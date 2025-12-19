@@ -1,25 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enterprise Manager ERP & POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Custom extensions if needed
+            }
+          }
+        }
+      }
+    </script>
     <style>
-      /* Custom scrollbar for slate theme */
+      /* Custom scrollbar with CSS variables for theme support */
+      :root {
+        --scrollbar-track: #f1f5f9;
+        --scrollbar-thumb: #cbd5e1;
+        --scrollbar-thumb-hover: #94a3b8;
+      }
+      .dark {
+        --scrollbar-track: #1e293b;
+        --scrollbar-thumb: #475569;
+        --scrollbar-thumb-hover: #64748b;
+      }
+
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #1e293b; 
+        background: var(--scrollbar-track); 
       }
       ::-webkit-scrollbar-thumb {
-        background: #475569; 
+        background: var(--scrollbar-thumb); 
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #64748b; 
+        background: var(--scrollbar-thumb-hover); 
       }
     </style>
   <script type="importmap">
@@ -38,7 +61,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-950 text-slate-100 overflow-hidden">
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-300">
     <div id="root"></div>
   </body>
 </html>

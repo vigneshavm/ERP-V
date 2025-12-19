@@ -25,12 +25,14 @@ interface AuthState {
   currentSector: Sector;
   currentBranch: Branch;
   user: string;
+  theme: 'light' | 'dark';
 }
 
 const initialAuthState: AuthState = {
   currentSector: 'General',
   currentBranch: 'Alpha',
   user: 'Admin',
+  theme: 'dark', // Default to dark
 };
 
 const authSlice = createSlice({
@@ -45,6 +47,10 @@ const authSlice = createSlice({
       state.currentBranch = action.payload;
       saveState('auth', state);
     },
+    toggleTheme: (state) => {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      saveState('auth', state);
+    }
   },
 });
 
@@ -337,7 +343,7 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export const { setSector, setBranch } = authSlice.actions;
+export const { setSector, setBranch, toggleTheme } = authSlice.actions;
 export const { addProduct, deductStock, addStockBulk } = inventorySlice.actions;
 export const { 
     addToCart, updateCartQty, removeFromCart, clearCurrentSession, 
