@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { APP_CONFIG } from '../config';
 import {
   Briefcase, History, IndianRupee, Plus, CheckCircle,
   Activity, CheckCircle2, AlertCircle, CalendarDays, CreditCard
@@ -39,7 +40,23 @@ const DailyFinanceTracker: React.FC = () => {
   const [tx, setTx] = useState<TrackerTransaction[]>(() => {
       try {
           const saved = localStorage.getItem("omni_fin_tracker");
-          return saved ? JSON.parse(saved) : [];
+          if (saved && JSON.parse(saved).length > 0) return JSON.parse(saved);
+          
+          if (APP_CONFIG.IS_DEMO) {
+             const subDays = (d: number) => {
+                const date = new Date();
+                date.setDate(date.getDate() - d);
+                return date.toISOString().split('T')[0];
+             };
+             
+             return [
+                 { id: 'dt1', date: subDays(0), cashSales: 12000, onlineSales: 8000, totalSales: 20000, expenses: 500, cashInDrawer: 11500, notes: 'Good footfall', timestamp: new Date().toISOString() },
+                 { id: 'dt2', date: subDays(1), cashSales: 15000, onlineSales: 5000, totalSales: 20000, expenses: 1500, cashInDrawer: 13500, notes: 'Paid electricity', timestamp: new Date().toISOString() },
+                 { id: 'dt3', date: subDays(2), cashSales: 8000, onlineSales: 12000, totalSales: 20000, expenses: 200, cashInDrawer: 7800, notes: 'Rainy day', timestamp: new Date().toISOString() },
+                 { id: 'dt4', date: subDays(3), cashSales: 20000, onlineSales: 15000, totalSales: 35000, expenses: 5000, cashInDrawer: 15000, notes: 'Weekend rush', timestamp: new Date().toISOString() },
+             ];
+          }
+          return [];
       } catch(e) { return []; }
   });
   const [view, setView] = useState<'ENTRY' | 'CHARTS'>('ENTRY');
@@ -315,4 +332,3 @@ const DailyFinanceTracker: React.FC = () => {
   );
 };
 export default DailyFinanceTracker;
-    

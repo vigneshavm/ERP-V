@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addToCart, removeFromCart, updateCartQty, processSale, setCustomer, setActiveSession, setTaxMode, setPaymentMethod } from '../store';
-import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid } from 'lucide-react';
+import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid, Maximize2, Minimize2 } from 'lucide-react';
 import { TaxMode, PaymentMethod, Product, Customer } from '../types';
 
 const POSModule: React.FC = () => {
@@ -32,8 +32,10 @@ const POSModule: React.FC = () => {
   // --- Interaction State ---
   const [isProcessing, setIsProcessing] = useState(false);
   const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   // --- Refs ---
+  const posContainerRef = useRef<HTMLDivElement>(null);
   const skuInputRef = useRef<HTMLInputElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,11 @@ const POSModule: React.FC = () => {
   const taxAmount = activeSession.taxMode === 'EXCLUSIVE' ? cartSubtotal * 0.18 : 0;
   const cartTotal = cartSubtotal + taxAmount;
 
+  // --- Effect: Auto-focus SKU on mount ---
+  useEffect(() => {
+      skuInputRef.current?.focus();
+  }, []);
+
   // --- Effect: Auto-focus Cart Qty ---
   useEffect(() => {
       if (focusedItemId && cartQtyRefs.current[focusedItemId]) {
@@ -63,6 +70,25 @@ const POSModule: React.FC = () => {
       }
   }, [cart, focusedItemId]);
 
+  // --- Effect: Handle Full Screen Changes ---
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+        setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+        posContainerRef.current?.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+  };
+
   // --- Handlers: SKU Input ---
   const handleSkuKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -71,7 +97,11 @@ const POSModule: React.FC = () => {
         if (match.stock > 0) {
             dispatch(addToCart({ ...match, qty: 1 }));
             setSkuQuery('');
-            // Don't focus qty here to allow rapid scanning
+            
+            // Ensure focus stays on SKU input for rapid scanning
+            setTimeout(() => {
+                skuInputRef.current?.focus();
+            }, 10);
         }
       } 
     }
@@ -190,28 +220,49 @@ const POSModule: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-9rem)] relative">
-      {/* Session Tabs */}
-      <div className="flex gap-2 mb-4 shrink-0">
-          {sessions.map((session, index) => (
-              <button
-                key={session.id}
-                onClick={() => dispatch(setActiveSession(index))}
-                className={`flex-1 py-3 px-4 rounded-t-xl font-bold flex flex-col items-center justify-center transition-all border-b-2 ${
-                    activeSessionIndex === index 
-                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-900/20' 
-                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700'
-                }`}
-              >
-                  <span className="text-sm flex items-center gap-2">
-                      {session.label}
-                      <span className="text-[10px] opacity-60 font-normal bg-black/20 px-1.5 rounded">Alt+{index+1}</span>
-                  </span>
-                  <span className="text-xs font-normal mt-1 opacity-80">
-                      {session.cart.length} items &bull; ₹{session.cart.reduce((s, i) => s + (i.price * i.qty), 0).toFixed(0)}
-                  </span>
-              </button>
-          ))}
+    <div 
+        ref={posContainerRef}
+        className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4' : 'h-[calc(100vh-9rem)]'}`}
+    >
+      {/* Top Bar: Sessions & Full Screen Toggle */}
+      <div className="flex gap-4 mb-2 shrink-0 items-end">
+          {/* Session Tabs */}
+          <div className="flex gap-2 flex-1">
+              {sessions.map((session, index) => {
+                  const totalQty = session.cart.reduce((acc, item) => acc + item.qty, 0);
+                  return (
+                  <button
+                    key={session.id}
+                    onClick={() => dispatch(setActiveSession(index))}
+                    title={`Switch to ${session.label} (Alt+${index+1})`}
+                    className={`flex-1 py-2 px-4 rounded-t-lg font-bold flex items-center justify-center gap-2 transition-all border-b-2 ${
+                        activeSessionIndex === index 
+                        ? 'bg-indigo-600 text-white border-indigo-400 shadow-sm' 
+                        : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                      <span className="text-sm">{session.label}</span>
+                      {totalQty > 0 && (
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
+                              activeSessionIndex === index 
+                              ? 'bg-indigo-500 text-white' 
+                              : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          }`}>
+                              {totalQty}
+                          </span>
+                      )}
+                  </button>
+              )})}
+          </div>
+          
+          {/* Full Screen Toggle */}
+          <button 
+            onClick={toggleFullScreen}
+            className="p-2.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all"
+            title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
+          >
+              {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+          </button>
       </div>
 
       <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
@@ -451,14 +502,16 @@ const POSModule: React.FC = () => {
                             <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                                 {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => {
                                     const Icon = method === 'CASH' ? Banknote : method === 'CARD' ? CardIcon : Smartphone;
+                                    const label = method === 'CASH' ? 'Cash' : method === 'CARD' ? 'Card' : 'UPI';
                                     return (
                                         <button
                                             key={method}
                                             onClick={() => dispatch(setPaymentMethod(method))}
-                                            className={`flex-1 py-1.5 rounded-md flex items-center justify-center transition-all ${activeSession.paymentMethod === method ? 'bg-emerald-600 text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
+                                            className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${activeSession.paymentMethod === method ? 'bg-emerald-600 text-white shadow font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
                                             title={method}
                                         >
                                             <Icon className="w-4 h-4" />
+                                            <span className="text-[9px] uppercase leading-none">{label}</span>
                                         </button>
                                     );
                                 })}
@@ -514,4 +567,3 @@ const POSModule: React.FC = () => {
 };
 
 export default POSModule;
-    

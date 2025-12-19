@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2 } from 'lucide-react';
-import { AttendanceStatus, DailyLog } from './LaborSalaryManager';
+import { AttendanceStatus, DailyLog } from '../types';
 
 interface TimeEntryModalProps {
   isOpen: boolean;
   date: string;
   onClose: () => void;
   onSave: (log: DailyLog | null) => void;
-  initialData?: DailyLog;
+  initialData?: DailyLog | { inTime?: string; outTime?: string; status?: AttendanceStatus };
 }
 
 export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, onClose, onSave, initialData }) => {

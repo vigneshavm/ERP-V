@@ -1,12 +1,21 @@
 
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Product, Sale, CartItem, Customer, Transaction, Employee, Attendance, PurchaseOrder, Sector, Branch, BillSession, TaxMode, PaymentMethod, Cheque } from './types';
+import { Product, Sale, CartItem, Customer, Transaction, Employee, Attendance, PurchaseOrder, Sector, Branch, BillSession, TaxMode, PaymentMethod, Cheque, LaborPayment } from './types';
+import { APP_CONFIG } from './config';
+import { MOCK_PRODUCTS, MOCK_CUSTOMERS, MOCK_EMPLOYEES, MOCK_TRANSACTIONS, MOCK_CHEQUES, MOCK_SALES, MOCK_ORDERS, MOCK_LABOR_PAYMENTS } from './mockData';
 
 // --- LocalStorage Helpers ---
 const loadState = (key: string, defaultState: any) => {
   try {
     const serialized = localStorage.getItem(key);
-    return serialized ? JSON.parse(serialized) : defaultState;
+    if (serialized) {
+        return JSON.parse(serialized);
+    }
+    // If no local storage, and DEMO mode is on, return mock data merged with default structure
+    if (APP_CONFIG.IS_DEMO) {
+        return defaultState; 
+    }
+    return defaultState;
   } catch (e) {
     return defaultState;
   }
@@ -25,14 +34,18 @@ interface AuthState {
   currentSector: Sector;
   currentBranch: Branch;
   user: string;
+  role: string;
+  isAuthenticated: boolean;
   theme: 'light' | 'dark';
 }
 
 const initialAuthState: AuthState = {
-  currentSector: 'General',
+  currentSector: 'Textile', // Default to Textile to show product types immediately
   currentBranch: 'Alpha',
   user: 'Admin',
-  theme: 'dark', // Default to dark
+  role: 'Owner',
+  isAuthenticated: false,
+  theme: 'dark', 
 };
 
 const authSlice = createSlice({
@@ -50,6 +63,18 @@ const authSlice = createSlice({
     toggleTheme: (state) => {
       state.theme = state.theme === 'dark' ? 'light' : 'dark';
       saveState('auth', state);
+    },
+    login: (state, action: PayloadAction<{ user: string; role: string }>) => {
+      state.user = action.payload.user;
+      state.role = action.payload.role;
+      state.isAuthenticated = true;
+      saveState('auth', state);
+    },
+    logout: (state) => {
+      state.user = '';
+      state.role = '';
+      state.isAuthenticated = false;
+      saveState('auth', state);
     }
   },
 });
@@ -59,12 +84,9 @@ interface InventoryState {
   products: Product[];
 }
 
+// Initial state logic: Use Mock if Demo and LS is empty
 const initialInventoryState: InventoryState = {
-  products: [
-    { id: '1', sku: 'GEN001', name: 'Premium Notebook', category: 'Stationery', price: 12.00, cost: 5.50, stock: 100, sector: 'General', branch: 'Alpha', barcode: '123456789012' },
-    { id: '2', sku: 'TEX001', name: 'Cotton Shirt XL', category: 'Apparel', price: 45.00, cost: 18.00, stock: 50, sector: 'Textile', branch: 'Alpha', barcode: '223456789012' },
-    { id: '3', sku: 'ELEC001', name: 'USB-C Cable 2m', category: 'Accessories', price: 15.00, cost: 3.50, stock: 200, sector: 'Electronics', branch: 'Beta', barcode: '323456789012' },
-  ],
+  products: APP_CONFIG.IS_DEMO ? MOCK_PRODUCTS : []
 };
 
 const inventorySlice = createSlice({
@@ -85,7 +107,7 @@ const inventorySlice = createSlice({
       if (p) p.stock = Math.max(0, p.stock - action.payload.qty);
       saveState('inventory', state);
     },
-    addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: Branch; category?: string; barcode?: string }[]>) => {
+    addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: Branch; category?: string; productType?: string; barcode?: string }[]>) => {
         action.payload.forEach(item => {
             const existing = state.products.find(p => p.sku === item.sku && p.sector === item.sector && p.branch === item.branch);
             if (existing) {
@@ -97,6 +119,7 @@ const inventorySlice = createSlice({
                     id: Math.random().toString(36).substr(2, 9),
                     sku: item.sku || `SKU-${Math.random().toString(36).substr(2, 5)}`,
                     name: item.name,
+                    productType: item.productType || 'General',
                     category: item.category || 'Uncategorized',
                     price: item.price || item.cost * 1.5,
                     cost: item.cost,
@@ -132,10 +155,8 @@ interface POSState {
 const initialPOSState: POSState = {
   sessions: [createSession(0), createSession(1), createSession(2), createSession(3)],
   activeSessionIndex: 0,
-  customers: [
-    { id: 'c1', name: 'Walk-in Customer', phone: '000-000-0000', points: 0 }
-  ],
-  salesHistory: [],
+  customers: APP_CONFIG.IS_DEMO ? MOCK_CUSTOMERS : [{ id: 'c1', name: 'Walk-in Customer', phone: '000-000-0000', points: 0 }],
+  salesHistory: APP_CONFIG.IS_DEMO ? MOCK_SALES : [],
 };
 
 const posSlice = createSlice({
@@ -212,9 +233,9 @@ interface FinanceState {
 }
 
 const initialFinanceState: FinanceState = {
-  transactions: [],
-  cheques: [],
-  bankBalance: 25000, 
+  transactions: APP_CONFIG.IS_DEMO ? MOCK_TRANSACTIONS : [],
+  cheques: APP_CONFIG.IS_DEMO ? MOCK_CHEQUES : [],
+  bankBalance: 250000, // Higher default for demo
 };
 
 const financeSlice = createSlice({
@@ -279,7 +300,7 @@ interface PurchaseState {
 }
 
 const initialPurchaseState: PurchaseState = {
-  orders: [],
+  orders: APP_CONFIG.IS_DEMO ? MOCK_ORDERS : [],
 };
 
 const purchaseSlice = createSlice({
@@ -302,13 +323,13 @@ const purchaseSlice = createSlice({
 interface LaborState {
   employees: Employee[];
   attendance: Attendance[];
+  payments: LaborPayment[];
 }
 
 const initialLaborState: LaborState = {
-  employees: [
-    { id: 'e1', name: 'John Doe', role: 'Store Manager', dailyRate: 120, sector: 'General', branch: 'Alpha' }
-  ],
+  employees: APP_CONFIG.IS_DEMO ? MOCK_EMPLOYEES : [],
   attendance: [],
+  payments: APP_CONFIG.IS_DEMO ? MOCK_LABOR_PAYMENTS : [],
 };
 
 const laborSlice = createSlice({
@@ -325,6 +346,10 @@ const laborSlice = createSlice({
       state.attendance.push(action.payload);
       saveState('labor', state);
     },
+    addLaborPayment: (state, action: PayloadAction<LaborPayment>) => {
+      state.payments.push(action.payload);
+      saveState('labor', state);
+    }
   },
 });
 
@@ -343,7 +368,7 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export const { setSector, setBranch, toggleTheme } = authSlice.actions;
+export const { setSector, setBranch, toggleTheme, login, logout } = authSlice.actions;
 export const { addProduct, deductStock, addStockBulk } = inventorySlice.actions;
 export const { 
     addToCart, updateCartQty, removeFromCart, clearCurrentSession, 
@@ -352,7 +377,7 @@ export const {
 } = posSlice.actions;
 export const { addTransaction, addCheque, updateChequeStatus } = financeSlice.actions;
 export const { addOrder, approveOrder } = purchaseSlice.actions;
-export const { addEmployee, markAttendance } = laborSlice.actions;
+export const { addEmployee, markAttendance, addLaborPayment } = laborSlice.actions;
 
 export const processSale = (sale: Sale) => (dispatch: AppDispatch) => {
   dispatch(recordSale(sale));
@@ -380,6 +405,8 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
         cost: i.cost,
         price: undefined, 
         name: i.name,
+        category: 'Uncategorized', // Default
+        productType: 'General', // Default
         sector: order.sector,
         branch: order.branch
     }))));

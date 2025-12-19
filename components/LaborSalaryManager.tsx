@@ -4,6 +4,8 @@ import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, Trash2, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X } from 'lucide-react';
 import { formatCurrency, getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../utils/helpers';
+import { APP_CONFIG } from '../config';
+import { AttendanceStatus, DailyLog } from '../types';
 
 export interface Payment {
   id: string;
@@ -11,15 +13,6 @@ export interface Payment {
   amount: number;
   note?: string;
 }
-
-export interface DailyLog {
-  status: AttendanceStatus;
-  inTime: string;
-  outTime: string;
-  duration: number; // in hours
-}
-
-export type AttendanceStatus = 'PRESENT' | 'HALF' | 'QUARTER' | 'ABSENT';
 
 export interface AttendanceRecord {
   [dateIso: string]: DailyLog;
@@ -34,10 +27,18 @@ export interface Laborer {
 
 export const LaborSalaryManager = () => {
   // -- State --
-  const [laborers, setLaborers] = useState<Laborer[]>([
-    { id: '1', name: 'Raju Kumar', dailyWage: 800, role: 'Master' },
-    { id: '2', name: 'Sunil Singh', dailyWage: 500, role: 'Helper' },
-  ]);
+  const [laborers, setLaborers] = useState<Laborer[]>(() => {
+      // Mock data injection
+      if (APP_CONFIG.IS_DEMO) {
+          return [
+            { id: '1', name: 'Raju Kumar', dailyWage: 800, role: 'Master' },
+            { id: '2', name: 'Sunil Singh', dailyWage: 500, role: 'Helper' },
+            { id: '3', name: 'Vikram Das', dailyWage: 1200, role: 'Supervisor' },
+            { id: '4', name: 'Amit Roy', dailyWage: 600, role: 'Packer' },
+          ];
+      }
+      return [];
+  });
 
   const [selectedLaborerId, setSelectedLaborerId] = useState<string>(laborers[0]?.id);
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceRecord>>({});

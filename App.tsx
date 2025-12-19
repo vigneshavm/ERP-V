@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSector, setBranch, toggleTheme } from './store';
-import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet } from 'lucide-react';
+import { RootState, setSector, setBranch, toggleTheme, logout } from './store';
+import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
 import POSModule from './components/POSModule';
@@ -12,12 +12,13 @@ import FinanceTracker from './components/FinanceTracker';
 import LaborManager from './components/LaborManager';
 import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
-import { LaborSalaryManager } from './components/LaborSalaryManager';
-import { Sector, Branch } from './types';
+import Login from './login';
+import { Sector, Branch, AppView } from './types';
+import { hasAccess } from './config';
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
-    const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
+    const { currentSector, currentBranch, theme, user, role } = useSelector((state: RootState) => state.auth);
     const sectors: Sector[] = ['General', 'Textile', 'Electronics'];
     const branches: Branch[] = ['All', 'Alpha', 'Beta', 'Gamma'];
 
@@ -68,6 +69,11 @@ const Header: React.FC = () => {
 
                 <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
 
+                <div className="text-right hidden lg:block">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">{user}</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{role}</p>
+                </div>
+
                 {/* Theme Toggle */}
                 <button 
                     onClick={() => dispatch(toggleTheme())}
@@ -76,17 +82,31 @@ const Header: React.FC = () => {
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
 
-                <button className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <Settings className="w-5 h-5" />
+                <button 
+                    onClick={() => dispatch(logout())}
+                    className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    title="Logout"
+                >
+                    <LogOut className="w-5 h-5" />
                 </button>
             </div>
         </header>
     );
 }
 
+const Unauthorized: React.FC = () => (
+    <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+        <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-full mb-4">
+            <ShieldAlert className="w-12 h-12 text-red-500" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">Access Denied</h2>
+        <p className="text-sm">You do not have permission to view this module.</p>
+    </div>
+);
+
 const App: React.FC = () => {
-  const { theme } = useSelector((state: RootState) => state.auth);
-  const [currentView, setCurrentView] = useState('dashboard');
+  const { theme, isAuthenticated, role } = useSelector((state: RootState) => state.auth);
+  const [currentView, setCurrentView] = useState<AppView>('pos'); // Default to POS for safety
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -96,8 +116,21 @@ const App: React.FC = () => {
     }
   }, [theme]);
 
-  const NavItem = ({ view, icon: Icon, label }: any) => {
+  // Security Check: If login role changes and current view is not allowed, reset to POS
+  useEffect(() => {
+      if (isAuthenticated && role) {
+          if (!hasAccess(role, currentView)) {
+              setCurrentView('pos');
+          }
+      }
+  }, [role, isAuthenticated]);
+
+  const NavItem = ({ view, icon: Icon, label }: { view: AppView, icon: any, label: string }) => {
     const isActive = currentView === view;
+    const isAllowed = hasAccess(role, view);
+
+    if (!isAllowed) return null;
+
     return (
         <button 
             onClick={() => setCurrentView(view)}
@@ -114,6 +147,11 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    // Security Gate: Prevent rendering if role doesn't match config
+    if (!hasAccess(role, currentView)) {
+        return <Unauthorized />;
+    }
+
     switch (currentView) {
         case 'dashboard': return <Dashboard />;
         case 'pos': return <POSModule />;
@@ -123,10 +161,17 @@ const App: React.FC = () => {
         case 'purchases': return <PurchaseManager />;
         case 'finance': return <FinanceTracker />;
         case 'labor': return <LaborManager />;
-        case 'salary': return <LaborSalaryManager />;
         default: return <Dashboard />;
     }
   };
+
+  if (!isAuthenticated) {
+      return (
+          <div className={theme === 'dark' ? 'dark' : ''}>
+              <Login />
+          </div>
+      );
+  }
 
   return (
       <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-500/30 transition-colors duration-300">
@@ -157,17 +202,18 @@ const App: React.FC = () => {
                     <NavItem view="inventory" icon={Archive} label="Inventory" />
                     <NavItem view="purchases" icon={FileText} label="Restock & AI" />
                     <NavItem view="finance" icon={DollarSign} label="Finance" />
-                    <NavItem view="labor" icon={Users} label="Staff & Attendance" />
-                    <NavItem view="salary" icon={Wallet} label="Salary & Payments" />
+                    <NavItem view="labor" icon={Users} label="Staff & Payroll" />
                 </div>
             </nav>
 
             <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                 <div className="flex items-center gap-3 px-2 py-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border border-slate-300 dark:border-slate-600"></div>
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border border-slate-300 dark:border-slate-600 flex items-center justify-center text-white font-bold text-xs">
+                        {role[0]}
+                    </div>
                     <div>
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">Admin User</p>
-                        <p className="text-xs text-slate-500">Super Admin</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">{role === 'Owner' ? 'Administrator' : 'Staff Member'}</p>
+                        <p className="text-xs text-slate-500">{role}</p>
                     </div>
                 </div>
             </div>

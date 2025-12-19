@@ -8,17 +8,17 @@ import { Sector, Branch } from '../types';
 const InventoryManager: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { products } = useSelector((state: RootState) => state.inventory);
-  const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+  const { currentSector, currentBranch, role } = useSelector((state: RootState) => state.auth);
 
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [newItem, setNewItem] = useState({ name: '', sku: '', price: '', cost: '', stock: '', category: '', branch: 'Alpha' });
+  const [newItem, setNewItem] = useState({ name: '', sku: '', price: '', cost: '', stock: '', category: '', productType: '', branch: 'Alpha' });
 
   // Filter based on context and search
   const sectorProducts = products.filter(p => 
     p.sector === currentSector && 
     (currentBranch === 'All' || p.branch === currentBranch) &&
-    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()) || p.productType.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleAdd = (e: React.FormEvent) => {
@@ -31,12 +31,15 @@ const InventoryManager: React.FC = () => {
       cost: parseFloat(newItem.cost),
       stock: parseInt(newItem.stock),
       category: newItem.category,
+      productType: newItem.productType,
       sector: currentSector as Sector,
       branch: newItem.branch as Branch // Default or selected
     }));
     setIsAdding(false);
-    setNewItem({ name: '', sku: '', price: '', cost: '', stock: '', category: '', branch: 'Alpha' });
+    setNewItem({ name: '', sku: '', price: '', cost: '', stock: '', category: '', productType: '', branch: 'Alpha' });
   };
+
+  const isOwner = role === 'Owner';
 
   return (
     <div className="space-y-6">
@@ -48,7 +51,7 @@ const InventoryManager: React.FC = () => {
             <div className="relative flex-1 md:w-64">
                 <input 
                     type="text" 
-                    placeholder="Search SKU or Name..." 
+                    placeholder="Search SKU, Name or Type..." 
                     className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
@@ -95,6 +98,11 @@ const InventoryManager: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Product Type</label>
+              <input required placeholder="E.g. Gents Pant, Shirt" className="bg-slate-100 dark:bg-slate-700 border-none rounded p-2 text-slate-900 dark:text-white" value={newItem.productType} onChange={e => setNewItem({...newItem, productType: e.target.value})} />
+          </div>
+
+          <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Category</label>
               <input required placeholder="E.g. Apparel" className="bg-slate-100 dark:bg-slate-700 border-none rounded p-2 text-slate-900 dark:text-white" value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} />
           </div>
@@ -104,10 +112,12 @@ const InventoryManager: React.FC = () => {
               <input required type="number" step="0.01" className="bg-slate-100 dark:bg-slate-700 border-none rounded p-2 text-slate-900 dark:text-white" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} />
           </div>
 
-          <div className="flex flex-col gap-1">
-              <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Cost Price</label>
-              <input required type="number" step="0.01" className="bg-slate-100 dark:bg-slate-700 border-none rounded p-2 text-slate-900 dark:text-white" value={newItem.cost} onChange={e => setNewItem({...newItem, cost: e.target.value})} />
-          </div>
+          {isOwner && (
+            <div className="flex flex-col gap-1">
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Cost Price</label>
+                <input required type="number" step="0.01" className="bg-slate-100 dark:bg-slate-700 border-none rounded p-2 text-slate-900 dark:text-white" value={newItem.cost} onChange={e => setNewItem({...newItem, cost: e.target.value})} />
+            </div>
+          )}
 
           <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Stock Qty</label>
@@ -128,12 +138,13 @@ const InventoryManager: React.FC = () => {
               <tr>
                 <th className="p-4">SKU</th>
                 <th className="p-4">Name</th>
+                <th className="p-4">Type</th>
                 <th className="p-4">Branch</th>
                 <th className="p-4">Category</th>
                 <th className="p-4">Stock</th>
-                <th className="p-4">Cost</th>
+                {isOwner && <th className="p-4">Cost</th>}
                 <th className="p-4">Price</th>
-                <th className="p-4 text-right">Value</th>
+                {isOwner && <th className="p-4 text-right">Value</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
@@ -141,21 +152,22 @@ const InventoryManager: React.FC = () => {
                 <tr key={product.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                   <td className="p-4 font-mono text-slate-500 dark:text-slate-400">{product.sku}</td>
                   <td className="p-4 font-bold">{product.name}</td>
-                  <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded text-xs text-indigo-600 dark:text-indigo-300">{product.branch}</span></td>
+                  <td className="p-4"><span className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-xs font-bold border border-indigo-100 dark:border-indigo-800">{product.productType}</span></td>
+                  <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded text-xs text-slate-600 dark:text-slate-400">{product.branch}</span></td>
                   <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs">{product.category}</span></td>
                   <td className="p-4">
                     <span className={`font-bold ${product.stock < 10 ? 'text-red-500 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                       {product.stock}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-500 dark:text-slate-400">₹{product.cost.toFixed(2)}</td>
+                  {isOwner && <td className="p-4 text-slate-500 dark:text-slate-400">₹{product.cost.toFixed(2)}</td>}
                   <td className="p-4 font-medium text-indigo-600 dark:text-indigo-400">₹{product.price.toFixed(2)}</td>
-                  <td className="p-4 text-right font-bold">₹{(product.price * product.stock).toFixed(2)}</td>
+                  {isOwner && <td className="p-4 text-right font-bold">₹{(product.price * product.stock).toFixed(2)}</td>}
                 </tr>
               ))}
               {sectorProducts.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">No products found matching criteria.</td>
+                  <td colSpan={isOwner ? 9 : 7} className="p-8 text-center text-slate-500">No products found matching criteria.</td>
                 </tr>
               )}
             </tbody>
@@ -167,4 +179,3 @@ const InventoryManager: React.FC = () => {
 };
 
 export default InventoryManager;
-    

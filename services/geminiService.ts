@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ScannedInvoice } from "../types";
 
@@ -33,7 +34,11 @@ export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice
           }
         },
         {
-          text: `Extract the following details from this invoice: Vendor Name, Date, and a list of items (Name, Quantity, Unit Cost). Return a valid JSON object strictly matching this schema.`
+          text: `Extract the following details from this invoice: Vendor Name, Date, and a list of items (Name, Quantity, Unit Cost). 
+          IMPORTANT: 
+          1. If items have different sizes, colors, or variants listed as separate lines or entries, extract them as SEPARATE items. Do not merge them.
+          2. Example: "Shirt Size 40" and "Shirt Size 42" must be two different items in the list.
+          3. Return a valid JSON object strictly matching this schema.`
         }
       ]
     },

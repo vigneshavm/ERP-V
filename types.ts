@@ -1,12 +1,15 @@
 
 export type Sector = 'General' | 'Textile' | 'Electronics';
 export type Branch = 'All' | 'Alpha' | 'Beta' | 'Gamma';
+export type UserRole = 'Owner' | 'Staff';
+export type AppView = 'dashboard' | 'pos' | 'sales' | 'daily' | 'inventory' | 'purchases' | 'finance' | 'labor';
 
 export interface Product {
   id: string;
   sku: string;
   name: string;
-  category: string;
+  productType: string; // e.g. "Gents Pant", "Shirt", "Mobile"
+  category: string;    // e.g. "Men's Wear", "Electronics"
   price: number;
   cost: number;
   stock: number;
@@ -82,12 +85,33 @@ export interface Employee {
   branch: Branch;
 }
 
+export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'HALF' | 'QUARTER';
+
+export interface DailyLog {
+  status: AttendanceStatus;
+  inTime?: string;
+  outTime?: string;
+  duration?: number; // in hours
+}
+
 export interface Attendance {
   id: string;
   employeeId: string;
   date: string;
-  status: 'PRESENT' | 'ABSENT';
+  status: AttendanceStatus;
   advanceTaken: number;
+  inTime?: string;
+  outTime?: string;
+  duration?: number;
+}
+
+export interface LaborPayment {
+  id: string;
+  employeeId: string;
+  amount: number;
+  date: string;
+  type: 'SALARY' | 'ADVANCE' | 'BONUS';
+  note?: string;
 }
 
 export interface ScannedInvoiceItem {

@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { parseInvoiceWithGemini } from '../services/geminiService';
 import { processPurchaseApproval, RootState, AppDispatch, addOrder, addStockBulk, addTransaction } from '../store';
-import { Upload, FileText, Check, Loader2, AlertCircle } from 'lucide-react';
-import { ScannedInvoice, Branch, Sector } from '../types';
+import { Upload, FileText, Check, Loader2, AlertCircle, X, Eye, Lock } from 'lucide-react';
+import { ScannedInvoice, Branch, Sector, PurchaseOrder } from '../types';
 import InvoiceResult from './InvoiceResult';
 
 const PurchaseManager: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+  const { currentSector, currentBranch, role } = useSelector((state: RootState) => state.auth);
   const { orders } = useSelector((state: RootState) => state.purchase);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -17,6 +16,7 @@ const PurchaseManager: React.FC = () => {
   const [scannedData, setScannedData] = useState<ScannedInvoice | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [targetBranch, setTargetBranch] = useState<Branch>('Alpha');
+  const [viewOrder, setViewOrder] = useState<PurchaseOrder | null>(null);
 
   // Filter orders by current sector and branch (if specific branch selected)
   const sectorOrders = orders.filter(o => 
@@ -45,7 +45,9 @@ const PurchaseManager: React.FC = () => {
   };
 
   const handleCommitInventory = (items: any[]) => {
-      // 1. Create Purchase Order Record (Approved automatically as we just reviewed it)
+      // 1. Create Purchase Order Record
+      // Staff creates PENDING orders, Owner creates APPROVED orders instantly
+      const isOwner = role === 'Owner';
       const orderTotal = items.reduce((sum, item) => sum + (item.cost * item.qty), 0);
       
       const newOrder = {
@@ -54,37 +56,41 @@ const PurchaseManager: React.FC = () => {
         date: scannedData?.date || new Date().toISOString(),
         items: items.map(i => ({ name: i.name, qty: i.qty, cost: i.cost, sku: i.sku })), // Simplified for PO record
         total: orderTotal,
-        status: 'APPROVED' as const,
+        status: isOwner ? 'APPROVED' as const : 'PENDING' as const,
         sector: currentSector,
         branch: targetBranch
       };
       
       dispatch(addOrder(newOrder));
 
-      // 2. Commit to Inventory (Add Stock Bulk)
-      dispatch(addStockBulk(items.map(item => ({
-          sku: item.sku,
-          qty: item.qty,
-          cost: item.cost,
-          price: item.sellingPrice,
-          name: item.name,
-          category: item.category,
-          sector: currentSector,
-          branch: targetBranch,
-          barcode: item.barcode
-      }))));
+      if (isOwner) {
+          // 2. Commit to Inventory (Add Stock Bulk)
+          dispatch(addStockBulk(items.map(item => ({
+              sku: item.sku,
+              qty: item.qty,
+              cost: item.cost,
+              price: item.sellingPrice,
+              name: item.name,
+              category: item.category,
+              sector: currentSector,
+              branch: targetBranch,
+              barcode: item.barcode
+          }))));
 
-      // 3. Record Expense
-      dispatch(addTransaction({
-          id: Math.random().toString(36).substr(2, 9),
-          type: 'EXPENSE',
-          category: 'Inventory Restock',
-          amount: orderTotal,
-          date: new Date().toISOString(),
-          description: `Invoice Payment - ${newOrder.vendor} (${targetBranch})`,
-          sector: currentSector,
-          branch: targetBranch
-      }));
+          // 3. Record Expense
+          dispatch(addTransaction({
+              id: Math.random().toString(36).substr(2, 9),
+              type: 'EXPENSE',
+              category: 'Inventory Restock',
+              amount: orderTotal,
+              date: new Date().toISOString(),
+              description: `Invoice Payment - ${newOrder.vendor} (${targetBranch})`,
+              sector: currentSector,
+              branch: targetBranch
+          }));
+      } else {
+          alert("Purchase Order created with PENDING status. An Owner must approve it to update inventory.");
+      }
 
       // Cleanup
       setScannedData(null);
@@ -108,7 +114,107 @@ const PurchaseManager: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
+      {/* View Order Modal */}
+      {viewOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95">
+              {/* Header */}
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded-t-xl">
+                  <div>
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-indigo-500" /> Purchase Order Details
+                      </h3>
+                      <p className="text-xs text-slate-500 font-mono mt-1">ID: {viewOrder.id}</p>
+                  </div>
+                  <button onClick={() => setViewOrder(null)} className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
+                      <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                  </button>
+              </div>
+              
+              {/* Content */}
+              <div className="p-6 overflow-y-auto">
+                  {/* Meta Info */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                      <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vendor</label>
+                          <p className="font-bold text-slate-900 dark:text-white text-base truncate" title={viewOrder.vendor}>{viewOrder.vendor}</p>
+                      </div>
+                      <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Date</label>
+                          <p className="text-slate-900 dark:text-white text-sm font-medium">{new Date(viewOrder.date).toLocaleDateString()}</p>
+                      </div>
+                      <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Branch</label>
+                          <p className="text-slate-900 dark:text-white text-sm font-medium">{viewOrder.branch}</p>
+                      </div>
+                      <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</label>
+                          <div className={`mt-0.5 inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${viewOrder.status === 'APPROVED' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20'}`}>
+                              {viewOrder.status}
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Items Table */}
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-bold text-xs">
+                            <tr>
+                                <th className="p-3">Item Details</th>
+                                <th className="p-3 text-center">Qty</th>
+                                <th className="p-3 text-right">Unit Cost</th>
+                                <th className="p-3 text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                            {viewOrder.items.map((item, idx) => (
+                                <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td className="p-3">
+                                        <p className="font-bold text-slate-800 dark:text-slate-200">{item.name}</p>
+                                        <p className="text-[10px] text-slate-500 font-mono">{item.sku || 'No SKU'}</p>
+                                    </td>
+                                    <td className="p-3 text-center text-slate-700 dark:text-slate-300 font-medium">{item.qty}</td>
+                                    {role === 'Owner' ? (
+                                        <td className="p-3 text-right text-slate-700 dark:text-slate-300 font-mono">₹{item.cost.toFixed(2)}</td>
+                                    ) : (
+                                        <td className="p-3 text-right text-slate-400 dark:text-slate-600 font-mono">***</td>
+                                    )}
+                                    {role === 'Owner' ? (
+                                        <td className="p-3 text-right font-bold text-slate-900 dark:text-white font-mono">₹{(item.qty * item.cost).toFixed(2)}</td>
+                                    ) : (
+                                        <td className="p-3 text-right font-bold text-slate-400 dark:text-slate-600 font-mono">***</td>
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700">
+                            <tr>
+                                <td colSpan={3} className="p-3 text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Total Amount</td>
+                                {role === 'Owner' ? (
+                                    <td className="p-3 text-right font-bold text-lg text-indigo-600 dark:text-indigo-400 font-mono">₹{viewOrder.total.toFixed(2)}</td>
+                                ) : (
+                                    <td className="p-3 text-right font-bold text-lg text-slate-400 dark:text-slate-600 font-mono">***</td>
+                                )}
+                            </tr>
+                        </tfoot>
+                    </table>
+                  </div>
+              </div>
+              
+              {/* Footer */}
+              <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-end rounded-b-xl">
+                  <button 
+                    onClick={() => setViewOrder(null)} 
+                    className="px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    Close
+                  </button>
+              </div>
+          </div>
+        </div>
+      )}
+
       {/* Upload Section */}
       <div className="space-y-6">
         <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed text-center transition-colors">
@@ -160,7 +266,7 @@ const PurchaseManager: React.FC = () => {
 
         <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg text-indigo-800 dark:text-indigo-200 text-sm transition-colors">
             <p className="font-bold mb-1">AI Processing</p>
-            <p>The system will automatically extract items, quantities, and costs. You will review and set selling prices/margins in the next step.</p>
+            <p>The system will automatically extract items, quantities, and costs. {role === 'Owner' ? 'You will review and set selling prices.' : 'Your upload will be pending Owner approval.'}</p>
         </div>
       </div>
 
@@ -172,7 +278,11 @@ const PurchaseManager: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {sectorOrders.length === 0 && <p className="text-slate-500 text-center mt-10">No purchase orders found for this branch.</p>}
             {sectorOrders.map(order => (
-                <div key={order.id} className="p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
+                <div 
+                  key={order.id} 
+                  onClick={() => setViewOrder(order)}
+                  className="p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors cursor-pointer group relative"
+                >
                     <div className="flex justify-between items-start mb-3">
                         <div>
                             <div className="flex items-center gap-2">
@@ -186,17 +296,36 @@ const PurchaseManager: React.FC = () => {
                         </span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{order.items.length} items</span>
+                        <span className="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-1">
+                          {order.items.length} items
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </span>
                         <div className="flex items-center gap-3">
-                            <span className="font-bold text-slate-900 dark:text-white">₹{order.total.toFixed(2)}</span>
+                            {role === 'Owner' ? (
+                                <span className="font-bold text-slate-900 dark:text-white">₹{order.total.toFixed(2)}</span>
+                            ) : (
+                                <span className="font-bold text-slate-400 dark:text-slate-600">Hidden</span>
+                            )}
+                            
                             {order.status === 'PENDING' && (
-                                <button 
-                                    onClick={() => dispatch(processPurchaseApproval(order))}
-                                    className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors"
-                                    title="Approve & Update Inventory"
-                                >
-                                    <Check className="w-4 h-4" />
-                                </button>
+                                <>
+                                    {role === 'Owner' ? (
+                                        <button 
+                                            onClick={(e) => {
+                                            e.stopPropagation();
+                                            dispatch(processPurchaseApproval(order));
+                                            }}
+                                            className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors relative z-10"
+                                            title="Approve & Update Inventory"
+                                        >
+                                            <Check className="w-4 h-4" />
+                                        </button>
+                                    ) : (
+                                        <div title="Awaiting Owner Approval">
+                                            <Lock className="w-4 h-4 text-slate-400" />
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -209,4 +338,3 @@ const PurchaseManager: React.FC = () => {
 };
 
 export default PurchaseManager;
-    
