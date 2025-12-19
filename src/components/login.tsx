@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from './store';
+import { login } from '../../store';
 import { Box, TrendingUp, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 
 const Login: React.FC = () => {

@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch, addTransaction, addCheque, updateChequeStatus } from '../store';
+import { RootState, AppDispatch, addTransaction, addCheque, updateChequeStatus } from '../../store';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ArrowDownLeft, ArrowUpRight, Plus, FileText, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
-import { Sector, Cheque } from '../types';
+import { Sector, Cheque } from '../../types';
 
 const FinanceTracker: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

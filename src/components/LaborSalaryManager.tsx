@@ -4,8 +4,8 @@ import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, Trash2, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X } from 'lucide-react';
 import { formatCurrency, getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../utils/helpers';
-import { APP_CONFIG } from '../config';
-import { AttendanceStatus, DailyLog } from '../types';
+
+
 
 export interface Payment {
   id: string;
@@ -13,6 +13,15 @@ export interface Payment {
   amount: number;
   note?: string;
 }
+
+export interface DailyLog {
+  status: AttendanceStatus;
+  inTime: string;
+  outTime: string;
+  duration: number; // in hours
+}
+
+export type AttendanceStatus = 'PRESENT' | 'HALF' | 'QUARTER' | 'ABSENT';
 
 export interface AttendanceRecord {
   [dateIso: string]: DailyLog;
@@ -27,18 +36,10 @@ export interface Laborer {
 
 export const LaborSalaryManager = () => {
   // -- State --
-  const [laborers, setLaborers] = useState<Laborer[]>(() => {
-      // Mock data injection
-      if (APP_CONFIG.IS_DEMO) {
-          return [
-            { id: '1', name: 'Raju Kumar', dailyWage: 800, role: 'Master' },
-            { id: '2', name: 'Sunil Singh', dailyWage: 500, role: 'Helper' },
-            { id: '3', name: 'Vikram Das', dailyWage: 1200, role: 'Supervisor' },
-            { id: '4', name: 'Amit Roy', dailyWage: 600, role: 'Packer' },
-          ];
-      }
-      return [];
-  });
+  const [laborers, setLaborers] = useState<Laborer[]>([
+    { id: '1', name: 'Raju Kumar', dailyWage: 800, role: 'Master' },
+    { id: '2', name: 'Sunil Singh', dailyWage: 500, role: 'Helper' },
+  ]);
 
   const [selectedLaborerId, setSelectedLaborerId] = useState<string>(laborers[0]?.id);
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceRecord>>({});
@@ -265,7 +266,7 @@ export const LaborSalaryManager = () => {
     return (
       <div className="grid grid-cols-7 gap-1 mb-2">
         {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-          <div key={d} className="text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 py-1 uppercase">{d}</div>
+          <div key={d} className="text-center text-[10px] font-bold text-slate-400 py-1 uppercase">{d}</div>
         ))}
 
         {blanks.map((_, i) => <div key={`blank-${i}`} className="h-9" />)}
@@ -276,31 +277,31 @@ export const LaborSalaryManager = () => {
           const status = log?.status;
           const isSelected = selectedDates.has(dateKey);
 
-          let bgClass = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500';
-          let textClass = 'text-slate-700 dark:text-slate-200';
+          let bgClass = 'bg-slate-50 border-slate-200 hover:border-blue-400';
+          let textClass = 'text-slate-700';
           let icon = null;
 
           if (status === 'PRESENT') {
-            bgClass = 'bg-emerald-100 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800';
-            textClass = 'text-emerald-700 dark:text-emerald-300 font-bold';
+            bgClass = 'bg-emerald-100 border-emerald-200';
+            textClass = 'text-emerald-700 font-bold';
             icon = <CheckCircle2 className="w-3 h-3" />;
           } else if (status === 'HALF') {
-            bgClass = 'bg-amber-100 dark:bg-amber-900/40 border-amber-200 dark:border-amber-800';
-            textClass = 'text-amber-700 dark:text-amber-300 font-bold';
+            bgClass = 'bg-amber-100 border-amber-200';
+            textClass = 'text-amber-700 font-bold';
             icon = <Clock className="w-3 h-3" />;
           } else if (status === 'QUARTER') {
-            bgClass = 'bg-purple-100 dark:bg-purple-900/40 border-purple-200 dark:border-purple-800';
-            textClass = 'text-purple-700 dark:text-purple-300 font-bold';
+            bgClass = 'bg-purple-100 border-purple-200';
+            textClass = 'text-purple-700 font-bold';
             icon = <PieChart className="w-3 h-3" />;
           } else if (status === 'ABSENT') {
-            bgClass = 'bg-rose-50 dark:bg-rose-900/40 border-rose-200 dark:border-rose-800';
-            textClass = 'text-rose-400 dark:text-rose-300 font-bold';
+            bgClass = 'bg-rose-50 border-rose-200';
+            textClass = 'text-rose-400 font-bold';
             icon = <XCircle className="w-3 h-3" />;
           }
 
           // Override style if selected
           if (isSelected) {
-            bgClass = 'bg-blue-600 border-blue-600 shadow-md ring-2 ring-blue-200 dark:ring-blue-900';
+            bgClass = 'bg-blue-600 border-blue-600 shadow-md ring-2 ring-blue-200';
             textClass = 'text-white';
             icon = null; // Hide icon on selection to reduce clutter
           }
@@ -338,12 +339,12 @@ export const LaborSalaryManager = () => {
       {/* Sidebar: Labor List */}
       <div className="w-full lg:w-72 flex flex-col gap-3 shrink-0">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Users className="text-blue-600 dark:text-blue-400" size={20} /> Laborers
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <Users className="text-blue-600" size={20} /> Laborers
           </h2>
           <button
             onClick={() => setIsAddingLaborer(!isAddingLaborer)}
-            className="p-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition"
+            className="p-1.5 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
           >
             <Plus size={18} />
           </button>
@@ -351,31 +352,31 @@ export const LaborSalaryManager = () => {
 
         {/* Add Laborer Form */}
         {isAddingLaborer && (
-          <Card className="p-3 bg-blue-50 dark:bg-slate-800 border-blue-100 dark:border-slate-700 shadow-md relative z-10">
-            <h4 className="font-bold text-blue-800 dark:text-blue-300 mb-2 text-xs">New Laborer Details</h4>
+          <Card className="p-3 bg-blue-50 border-blue-100 shadow-md relative z-10">
+            <h4 className="font-bold text-blue-800 mb-2 text-xs">New Laborer Details</h4>
             <form onSubmit={handleAddLaborer} className="space-y-2">
               <input
                 type="text"
                 placeholder="Full Name"
                 value={newLaborerName}
                 onChange={e => setNewLaborerName(e.target.value)}
-                className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full p-2 text-xs rounded border border-blue-200 outline-none focus:ring-2 focus:ring-blue-300"
                 autoFocus
               />
 
-              <div className="flex bg-white dark:bg-slate-900 rounded border border-blue-200 dark:border-slate-600 overflow-hidden">
+              <div className="flex bg-white rounded border border-blue-200 overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setWageType('DAILY')}
-                  className={`flex-1 py-1.5 text-[10px] font-bold transition-colors ${wageType === 'DAILY' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                  className={`flex-1 py-1.5 text-[10px] font-bold transition-colors ${wageType === 'DAILY' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
                   Daily Rate
                 </button>
-                <div className="w-px bg-blue-200 dark:bg-slate-600"></div>
+                <div className="w-px bg-blue-200"></div>
                 <button
                   type="button"
                   onClick={() => setWageType('MONTHLY')}
-                  className={`flex-1 py-1.5 text-[10px] font-bold transition-colors ${wageType === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                  className={`flex-1 py-1.5 text-[10px] font-bold transition-colors ${wageType === 'MONTHLY' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
                   Monthly Salary
                 </button>
@@ -389,7 +390,7 @@ export const LaborSalaryManager = () => {
                     placeholder="Daily Wage"
                     value={newLaborerWage}
                     onChange={e => setNewLaborerWage(e.target.value)}
-                    className="w-full pl-6 p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
+                    className="w-full pl-6 p-2 text-xs rounded border border-blue-200 outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
               ) : (
@@ -401,11 +402,11 @@ export const LaborSalaryManager = () => {
                       placeholder="Monthly Salary"
                       value={monthlyInput}
                       onChange={handleMonthlyChange}
-                      className="w-full pl-6 p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
+                      className="w-full pl-6 p-2 text-xs rounded border border-blue-200 outline-none focus:ring-2 focus:ring-blue-300"
                     />
                   </div>
                   {newLaborerWage && (
-                    <div className="flex items-center gap-1.5 text-[10px] text-blue-700 dark:text-blue-300 bg-blue-100/50 dark:bg-blue-900/30 p-1.5 rounded">
+                    <div className="flex items-center gap-1.5 text-[10px] text-blue-700 bg-blue-100/50 p-1.5 rounded">
                       <Calculator size={10} />
                       <span>Daily: {formatCurrency(parseFloat(newLaborerWage))} (Calc: /30)</span>
                     </div>
@@ -415,7 +416,7 @@ export const LaborSalaryManager = () => {
 
               <div className="flex gap-2 mt-1">
                 <button type="submit" className="flex-1 bg-blue-600 text-white py-1 rounded text-xs font-medium hover:bg-blue-700">Save</button>
-                <button type="button" onClick={() => setIsAddingLaborer(false)} className="flex-1 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-1 rounded text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-600">Cancel</button>
+                <button type="button" onClick={() => setIsAddingLaborer(false)} className="flex-1 bg-white text-slate-600 py-1 rounded text-xs font-medium hover:bg-slate-50">Cancel</button>
               </div>
             </form>
           </Card>
@@ -428,12 +429,12 @@ export const LaborSalaryManager = () => {
               onClick={() => setSelectedLaborerId(l.id)}
               className={`w-full text-left p-2.5 rounded-lg border transition-all flex justify-between items-center group
                 ${selectedLaborerId === l.id
-                  ? 'bg-slate-800 dark:bg-slate-700 text-white border-slate-800 dark:border-slate-600 shadow-md'
-                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+                  ? 'bg-slate-800 text-white border-slate-800 shadow-md'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
             >
               <div>
                 <p className="font-bold text-sm">{l.name}</p>
-                <p className={`text-[10px] ${selectedLaborerId === l.id ? 'text-slate-400 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
+                <p className={`text-[10px] ${selectedLaborerId === l.id ? 'text-slate-400' : 'text-slate-500'}`}>
                   {l.role} • {formatCurrency(l.dailyWage)}/day
                 </p>
               </div>
@@ -448,47 +449,47 @@ export const LaborSalaryManager = () => {
         {selectedLaborer ? (
           <>
             {/* Header Card */}
-            <Card className="p-4 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/50 flex flex-col gap-4">
+            <Card className="p-4 bg-gradient-to-br from-white to-slate-50 flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div>
-                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">{selectedLaborer.name}</h1>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Daily Wage: {formatCurrency(selectedLaborer.dailyWage)}</span>
+                  <h1 className="text-xl font-bold text-slate-800">{selectedLaborer.name}</h1>
+                  <span className="text-xs text-slate-500 font-medium">Daily Wage: {formatCurrency(selectedLaborer.dailyWage)}</span>
                 </div>
 
-                <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-md border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
-                  <button onClick={() => changeMonth(-1)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400"><ChevronLeft size={16} /></button>
-                  <span className="min-w-[120px] text-center text-sm font-bold text-slate-700 dark:text-slate-200 select-none">{currentMonthName}</span>
-                  <button onClick={() => changeMonth(1)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400"><ChevronRight size={16} /></button>
+                <div className="flex items-center gap-1 bg-white rounded-md border border-slate-200 p-0.5 shadow-sm">
+                  <button onClick={() => changeMonth(-1)} className="p-1 hover:bg-slate-100 rounded text-slate-600"><ChevronLeft size={16} /></button>
+                  <span className="min-w-[120px] text-center text-sm font-bold text-slate-700 select-none">{currentMonthName}</span>
+                  <button onClick={() => changeMonth(1)} className="p-1 hover:bg-slate-100 rounded text-slate-600"><ChevronRight size={16} /></button>
                 </div>
               </div>
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
-                <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/50 flex flex-col justify-center min-h-[60px]">
+                <div className="p-1.5 bg-blue-50 rounded-lg border border-blue-100 flex flex-col justify-center min-h-[60px]">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-[9px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider leading-none mb-0.5">Days Worked</p>
-                      <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{stats.days}</p>
+                      <p className="text-[9px] text-blue-600 font-bold uppercase tracking-wider leading-none mb-0.5">Days Worked</p>
+                      <p className="text-base font-bold text-slate-800 leading-none">{stats.days}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-0.5 mt-1.5 w-full">
-                    <span title="Full Days" className="text-center py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded text-[7px] font-bold leading-none">F:{stats.full}</span>
-                    <span title="Half Days" className="text-center py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded text-[7px] font-bold leading-none">H:{stats.half}</span>
-                    <span title="Quarter Days" className="text-center py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded text-[7px] font-bold leading-none">Q:{stats.quarter}</span>
-                    <span title="Absent Days" className="text-center py-0.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 rounded text-[7px] font-bold leading-none">A:{stats.absent}</span>
+                    <span title="Full Days" className="text-center py-0.5 bg-emerald-100 text-emerald-700 rounded text-[7px] font-bold leading-none">F:{stats.full}</span>
+                    <span title="Half Days" className="text-center py-0.5 bg-amber-100 text-amber-700 rounded text-[7px] font-bold leading-none">H:{stats.half}</span>
+                    <span title="Quarter Days" className="text-center py-0.5 bg-purple-100 text-purple-700 rounded text-[7px] font-bold leading-none">Q:{stats.quarter}</span>
+                    <span title="Absent Days" className="text-center py-0.5 bg-rose-100 text-rose-700 rounded text-[7px] font-bold leading-none">A:{stats.absent}</span>
                   </div>
                 </div>
-                <div className="p-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/50 flex flex-col justify-center min-h-[60px]">
-                  <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider leading-none mb-0.5">Total Earned</p>
-                  <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{formatCurrency(stats.earned)}</p>
+                <div className="p-1.5 bg-emerald-50 rounded-lg border border-emerald-100 flex flex-col justify-center min-h-[60px]">
+                  <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-wider leading-none mb-0.5">Total Earned</p>
+                  <p className="text-base font-bold text-slate-800 leading-none">{formatCurrency(stats.earned)}</p>
                 </div>
-                <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-900/50 flex flex-col justify-center min-h-[60px]">
-                  <p className="text-[9px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider leading-none mb-0.5">Paid / Advance</p>
-                  <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{formatCurrency(stats.paid)}</p>
+                <div className="p-1.5 bg-amber-50 rounded-lg border border-amber-100 flex flex-col justify-center min-h-[60px]">
+                  <p className="text-[9px] text-amber-600 font-bold uppercase tracking-wider leading-none mb-0.5">Paid / Advance</p>
+                  <p className="text-base font-bold text-slate-800 leading-none">{formatCurrency(stats.paid)}</p>
                 </div>
-                <div className={`p-1.5 rounded-lg border flex flex-col justify-center min-h-[60px] ${stats.balance < 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/50' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
-                  <p className={`text-[9px] font-bold uppercase tracking-wider leading-none mb-0.5 ${stats.balance < 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-400'}`}>Net Payable</p>
-                  <p className={`text-base font-bold leading-none ${stats.balance < 0 ? 'text-red-700 dark:text-red-300' : 'text-slate-800 dark:text-slate-100'}`}>
+                <div className={`p-1.5 rounded-lg border flex flex-col justify-center min-h-[60px] ${stats.balance < 0 ? 'bg-red-50 border-red-100' : 'bg-slate-100 border-slate-200'}`}>
+                  <p className={`text-[9px] font-bold uppercase tracking-wider leading-none mb-0.5 ${stats.balance < 0 ? 'text-red-600' : 'text-slate-600'}`}>Net Payable</p>
+                  <p className={`text-base font-bold leading-none ${stats.balance < 0 ? 'text-red-700' : 'text-slate-800'}`}>
                     {formatCurrency(stats.balance)}
                   </p>
                 </div>
@@ -502,12 +503,12 @@ export const LaborSalaryManager = () => {
 
                   {/* Calendar Header with Multi-Select Toggle */}
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
+                    <h3 className="font-bold text-slate-700 flex items-center gap-2 text-sm">
                       <CalendarIcon size={16} /> Attendance
                     </h3>
                     <button
                       onClick={toggleSelectionMode}
-                      className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
                     >
                       {isSelectionMode ? <CheckSquare size={14} /> : <ListChecks size={14} />}
                       {isSelectionMode ? 'Done' : 'Select'}
@@ -520,20 +521,20 @@ export const LaborSalaryManager = () => {
                   </div>
 
                   {/* Footer / Bulk Actions */}
-                  <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                  <div className="mt-2 pt-2 border-t border-slate-100">
                     {isSelectionMode ? (
                       <div className="flex gap-1 animate-in slide-in-from-bottom-2">
-                        <button onClick={() => handleBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
-                        <button onClick={() => handleBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
-                        <button onClick={() => handleBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
-                        <button onClick={() => handleBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
-                        <button onClick={() => handleBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
+                        <button onClick={() => handleBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
+                        <button onClick={() => handleBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
+                        <button onClick={() => handleBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
+                        <button onClick={() => handleBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
+                        <button onClick={() => handleBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
                       </div>
                     ) : (
-                      <div className="flex justify-center gap-3 text-[10px] text-slate-500 dark:text-slate-400">
-                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 rounded" /> Present</div>
-                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-amber-100 dark:bg-amber-900/60 border border-amber-200 dark:border-amber-700 rounded" /> Half</div>
-                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-rose-50 dark:bg-rose-900/60 border border-rose-200 dark:border-rose-700 rounded" /> Absent</div>
+                      <div className="flex justify-center gap-3 text-[10px] text-slate-500">
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-emerald-100 border border-emerald-200 rounded" /> Present</div>
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-amber-100 border border-amber-200 rounded" /> Half</div>
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-rose-50 border border-rose-200 rounded" /> Absent</div>
                       </div>
                     )}
                   </div>
@@ -542,9 +543,9 @@ export const LaborSalaryManager = () => {
 
               {/* Right: Payments */}
               <div className="w-full xl:w-72 shrink-0 flex flex-col">
-                <Card className="flex-1 flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-900/30">
-                  <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
+                <Card className="flex-1 flex flex-col overflow-hidden bg-slate-50/50">
+                  <div className="p-3 border-b border-slate-200 bg-white">
+                    <h3 className="font-bold text-slate-700 flex items-center gap-2 text-sm">
                       <Wallet size={16} /> Payments
                     </h3>
                   </div>
@@ -562,10 +563,10 @@ export const LaborSalaryManager = () => {
                       const d = new Date(p.date);
                       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
                     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(p => (
-                      <div key={p.id} className="bg-white dark:bg-slate-800 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center group">
+                      <div key={p.id} className="bg-white p-2.5 rounded-md border border-slate-200 shadow-sm flex justify-between items-center group">
                         <div>
-                          <p className="font-bold text-slate-700 dark:text-slate-200 text-sm">{formatCurrency(p.amount)}</p>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400">{new Date(p.date).toLocaleDateString()}</p>
+                          <p className="font-bold text-slate-700 text-sm">{formatCurrency(p.amount)}</p>
+                          <p className="text-[10px] text-slate-500">{new Date(p.date).toLocaleDateString()}</p>
                         </div>
                         <button
                           onClick={() => handleDeletePayment(p.id)}
@@ -578,7 +579,7 @@ export const LaborSalaryManager = () => {
                   </div>
 
                   {/* Add Payment Footer */}
-                  <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+                  <div className="p-3 bg-white border-t border-slate-200">
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <IndianRupee className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
@@ -587,13 +588,13 @@ export const LaborSalaryManager = () => {
                           value={newPaymentAmount}
                           onChange={(e) => setNewPaymentAmount(e.target.value)}
                           placeholder="Amount"
-                          className="w-full pl-7 pr-2 py-1.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white rounded text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded text-sm outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <button
                         onClick={handleAddPayment}
                         disabled={!newPaymentAmount}
-                        className="bg-slate-800 dark:bg-slate-700 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
+                        className="bg-slate-800 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 disabled:opacity-50 transition-colors"
                       >
                         Add
                       </button>
@@ -605,7 +606,7 @@ export const LaborSalaryManager = () => {
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-            <Users size={40} className="mb-3 text-slate-200 dark:text-slate-700" />
+            <Users size={40} className="mb-3 text-slate-200" />
             <p className="text-sm">Select a laborer to view details</p>
           </div>
         )}

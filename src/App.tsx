@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSector, setBranch, toggleTheme, logout } from './store';
+import { RootState, setSector, setBranch, toggleTheme, logout } from '../store';
 import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
@@ -12,9 +12,9 @@ import FinanceTracker from './components/FinanceTracker';
 import LaborManager from './components/LaborManager';
 import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
-import Login from './login';
-import { Sector, Branch, AppView } from './types';
-import { hasAccess } from './config';
+import Login from './components/login';
+import { Sector, Branch, AppView } from '../types';
+import { hasAccess } from '../config';
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();

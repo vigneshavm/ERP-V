@@ -1,12 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../store';
+import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../../store';
 import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, Trash2, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, UserPlus, Filter } from 'lucide-react';
 import { formatCurrency, getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../utils/helpers';
-import { Sector, Branch, DailyLog, AttendanceStatus, LaborPayment } from '../types';
+import { Sector, Branch, DailyLog, AttendanceStatus, LaborPayment } from '../../types';
 
 export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();

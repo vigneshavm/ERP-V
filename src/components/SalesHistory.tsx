@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../../store';
 import { Calendar, Search, Filter, ArrowUpRight } from 'lucide-react';
 
 const SalesHistory: React.FC = () => {

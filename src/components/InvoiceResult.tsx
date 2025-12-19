@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { ScannedInvoice, Sector, Branch } from '../types';
+import { ScannedInvoice, Sector, Branch } from '../../types';
 import { LayoutTemplate, Table, FileText, Save, CheckCircle2, AlertOctagon, RotateCcw, X, IndianRupee, Plus, Barcode } from 'lucide-react';
 
 interface InvoiceResultProps {

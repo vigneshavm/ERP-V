@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch, addProduct } from '../store';
+import { RootState, AppDispatch, addProduct } from '../../store';
 import { Plus, Search } from 'lucide-react';
-import { Sector, Branch } from '../types';
+import { Sector, Branch } from '../../types';
 
 const InventoryManager: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
