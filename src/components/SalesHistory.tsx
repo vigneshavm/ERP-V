@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { Calendar, Search, Filter, ArrowUpRight } from 'lucide-react';
+import { Calendar, Search, Filter, ArrowUpRight, Printer, FileText } from 'lucide-react';
+import { ReceiptModal } from './ReceiptModal';
+import { Sale } from '../../types';
 
 const SalesHistory: React.FC = () => {
   const { salesHistory, customers } = useSelector((state: RootState) => state.pos);
@@ -11,6 +13,7 @@ const SalesHistory: React.FC = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [searchId, setSearchId] = useState('');
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
 
   const filteredSales = salesHistory.filter(sale => {
       // 1. Branch/Sector Filter
@@ -40,6 +43,8 @@ const SalesHistory: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+        {selectedSale && <ReceiptModal sale={selectedSale} onClose={() => setSelectedSale(null)} />}
+
         <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 Sales History <span className="text-slate-500 text-base font-normal">/ {currentBranch}</span>
@@ -112,15 +117,16 @@ const SalesHistory: React.FC = () => {
                             <th className="p-4">Items</th>
                             <th className="p-4">Payment</th>
                             <th className="p-4 text-right">Total</th>
+                            <th className="p-4 text-center">Receipt</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                         {filteredSales.length === 0 && (
-                            <tr><td colSpan={6} className="p-8 text-center text-slate-500">No sales found matching criteria.</td></tr>
+                            <tr><td colSpan={7} className="p-8 text-center text-slate-500">No sales found matching criteria.</td></tr>
                         )}
                         {filteredSales.map(sale => (
                             <tr key={sale.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                <td className="p-4 font-mono text-slate-500 dark:text-slate-400">#{sale.id}</td>
+                                <td className="p-4 font-mono text-slate-500 dark:text-slate-400">#{sale.id.substring(0, 8)}...</td>
                                 <td className="p-4 text-slate-800 dark:text-slate-200">
                                     {new Date(sale.date).toLocaleDateString()} 
                                     <span className="text-slate-500 text-xs ml-1">{new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})}</span>
@@ -133,6 +139,15 @@ const SalesHistory: React.FC = () => {
                                     </span>
                                 </td>
                                 <td className="p-4 text-right font-bold text-emerald-600 dark:text-emerald-400">₹{sale.total.toFixed(2)}</td>
+                                <td className="p-4 text-center">
+                                    <button 
+                                        onClick={() => setSelectedSale(sale)}
+                                        className="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                                        title="Print Receipt"
+                                    >
+                                        <Printer className="w-4 h-4" />
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -144,4 +159,3 @@ const SalesHistory: React.FC = () => {
 };
 
 export default SalesHistory;
-    

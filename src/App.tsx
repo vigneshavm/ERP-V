@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSector, setBranch, toggleTheme, logout } from '../store';
-import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert } from 'lucide-react';
+import { RootState, setSector, setBranch, toggleTheme, logout } from '../../store';
+import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert, ShoppingBag } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
 import POSModule from './components/POSModule';
@@ -12,14 +12,15 @@ import FinanceTracker from './components/FinanceTracker';
 import LaborManager from './components/LaborManager';
 import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
+import Storefront from './components/Storefront';
 import Login from './components/login';
-import { Sector, Branch, AppView } from '../types';
+import { Sector, Branch, AppView } from '../../types';
 import { hasAccess } from '../config';
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const { currentSector, currentBranch, theme, user, role } = useSelector((state: RootState) => state.auth);
-    const sectors: Sector[] = ['General', 'Textile', 'Electronics'];
+    const sectors: Sector[] = ['Supermarket', 'Textile', 'Mobile Shop'];
     const branches: Branch[] = ['All', 'Alpha', 'Beta', 'Gamma'];
 
     return (
@@ -120,14 +121,16 @@ const App: React.FC = () => {
   useEffect(() => {
       if (isAuthenticated && role) {
           if (!hasAccess(role, currentView)) {
-              setCurrentView('pos');
+              // Add simple check for storefront which might be public in future but currently restricted by role logic
+              if (currentView !== 'storefront') setCurrentView('pos');
           }
       }
   }, [role, isAuthenticated]);
 
   const NavItem = ({ view, icon: Icon, label }: { view: AppView, icon: any, label: string }) => {
     const isActive = currentView === view;
-    const isAllowed = hasAccess(role, view);
+    // Allow storefront access for now or check generic permissions
+    const isAllowed = view === 'storefront' ? true : hasAccess(role, view);
 
     if (!isAllowed) return null;
 
@@ -147,8 +150,8 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    // Security Gate: Prevent rendering if role doesn't match config
-    if (!hasAccess(role, currentView)) {
+    // Basic role check
+    if (currentView !== 'storefront' && !hasAccess(role, currentView)) {
         return <Unauthorized />;
     }
 
@@ -161,6 +164,7 @@ const App: React.FC = () => {
         case 'purchases': return <PurchaseManager />;
         case 'finance': return <FinanceTracker />;
         case 'labor': return <LaborManager />;
+        case 'storefront': return <Storefront />;
         default: return <Dashboard />;
     }
   };
@@ -195,6 +199,7 @@ const App: React.FC = () => {
                     <NavItem view="pos" icon={ShoppingCart} label="Point of Sale" />
                     <NavItem view="sales" icon={History} label="Sales History" />
                     <NavItem view="daily" icon={PieChart} label="Daily Tracker" />
+                    <NavItem view="storefront" icon={ShoppingBag} label="Web Storefront" />
                 </div>
                 
                 <div className="mb-6">

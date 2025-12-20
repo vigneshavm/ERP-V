@@ -1,8 +1,8 @@
 
-export type Sector = 'General' | 'Textile' | 'Electronics';
+export type Sector = 'Supermarket' | 'Textile' | 'Mobile Shop';
 export type Branch = 'All' | 'Alpha' | 'Beta' | 'Gamma';
 export type UserRole = 'Owner' | 'Staff';
-export type AppView = 'dashboard' | 'pos' | 'sales' | 'daily' | 'inventory' | 'purchases' | 'finance' | 'labor';
+export type AppView = 'dashboard' | 'pos' | 'sales' | 'daily' | 'inventory' | 'purchases' | 'finance' | 'labor' | 'storefront';
 
 export interface Product {
   id: string;
@@ -119,6 +119,7 @@ export interface ScannedInvoiceItem {
   qty: number;
   cost: number;
   sku?: string;
+  productType?: string;
 }
 
 export interface ScannedInvoice {

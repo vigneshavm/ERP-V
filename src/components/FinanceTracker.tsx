@@ -19,14 +19,29 @@ const FinanceTracker: React.FC = () => {
 
   // Forms State
   const [newExpense, setNewExpense] = useState({ category: '', amount: '', description: '' });
-  const [newCheque, setNewCheque] = useState<Partial<Cheque>>({ number: '', bankName: '', payee: '', amount: 0, date: '', type: 'ISSUED' });
+  // Initialize with specific default values to avoid undefined issues
+  const [newCheque, setNewCheque] = useState<{
+    number: string;
+    bankName: string;
+    payee: string;
+    amount: string; // Use string for input handling
+    date: string;
+    type: 'ISSUED' | 'RECEIVED';
+  }>({ 
+    number: '', 
+    bankName: '', 
+    payee: '', 
+    amount: '', 
+    date: new Date().toISOString().split('T')[0], 
+    type: 'ISSUED' 
+  });
 
   // Filter Data
   const sectorTx = transactions.filter(t => 
       t.sector === currentSector && (currentBranch === 'All' || t.branch === currentBranch)
   );
   
-  const sectorCheques = cheques.filter(c => c.sector === currentSector); // Cheques generally per sector, branch agnostic usually or specific. Assuming Sector level.
+  const sectorCheques = cheques.filter(c => c.sector === currentSector); 
 
   // P&L Calculations
   const totalSales = salesHistory
@@ -83,19 +98,27 @@ const FinanceTracker: React.FC = () => {
   const handleAddCheque = (e: React.FormEvent) => {
       e.preventDefault();
       if (!newCheque.amount || !newCheque.number) return;
+      
       dispatch(addCheque({
           id: Math.random().toString(36).substr(2, 9),
-          number: newCheque.number!,
-          bankName: newCheque.bankName!,
-          payee: newCheque.payee!,
-          amount: Number(newCheque.amount),
-          date: newCheque.date!,
+          number: newCheque.number,
+          bankName: newCheque.bankName,
+          payee: newCheque.payee,
+          amount: parseFloat(newCheque.amount),
+          date: newCheque.date,
           status: 'PENDING',
-          type: newCheque.type as 'ISSUED' | 'RECEIVED',
+          type: newCheque.type,
           sector: currentSector
       }));
       setShowChequeModal(false);
-      setNewCheque({ number: '', bankName: '', payee: '', amount: 0, date: '', type: 'ISSUED' });
+      setNewCheque({ 
+        number: '', 
+        bankName: '', 
+        payee: '', 
+        amount: '', 
+        date: new Date().toISOString().split('T')[0], 
+        type: 'ISSUED' 
+      });
   };
 
   return (
@@ -329,7 +352,7 @@ const FinanceTracker: React.FC = () => {
                         </div>
                          <div>
                             <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Amount</label>
-                            <input type="number" required className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-slate-900 dark:text-white" value={newCheque.amount} onChange={e => setNewCheque({...newCheque, amount: Number(e.target.value)})} />
+                            <input type="number" required className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-slate-900 dark:text-white" value={newCheque.amount} onChange={e => setNewCheque({...newCheque, amount: e.target.value})} />
                         </div>
                          <div>
                             <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase">Date</label>
@@ -348,4 +371,3 @@ const FinanceTracker: React.FC = () => {
 };
 
 export default FinanceTracker;
-    

@@ -1,36 +1,48 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ScannedInvoice } from "../../types";
 
-const API_KEY = process.env.API_KEY || process.env.GEMINI_API_KEY || '';
+export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key not found");
 
+  const ai = new GoogleGenAI({ apiKey });
 
-export const extractInvoiceData = async (base64Data: string,mimeType: string): Promise<ScannedInvoice> => {
+  // Convert file to base64
+  const base64Data = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Remove data URL prefix (e.g. "data:image/jpeg;base64,")
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 
+  const model = "gemini-3-flash-preview";
 
-   const ai = new GoogleGenAI({ apiKey: API_KEY });
-
- const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: [
-      {
-        parts: [
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: base64Data,
-            },
-          },
-          {
-            text: `Please extract the following information from this invoice document in a structured JSON format. 
-            For each line item, extract the quantity, unit rate, and final amount. 
-            CRITICAL: 
-            1. Look for a Product Code, SKU, or Part Number for each item and put it in the 'sku' field.
-            2. Assign a suggested 'category' for each item from this list
-            If unsure about SKU or Category, leave them blank.`,
-          },
-        ],
-      },
-    ],
+  const response = await ai.models.generateContent({
+    model,
+    contents: {
+      parts: [
+        {
+          inlineData: {
+            mimeType: file.type,
+            data: base64Data
+          }
+        },
+        {
+          text: `Extract the following details from this invoice: Vendor Name, Date, and a list of items (Name, Quantity, Unit Cost, Product Type). 
+          IMPORTANT: 
+          1. If items have different sizes, colors, or variants listed as separate lines or entries, extract them as SEPARATE items. Do not merge them.
+          2. Example: "Shirt Size 40" and "Shirt Size 42" must be two different items in the list.
+          3. 'Product Type' should be generic like 'Shirt', 'Mobile', 'Rice', 'Oil'.
+          4. Return a valid JSON object strictly matching this schema.`
+        }
+      ]
+    },
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -46,7 +58,8 @@ export const extractInvoiceData = async (base64Data: string,mimeType: string): P
                 name: { type: Type.STRING },
                 qty: { type: Type.NUMBER },
                 cost: { type: Type.NUMBER },
-                sku: { type: Type.STRING, description: "Optional SKU if visible" }
+                sku: { type: Type.STRING, description: "Optional SKU if visible" },
+                productType: { type: Type.STRING, description: "Generic type e.g. Shirt, Mobile" }
               }
             }
           },
@@ -56,8 +69,14 @@ export const extractInvoiceData = async (base64Data: string,mimeType: string): P
     }
   });
 
-  const text = response.text;
-  if (!text) throw new Error("No data extracted from the document.");
+  if (response.text) {
+    try {
+      return JSON.parse(response.text) as ScannedInvoice;
+    } catch (e) {
+      console.error("Failed to parse Gemini response", e);
+      throw new Error("Failed to parse invoice data.");
+    }
+  }
   
-  return JSON.parse(text) as ScannedInvoice;
+  throw new Error("No response from Gemini.");
 };

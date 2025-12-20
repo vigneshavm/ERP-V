@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addToCart, removeFromCart, updateCartQty, processSale, setCustomer, setActiveSession, setTaxMode, setPaymentMethod } from '../../store';
 import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid, Maximize2, Minimize2 } from 'lucide-react';
-import { TaxMode, PaymentMethod, Product, Customer } from '../../types';
+import { TaxMode, PaymentMethod, Product, Customer, Sale } from '../../types';
+import { ReceiptModal } from './ReceiptModal';
 
 const POSModule: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +34,9 @@ const POSModule: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  
+  // --- Receipt State ---
+  const [completedSale, setCompletedSale] = useState<Sale | null>(null);
 
   // --- Refs ---
   const posContainerRef = useRef<HTMLDivElement>(null);
@@ -88,6 +92,40 @@ const POSModule: React.FC = () => {
         document.exitFullscreen();
     }
   };
+
+  // --- Action: Checkout ---
+  const handleCheckout = useCallback(async () => {
+    if (cart.length === 0 || isBranchAll || isProcessing) return;
+    
+    setIsProcessing(true);
+    
+    // Simulate API Delay
+    await new Promise(resolve => setTimeout(resolve, 800)); // Reduced delay for snappier feel
+
+    const saleData: Sale = {
+      id: Math.random().toString(36).substr(2, 9),
+      date: new Date().toISOString(),
+      items: [...cart],
+      total: cartTotal,
+      customerId: activeCustomerId || undefined,
+      sector: currentSector,
+      branch: currentBranch,
+      taxMode: activeSession.taxMode,
+      paymentMethod: activeSession.paymentMethod
+    };
+
+    dispatch(processSale(saleData));
+    
+    // Show Receipt Modal
+    setCompletedSale(saleData);
+    
+    setIsProcessing(false);
+    
+    // Reset focus to SKU for next transaction immediately
+    setTimeout(() => {
+        skuInputRef.current?.focus();
+    }, 100);
+  }, [cart, isBranchAll, isProcessing, cartTotal, activeCustomerId, currentSector, currentBranch, activeSession.taxMode, activeSession.paymentMethod, dispatch]);
 
   // --- Handlers: SKU Input ---
   const handleSkuKeyDown = (e: React.KeyboardEvent) => {
@@ -191,35 +229,34 @@ const POSModule: React.FC = () => {
              e.preventDefault();
              phoneInputRef.current?.focus();
         }
+        
+        // Checkout Shortcut: Ctrl + Space or Ctrl + Enter
+        if (e.ctrlKey && (e.code === 'Space' || e.key === 'Enter')) {
+            e.preventDefault();
+            handleCheckout();
+        }
+        
+        // Escape to focus SKU (Reset flow)
+        if (e.key === 'Escape') {
+            skuInputRef.current?.focus();
+            setSkuQuery('');
+            setNameSuggestions([]);
+            setPhoneSuggestions([]);
+        }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch]);
-
-  const handleCheckout = async () => {
-    if (cart.length === 0 || isBranchAll) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate API Delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    dispatch(processSale({
-      id: Math.random().toString(36).substr(2, 9),
-      date: new Date().toISOString(),
-      items: [...cart],
-      total: cartTotal,
-      customerId: activeCustomerId || undefined,
-      sector: currentSector,
-      branch: currentBranch,
-      taxMode: activeSession.taxMode,
-      paymentMethod: activeSession.paymentMethod
-    }));
-    
-    setIsProcessing(false);
-  };
+  }, [dispatch, handleCheckout]);
 
   return (
+    <>
+    {completedSale && (
+        <ReceiptModal 
+            sale={completedSale} 
+            onClose={() => setCompletedSale(null)} 
+        />
+    )}
+    
     <div 
         ref={posContainerRef}
         className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4' : 'h-[calc(100vh-9rem)]'}`}
@@ -339,7 +376,7 @@ const POSModule: React.FC = () => {
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 opacity-60">
                         <ShoppingCart className="w-16 h-16 mb-4" />
                         <p className="text-lg font-medium">Cart is empty</p>
-                        <p className="text-sm">Scan items or search to begin</p>
+                        <p className="text-sm">Scan items (Ctrl+B) or search (Ctrl+F) to begin</p>
                     </div>
                 ) : (
                     <table className="w-full text-left text-sm text-slate-700 dark:text-slate-300">
@@ -383,7 +420,8 @@ const POSModule: React.FC = () => {
                                                 }}
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') {
-                                                        nameInputRef.current?.focus(); // Return to search on Enter
+                                                        // Return to SKU scan for speed
+                                                        skuInputRef.current?.focus(); 
                                                     }
                                                 }}
                                                 className="w-14 text-center bg-transparent border-none text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-indigo-500 rounded h-8 spin-hide"
@@ -433,7 +471,7 @@ const POSModule: React.FC = () => {
                     <input 
                         ref={phoneInputRef}
                         type="text" 
-                        placeholder="Search Phone or Name..."
+                        placeholder="Search Phone or Name (Ctrl+K)..."
                         className={`w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border ${activeCustomer.id !== 'c1' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-300 ring-1 ring-emerald-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
                         value={phoneQuery}
                         onChange={e => setPhoneQuery(e.target.value)}
@@ -500,21 +538,19 @@ const POSModule: React.FC = () => {
                         <div>
                             <span className="text-[10px] font-bold text-slate-500 mb-1.5 block uppercase">Payment</span>
                             <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
-                                {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => {
-                                    const Icon = method === 'CASH' ? Banknote : method === 'CARD' ? CardIcon : Smartphone;
-                                    const label = method === 'CASH' ? 'Cash' : method === 'CARD' ? 'Card' : 'UPI';
-                                    return (
-                                        <button
-                                            key={method}
-                                            onClick={() => dispatch(setPaymentMethod(method))}
-                                            className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${activeSession.paymentMethod === method ? 'bg-emerald-600 text-white shadow font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
-                                            title={method}
-                                        >
-                                            <Icon className="w-4 h-4" />
-                                            <span className="text-[9px] uppercase leading-none">{label}</span>
-                                        </button>
-                                    );
-                                })}
+                                {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
+                                    <button
+                                        key={method}
+                                        onClick={() => dispatch(setPaymentMethod(method))}
+                                        className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${activeSession.paymentMethod === method ? 'bg-emerald-600 text-white shadow font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
+                                        title={method}
+                                    >
+                                        {method === 'CASH' && <Banknote className="w-4 h-4" />}
+                                        {method === 'CARD' && <CardIcon className="w-4 h-4" />}
+                                        {method === 'UPI' && <Smartphone className="w-4 h-4" />}
+                                        <span className="text-[9px] uppercase leading-none">{method}</span>
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -544,7 +580,8 @@ const POSModule: React.FC = () => {
                     <button 
                         onClick={handleCheckout}
                         disabled={cart.length === 0 || isBranchAll || isProcessing}
-                        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 mt-4 text-lg"
+                        className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 mt-4 text-lg group"
+                        title="Shortcut: Ctrl + Space"
                     >
                         {isProcessing ? (
                             <>
@@ -555,6 +592,7 @@ const POSModule: React.FC = () => {
                             <>
                                 <Check className="w-6 h-6" />
                                 Finalize Bill
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/20 px-2 py-1 rounded">Ctrl+Space</span>
                             </>
                         )}
                     </button>
@@ -563,6 +601,7 @@ const POSModule: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

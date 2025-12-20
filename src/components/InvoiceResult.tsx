@@ -16,6 +16,7 @@ interface EditableItem {
   id: string; // Internal UUID
   sku: string;
   name: string;
+  productType: string;
   category: string;
   qty: number;
   cost: number;
@@ -25,9 +26,9 @@ interface EditableItem {
 }
 
 const CATEGORIES_BY_SECTOR: Record<Sector, string[]> = {
-  General: ['Stationery', 'Snacks', 'Gifts', 'Beverages', 'Household'],
-  Textile: ['Saree', 'Kurta', 'Shirt', 'Trousers', 'Fabric', 'Accessories'],
-  Electronics: ['Mobile', 'Laptop', 'Accessories', 'Cables', 'Audio', 'Appliances']
+  Supermarket: ['Grocery', 'Beverages', 'Snacks', 'Household', 'Personal Care', 'Dairy', 'Frozen'],
+  Textile: ['Saree', 'Kurta', 'Shirt', 'Trousers', 'Fabric', 'Accessories', 'Kids Wear'],
+  'Mobile Shop': ['Smartphones', 'Accessories', 'Tablets', 'Audio', 'Chargers', 'Wearables']
 };
 
 const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector, branch, onSave, onCancel }) => {
@@ -57,6 +58,7 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
          id: crypto.randomUUID(),
          sku: i.sku || `SKU-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
          name: i.name,
+         productType: i.productType || 'General',
          category: CATEGORIES_BY_SECTOR[sector][0] || 'Uncategorized',
          qty: i.qty,
          cost: cost,
@@ -99,6 +101,7 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
           id: crypto.randomUUID(),
           sku: `SKU-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
           name: '',
+          productType: 'General',
           category: CATEGORIES_BY_SECTOR[sector][0],
           qty: 1,
           cost: 0,
@@ -110,10 +113,9 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
   };
 
   const handleSave = () => {
-    // Generate barcodes and prepare final data
-    // Important: Ensure unique SKUs for each item line to prevent merging in inventory
+    // Final mapping to ensure compatibility with PurchaseManager and Redux actions
     const finalItems = items.map((item, index) => {
-        // Generate a 12-digit barcode if one doesn't exist (safety check, though initialized above)
+        // Ensure barcode exists
         const barcode = item.barcode || Math.floor(100000000000 + Math.random() * 900000000000).toString();
         
         // Uniquify SKU if duplicate exists in this batch to force separate items
@@ -121,21 +123,28 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
         const isDuplicateSku = items.some((other, idx) => other.sku === item.sku && idx !== index);
         
         if (isDuplicateSku) {
-           // Append a suffix to differentiate
            finalSku = `${item.sku}-${index + 1}`;
         }
 
+        // Return object matching fields needed by addStockBulk payload
+        // Note: PurchaseManager expects specific fields to build the Product object
         return {
-            ...item,
             sku: finalSku,
-            barcode
+            name: item.name,
+            productType: item.productType,
+            category: item.category,
+            qty: item.qty,
+            cost: item.cost,
+            sellingPrice: item.sellingPrice, // Used as 'price' in inventory
+            barcode: barcode
         };
     });
     
-    setItems(finalItems); // Update state to show generated barcodes if needed, or just lock UI
+    // Update local state to reflect finalized values (UI feedback)
+    setItems(prev => prev.map((p, i) => ({ ...p, sku: finalItems[i].sku, barcode: finalItems[i].barcode })));
     setIsSaved(true);
     
-    // Trigger callback after short delay for visual feedback
+    // Trigger callback
     setTimeout(() => {
         onSave(finalItems);
     }, 1000);
@@ -169,6 +178,7 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                 <th className="p-3">SKU</th>
                 <th className="p-3">Barcode</th>
                 <th className="p-3">Product Name</th>
+                <th className="p-3">Type</th>
                 <th className="p-3">Category</th>
                 <th className="p-3 w-20">Qty</th>
                 <th className="p-3 w-28">Cost</th>
@@ -205,7 +215,16 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                         type="text" 
                         value={item.name} 
                         onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-full min-w-[200px] text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-full min-w-[150px] text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                    />
+                </td>
+                <td className="p-2">
+                    <input 
+                        type="text" 
+                        value={item.productType} 
+                        onChange={(e) => handleItemChange(item.id, 'productType', e.target.value)}
+                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-24 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                        placeholder="Type"
                     />
                 </td>
                 <td className="p-2">
@@ -290,74 +309,87 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
   );
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95">
-      {/* Header */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-        <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
-           <FileText className="w-5 h-5 text-indigo-500" /> Review Invoice Data
-        </h3>
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+      {/* Header Toolbar */}
+      <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        <div className="flex items-center gap-3">
+           <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+             <FileText className="w-5 h-5" />
+           </div>
+           <div>
+             <h3 className="font-bold text-slate-800 dark:text-white">Review Extracted Data</h3>
+             <p className="text-xs text-slate-500">{items.length} items found • {sector} ({branch})</p>
+           </div>
+        </div>
 
-        {/* View Toggle */}
-        <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+        {/* View Toggles */}
+        <div className="flex bg-slate-200 dark:bg-slate-700 rounded-lg p-1">
             <button 
-                onClick={() => setViewMode('SPLIT')} 
-                className={`p-2 rounded-md transition-colors ${viewMode === 'SPLIT' ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-400 hover:text-slate-600'}`}
+                onClick={() => setViewMode('SPLIT')}
+                className={`p-2 rounded-md transition-all ${viewMode === 'SPLIT' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}
                 title="Split View"
             >
                 <LayoutTemplate className="w-4 h-4" />
             </button>
             <button 
-                onClick={() => setViewMode('DETAILS')} 
-                className={`p-2 rounded-md transition-colors ${viewMode === 'DETAILS' ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-400 hover:text-slate-600'}`}
-                title="Grid View"
+                onClick={() => setViewMode('DETAILS')}
+                className={`p-2 rounded-md transition-all ${viewMode === 'DETAILS' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}
+                title="Data Only"
             >
                 <Table className="w-4 h-4" />
             </button>
-             <button 
-                onClick={() => setViewMode('PREVIEW')} 
-                className={`p-2 rounded-md transition-colors ${viewMode === 'PREVIEW' ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-400 hover:text-slate-600'}`}
+            <button 
+                onClick={() => setViewMode('PREVIEW')}
+                className={`p-2 rounded-md transition-all ${viewMode === 'PREVIEW' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}
                 title="Original Invoice"
             >
                 <FileText className="w-4 h-4" />
             </button>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-            <button onClick={onCancel} className="px-4 py-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
+        <div className="flex items-center gap-2">
             <button 
-                onClick={handleSave} 
-                disabled={isSaved}
-                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                onClick={onCancel}
+                className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
             >
-                {isSaved ? <CheckCircle2 className="w-5 h-5" /> : <Save className="w-5 h-5" />}
-                {isSaved ? 'Processing...' : 'Confirm Stock'}
+                Cancel
+            </button>
+            <button 
+                onClick={handleSave}
+                disabled={isSaved || items.length === 0}
+                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all"
+            >
+                {isSaved ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                {isSaved ? 'Saved' : 'Confirm & Add Stock'}
             </button>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Main Content Area */}
       <div className="flex-1 overflow-hidden relative">
-         {viewMode === 'SPLIT' && (
-             <div className="grid grid-cols-2 h-full divide-x divide-slate-200 dark:divide-slate-700">
-                 <div className="h-full overflow-hidden bg-slate-100 dark:bg-slate-900/50 p-4">
-                     <Previewer />
-                 </div>
-                 <div className="h-full overflow-hidden">
-                     <DataGrid />
-                 </div>
-             </div>
-         )}
-         {viewMode === 'DETAILS' && (
-             <div className="h-full">
-                 <DataGrid />
-             </div>
-         )}
-         {viewMode === 'PREVIEW' && (
-             <div className="h-full bg-slate-100 dark:bg-slate-900/50 p-6">
-                 <Previewer />
-             </div>
-         )}
+          {viewMode === 'SPLIT' && (
+              <div className="flex h-full">
+                  <div className="w-1/2 border-r border-slate-200 dark:border-slate-700 h-full bg-slate-100 dark:bg-slate-900/50 p-4">
+                      <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">Original Document</h4>
+                      <Previewer />
+                  </div>
+                  <div className="w-1/2 h-full flex flex-col">
+                       <DataGrid />
+                  </div>
+              </div>
+          )}
+
+          {viewMode === 'DETAILS' && (
+              <div className="h-full flex flex-col">
+                  <DataGrid />
+              </div>
+          )}
+
+          {viewMode === 'PREVIEW' && (
+              <div className="h-full bg-slate-100 dark:bg-slate-900/50 p-4">
+                  <Previewer />
+              </div>
+          )}
       </div>
     </div>
   );
