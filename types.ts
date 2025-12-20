@@ -16,6 +16,7 @@ export interface Product {
   sector: Sector;
   branch: Branch;
   barcode?: string;
+  image?: string;
 }
 
 export interface CartItem extends Product {

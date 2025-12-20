@@ -97,6 +97,13 @@ const inventorySlice = createSlice({
       state.products.push(action.payload);
       saveState('inventory', state);
     },
+    editProduct: (state, action: PayloadAction<Product>) => {
+      const index = state.products.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) {
+        state.products[index] = action.payload;
+        saveState('inventory', state);
+      }
+    },
     updateStock: (state, action: PayloadAction<{ id: string; qty: number }>) => {
       const p = state.products.find(p => p.id === action.payload.id);
       if (p) p.stock = action.payload.qty;
@@ -369,7 +376,7 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export const { setSector, setBranch, toggleTheme, login, logout } = authSlice.actions;
-export const { addProduct, deductStock, addStockBulk } = inventorySlice.actions;
+export const { addProduct, editProduct, deductStock, addStockBulk } = inventorySlice.actions;
 export const { 
     addToCart, updateCartQty, removeFromCart, clearCurrentSession, 
     setCustomer, addCustomer, recordSale, 
