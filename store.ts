@@ -1,6 +1,6 @@
 
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Product, Sale, CartItem, Customer, Transaction, Employee, Attendance, PurchaseOrder, Sector, Branch, BillSession, TaxMode, PaymentMethod, Cheque, LaborPayment } from './types';
+import { Product, Sale, CartItem, Customer, Transaction, Employee, Attendance, PurchaseOrder, Sector, Branch, BillSession, TaxMode, PaymentMethod, Cheque, LaborPayment, AppSettings } from './types';
 import { APP_CONFIG } from './config';
 import { MOCK_PRODUCTS, MOCK_CUSTOMERS, MOCK_EMPLOYEES, MOCK_TRANSACTIONS, MOCK_CHEQUES, MOCK_SALES, MOCK_ORDERS, MOCK_LABOR_PAYMENTS } from './mockData';
 
@@ -77,6 +77,39 @@ const authSlice = createSlice({
       saveState('auth', state);
     }
   },
+});
+
+// --- Settings Slice ---
+const initialSettingsState: AppSettings = {
+  appName: 'EnterpriseMgr',
+  logoUrl: '',
+  primaryColor: '#4f46e5', // Default Indigo-600
+  enabledModules: {
+    pos: true,
+    inventory: true,
+    finance: true,
+    labor: true,
+    purchases: true,
+    storefront: true,
+    sales: true,
+    daily: true
+  }
+};
+
+const settingsSlice = createSlice({
+  name: 'settings',
+  initialState: loadState('settings', initialSettingsState),
+  reducers: {
+    updateSettings: (state, action: PayloadAction<Partial<AppSettings>>) => {
+      const newState = { ...state, ...action.payload };
+      saveState('settings', newState);
+      return newState;
+    },
+    resetSettings: () => {
+      saveState('settings', initialSettingsState);
+      return initialSettingsState;
+    }
+  }
 });
 
 // --- Inventory Slice ---
@@ -369,6 +402,7 @@ export const store = configureStore({
     finance: financeSlice.reducer,
     purchase: purchaseSlice.reducer,
     labor: laborSlice.reducer,
+    settings: settingsSlice.reducer,
   },
 });
 
@@ -385,6 +419,7 @@ export const {
 export const { addTransaction, addCheque, updateChequeStatus } = financeSlice.actions;
 export const { addOrder, approveOrder } = purchaseSlice.actions;
 export const { addEmployee, markAttendance, addLaborPayment } = laborSlice.actions;
+export const { updateSettings, resetSettings } = settingsSlice.actions;
 
 export const processSale = (sale: Sale) => (dispatch: AppDispatch) => {
   dispatch(recordSale(sale));

@@ -1,12 +1,13 @@
 
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../../store';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, RootState } from '../../store';
 import { Box, TrendingUp, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
-  const [pin, setPin] = useState('');
+  const { appName, logoUrl } = useSelector((state: RootState) => state.settings);
+  const [pin, setPin] = React.useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,10 +42,14 @@ const Login: React.FC = () => {
             
             <div className="relative z-10 p-12 mt-auto">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                        <Box className="w-7 h-7 text-white" />
-                    </div>
-                    <span className="text-3xl font-bold text-white tracking-tight">Enterprise<span className="text-indigo-400">Mgr</span></span>
+                    {logoUrl ? (
+                        <img src={logoUrl} alt="Logo" className="w-12 h-12 object-contain bg-white rounded-xl p-1" />
+                    ) : (
+                        <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                            <Box className="w-7 h-7 text-white" />
+                        </div>
+                    )}
+                    <span className="text-3xl font-bold text-white tracking-tight">{appName}</span>
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-4 leading-tight">Manage your business with intelligent insights.</h2>
                 <div className="flex gap-4 mt-8">
@@ -64,7 +69,7 @@ const Login: React.FC = () => {
           <div className="lg:w-1/2 p-8 lg:p-16 flex flex-col justify-center bg-slate-900 relative">
             <div className="mb-10 text-center lg:text-left">
                 <div className="lg:hidden flex items-center justify-center gap-2 mb-6 text-white font-bold text-xl">
-                    <Box className="w-6 h-6 text-indigo-500" /> EnterpriseMgr
+                    <Box className="w-6 h-6 text-indigo-500" /> {appName}
                 </div>
                 <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
                 <p className="text-slate-400 text-sm">Enter your secure PIN to access the terminal.</p>

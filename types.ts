@@ -2,7 +2,23 @@
 export type Sector = 'Supermarket' | 'Textile' | 'Mobile Shop';
 export type Branch = 'All' | 'Alpha' | 'Beta' | 'Gamma';
 export type UserRole = 'Owner' | 'Staff';
-export type AppView = 'dashboard' | 'pos' | 'sales' | 'daily' | 'inventory' | 'purchases' | 'finance' | 'labor' | 'storefront';
+export type AppView = 'dashboard' | 'pos' | 'sales' | 'daily' | 'inventory' | 'purchases' | 'finance' | 'labor' | 'storefront' | 'settings';
+
+export interface AppSettings {
+  appName: string;
+  logoUrl?: string; // Data URL or Image URL
+  primaryColor: string; // Hex Code
+  enabledModules: {
+    pos: boolean;
+    inventory: boolean;
+    finance: boolean;
+    labor: boolean;
+    purchases: boolean;
+    storefront: boolean;
+    sales: boolean;
+    daily: boolean;
+  };
+}
 
 export interface Product {
   id: string;

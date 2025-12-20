@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSector, setBranch, toggleTheme, logout } from '../../store';
+import { RootState, setSector, setBranch, toggleTheme, logout } from '../store';
 import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert, ShoppingBag } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
@@ -13,13 +13,35 @@ import LaborManager from './components/LaborManager';
 import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
 import Storefront from './components/Storefront';
+import SettingsManager from './components/SettingsManager';
 import Login from './components/login';
-import { Sector, Branch, AppView } from '../../types';
+import { Sector, Branch, AppView } from '../types';
 import { hasAccess } from '../config';
+
+// Helper to convert hex to rgb values string
+const hexToRgb = (hex: string) => {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` : '79 70 229';
+};
+
+// Generate shade logic (simplified approximation for runtime)
+const generateShades = (hex: string) => {
+    // In a real app we'd use color manipulation lib, here we just set the primary color for all shades
+    // This effectively makes the "indigo" palette become the brand palette.
+    // A better approach would be proper HSL manipulation but for this demo keeping it simple or relying on the main shade
+    const base = hexToRgb(hex);
+    return {
+        50: base, 100: base, 200: base, 300: base, 
+        400: base, 500: base, 600: base, 700: base, 
+        800: base, 900: base, 950: base
+    };
+};
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const { currentSector, currentBranch, theme, user, role } = useSelector((state: RootState) => state.auth);
+    const { appName } = useSelector((state: RootState) => state.settings);
+    
     const sectors: Sector[] = ['Supermarket', 'Textile', 'Mobile Shop'];
     const branches: Branch[] = ['All', 'Alpha', 'Beta', 'Gamma'];
 
@@ -27,7 +49,7 @@ const Header: React.FC = () => {
         <header className="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md flex items-center justify-between px-8 z-10 sticky top-0 shadow-sm transition-colors duration-300">
             <div className="md:hidden font-bold text-xl flex items-center gap-2 text-slate-900 dark:text-white">
                  <Box className="w-6 h-6 text-indigo-500" />
-                 <span>Ent<span className="text-indigo-500">Mgr</span></span>
+                 <span>{appName}</span>
             </div>
 
             <div className="hidden md:flex flex-col">
@@ -107,30 +129,57 @@ const Unauthorized: React.FC = () => (
 
 const App: React.FC = () => {
   const { theme, isAuthenticated, role } = useSelector((state: RootState) => state.auth);
-  const [currentView, setCurrentView] = useState<AppView>('pos'); // Default to POS for safety
+  const settings = useSelector((state: RootState) => state.settings);
+  const [currentView, setCurrentView] = useState<AppView>('pos');
 
+  // --- Dynamic Theming ---
   useEffect(() => {
+    // 1. Dark Mode
     if (theme === 'dark') {
         document.documentElement.classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
     }
-  }, [theme]);
 
-  // Security Check: If login role changes and current view is not allowed, reset to POS
+    // 2. Brand Color Injection
+    // We override the CSS variables that Tailwind is configured to use for 'indigo'
+    const root = document.documentElement;
+    const primaryRgb = hexToRgb(settings.primaryColor);
+    
+    // We update all shades to the primary color to ensure consistency for this simple implementation
+    // Ideally we would calculate lighter/darker shades
+    root.style.setProperty('--color-brand-50', primaryRgb);
+    root.style.setProperty('--color-brand-100', primaryRgb); // Keep light shades logic if needed, but for now flat color
+    root.style.setProperty('--color-brand-500', primaryRgb);
+    root.style.setProperty('--color-brand-600', primaryRgb);
+    root.style.setProperty('--color-brand-700', primaryRgb);
+    
+    // To make it look decent, we should actually compute a light shade for backgrounds (50/100)
+    // Simple logic: if primary is dark, make light really light.
+    // For now, let's just let opacity handle the lightness in tailwind (bg-indigo-600/10)
+    
+  }, [theme, settings.primaryColor]);
+
+  // Security Check
   useEffect(() => {
       if (isAuthenticated && role) {
           if (!hasAccess(role, currentView)) {
-              // Add simple check for storefront which might be public in future but currently restricted by role logic
-              if (currentView !== 'storefront') setCurrentView('pos');
+              if (currentView !== 'storefront' && currentView !== 'settings') setCurrentView('pos');
           }
       }
   }, [role, isAuthenticated]);
 
   const NavItem = ({ view, icon: Icon, label }: { view: AppView, icon: any, label: string }) => {
+    // 1. Check if module is enabled in Settings
+    if (!settings.enabledModules[view as keyof typeof settings.enabledModules] && view !== 'dashboard' && view !== 'settings') {
+        return null;
+    }
+
     const isActive = currentView === view;
-    // Allow storefront access for now or check generic permissions
-    const isAllowed = view === 'storefront' ? true : hasAccess(role, view);
+    const isAllowed = (view === 'storefront' || view === 'settings') ? true : hasAccess(role, view);
+
+    // Hide settings for non-owners
+    if (view === 'settings' && role !== 'Owner') return null;
 
     if (!isAllowed) return null;
 
@@ -150,8 +199,8 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    // Basic role check
-    if (currentView !== 'storefront' && !hasAccess(role, currentView)) {
+    // Allow settings/storefront without role check
+    if (currentView !== 'storefront' && currentView !== 'settings' && !hasAccess(role, currentView)) {
         return <Unauthorized />;
     }
 
@@ -165,6 +214,7 @@ const App: React.FC = () => {
         case 'finance': return <FinanceTracker />;
         case 'labor': return <LaborManager />;
         case 'storefront': return <Storefront />;
+        case 'settings': return <SettingsManager />;
         default: return <Dashboard />;
     }
   };
@@ -183,12 +233,16 @@ const App: React.FC = () => {
         {/* Sidebar */}
         <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col hidden md:flex z-20 transition-colors duration-300">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
-                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <Box className="w-5 h-5 text-white" />
-                </div>
+                {settings.logoUrl ? (
+                    <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg" />
+                ) : (
+                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <Box className="w-5 h-5 text-white" />
+                    </div>
+                )}
                 <div>
-                    <h1 className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">Enterprise<span className="text-indigo-500">Mgr</span></h1>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">ERP & POS System</p>
+                    <h1 className="font-bold text-lg tracking-tight text-slate-900 dark:text-white truncate max-w-[140px]">{settings.appName}</h1>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">ERP & POS</p>
                 </div>
             </div>
 
@@ -209,6 +263,13 @@ const App: React.FC = () => {
                     <NavItem view="finance" icon={DollarSign} label="Finance" />
                     <NavItem view="labor" icon={Users} label="Staff & Payroll" />
                 </div>
+
+                {role === 'Owner' && (
+                    <div className="mb-6">
+                        <p className="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">System</p>
+                        <NavItem view="settings" icon={Settings} label="Configuration" />
+                    </div>
+                )}
             </nav>
 
             <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
