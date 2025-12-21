@@ -2,15 +2,18 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addToCart, removeFromCart, updateCartQty, processSale, setCustomer, setActiveSession, setTaxMode, setPaymentMethod } from '../store';
-import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid, Maximize2, Minimize2 } from 'lucide-react';
+import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid, Maximize2, Minimize2, Camera, X } from 'lucide-react';
 import { TaxMode, PaymentMethod, Product, Customer, Sale } from '../types';
 import { ReceiptModal } from './ReceiptModal';
+import { CameraScanner } from './CameraScanner';
+import { searchProductsByImage } from '../services/geminiService';
 
 const POSModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
     const { products } = useSelector((state: RootState) => state.inventory);
     const { sessions, activeSessionIndex, customers } = useSelector((state: RootState) => state.pos);
+    const { defaultTaxMode } = useSelector((state: RootState) => state.settings);
 
     // --- Global State ---
     const activeSession = useMemo(() => sessions[activeSessionIndex], [sessions, activeSessionIndex]);
@@ -30,6 +33,11 @@ const POSModule: React.FC = () => {
     const [selectedNameIndex, setSelectedNameIndex] = useState(-1);
     const [selectedPhoneIndex, setSelectedPhoneIndex] = useState(-1);
 
+    // --- Visual Search State ---
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [visualMatches, setVisualMatches] = useState<string[] | null>(null);
+    const [isIdentifying, setIsIdentifying] = useState(false);
+
     // --- Interaction State ---
     const [isProcessing, setIsProcessing] = useState(false);
     const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
@@ -46,12 +54,19 @@ const POSModule: React.FC = () => {
     const cartQtyRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
     // --- Computed Data ---
+    // --- Computed Data ---
     const filteredProducts = useMemo(() => {
-        return products.filter(p =>
+        let prods = products.filter(p =>
             p.sector === currentSector &&
             (currentBranch === 'All' || p.branch === currentBranch)
         );
-    }, [products, currentSector, currentBranch]);
+
+        if (visualMatches && visualMatches.length > 0) {
+            prods = prods.filter(p => visualMatches.includes(p.id));
+        }
+
+        return prods;
+    }, [products, currentSector, currentBranch, visualMatches]);
 
     const cartSubtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const taxAmount = activeSession.taxMode === 'EXCLUSIVE' ? cartSubtotal * 0.18 : 0;
@@ -121,9 +136,11 @@ const POSModule: React.FC = () => {
 
         setIsProcessing(false);
 
-        // Reset focus to SKU for next transaction immediately
+        // Reset focus to SKU
         setTimeout(() => {
             skuInputRef.current?.focus();
+            // Reset Tax Mode to Default for Next Bill (Optional, but good UX)
+            dispatch(setTaxMode(defaultTaxMode));
         }, 100);
     }, [cart, isBranchAll, isProcessing, cartTotal, activeCustomerId, currentSector, currentBranch, activeSession.taxMode, activeSession.paymentMethod, dispatch]);
 
@@ -176,6 +193,77 @@ const POSModule: React.FC = () => {
         setFocusedItemId(product.id); // Trigger focus in cart
         setNameQuery('');
         setNameSuggestions([]);
+        setVisualMatches(null); // Clear visual search on selection
+    };
+
+    // --- Handlers: Camera ---
+    const handleCameraCapture = async (file: File) => {
+        setIsIdentifying(true);
+        // Close camera immediately or keep open? Better to close to show loading overlay or progress
+        setIsCameraOpen(false); // Close camera to show processing state on main screen? Or keep modla?
+        // Let's keep modal open? No, the scanner component doesn't handle 'loading' state well yet.
+        // Better: Close camera, show global 'isIdentifying' loader.
+
+        try {
+            // Need 'products' to send context to Gemini
+            // Filter products by current sector first to optimize prompt context
+            const sectorProducts = products.filter(p => p.sector === currentSector);
+
+            const matchedIds = await searchProductsByImage(file, sectorProducts);
+
+            if (matchedIds.length > 0) {
+                if (matchedIds.length === 1) {
+                    // Exact match found
+                    const product = products.find(p => p.id === matchedIds[0]);
+                    if (product) {
+                        dispatch(addToCart({ ...product, qty: 1 }));
+                        // Toast success?
+                    }
+                } else {
+                    // Multiple matches
+                    setVisualMatches(matchedIds);
+                    // Focus the list
+                }
+            } else {
+                alert("No products identified. Try checking your inventory or the image clarity.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Failed to identify product.");
+        } finally {
+            setIsIdentifying(false);
+        }
+    };
+
+    const handleBarcodeScan = (code: string) => {
+        // Find product by SKU or Barcode
+        const match = products.find(p => p.sku === code || p.barcode === code);
+
+        if (match) {
+            // Check stock
+            if (match.stock > 0) {
+                dispatch(addToCart({ ...match, qty: 1 }));
+                // Play beep?
+                // Optional: Close scanner after successful scan for single-item flow, 
+                // or keep open for multi-scan? 
+                // Let's keep it open but show a toast/notification (not implemented yet, so maybe just blink?)
+                // For now, let's close it to indicate success clearly or maybe just alert?
+                // Most POS scanners let you keep scanning. 
+
+                // Let's just create a temporary visual feedback?
+                // For MVP, lets just proceed.
+                // Maybe close if it was a quick lookup?
+
+                // If the user wants to scan multiple, we shouldn't close. 
+                // But we need feedback.
+                // Let's rely on the cart updating in background (Sound would be good).
+            } else {
+                alert(`Product "${match.name}" is out of stock!`);
+            }
+        } else {
+            console.warn("Product not found for code:", code);
+            // Optionally show "Not Found" on the scanner UI itself if we could pass props back
+        }
     };
 
     // --- Handlers: Phone Input ---
@@ -257,6 +345,22 @@ const POSModule: React.FC = () => {
                 />
             )}
 
+            {isCameraOpen && (
+                <CameraScanner
+                    onCapture={handleCameraCapture}
+                    onScan={handleBarcodeScan}
+                    onClose={() => setIsCameraOpen(false)}
+                />
+            )}
+
+            {isIdentifying && (
+                <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-white">
+                    <Loader2 className="w-12 h-12 animate-spin mb-4 text-indigo-400" />
+                    <p className="font-bold text-xl">Analyzing Image...</p>
+                    <p className="text-slate-300 text-sm">Identifying product against inventory</p>
+                </div>
+            )}
+
             <div
                 ref={posContainerRef}
                 className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4' : 'h-[calc(100vh-9rem)]'}`}
@@ -325,6 +429,15 @@ const POSModule: React.FC = () => {
                                 <kbd className="absolute right-3 top-3.5 text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+B</kbd>
                             </div>
 
+                            {/* Camera Trigger */}
+                            <button
+                                onClick={() => setIsCameraOpen(true)}
+                                className="md:hidden p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                                title="Scan Product via Camera"
+                            >
+                                <Camera className="w-5 h-5" />
+                            </button>
+
                             {/* Name Input */}
                             <div className="relative group">
                                 <div className="absolute left-3 top-3 text-slate-400 dark:text-slate-500">
@@ -367,7 +480,32 @@ const POSModule: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Desktop Camera Button */}
+                            <button
+                                onClick={() => setIsCameraOpen(true)}
+                                className="hidden md:flex p-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:border-indigo-500 dark:hover:text-indigo-400 transition-colors rounded-lg shadow-sm"
+                                title="Identify Product via Camera"
+                            >
+                                <Camera className="w-5 h-5" />
+                            </button>
                         </div>
+
+                        {/* Visual Search Banner */}
+                        {visualMatches && (
+                            <div className="bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 flex justify-between items-center border-b border-indigo-100 dark:border-indigo-500/20">
+                                <span className="text-indigo-700 dark:text-indigo-300 text-sm flex items-center gap-2">
+                                    <Camera className="w-4 h-4" />
+                                    Visual Search: Found {visualMatches.length} matches
+                                </span>
+                                <button
+                                    onClick={() => setVisualMatches(null)}
+                                    className="p-1 hover:bg-indigo-200 dark:hover:bg-indigo-800/50 rounded-full text-indigo-700 dark:text-indigo-300 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
 
                         {/* Billing Table */}
                         <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-800 relative transition-colors">
@@ -599,7 +737,7 @@ const POSModule: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 };

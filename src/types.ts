@@ -8,7 +8,8 @@ export type AppView =
     | 'DAILY'
     | 'LABOR'
     | 'STOREFRONT'
-    | 'SETTINGS';
+    | 'SETTINGS'
+    | 'PROFIT_PULSE';
 
 
 
@@ -87,6 +88,10 @@ export interface Customer {
     name: string;
     phone: string;
     points: number;
+    creditBalance: number;
+    creditLimit: number;
+    riskScore: 'HIGH' | 'MEDIUM' | 'LOW';
+    lastPaymentDate?: string;
 }
 
 export interface Sale {
@@ -201,6 +206,7 @@ export interface SettingsState {
     primaryColor: string;
     enabledModules: Record<string, boolean>;
     rolePermissions: Record<SystemRole, AppView[]>;
+    defaultTaxMode: TaxMode;
 }
 
 // Redux State Interfaces
@@ -209,7 +215,7 @@ export interface InventoryState {
 }
 
 export interface Session {
-    id: number;
+    id: string;
     label: string;
     cart: CartItem[];
     customerId: string | null;

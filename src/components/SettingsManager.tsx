@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, updateSettings, resetSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type } from 'lucide-react';
+import { RootState, updateSettings, updateRolePermissions, resetSettings } from '../store';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator } from 'lucide-react';
+import { AppView, SystemRole, TaxMode } from '../types';
 
 const COLORS = [
     { name: 'Indigo', hex: '#4f46e5' },
@@ -14,8 +15,8 @@ const COLORS = [
     { name: 'Cyan', hex: '#06b6d4' },
     { name: 'Slate', hex: '#64748b' },
     { name: 'Black', hex: '#000000' },
-    { name: 'Adidas Red', hex: '#E32B2B' }, // Example Brand
-    { name: 'Puma Black', hex: '#1E1E1E' }, // Example Brand
+    { name: 'Adidas Red', hex: '#E32B2B' },
+    { name: 'Puma Black', hex: '#1E1E1E' },
 ];
 
 const MODULES = [
@@ -29,22 +30,41 @@ const MODULES = [
     { id: 'storefront', label: 'Web Storefront' },
 ];
 
+// Mapping readable labels to View IDs for Permissions
+const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
+    { id: 'DASHBOARD', label: 'Dashboard' },
+    { id: 'PROFIT_PULSE', label: 'Profit Pulse AI' }, // Added Profit Pulse
+    { id: 'POS', label: 'Point of Sale' },
+    { id: 'INVENTORY', label: 'Inventory' },
+    { id: 'PURCHASE', label: 'Purchases' },
+    { id: 'FINANCE', label: 'Finance & P&L' },
+    { id: 'SALES', label: 'Sales History' },
+    { id: 'DAILY', label: 'Daily Tracker' },
+    { id: 'LABOR', label: 'Labor Mgmt' },
+    { id: 'STOREFRONT', label: 'Storefront' },
+    { id: 'SETTINGS', label: 'Settings' },
+];
+
 const SettingsManager: React.FC = () => {
     const dispatch = useDispatch();
     const settings = useSelector((state: RootState) => state.settings);
+    const { role } = useSelector((state: RootState) => state.auth);
 
-    // Local state for form management
     const [appName, setAppName] = useState(settings.appName);
     const [logoUrl, setLogoUrl] = useState(settings.logoUrl || '');
     const [primaryColor, setPrimaryColor] = useState(settings.primaryColor);
     const [modules, setModules] = useState(settings.enabledModules);
+    const [taxMode, setTaxMode] = useState<TaxMode>(settings.defaultTaxMode);
     const [isSaved, setIsSaved] = useState(false);
+    const [permissions, setPermissions] = useState(settings.rolePermissions);
 
     useEffect(() => {
         setAppName(settings.appName);
         setLogoUrl(settings.logoUrl || '');
         setPrimaryColor(settings.primaryColor);
         setModules(settings.enabledModules);
+        setTaxMode(settings.defaultTaxMode);
+        setPermissions(settings.rolePermissions);
     }, [settings]);
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,12 +82,25 @@ const SettingsManager: React.FC = () => {
         setModules(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
+    const handlePermissionToggle = (roleKey: SystemRole, view: AppView) => {
+        if (roleKey === 'Owner') return; // Owner always has access
+        setPermissions(prev => {
+            const current = prev[roleKey] || [];
+            const updated = current.includes(view)
+                ? current.filter(v => v !== view)
+                : [...current, view];
+            return { ...prev, [roleKey]: updated };
+        });
+    };
+
     const handleSave = () => {
         dispatch(updateSettings({
             appName,
             logoUrl,
             primaryColor,
-            enabledModules: modules
+            enabledModules: modules,
+            defaultTaxMode: taxMode,
+            rolePermissions: permissions
         }));
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
@@ -79,15 +112,25 @@ const SettingsManager: React.FC = () => {
         }
     };
 
+    if (role !== 'Owner') {
+        return (
+            <div className="flex flex-col items-center justify-center h-96 text-slate-400">
+                <Lock className="w-12 h-12 mb-4 opacity-50" />
+                <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300">Access Restricted</h2>
+                <p>Only the System Owner can modify settings.</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-10">
+        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in pb-10">
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
                         <SettingsIcon className="w-8 h-8 text-indigo-600" />
                         System Configuration
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Customize the ERP for your tenant (Branding, Features, UI).</p>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1">Customize branding, features, and security.</p>
                 </div>
                 <div className="flex gap-3">
                     <button
@@ -105,7 +148,7 @@ const SettingsManager: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Branding Section */}
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
@@ -203,11 +246,88 @@ const SettingsManager: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                    <p className="text-xs text-slate-400 mt-6 text-center">Disabled modules will be hidden from the sidebar and inaccessible to staff.</p>
+                    <p className="text-xs text-slate-400 mt-6 text-center">Disabled modules will be hidden globally.</p>
+                </div>
+
+                {/* Financial Defaults */}
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                        <Calculator className="w-5 h-5 text-indigo-500" /> Financial Defaults
+                    </h3>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Default Tax Mode</label>
+                            <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <button
+                                    onClick={() => setTaxMode('EXCLUSIVE')}
+                                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                >
+                                    Exclusive (+ Tax)
+                                </button>
+                                <button
+                                    onClick={() => setTaxMode('INCLUSIVE')}
+                                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                >
+                                    Inclusive (Inc. Tax)
+                                </button>
+                            </div>
+                            <p className="text-[10px] text-slate-400 mt-2">This will be the default selection for new POS sessions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Role Access Control (Full Width) */}
+                <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                        <Shield className="w-5 h-5 text-indigo-500" /> Role Access Control
+                    </h3>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th className="px-6 py-3">Module / View</th>
+                                    <th className="px-6 py-3 text-center text-emerald-600">Owner <span className="block text-[9px] text-slate-400">Full Access</span></th>
+                                    <th className="px-6 py-3 text-center">Manager</th>
+                                    <th className="px-6 py-3 text-center">Staff</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                {PERMISSION_VIEWS.map(view => (
+                                    <tr key={view.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30">
+                                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{view.label}</td>
+                                        <td className="px-6 py-4 text-center">
+                                            <CheckToggle checked={true} disabled />
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <CheckToggle
+                                                checked={permissions['Manager'].includes(view.id)}
+                                                onChange={() => handlePermissionToggle('Manager', view.id)}
+                                            />
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <CheckToggle
+                                                checked={permissions['Staff'].includes(view.id)}
+                                                onChange={() => handlePermissionToggle('Staff', view.id)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
+
+const CheckToggle = ({ checked, onChange, disabled = false }: { checked: boolean, onChange?: () => void, disabled?: boolean }) => (
+    <label className={`relative inline-flex items-center cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <input type="checkbox" className="sr-only peer" checked={checked} onChange={onChange} disabled={disabled} />
+        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+    </label>
+);
 
 export default SettingsManager;

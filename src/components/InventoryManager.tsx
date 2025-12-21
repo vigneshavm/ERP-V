@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addProduct, editProduct } from '../store';
-import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List } from 'lucide-react';
+import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square } from 'lucide-react';
 import { Sector, Branch, Product } from '../types';
+import BarcodeGenerator from './BarcodeGenerator';
 
 const InventoryManager: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,6 +21,11 @@ const InventoryManager: React.FC = () => {
     name: '', sku: '', price: '', cost: '', stock: '', category: '', productType: '', branch: 'Alpha'
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Barcode Printing State
+  const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
+  const [isPrintMode, setIsPrintMode] = useState(false);
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
   // Filter based on context and search
   const sectorProducts = products.filter(p =>
@@ -82,7 +88,9 @@ const InventoryManager: React.FC = () => {
       productType: formData.productType,
       sector: currentSector as Sector,
       branch: formData.branch as Branch,
-      image: imagePreview || undefined
+      image: imagePreview || undefined,
+      // Generate barcode if not present (using SKU or Random) if not editing existing
+      barcode: !editingId ? (formData.sku || Math.random().toString().slice(2, 14)) : undefined
     };
 
     if (editingId) {
@@ -102,6 +110,67 @@ const InventoryManager: React.FC = () => {
     }
 
     resetForm();
+  };
+
+  // --- Barcode Printing Handlers ---
+  const toggleProductSelection = (id: string) => {
+    const newSet = new Set(selectedProductIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    setSelectedProductIds(newSet);
+  };
+
+  const selectAll = () => {
+    if (selectedProductIds.size === displayedProducts.length) {
+      setSelectedProductIds(new Set());
+    } else {
+      setSelectedProductIds(new Set(displayedProducts.map(p => p.id)));
+    }
+  };
+
+  const handlePrintLabels = () => {
+    if (selectedProductIds.size === 0) return;
+    setIsPrintModalOpen(true);
+  };
+
+  const executePrint = () => {
+    const content = document.getElementById('barcode-print-area');
+    if (!content) return;
+
+    const printWindow = window.open('', '_blank', 'width=800,height=800');
+    if (!printWindow) {
+      alert("Please allow popups to print labels.");
+      return;
+    }
+
+    printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>Print Labels</title>
+                    <style>
+                        body { background: white; margin: 0; padding: 20px; font-family: sans-serif; }
+                        .label-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+                        .label-item { border: 1px dashed #ccc; padding: 10px; text-align: center; page-break-inside: avoid; border-radius: 8px; }
+                        h3 { font-size: 14px; margin: 0 0 5px 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                        p { font-size: 12px; margin: 0; }
+                        .price { font-weight: bold; font-size: 16px; margin-top: 5px; }
+                        svg { max-width: 100%; height: 50px; }
+                        @media print {
+                            .label-item { border: none; outline: 1px solid #eee; }
+                            body { padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${content.innerHTML}
+                    <script>
+                        setTimeout(() => { window.print(); window.close(); }, 800);
+                    </script>
+                </body>
+            </html>
+        `);
+    printWindow.document.close();
   };
 
   const isOwner = role === 'Owner';
@@ -146,8 +215,53 @@ const InventoryManager: React.FC = () => {
           >
             <Plus className="w-4 h-4" /> Add Product
           </button>
+          <button
+            onClick={() => setIsPrintMode(!isPrintMode)}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors whitespace-nowrap border ${isPrintMode ? 'bg-slate-800 text-white border-slate-800' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
+          >
+            <Printer className="w-4 h-4" /> {isPrintMode ? 'Done Printing' : 'Print Labels'}
+          </button>
         </div>
       </div>
+
+      {/* Print Modal */}
+      {isPrintModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded-t-xl">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Printer className="w-5 h-5 text-indigo-500" /> Print Preview ({selectedProductIds.size} Items)
+              </h3>
+              <div className="flex gap-2">
+                <button onClick={executePrint} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold flex items-center gap-2">
+                  <Printer className="w-4 h-4" /> Print
+                </button>
+                <button onClick={() => setIsPrintModalOpen(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg">
+                  <X className="w-5 h-5 text-slate-500" />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-8 bg-slate-100 dark:bg-slate-900">
+              <div id="barcode-print-area" className="bg-white p-8 shadow-sm grid grid-cols-3 gap-4 max-w-[210mm] mx-auto min-h-[297mm]">
+                {products.filter(p => selectedProductIds.has(p.id)).map(p => (
+                  <div key={p.id} className="border border-dashed border-slate-300 p-4 rounded-lg flex flex-col items-center justify-center text-center h-48 bg-white break-inside-avoid">
+                    <h3 className="font-bold text-slate-900 text-sm mb-1 line-clamp-2">{p.name}</h3>
+                    <p className="text-xs text-slate-500 mb-2">{p.sku}</p>
+                    <BarcodeGenerator
+                      value={p.barcode || p.sku}
+                      width={1.5}
+                      height={40}
+                      fontSize={12}
+                      className="mb-2"
+                    />
+                    <p className="font-bold text-lg text-slate-900">₹{p.price.toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isFormOpen && (
         <form onSubmit={handleSave} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-4 gap-4 animate-fade-in shadow-lg relative">
@@ -248,10 +362,33 @@ const InventoryManager: React.FC = () => {
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-lg transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
+            {isPrintMode && (
+              <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 flex justify-between items-center border-b border-indigo-100 dark:border-indigo-500/30">
+                <div className="flex items-center gap-3">
+                  <button onClick={selectAll} className="flex items-center gap-2 text-sm font-bold text-indigo-700 dark:text-indigo-300 hover:underline">
+                    {selectedProductIds.size === displayedProducts.length ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
+                    {selectedProductIds.size === displayedProducts.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                  <span className="text-sm text-indigo-600 dark:text-indigo-400">
+                    {selectedProductIds.size} Selected
+                  </span>
+                </div>
+                <button
+                  onClick={handlePrintLabels}
+                  disabled={selectedProductIds.size === 0}
+                  className="px-4 py-1.5 bg-indigo-600 text-white text-sm font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-500 transition-colors"
+                >
+                  Preview & Print
+                </button>
+              </div>
+            )}
+
             <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
               <tr>
+                {isPrintMode && <th className="p-4 w-10"></th>}
                 <th className="p-4 w-16">Img</th>
                 <th className="p-4">SKU</th>
+                <th className="p-4">Barcode</th>
                 <th className="p-4">Name</th>
                 <th className="p-4">Type</th>
                 <th className="p-4">Branch</th>
@@ -266,6 +403,19 @@ const InventoryManager: React.FC = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
               {displayedProducts.map(product => (
                 <tr key={product.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                  {isPrintMode && (
+                    <td className="p-4">
+                      <button
+                        onClick={() => toggleProductSelection(product.id)}
+                        className="text-slate-400 hover:text-indigo-600 transition-colors"
+                      >
+                        {selectedProductIds.has(product.id) ?
+                          <CheckSquare className="w-5 h-5 text-indigo-600" /> :
+                          <Square className="w-5 h-5" />
+                        }
+                      </button>
+                    </td>
+                  )}
                   <td className="p-4">
                     {product.image ? (
                       <img src={product.image} alt="Prod" className="w-8 h-8 rounded object-cover border border-slate-200 dark:border-slate-600" />
@@ -276,6 +426,7 @@ const InventoryManager: React.FC = () => {
                     )}
                   </td>
                   <td className="p-4 font-mono text-slate-500 dark:text-slate-400">{product.sku}</td>
+                  <td className="p-4 font-mono text-xs text-slate-500 dark:text-slate-400 break-all">{product.barcode || '-'}</td>
                   <td className="p-4 font-bold">{product.name}</td>
                   <td className="p-4"><span className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-xs font-bold border border-indigo-100 dark:border-indigo-800">{product.productType}</span></td>
                   <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded text-xs text-slate-600 dark:text-slate-400">{product.branch}</span></td>
@@ -301,7 +452,7 @@ const InventoryManager: React.FC = () => {
               ))}
               {displayedProducts.length === 0 && (
                 <tr>
-                  <td colSpan={isOwner ? 11 : 9} className="p-8 text-center text-slate-500">No products found matching criteria.</td>
+                  <td colSpan={isOwner ? 12 : 10} className="p-8 text-center text-slate-500">No products found matching criteria.</td>
                 </tr>
               )}
             </tbody>

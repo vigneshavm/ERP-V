@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import inventoryReducer, { deductStock, addStockBulk } from './inventorySlice';
-import posReducer, { recordSale, clearCurrentSession } from './posSlice';
+import posReducer, { recordSale } from './posSlice';
 import financeReducer, { addTransaction } from './financeSlice';
 import laborReducer from './laborSlice';
 import purchaseReducer, { approveOrder } from './purchaseSlice';
@@ -48,7 +48,7 @@ export const processSale = (sale: Sale) => (dispatch: AppDispatch) => {
         sector: sale.sector,
         branch: sale.branch
     }));
-    dispatch(clearCurrentSession());
+    // dispatch(clearCurrentSession()); // Handled in recordSale reducer
 };
 
 export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch) => {

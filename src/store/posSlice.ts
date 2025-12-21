@@ -1,94 +1,94 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { POSState, Sale, CartItem, Customer, BillSession, TaxMode, PaymentMethod } from '../types';
-import { APP_CONFIG } from '../../config';
-import { MOCK_CUSTOMERS, MOCK_SALES } from '../../mockData';
-import { loadState, saveState } from './storage';
 
-const createSession = (id: number): BillSession => ({
-  id,
-  label: `Bill ${id + 1}`,
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { POSState, CartItem, Sale, Session, TaxMode, PaymentMethod, Customer } from '../types';
+
+const defaultSession: Session = {
+  id: '1',
+  label: 'Tab 1',
   cart: [],
-  customerId: null,
+  customerId: 'c1',
   taxMode: 'EXCLUSIVE',
   paymentMethod: 'CASH'
-});
+};
 
-const initialPOSState: POSState = {
-  sessions: [createSession(0), createSession(1), createSession(2), createSession(3)],
+const initialState: POSState = {
+  sessions: [defaultSession, { ...defaultSession, id: '2', label: 'Tab 2' }, { ...defaultSession, id: '3', label: 'Tab 3' }, { ...defaultSession, id: '4', label: 'Tab 4' }],
   activeSessionIndex: 0,
-  customers: APP_CONFIG.IS_DEMO ? MOCK_CUSTOMERS : [{ id: 'c1', name: 'Walk-in Customer', phone: '000-000-0000', points: 0 }],
-  salesHistory: APP_CONFIG.IS_DEMO ? MOCK_SALES : [],
+  customers: [
+    { id: 'c1', name: 'Walk-in Customer', phone: '', points: 0, creditBalance: 0, creditLimit: 0, riskScore: 'LOW' },
+    { id: 'c2', name: 'John Doe', phone: '9876543210', points: 120, creditBalance: 2500, creditLimit: 5000, riskScore: 'MEDIUM', lastPaymentDate: '2023-10-15' },
+    { id: 'c3', name: 'Rahul Enterprise', phone: '9988776655', points: 500, creditBalance: 12000, creditLimit: 10000, riskScore: 'HIGH', lastPaymentDate: '2023-08-01' },
+    { id: 'c4', name: 'Alice Baker', phone: '5551234567', points: 50, creditBalance: 0, creditLimit: 2000, riskScore: 'LOW' },
+  ],
+  salesHistory: []
 };
 
 const posSlice = createSlice({
   name: 'pos',
-  initialState: loadState('pos', initialPOSState),
+  initialState,
   reducers: {
     setActiveSession: (state, action: PayloadAction<number>) => {
-      if (action.payload >= 0 && action.payload < 4) {
+      if (action.payload >= 0 && action.payload < state.sessions.length) {
         state.activeSessionIndex = action.payload;
-        saveState('pos', state);
       }
     },
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const session = state.sessions[state.activeSessionIndex];
-      const existing = session.cart.find(item => item.id === action.payload.id);
+      const existing = session.cart.find(item => item.sku === action.payload.sku);
       if (existing) {
-        existing.qty += 1;
+        existing.qty += action.payload.qty;
       } else {
-        session.cart.push({ ...action.payload, qty: 1 });
+        session.cart.push({ ...action.payload });
       }
-      saveState('pos', state);
-    },
-    updateCartQty: (state, action: PayloadAction<{ id: string; qty: number }>) => {
-      const session = state.sessions[state.activeSessionIndex];
-      const item = session.cart.find(i => i.id === action.payload.id);
-      if (item) item.qty = action.payload.qty;
-      if (item && item.qty <= 0) session.cart = session.cart.filter(i => i.id !== action.payload.id);
-      saveState('pos', state);
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       const session = state.sessions[state.activeSessionIndex];
       session.cart = session.cart.filter(item => item.id !== action.payload);
-      saveState('pos', state);
     },
-    clearCurrentSession: (state) => {
-      const idx = state.activeSessionIndex;
-      state.sessions[idx] = createSession(idx);
-      saveState('pos', state);
+    updateCartQty: (state, action: PayloadAction<{ id: string; qty: number }>) => {
+      const session = state.sessions[state.activeSessionIndex];
+      const item = session.cart.find(i => i.id === action.payload.id);
+      if (item && action.payload.qty > 0) {
+        item.qty = action.payload.qty;
+      }
     },
-    setCustomer: (state, action: PayloadAction<string>) => {
-      state.sessions[state.activeSessionIndex].customerId = action.payload;
-      saveState('pos', state);
-    },
-    setTaxMode: (state, action: PayloadAction<TaxMode>) => {
-      state.sessions[state.activeSessionIndex].taxMode = action.payload;
-      saveState('pos', state);
-    },
-    setPaymentMethod: (state, action: PayloadAction<PaymentMethod>) => {
-      state.sessions[state.activeSessionIndex].paymentMethod = action.payload;
-      saveState('pos', state);
-    },
-    addCustomer: (state, action: PayloadAction<Customer>) => {
-      state.customers.push(action.payload);
-      saveState('pos', state);
+    clearCart: (state) => {
+      const session = state.sessions[state.activeSessionIndex];
+      session.cart = [];
+      session.customerId = 'c1';
     },
     recordSale: (state, action: PayloadAction<Sale>) => {
       state.salesHistory.unshift(action.payload);
+      const session = state.sessions[state.activeSessionIndex];
+
+      // Update points and Credit Balance (Khata)
       if (action.payload.customerId) {
-        const cust = state.customers.find(c => c.id === action.payload.customerId);
-        if (cust) {
-          cust.points += Math.floor(action.payload.total * 0.01);
+        const customer = state.customers.find(c => c.id === action.payload.customerId);
+        if (customer) {
+          customer.points += Math.floor(action.payload.total / 10);
+
+          // If Payment Method is implied 'CREDIT' (Not currently in Enum, but logic placeholder)
+          // Or update strictly based on custom logic. For now, assume Credit if flagged (future enhancement).
         }
       }
-      saveState('pos', state);
+
+      // Clear session
+      session.cart = [];
+      session.customerId = 'c1';
+      session.paymentMethod = 'CASH';
+      session.taxMode = 'EXCLUSIVE';
+    },
+    setCustomer: (state, action: PayloadAction<string>) => {
+      state.sessions[state.activeSessionIndex].customerId = action.payload;
+    },
+    setTaxMode: (state, action: PayloadAction<TaxMode>) => {
+      state.sessions[state.activeSessionIndex].taxMode = action.payload;
+    },
+    setPaymentMethod: (state, action: PayloadAction<PaymentMethod>) => {
+      state.sessions[state.activeSessionIndex].paymentMethod = action.payload;
     }
-  },
+  }
 });
 
-export const {
-  addToCart, updateCartQty, removeFromCart, clearCurrentSession,
-  setCustomer, addCustomer, recordSale,
-  setActiveSession, setTaxMode, setPaymentMethod
-} = posSlice.actions;
+export const { setActiveSession, addToCart, removeFromCart, updateCartQty, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod } = posSlice.actions;
 export default posSlice.reducer;

@@ -5,19 +5,19 @@ import { TenantState, Tenant, ModuleType, AuthState, Sector, SettingsState, Syst
 // --- Tenant Slice ---
 const initialTenantState: TenantState = {
   tenants: [
-    { 
-      id: '1', 
-      name: 'Retail Co', 
-      subdomain: 'retail-co', 
-      modules: ['POS', 'INVENTORY', 'FINANCE'], 
+    {
+      id: '1',
+      name: 'Retail Co',
+      subdomain: 'retail-co',
+      modules: ['POS', 'INVENTORY', 'FINANCE'],
       isActive: true,
       region: { currency: 'USD', currencySymbol: '$', dateFormat: 'MM/DD/YYYY' }
     },
-    { 
-      id: '2', 
-      name: 'Pharma Plus', 
-      subdomain: 'pharma-plus', 
-      modules: ['POS', 'INVENTORY'], 
+    {
+      id: '2',
+      name: 'Pharma Plus',
+      subdomain: 'pharma-plus',
+      modules: ['POS', 'INVENTORY'],
       isActive: true,
       region: { currency: 'EUR', currencySymbol: '€', dateFormat: 'DD/MM/YYYY' }
     },
@@ -32,12 +32,12 @@ const tenantSlice = createSlice({
       state.tenants.push(action.payload);
     },
     toggleTenantStatus: (state, action: PayloadAction<string>) => {
-        const tenant = state.tenants.find(t => t.id === action.payload);
-        if (tenant) tenant.isActive = !tenant.isActive;
+      const tenant = state.tenants.find(t => t.id === action.payload);
+      if (tenant) tenant.isActive = !tenant.isActive;
     },
-    updateTenantModules: (state, action: PayloadAction<{id: string, modules: ModuleType[]}>) => {
-        const tenant = state.tenants.find(t => t.id === action.payload.id);
-        if (tenant) tenant.modules = action.payload.modules;
+    updateTenantModules: (state, action: PayloadAction<{ id: string, modules: ModuleType[] }>) => {
+      const tenant = state.tenants.find(t => t.id === action.payload.id);
+      if (tenant) tenant.modules = action.payload.modules;
     }
   }
 });
@@ -85,28 +85,29 @@ export const authReducer = authSlice.reducer;
 
 // --- Settings Slice ---
 const initialSettingsState: SettingsState = {
-    appName: 'Enterprise Manager',
-    primaryColor: '#4f46e5',
-    enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
-    rolePermissions: {
-        'Owner': ['DASHBOARD', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS'],
-        'Manager': ['DASHBOARD', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT'],
-        'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
-    }
+  appName: 'Enterprise Manager',
+  primaryColor: '#4f46e5',
+  enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
+  rolePermissions: {
+    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS'],
+    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT'],
+    'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
+  },
+  defaultTaxMode: 'EXCLUSIVE'
 };
 
 const settingsSlice = createSlice({
-    name: 'settings',
-    initialState: initialSettingsState,
-    reducers: {
-        updateSettings: (state, action: PayloadAction<Partial<SettingsState>>) => {
-            return { ...state, ...action.payload };
-        },
-        updateRolePermissions: (state, action: PayloadAction<{ role: SystemRole, views: AppView[] }>) => {
-            state.rolePermissions[action.payload.role] = action.payload.views;
-        },
-        resetSettings: () => initialSettingsState
-    }
+  name: 'settings',
+  initialState: initialSettingsState,
+  reducers: {
+    updateSettings: (state, action: PayloadAction<Partial<SettingsState>>) => {
+      return { ...state, ...action.payload };
+    },
+    updateRolePermissions: (state, action: PayloadAction<{ role: SystemRole, views: AppView[] }>) => {
+      state.rolePermissions[action.payload.role] = action.payload.views;
+    },
+    resetSettings: () => initialSettingsState
+  }
 });
 
 export const { updateSettings, updateRolePermissions, resetSettings } = settingsSlice.actions;

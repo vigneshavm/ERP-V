@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, LogIn, Lock, Ban } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, LogIn, Lock, Ban, Zap } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setUser } from './store';
 import Dashboard from './components/Dashboard';
@@ -13,8 +13,10 @@ import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
 import Storefront from './components/Storefront';
 import SettingsManager from './components/SettingsManager';
+import ProfitPulse from './components/ProfitPulse'; // Imported Profit Pulse
 import Login from './components/login';
 import TenantManager from './components/TenantManager';
+
 import { ConfigProvider } from './components/ConfigProvider';
 import { Tenant, AppView } from './types';
 
@@ -176,8 +178,8 @@ const App: React.FC = () => {
                         setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${activeTab === id
-                            ? 'bg-blue-600 text-white shadow-md'
-                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                         }`}
                 >
                     <Icon className="w-5 h-5" />
@@ -202,6 +204,7 @@ const App: React.FC = () => {
 
             switch (activeTab) {
                 case 'DASHBOARD': return <Dashboard />;
+                case 'PROFIT_PULSE': return <ProfitPulse />;
                 case 'POS': return <POSModule />;
                 case 'INVENTORY': return <InventoryManager />;
                 case 'PURCHASE': return <PurchaseManager />;
@@ -257,6 +260,7 @@ const App: React.FC = () => {
 
                         <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
                             <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
+                            <NavItem id="PROFIT_PULSE" icon={Zap} label="Profit Pulse AI" />
                             <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
                             <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
                             <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
