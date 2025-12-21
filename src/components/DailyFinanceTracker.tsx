@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../store';
 import { APP_CONFIG } from '../../config';
 import {
   Briefcase, History, IndianRupee, Plus, CheckCircle,
@@ -20,7 +20,7 @@ interface TrackerTransaction {
   date: string;
   cashSales: number;
   onlineSales: number;
-  totalSales: number; 
+  totalSales: number;
   expenses: number;
   cashInDrawer: number;
   notes: string;
@@ -32,26 +32,26 @@ type PeriodType = 'DAILY' | 'MONTHLY' | 'YEARLY' | 'CUSTOM';
 const DailyFinanceTracker: React.FC = () => {
   const { theme } = useSelector((state: RootState) => state.auth);
   const [tx, setTx] = useState<TrackerTransaction[]>(() => {
-      try {
-          const saved = localStorage.getItem("omni_fin_tracker");
-          if (saved && JSON.parse(saved).length > 0) return JSON.parse(saved);
-          
-          if (APP_CONFIG.IS_DEMO) {
-             const subDays = (d: number) => {
-                const date = new Date();
-                date.setDate(date.getDate() - d);
-                return date.toISOString().split('T')[0];
-             };
-             
-             return [
-                 { id: 'dt1', date: subDays(0), cashSales: 12000, onlineSales: 8000, totalSales: 20000, expenses: 500, cashInDrawer: 11500, notes: 'Good footfall', timestamp: new Date().toISOString() },
-                 { id: 'dt2', date: subDays(1), cashSales: 15000, onlineSales: 5000, totalSales: 20000, expenses: 1500, cashInDrawer: 13500, notes: 'Paid electricity', timestamp: new Date().toISOString() },
-                 { id: 'dt3', date: subDays(2), cashSales: 8000, onlineSales: 12000, totalSales: 20000, expenses: 200, cashInDrawer: 7800, notes: 'Rainy day', timestamp: new Date().toISOString() },
-                 { id: 'dt4', date: subDays(3), cashSales: 20000, onlineSales: 15000, totalSales: 35000, expenses: 5000, cashInDrawer: 15000, notes: 'Weekend rush', timestamp: new Date().toISOString() },
-             ];
-          }
-          return [];
-      } catch(e) { return []; }
+    try {
+      const saved = localStorage.getItem("omni_fin_tracker");
+      if (saved && JSON.parse(saved).length > 0) return JSON.parse(saved);
+
+      if (APP_CONFIG.IS_DEMO) {
+        const subDays = (d: number) => {
+          const date = new Date();
+          date.setDate(date.getDate() - d);
+          return date.toISOString().split('T')[0];
+        };
+
+        return [
+          { id: 'dt1', date: subDays(0), cashSales: 12000, onlineSales: 8000, totalSales: 20000, expenses: 500, cashInDrawer: 11500, notes: 'Good footfall', timestamp: new Date().toISOString() },
+          { id: 'dt2', date: subDays(1), cashSales: 15000, onlineSales: 5000, totalSales: 20000, expenses: 1500, cashInDrawer: 13500, notes: 'Paid electricity', timestamp: new Date().toISOString() },
+          { id: 'dt3', date: subDays(2), cashSales: 8000, onlineSales: 12000, totalSales: 20000, expenses: 200, cashInDrawer: 7800, notes: 'Rainy day', timestamp: new Date().toISOString() },
+          { id: 'dt4', date: subDays(3), cashSales: 20000, onlineSales: 15000, totalSales: 35000, expenses: 5000, cashInDrawer: 15000, notes: 'Weekend rush', timestamp: new Date().toISOString() },
+        ];
+      }
+      return [];
+    } catch (e) { return []; }
   });
   const [view, setView] = useState<'ENTRY' | 'CHARTS'>('ENTRY');
 
@@ -145,11 +145,11 @@ const DailyFinanceTracker: React.FC = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            Daily Finance <span className="text-slate-500 text-base font-normal">/ Tracker</span>
+          Daily Finance <span className="text-slate-500 text-base font-normal">/ Tracker</span>
         </h2>
         <div className="flex bg-slate-100 dark:bg-slate-700/50 rounded-lg p-1">
-            <button onClick={() => setView('ENTRY')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'ENTRY' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Data Entry</button>
-            <button onClick={() => setView('CHARTS')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'CHARTS' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Analytics</button>
+          <button onClick={() => setView('ENTRY')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'ENTRY' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Data Entry</button>
+          <button onClick={() => setView('CHARTS')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'CHARTS' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Analytics</button>
         </div>
       </div>
 
@@ -168,63 +168,63 @@ const DailyFinanceTracker: React.FC = () => {
             <form onSubmit={saveTransaction} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Date</label>
-                    <div className="relative">
-                        <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-                    </div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Date</label>
+                  <div className="relative">
+                    <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total Sales (Auto)</label>
                   <div className="relative">
-                     <div className="w-full p-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg font-bold text-indigo-700 dark:text-indigo-300 flex items-center h-[42px]">
-                        {formatCurrency(currentTotalSales)}
-                     </div>
+                    <div className="w-full p-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg font-bold text-indigo-700 dark:text-indigo-300 flex items-center h-[42px]">
+                      {formatCurrency(currentTotalSales)}
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Cash Sales</label>
-                    <div className="relative">
-                        <IndianRupee size={14} className="absolute left-3 top-3.5 text-slate-400" />
-                        <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-                    </div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Cash Sales</label>
+                  <div className="relative">
+                    <IndianRupee size={14} className="absolute left-3 top-3.5 text-slate-400" />
+                    <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                  </div>
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">UPI / Card Sales</label>
-                    <div className="relative">
-                        <CreditCard size={14} className="absolute left-3 top-3.5 text-slate-400" />
-                        <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-                    </div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">UPI / Card Sales</label>
+                  <div className="relative">
+                    <CreditCard size={14} className="absolute left-3 top-3.5 text-slate-400" />
+                    <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                  </div>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total Expenses</label>
-                    <div className="relative">
-                        <Briefcase size={14} className="absolute left-3 top-3.5 text-slate-400" />
-                        <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-                    </div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total Expenses</label>
+                  <div className="relative">
+                    <Briefcase size={14} className="absolute left-3 top-3.5 text-slate-400" />
+                    <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                  </div>
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Cash in Drawer</label>
-                    <div className="relative">
-                        <IndianRupee size={14} className="absolute left-3 top-3.5 text-slate-400" />
-                        <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted Cash" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
-                    </div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Cash in Drawer</label>
+                  <div className="relative">
+                    <IndianRupee size={14} className="absolute left-3 top-3.5 text-slate-400" />
+                    <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted Cash" className="w-full pl-8 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                  </div>
                 </div>
               </div>
               <div>
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Notes</label>
-                  <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Electricity bill..." className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Notes</label>
+                <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Electricity bill..." className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
               </div>
               <button type="submit" className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2">
-                  <Plus size={18} /> Save Daily Record
+                <Plus size={18} /> Save Daily Record
               </button>
             </form>
           </Card>
-          
+
           <Card className="p-6 h-full flex flex-col">
             <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2"><History size={18} /> Recent Entries</h3>
             <div className="flex-1 overflow-auto space-y-3 pr-2 custom-scrollbar max-h-[450px]">
@@ -232,12 +232,12 @@ const DailyFinanceTracker: React.FC = () => {
               {tx.slice(0, 10).map(t => (
                 <div key={t.id} className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
                   <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
-                      <div>Sales: <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(t.totalSales)}</span></div>
-                      <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
+                    <div>Sales: <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(t.totalSales)}</span></div>
+                    <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
                   </div>
                   {t.cashInDrawer > 0 && <div className="text-[10px] text-slate-400 mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">Drawer: {formatCurrency(t.cashInDrawer)}</div>}
                 </div>
@@ -265,12 +265,12 @@ const DailyFinanceTracker: React.FC = () => {
             {period === 'CUSTOM' && (
               <div className="flex gap-2 mb-4 p-2 bg-slate-50 dark:bg-slate-700/30 rounded border border-slate-200 dark:border-slate-700 text-sm">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">From:</span>
-                    <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">From:</span>
+                  <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">To:</span>
-                    <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">To:</span>
+                  <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
                 </div>
               </div>
             )}

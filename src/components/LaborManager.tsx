@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../../store';
+import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../store';
 import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, Trash2, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, UserPlus, Filter } from 'lucide-react';
@@ -16,7 +16,7 @@ export const LaborManager = () => {
   // -- State --
   const [selectedLaborerId, setSelectedLaborerId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'ATTENDANCE' | 'PAYMENTS'>('ATTENDANCE');
-  
+
   // View State
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddingLaborer, setIsAddingLaborer] = useState(false);
@@ -42,13 +42,13 @@ export const LaborManager = () => {
   const currentMonthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   // Filter Employees
-  const sectorEmps = employees.filter(e => 
+  const sectorEmps = employees.filter(e =>
     e.sector === currentSector && (currentBranch === 'All' || e.branch === currentBranch)
   );
 
   // Default selection
   if (!selectedLaborerId && sectorEmps.length > 0) {
-      setSelectedLaborerId(sectorEmps[0].id);
+    setSelectedLaborerId(sectorEmps[0].id);
   }
 
   const selectedLaborer = sectorEmps.find(l => l.id === selectedLaborerId);
@@ -73,14 +73,14 @@ export const LaborManager = () => {
     for (let d = 1; d <= daysInMonth; d++) {
       const dateKey = formatDateISO(currentYear, currentMonth, d);
       const log = empAttendance.find(a => a.date === dateKey);
-      
+
       if (log) {
-          if (log.status === 'PRESENT') { daysCount += 1; full += 1; }
-          else if (log.status === 'HALF') { daysCount += 0.5; half += 1; }
-          else if (log.status === 'QUARTER') { daysCount += 0.25; quarter += 1; }
-          else if (log.status === 'ABSENT') { absent += 1; }
-          
-          monthlyAdvance += (log.advanceTaken || 0);
+        if (log.status === 'PRESENT') { daysCount += 1; full += 1; }
+        else if (log.status === 'HALF') { daysCount += 0.5; half += 1; }
+        else if (log.status === 'QUARTER') { daysCount += 0.25; quarter += 1; }
+        else if (log.status === 'ABSENT') { absent += 1; }
+
+        monthlyAdvance += (log.advanceTaken || 0);
       }
     }
 
@@ -99,14 +99,14 @@ export const LaborManager = () => {
     const allTimeAttendance = attendance.filter(a => a.employeeId === selectedLaborer.id);
     let allTimeDays = 0;
     let allTimeAdvances = 0;
-    
+
     allTimeAttendance.forEach(log => {
-        let d = 0;
-        if (log.status === 'PRESENT') d = 1;
-        else if (log.status === 'HALF') d = 0.5;
-        else if (log.status === 'QUARTER') d = 0.25;
-        allTimeDays += d;
-        allTimeAdvances += (log.advanceTaken || 0);
+      let d = 0;
+      if (log.status === 'PRESENT') d = 1;
+      else if (log.status === 'HALF') d = 0.5;
+      else if (log.status === 'QUARTER') d = 0.25;
+      allTimeDays += d;
+      allTimeAdvances += (log.advanceTaken || 0);
     });
 
     const allTimeEarned = allTimeDays * selectedLaborer.dailyRate;
@@ -133,12 +133,14 @@ export const LaborManager = () => {
   const handleAddLaborer = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(addEmployee({
-        id: Math.random().toString(36).substr(2, 9),
-        name: newEmp.name,
-        role: newEmp.role,
-        dailyRate: parseFloat(newEmp.dailyRate),
-        sector: currentSector as Sector,
-        branch: newEmp.branch as Branch
+      id: Math.random().toString(36).substr(2, 9),
+      name: newEmp.name,
+      role: newEmp.role,
+      dailyRate: parseFloat(newEmp.dailyRate),
+      sector: currentSector as Sector,
+      branch: newEmp.branch as Branch,
+      systemRole: 'Staff',
+      pin: '0000'
     }));
     setIsAddingLaborer(false);
     setNewEmp({ name: '', role: '', dailyRate: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
@@ -150,9 +152,9 @@ export const LaborManager = () => {
     const monthly = parseFloat(val);
     if (!isNaN(monthly)) {
       const daily = Math.round(monthly / 30);
-      setNewEmp({...newEmp, dailyRate: daily.toString()});
+      setNewEmp({ ...newEmp, dailyRate: daily.toString() });
     } else {
-      setNewEmp({...newEmp, dailyRate: ''});
+      setNewEmp({ ...newEmp, dailyRate: '' });
     }
   };
 
@@ -182,28 +184,28 @@ export const LaborManager = () => {
     if (!selectedLaborer) return;
 
     selectedDates.forEach(dateKey => {
-       // Check existing to preserve advanceTaken if any, or create new
-       const existing = attendance.find(a => a.employeeId === selectedLaborer.id && a.date === dateKey);
-       
-       if (status === 'CLEAR') {
-           dispatch(markAttendance({
-               id: existing?.id || Math.random().toString(),
-               employeeId: selectedLaborer.id,
-               date: dateKey,
-               status: 'ABSENT',
-               advanceTaken: existing?.advanceTaken || 0
-           }));
-       } else {
-           dispatch(markAttendance({
-               id: existing?.id || Math.random().toString(),
-               employeeId: selectedLaborer.id,
-               date: dateKey,
-               status: status,
-               advanceTaken: existing?.advanceTaken || 0,
-               inTime: status === 'PRESENT' ? '09:00' : undefined,
-               outTime: status === 'PRESENT' ? '18:00' : undefined
-           }));
-       }
+      // Check existing to preserve advanceTaken if any, or create new
+      const existing = attendance.find(a => a.employeeId === selectedLaborer.id && a.date === dateKey);
+
+      if (status === 'CLEAR') {
+        dispatch(markAttendance({
+          id: existing?.id || Math.random().toString(),
+          employeeId: selectedLaborer.id,
+          date: dateKey,
+          status: 'ABSENT',
+          advanceTaken: existing?.advanceTaken || 0
+        }));
+      } else {
+        dispatch(markAttendance({
+          id: existing?.id || Math.random().toString(),
+          employeeId: selectedLaborer.id,
+          date: dateKey,
+          status: status,
+          advanceTaken: existing?.advanceTaken || 0,
+          inTime: status === 'PRESENT' ? '09:00' : undefined,
+          outTime: status === 'PRESENT' ? '18:00' : undefined
+        }));
+      }
     });
 
     setIsSelectionMode(false);
@@ -212,28 +214,28 @@ export const LaborManager = () => {
 
   const handleSaveAttendance = (log: DailyLog | null) => {
     if (!selectedLaborer || !editingDate) return;
-    
+
     const existing = attendance.find(a => a.employeeId === selectedLaborer.id && a.date === editingDate);
 
     if (log) {
-        dispatch(markAttendance({
-            id: existing?.id || Math.random().toString(),
-            employeeId: selectedLaborer.id,
-            date: editingDate,
-            status: log.status,
-            advanceTaken: existing?.advanceTaken || 0, // Modal doesn't handle advance currently, preserve it
-            inTime: log.inTime,
-            outTime: log.outTime
-        }));
+      dispatch(markAttendance({
+        id: existing?.id || Math.random().toString(),
+        employeeId: selectedLaborer.id,
+        date: editingDate,
+        status: log.status,
+        advanceTaken: existing?.advanceTaken || 0, // Modal doesn't handle advance currently, preserve it
+        inTime: log.inTime,
+        outTime: log.outTime
+      }));
     } else {
-        // If null (cleared), set to Absent
-        dispatch(markAttendance({
-            id: existing?.id || Math.random().toString(),
-            employeeId: selectedLaborer.id,
-            date: editingDate,
-            status: 'ABSENT',
-            advanceTaken: existing?.advanceTaken || 0
-        }));
+      // If null (cleared), set to Absent
+      dispatch(markAttendance({
+        id: existing?.id || Math.random().toString(),
+        employeeId: selectedLaborer.id,
+        date: editingDate,
+        status: 'ABSENT',
+        advanceTaken: existing?.advanceTaken || 0
+      }));
     }
   };
 
@@ -243,12 +245,12 @@ export const LaborManager = () => {
     if (isNaN(amount) || amount <= 0) return;
 
     dispatch(addLaborPayment({
-        id: Math.random().toString(36).substr(2, 9),
-        employeeId: selectedLaborer.id,
-        amount: amount,
-        date: new Date().toISOString(),
-        type: paymentType,
-        note: paymentNote
+      id: Math.random().toString(36).substr(2, 9),
+      employeeId: selectedLaborer.id,
+      amount: amount,
+      date: new Date().toISOString(),
+      type: paymentType,
+      note: paymentNote
     }));
 
     setPaymentAmount('');
@@ -364,7 +366,7 @@ export const LaborManager = () => {
                 type="text"
                 placeholder="Full Name"
                 value={newEmp.name}
-                onChange={e => setNewEmp({...newEmp, name: e.target.value})}
+                onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
                 className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
                 autoFocus
               />
@@ -372,7 +374,7 @@ export const LaborManager = () => {
                 type="text"
                 placeholder="Role"
                 value={newEmp.role}
-                onChange={e => setNewEmp({...newEmp, role: e.target.value})}
+                onChange={e => setNewEmp({ ...newEmp, role: e.target.value })}
                 className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
               />
 
@@ -401,7 +403,7 @@ export const LaborManager = () => {
                     type="number"
                     placeholder="Daily Wage"
                     value={newEmp.dailyRate}
-                    onChange={e => setNewEmp({...newEmp, dailyRate: e.target.value})}
+                    onChange={e => setNewEmp({ ...newEmp, dailyRate: e.target.value })}
                     className="w-full pl-6 p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
@@ -510,131 +512,131 @@ export const LaborManager = () => {
             </Card>
 
             <div className="flex gap-2">
-                <button 
-                    onClick={() => setActiveTab('ATTENDANCE')} 
-                    className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'ATTENDANCE' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
-                >
-                    Attendance Calendar
-                </button>
-                <button 
-                    onClick={() => setActiveTab('PAYMENTS')} 
-                    className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'PAYMENTS' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
-                >
-                    Payments & Payroll
-                </button>
+              <button
+                onClick={() => setActiveTab('ATTENDANCE')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'ATTENDANCE' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+              >
+                Attendance Calendar
+              </button>
+              <button
+                onClick={() => setActiveTab('PAYMENTS')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'PAYMENTS' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+              >
+                Payments & Payroll
+              </button>
             </div>
 
             {activeTab === 'ATTENDANCE' && (
-                <div className="flex-1 min-w-0">
-                    <Card className="p-4 h-full flex flex-col relative overflow-hidden">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
-                                <CalendarIcon size={16} /> Attendance Log
-                            </h3>
-                            <button
-                                onClick={toggleSelectionMode}
-                                className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
-                            >
-                                {isSelectionMode ? <CheckSquare size={14} /> : <ListChecks size={14} />}
-                                {isSelectionMode ? 'Done' : 'Select'}
-                            </button>
-                        </div>
-                        <div className="flex-1 overflow-auto">
-                            {renderCalendar()}
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                            {isSelectionMode ? (
-                                <div className="flex gap-1 animate-in slide-in-from-bottom-2">
-                                    <button onClick={() => handleBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
-                                    <button onClick={() => handleBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
-                                    <button onClick={() => handleBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
-                                    <button onClick={() => handleBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
-                                    <button onClick={() => handleBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
-                                </div>
-                            ) : (
-                                <div className="flex justify-center gap-3 text-[10px] text-slate-500 dark:text-slate-400">
-                                    <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 rounded" /> Present</div>
-                                    <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-amber-100 dark:bg-amber-900/60 border border-amber-200 dark:border-amber-700 rounded" /> Half</div>
-                                    <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-rose-50 dark:bg-rose-900/60 border border-rose-200 dark:border-rose-700 rounded" /> Absent</div>
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 bg-amber-500 rounded-full" /> Adv Taken</div>
-                                </div>
-                            )}
-                        </div>
-                    </Card>
-                </div>
+              <div className="flex-1 min-w-0">
+                <Card className="p-4 h-full flex flex-col relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
+                      <CalendarIcon size={16} /> Attendance Log
+                    </h3>
+                    <button
+                      onClick={toggleSelectionMode}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                    >
+                      {isSelectionMode ? <CheckSquare size={14} /> : <ListChecks size={14} />}
+                      {isSelectionMode ? 'Done' : 'Select'}
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-auto">
+                    {renderCalendar()}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    {isSelectionMode ? (
+                      <div className="flex gap-1 animate-in slide-in-from-bottom-2">
+                        <button onClick={() => handleBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
+                        <button onClick={() => handleBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
+                        <button onClick={() => handleBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
+                        <button onClick={() => handleBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
+                        <button onClick={() => handleBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
+                      </div>
+                    ) : (
+                      <div className="flex justify-center gap-3 text-[10px] text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 rounded" /> Present</div>
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-amber-100 dark:bg-amber-900/60 border border-amber-200 dark:border-amber-700 rounded" /> Half</div>
+                        <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-rose-50 dark:bg-rose-900/60 border border-rose-200 dark:border-rose-700 rounded" /> Absent</div>
+                        <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 bg-amber-500 rounded-full" /> Adv Taken</div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </div>
             )}
 
             {activeTab === 'PAYMENTS' && (
-                <div className="flex-1 min-w-0">
-                    <Card className="flex-1 flex flex-col overflow-hidden h-full bg-slate-50/50 dark:bg-slate-900/30">
-                        <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                            <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
-                                <Wallet size={16} /> Transaction History
-                            </h3>
-                        </div>
+              <div className="flex-1 min-w-0">
+                <Card className="flex-1 flex flex-col overflow-hidden h-full bg-slate-50/50 dark:bg-slate-900/30">
+                  <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
+                      <Wallet size={16} /> Transaction History
+                    </h3>
+                  </div>
 
-                        <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
-                            {payments.filter(p => p.employeeId === selectedLaborer.id).length === 0 && (
-                                <p className="text-center text-slate-400 text-xs py-8 italic">No payment history found.</p>
-                            )}
-                            {payments
-                                .filter(p => p.employeeId === selectedLaborer.id)
-                                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                                .map(p => (
-                                    <div key={p.id} className="bg-white dark:bg-slate-800 p-3 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`text-[10px] font-bold px-1.5 rounded ${p.type === 'SALARY' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'}`}>
-                                                    {p.type}
-                                                </span>
-                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatCurrency(p.amount)}</span>
-                                            </div>
-                                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                                {new Date(p.date).toLocaleDateString()} {p.note && `• ${p.note}`}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))
-                            }
+                  <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                    {payments.filter(p => p.employeeId === selectedLaborer.id).length === 0 && (
+                      <p className="text-center text-slate-400 text-xs py-8 italic">No payment history found.</p>
+                    )}
+                    {payments
+                      .filter(p => p.employeeId === selectedLaborer.id)
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map(p => (
+                        <div key={p.id} className="bg-white dark:bg-slate-800 p-3 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[10px] font-bold px-1.5 rounded ${p.type === 'SALARY' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'}`}>
+                                {p.type}
+                              </span>
+                              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatCurrency(p.amount)}</span>
+                            </div>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                              {new Date(p.date).toLocaleDateString()} {p.note && `• ${p.note}`}
+                            </p>
+                          </div>
                         </div>
+                      ))
+                    }
+                  </div>
 
-                        {/* Add Payment Form */}
-                        <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
-                            <div className="grid grid-cols-2 gap-2 mb-2">
-                                <div className="flex bg-slate-100 dark:bg-slate-900 rounded p-0.5">
-                                    <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-amber-600 dark:text-amber-400' : 'text-slate-500'}`}>Advance</button>
-                                    <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>Salary</button>
-                                </div>
-                                <input 
-                                    type="text" 
-                                    placeholder="Note (Optional)"
-                                    value={paymentNote}
-                                    onChange={e => setPaymentNote(e.target.value)}
-                                    className="w-full px-2 py-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded text-xs outline-none"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="relative flex-1">
-                                    <IndianRupee className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
-                                    <input
-                                        type="number"
-                                        value={paymentAmount}
-                                        onChange={(e) => setPaymentAmount(e.target.value)}
-                                        placeholder="Amount"
-                                        className="w-full pl-7 pr-2 py-1.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white rounded text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleAddPayment}
-                                    disabled={!paymentAmount}
-                                    className="bg-slate-800 dark:bg-slate-700 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
-                                >
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
+                  {/* Add Payment Form */}
+                  <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div className="flex bg-slate-100 dark:bg-slate-900 rounded p-0.5">
+                        <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-amber-600 dark:text-amber-400' : 'text-slate-500'}`}>Advance</button>
+                        <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>Salary</button>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Note (Optional)"
+                        value={paymentNote}
+                        onChange={e => setPaymentNote(e.target.value)}
+                        className="w-full px-2 py-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded text-xs outline-none"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <IndianRupee className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
+                        <input
+                          type="number"
+                          value={paymentAmount}
+                          onChange={(e) => setPaymentAmount(e.target.value)}
+                          placeholder="Amount"
+                          className="w-full pl-7 pr-2 py-1.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white rounded text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <button
+                        onClick={handleAddPayment}
+                        disabled={!paymentAmount}
+                        className="bg-slate-800 dark:bg-slate-700 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             )}
           </>
         ) : (

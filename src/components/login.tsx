@@ -1,118 +1,124 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, RootState } from '../../store';
-import { Box, TrendingUp, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
+import { RootState, setUser } from '../store';
+import { Store, Lock, ArrowRight, AlertCircle, UserCircle } from 'lucide-react';
 
-const Login: React.FC = () => {
-  const dispatch = useDispatch();
-  const { appName, logoUrl } = useSelector((state: RootState) => state.settings);
-  const [pin, setPin] = React.useState('');
+interface LoginProps {
+    onLogin: () => void;
+    tenantName: string;
+}
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pin === '0000') {
-       dispatch(login({ user: 'Owner', role: 'Owner' }));
-    } else if (pin === '1111') {
-       dispatch(login({ user: 'Staff', role: 'Staff' }));
-    } else {
-       setPin('');
-       alert('Invalid PIN');
+const Login: React.FC<LoginProps> = ({ onLogin, tenantName }) => {
+    const dispatch = useDispatch();
+    const { employees } = useSelector((state: RootState) => state.labor);
+
+    const [selectedUserId, setSelectedUserId] = useState<string>('');
+    const [pin, setPin] = useState('');
+    const [error, setError] = useState('');
+
+    const sortedEmployees = useMemo(() => {
+        // Sort by role priority (Owner -> Manager -> Staff) then name
+        const roleOrder = { 'Owner': 0, 'Manager': 1, 'Staff': 2 };
+        return [...employees].sort((a, b) => {
+            const roleDiff = (roleOrder[a.systemRole] || 2) - (roleOrder[b.systemRole] || 2);
+            if (roleDiff !== 0) return roleDiff;
+            return a.name.localeCompare(b.name);
+        });
+    }, [employees]);
+
+    // Default selection
+    if (!selectedUserId && sortedEmployees.length > 0) {
+        setSelectedUserId(sortedEmployees[0].id);
     }
-  };
 
-  return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 lg:p-0 relative overflow-hidden">
-        {/* Abstract Background Elements */}
-        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
 
-        <div className="max-w-5xl w-full bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col lg:flex-row h-auto lg:h-[650px] relative z-10">
-          
-          {/* Left Side: Visuals */}
-          <div className="lg:w-1/2 relative bg-slate-800 hidden lg:flex flex-col">
-            <div className="absolute inset-0">
-                <img 
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop" 
-                    alt="Analytics Dashboard" 
-                    className="w-full h-full object-cover opacity-60 mix-blend-overlay"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/60 to-slate-900"></div>
-            </div>
-            
-            <div className="relative z-10 p-12 mt-auto">
-                <div className="flex items-center gap-3 mb-6">
-                    {logoUrl ? (
-                        <img src={logoUrl} alt="Logo" className="w-12 h-12 object-contain bg-white rounded-xl p-1" />
-                    ) : (
-                        <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                            <Box className="w-7 h-7 text-white" />
+        const user = employees.find(e => e.id === selectedUserId);
+
+        if (!user) {
+            setError("Please select a valid user.");
+            return;
+        }
+
+        if (pin === user.pin) {
+            dispatch(setUser(user));
+            onLogin();
+        } else {
+            setError("Invalid PIN.");
+            setPin('');
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/20">
+                        <Store className="w-8 h-8 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-1">{tenantName}</h2>
+                    <p className="text-slate-500 text-sm">Role-Based Secure Access</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Select User</label>
+                        <div className="relative">
+                            <UserCircle className="w-5 h-5 text-slate-400 absolute left-3 top-3.5" />
+                            <select
+                                value={selectedUserId}
+                                onChange={(e) => setSelectedUserId(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-600 appearance-none text-slate-800 font-medium"
+                            >
+                                {sortedEmployees.map(emp => (
+                                    <option key={emp.id} value={emp.id}>
+                                        {emp.name} ({emp.systemRole})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Enter PIN</label>
+                        <div className="relative">
+                            <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-3" />
+                            <input
+                                type="password"
+                                value={pin}
+                                onChange={(e) => setPin(e.target.value)}
+                                placeholder="****"
+                                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-600 font-mono text-center text-lg tracking-widest text-slate-800"
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+
+                    {error && (
+                        <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg animate-in slide-in-from-top-1">
+                            <AlertCircle className="w-4 h-4" /> {error}
                         </div>
                     )}
-                    <span className="text-3xl font-bold text-white tracking-tight">{appName}</span>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-4 leading-tight">Manage your business with intelligent insights.</h2>
-                <div className="flex gap-4 mt-8">
-                    <div className="flex items-center gap-2 text-slate-300 text-sm">
-                        <div className="p-1 bg-emerald-500/20 rounded-full"><TrendingUp size={14} className="text-emerald-400" /></div>
-                        <span>Real-time Analytics</span>
+
+                    <button type="submit" className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-lg">
+                        Authenticate Access <ArrowRight className="w-4 h-4" />
+                    </button>
+                </form>
+
+                <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                    <p className="text-xs text-slate-400 mb-2">Testing Credentials (Auto-detected):</p>
+                    <div className="inline-block bg-slate-100 px-3 py-1 rounded-lg">
+                        <span className="text-xs text-slate-500 font-mono">
+                            Current User PIN: <strong className="text-slate-900">{employees.find(e => e.id === selectedUserId)?.pin || '----'}</strong>
+                        </span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-300 text-sm">
-                        <div className="p-1 bg-indigo-500/20 rounded-full"><ShieldCheck size={14} className="text-indigo-400" /></div>
-                        <span>Secure Access</span>
-                    </div>
                 </div>
             </div>
-          </div>
-
-          {/* Right Side: Form */}
-          <div className="lg:w-1/2 p-8 lg:p-16 flex flex-col justify-center bg-slate-900 relative">
-            <div className="mb-10 text-center lg:text-left">
-                <div className="lg:hidden flex items-center justify-center gap-2 mb-6 text-white font-bold text-xl">
-                    <Box className="w-6 h-6 text-indigo-500" /> {appName}
-                </div>
-                <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-                <p className="text-slate-400 text-sm">Enter your secure PIN to access the terminal.</p>
-            </div>
-
-            <form onSubmit={handleLogin} className="space-y-8 max-w-sm mx-auto lg:mx-0 w-full">
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                        <Lock size={12} /> Security PIN
-                    </label>
-                    <input 
-                        type="password" 
-                        maxLength={4} 
-                        value={pin} 
-                        autoFocus 
-                        onChange={(e) => setPin(e.target.value)} 
-                        placeholder="••••" 
-                        className="w-full bg-slate-800/50 border border-slate-700 focus:border-indigo-500 rounded-xl py-4 px-6 text-center text-4xl font-black text-white tracking-[0.5em] focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-700" 
-                    />
-                </div>
-                <button 
-                    type="submit" 
-                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 group"
-                >
-                    Unlock Terminal
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-            </form>
-
-            <div className="mt-12 pt-6 border-t border-slate-800 flex justify-between text-[10px] font-medium text-slate-500 uppercase px-2">
-                <div>
-                    <span className="block text-slate-600 mb-1">Owner Access</span>
-                    <span className="bg-slate-800 px-2 py-1 rounded text-slate-300 font-mono tracking-wider">0000</span>
-                </div>
-                <div className="text-right">
-                    <span className="block text-slate-600 mb-1">Staff Access</span>
-                    <span className="bg-slate-800 px-2 py-1 rounded text-slate-300 font-mono tracking-wider">1111</span>
-                </div>
-            </div>
-          </div>
         </div>
-      </div>
-  );
+    );
 };
 
 export default Login;

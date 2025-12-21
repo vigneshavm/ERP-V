@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../store';
 import { DollarSign, Package, TrendingUp, AlertTriangle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -11,11 +11,11 @@ const Dashboard: React.FC = () => {
   const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
 
   // Filtered Data based on Sector and Branch
-  const sectorTransactions = transactions.filter(t => 
+  const sectorTransactions = transactions.filter(t =>
     t.sector === currentSector && (currentBranch === 'All' || t.branch === currentBranch)
   );
-  
-  const sectorProducts = products.filter(p => 
+
+  const sectorProducts = products.filter(p =>
     p.sector === currentSector && (currentBranch === 'All' || p.branch === currentBranch)
   );
 
@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
     .reduce((acc, curr) => acc + curr.amount, 0);
 
   const totalStockValue = sectorProducts.reduce((acc, curr) => acc + (curr.cost * curr.stock), 0);
-  
+
   const lowStockItems = sectorProducts.filter(p => p.stock < 10);
 
   // Chart Data: Last 7 days revenue
@@ -35,11 +35,11 @@ const Dashboard: React.FC = () => {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
-      
+
       const dayRev = sectorTransactions
         .filter(t => t.type === 'INCOME' && t.date.startsWith(dateStr))
         .reduce((acc, curr) => acc + curr.amount, 0);
-        
+
       data.push({ name: dateStr.substr(5), revenue: dayRev });
     }
     return data;
@@ -62,37 +62,37 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
-        Dashboard 
+        Dashboard
         <span className="text-lg font-normal text-slate-500 border-l border-slate-300 dark:border-slate-700 pl-3">
-            {currentSector} / {currentBranch === 'All' ? 'All Branches' : currentBranch}
+          {currentSector} / {currentBranch === 'All' ? 'All Branches' : currentBranch}
         </span>
       </h2>
-      
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Total Revenue" 
-          value={`₹${totalRevenue.toLocaleString()}`} 
-          icon={TrendingUp} 
-          color="bg-emerald-500" 
+        <StatCard
+          title="Total Revenue"
+          value={`₹${totalRevenue.toLocaleString()}`}
+          icon={TrendingUp}
+          color="bg-emerald-500"
         />
-        <StatCard 
-          title="Stock Value" 
-          value={`₹${totalStockValue.toLocaleString()}`} 
-          icon={Package} 
-          color="bg-indigo-500" 
+        <StatCard
+          title="Stock Value"
+          value={`₹${totalStockValue.toLocaleString()}`}
+          icon={Package}
+          color="bg-indigo-500"
         />
-        <StatCard 
-          title="Net Profit" 
-          value={`₹${(totalRevenue - (totalStockValue * 0.5)).toLocaleString()}`} 
-          icon={DollarSign} 
-          color="bg-purple-500" 
+        <StatCard
+          title="Net Profit"
+          value={`₹${(totalRevenue - (totalStockValue * 0.5)).toLocaleString()}`}
+          icon={DollarSign}
+          color="bg-purple-500"
         />
-        <StatCard 
-          title="Low Stock Items" 
-          value={lowStockItems.length} 
-          icon={AlertTriangle} 
-          color="bg-red-500" 
+        <StatCard
+          title="Low Stock Items"
+          value={lowStockItems.length}
+          icon={AlertTriangle}
+          color="bg-red-500"
         />
       </div>
 
@@ -106,11 +106,11 @@ const Dashboard: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#334155" : "#e2e8f0"} />
                 <XAxis dataKey="name" stroke={theme === 'dark' ? "#94a3b8" : "#64748b"} />
                 <YAxis stroke={theme === 'dark' ? "#94a3b8" : "#64748b"} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff', 
-                    borderColor: theme === 'dark' ? '#334155' : '#cbd5e1', 
-                    color: theme === 'dark' ? '#f1f5f9' : '#1e293b' 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+                    borderColor: theme === 'dark' ? '#334155' : '#cbd5e1',
+                    color: theme === 'dark' ? '#f1f5f9' : '#1e293b'
                   }}
                   itemStyle={{ color: theme === 'dark' ? '#f1f5f9' : '#1e293b' }}
                   formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
@@ -126,7 +126,7 @@ const Dashboard: React.FC = () => {
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Low Stock Alerts</h3>
           <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
             {lowStockItems.length === 0 ? (
-                <p className="text-slate-500 italic">No inventory alerts.</p>
+              <p className="text-slate-500 italic">No inventory alerts.</p>
             ) : lowStockItems.map(item => (
               <div key={item.id} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-red-500/20">
                 <div>
@@ -146,4 +146,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-    

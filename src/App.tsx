@@ -1,9 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, LogIn, Lock, Ban } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSector, setBranch, toggleTheme, logout } from '../store';
-import { LayoutDashboard, ShoppingCart, Archive, DollarSign, Users, FileText, Settings, Layers, Box, MapPin, ChevronDown, History, Moon, Sun, PieChart, Wallet, LogOut, ShieldAlert, ShoppingBag } from 'lucide-react';
-
+import { RootState, setUser } from './store';
 import Dashboard from './components/Dashboard';
 import POSModule from './components/POSModule';
 import InventoryManager from './components/InventoryManager';
@@ -15,286 +14,337 @@ import DailyFinanceTracker from './components/DailyFinanceTracker';
 import Storefront from './components/Storefront';
 import SettingsManager from './components/SettingsManager';
 import Login from './components/login';
-import { Sector, Branch, AppView } from '../types';
-import { hasAccess } from '../config';
+import TenantManager from './components/TenantManager';
+import { ConfigProvider } from './components/ConfigProvider';
+import { Tenant, AppView } from './types';
 
-// Helper to convert hex to rgb values string
-const hexToRgb = (hex: string) => {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` : '79 70 229';
-};
-
-// Generate shade logic (simplified approximation for runtime)
-const generateShades = (hex: string) => {
-    // In a real app we'd use color manipulation lib, here we just set the primary color for all shades
-    // This effectively makes the "indigo" palette become the brand palette.
-    // A better approach would be proper HSL manipulation but for this demo keeping it simple or relying on the main shade
-    const base = hexToRgb(hex);
-    return {
-        50: base, 100: base, 200: base, 300: base, 
-        400: base, 500: base, 600: base, 700: base, 
-        800: base, 900: base, 950: base
-    };
-};
-
-const Header: React.FC = () => {
-    const dispatch = useDispatch();
-    const { currentSector, currentBranch, theme, user, role } = useSelector((state: RootState) => state.auth);
-    const { appName } = useSelector((state: RootState) => state.settings);
-    
-    const sectors: Sector[] = ['Supermarket', 'Textile', 'Mobile Shop'];
-    const branches: Branch[] = ['All', 'Alpha', 'Beta', 'Gamma'];
-
-    return (
-        <header className="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md flex items-center justify-between px-8 z-10 sticky top-0 shadow-sm transition-colors duration-300">
-            <div className="md:hidden font-bold text-xl flex items-center gap-2 text-slate-900 dark:text-white">
-                 <Box className="w-6 h-6 text-indigo-500" />
-                 <span>{appName}</span>
-            </div>
-
-            <div className="hidden md:flex flex-col">
-                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">Overview</h2>
-                <p className="text-xs text-slate-500 font-medium">{currentSector} &bull; {currentBranch === 'All' ? 'All Branches' : `Branch ${currentBranch}`}</p>
-            </div>
-
-            <div className="flex items-center gap-4 ml-auto">
-                {/* Sector Selector */}
-                <div className="relative group">
-                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-700 cursor-pointer">
-                        <Layers className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-                        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{currentSector}</span>
-                        <ChevronDown className="w-3 h-3 text-slate-500" />
-                        <select 
-                            value={currentSector} 
-                            onChange={(e) => dispatch(setSector(e.target.value as Sector))}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        >
-                            {sectors.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                    </div>
-                </div>
-
-                {/* Branch Selector */}
-                <div className="relative group">
-                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-700 cursor-pointer">
-                        <MapPin className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-                        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{currentBranch}</span>
-                        <ChevronDown className="w-3 h-3 text-slate-500" />
-                        <select 
-                            value={currentBranch} 
-                            onChange={(e) => dispatch(setBranch(e.target.value as Branch))}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        >
-                            {branches.map(b => <option key={b} value={b}>{b}</option>)}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-
-                <div className="text-right hidden lg:block">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">{user}</p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{role}</p>
-                </div>
-
-                {/* Theme Toggle */}
-                <button 
-                    onClick={() => dispatch(toggleTheme())}
-                    className="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-yellow-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-
-                <button 
-                    onClick={() => dispatch(logout())}
-                    className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                    title="Logout"
-                >
-                    <LogOut className="w-5 h-5" />
-                </button>
-            </div>
-        </header>
-    );
-}
-
-const Unauthorized: React.FC = () => (
-    <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-        <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-full mb-4">
-            <ShieldAlert className="w-12 h-12 text-red-500" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">Access Denied</h2>
-        <p className="text-sm">You do not have permission to view this module.</p>
-    </div>
-);
+type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
 const App: React.FC = () => {
-  const { theme, isAuthenticated, role } = useSelector((state: RootState) => state.auth);
-  const settings = useSelector((state: RootState) => state.settings);
-  const [currentView, setCurrentView] = useState<AppView>('pos');
+    const dispatch = useDispatch();
+    const { user, role } = useSelector((state: RootState) => state.auth);
+    const { rolePermissions } = useSelector((state: RootState) => state.settings);
 
-  // --- Dynamic Theming ---
-  useEffect(() => {
-    // 1. Dark Mode
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
+    const [viewMode, setViewMode] = useState<ViewMode>('LANDING');
+    const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
 
-    // 2. Brand Color Injection
-    // We override the CSS variables that Tailwind is configured to use for 'indigo'
-    const root = document.documentElement;
-    const primaryRgb = hexToRgb(settings.primaryColor);
-    
-    // We update all shades to the primary color to ensure consistency for this simple implementation
-    // Ideally we would calculate lighter/darker shades
-    root.style.setProperty('--color-brand-50', primaryRgb);
-    root.style.setProperty('--color-brand-100', primaryRgb); // Keep light shades logic if needed, but for now flat color
-    root.style.setProperty('--color-brand-500', primaryRgb);
-    root.style.setProperty('--color-brand-600', primaryRgb);
-    root.style.setProperty('--color-brand-700', primaryRgb);
-    
-    // To make it look decent, we should actually compute a light shade for backgrounds (50/100)
-    // Simple logic: if primary is dark, make light really light.
-    // For now, let's just let opacity handle the lightness in tailwind (bg-indigo-600/10)
-    
-  }, [theme, settings.primaryColor]);
+    // --- Tenant specific state ---
+    const [activeTab, setActiveTab] = useState<AppView>('DASHBOARD');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Security Check
-  useEffect(() => {
-      if (isAuthenticated && role) {
-          if (!hasAccess(role, currentView)) {
-              if (currentView !== 'storefront' && currentView !== 'settings') setCurrentView('pos');
-          }
-      }
-  }, [role, isAuthenticated]);
+    // --- Permission Helper ---
+    const checkAccess = (view: AppView): boolean => {
+        // 1. Check if user is logged in
+        if (!user) return false;
+        // 2. Owner has all permissions
+        if (role === 'Owner') return true;
+        // 3. Check specific role permissions
+        const allowedViews = rolePermissions[role] || [];
+        return allowedViews.includes(view);
+    };
 
-  const NavItem = ({ view, icon: Icon, label }: { view: AppView, icon: any, label: string }) => {
-    // 1. Check if module is enabled in Settings
-    if (!settings.enabledModules[view as keyof typeof settings.enabledModules] && view !== 'dashboard' && view !== 'settings') {
-        return null;
-    }
+    // --- Views ---
 
-    const isActive = currentView === view;
-    const isAllowed = (view === 'storefront' || view === 'settings') ? true : hasAccess(role, view);
+    const LandingPage = () => (
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+            <div className="max-w-4xl w-full text-center mb-12">
+                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-600/20">
+                    <span className="font-bold text-3xl text-white">E</span>
+                </div>
+                <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Enterprise Manager</h1>
+                <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+                    The all-in-one ERP & POS platform for modern retail chains.
+                    Manage inventory, sales, finance, and workforce from a single dashboard.
+                </p>
+            </div>
 
-    // Hide settings for non-owners
-    if (view === 'settings' && role !== 'Owner') return null;
+            <div className="grid md:grid-cols-2 gap-8 max-w-3xl w-full">
+                <button
+                    onClick={() => setViewMode('ADMIN')}
+                    className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-blue-600 hover:shadow-xl transition-all duration-300 text-left"
+                >
+                    <div className="absolute top-6 right-6 text-slate-300 group-hover:text-blue-600 transition-colors">
+                        <ArrowRight className="w-6 h-6" />
+                    </div>
+                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                        <Shield className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Super Admin</h2>
+                    <p className="text-slate-500">Provision new tenants, manage subscriptions, and oversee platform health.</p>
+                </button>
 
-    if (!isAllowed) return null;
+                <button
+                    onClick={() => {
+                        // Setup demo tenant
+                        setCurrentTenant({
+                            id: 'demo',
+                            name: 'Demo Retail Co',
+                            subdomain: 'demo',
+                            modules: ['POS', 'INVENTORY', 'FINANCE', 'HR'],
+                            isActive: true,
+                            region: { currency: 'USD', currencySymbol: '$', dateFormat: 'MM/DD/YYYY' }
+                        });
+                        setViewMode('TENANT');
+                        setIsLoggedIn(false); // Force login
+                    }}
+                    className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-emerald-600 hover:shadow-xl transition-all duration-300 text-left"
+                >
+                    <div className="absolute top-6 right-6 text-slate-300 group-hover:text-emerald-600 transition-colors">
+                        <ArrowRight className="w-6 h-6" />
+                    </div>
+                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
+                        <Store className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Tenant Login</h2>
+                    <p className="text-slate-500">Access your store's POS, Inventory, and Financial dashboards.</p>
+                </button>
+            </div>
 
-    return (
-        <button 
-            onClick={() => setCurrentView(view)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                isActive 
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-        >
-            <Icon className="w-5 h-5" />
-            <span className="font-medium">{label}</span>
-        </button>
+            <p className="mt-12 text-sm text-slate-400">© 2024 Enterprise Manager Platform. All rights reserved.</p>
+        </div>
     );
-  };
 
-  const renderContent = () => {
-    // Allow settings/storefront without role check
-    if (currentView !== 'storefront' && currentView !== 'settings' && !hasAccess(role, currentView)) {
-        return <Unauthorized />;
-    }
-
-    switch (currentView) {
-        case 'dashboard': return <Dashboard />;
-        case 'pos': return <POSModule />;
-        case 'sales': return <SalesHistory />;
-        case 'daily': return <DailyFinanceTracker />;
-        case 'inventory': return <InventoryManager />;
-        case 'purchases': return <PurchaseManager />;
-        case 'finance': return <FinanceTracker />;
-        case 'labor': return <LaborManager />;
-        case 'storefront': return <Storefront />;
-        case 'settings': return <SettingsManager />;
-        default: return <Dashboard />;
-    }
-  };
-
-  if (!isAuthenticated) {
-      return (
-          <div className={theme === 'dark' ? 'dark' : ''}>
-              <Login />
-          </div>
-      );
-  }
-
-  return (
-      <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-500/30 transition-colors duration-300">
-        
-        {/* Sidebar */}
-        <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col hidden md:flex z-20 transition-colors duration-300">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
-                {settings.logoUrl ? (
-                    <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-lg" />
-                ) : (
-                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                        <Box className="w-5 h-5 text-white" />
+    const AdminView = () => (
+        <div className="min-h-screen bg-slate-100 flex flex-col">
+            <header className="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold">A</div>
+                        <span className="font-bold text-lg">Super Admin Portal</span>
                     </div>
-                )}
-                <div>
-                    <h1 className="font-bold text-lg tracking-tight text-slate-900 dark:text-white truncate max-w-[140px]">{settings.appName}</h1>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">ERP & POS</p>
+                    <button
+                        onClick={() => setViewMode('LANDING')}
+                        className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                    </button>
                 </div>
-            </div>
+            </header>
+            <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+                <div className="max-w-7xl mx-auto">
+                    <TenantManager onLoginAs={(tenant) => {
+                        setCurrentTenant(tenant);
+                        setViewMode('TENANT');
+                        setIsLoggedIn(false);
+                    }} />
+                </div>
+            </main>
+        </div>
+    );
 
-            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                <div className="mb-6">
-                    <p className="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Operations</p>
-                    <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
-                    <NavItem view="pos" icon={ShoppingCart} label="Point of Sale" />
-                    <NavItem view="sales" icon={History} label="Sales History" />
-                    <NavItem view="daily" icon={PieChart} label="Daily Tracker" />
-                    <NavItem view="storefront" icon={ShoppingBag} label="Web Storefront" />
-                </div>
-                
-                <div className="mb-6">
-                    <p className="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Management</p>
-                    <NavItem view="inventory" icon={Archive} label="Inventory" />
-                    <NavItem view="purchases" icon={FileText} label="Restock & AI" />
-                    <NavItem view="finance" icon={DollarSign} label="Finance" />
-                    <NavItem view="labor" icon={Users} label="Staff & Payroll" />
-                </div>
+    const TenantView = () => {
+        // Confirmation State
+        const [confirmDialog, setConfirmDialog] = useState<{
+            isOpen: boolean;
+            title: string;
+            message: string;
+            onConfirm: () => void;
+        }>({ isOpen: false, title: '', message: '', onConfirm: () => { } });
 
-                {role === 'Owner' && (
-                    <div className="mb-6">
-                        <p className="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">System</p>
-                        <NavItem view="settings" icon={Settings} label="Configuration" />
+        const requestConfirm = (title: string, message: string, onConfirm: () => void) => {
+            setConfirmDialog({ isOpen: true, title, message, onConfirm });
+        };
+
+        const handleConfirm = () => {
+            confirmDialog.onConfirm();
+            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        };
+
+        // 1. Check Login
+        if (!isLoggedIn) {
+            return (
+                <ConfigProvider tenant={currentTenant}>
+                    <Login
+                        tenantName={currentTenant?.name || 'Retail Store'}
+                        onLogin={() => setIsLoggedIn(true)}
+                    />
+                </ConfigProvider>
+            );
+        }
+
+        // 2. Navigation Item Component
+        const NavItem = ({ id, icon: Icon, label }: { id: AppView; icon: any; label: string }) => {
+            // Hide if no access
+            if (!checkAccess(id)) return null;
+
+            return (
+                <button
+                    onClick={() => {
+                        setActiveTab(id);
+                        setSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${activeTab === id
+                            ? 'bg-blue-600 text-white shadow-md'
+                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                        }`}
+                >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{label}</span>
+                </button>
+            );
+        };
+
+        // 3. Render Content (with Permission Check)
+        const renderContent = () => {
+            if (!checkAccess(activeTab)) {
+                // Access Denied View
+                return (
+                    <div className="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
+                        <Ban className="w-16 h-16 mb-4 text-red-400 opacity-80" />
+                        <h2 className="text-2xl font-bold text-slate-600 dark:text-slate-300">Access Denied</h2>
+                        <p className="mt-2 text-sm">You do not have permission to view the {activeTab} module.</p>
+                        <p className="text-xs mt-1">Role: {role}</p>
                     </div>
-                )}
-            </nav>
+                );
+            }
 
-            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
-                <div className="flex items-center gap-3 px-2 py-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border border-slate-300 dark:border-slate-600 flex items-center justify-center text-white font-bold text-xs">
-                        {role[0]}
+            switch (activeTab) {
+                case 'DASHBOARD': return <Dashboard />;
+                case 'POS': return <POSModule />;
+                case 'INVENTORY': return <InventoryManager />;
+                case 'PURCHASE': return <PurchaseManager />;
+                case 'FINANCE': return <FinanceTracker />;
+                case 'SALES': return <SalesHistory />;
+                case 'DAILY': return <DailyFinanceTracker />;
+                case 'LABOR': return <LaborManager />;
+                case 'STOREFRONT': return <Storefront />;
+                case 'SETTINGS': return <SettingsManager />;
+                default: return <Dashboard />;
+            }
+        };
+
+        return (
+            <ConfigProvider tenant={currentTenant}>
+                <div className="flex h-screen bg-slate-50 overflow-hidden">
+                    {/* Mobile Sidebar Toggle */}
+                    <div className="lg:hidden fixed top-0 left-0 w-full bg-slate-900 text-white p-4 z-50 flex justify-between items-center">
+                        <span className="font-bold text-lg">{currentTenant?.name || 'Ent. Manager'}</span>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => {
+                                    requestConfirm("Logout?", "Are you sure you want to log out?", () => setIsLoggedIn(false));
+                                }}
+                                className="text-slate-400 hover:text-white"
+                            >
+                                <LogOut className="w-5 h-5" />
+                            </button>
+                            <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+                                {sidebarOpen ? <X /> : <Menu />}
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">{role === 'Owner' ? 'Administrator' : 'Staff Member'}</p>
-                        <p className="text-xs text-slate-500">{role}</p>
-                    </div>
+
+                    {/* Sidebar */}
+                    <aside className={`
+            fixed lg:static inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-100 p-4 flex flex-col transition-transform duration-300 transform 
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          `}>
+                        <div className="flex items-center space-x-2 px-4 mb-2 mt-2 lg:mt-0">
+                            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                <span className="font-bold text-white">{user?.name.charAt(0) || 'T'}</span>
+                            </div>
+                            <div className="overflow-hidden">
+                                <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
+                                <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">{role}</span>
+                            </div>
+                        </div>
+
+                        <div className="mb-6 px-4">
+                            <span className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">{currentTenant?.name}</span>
+                        </div>
+
+                        <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
+                            <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
+                            <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
+                            <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
+                            <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
+                            <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
+                            <NavItem id="SALES" icon={List} label="Sales History" />
+                            <NavItem id="DAILY" icon={LogOut} label="Daily Tracker" />
+                            <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
+                            <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
+                            <div className="pt-4 mt-4 border-t border-slate-800">
+                                <NavItem id="SETTINGS" icon={Settings} label="Settings" />
+                            </div>
+                        </nav>
+
+                        <div className="pt-4 border-t border-slate-800 mt-2 space-y-2">
+                            <button
+                                onClick={() => {
+                                    requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => setIsLoggedIn(false));
+                                }}
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                            >
+                                <Lock className="w-5 h-5" />
+                                <span className="font-medium">Staff Logout</span>
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    requestConfirm('Switch Company', 'Switch company? This will end your session.', () => {
+                                        setViewMode('LANDING');
+                                        setCurrentTenant(null);
+                                        setIsLoggedIn(false);
+                                    });
+                                }}
+                                className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-800 hover:text-red-400 transition-colors text-sm"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                <span className="font-medium">Switch Company</span>
+                            </button>
+                        </div>
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="flex-1 overflow-hidden w-full pt-16 lg:pt-0 bg-slate-50 dark:bg-slate-900 relative">
+                        <div className="h-full w-full overflow-y-auto p-4 lg:p-6 custom-scrollbar">
+                            {renderContent()}
+                        </div>
+                    </main>
+
+                    {/* Overlay for mobile sidebar */}
+                    {sidebarOpen && (
+                        <div
+                            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                            onClick={() => setSidebarOpen(false)}
+                        />
+                    )}
+
+                    {/* Confirmation Modal */}
+                    {confirmDialog.isOpen && (
+                        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
+                                <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
+                                <div className="flex gap-3 justify-end">
+                                    <button
+                                        onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                                        className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleConfirm}
+                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
+                                    >
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </div>
-        </aside>
+            </ConfigProvider>
+        );
+    };
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
-            <Header />
-            {/* Scrollable Page Content */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 relative">
-                {renderContent()}
-            </div>
-        </main>
-      </div>
-  );
+    // --- Main Render ---
+
+    if (viewMode === 'ADMIN') return <AdminView />;
+    if (viewMode === 'TENANT') return <TenantView />;
+    return <LandingPage />;
 };
 
 export default App;
