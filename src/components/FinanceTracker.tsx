@@ -90,7 +90,7 @@ const FinanceTracker: React.FC = () => {
             date: new Date().toISOString(),
             description: newExpense.description,
             sector: currentSector,
-            branchId: currentBranch === 'All' ? MOCK_BRANCHES.find(b => b.sector === currentSector)?.name || 'Main' : currentBranch
+            branchId: currentBranch === 'All' ? MOCK_BRANCHES.find(b => b.sector === currentSector)?.id || 'Main' : currentBranch
         }));
         setShowExpenseModal(false);
         setNewExpense({ category: '', amount: '', description: '' });

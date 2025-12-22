@@ -8,6 +8,14 @@ export interface SettingsState {
     enabledModules: Record<string, boolean>;
     rolePermissions: Record<SystemRole, AppView[]>;
     defaultTaxMode: TaxMode;
+    expiryRules?: {
+        criticalDays: number;
+        criticalDiscount: number;
+        highDays: number;
+        highDiscount: number;
+        mediumDays: number;
+        mediumDiscount: number;
+    };
 }
 
 export interface AppSettings {

@@ -9,6 +9,12 @@ const subDays = (days: number) => {
     return d.toISOString();
 };
 
+const addDays = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toISOString();
+};
+
 // --- Tenants Mock (Moved Up) ---
 export const MOCK_TENANTS: Tenant[] = [
     {
@@ -78,7 +84,7 @@ export const MOCK_TENANTS: Tenant[] = [
 export const MOCK_DATABASE: MockDatabase = {
     '1': { // Big Bazaar
         products: [
-            { id: 'bb-01', sku: 'BB-STAT-NB', name: 'Classmate Notebook A4', category: 'Stationery', price: 150, cost: 90, stock: 500, sector: 'General', tenantId: '1', branchId: 'br-bb-mum-01', barcode: '4001', productType: 'Stationery' },
+            { id: 'bb-01', sku: 'BB-STAT-NB', name: 'Classmate Notebook A4', category: 'Stationery', price: 150, cost: 90, stock: 500, sector: 'General', tenantId: '1', branchId: 'br-bb-mum-01', barcode: '4001', productType: 'Stationery', lastRestocked: subDays(100) },
             { id: 'bb-02', sku: 'BB-BEV-COKE', name: 'Coca Cola 1.25L', category: 'Beverage', price: 95, cost: 70, stock: 200, sector: 'General', tenantId: '1', branchId: 'br-bb-blr-01', barcode: '4002', productType: 'FMCG' }
         ],
         customers: [
@@ -101,10 +107,10 @@ export const MOCK_DATABASE: MockDatabase = {
     },
     '2': { // Apollo Pharmacy
         products: [
-            { id: 'ap-chn01-01', sku: 'MED-DOLO-650', name: 'Dolo 650', category: 'Analgesic', price: 30, cost: 18, stock: 1200, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5001', composition: 'Paracetamol 650mg', unit: 'Strip' },
-            { id: 'ap-chn01-02', sku: 'MED-AUG-625', name: 'Augmentin 625 Duo', category: 'Antibiotic', price: 201, cost: 150, stock: 50, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5002', composition: 'Amoxicillin', unit: 'Strip' },
-            { id: 'ap-chn01-03', sku: 'MED-PAN-40', name: 'Pantop 40', category: 'Antacid', price: 155, cost: 110, stock: 300, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5003', composition: 'Pantoprazole', unit: 'Strip' },
-            { id: 'ap-chn01-04', sku: 'MED-VITS-CZ', name: 'Limcee Vitamin C', category: 'Supplements', price: 25, cost: 15, stock: 500, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5004', composition: 'Ascorbic Acid', unit: 'Strip' },
+            { id: 'ap-chn01-01', sku: 'MED-DOLO-650', name: 'Dolo 650', category: 'Analgesic', price: 30, cost: 18, stock: 1200, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5001', composition: 'Paracetamol 650mg', unit: 'Strip', expiryDate: addDays(400) },
+            { id: 'ap-chn01-02', sku: 'MED-AUG-625', name: 'Augmentin 625 Duo', category: 'Antibiotic', price: 201, cost: 150, stock: 50, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5002', composition: 'Amoxicillin', unit: 'Strip', lastRestocked: subDays(130), expiryDate: addDays(25) },
+            { id: 'ap-chn01-03', sku: 'MED-PAN-40', name: 'Pantop 40', category: 'Antacid', price: 155, cost: 110, stock: 300, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5003', composition: 'Pantoprazole', unit: 'Strip', expiryDate: addDays(55) },
+            { id: 'ap-chn01-04', sku: 'MED-VITS-CZ', name: 'Limcee Vitamin C', category: 'Supplements', price: 25, cost: 15, stock: 500, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-01', barcode: '5004', composition: 'Ascorbic Acid', unit: 'Strip', expiryDate: addDays(85) },
             { id: 'ap-chn02-01', sku: 'MED-DOLO-650', name: 'Dolo 650', category: 'Analgesic', price: 30, cost: 18, stock: 800, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-02', barcode: '5001', composition: 'Paracetamol 650mg', unit: 'Strip' },
             { id: 'ap-chn02-02', sku: 'MED-BEN-DRYL', name: 'Benadryl Cough Syrup', category: 'Syrup', price: 125, cost: 95, stock: 150, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-02', barcode: '5005', composition: 'Diphenhydramine', unit: 'Bottle' },
             { id: 'ap-chn02-03', sku: 'DEV-ACCU-CHK', name: 'Accu-Chek Active Strips', category: 'Device', price: 950, cost: 750, stock: 40, sector: 'Pharmacy', tenantId: '2', branchId: 'br-ap-chn-02', barcode: '5006', brand: 'Roche', unit: 'Box' },
@@ -164,8 +170,8 @@ export const MOCK_DATABASE: MockDatabase = {
     },
     '4': { // Reliance Smart Point
         products: [
-            { id: 'rs-01', sku: 'GR-ATTA-ASH', name: 'Aashirvaad Atta 5kg', category: 'Staples', price: 280, cost: 230, stock: 150, sector: 'Grocery', tenantId: '4', branchId: 'br-rs-hyd-01', brand: 'Aashirvaad', unit: 'Bag', barcode: '6001', gstPercentage: 5 },
-            { id: 'rs-02', sku: 'GR-OIL-FRT', name: 'Fortune Sunflower Oil 1L', category: 'Oil', price: 145, cost: 110, stock: 80, sector: 'Grocery', tenantId: '4', branchId: 'br-rs-ten-01', brand: 'Fortune', unit: 'Pouch', barcode: '6002', gstPercentage: 5 }
+            { id: 'rs-01', sku: 'GR-ATTA-ASH', name: 'Aashirvaad Atta 5kg', category: 'Staples', price: 280, cost: 230, stock: 150, sector: 'Grocery', tenantId: '4', branchId: 'br-rs-hyd-01', brand: 'Aashirvaad', unit: 'Bag', barcode: '6001', gstPercentage: 5, expiryDate: addDays(45) },
+            { id: 'rs-02', sku: 'GR-OIL-FRT', name: 'Fortune Sunflower Oil 1L', category: 'Oil', price: 145, cost: 110, stock: 80, sector: 'Grocery', tenantId: '4', branchId: 'br-rs-ten-01', brand: 'Fortune', unit: 'Pouch', barcode: '6002', gstPercentage: 5, expiryDate: addDays(120) }
         ],
         customers: [
             { id: 'c1', name: 'Walk-in Customer', phone: '000-000-0000', points: 0 }
@@ -181,8 +187,8 @@ export const MOCK_DATABASE: MockDatabase = {
     },
     '5': { // Spar Hypermarket
         products: [
-            { id: 'sp-01', sku: 'SP-FRUIT-APL', name: 'Washington Apple', category: 'Fresh Produce', price: 220, cost: 150, stock: 40, sector: 'Supermarket', tenantId: '5', branchId: 'br-sp-blr-01', unit: 'Kg', barcode: '7001' },
-            { id: 'sp-02', sku: 'SP-DAIRY-AMUL', name: 'Amul Butter 500g', category: 'Dairy', price: 275, cost: 240, stock: 60, sector: 'Supermarket', tenantId: '5', branchId: 'br-sp-cbe-01', brand: 'Amul', barcode: '7002' }
+            { id: 'sp-01', sku: 'SP-FRUIT-APL', name: 'Washington Apple', category: 'Fresh Produce', price: 220, cost: 150, stock: 40, sector: 'Supermarket', tenantId: '5', branchId: 'br-sp-blr-01', unit: 'Kg', barcode: '7001', expiryDate: addDays(10) },
+            { id: 'sp-02', sku: 'SP-DAIRY-AMUL', name: 'Amul Butter 500g', category: 'Dairy', price: 275, cost: 240, stock: 60, sector: 'Supermarket', tenantId: '5', branchId: 'br-sp-cbe-01', brand: 'Amul', barcode: '7002', expiryDate: addDays(65) }
         ],
         customers: [
             { id: 'c1', name: 'Walk-in Customer', phone: '000-000-0000', points: 0 }
@@ -198,7 +204,7 @@ export const MOCK_DATABASE: MockDatabase = {
     },
     '6': { // Pothys
         products: [
-            { id: 'po-01', sku: 'TX-SILK-KAN', name: 'Kanjivaram Silk Saree', category: 'Ethnic Wear', price: 15000, cost: 9000, stock: 25, sector: 'Textile', tenantId: '6', branchId: 'br-po-chn-01', productType: 'Saree', hsnCode: '5007', gstPercentage: 12, barcode: '2001' },
+            { id: 'po-01', sku: 'TX-SILK-KAN', name: 'Kanjivaram Silk Saree', category: 'Ethnic Wear', price: 15000, cost: 9000, stock: 25, sector: 'Textile', tenantId: '6', branchId: 'br-po-chn-01', productType: 'Saree', hsnCode: '5007', gstPercentage: 12, barcode: '2001', lastRestocked: subDays(200) },
             { id: 'po-02', sku: 'TX-SHIRT-LP', name: 'LP Formal Shirt Blue', category: 'Mens Wear', price: 2499, cost: 1200, stock: 100, sector: 'Textile', tenantId: '6', branchId: 'br-po-mdu-01', brand: 'Louis Philippe', barcode: '2002', gstPercentage: 5 }
         ],
         customers: [
@@ -259,22 +265,16 @@ export const MOCK_CHEQUES: Cheque[] = Object.values(MOCK_DATABASE).flatMap(d => 
 export const MOCK_ORDERS: PurchaseOrder[] = Object.values(MOCK_DATABASE).flatMap(d => d.purchaseOrders);
 export const MOCK_LABOR_PAYMENTS: LaborPayment[] = Object.values(MOCK_DATABASE).flatMap(d => d.laborPayments);
 
-// --- Branches (Derived or Static) ---
-// Kept static for now as it's a simple list, but could be derived from MOCK_TENANTS locations if needed.
-export const MOCK_BRANCHES = [
-    { name: 'br-po-chn-01', sector: 'Textile' },
-    { name: 'Madurai - West Masi St', sector: 'Textile' },
-    { name: 'Tirunelveli - Town', sector: 'Textile' },
-    { name: 'br-rel-chn-01', sector: 'Electronics' },
-    { name: 'Trichy - Thillai Nagar', sector: 'Electronics' },
-    { name: 'br-bb-mdu-01', sector: 'General' },
-    { name: 'br-ap-chn-01', sector: 'Pharmacy' },
-    { name: 'br-ap-try-01', sector: 'Pharmacy' },
-    { name: 'br-rs-ten-01', sector: 'Grocery' },
-    { name: 'Madurai - Mattuthavani', sector: 'Grocery' },
-    { name: 'br-sp-cbe-01', sector: 'Supermarket' },
-    { name: 'Bangalore - MG Road', sector: 'Supermarket' }
-];
+// --- Branches (Derived) ---
+export const MOCK_BRANCHES = MOCK_TENANTS.flatMap(t =>
+    t.locations.flatMap(l =>
+        l.branches.map(b => ({
+            id: b.id,
+            name: b.name,
+            sector: t.sector
+        }))
+    )
+);
 
 // --- App Defaults ---
 export const APP_DEFAULTS = {

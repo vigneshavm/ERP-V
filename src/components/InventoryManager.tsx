@@ -367,7 +367,7 @@ const InventoryManager: React.FC = () => {
                 {MOCK_BRANCHES
                   .filter(b => b.sector === currentSector)
                   .map(b => (
-                    <option key={b.name} value={b.name}>{b.name}</option>
+                    <option key={b.id} value={b.id}>{b.name}</option>
                   ))}
               </select>
             </div>

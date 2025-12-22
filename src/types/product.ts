@@ -19,6 +19,8 @@ export interface Product {
     composition?: string;
     unit?: string;
     tenantId?: string;
+    lastRestocked?: string; // ISO Date String
+    expiryDate?: string; // ISO Date String
 }
 
 // Redux State Interface

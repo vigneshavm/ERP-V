@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setBranch } from './store';
 import { MOCK_BRANCHES } from '../mockData';
@@ -14,7 +14,8 @@ import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
 import Storefront from './components/Storefront';
 import SettingsManager from './components/SettingsManager';
-import ProfitPulse from './components/ProfitPulse'; // Imported Profit Pulse
+import ProfitPulse from './components/ProfitPulse';
+import AgedStockManager from './components/AgedStockManager';
 import Login from './components/login';
 import TenantManager from './components/TenantManager';
 
@@ -215,6 +216,7 @@ const App: React.FC = () => {
             switch (activeTab) {
                 case 'DASHBOARD': return <Dashboard />;
                 case 'PROFIT_PULSE': return <ProfitPulse />;
+                case 'AGED_STOCK': return <AgedStockManager />;
                 case 'POS': return <POSModule />;
                 case 'INVENTORY': return <InventoryManager />;
                 case 'PURCHASE': return <PurchaseManager />;
@@ -299,6 +301,7 @@ const App: React.FC = () => {
                             <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
                             <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
                             <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
+                            <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
                             <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
                             <NavItem id="SALES" icon={List} label="Sales History" />
                             <NavItem id="DAILY" icon={LogOut} label="Daily Tracker" />

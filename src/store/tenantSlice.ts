@@ -93,11 +93,19 @@ const initialSettingsState: SettingsState = {
   primaryColor: '#4f46e5',
   enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
   rolePermissions: {
-    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS'],
-    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT'],
+    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS'],
+    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT'],
     'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
   },
-  defaultTaxMode: 'EXCLUSIVE'
+  defaultTaxMode: 'EXCLUSIVE',
+  expiryRules: {
+    criticalDays: 30,
+    criticalDiscount: 50,
+    highDays: 60,
+    highDiscount: 30,
+    mediumDays: 90,
+    mediumDiscount: 15
+  }
 };
 
 const settingsSlice = createSlice({
