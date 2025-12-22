@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InventoryState, Product, Sector, Branch } from '../types'; // Correct relative path to types
+import { Product, InventoryState } from '../types/product';
+import { Sector, Branch } from '../types/common';
 import { APP_CONFIG } from '../config';
 import { MOCK_PRODUCTS } from '../../mockData';
 import { loadState, saveState } from './storage';
@@ -11,7 +12,7 @@ const initialInventoryState: InventoryState = {
 
 const inventorySlice = createSlice({
   name: 'inventory',
-  initialState: loadState('inventory', initialInventoryState),
+  initialState: loadState('inventory_v2', initialInventoryState),
   reducers: {
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products.push(action.payload);
@@ -36,7 +37,7 @@ const inventorySlice = createSlice({
     },
     addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: Branch; category?: string; productType?: string; barcode?: string }[]>) => {
       action.payload.forEach(item => {
-        const existing = state.products.find(p => p.sku === item.sku && p.sector === item.sector && p.branch === item.branch);
+        const existing = state.products.find(p => p.sku === item.sku && p.sector === item.sector && p.branchId === item.branch);
         if (existing) {
           existing.stock += item.qty;
           existing.cost = item.cost;
@@ -52,7 +53,7 @@ const inventorySlice = createSlice({
             cost: item.cost,
             stock: item.qty,
             sector: item.sector,
-            branch: item.branch,
+            branchId: item.branch,
             barcode: item.barcode || Math.floor(100000000000 + Math.random() * 900000000000).toString()
           });
         }

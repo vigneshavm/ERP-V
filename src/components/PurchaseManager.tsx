@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { parseInvoiceWithGemini } from '../services/geminiService';
+import { useConfig } from './ConfigContext';
+import { useBranchResolver } from '../hooks/useBranchResolver';
 import { processPurchaseApproval, RootState, AppDispatch, addOrder, addStockBulk, addTransaction } from '../store';
 import { Upload, FileText, Check, Loader2, AlertCircle, X, Eye, Lock, Printer } from 'lucide-react';
-import { ScannedInvoice, Branch, Sector, PurchaseOrder, TransactionType } from '../types';
+import { ScannedInvoice, PurchaseOrder, FinalizedPurchaseItem } from '../types/purchase';
+import { Branch, TransactionType } from '../types/common';
 import InvoiceResult from './InvoiceResult';
 
-const PurchaseManager: React.FC = () => {
+const PurchaseManager = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { currentSector, currentBranch, role } = useSelector((state: RootState) => state.auth);
     const { orders } = useSelector((state: RootState) => state.purchase);
+    const { tenants } = useSelector((state: RootState) => state.tenant);
+    const { tenantId } = useConfig();
+    const { getBranchName } = useBranchResolver();
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -20,10 +26,10 @@ const PurchaseManager: React.FC = () => {
 
     // Filter orders by current sector and branch (if specific branch selected)
     const sectorOrders = orders.filter(o =>
-        o.sector === currentSector && (currentBranch === 'All' || o.branch === currentBranch)
+        o.sector === currentSector && (currentBranch === 'All' || o.branchId === currentBranch)
     );
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -38,13 +44,13 @@ const PurchaseManager: React.FC = () => {
             // Default to current branch if specific, else Alpha
             if (currentBranch !== 'All') setTargetBranch(currentBranch);
         } catch (err) {
-            setError("Failed to process invoice. Ensure the image is clear.");
+            setError("Failed to process invoice. Ensure the image is clear.", err);
         } finally {
             setIsProcessing(false);
         }
     };
 
-    const handleCommitInventory = (items: any[]) => {
+    const handleCommitInventory = (items: FinalizedPurchaseItem[]) => {
         // 1. Create Purchase Order Record
         // Staff creates PENDING orders, Owner creates APPROVED orders instantly
         const isOwner = role === 'Owner';
@@ -58,7 +64,7 @@ const PurchaseManager: React.FC = () => {
             total: orderTotal,
             status: isOwner ? 'APPROVED' as const : 'PENDING' as const,
             sector: currentSector,
-            branch: targetBranch
+            branchId: targetBranch
         };
 
         dispatch(addOrder(newOrder));
@@ -87,7 +93,7 @@ const PurchaseManager: React.FC = () => {
                 date: new Date().toISOString(),
                 description: `Invoice Payment - ${newOrder.vendor} (${targetBranch})`,
                 sector: currentSector,
-                branch: targetBranch
+                branchId: targetBranch
             }));
         } else {
             alert("Purchase Order created with PENDING status. An Owner must approve it to update inventory.");
@@ -182,7 +188,7 @@ const PurchaseManager: React.FC = () => {
                             <div className="hidden print:block p-6 border-b border-slate-300">
                                 <h1 className="text-2xl font-bold uppercase tracking-wider mb-2 text-black">Purchase Order</h1>
                                 <p className="text-sm text-black">ID: {viewOrder.id}</p>
-                                <p className="text-sm text-slate-500">{currentSector} - {viewOrder.branch}</p>
+                                <p className="text-sm text-slate-500">{currentSector} - {getBranchName(viewOrder.branchId)}</p>
                             </div>
 
                             {/* Content */}
@@ -199,7 +205,7 @@ const PurchaseManager: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Branch</label>
-                                        <p className="text-slate-900 dark:text-white text-sm font-medium">{viewOrder.branch}</p>
+                                        <p className="text-slate-900 dark:text-white text-sm font-medium">{getBranchName(viewOrder.branchId)}</p>
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</label>
@@ -304,23 +310,35 @@ const PurchaseManager: React.FC = () => {
                     </div>
                 )}
 
-                {/* Branch Selection for Upload (Pre-scan) */}
                 <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors">
                     <label className="text-xs text-slate-500 uppercase font-bold block mb-2">Target Branch for this Upload</label>
-                    <div className="flex gap-4">
-                        {['Alpha', 'Beta', 'Gamma'].map(b => (
-                            <label key={b} className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                    type="radio"
-                                    name="targetBranch"
-                                    value={b}
-                                    checked={targetBranch === b}
-                                    onChange={() => setTargetBranch(b as Branch)}
-                                    className="text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600"
-                                />
-                                <span className="text-slate-700 dark:text-slate-300 text-sm">{b}</span>
-                            </label>
-                        ))}
+                    <div className="flex flex-wrap gap-4">
+                        {(() => {
+                            const currentTenant = tenants.find(t => t.id === tenantId);
+                            const tenantBranches = currentTenant
+                                ? currentTenant.locations.flatMap(loc => loc.branches)
+                                : [];
+
+                            // If Owner, show all branches for this sector. If Staff, show only current branch.
+                            const visibleBranches = role === 'Owner'
+                                ? tenantBranches
+                                : tenantBranches.filter(b => b.id === currentBranch);
+
+                            return visibleBranches.map(b => (
+                                <label key={b.id} className={`flex items-center gap-2 ${role === 'Owner' ? 'cursor-pointer' : 'cursor-default'}`}>
+                                    <input
+                                        type="radio"
+                                        name="targetBranch"
+                                        value={b.id}
+                                        checked={targetBranch === b.id || (role !== 'Owner' && currentBranch === b.id)}
+                                        onChange={() => role === 'Owner' && setTargetBranch(b.id as Branch)}
+                                        disabled={role !== 'Owner'}
+                                        className="text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 disabled:opacity-50"
+                                    />
+                                    <span className="text-slate-700 dark:text-slate-300 text-sm">{b.name}</span>
+                                </label>
+                            ));
+                        })()}
                     </div>
                 </div>
 
@@ -346,7 +364,7 @@ const PurchaseManager: React.FC = () => {
                             <div className="flex justify-between items-start mb-3">
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded">{order.branch}</span>
+                                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded">{getBranchName(order.branchId)}</span>
                                         <h4 className="font-bold text-slate-800 dark:text-slate-200">{order.vendor}</h4>
                                     </div>
                                     <p className="text-xs text-slate-500 mt-1">{new Date(order.date).toLocaleDateString()} {new Date(order.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>

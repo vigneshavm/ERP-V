@@ -51,7 +51,7 @@ const DailyFinanceTracker: React.FC = () => {
         ];
       }
       return [];
-    } catch (e) { return []; }
+    } catch { return []; }
   });
   const [view, setView] = useState<'ENTRY' | 'CHARTS'>('ENTRY');
 

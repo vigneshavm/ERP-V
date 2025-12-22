@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ScannedInvoice } from "../../types";
+import { ScannedInvoice } from "../types/purchase";
+import { Product } from "../types/product";
 
 export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice> => {
   const apiKey = process.env.API_KEY;
@@ -77,18 +78,18 @@ export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice
       throw new Error("Failed to parse invoice data.");
     }
   }
-  
+
   throw new Error("No response from Gemini.");
 };
 
-export const getProductRecommendations = async (query: string, products: any[]): Promise<{ recommendationText: string, recommendedIds: string[] }> => {
+export const getProductRecommendations = async (query: string, products: Product[]): Promise<{ recommendationText: string, recommendedIds: string[] }> => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) throw new Error("API Key not found");
 
   const ai = new GoogleGenAI({ apiKey });
 
   // Simplify product context for the model
-  const inventoryList = products.map(p => 
+  const inventoryList = products.map(p =>
     `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Price: ${p.price} | Stock: ${p.stock}`
   ).join('\n');
 
@@ -118,7 +119,7 @@ export const getProductRecommendations = async (query: string, products: any[]):
         type: Type.OBJECT,
         properties: {
           recommendationText: { type: Type.STRING },
-          recommendedIds: { 
+          recommendedIds: {
             type: Type.ARRAY,
             items: { type: Type.STRING }
           }
@@ -135,11 +136,11 @@ export const getProductRecommendations = async (query: string, products: any[]):
       return { recommendationText: "I couldn't process the results properly. Please try again.", recommendedIds: [] };
     }
   }
-  
+
   throw new Error("No response from AI");
 };
 
-export const searchProductsByImage = async (imageFile: File, products: any[]): Promise<string[]> => {
+export const searchProductsByImage = async (imageFile: File, products: Product[]): Promise<string[]> => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) throw new Error("API Key not found");
 
@@ -157,7 +158,7 @@ export const searchProductsByImage = async (imageFile: File, products: any[]): P
   });
 
   // Simplify product context
-  const inventoryList = products.map(p => 
+  const inventoryList = products.map(p =>
     `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Color/Desc: ${p.name}`
   ).join('\n');
 
@@ -167,7 +168,8 @@ export const searchProductsByImage = async (imageFile: File, products: any[]): P
     contents: {
       parts: [
         { inlineData: { mimeType: imageFile.type, data: base64Data } },
-        { text: `Look at this image. Search through the following inventory list and identify items that visually match this product (similar style, color, type).
+        {
+          text: `Look at this image. Search through the following inventory list and identify items that visually match this product (similar style, color, type).
         
         Inventory:
         ${inventoryList}
@@ -180,7 +182,7 @@ export const searchProductsByImage = async (imageFile: File, products: any[]): P
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          matchedIds: { 
+          matchedIds: {
             type: Type.ARRAY,
             items: { type: Type.STRING }
           }

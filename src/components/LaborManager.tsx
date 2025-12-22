@@ -1,12 +1,16 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../store';
 import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
-import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, Trash2, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, UserPlus, Filter } from 'lucide-react';
+import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, } from 'lucide-react';
 import { formatCurrency, getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../utils/helpers';
-import { Sector, Branch, DailyLog, AttendanceStatus, LaborPayment } from '../../types';
+import { Branch, AttendanceStatus } from '../types/common';
+import { DailyLog } from '../types/hr';
+import { Sector } from '../types/common';
+// Helper for ID generation (outside component to satisfy purity rules)
+const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +47,7 @@ export const LaborManager = () => {
 
   // Filter Employees
   const sectorEmps = employees.filter(e =>
-    e.sector === currentSector && (currentBranch === 'All' || e.branch === currentBranch)
+    e.sector === currentSector && (currentBranch === 'All' || e.branchId === currentBranch)
   );
 
   // Default selection
@@ -53,13 +57,17 @@ export const LaborManager = () => {
 
   const selectedLaborer = sectorEmps.find(l => l.id === selectedLaborerId);
 
+  // Destructure for stable dependencies
+  const selectedId = selectedLaborer?.id;
+  const selectedDailyRate = selectedLaborer?.dailyRate;
+
   // Calculate Stats for Selected Month
-  const stats = useMemo(() => {
-    if (!selectedLaborer) return { days: 0, full: 0, half: 0, quarter: 0, absent: 0, earned: 0, paid: 0, balance: 0, totalPaid: 0 };
+  const stats = (() => {
+    if (!selectedId) return { days: 0, full: 0, half: 0, quarter: 0, absent: 0, earned: 0, paid: 0, balance: 0, totalPaid: 0 };
 
     // Filter data for this employee
-    const empAttendance = attendance.filter(a => a.employeeId === selectedLaborer.id);
-    const empPayments = payments.filter(p => p.employeeId === selectedLaborer.id);
+    const empAttendance = attendance.filter(a => a.employeeId === selectedId);
+    const empPayments = payments.filter(p => p.employeeId === selectedId);
 
     let daysCount = 0;
     let full = 0;
@@ -84,7 +92,7 @@ export const LaborManager = () => {
       }
     }
 
-    const totalEarned = daysCount * selectedLaborer.dailyRate;
+    const totalEarned = daysCount * (selectedDailyRate || 0);
 
     // Payments in this month
     const monthlyPayments = empPayments.filter(p => {
@@ -96,7 +104,7 @@ export const LaborManager = () => {
 
     // GLOBAL BALANCE CALCULATION (Not just this month)
     // Balance = (All Time Earnings) - (All Time Payments + All Time Advances)
-    const allTimeAttendance = attendance.filter(a => a.employeeId === selectedLaborer.id);
+    const allTimeAttendance = attendance.filter(a => a.employeeId === selectedId);
     let allTimeDays = 0;
     let allTimeAdvances = 0;
 
@@ -109,7 +117,7 @@ export const LaborManager = () => {
       allTimeAdvances += (log.advanceTaken || 0);
     });
 
-    const allTimeEarned = allTimeDays * selectedLaborer.dailyRate;
+    const allTimeEarned = allTimeDays * (selectedDailyRate || 0);
     const allTimePayments = empPayments.reduce((sum, p) => sum + p.amount, 0);
     const totalPaidAllTime = allTimePayments + allTimeAdvances;
     const balance = allTimeEarned - totalPaidAllTime;
@@ -125,7 +133,7 @@ export const LaborManager = () => {
       balance: balance, // Global Net Payable
       totalPaid: totalPaidAllTime
     };
-  }, [selectedLaborer, attendance, payments, currentYear, currentMonth]);
+  })();
 
 
   // -- Handlers --
@@ -133,12 +141,12 @@ export const LaborManager = () => {
   const handleAddLaborer = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(addEmployee({
-      id: Math.random().toString(36).substr(2, 9),
+      id: generateId(),
       name: newEmp.name,
       role: newEmp.role,
       dailyRate: parseFloat(newEmp.dailyRate),
       sector: currentSector as Sector,
-      branch: newEmp.branch as Branch,
+      branchId: newEmp.branch as Branch,
       systemRole: 'Staff',
       pin: '0000'
     }));
@@ -189,7 +197,7 @@ export const LaborManager = () => {
 
       if (status === 'CLEAR') {
         dispatch(markAttendance({
-          id: existing?.id || Math.random().toString(),
+          id: existing?.id || generateId(),
           employeeId: selectedLaborer.id,
           date: dateKey,
           status: 'ABSENT',
@@ -197,7 +205,7 @@ export const LaborManager = () => {
         }));
       } else {
         dispatch(markAttendance({
-          id: existing?.id || Math.random().toString(),
+          id: existing?.id || generateId(),
           employeeId: selectedLaborer.id,
           date: dateKey,
           status: status,
@@ -219,7 +227,7 @@ export const LaborManager = () => {
 
     if (log) {
       dispatch(markAttendance({
-        id: existing?.id || Math.random().toString(),
+        id: existing?.id || generateId(),
         employeeId: selectedLaborer.id,
         date: editingDate,
         status: log.status,
@@ -230,7 +238,7 @@ export const LaborManager = () => {
     } else {
       // If null (cleared), set to Absent
       dispatch(markAttendance({
-        id: existing?.id || Math.random().toString(),
+        id: existing?.id || generateId(),
         employeeId: selectedLaborer.id,
         date: editingDate,
         status: 'ABSENT',
@@ -245,7 +253,7 @@ export const LaborManager = () => {
     if (isNaN(amount) || amount <= 0) return;
 
     dispatch(addLaborPayment({
-      id: Math.random().toString(36).substr(2, 9),
+      id: generateId(),
       employeeId: selectedLaborer.id,
       amount: amount,
       date: new Date().toISOString(),
@@ -335,6 +343,7 @@ export const LaborManager = () => {
       {/* Time Entry Modal */}
       {editingDate && (
         <TimeEntryModal
+          key={`${editingDate}-${selectedLaborerId}`}
           isOpen={!!editingDate}
           date={editingDate}
           onClose={() => setEditingDate(null)}

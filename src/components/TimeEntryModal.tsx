@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
-import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2 } from 'lucide-react';
-import { AttendanceStatus, DailyLog } from '../../types';
+import React, { useState } from 'react';
+import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2, LucideIcon } from 'lucide-react';
+import { DailyLog } from '../types/hr';
+import { AttendanceStatus } from '../types/common';
 
 interface TimeEntryModalProps {
   isOpen: boolean;
@@ -11,18 +12,26 @@ interface TimeEntryModalProps {
   initialData?: DailyLog | { inTime?: string; outTime?: string; status?: AttendanceStatus };
 }
 
+const StatusButton = ({ currentStatus, targetStatus, label, icon: Icon, colorClass, onClick }: { currentStatus: AttendanceStatus, targetStatus: AttendanceStatus, label: string, icon: LucideIcon, colorClass: string, onClick: (s: AttendanceStatus) => void }) => (
+  <button
+    type="button"
+    onClick={() => onClick(targetStatus)}
+    className={`flex-1 flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${currentStatus === targetStatus
+      ? `${colorClass} border-current`
+      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'
+      }`}
+  >
+    <Icon className={`w-6 h-6 mb-1 ${currentStatus === targetStatus ? '' : 'text-slate-400'}`} />
+    <span className="text-xs font-bold">{label}</span>
+  </button>
+);
+
 export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, onClose, onSave, initialData }) => {
   const [status, setStatus] = useState<AttendanceStatus>(initialData?.status || 'PRESENT');
   const [inTime, setInTime] = useState(initialData?.inTime || '09:00');
   const [outTime, setOutTime] = useState(initialData?.outTime || '18:00');
 
-  useEffect(() => {
-    if (isOpen) {
-      setStatus(initialData?.status || 'PRESENT');
-      setInTime(initialData?.inTime || '09:00');
-      setOutTime(initialData?.outTime || '18:00');
-    }
-  }, [isOpen, initialData]);
+
 
   if (!isOpen) return null;
 
@@ -52,21 +61,6 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
     onClose();
   };
 
-  const StatusButton = ({ s, label, icon: Icon, colorClass }: any) => (
-    <button
-      type="button"
-      onClick={() => setStatus(s)}
-      className={`flex-1 flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
-        status === s
-          ? `${colorClass} border-current`
-          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'
-      }`}
-    >
-      <Icon className={`w-6 h-6 mb-1 ${status === s ? '' : 'text-slate-400'}`} />
-      <span className="text-xs font-bold">{label}</span>
-    </button>
-  );
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in">
       <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-200 dark:border-slate-700">
@@ -88,10 +82,10 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
           </div>
 
           <div className="flex gap-2">
-            <StatusButton s="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-emerald-50 border-emerald-500 text-emerald-600" />
-            <StatusButton s="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-amber-50 border-amber-500 text-amber-600" />
-            <StatusButton s="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-purple-50 border-purple-500 text-purple-600" />
-            <StatusButton s="ABSENT" label="Absent" icon={XCircle} colorClass="bg-rose-50 border-rose-500 text-rose-600" />
+            <StatusButton currentStatus={status} onClick={setStatus} targetStatus="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-emerald-50 border-emerald-500 text-emerald-600" />
+            <StatusButton currentStatus={status} onClick={setStatus} targetStatus="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-amber-50 border-amber-500 text-amber-600" />
+            <StatusButton currentStatus={status} onClick={setStatus} targetStatus="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-purple-50 border-purple-500 text-purple-600" />
+            <StatusButton currentStatus={status} onClick={setStatus} targetStatus="ABSENT" label="Absent" icon={XCircle} colorClass="bg-rose-50 border-rose-500 text-rose-600" />
           </div>
 
           {status !== 'ABSENT' && (

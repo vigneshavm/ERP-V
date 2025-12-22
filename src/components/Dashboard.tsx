@@ -1,22 +1,46 @@
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { useBranchResolver } from '../hooks/useBranchResolver';
 import { DollarSign, Package, TrendingUp, AlertTriangle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
+  color: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) => (
+  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{title}</p>
+        <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{value}</h3>
+      </div>
+      <div className={`p-3 rounded-lg bg-opacity-20 ${color}`}>
+        <Icon className={`w-6 h-6 dark:text-white text-slate-800`} />
+      </div>
+    </div>
+  </div>
+);
+
+
 const Dashboard: React.FC = () => {
-  const { transactions, bankBalance } = useSelector((state: RootState) => state.finance);
+  const { transactions } = useSelector((state: RootState) => state.finance);
   const { products } = useSelector((state: RootState) => state.inventory);
-  const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
+  const { currentSector, currentBranch, theme, role } = useSelector((state: RootState) => state.auth);
+  const { getBranchName } = useBranchResolver();
 
   // Filtered Data based on Sector and Branch
   const sectorTransactions = transactions.filter(t =>
-    t.sector === currentSector && (currentBranch === 'All' || t.branch === currentBranch)
+    t.sector === currentSector && (currentBranch === 'All' || t.branchId === currentBranch)
   );
 
   const sectorProducts = products.filter(p =>
-    p.sector === currentSector && (currentBranch === 'All' || p.branch === currentBranch)
+    p.sector === currentSector && (currentBranch === 'All' || p.branchId === currentBranch)
   );
 
   const totalRevenue = sectorTransactions
@@ -28,7 +52,7 @@ const Dashboard: React.FC = () => {
   const lowStockItems = sectorProducts.filter(p => p.stock < 10);
 
   // Chart Data: Last 7 days revenue
-  const chartData = useMemo(() => {
+  const chartData = (() => {
     const days = 7;
     const data = [];
     for (let i = days - 1; i >= 0; i--) {
@@ -43,28 +67,14 @@ const Dashboard: React.FC = () => {
       data.push({ name: dateStr.substr(5), revenue: dayRev });
     }
     return data;
-  }, [sectorTransactions]);
-
-  const StatCard = ({ title, value, icon: Icon, color }: any) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{title}</p>
-          <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{value}</h3>
-        </div>
-        <div className={`p-3 rounded-lg bg-opacity-20 ${color}`}>
-          <Icon className={`w-6 h-6 dark:text-white text-slate-800`} />
-        </div>
-      </div>
-    </div>
-  );
+  })();
 
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
         Dashboard
         <span className="text-lg font-normal text-slate-500 border-l border-slate-300 dark:border-slate-700 pl-3">
-          {currentSector} / {currentBranch === 'All' ? 'All Branches' : currentBranch}
+          {currentSector} / {getBranchName(currentBranch)}
         </span>
       </h2>
 
@@ -76,18 +86,22 @@ const Dashboard: React.FC = () => {
           icon={TrendingUp}
           color="bg-emerald-500"
         />
-        <StatCard
-          title="Stock Value"
-          value={`₹${totalStockValue.toLocaleString()}`}
-          icon={Package}
-          color="bg-indigo-500"
-        />
-        <StatCard
-          title="Net Profit"
-          value={`₹${(totalRevenue - (totalStockValue * 0.5)).toLocaleString()}`}
-          icon={DollarSign}
-          color="bg-purple-500"
-        />
+        {role === 'Owner' && (
+          <>
+            <StatCard
+              title="Stock Value"
+              value={`₹${totalStockValue.toLocaleString()}`}
+              icon={Package}
+              color="bg-indigo-500"
+            />
+            <StatCard
+              title="Net Profit"
+              value={`₹${(totalRevenue - (totalStockValue * 0.5)).toLocaleString()}`}
+              icon={DollarSign}
+              color="bg-purple-500"
+            />
+          </>
+        )}
         <StatCard
           title="Low Stock Items"
           value={lowStockItems.length}
@@ -97,6 +111,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
         {/* Chart */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg transition-colors">
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Revenue Trend (Last 7 Days)</h3>
@@ -131,7 +146,7 @@ const Dashboard: React.FC = () => {
               <div key={item.id} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-red-500/20">
                 <div>
                   <p className="font-medium text-slate-800 dark:text-slate-200">{item.name}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">SKU: {item.sku} <span className="text-slate-500">({item.branch})</span></p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">SKU: {item.sku} <span className="text-slate-500">({getBranchName(item.branchId)})</span></p>
                 </div>
                 <span className="px-3 py-1 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold rounded-full">
                   {item.stock} left

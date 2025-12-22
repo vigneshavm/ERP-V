@@ -1,0 +1,48 @@
+import { Sector, ModuleType } from './common';
+
+export interface RegionConfig {
+    currency: string;
+    currencySymbol: string;
+    dateFormat: string;
+}
+
+export interface TenantConfig {
+    modules: string[];
+    theme: 'light' | 'dark';
+    primaryColor: string;
+    layout: 'standard' | 'compact';
+}
+
+export interface BranchConfig {
+    id: string;
+    name: string;
+    city: string;
+    address: string;
+    config?: Partial<TenantConfig>;
+}
+
+export interface TenantLocation {
+    city: string;
+    branches: BranchConfig[];
+}
+
+export interface Tenant {
+    id: string;
+    name: string;
+    sector: Sector;
+    subdomain?: string;
+    modules?: ModuleType[];
+    isActive?: boolean;
+    region?: RegionConfig;
+    theme?: 'light' | 'dark';
+    layout?: 'standard' | 'compact';
+    domain?: string;
+    primaryColor?: string;
+    defaultConfig?: TenantConfig;
+    locations?: TenantLocation[];
+}
+
+// Redux State Interface
+export interface TenantState {
+    tenants: Tenant[];
+}

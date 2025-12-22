@@ -1,0 +1,28 @@
+export const Sector = {
+    GENERAL: 'General',
+    PHARMACY: 'Pharmacy',
+    ELECTRONICS: 'Electronics',
+    GROCERY: 'Grocery',
+    SUPERMARKET: 'Supermarket',
+    TEXTILE: 'Textile',
+    MOBILE_SHOP: 'Mobile Shop'
+} as const;
+
+export type Sector = typeof Sector[keyof typeof Sector];
+
+export type AttendanceStatus = 'PRESENT' | 'HALF' | 'QUARTER' | 'ABSENT';
+
+export enum TransactionType {
+    SALE = 'Sale',
+    EXPENSE = 'EXPENSE',
+    PURCHASE = 'Purchase',
+    SALARY = 'Salary',
+    INCOME = 'INCOME'
+}
+
+export type ModuleType = 'POS' | 'INVENTORY' | 'HR' | 'FINANCE' | 'ANALYTICS' | 'PURCHASE' | 'SALES' | 'DAILY' | 'STOREFRONT' | 'SERIAL_TRACKING' | 'INSTALLATION_SERVICE' | 'WEIGHT_SCALE_INTEGRATION';
+export type Branch = string;
+export type TaxMode = 'EXCLUSIVE' | 'INCLUSIVE';
+export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
+export type AppView = 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE' | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS';
+export type SystemRole = 'Owner' | 'Manager' | 'Staff';

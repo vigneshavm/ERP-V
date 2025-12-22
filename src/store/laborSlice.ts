@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { LaborState, Employee, Attendance, LaborPayment } from '../types';
+import { LaborState, Employee, Attendance, LaborPayment } from '../types/hr';
+
+
 import { APP_CONFIG } from '../../config';
 import { MOCK_EMPLOYEES, MOCK_LABOR_PAYMENTS } from '../../mockData';
 import { loadState, saveState } from './storage';
@@ -12,7 +14,7 @@ const initialLaborState: LaborState = {
 
 const laborSlice = createSlice({
   name: 'labor',
-  initialState: loadState('labor', initialLaborState),
+  initialState: loadState('labor_v2', initialLaborState),
   reducers: {
     addEmployee: (state, action: PayloadAction<Employee>) => {
       state.employees.push(action.payload);

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FinanceState, Transaction, Cheque, TransactionType } from '../types';
+import { FinanceState, Transaction, Cheque } from '../types/finance';
+import { TransactionType } from '../types/common';
 import { APP_CONFIG } from '../../config';
 import { MOCK_TRANSACTIONS, MOCK_CHEQUES } from '../../mockData';
 import { loadState, saveState } from './storage';
@@ -44,7 +45,7 @@ const financeSlice = createSlice({
               date: new Date().toISOString(),
               description: `Cheque Received: ${cheque.number}`,
               sector: cheque.sector,
-              branch: 'Alpha' // Default
+              branchId: 'Alpha' // Default
             });
           } else {
             state.bankBalance -= cheque.amount;
@@ -56,7 +57,7 @@ const financeSlice = createSlice({
               date: new Date().toISOString(),
               description: `Cheque Issued: ${cheque.number}`,
               sector: cheque.sector,
-              branch: 'Alpha' // Default
+              branchId: 'Alpha' // Default
             });
           }
         }

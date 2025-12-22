@@ -1,6 +1,10 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { POSState, CartItem, Sale, Session, TaxMode, PaymentMethod, Customer } from '../types';
+import { PaymentMethod, TaxMode, } from '../types/common';
+import { POSState, Sale } from '../types/sales';
+import { CartItem, Session } from '../types/sales';
+
+
 
 const defaultSession: Session = {
   id: '1',
@@ -15,10 +19,10 @@ const initialState: POSState = {
   sessions: [defaultSession, { ...defaultSession, id: '2', label: 'Tab 2' }, { ...defaultSession, id: '3', label: 'Tab 3' }, { ...defaultSession, id: '4', label: 'Tab 4' }],
   activeSessionIndex: 0,
   customers: [
-    { id: 'c1', name: 'Walk-in Customer', phone: '', points: 0, creditBalance: 0, creditLimit: 0, riskScore: 'LOW' },
-    { id: 'c2', name: 'John Doe', phone: '9876543210', points: 120, creditBalance: 2500, creditLimit: 5000, riskScore: 'MEDIUM', lastPaymentDate: '2023-10-15' },
-    { id: 'c3', name: 'Rahul Enterprise', phone: '9988776655', points: 500, creditBalance: 12000, creditLimit: 10000, riskScore: 'HIGH', lastPaymentDate: '2023-08-01' },
-    { id: 'c4', name: 'Alice Baker', phone: '5551234567', points: 50, creditBalance: 0, creditLimit: 2000, riskScore: 'LOW' },
+    { id: 'c1', name: 'Walk-in Customer', phone: '', points: 0, creditBalance: 0, creditLimit: 0, riskScore: 10 },
+    { id: 'c2', name: 'John Doe', phone: '9876543210', points: 120, creditBalance: 2500, creditLimit: 5000, riskScore: 50, lastPaymentDate: '2023-10-15' },
+    { id: 'c3', name: 'Rahul Enterprise', phone: '9988776655', points: 500, creditBalance: 12000, creditLimit: 10000, riskScore: 90, lastPaymentDate: '2023-08-01' },
+    { id: 'c4', name: 'Alice Baker', phone: '5551234567', points: 50, creditBalance: 0, creditLimit: 2000, riskScore: 10 },
   ],
   salesHistory: []
 };

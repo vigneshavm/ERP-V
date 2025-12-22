@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addTransaction, addCheque, updateChequeStatus } from '../store';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { ArrowDownLeft, ArrowUpRight, Plus, FileText, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
-import { Sector, Cheque, TransactionType } from '../../types';
+import { ArrowDownLeft, ArrowUpRight, Plus, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { TransactionType } from '../types/common';
+import { MOCK_BRANCHES } from '../../mockData';
 
 const FinanceTracker: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { transactions, bankBalance, cheques } = useSelector((state: RootState) => state.finance);
+    const { transactions, cheques } = useSelector((state: RootState) => state.finance);
     const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
     const { employees, attendance } = useSelector((state: RootState) => state.labor);
     const { salesHistory } = useSelector((state: RootState) => state.pos);
@@ -38,14 +39,14 @@ const FinanceTracker: React.FC = () => {
 
     // Filter Data
     const sectorTx = transactions.filter(t =>
-        t.sector === currentSector && (currentBranch === 'All' || t.branch === currentBranch)
+        t.sector === currentSector && (currentBranch === 'All' || t.branchId === currentBranch)
     );
 
     const sectorCheques = cheques.filter(c => c.sector === currentSector);
 
     // P&L Calculations
     const totalSales = salesHistory
-        .filter(s => s.sector === currentSector && (currentBranch === 'All' || s.branch === currentBranch))
+        .filter(s => s.sector === currentSector && (currentBranch === 'All' || s.branchId === currentBranch))
         .reduce((acc, s) => acc + s.total, 0);
 
     const totalExpenses = sectorTx
@@ -54,7 +55,7 @@ const FinanceTracker: React.FC = () => {
 
     // Calculate Accrued Labor Cost (Liability)
     const sectorLaborCost = employees
-        .filter(e => e.sector === currentSector && (currentBranch === 'All' || e.branch === currentBranch))
+        .filter(e => e.sector === currentSector && (currentBranch === 'All' || e.branchId === currentBranch))
         .reduce((acc, emp) => {
             const empAtt = attendance.filter(a => a.employeeId === emp.id && a.status === 'PRESENT');
             const days = empAtt.length;
@@ -89,7 +90,7 @@ const FinanceTracker: React.FC = () => {
             date: new Date().toISOString(),
             description: newExpense.description,
             sector: currentSector,
-            branch: currentBranch === 'All' ? 'Alpha' : currentBranch
+            branchId: currentBranch === 'All' ? MOCK_BRANCHES.find(b => b.sector === currentSector)?.name || 'Main' : currentBranch
         }));
         setShowExpenseModal(false);
         setNewExpense({ category: '', amount: '', description: '' });
@@ -128,7 +129,7 @@ const FinanceTracker: React.FC = () => {
                     {['OVERVIEW', 'EXPENSES', 'CHEQUES'].map(tab => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab as any)}
+                            onClick={() => setActiveTab(tab as 'OVERVIEW' | 'EXPENSES' | 'CHEQUES')}
                             className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
                         >
                             {tab === 'OVERVIEW' ? 'P&L Overview' : tab === 'EXPENSES' ? 'Op. Expenses' : 'Bank & Cheques'}

@@ -2,11 +2,15 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addToCart, removeFromCart, updateCartQty, processSale, setCustomer, setActiveSession, setTaxMode, setPaymentMethod } from '../store';
-import { Search, ShoppingCart, Trash2, CreditCard, User, AlertOctagon, CreditCard as CardIcon, Banknote, Smartphone, Barcode, Check, Loader2, IndianRupee, LayoutGrid, Maximize2, Minimize2, Camera, X } from 'lucide-react';
-import { TaxMode, PaymentMethod, Product, Customer, Sale } from '../types';
+import { Search, ShoppingCart, Trash2, User, AlertOctagon, CreditCard, Banknote, Smartphone, Barcode, Check, Loader2, Maximize2, Minimize2, Camera, X } from 'lucide-react';
+import { Customer, Sale } from '../types/sales';
+import { Product } from '../types/product';
+import { TaxMode, PaymentMethod } from '../types/common';
+
 import { ReceiptModal } from './ReceiptModal';
 import { CameraScanner } from './CameraScanner';
 import { searchProductsByImage } from '../services/geminiService';
+import { useBranchResolver } from '../hooks/useBranchResolver';
 
 const POSModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -42,6 +46,7 @@ const POSModule: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [mobileTab, setMobileTab] = useState<'CART' | 'CHECKOUT'>('CART');
 
     // --- Receipt State ---
     const [completedSale, setCompletedSale] = useState<Sale | null>(null);
@@ -58,7 +63,7 @@ const POSModule: React.FC = () => {
     const filteredProducts = useMemo(() => {
         let prods = products.filter(p =>
             p.sector === currentSector &&
-            (currentBranch === 'All' || p.branch === currentBranch)
+            (currentBranch === 'All' || p.branchId === currentBranch)
         );
 
         if (visualMatches && visualMatches.length > 0) {
@@ -68,9 +73,32 @@ const POSModule: React.FC = () => {
         return prods;
     }, [products, currentSector, currentBranch, visualMatches]);
 
-    const cartSubtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const taxAmount = activeSession.taxMode === 'EXCLUSIVE' ? cartSubtotal * 0.18 : 0;
-    const cartTotal = cartSubtotal + taxAmount;
+    const { cartSubtotal, taxAmount, cartTotal } = useMemo(() => {
+        let subtotal = 0;
+        let tax = 0;
+
+        cart.forEach(item => {
+            const gstRate = (item.gstPercentage || 18) / 100;
+            const lineTotal = item.price * item.qty;
+
+            if (activeSession.taxMode === 'EXCLUSIVE') {
+                subtotal += lineTotal;
+                tax += lineTotal * gstRate;
+            } else {
+                // INCLUSIVE: lineTotal is the final amount customer pays
+                // Back-calculate Base: Base * (1 + GST) = Total -> Base = Total / (1 + GST)
+                const baseAmount = lineTotal / (1 + gstRate);
+                subtotal += baseAmount;
+                tax += (lineTotal - baseAmount);
+            }
+        });
+
+        return {
+            cartSubtotal: subtotal,
+            taxAmount: tax,
+            cartTotal: subtotal + tax
+        };
+    }, [cart, activeSession.taxMode]);
 
     // --- Effect: Auto-focus SKU on mount ---
     useEffect(() => {
@@ -109,22 +137,56 @@ const POSModule: React.FC = () => {
     };
 
     // --- Action: Checkout ---
+    // --- Action: Checkout ---
+    const { getBranchName } = useBranchResolver(); // Get helper
+    const salesHistory = useSelector((state: RootState) => state.pos.salesHistory); // Get history for count
+
     const handleCheckout = useCallback(async () => {
         if (cart.length === 0 || isBranchAll || isProcessing) return;
 
         setIsProcessing(true);
 
         // Simulate API Delay
-        await new Promise(resolve => setTimeout(resolve, 800)); // Reduced delay for snappier feel
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // --- Dynamic Bill Number Logic ---
+        const branchName = getBranchName(currentBranch);
+        const branchCode = branchName ? branchName.substring(0, 3).toUpperCase() : 'BRN';
+
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yy = String(now.getFullYear()).slice(-2);
+        const dateStr = `${dd}${mm}${yy}`;
+
+        // Count today's sales for this branch
+        // Note: checking date string match using localized date might be fragile across timezones, 
+        // but sufficient for MVP if running locally. Ideally use ISO date substring (YYYY-MM-DD).
+        const todayISO = now.toISOString().split('T')[0];
+        const todaysCount = salesHistory.filter(s =>
+            s.branchId === currentBranch &&
+            s.date.startsWith(todayISO)
+        ).length + 1; // +1 for current sale
+
+        const billId = `${branchCode}${dd}${dateStr}${String(todaysCount).padStart(3, '0')}`;
+        // e.g., CHE221225001 (Note: User asked for CHE122225001, which is Branch+MM+DD+YY+Count? 
+        // User example: CHE122225001 -> 12/22/25. So Month-Day-Year? 
+        // User said: "bill number based on branchcodeDDMMYY" -> CHE+22+12+25. 
+        // But then example "CHE122225001" and "12/22/25". 12 is month.
+        // Let's stick to DDMMYY as requested in text "branchcodeDDMMYY".
+        // Example CHE221225001 -> 22nd Dec 2025. This allows sorting by day if needed visually.
+        // Wait, user example "CHE122225001" matches "12/22/25". That is MM DD YY.
+        // I will stick to stricter "branchcodeDDMMYY" as written in text: "branchcodeDDMMYY".
+        // So 221225. ID: CHE221225001.
 
         const saleData: Sale = {
-            id: Math.random().toString(36).substr(2, 9),
-            date: new Date().toISOString(),
+            id: billId,
+            date: now.toISOString(),
             items: [...cart],
             total: cartTotal,
             customerId: activeCustomerId || undefined,
             sector: currentSector,
-            branch: currentBranch,
+            branchId: currentBranch,
             taxMode: activeSession.taxMode,
             paymentMethod: activeSession.paymentMethod
         };
@@ -139,10 +201,9 @@ const POSModule: React.FC = () => {
         // Reset focus to SKU
         setTimeout(() => {
             skuInputRef.current?.focus();
-            // Reset Tax Mode to Default for Next Bill (Optional, but good UX)
             dispatch(setTaxMode(defaultTaxMode));
         }, 100);
-    }, [cart, isBranchAll, isProcessing, cartTotal, activeCustomerId, currentSector, currentBranch, activeSession.taxMode, activeSession.paymentMethod, dispatch]);
+    }, [cart, isBranchAll, isProcessing, cartTotal, activeCustomerId, currentSector, currentBranch, activeSession.taxMode, activeSession.paymentMethod, dispatch, defaultTaxMode, getBranchName, salesHistory]);
 
     // --- Handlers: SKU Input ---
     const handleSkuKeyDown = (e: React.KeyboardEvent) => {
@@ -338,33 +399,33 @@ const POSModule: React.FC = () => {
 
     return (
         <>
-            {completedSale && (
-                <ReceiptModal
-                    sale={completedSale}
-                    onClose={() => setCompletedSale(null)}
-                />
-            )}
-
-            {isCameraOpen && (
-                <CameraScanner
-                    onCapture={handleCameraCapture}
-                    onScan={handleBarcodeScan}
-                    onClose={() => setIsCameraOpen(false)}
-                />
-            )}
-
-            {isIdentifying && (
-                <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-white">
-                    <Loader2 className="w-12 h-12 animate-spin mb-4 text-indigo-400" />
-                    <p className="font-bold text-xl">Analyzing Image...</p>
-                    <p className="text-slate-300 text-sm">Identifying product against inventory</p>
-                </div>
-            )}
-
             <div
                 ref={posContainerRef}
                 className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4' : 'h-[calc(100vh-9rem)]'}`}
             >
+                {/* Modals & Overlays (Must be inside for Full Screen visibility) */}
+                {completedSale && (
+                    <ReceiptModal
+                        sale={completedSale}
+                        onClose={() => setCompletedSale(null)}
+                    />
+                )}
+
+                {isCameraOpen && (
+                    <CameraScanner
+                        onCapture={handleCameraCapture}
+                        onScan={handleBarcodeScan}
+                        onClose={() => setIsCameraOpen(false)}
+                    />
+                )}
+
+                {isIdentifying && (
+                    <div className="absolute inset-0 z-[70] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-white rounded-xl">
+                        <Loader2 className="w-12 h-12 animate-spin mb-4 text-indigo-400" />
+                        <p className="font-bold text-xl">Analyzing Image...</p>
+                        <p className="text-slate-300 text-sm">Identifying product against inventory</p>
+                    </div>
+                )}
                 {/* Top Bar: Sessions & Full Screen Toggle */}
                 <div className="flex gap-4 mb-2 shrink-0 items-end">
                     {/* Session Tabs */}
@@ -408,87 +469,77 @@ const POSModule: React.FC = () => {
                 <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
 
                     {/* LEFT 2/3 - BILLING TABLE & SEARCH */}
-                    <div className="col-span-12 lg:col-span-8 flex flex-col bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden min-h-0 transition-colors">
+                    <div className={`col-span-12 lg:col-span-8 flex flex-col bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden min-h-0 transition-colors ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
 
-                        {/* Search Bar Row */}
-                        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0 z-20">
+                        {/* Search Bar Row - Compact */}
+                        <div className="p-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-2 shrink-0 z-20">
+
                             {/* SKU Input */}
-                            <div className="relative group">
-                                <div className="absolute left-3 top-3 text-slate-400 dark:text-slate-500">
-                                    <Barcode className="w-5 h-5" />
+                            <div className="relative group flex-1">
+                                <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
+                                    <Barcode className="w-4 h-4" />
                                 </div>
                                 <input
                                     ref={skuInputRef}
                                     type="text"
-                                    placeholder="Scan SKU/Barcode (Exact Match)"
-                                    className="w-full pl-10 pr-16 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors shadow-sm"
+                                    placeholder="Scan SKU (Ctrl+B)"
+                                    className="w-full pl-9 pr-14 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors shadow-sm"
                                     value={skuQuery}
                                     onChange={e => setSkuQuery(e.target.value)}
                                     onKeyDown={handleSkuKeyDown}
                                 />
-                                <kbd className="absolute right-3 top-3.5 text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+B</kbd>
+                                <kbd className="absolute right-2 top-2.5 text-[9px] bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+B</kbd>
                             </div>
 
-                            {/* Camera Trigger */}
+                            {/* Camera Trigger (Mobile & Desktop) */}
                             <button
                                 onClick={() => setIsCameraOpen(true)}
-                                className="md:hidden p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                                className="p-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:border-indigo-500 dark:hover:text-indigo-400 transition-colors rounded-lg shadow-sm shrink-0"
                                 title="Scan Product via Camera"
                             >
-                                <Camera className="w-5 h-5" />
+                                <Camera className="w-4 h-4" />
                             </button>
 
                             {/* Name Input */}
-                            <div className="relative group">
-                                <div className="absolute left-3 top-3 text-slate-400 dark:text-slate-500">
-                                    <Search className="w-5 h-5" />
+                            <div className="relative group flex-[1.5]">
+                                <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
+                                    <Search className="w-4 h-4" />
                                 </div>
                                 <input
                                     ref={nameInputRef}
                                     type="text"
-                                    placeholder="Search Product Name..."
-                                    className="w-full pl-10 pr-16 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors shadow-sm"
+                                    placeholder="Search Name..."
+                                    className="w-full pl-9 pr-14 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors shadow-sm"
                                     value={nameQuery}
                                     onChange={e => setNameQuery(e.target.value)}
                                     onKeyDown={handleNameKeyDown}
                                     autoComplete="off"
                                 />
-                                <kbd className="absolute right-3 top-3.5 text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+F</kbd>
+                                <kbd className="absolute right-2 top-2.5 text-[9px] bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+F</kbd>
 
                                 {/* Name Suggestions Dropdown */}
                                 {nameSuggestions.length > 0 && (
-                                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto ring-1 ring-black/5 dark:ring-black/20">
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto ring-1 ring-black/5 dark:ring-black/20">
                                         {nameSuggestions.map((prod, idx) => (
                                             <button
                                                 key={prod.id}
                                                 onClick={() => handleSelectProduct(prod)}
-                                                className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-700/50 flex justify-between items-center group transition-colors ${idx === selectedNameIndex ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                                className={`w-full text-left px-3 py-2 border-b border-slate-100 dark:border-slate-700/50 flex justify-between items-center group transition-colors ${idx === selectedNameIndex ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                                             >
-                                                <div>
-                                                    <p className="font-bold text-sm">{prod.name}</p>
-                                                    <div className="flex gap-2 mt-0.5">
-                                                        <span className={`text-[10px] px-1.5 rounded border ${idx === selectedNameIndex ? 'border-indigo-400 bg-indigo-500/30' : 'border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}`}>{prod.sku}</span>
-                                                        <span className={`text-[10px] px-1.5 rounded border ${idx === selectedNameIndex ? 'border-indigo-400 bg-indigo-500/30' : 'border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}`}>{prod.branch}</span>
+                                                <div className="min-w-0">
+                                                    <p className="font-bold text-xs truncate">{prod.name}</p>
+                                                    <div className="flex gap-1 mt-0.5">
+                                                        <span className={`text-[9px] px-1 rounded border ${idx === selectedNameIndex ? 'border-indigo-400 bg-indigo-500/30' : 'border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}`}>{prod.sku}</span>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className="font-bold font-mono">₹{prod.price.toFixed(2)}</p>
-                                                    <p className={`text-[10px] ${idx === selectedNameIndex ? 'text-indigo-200' : 'text-slate-400 dark:text-slate-500'}`}>{prod.stock} left</p>
+                                                <div className="text-right shrink-0 ml-2">
+                                                    <p className="font-bold font-mono text-xs">₹{prod.price.toFixed(2)}</p>
                                                 </div>
                                             </button>
                                         ))}
                                     </div>
                                 )}
                             </div>
-
-                            {/* Desktop Camera Button */}
-                            <button
-                                onClick={() => setIsCameraOpen(true)}
-                                className="hidden md:flex p-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:border-indigo-500 dark:hover:text-indigo-400 transition-colors rounded-lg shadow-sm"
-                                title="Identify Product via Camera"
-                            >
-                                <Camera className="w-5 h-5" />
-                            </button>
                         </div>
 
                         {/* Visual Search Banner */}
@@ -519,9 +570,9 @@ const POSModule: React.FC = () => {
                                 <table className="w-full text-left text-sm text-slate-700 dark:text-slate-300">
                                     <thead className="bg-slate-100 dark:bg-slate-900 text-xs uppercase font-bold text-slate-500 sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <th className="p-4 w-12 text-center">#</th>
+                                            <th className="p-4 w-12 text-center hidden md:table-cell">#</th>
                                             <th className="p-4">Item Details</th>
-                                            <th className="p-4 w-32 text-center">Unit Price</th>
+                                            <th className="p-4 w-32 text-center hidden sm:table-cell">Unit Price</th>
                                             <th className="p-4 w-40 text-center">Quantity</th>
                                             <th className="p-4 w-32 text-right">Total</th>
                                             <th className="p-4 w-16 text-center">Action</th>
@@ -530,12 +581,12 @@ const POSModule: React.FC = () => {
                                     <tbody className="divide-y divide-slate-200 dark:divide-slate-700/50">
                                         {cart.map((item, idx) => (
                                             <tr key={item.id} className="hover:bg-slate-200/50 dark:hover:bg-slate-700/30 transition-colors group bg-white dark:bg-slate-800">
-                                                <td className="p-4 text-center text-slate-400 dark:text-slate-500 font-mono">{idx + 1}</td>
+                                                <td className="p-4 text-center text-slate-400 dark:text-slate-500 font-mono hidden md:table-cell">{idx + 1}</td>
                                                 <td className="p-4">
                                                     <p className="font-bold text-slate-800 dark:text-slate-200 text-base">{item.name}</p>
                                                     <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
                                                 </td>
-                                                <td className="p-4 text-center font-mono text-slate-600 dark:text-slate-400">
+                                                <td className="p-4 text-center font-mono text-slate-600 dark:text-slate-400 hidden sm:table-cell">
                                                     ₹{item.price.toFixed(2)}
                                                 </td>
                                                 <td className="p-4">
@@ -591,7 +642,7 @@ const POSModule: React.FC = () => {
                     </div>
 
                     {/* RIGHT 1/3 - CUSTOMER & SETTLEMENT */}
-                    <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 min-h-0">
+                    <div className={`col-span-12 lg:col-span-4 flex flex-col gap-6 min-h-0 ${mobileTab === 'CHECKOUT' ? 'flex' : 'hidden lg:flex'}`}>
 
                         {/* Customer Panel */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-lg shrink-0 transition-colors">
@@ -683,7 +734,7 @@ const POSModule: React.FC = () => {
                                                     title={method}
                                                 >
                                                     {method === 'CASH' && <Banknote className="w-4 h-4" />}
-                                                    {method === 'CARD' && <CardIcon className="w-4 h-4" />}
+                                                    {method === 'CARD' && <Smartphone className="w-4 h-4" />}
                                                     {method === 'UPI' && <Smartphone className="w-4 h-4" />}
                                                     <span className="text-[9px] uppercase leading-none">{method}</span>
                                                 </button>
@@ -706,7 +757,7 @@ const POSModule: React.FC = () => {
                                     <span className="text-slate-800 dark:text-slate-200 font-mono">₹{cartSubtotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-500 dark:text-slate-400">Tax {activeSession.taxMode === 'EXCLUSIVE' ? '(18%)' : '(0%)'}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Tax {activeSession.taxMode === 'INCLUSIVE' ? '(Included)' : ''}</span>
                                     <span className="text-slate-800 dark:text-slate-200 font-mono">₹{taxAmount.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-end pt-2">
@@ -736,6 +787,27 @@ const POSModule: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Mobile Bottom Navigation Bar */}
+                <div className="lg:hidden mt-4 grid grid-cols-2 gap-4 shrink-0">
+                    <button
+                        onClick={() => setMobileTab('CART')}
+                        className={`p-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'CART' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'}`}
+                    >
+                        <ShoppingCart className="w-6 h-6" />
+                        <span className="text-xs font-bold uppercase">Cart ({cart.reduce((a, b) => a + b.qty, 0)})</span>
+                    </button>
+                    <button
+                        onClick={() => setMobileTab('CHECKOUT')}
+                        className={`p-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'CHECKOUT' ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'}`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold">₹{cartTotal.toFixed(2)}</span>
+                            <Check className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-bold uppercase">Checkout</span>
+                    </button>
                 </div>
             </div >
         </>

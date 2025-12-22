@@ -1,27 +1,16 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TenantState, Tenant, ModuleType, AuthState, Sector, SettingsState, SystemRole, Employee, AppView } from '../types';
+
+import { TenantState, Tenant } from '../types/tenant'
+import { ModuleType, Sector, SystemRole, AppView } from '../types/common'
+import { AuthState, SettingsState } from '../types/settings'
+import { Employee } from '../types/hr'
+
+import { MOCK_TENANTS, APP_DEFAULTS } from '../../mockData';
 
 // --- Tenant Slice ---
 const initialTenantState: TenantState = {
-  tenants: [
-    {
-      id: '1',
-      name: 'Retail Co',
-      subdomain: 'retail-co',
-      modules: ['POS', 'INVENTORY', 'FINANCE'],
-      isActive: true,
-      region: { currency: 'USD', currencySymbol: '$', dateFormat: 'MM/DD/YYYY' }
-    },
-    {
-      id: '2',
-      name: 'Pharma Plus',
-      subdomain: 'pharma-plus',
-      modules: ['POS', 'INVENTORY'],
-      isActive: true,
-      region: { currency: 'EUR', currencySymbol: '€', dateFormat: 'DD/MM/YYYY' }
-    },
-  ]
+  tenants: MOCK_TENANTS
 };
 
 const tenantSlice = createSlice({
@@ -38,20 +27,26 @@ const tenantSlice = createSlice({
     updateTenantModules: (state, action: PayloadAction<{ id: string, modules: ModuleType[] }>) => {
       const tenant = state.tenants.find(t => t.id === action.payload.id);
       if (tenant) tenant.modules = action.payload.modules;
+    },
+    updateTenantDetails: (state, action: PayloadAction<Tenant>) => {
+      const index = state.tenants.findIndex(t => t.id === action.payload.id);
+      if (index !== -1) {
+        state.tenants[index] = action.payload;
+      }
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules } = tenantSlice.actions;
+export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails } = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---
 const initialAuthState: AuthState = {
   user: null,
-  currentSector: Sector.GENERAL,
-  currentBranch: 'Alpha',
-  role: 'Staff', // Default safe role
-  theme: 'light'
+  currentSector: APP_DEFAULTS.currentSector as Sector,
+  currentBranch: 'All',
+  role: APP_DEFAULTS.role as SystemRole,
+  theme: APP_DEFAULTS.theme as 'light' | 'dark'
 };
 
 const authSlice = createSlice({
@@ -71,7 +66,16 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.role = action.payload.systemRole;
       state.currentSector = action.payload.sector;
-      state.currentBranch = action.payload.branch === 'All' ? 'Alpha' : action.payload.branch;
+
+      // Strict Branch Locking Logic
+      if (action.payload.systemRole === 'Owner') {
+        // Owners default to their home branch but CAN switch to 'All' or others
+        // For convenience, let's default to 'All' if they are an Owner to give the "Super View"
+        state.currentBranch = 'All';
+      } else {
+        // Staff/Managers are STRICTLY locked to their assigned branch
+        state.currentBranch = action.payload.branchId;
+      }
     },
     logout: (state) => {
       state.user = null;

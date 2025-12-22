@@ -5,8 +5,9 @@ import financeReducer, { addTransaction } from './financeSlice';
 import laborReducer from './laborSlice';
 import purchaseReducer, { approveOrder } from './purchaseSlice';
 import tenantReducer, { authReducer, settingsReducer } from './tenantSlice';
-import { Sale, PurchaseOrder, TransactionType } from '../types';
-
+import { PurchaseOrder } from '../types/purchase';
+import { TransactionType } from '../types/common';
+import { Sale } from '../types/sales';
 export const store = configureStore({
     reducer: {
         inventory: inventoryReducer,
@@ -44,9 +45,9 @@ export const processSale = (sale: Sale) => (dispatch: AppDispatch) => {
         category: 'Sales',
         amount: sale.total,
         date: sale.date,
-        description: `Sale #${sale.id.substr(0, 6)} - ${sale.branch || 'Unknown'} (${sale.paymentMethod})`,
+        description: `Sale #${sale.id.substr(0, 6)} - ${sale.branchId || 'Unknown'} (${sale.paymentMethod})`,
         sector: sale.sector,
-        branch: sale.branch
+        branchId: sale.branchId
     }));
     // dispatch(clearCurrentSession()); // Handled in recordSale reducer
 };
@@ -62,7 +63,7 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
         category: 'Uncategorized', // Default
         productType: 'General', // Default
         sector: order.sector,
-        branch: order.branch
+        branch: order.branchId
     }))));
     dispatch(addTransaction({
         id: Math.random().toString(36).substr(2, 9),
@@ -70,8 +71,8 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
         category: 'Inventory Restock',
         amount: order.total,
         date: new Date().toISOString(),
-        description: `Invoice Payment - ${order.vendor} (${order.branch})`,
+        description: `Invoice Payment - ${order.vendor} (${order.branchId})`,
         sector: order.sector,
-        branch: order.branch
+        branchId: order.branchId
     }));
 };

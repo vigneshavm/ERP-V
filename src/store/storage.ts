@@ -1,6 +1,6 @@
 import { APP_CONFIG } from '../config';
 
-export const loadState = (key: string, defaultState: any) => {
+export const loadState = <T>(key: string, defaultState: T): T => {
     try {
         const serialized = localStorage.getItem(key);
         if (serialized) {
@@ -11,12 +11,12 @@ export const loadState = (key: string, defaultState: any) => {
             return defaultState;
         }
         return defaultState;
-    } catch (e) {
+    } catch {
         return defaultState;
     }
 };
 
-export const saveState = (key: string, state: any) => {
+export const saveState = <T>(key: string, state: T): void => {
     try {
         localStorage.setItem(key, JSON.stringify(state));
     } catch (e) {

@@ -1,5 +1,5 @@
 
-import { AppView, UserRole } from "./types";
+import { AppView, SystemRole } from "./src/types";
 
 export const APP_CONFIG = {
   IS_DEMO: true, // Toggle this to false for production/clean slate
@@ -7,28 +7,38 @@ export const APP_CONFIG = {
 };
 
 // Role-Based Access Control Configuration
-export const PERMISSIONS: Record<UserRole, AppView[]> = {
+export const PERMISSIONS: Record<SystemRole, AppView[]> = {
   Owner: [
-    'dashboard', 
-    'pos', 
-    'sales', 
-    'daily', 
-    'inventory', 
-    'purchases', 
-    'finance', 
-    'labor'
+    'DASHBOARD',
+    'POS',
+    'SALES',
+    'DAILY',
+    'INVENTORY',
+    'PURCHASE',
+    'FINANCE',
+    'LABOR'
   ],
   Staff: [
-    'pos', 
-    'sales', 
-    'daily', 
-    'inventory', 
-    'purchases' // Staff can upload, but not approve (handled in component)
+    'POS',
+    'SALES',
+    'DAILY',
+    'INVENTORY',
+    'PURCHASE' // Staff can upload, but not approve (handled in component)
+  ],
+  Manager: [
+    'DASHBOARD',
+    'POS',
+    'SALES',
+    'DAILY',
+    'INVENTORY',
+    'PURCHASE',
+    'FINANCE',
+    'LABOR'
   ]
 };
 
 // Check if a role has access to a specific view
 export const hasAccess = (role: string, view: AppView): boolean => {
-  const userRole = role as UserRole;
+  const userRole = role as SystemRole;
   return PERMISSIONS[userRole]?.includes(view) || false;
 };

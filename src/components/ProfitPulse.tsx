@@ -4,19 +4,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    ReferenceLine, BarChart, Bar, Cell
+    ReferenceLine,
 } from 'recharts';
 import {
-    TrendingUp, TrendingDown, AlertTriangle, BatteryCharging,
-    Zap, PackageSearch, UserX, Clock, ArrowRight, ShieldAlert, CheckCircle2
+    AlertTriangle, BatteryCharging,
+    Zap, PackageSearch, Clock, ShieldAlert, CheckCircle2
 } from 'lucide-react';
 import { formatCurrency } from '../utils/helpers';
 import { Card } from './Card';
 
 const ProfitPulse: React.FC = () => {
-    const { balance } = useSelector((state: RootState) => state.finance);
+    const { bankBalance: balance } = useSelector((state: RootState) => state.finance);
     const { products } = useSelector((state: RootState) => state.inventory);
-    const { customers, salesHistory } = useSelector((state: RootState) => state.pos);
+    const { customers } = useSelector((state: RootState) => state.pos);
     const { currentSector, theme } = useSelector((state: RootState) => state.auth);
 
     // --- 1. CASH RUNWAY PREDICTION ---
@@ -67,8 +67,9 @@ const ProfitPulse: React.FC = () => {
         return products
             .filter(p => p.sector === currentSector)
             .map(p => {
-                // Mock velocity: random between 1 and 5 units/day
-                const velocity = Math.ceil(Math.random() * 5);
+                // Mock velocity: deterministic based on name for stability
+                const hash = p.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const velocity = (hash % 5) + 1;
                 const daysRemaining = Math.floor(p.stock / velocity);
                 return { ...p, velocity, daysRemaining };
             })

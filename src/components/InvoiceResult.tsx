@@ -1,14 +1,15 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { ScannedInvoice, Sector, Branch } from '../../types';
-import { LayoutTemplate, Table, FileText, Save, CheckCircle2, AlertOctagon, RotateCcw, X, IndianRupee, Plus, Barcode } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sector, Branch } from '../types/common';
+import { ScannedInvoice, FinalizedPurchaseItem } from '../types/purchase';
+import { LayoutTemplate, Table, FileText, Save, CheckCircle2, X, IndianRupee, Plus, Barcode } from 'lucide-react';
 
 interface InvoiceResultProps {
     initialData: ScannedInvoice;
     file: File | null;
     sector: Sector;
     branch: Branch;
-    onSave: (items: any[]) => void;
+    onSave: (items: FinalizedPurchaseItem[]) => void;
     onCancel: () => void;
 }
 
@@ -35,25 +36,176 @@ const CATEGORIES_BY_SECTOR: Record<Sector, string[]> = {
     'Mobile Shop': ['Smartphones', 'Accessories', 'Tablets', 'Audio', 'Chargers', 'Wearables']
 };
 
+
+
+const Previewer: React.FC<{ file: File | null; fileUrl: string | null }> = ({ file, fileUrl }) => {
+    if (!file) return <div className="flex items-center justify-center h-full text-slate-500">No file uploaded</div>;
+
+    if (file.type.startsWith('image/')) {
+        return (
+            <div className="h-full w-full overflow-auto bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-2">
+                <img src={fileUrl!} alt="Invoice Preview" className="max-w-full h-auto mx-auto" />
+            </div>
+        );
+    } else if (file.type === 'application/pdf') {
+        return (
+            <iframe src={fileUrl!} className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white" title="Invoice PDF" />
+        );
+    }
+    return <div className="flex items-center justify-center h-full text-slate-500">Preview not supported for this file type</div>;
+};
+
+interface DataGridProps {
+    items: EditableItem[];
+    sector: Sector;
+    onItemChange: (id: string, field: keyof EditableItem, value: string | number) => void;
+    onAddItem: () => void;
+    onDeleteItem: (id: string) => void;
+}
+
+const DataGrid: React.FC<DataGridProps> = ({ items, sector, onItemChange, onAddItem, onDeleteItem }) => (
+    <div className="overflow-x-auto h-full flex flex-col">
+        <div className="flex-1 overflow-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase font-bold sticky top-0 z-10 shadow-md">
+                    <tr>
+                        <th className="p-3">SKU</th>
+                        <th className="p-3">Barcode</th>
+                        <th className="p-3">Product Name</th>
+                        <th className="p-3">Type</th>
+                        <th className="p-3">Category</th>
+                        <th className="p-3 w-20">Qty</th>
+                        <th className="p-3 w-28">Cost</th>
+                        <th className="p-3 w-24">Margin %</th>
+                        <th className="p-3 w-32">Sell Price</th>
+                        <th className="p-3 w-10"></th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900/50">
+                    {items.map(item => (
+                        <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td className="p-2">
+                                <input
+                                    type="text"
+                                    value={item.sku}
+                                    onChange={(e) => onItemChange(item.id, 'sku', e.target.value)}
+                                    className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-24 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                                />
+                            </td>
+                            <td className="p-2">
+                                <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded px-2 py-1">
+                                    <Barcode className="w-3 h-3 text-slate-400" />
+                                    <input
+                                        type="text"
+                                        value={item.barcode || ''}
+                                        onChange={(e) => onItemChange(item.id, 'barcode', e.target.value)}
+                                        className="bg-transparent w-24 text-xs font-mono outline-none text-slate-600 dark:text-slate-300"
+                                        placeholder="Auto-gen"
+                                    />
+                                </div>
+                            </td>
+                            <td className="p-2">
+                                <input
+                                    type="text"
+                                    value={item.name}
+                                    onChange={(e) => onItemChange(item.id, 'name', e.target.value)}
+                                    className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-full min-w-[150px] text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                                />
+                            </td>
+                            <td className="p-2">
+                                <input
+                                    type="text"
+                                    value={item.productType}
+                                    onChange={(e) => onItemChange(item.id, 'productType', e.target.value)}
+                                    className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-24 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                                    placeholder="Type"
+                                />
+                            </td>
+                            <td className="p-2">
+                                <div className="relative">
+                                    <input
+                                        list={`cat-${item.id}`}
+                                        value={item.category}
+                                        onChange={(e) => onItemChange(item.id, 'category', e.target.value)}
+                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-28 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                                        placeholder="Select..."
+                                    />
+                                    <datalist id={`cat-${item.id}`}>
+                                        {CATEGORIES_BY_SECTOR[sector].map(c => <option key={c} value={c} />)}
+                                    </datalist>
+                                </div>
+                            </td>
+                            <td className="p-2">
+                                <input
+                                    type="number"
+                                    value={item.qty}
+                                    onChange={(e) => onItemChange(item.id, 'qty', parseInt(e.target.value))}
+                                    className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-16 text-center text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
+                                />
+                            </td>
+                            <td className="p-2 text-slate-400">
+                                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded px-2 py-1">
+                                    <IndianRupee className="w-3 h-3" />
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        value={item.cost}
+                                        onChange={(e) => onItemChange(item.id, 'cost', parseFloat(e.target.value))}
+                                        className="bg-transparent w-16 outline-none text-slate-600 dark:text-slate-400"
+                                    />
+                                </div>
+                            </td>
+                            <td className="p-2">
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="number"
+                                        step="0.1"
+                                        value={item.margin}
+                                        onChange={(e) => onItemChange(item.id, 'margin', parseFloat(e.target.value))}
+                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-16 pr-5 text-right text-emerald-600 dark:text-emerald-400 font-medium focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <span className="absolute right-2 text-xs text-slate-500">%</span>
+                                </div>
+                            </td>
+                            <td className="p-2">
+                                <div className="relative flex items-center">
+                                    <span className="absolute left-2 text-slate-500"><IndianRupee className="w-3 h-3" /></span>
+                                    <input
+                                        type="number"
+                                        value={item.sellingPrice}
+                                        onChange={(e) => onItemChange(item.id, 'sellingPrice', parseFloat(e.target.value))}
+                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded pl-5 pr-2 py-1 w-20 text-right text-indigo-600 dark:text-indigo-400 font-bold focus:border-indigo-500 focus:outline-none"
+                                    />
+                                </div>
+                            </td>
+                            <td className="p-2">
+                                <button
+                                    onClick={() => onDeleteItem(item.id)}
+                                    className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <button
+                onClick={onAddItem}
+                className="w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-lg hover:border-indigo-500 hover:text-indigo-600 dark:hover:border-indigo-400 dark:hover:text-indigo-300 transition-colors flex items-center justify-center gap-2 font-bold text-sm"
+            >
+                <Plus className="w-4 h-4" /> Add Line Item
+            </button>
+        </div>
+    </div>
+);
+
 const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector, branch, onSave, onCancel }) => {
-    // --- State ---
-    const [viewMode, setViewMode] = useState<'SPLIT' | 'DETAILS' | 'PREVIEW'>('SPLIT');
-    const [items, setItems] = useState<EditableItem[]>([]);
-    const [isSaved, setIsSaved] = useState(false);
-    const [fileUrl, setFileUrl] = useState<string | null>(null);
-
-    // --- Initialization ---
-    useEffect(() => {
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setFileUrl(url);
-            return () => URL.revokeObjectURL(url);
-        }
-    }, [file]);
-
-    useEffect(() => {
-        // Transform initial data
-        const transformed: EditableItem[] = initialData.items.map(i => {
+    // --- Logic ---
+    const generateItems = (data: ScannedInvoice, sec: Sector): EditableItem[] => {
+        return data.items.map(i => {
             const cost = i.cost || 0;
             const defaultMargin = 20; // 20% default
             const sellingPrice = Math.round(cost * (1 + defaultMargin / 100));
@@ -63,7 +215,7 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                 sku: i.sku || `SKU-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                 name: i.name,
                 productType: i.productType || 'General',
-                category: CATEGORIES_BY_SECTOR[sector]?.[0] || 'Uncategorized',
+                category: CATEGORIES_BY_SECTOR[sec]?.[0] || 'Uncategorized',
                 qty: i.qty,
                 cost: cost,
                 margin: defaultMargin,
@@ -71,11 +223,29 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                 barcode: Math.floor(100000000000 + Math.random() * 900000000000).toString() // Generate unique 12-digit barcode immediately
             };
         });
-        setItems(transformed);
-    }, [initialData, sector]);
+    };
+
+    // --- State ---
+    const [viewMode, setViewMode] = useState<'SPLIT' | 'DETAILS' | 'PREVIEW'>('SPLIT');
+    const [items, setItems] = useState<EditableItem[]>(() => generateItems(initialData, sector));
+    const [isSaved, setIsSaved] = useState(false);
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+    // --- Initialization ---
+    useEffect(() => {
+        if (file) {
+            const url = URL.createObjectURL(file);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFileUrl(url);
+            return () => URL.revokeObjectURL(url);
+        }
+    }, [file]);
+
+    // Initial data transformation is now handled in useState initializer to avoid set-state-in-effect
+
 
     // --- Logic ---
-    const handleItemChange = (id: string, field: keyof EditableItem, value: any) => {
+    const handleItemChange = (id: string, field: keyof EditableItem, value: string | number) => {
         setItems(prev => prev.map(item => {
             if (item.id !== id) return item;
 
@@ -116,6 +286,10 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
         setItems(prev => [...prev, newItem]);
     };
 
+    const handleDeleteItem = (id: string) => {
+        setItems(prev => prev.filter(i => i.id !== id));
+    };
+
     const handleSave = () => {
         // Final mapping to ensure compatibility with PurchaseManager and Redux actions
         const finalItems = items.map((item, index) => {
@@ -153,164 +327,6 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
             onSave(finalItems);
         }, 1000);
     };
-
-    // --- Renderers ---
-
-    const Previewer = () => {
-        if (!file) return <div className="flex items-center justify-center h-full text-slate-500">No file uploaded</div>;
-
-        if (file.type.startsWith('image/')) {
-            return (
-                <div className="h-full w-full overflow-auto bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-2">
-                    <img src={fileUrl!} alt="Invoice Preview" className="max-w-full h-auto mx-auto" />
-                </div>
-            );
-        } else if (file.type === 'application/pdf') {
-            return (
-                <iframe src={fileUrl!} className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white" title="Invoice PDF" />
-            );
-        }
-        return <div className="flex items-center justify-center h-full text-slate-500">Preview not supported for this file type</div>;
-    };
-
-    const DataGrid = () => (
-        <div className="overflow-x-auto h-full flex flex-col">
-            <div className="flex-1 overflow-auto">
-                <table className="w-full text-left text-sm whitespace-nowrap">
-                    <thead className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase font-bold sticky top-0 z-10 shadow-md">
-                        <tr>
-                            <th className="p-3">SKU</th>
-                            <th className="p-3">Barcode</th>
-                            <th className="p-3">Product Name</th>
-                            <th className="p-3">Type</th>
-                            <th className="p-3">Category</th>
-                            <th className="p-3 w-20">Qty</th>
-                            <th className="p-3 w-28">Cost</th>
-                            <th className="p-3 w-24">Margin %</th>
-                            <th className="p-3 w-32">Sell Price</th>
-                            <th className="p-3 w-10"></th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900/50">
-                        {items.map(item => (
-                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <td className="p-2">
-                                    <input
-                                        type="text"
-                                        value={item.sku}
-                                        onChange={(e) => handleItemChange(item.id, 'sku', e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-24 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
-                                    />
-                                </td>
-                                <td className="p-2">
-                                    <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded px-2 py-1">
-                                        <Barcode className="w-3 h-3 text-slate-400" />
-                                        <input
-                                            type="text"
-                                            value={item.barcode || ''}
-                                            onChange={(e) => handleItemChange(item.id, 'barcode', e.target.value)}
-                                            className="bg-transparent w-24 text-xs font-mono outline-none text-slate-600 dark:text-slate-300"
-                                            placeholder="Auto-gen"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="p-2">
-                                    <input
-                                        type="text"
-                                        value={item.name}
-                                        onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-full min-w-[150px] text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
-                                    />
-                                </td>
-                                <td className="p-2">
-                                    <input
-                                        type="text"
-                                        value={item.productType}
-                                        onChange={(e) => handleItemChange(item.id, 'productType', e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-24 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
-                                        placeholder="Type"
-                                    />
-                                </td>
-                                <td className="p-2">
-                                    <div className="relative">
-                                        <input
-                                            list={`cat-${item.id}`}
-                                            value={item.category}
-                                            onChange={(e) => handleItemChange(item.id, 'category', e.target.value)}
-                                            className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-28 text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
-                                            placeholder="Select..."
-                                        />
-                                        <datalist id={`cat-${item.id}`}>
-                                            {CATEGORIES_BY_SECTOR[sector].map(c => <option key={c} value={c} />)}
-                                        </datalist>
-                                    </div>
-                                </td>
-                                <td className="p-2">
-                                    <input
-                                        type="number"
-                                        value={item.qty}
-                                        onChange={(e) => handleItemChange(item.id, 'qty', parseInt(e.target.value))}
-                                        className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-16 text-center text-slate-900 dark:text-slate-200 focus:border-indigo-500 focus:outline-none"
-                                    />
-                                </td>
-                                <td className="p-2 text-slate-400">
-                                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded px-2 py-1">
-                                        <IndianRupee className="w-3 h-3" />
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={item.cost}
-                                            onChange={(e) => handleItemChange(item.id, 'cost', parseFloat(e.target.value))}
-                                            className="bg-transparent w-16 outline-none text-slate-600 dark:text-slate-400"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="p-2">
-                                    <div className="relative flex items-center">
-                                        <input
-                                            type="number"
-                                            step="0.1"
-                                            value={item.margin}
-                                            onChange={(e) => handleItemChange(item.id, 'margin', parseFloat(e.target.value))}
-                                            className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 w-16 pr-5 text-right text-emerald-600 dark:text-emerald-400 font-medium focus:border-emerald-500 focus:outline-none"
-                                        />
-                                        <span className="absolute right-2 text-xs text-slate-500">%</span>
-                                    </div>
-                                </td>
-                                <td className="p-2">
-                                    <div className="relative flex items-center">
-                                        <span className="absolute left-2 text-slate-500"><IndianRupee className="w-3 h-3" /></span>
-                                        <input
-                                            type="number"
-                                            value={item.sellingPrice}
-                                            onChange={(e) => handleItemChange(item.id, 'sellingPrice', parseFloat(e.target.value))}
-                                            className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded pl-5 pr-2 py-1 w-20 text-right text-indigo-600 dark:text-indigo-400 font-bold focus:border-indigo-500 focus:outline-none"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="p-2">
-                                    <button
-                                        onClick={() => setItems(prev => prev.filter(i => i.id !== item.id))}
-                                        className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded transition-colors"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-                <button
-                    onClick={handleAddItem}
-                    className="w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-lg hover:border-indigo-500 hover:text-indigo-600 dark:hover:border-indigo-400 dark:hover:text-indigo-300 transition-colors flex items-center justify-center gap-2 font-bold text-sm"
-                >
-                    <Plus className="w-4 h-4" /> Add Line Item
-                </button>
-            </div>
-        </div>
-    );
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
@@ -375,23 +391,35 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                     <div className="flex h-full">
                         <div className="w-1/2 border-r border-slate-200 dark:border-slate-700 h-full bg-slate-100 dark:bg-slate-900/50 p-4">
                             <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">Original Document</h4>
-                            <Previewer />
+                            <Previewer file={file} fileUrl={fileUrl} />
                         </div>
                         <div className="w-1/2 h-full flex flex-col">
-                            <DataGrid />
+                            <DataGrid
+                                items={items}
+                                sector={sector}
+                                onItemChange={handleItemChange}
+                                onAddItem={handleAddItem}
+                                onDeleteItem={handleDeleteItem}
+                            />
                         </div>
                     </div>
                 )}
 
                 {viewMode === 'DETAILS' && (
                     <div className="h-full flex flex-col">
-                        <DataGrid />
+                        <DataGrid
+                            items={items}
+                            sector={sector}
+                            onItemChange={handleItemChange}
+                            onAddItem={handleAddItem}
+                            onDeleteItem={handleDeleteItem}
+                        />
                     </div>
                 )}
 
                 {viewMode === 'PREVIEW' && (
                     <div className="h-full bg-slate-100 dark:bg-slate-900/50 p-4">
-                        <Previewer />
+                        <Previewer file={file} fileUrl={fileUrl} />
                     </div>
                 )}
             </div>

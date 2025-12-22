@@ -3,12 +3,12 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, addToCart } from '../store';
 import {
-    ShoppingBag, Search, Filter, Star, Heart, ShoppingCart,
+    Search, Filter, Star, Heart, ShoppingCart,
     Sparkles, Send, X, Bot, RotateCcw, Image as ImageIcon,
     Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
-    Check, Loader2, ArrowUpDown
+    Check, Loader2
 } from 'lucide-react';
-import { Product } from '../../types';
+import { Product } from '../types/product';
 import { getProductRecommendations, searchProductsByImage } from '../services/geminiService';
 
 const Storefront: React.FC = () => {
@@ -42,7 +42,7 @@ const Storefront: React.FC = () => {
     // 1. Get base products for current store context
     const baseProducts = useMemo(() => {
         return products.filter(p =>
-            p.sector === currentSector && (currentBranch === 'All' || p.branch === currentBranch)
+            p.sector === currentSector && (currentBranch === 'All' || p.branchId === currentBranch)
         );
     }, [products, currentSector, currentBranch]);
 
@@ -466,7 +466,7 @@ const Storefront: React.FC = () => {
                                             {product.stock < 10 && <span className="text-[10px] font-bold text-red-500 uppercase">Low Stock</span>}
                                         </div>
                                         <h3 className="font-bold text-slate-900 dark:text-white text-lg truncate">{product.name}</h3>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">{product.productType} &bull; {product.branch}</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">{product.productType} &bull; {product.branchId}</p>
                                     </div>
                                     <div className="text-right">
                                         <span className="block text-2xl font-bold text-slate-900 dark:text-white mb-2">₹{product.price.toLocaleString()}</span>

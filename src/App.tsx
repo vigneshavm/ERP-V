@@ -1,8 +1,9 @@
 
-import React, { useState, useMemo } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, LogIn, Lock, Ban, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setUser } from './store';
+import { RootState, setBranch } from './store';
+import { MOCK_BRANCHES } from '../mockData';
 import Dashboard from './components/Dashboard';
 import POSModule from './components/POSModule';
 import InventoryManager from './components/InventoryManager';
@@ -18,7 +19,11 @@ import Login from './components/login';
 import TenantManager from './components/TenantManager';
 
 import { ConfigProvider } from './components/ConfigProvider';
-import { Tenant, AppView } from './types';
+import { useBranchResolver } from './hooks/useBranchResolver';
+
+import { AppView } from './types/common';
+import { Sector } from './types/common';
+import { Tenant } from './types/tenant';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -51,7 +56,7 @@ const App: React.FC = () => {
     const LandingPage = () => (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-4xl w-full text-center mb-12">
-                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-600/20">
+                <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/20">
                     <span className="font-bold text-3xl text-white">E</span>
                 </div>
                 <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Enterprise Manager</h1>
@@ -145,6 +150,10 @@ const App: React.FC = () => {
             onConfirm: () => void;
         }>({ isOpen: false, title: '', message: '', onConfirm: () => { } });
 
+        // Hooks must be at the top level
+        const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
+        const { getBranchName } = useBranchResolver();
+
         const requestConfirm = (title: string, message: string, onConfirm: () => void) => {
             setConfirmDialog({ isOpen: true, title, message, onConfirm });
         };
@@ -160,6 +169,7 @@ const App: React.FC = () => {
                 <ConfigProvider tenant={currentTenant}>
                     <Login
                         tenantName={currentTenant?.name || 'Retail Store'}
+                        allowedSector={currentTenant?.sector || Sector.GENERAL}
                         onLogin={() => setIsLoggedIn(true)}
                     />
                 </ConfigProvider>
@@ -167,7 +177,7 @@ const App: React.FC = () => {
         }
 
         // 2. Navigation Item Component
-        const NavItem = ({ id, icon: Icon, label }: { id: AppView; icon: any; label: string }) => {
+        const NavItem = ({ id, icon: Icon, label }: { id: AppView; icon: LucideIcon; label: string }) => {
             // Hide if no access
             if (!checkAccess(id)) return null;
 
@@ -178,8 +188,8 @@ const App: React.FC = () => {
                         setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${activeTab === id
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                         }`}
                 >
                     <Icon className="w-5 h-5" />
@@ -241,7 +251,7 @@ const App: React.FC = () => {
 
                     {/* Sidebar */}
                     <aside className={`
-            fixed lg:static inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-100 p-4 flex flex-col transition-transform duration-300 transform 
+            fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 p-4 flex flex-col transition-transform duration-300 transform 
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}>
                         <div className="flex items-center space-x-2 px-4 mb-2 mt-2 lg:mt-0">
@@ -250,12 +260,37 @@ const App: React.FC = () => {
                             </div>
                             <div className="overflow-hidden">
                                 <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                                <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">{role}</span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
                             </div>
                         </div>
 
                         <div className="mb-6 px-4">
-                            <span className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">{currentTenant?.name}</span>
+                            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{currentTenant?.name}</span>
+
+                            {/* Branch Selector (Owner Only) or Display (Staff) */}
+                            <div className="mt-2">
+                                {role === 'Owner' ? (
+                                    <div className="relative">
+                                        <select
+                                            value={selectedBranch}
+                                            onChange={(e) => dispatch(setBranch(e.target.value))}
+                                            className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                        >
+                                            <option value="All">All Branches (HQ View)</option>
+                                            {(currentTenant?.locations?.flatMap(l => l.branches) ||
+                                                MOCK_BRANCHES.filter(b => b.sector === currentTenant?.sector || currentTenant?.sector === Sector.GENERAL)
+                                            ).map(b => (
+                                                <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                        {getBranchName(selectedBranch)}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
@@ -269,35 +304,23 @@ const App: React.FC = () => {
                             <NavItem id="DAILY" icon={LogOut} label="Daily Tracker" />
                             <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
                             <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
-                            <div className="pt-4 mt-4 border-t border-slate-800">
+                            <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
                                 <NavItem id="SETTINGS" icon={Settings} label="Settings" />
                             </div>
                         </nav>
 
-                        <div className="pt-4 border-t border-slate-800 mt-2 space-y-2">
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
                             <button
                                 onClick={() => {
                                     requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => setIsLoggedIn(false));
                                 }}
-                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             >
                                 <Lock className="w-5 h-5" />
                                 <span className="font-medium">Staff Logout</span>
                             </button>
 
-                            <button
-                                onClick={() => {
-                                    requestConfirm('Switch Company', 'Switch company? This will end your session.', () => {
-                                        setViewMode('LANDING');
-                                        setCurrentTenant(null);
-                                        setIsLoggedIn(false);
-                                    });
-                                }}
-                                className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-800 hover:text-red-400 transition-colors text-sm"
-                            >
-                                <LogOut className="w-4 h-4" />
-                                <span className="font-medium">Switch Company</span>
-                            </button>
+
                         </div>
                     </aside>
 
@@ -309,38 +332,42 @@ const App: React.FC = () => {
                     </main>
 
                     {/* Overlay for mobile sidebar */}
-                    {sidebarOpen && (
-                        <div
-                            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-                            onClick={() => setSidebarOpen(false)}
-                        />
-                    )}
+                    {
+                        sidebarOpen && (
+                            <div
+                                className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                                onClick={() => setSidebarOpen(false)}
+                            />
+                        )
+                    }
 
                     {/* Confirmation Modal */}
-                    {confirmDialog.isOpen && (
-                        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
-                                <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
-                                <div className="flex gap-3 justify-end">
-                                    <button
-                                        onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                                        className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleConfirm}
-                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
-                                    >
-                                        Confirm
-                                    </button>
+                    {
+                        confirmDialog.isOpen && (
+                            <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+                                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
+                                    <div className="flex gap-3 justify-end">
+                                        <button
+                                            onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                                            className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleConfirm}
+                                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
+                                        >
+                                            Confirm
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-            </ConfigProvider>
+                        )
+                    }
+                </div >
+            </ConfigProvider >
         );
     };
 

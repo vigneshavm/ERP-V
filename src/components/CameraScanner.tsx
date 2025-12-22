@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Camera, X, RefreshCw, Aperture, Scan, Image as ImageIcon } from 'lucide-react';
+import { Camera, X, Aperture, Scan, Image as ImageIcon } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 
 interface CameraScannerProps {
@@ -19,7 +19,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [mode, setMode] = useState<ScanMode>('AI_IDENTIFY');
-    const [isScanning, setIsScanning] = useState(false);
+
 
     // AI Camera Logic
     useEffect(() => {
@@ -88,7 +88,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                 const scanner = new Html5Qrcode("reader");
                 scannerRef.current = scanner;
 
-                setIsScanning(true);
+
                 await scanner.start(
                     { facingMode: { exact: "environment" } }, // Prefer back camera
                     {
@@ -103,11 +103,11 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                             // Play beep?
                         }
                     },
-                    (errorMessage) => {
+                    () => {
                         // Error callback (ignore frequent errors)
                     }
                 );
-            } catch (err: any) {
+            } catch (err) {
                 // Fallback to 'user' facing mode if environment fails (e.g. laptop)
                 try {
                     const scanner = new Html5Qrcode("reader");
@@ -118,7 +118,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                         (decodedText) => { if (onScan) onScan(decodedText); },
                         () => { }
                     );
-                } catch (retryErr) {
+                } catch {
                     console.error("Scanner Error:", err);
                     setError("Failed to start barcode scanner. Camera access required.");
                 }
@@ -135,14 +135,14 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                     try {
                         await scannerRef.current.stop();
                         scannerRef.current.clear();
-                    } catch (e) {
+                    } catch {
                         // ignore
                     }
                 }
             };
             cleanup();
         };
-    }, [mode]);
+    }, [mode, onScan, stream]);
 
 
     const handleCapture = () => {

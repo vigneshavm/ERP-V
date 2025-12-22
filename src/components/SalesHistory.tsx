@@ -1,14 +1,16 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Calendar, Search, Filter, ArrowUpRight, Printer, FileText } from 'lucide-react';
+import { Calendar, Search, Printer } from 'lucide-react';
 import { ReceiptModal } from './ReceiptModal';
-import { Sale } from '../types';
+import { useBranchResolver } from '../hooks/useBranchResolver';
+import { Sale } from '../types/sales';
 
-const SalesHistory: React.FC = () => {
+const SalesHistory = () => {
     const { salesHistory, customers } = useSelector((state: RootState) => state.pos);
     const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const { getBranchName } = useBranchResolver();
 
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
@@ -18,7 +20,7 @@ const SalesHistory: React.FC = () => {
     const filteredSales = salesHistory.filter(sale => {
         // 1. Branch/Sector Filter
         if (sale.sector !== currentSector) return false;
-        if (currentBranch !== 'All' && sale.branch !== currentBranch) return false;
+        if (currentBranch !== 'All' && sale.branchId !== currentBranch) return false;
 
         // 2. Search ID
         if (searchId && !sale.id.includes(searchId)) return false;
@@ -47,7 +49,7 @@ const SalesHistory: React.FC = () => {
 
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    Sales History <span className="text-slate-500 text-base font-normal">/ {currentBranch}</span>
+                    Sales History <span className="text-slate-500 text-base font-normal">/ {getBranchName(currentBranch)}</span>
                 </h2>
                 <div className="text-right">
                     <p className="text-xs text-slate-500 uppercase font-bold">Total Period Revenue</p>

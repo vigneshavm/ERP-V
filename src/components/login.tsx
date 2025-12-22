@@ -4,12 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, setUser } from '../store';
 import { Store, Lock, ArrowRight, AlertCircle, UserCircle } from 'lucide-react';
 
+import { Sector } from '../types/common';
+
 interface LoginProps {
     onLogin: () => void;
     tenantName: string;
+    allowedSector: Sector;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, tenantName }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, tenantName, allowedSector }) => {
     const dispatch = useDispatch();
     const { employees } = useSelector((state: RootState) => state.labor);
 
@@ -18,14 +21,19 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenantName }) => {
     const [error, setError] = useState('');
 
     const sortedEmployees = useMemo(() => {
+        // Filter by Sector (Allow Owners or matching Sector)
+        const relevantEmployees = employees.filter(e =>
+            e.systemRole === 'Owner' || e.sector === allowedSector
+        );
+
         // Sort by role priority (Owner -> Manager -> Staff) then name
         const roleOrder = { 'Owner': 0, 'Manager': 1, 'Staff': 2 };
-        return [...employees].sort((a, b) => {
+        return [...relevantEmployees].sort((a, b) => {
             const roleDiff = (roleOrder[a.systemRole] || 2) - (roleOrder[b.systemRole] || 2);
             if (roleDiff !== 0) return roleDiff;
             return a.name.localeCompare(b.name);
         });
-    }, [employees]);
+    }, [employees, allowedSector]);
 
     // Default selection
     if (!selectedUserId && sortedEmployees.length > 0) {
@@ -44,7 +52,15 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenantName }) => {
         }
 
         if (pin === user.pin) {
-            dispatch(setUser(user));
+            // Fix for Admin: Identify if we need to switch context sector
+            // If the user is an Owner, they should adopt the Tenant's sector for this session
+            // instead of their default 'General' sector, so they can see relevant data.
+            const sessionUser = { ...user };
+            if (user.systemRole === 'Owner' && allowedSector) {
+                sessionUser.sector = allowedSector;
+            }
+
+            dispatch(setUser(sessionUser));
             onLogin();
         } else {
             setError("Invalid PIN.");
@@ -103,7 +119,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenantName }) => {
                         </div>
                     )}
 
-                    <button type="submit" className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-lg">
+                    <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-600/20">
                         Authenticate Access <ArrowRight className="w-4 h-4" />
                     </button>
                 </form>

@@ -1,9 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, updateSettings, updateRolePermissions, resetSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator } from 'lucide-react';
-import { AppView, SystemRole, TaxMode } from '../types';
+import { RootState, updateSettings, resetSettings, updateTenantDetails } from '../store';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun } from 'lucide-react';
+import { AppView, SystemRole, TaxMode } from '../types/common';
+import { useConfig } from './ConfigContext';
+import { Tenant } from '../types/tenant'; // Assuming Tenant type is exported from here or similar
 
 const COLORS = [
     { name: 'Indigo', hex: '#4f46e5' },
@@ -45,27 +47,33 @@ const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
     { id: 'SETTINGS', label: 'Settings' },
 ];
 
-const SettingsManager: React.FC = () => {
-    const dispatch = useDispatch();
-    const settings = useSelector((state: RootState) => state.settings);
-    const { role } = useSelector((state: RootState) => state.auth);
+interface SettingsData {
+    appName: string;
+    logoUrl?: string;
+    primaryColor: string;
+    enabledModules: { [key: string]: boolean };
+    defaultTaxMode: TaxMode;
+    rolePermissions: { [key in SystemRole]: AppView[] };
+}
 
-    const [appName, setAppName] = useState(settings.appName);
-    const [logoUrl, setLogoUrl] = useState(settings.logoUrl || '');
-    const [primaryColor, setPrimaryColor] = useState(settings.primaryColor);
-    const [modules, setModules] = useState(settings.enabledModules);
-    const [taxMode, setTaxMode] = useState<TaxMode>(settings.defaultTaxMode);
-    const [isSaved, setIsSaved] = useState(false);
-    const [permissions, setPermissions] = useState(settings.rolePermissions);
+interface SettingsFormProps {
+    initialSettings: SettingsData;
+    activeTenant?: Tenant;
+    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark' }) => void;
+    onReset: () => void;
+    currentTheme: 'light' | 'dark';
+    isSaved: boolean;
+}
 
-    useEffect(() => {
-        setAppName(settings.appName);
-        setLogoUrl(settings.logoUrl || '');
-        setPrimaryColor(settings.primaryColor);
-        setModules(settings.enabledModules);
-        setTaxMode(settings.defaultTaxMode);
-        setPermissions(settings.rolePermissions);
-    }, [settings]);
+const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved }) => {
+    // Initialize state from props. using 'key' in parent will force re-init when props change.
+    const [appName, setAppName] = useState(initialSettings.appName);
+    const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl || '');
+    const [primaryColor, setPrimaryColor] = useState(activeTenant?.primaryColor || initialSettings.primaryColor);
+    const [modules, setModules] = useState(initialSettings.enabledModules);
+    const [taxMode, setTaxMode] = useState<TaxMode>(initialSettings.defaultTaxMode);
+    const [permissions, setPermissions] = useState(initialSettings.rolePermissions);
+    const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -93,34 +101,17 @@ const SettingsManager: React.FC = () => {
         });
     };
 
-    const handleSave = () => {
-        dispatch(updateSettings({
+    const triggerSave = () => {
+        onSave({
             appName,
             logoUrl,
             primaryColor,
             enabledModules: modules,
             defaultTaxMode: taxMode,
-            rolePermissions: permissions
-        }));
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 2000);
+            rolePermissions: permissions,
+            tenantTheme
+        });
     };
-
-    const handleReset = () => {
-        if (window.confirm("Reset all settings to default?")) {
-            dispatch(resetSettings());
-        }
-    };
-
-    if (role !== 'Owner') {
-        return (
-            <div className="flex flex-col items-center justify-center h-96 text-slate-400">
-                <Lock className="w-12 h-12 mb-4 opacity-50" />
-                <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300">Access Restricted</h2>
-                <p>Only the System Owner can modify settings.</p>
-            </div>
-        );
-    }
 
     return (
         <div className="max-w-5xl mx-auto space-y-8 animate-fade-in pb-10">
@@ -134,13 +125,13 @@ const SettingsManager: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={handleReset}
+                        onClick={onReset}
                         className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 font-bold transition-colors flex items-center gap-2"
                     >
                         <RotateCcw className="w-4 h-4" /> Reset
                     </button>
                     <button
-                        onClick={handleSave}
+                        onClick={triggerSave}
                         className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95"
                     >
                         <Save className="w-4 h-4" /> {isSaved ? 'Saved!' : 'Save Changes'}
@@ -167,6 +158,24 @@ const SettingsManager: React.FC = () => {
                                     placeholder="e.g. Adidas Store"
                                 />
                                 <Type className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Theme</label>
+                            <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700 w-fit">
+                                <button
+                                    onClick={() => setTenantTheme('light')}
+                                    className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-md transition-all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                >
+                                    <Sun className="w-4 h-4" /> Light
+                                </button>
+                                <button
+                                    onClick={() => setTenantTheme('dark')}
+                                    className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-md transition-all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                >
+                                    <Moon className="w-4 h-4" /> Dark
+                                </button>
                             </div>
                         </div>
 
@@ -320,6 +329,75 @@ const SettingsManager: React.FC = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+const SettingsManager: React.FC = () => {
+    const dispatch = useDispatch();
+    const settings = useSelector((state: RootState) => state.settings);
+    const tenantsList = useSelector((state: RootState) => state.tenant.tenants);
+    const { role } = useSelector((state: RootState) => state.auth);
+    const { tenantId, theme: currentTheme } = useConfig();
+    const [isSaved, setIsSaved] = useState(false);
+
+    const activeTenant = tenantsList.find(t => t.id === tenantId);
+
+    const handleSave = (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark' }) => {
+        dispatch(updateSettings({
+            appName: updatedSettings.appName,
+            logoUrl: updatedSettings.logoUrl,
+            primaryColor: updatedSettings.primaryColor,
+            enabledModules: updatedSettings.enabledModules,
+            defaultTaxMode: updatedSettings.defaultTaxMode,
+            rolePermissions: updatedSettings.rolePermissions
+        }));
+
+        // Update Tenant Theme & Primary Color
+        if (tenantId) {
+            const currentTenant = tenantsList.find(t => t.id === tenantId);
+            if (currentTenant) {
+                dispatch(updateTenantDetails({
+                    ...currentTenant,
+                    theme: updatedSettings.tenantTheme,
+                    primaryColor: updatedSettings.primaryColor
+                }));
+            }
+        }
+
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 2000);
+    };
+
+    const handleReset = () => {
+        if (window.confirm("Reset all settings to default?")) {
+            dispatch(resetSettings());
+        }
+    };
+
+    if (role !== 'Owner') {
+        return (
+            <div className="flex flex-col items-center justify-center h-96 text-slate-400">
+                <Lock className="w-12 h-12 mb-4 opacity-50" />
+                <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300">Access Restricted</h2>
+                <p>Only the System Owner can modify settings.</p>
+            </div>
+        );
+    }
+
+    // Key includes settings version (derived from settings object) and theme/tenant props
+    // to ensure form resets when external data changes
+    const formKey = `${tenantId}-${currentTheme}-${JSON.stringify(settings)}`;
+
+    return (
+        <SettingsForm
+            key={formKey}
+            initialSettings={settings}
+            activeTenant={activeTenant}
+            currentTheme={currentTheme || 'light'}
+            onSave={handleSave}
+            onReset={handleReset}
+            isSaved={isSaved}
+        />
     );
 };
 
