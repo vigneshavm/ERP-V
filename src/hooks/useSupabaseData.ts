@@ -35,19 +35,13 @@ export const useSupabaseData = () => {
                 return;
             }
             try {
-                let query = supabase.from('tenants').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    query = query.eq('id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
-                const { data, error } = await query;
+                // Fetch ALL tenants first to check for validity and support "common" mode
+                const { data, error } = await supabase.from('tenants').select('*');
 
                 if (error) throw error;
 
                 if (data) {
-                    // Transform if necessary, or ensure DB matches types
-                    // Assuming DB columns match Tenant type or mapping is needed
-                    // For now, direct dispatch if structure aligns, or partial map
-                    const validTenants = data.map((t: any) => ({
+                    const allTenants = data.map((t: any) => ({
                         id: t.id,
                         name: t.name,
                         subdomain: t.subdomain,
@@ -63,18 +57,32 @@ export const useSupabaseData = () => {
                         updatedAt: t.updated_at || t.updatedAt
                     })) as Tenant[];
 
-                    dispatch(setTenants(validTenants));
+                    // Determine if we are isolating
+                    let isolatedTenantId: string | null = null;
+                    if (APP_CONFIG.REQUIRE_TENANT_ID && APP_CONFIG.DEPLOY_TENANT_ID) {
+                        const exists = allTenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+                        if (exists) {
+                            isolatedTenantId = APP_CONFIG.DEPLOY_TENANT_ID;
+                        }
+                    }
 
-                    // Fetch Branches (Global or for initial state)
+                    // If isolating and found, show only that tenant. Otherwise show all (common mode).
+                    const finalTenants = isolatedTenantId
+                        ? allTenants.filter(t => t.id === isolatedTenantId)
+                        : allTenants;
+
+                    dispatch(setTenants(finalTenants));
+
+                    // Fetch Branches (Filter if isolated)
                     let bQuery = supabase.from('branches').select('*');
-                    if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                        bQuery = bQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                    if (isolatedTenantId) {
+                        bQuery = bQuery.eq('tenant_id', isolatedTenantId);
                     }
                     const { data: branchData, error: bErr } = await bQuery;
                     if (bErr) throw bErr;
                     if (branchData) {
                         dispatch(setBranches(branchData.map((b: any) => {
-                            const tenant = validTenants.find(t => t.id === b.tenant_id);
+                            const tenant = allTenants.find(t => t.id === b.tenant_id);
                             return {
                                 id: b.id,
                                 tenantId: b.tenant_id,
@@ -87,10 +95,10 @@ export const useSupabaseData = () => {
                         })));
                     }
 
-                    // Fetch Employees (Needed for Login)
+                    // Fetch Employees (Filter if isolated)
                     let eQuery = supabase.from('employees').select('*');
-                    if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                        eQuery = eQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                    if (isolatedTenantId) {
+                        eQuery = eQuery.eq('tenant_id', isolatedTenantId);
                     }
                     const { data: empData, error: empError } = await eQuery;
                     if (empError) throw empError;
@@ -127,11 +135,11 @@ export const useSupabaseData = () => {
             try {
                 if (!supabase) return;
 
+                const tId = user.tenantId; // User already filtered by login, but safe to filter again
+
                 // Products
                 let pQuery = supabase.from('products').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    pQuery = pQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) pQuery = pQuery.eq('tenant_id', tId);
                 const { data: productsData, error: prodError } = await pQuery;
                 if (prodError) throw prodError;
                 if (productsData) {
@@ -161,18 +169,14 @@ export const useSupabaseData = () => {
 
                 // Customers
                 let cQuery = supabase.from('customers').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    cQuery = cQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) cQuery = cQuery.eq('tenant_id', tId);
                 const { data: custData, error: custError } = await cQuery;
                 if (custError) throw custError;
                 if (custData) dispatch(setCustomersList(custData as Customer[]));
 
                 // Labor Payments
                 let lpQuery = supabase.from('labor_payments').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    lpQuery = lpQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) lpQuery = lpQuery.eq('tenant_id', tId);
                 const { data: lpData, error: lpError } = await lpQuery;
                 if (lpError) throw lpError;
                 if (lpData) {
@@ -187,11 +191,9 @@ export const useSupabaseData = () => {
                     dispatch(setLaborPayments(mappedLP));
                 }
 
-                // Sales (Renamed from bills in schema)
+                // Sales
                 let sQuery = supabase.from('sales').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    sQuery = sQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) sQuery = sQuery.eq('tenant_id', tId);
                 const { data: salesData, error: salesError } = await sQuery.limit(100);
                 if (salesError) throw salesError;
                 if (salesData) {
@@ -213,9 +215,7 @@ export const useSupabaseData = () => {
 
                 // Transactions
                 let txQuery = supabase.from('transactions').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    txQuery = txQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) txQuery = txQuery.eq('tenant_id', tId);
                 const { data: txData, error: txError } = await txQuery;
                 if (txError) throw txError;
                 if (txData) {
@@ -235,9 +235,7 @@ export const useSupabaseData = () => {
 
                 // Cheques
                 let cqQuery = supabase.from('cheques').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    cqQuery = cqQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) cqQuery = cqQuery.eq('tenant_id', tId);
                 const { data: chequeData, error: chequeError } = await cqQuery;
                 if (chequeError) throw chequeError;
                 if (chequeData) {
@@ -258,9 +256,7 @@ export const useSupabaseData = () => {
 
                 // Purchase Orders
                 let poQuery = supabase.from('purchase_orders').select('*');
-                if (APP_CONFIG.DEPLOY_TENANT_ID) {
-                    poQuery = poQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
-                }
+                if (tId) poQuery = poQuery.eq('tenant_id', tId);
                 const { data: poData, error: poError } = await poQuery;
                 if (poError) throw poError;
                 if (poData) {

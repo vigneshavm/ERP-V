@@ -8,7 +8,8 @@ export const APP_CONFIG = {
     USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
     // Optional: restrict the app at build/runtime to a single tenant by subdomain or id
     DEPLOY_TENANT_SUBDOMAIN: import.meta.env.VITE_TENANT_SUBDOMAIN || null,
-    DEPLOY_TENANT_ID: import.meta.env.VITE_TENANT_ID || null
+    DEPLOY_TENANT_ID: import.meta.env.VITE_TENANT_ID || null,
+    REQUIRE_TENANT_ID: import.meta.env.VITE_REQUIRE_TENANT_ID === 'true'
 };
 
 // Role-Based Access Control Configuration

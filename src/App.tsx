@@ -42,15 +42,19 @@ const App: React.FC = () => {
     const [viewMode, setViewMode] = useState<ViewMode>('LANDING');
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
+    const [isResolving, setIsResolving] = useState(APP_CONFIG.REQUIRE_TENANT_ID);
 
     // --- Single Tenant Auto-Selection ---
     React.useEffect(() => {
-        if (APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING' && tenants.length > 0) {
-            const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
-            if (tenant) {
-                setCurrentTenant(tenant);
-                setViewMode('TENANT');
+        if (tenants.length > 0) {
+            if (APP_CONFIG.REQUIRE_TENANT_ID && APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
+                const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+                if (tenant) {
+                    setCurrentTenant(tenant);
+                    setViewMode('TENANT');
+                }
             }
+            setIsResolving(false);
         }
     }, [tenants, viewMode]);
 
@@ -82,6 +86,16 @@ const App: React.FC = () => {
     };
 
     // --- Views ---
+
+    const LoadingScreen = () => (
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+            <div className="w-16 h-16 relative">
+                <div className="absolute inset-0 border-4 border-indigo-200 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-t-indigo-600 rounded-full animate-spin"></div>
+            </div>
+            <p className="mt-4 text-slate-500 font-medium animate-pulse">Initializing Terminal...</p>
+        </div>
+    );
 
     const LandingPage = () => (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
@@ -398,6 +412,7 @@ const App: React.FC = () => {
     };
 
     // --- Main Render ---
+    if (isResolving) return <LoadingScreen />;
     if (viewMode === 'ADMIN') return <AdminView />;
     if (viewMode === 'TENANT') return <TenantView />;
     return <LandingPage />;
