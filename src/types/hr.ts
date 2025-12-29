@@ -10,6 +10,7 @@ export interface Employee {
     sector: Sector;
     branchId: Branch;
     tenantId?: string;
+    phoneNumber?: string;
 }
 
 export interface LaborPayment {

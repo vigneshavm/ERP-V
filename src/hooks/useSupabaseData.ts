@@ -54,6 +54,8 @@ export const useSupabaseData = () => {
                         domain: t.domain,
                         primaryColor: t.primary_color,
                         locations: t.locations || [],
+                        loginLogoUrl: t.login_logo_url,
+                        loginBgUrl: t.login_bg_url,
                         updatedAt: t.updated_at || t.updatedAt
                     })) as Tenant[];
 
@@ -112,7 +114,8 @@ export const useSupabaseData = () => {
                             systemRole: e.system_role,
                             pin: e.pin,
                             branchId: e.branch_id,
-                            tenantId: e.tenant_id
+                            tenantId: e.tenant_id,
+                            phoneNumber: e.phone_number
                         })) as Employee[]));
                     }
                 }

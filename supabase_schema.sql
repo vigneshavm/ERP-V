@@ -27,6 +27,8 @@ CREATE TABLE tenants (
     domain TEXT,
     primary_color TEXT DEFAULT '#f97316',
     locations JSONB DEFAULT '[]', -- Complex nested locations/branches
+    login_logo_url TEXT,
+    login_bg_url TEXT,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -87,6 +89,7 @@ CREATE TABLE employees (
     sector TEXT,
     system_role TEXT, -- 'Admin', 'Manager', 'Staff'
     pin TEXT, -- For POS login
+    phone_number TEXT,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 

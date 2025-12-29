@@ -213,9 +213,7 @@ const App: React.FC = () => {
             return (
                 <ConfigProvider tenant={currentTenant}>
                     <Login
-                        tenantName={currentTenant?.name || 'Retail Store'}
-                        tenantId={currentTenant?.id}
-                        allowedSector={currentTenant?.sector || Sector.GENERAL}
+                        tenant={currentTenant}
                         onLogin={() => setIsLoggedIn(true)}
                     />
                 </ConfigProvider>

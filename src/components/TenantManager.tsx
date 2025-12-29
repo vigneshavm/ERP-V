@@ -35,6 +35,8 @@ const mapDbTenantToTenant = (t: any): Tenant => ({
     domain: t.domain,
     primaryColor: t.primary_color,
     locations: t.locations || [],
+    loginLogoUrl: t.login_logo_url,
+    loginBgUrl: t.login_bg_url,
     updatedAt: t.updated_at || t.updatedAt
 });
 
@@ -42,7 +44,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const [activeSection, setActiveSection] = useState<'provision' | 'list' | 'staffing'>('provision');
-    const [activeTab, setActiveTab] = useState<'business' | 'geography'>('business');
+    const [activeTab, setActiveTab] = useState<'business' | 'geography' | 'branding'>('business');
     const [selectedTenantForStaff, setSelectedTenantForStaff] = useState<Tenant | null>(null);
     const [tenantEmployees, setTenantEmployees] = useState<any[]>([]);
     const [isLoadingEmployees, setIsLoadingEmployees] = useState(false);
@@ -58,6 +60,8 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         theme: 'light' | 'dark';
         layout: 'standard' | 'compact';
         domain: string;
+        loginLogoUrl: string;
+        loginBgUrl: string;
         locations: { city: string; branches: { id: string; name: string; city: string; address: string; }[] }[];
     }>({
         name: '',
@@ -69,6 +73,8 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         theme: 'light',
         layout: 'standard',
         domain: '',
+        loginLogoUrl: '',
+        loginBgUrl: '',
         locations: []
     });
 
@@ -77,14 +83,19 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
     const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
 
     // New Employee Form State
+    const [logoInput, setLogoInput] = useState('');
+
     const [newEmp, setNewEmp] = useState({
         name: '',
         role: '',
         systemRole: 'Staff' as SystemRole,
         pin: '',
         dailyRate: '',
-        branchId: ''
+        branchId: '',
+        phoneNumber: ''
     });
+    const [editingEmpId, setEditingEmpId] = useState<string | null>(null);
+
 
     const handleModuleToggle = (mod: ModuleType) => {
         if (newTenant.modules.includes(mod)) {
@@ -161,18 +172,23 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             theme: tenant.theme || 'light',
             layout: tenant.layout || 'standard',
             domain: tenant.domain || '',
+            loginLogoUrl: tenant.loginLogoUrl || '',
+            loginBgUrl: tenant.loginBgUrl || '',
             locations: tenant.locations || []
         });
         setActiveSection('provision');
         setActiveTab('business');
+        setLogoInput(tenant.loginLogoUrl || '');
     };
 
     const handleCancelEdit = () => {
         setEditingTenant(null);
         setNewTenant({
             name: '', subdomain: '', modules: [], currency: 'USD', dateFormat: 'MM/DD/YYYY',
-            sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '', locations: []
+            sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '',
+            loginLogoUrl: '', loginBgUrl: '', locations: []
         });
+        setLogoInput('');
         setActiveSection('list');
     };
 
@@ -211,7 +227,9 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             layout: newTenant.layout,
             domain: newTenant.domain || `${newTenant.subdomain}.app.com`,
             locations: normalizedLocations,
-            primaryColor: '#4f46e5'
+            primaryColor: '#4f46e5',
+            loginLogoUrl: logoInput,
+            loginBgUrl: newTenant.loginBgUrl
         };
 
         setIsSaving(true);
@@ -229,6 +247,8 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                     domain: tenantData.domain,
                     locations: tenantData.locations,
                     primary_color: tenantData.primaryColor,
+                    login_logo_url: tenantData.loginLogoUrl,
+                    login_bg_url: tenantData.loginBgUrl,
                     is_active: true
                 };
 
@@ -320,31 +340,67 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
 
         try {
             if (APP_CONFIG.USE_SUPABASE && supabase) {
-                const { data, error } = await supabase
-                    .from('employees')
-                    .insert([{
-                        name: newEmp.name,
-                        role: newEmp.role,
-                        system_role: newEmp.systemRole,
-                        pin: newEmp.pin,
-                        daily_rate: parseFloat(newEmp.dailyRate) || 0,
-                        branch_id: newEmp.branchId,
-                        tenant_id: selectedTenantForStaff.id,
-                        sector: selectedTenantForStaff.sector
-                    }])
-                    .select()
-                    .single();
+                const empData = {
+                    name: newEmp.name,
+                    role: newEmp.role,
+                    system_role: newEmp.systemRole,
+                    pin: newEmp.pin,
+                    daily_rate: parseFloat(newEmp.dailyRate) || 0,
+                    branch_id: newEmp.branchId,
+                    tenant_id: selectedTenantForStaff.id,
+                    sector: selectedTenantForStaff.sector,
+                    phone_number: newEmp.phoneNumber
+                };
 
-                if (error) throw error;
-                if (data) {
-                    setTenantEmployees(prev => [...prev, data]);
-                    setNewEmp({ name: '', role: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '' });
+                if (editingEmpId) {
+                    const { data, error } = await supabase
+                        .from('employees')
+                        .update(empData)
+                        .eq('id', editingEmpId)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    if (data) {
+                        setTenantEmployees(prev => prev.map(e => e.id === editingEmpId ? data : e));
+                        handleCancelEditEmp();
+                    }
+                } else {
+                    const { data, error } = await supabase
+                        .from('employees')
+                        .insert([empData])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    if (data) {
+                        setTenantEmployees(prev => [...prev, data]);
+                        handleCancelEditEmp();
+                    }
                 }
             }
         } catch (err: any) {
-            console.error('Error adding employee:', err);
+            console.error('Error saving employee:', err);
             alert(`Error: ${err.message}`);
         }
+    };
+
+    const handleStartEditEmp = (emp: any) => {
+        setNewEmp({
+            name: emp.name,
+            role: emp.role || '',
+            systemRole: emp.system_role as SystemRole,
+            pin: emp.pin,
+            dailyRate: emp.daily_rate?.toString() || '',
+            branchId: emp.branch_id || '',
+            phoneNumber: emp.phone_number || ''
+        });
+        setEditingEmpId(emp.id);
+    };
+
+    const handleCancelEditEmp = () => {
+        setNewEmp({ name: '', role: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', phoneNumber: '' });
+        setEditingEmpId(null);
     };
 
     const handleDeleteEmployee = async (id: string) => {
@@ -416,6 +472,12 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                     className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${activeTab === 'geography' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     Geography
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('branding')}
+                                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${activeTab === 'branding' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    Branding
                                 </button>
                             </div>
                         </div>
@@ -650,6 +712,69 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                 </div>
                                             ))}
                                         </div>
+
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'branding' && (
+                                <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                                    <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-3 text-indigo-900">
+                                        <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-bold">Login Page Customization</p>
+                                            <p className="text-xs opacity-80">Provide publicly accessible image URLs for the tenant's login portal.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Company Logo URL</label>
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex-1 space-y-2">
+                                                    <input
+                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                        value={logoInput}
+                                                        onChange={e => setLogoInput(e.target.value)}
+                                                        onBlur={() => setNewTenant({ ...newTenant, loginLogoUrl: logoInput })}
+                                                        placeholder="https://example.com/logo.png"
+                                                    />
+                                                    <p className="text-[10px] text-slate-400">Recommended: Square PNG with transparency. Preview updates after you click away.</p>
+                                                </div>
+                                                {newTenant.loginLogoUrl && (
+                                                    <div className="w-[200px] h-[200px] border-2 border-dashed border-slate-200 rounded-2xl p-2 bg-slate-50/50 flex items-center justify-center overflow-hidden shrink-0 mx-auto group relative">
+                                                        <img
+                                                            src={newTenant.loginLogoUrl}
+                                                            alt="Logo"
+                                                            className="w-[200px] h-[200px] object-contain transition-transform duration-500 group-hover:scale-110"
+                                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                                        />
+                                                        <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-[8px] font-bold text-slate-500 uppercase border border-slate-100 shadow-sm">200 x 200</div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Login Background Image URL</label>
+                                            <div className="space-y-2">
+                                                <input
+                                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    value={newTenant.loginBgUrl}
+                                                    onChange={e => setNewTenant({ ...newTenant, loginBgUrl: e.target.value })}
+                                                    placeholder="https://images.unsplash.com/..."
+                                                />
+                                                {newTenant.loginBgUrl && (
+                                                    <div className="aspect-video w-full rounded-lg bg-slate-100 border border-slate-200 overflow-hidden relative">
+                                                        <img src={newTenant.loginBgUrl} alt="Background" className="w-full h-full object-cover" />
+                                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                                            <span className="text-[10px] font-black text-white uppercase tracking-widest bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">Preview</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <p className="text-[10px] text-slate-400">High Resolution (1920x1080px or higher) landscape images work best.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -796,7 +921,8 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                             <div className="lg:col-span-1">
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-6">
                                     <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-slate-700 flex items-center gap-2">
-                                        <Plus className="w-4 h-4" /> Add New Staff
+                                        {editingEmpId ? <Pencil className="w-4 h-4 text-blue-600" /> : <Plus className="w-4 h-4 text-blue-600" />}
+                                        {editingEmpId ? 'Edit Staff Member' : 'Add New Staff'}
                                     </div>
                                     <form onSubmit={handleAddEmployee} className="p-4 space-y-4">
                                         <div>
@@ -807,6 +933,15 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                 value={newEmp.name}
                                                 onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
                                                 placeholder="e.g. John Doe"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number (Optional)</label>
+                                            <input
+                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                value={newEmp.phoneNumber}
+                                                onChange={e => setNewEmp({ ...newEmp, phoneNumber: e.target.value })}
+                                                placeholder="e.g. 9876543210"
                                             />
                                         </div>
                                         <div>
@@ -867,12 +1002,23 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                 placeholder="0.00"
                                             />
                                         </div>
-                                        <button
-                                            type="submit"
-                                            className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700"
-                                        >
-                                            Add Employee
-                                        </button>
+                                        <div className="flex gap-2">
+                                            {editingEmpId && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCancelEditEmp}
+                                                    className="flex-1 border border-slate-200 text-slate-600 py-2 rounded-lg font-medium hover:bg-slate-50 transition"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                            <button
+                                                type="submit"
+                                                className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700"
+                                            >
+                                                {editingEmpId ? 'Update Employee' : 'Add Employee'}
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -907,6 +1053,12 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                         </div>
                                                         <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
                                                             <span className="flex items-center gap-1"><Pencil className="w-3 h-3" /> {emp.role || 'No Title'}</span>
+                                                            {emp.phone_number && (
+                                                                <>
+                                                                    <span className="text-slate-300">|</span>
+                                                                    <span className="flex items-center gap-1 font-mono">{emp.phone_number}</span>
+                                                                </>
+                                                            )}
                                                             <span className="text-slate-300">|</span>
                                                             <span className="flex items-center gap-1 font-mono uppercase tracking-wider bg-slate-50 px-1 rounded border border-slate-100 text-[10px]">PIN: {emp.pin}</span>
                                                             {emp.branch_id && (
@@ -919,6 +1071,13 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleStartEditEmp(emp)}
+                                                        className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                        title="Edit Details"
+                                                    >
+                                                        <Pencil className="w-4 h-4" />
+                                                    </button>
                                                     <button
                                                         onClick={() => handleDeleteEmployee(emp.id)}
                                                         className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"

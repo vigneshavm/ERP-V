@@ -37,7 +37,7 @@ export const LaborManager = () => {
   const [editingDate, setEditingDate] = useState<string | null>(null);
 
   // New Laborer Form State
-  const [newEmp, setNewEmp] = useState({ name: '', role: '', dailyRate: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+  const [newEmp, setNewEmp] = useState({ name: '', role: '', dailyRate: '', phoneNumber: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
   const [wageType, setWageType] = useState<'DAILY' | 'MONTHLY'>('DAILY');
   const [monthlyInput, setMonthlyInput] = useState('');
 
@@ -153,10 +153,11 @@ export const LaborManager = () => {
       sector: currentSector as Sector,
       branchId: newEmp.branch as Branch,
       systemRole: 'Staff',
-      pin: '0000'
+      pin: '0000',
+      phoneNumber: newEmp.phoneNumber
     }));
     setIsAddingLaborer(false);
-    setNewEmp({ name: '', role: '', dailyRate: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+    setNewEmp({ name: '', role: '', dailyRate: '', phoneNumber: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
   };
 
   const handleMonthlyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -391,6 +392,13 @@ export const LaborManager = () => {
                 onChange={e => setNewEmp({ ...newEmp, role: e.target.value })}
                 className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
               />
+              <input
+                type="text"
+                placeholder="Phone Number"
+                value={newEmp.phoneNumber}
+                onChange={e => setNewEmp({ ...newEmp, phoneNumber: e.target.value })}
+                className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
+              />
 
               <div className="flex bg-white dark:bg-slate-900 rounded border border-blue-200 dark:border-slate-600 overflow-hidden">
                 <button
@@ -464,7 +472,7 @@ export const LaborManager = () => {
               <div>
                 <p className="font-bold text-sm">{l.name}</p>
                 <p className={`text-[10px] ${selectedLaborerId === l.id ? 'text-slate-400 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
-                  {l.role} • {formatCurrency(l.dailyRate)}/day
+                  {l.role} • {formatCurrency(l.dailyRate)}/day {l.phoneNumber && `• ${l.phoneNumber}`}
                 </p>
               </div>
               {selectedLaborerId === l.id && <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />}

@@ -43,6 +43,8 @@ export interface Tenant {
     primaryColor?: string;
     defaultConfig?: TenantConfig;
     locations?: TenantLocation[];
+    loginLogoUrl?: string;
+    loginBgUrl?: string;
     updatedAt?: string;
 }
 

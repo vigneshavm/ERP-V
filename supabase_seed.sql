@@ -31,6 +31,6 @@ VALUES
 ('a2e13880-3c1a-4d92-9a3d-9d41498b5801', '866d5ae4-82ee-48c6-9f4c-28df8c541702', 'br-ap-chn-01', 'MED-DOLO-650', 'Dolo 650', 'Analgesic', 30, 18, 1200, 'Pharmacy', '5001', 'Medicine');
 
 -- 4. Insert Employees
-INSERT INTO employees (id, tenant_id, branch_id, name, role, daily_rate, sector, system_role, pin)
+INSERT INTO employees (id, tenant_id, branch_id, name, role, daily_rate, sector, system_role, pin, phone_number)
 VALUES
-('e1e13880-3c1a-4d92-9a3d-9d41498b5801', '866d5ae4-82ee-48c6-9f4c-28df8c541701', 'br-bb-mum-01', 'Vikram (Helper)', 'Helper', 500, 'General', 'Staff', '2222');
+('e1e13880-3c1a-4d92-9a3d-9d41498b5801', '866d5ae4-82ee-48c6-9f4c-28df8c541701', 'br-bb-mum-01', 'Vikram (Helper)', 'Helper', 500, 'General', 'Staff', '2222', '9988776655');
