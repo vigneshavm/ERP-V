@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setBranch } from './store';
+import { APP_CONFIG } from './config';
+
 
 import Dashboard from './components/Dashboard';
 import POSModule from './components/POSModule';
@@ -38,7 +40,19 @@ const App: React.FC = () => {
     useSupabaseData();
 
     const [viewMode, setViewMode] = useState<ViewMode>('LANDING');
+    const { tenants } = useSelector((state: RootState) => state.tenant);
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
+
+    // --- Single Tenant Auto-Selection ---
+    React.useEffect(() => {
+        if (APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING' && tenants.length > 0) {
+            const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+            if (tenant) {
+                setCurrentTenant(tenant);
+                setViewMode('TENANT');
+            }
+        }
+    }, [tenants, viewMode]);
 
     // --- Tenant specific state ---
     const [activeTab, setActiveTab] = useState<AppView>('DASHBOARD');

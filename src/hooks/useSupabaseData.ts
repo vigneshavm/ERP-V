@@ -35,9 +35,11 @@ export const useSupabaseData = () => {
                 return;
             }
             try {
-                const { data, error } = await supabase
-                    .from('tenants')
-                    .select('*');
+                let query = supabase.from('tenants').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    query = query.eq('id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data, error } = await query;
 
                 if (error) throw error;
 
@@ -64,7 +66,11 @@ export const useSupabaseData = () => {
                     dispatch(setTenants(validTenants));
 
                     // Fetch Branches (Global or for initial state)
-                    const { data: branchData, error: bErr } = await supabase.from('branches').select('*');
+                    let bQuery = supabase.from('branches').select('*');
+                    if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                        bQuery = bQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                    }
+                    const { data: branchData, error: bErr } = await bQuery;
                     if (bErr) throw bErr;
                     if (branchData) {
                         dispatch(setBranches(branchData.map((b: any) => {
@@ -82,7 +88,11 @@ export const useSupabaseData = () => {
                     }
 
                     // Fetch Employees (Needed for Login)
-                    const { data: empData, error: empError } = await supabase.from('employees').select('*');
+                    let eQuery = supabase.from('employees').select('*');
+                    if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                        eQuery = eQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                    }
+                    const { data: empData, error: empError } = await eQuery;
                     if (empError) throw empError;
                     if (empData) {
                         dispatch(setEmployees(empData.map((e: any) => ({
@@ -118,7 +128,11 @@ export const useSupabaseData = () => {
                 if (!supabase) return;
 
                 // Products
-                const { data: productsData, error: prodError } = await supabase.from('products').select('*');
+                let pQuery = supabase.from('products').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    pQuery = pQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: productsData, error: prodError } = await pQuery;
                 if (prodError) throw prodError;
                 if (productsData) {
                     const mappedProducts = productsData.map((p: any) => ({
@@ -146,12 +160,20 @@ export const useSupabaseData = () => {
                 }
 
                 // Customers
-                const { data: custData, error: custError } = await supabase.from('customers').select('*');
+                let cQuery = supabase.from('customers').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    cQuery = cQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: custData, error: custError } = await cQuery;
                 if (custError) throw custError;
                 if (custData) dispatch(setCustomersList(custData as Customer[]));
 
                 // Labor Payments
-                const { data: lpData, error: lpError } = await supabase.from('labor_payments').select('*');
+                let lpQuery = supabase.from('labor_payments').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    lpQuery = lpQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: lpData, error: lpError } = await lpQuery;
                 if (lpError) throw lpError;
                 if (lpData) {
                     const mappedLP = lpData.map((lp: any) => ({
@@ -166,7 +188,11 @@ export const useSupabaseData = () => {
                 }
 
                 // Sales (Renamed from bills in schema)
-                const { data: salesData, error: salesError } = await supabase.from('sales').select('*').limit(100);
+                let sQuery = supabase.from('sales').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    sQuery = sQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: salesData, error: salesError } = await sQuery.limit(100);
                 if (salesError) throw salesError;
                 if (salesData) {
                     const mappedSales = salesData.map((s: any) => ({
@@ -186,7 +212,11 @@ export const useSupabaseData = () => {
                 }
 
                 // Transactions
-                const { data: txData, error: txError } = await supabase.from('transactions').select('*');
+                let txQuery = supabase.from('transactions').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    txQuery = txQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: txData, error: txError } = await txQuery;
                 if (txError) throw txError;
                 if (txData) {
                     const mappedTx = txData.map((t: any) => ({
@@ -204,7 +234,11 @@ export const useSupabaseData = () => {
                 }
 
                 // Cheques
-                const { data: chequeData, error: chequeError } = await supabase.from('cheques').select('*');
+                let cqQuery = supabase.from('cheques').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    cqQuery = cqQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: chequeData, error: chequeError } = await cqQuery;
                 if (chequeError) throw chequeError;
                 if (chequeData) {
                     const mappedCheques = chequeData.map((c: any) => ({
@@ -223,7 +257,11 @@ export const useSupabaseData = () => {
                 }
 
                 // Purchase Orders
-                const { data: poData, error: poError } = await supabase.from('purchase_orders').select('*');
+                let poQuery = supabase.from('purchase_orders').select('*');
+                if (APP_CONFIG.DEPLOY_TENANT_ID) {
+                    poQuery = poQuery.eq('tenant_id', APP_CONFIG.DEPLOY_TENANT_ID);
+                }
+                const { data: poData, error: poError } = await poQuery;
                 if (poError) throw poError;
                 if (poData) {
                     const mappedPO = poData.map((po: any) => ({

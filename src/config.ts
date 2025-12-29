@@ -5,7 +5,10 @@ export const APP_CONFIG = {
     IS_DEMO: true,
     API_BASE_URL: 'http://localhost:3000',
     DEMO_DATA_VERSION: '1.0',
-    USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true'
+    USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true',
+    // Optional: restrict the app at build/runtime to a single tenant by subdomain or id
+    DEPLOY_TENANT_SUBDOMAIN: import.meta.env.VITE_TENANT_SUBDOMAIN || null,
+    DEPLOY_TENANT_ID: import.meta.env.VITE_TENANT_ID || null
 };
 
 // Role-Based Access Control Configuration
