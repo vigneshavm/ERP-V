@@ -21,6 +21,7 @@ export interface BranchConfig {
     address: string;
     config?: Partial<TenantConfig>;
     settings?: Partial<SettingsState>;
+    updatedAt?: string;
 }
 
 export interface TenantLocation {
@@ -42,6 +43,7 @@ export interface Tenant {
     primaryColor?: string;
     defaultConfig?: TenantConfig;
     locations?: TenantLocation[];
+    updatedAt?: string;
 }
 
 // Redux State Interface

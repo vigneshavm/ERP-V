@@ -34,18 +34,35 @@ export * from './tenantSlice';
 
 // --- Thunks migrated from old store.ts ---
 
-export const processSale = (sale: Sale) => (dispatch: AppDispatch) => {
+export const processSale = (sale: Sale) => (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(recordSale(sale));
     sale.items.forEach(item => {
         dispatch(deductStock({ id: item.id, qty: item.qty }));
     });
+
+    // Resolve branch name: prefer sale.branchId, then tenant locations, then DB branches, else fallback
+    const state = getState();
+    let branchName: string | undefined = sale.branchId;
+
+    if (!branchName) {
+        const tenantBranches = (state.tenant.tenants || []).flatMap(t => (t.locations || []).flatMap((l: any) => l.branches || []));
+        if (tenantBranches.length === 1) branchName = tenantBranches[0].name;
+    }
+
+    if (!branchName) {
+        const dbBranch = (state.tenant.branches || []).find(b => b.id === sale.branchId || b.name === sale.branchId);
+        if (dbBranch) branchName = dbBranch.name;
+    }
+
+    const descBranch = branchName || 'Unknown Branch';
+
     dispatch(addTransaction({
         id: Math.random().toString(36).substr(2, 9),
         type: TransactionType.INCOME, // Use Enum
         category: 'Sales',
         amount: sale.total,
         date: sale.date,
-        description: `Sale #${sale.id.substr(0, 6)} - ${sale.branchId || 'Unknown'} (${sale.paymentMethod})`,
+        description: `Sale #${sale.id.substr(0, 6)} - ${descBranch} (${sale.paymentMethod})`,
         sector: sale.sector,
         branchId: sale.branchId
     }));

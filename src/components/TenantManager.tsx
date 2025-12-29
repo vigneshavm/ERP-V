@@ -34,7 +34,8 @@ const mapDbTenantToTenant = (t: any): Tenant => ({
     layout: t.layout || 'standard',
     domain: t.domain,
     primaryColor: t.primary_color,
-    locations: t.locations || []
+    locations: t.locations || [],
+    updatedAt: t.updated_at || t.updatedAt
 });
 
 const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
@@ -99,7 +100,15 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
 
         setNewTenant(prev => ({
             ...prev,
-            locations: [...prev.locations, { city: tempCity, branches: [] }]
+            locations: [...prev.locations, {
+                city: tempCity,
+                branches: [{
+                    id: `BR-${Date.now()}`,
+                    name: tempCity,
+                    city: tempCity,
+                    address: 'Main Office'
+                }]
+            }]
         }));
         setTempCity('');
     };
@@ -173,6 +182,21 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
 
         const currencyObj = CURRENCIES.find(c => c.code === newTenant.currency) || CURRENCIES[0];
 
+        const normalizedLocations = newTenant.locations.map(loc => {
+            if (loc.branches.length === 0) {
+                return {
+                    ...loc,
+                    branches: [{
+                        id: `BR-FALLBACK-${loc.city.toUpperCase()}-${Date.now()}`,
+                        name: loc.city,
+                        city: loc.city,
+                        address: 'Main Office'
+                    }]
+                };
+            }
+            return loc;
+        });
+
         const tenantData: Partial<Tenant> = {
             name: newTenant.name,
             subdomain: newTenant.subdomain,
@@ -186,7 +210,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             theme: newTenant.theme,
             layout: newTenant.layout,
             domain: newTenant.domain || `${newTenant.subdomain}.app.com`,
-            locations: newTenant.locations,
+            locations: normalizedLocations,
             primaryColor: '#4f46e5'
         };
 
@@ -242,6 +266,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                     const newTenantObj: Tenant = {
                         id: `TEN-${Date.now()}`,
                         isActive: true,
+                        updatedAt: new Date().toISOString(),
                         ...tenantData
                     } as Tenant;
                     dispatch(addTenant(newTenantObj));
@@ -887,7 +912,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                             {emp.branch_id && (
                                                                 <>
                                                                     <span className="text-slate-300">|</span>
-                                                                    <span className="flex items-center gap-1 text-blue-600 font-medium">{(selectedTenantForStaff.locations?.flatMap(l => l.branches) || []).find(b => b.id === emp.branch_id)?.name || 'Unknown Branch'}</span>
+                                                                    <span className="flex items-center gap-1 text-blue-600 font-medium">{(selectedTenantForStaff.locations?.flatMap(l => l.branches) || []).find(b => b.id === emp.branch_id || b.name === emp.branch_id)?.name || selectedTenantForStaff.locations?.find(l => (l.branches || []).some(b => b.id === emp.branch_id || b.name === emp.branch_id))?.city || 'Unknown Branch'}</span>
                                                                 </>
                                                             )}
                                                         </div>

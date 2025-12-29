@@ -5,7 +5,7 @@ import { RootState } from '../store';
 import { APP_CONFIG } from '../../config';
 import {
   Briefcase, History, IndianRupee, Plus, CheckCircle,
-  Activity, AlertCircle, CalendarDays, CreditCard
+  Activity, AlertCircle, CalendarDays, CreditCard, Search
 } from 'lucide-react';
 import { Card } from './Card';
 import { formatCurrency } from '../utils/helpers';
@@ -53,7 +53,7 @@ const DailyFinanceTracker: React.FC = () => {
       return [];
     } catch { return []; }
   });
-  const [view, setView] = useState<'ENTRY' | 'CHARTS'>('ENTRY');
+  const [view, setView] = useState<'ENTRY' | 'CHARTS' | 'RECENT'>('ENTRY');
 
   // Analytics State
   const [period, setPeriod] = useState<PeriodType>('MONTHLY');
@@ -70,6 +70,15 @@ const DailyFinanceTracker: React.FC = () => {
   const [drawerCash, setDrawerCash] = useState("");
   const [notes, setNotes] = useState("");
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // Recent view filters / search / sort state
+  const [recentSearch, setRecentSearch] = useState('');
+  const [recentFrom, setRecentFrom] = useState('');
+  const [recentTo, setRecentTo] = useState('');
+  const [netMin, setNetMin] = useState('');
+  const [netMax, setNetMax] = useState('');
+  const [recentSortBy, setRecentSortBy] = useState<'date' | 'net' | 'notes'>('date');
+  const [recentSortDir, setRecentSortDir] = useState<'desc' | 'asc'>('desc');
 
   // Auto-calc for form
   const currentTotalSales = (parseFloat(cash) || 0) + (parseFloat(online) || 0);
@@ -141,6 +150,39 @@ const DailyFinanceTracker: React.FC = () => {
     return Object.values(map);
   }, [filteredTransactions, period]);
 
+  // RECENT: filtered & sorted list based on user controls
+  const recentFiltered = useMemo(() => {
+    let list = [...tx];
+
+    if (recentFrom) list = list.filter(t => t.date >= recentFrom);
+    if (recentTo) list = list.filter(t => t.date <= recentTo);
+
+    if (recentSearch.trim()) {
+      const q = recentSearch.trim().toLowerCase();
+      list = list.filter(t => (t.notes || '').toLowerCase().includes(q) || t.date.includes(q) || (String(t.totalSales - t.expenses)).includes(q));
+    }
+
+    if (netMin) {
+      const min = parseFloat(netMin) || 0;
+      list = list.filter(t => (t.totalSales - t.expenses) >= min);
+    }
+    if (netMax) {
+      const max = parseFloat(netMax);
+      if (!isNaN(max)) list = list.filter(t => (t.totalSales - t.expenses) <= max);
+    }
+
+    list.sort((a, b) => {
+      let cmp = 0;
+      if (recentSortBy === 'date') cmp = a.date.localeCompare(b.date);
+      else if (recentSortBy === 'net') cmp = (a.totalSales - a.expenses) - (b.totalSales - b.expenses);
+      else if (recentSortBy === 'notes') cmp = (a.notes || '').localeCompare(b.notes || '');
+
+      return recentSortDir === 'desc' ? -cmp : cmp;
+    });
+
+    return list;
+  }, [tx, recentFrom, recentTo, recentSearch, netMin, netMax, recentSortBy, recentSortDir]);
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -150,6 +192,7 @@ const DailyFinanceTracker: React.FC = () => {
         <div className="flex bg-slate-100 dark:bg-slate-700/50 rounded-lg p-1">
           <button onClick={() => setView('ENTRY')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'ENTRY' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Data Entry</button>
           <button onClick={() => setView('CHARTS')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'CHARTS' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Analytics</button>
+          <button onClick={() => setView('RECENT')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'RECENT' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Recent</button>
         </div>
       </div>
 
@@ -162,7 +205,7 @@ const DailyFinanceTracker: React.FC = () => {
 
       {/* VIEW: DATA ENTRY */}
       {view === 'ENTRY' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <Card className="p-6">
             <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">Record Daily Transactions</h3>
             <form onSubmit={saveTransaction} className="space-y-4">
@@ -223,26 +266,6 @@ const DailyFinanceTracker: React.FC = () => {
                 <Plus size={18} /> Save Daily Record
               </button>
             </form>
-          </Card>
-
-          <Card className="p-6 h-full flex flex-col">
-            <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2"><History size={18} /> Recent Entries</h3>
-            <div className="flex-1 overflow-auto space-y-3 pr-2 custom-scrollbar max-h-[450px]">
-              {tx.length === 0 && <div className="text-center py-10 text-slate-400">No records found.</div>}
-              {tx.slice(0, 10).map(t => (
-                <div key={t.id} className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
-                    <div>Sales: <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(t.totalSales)}</span></div>
-                    <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
-                  </div>
-                  {t.cashInDrawer > 0 && <div className="text-[10px] text-slate-400 mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">Drawer: {formatCurrency(t.cashInDrawer)}</div>}
-                </div>
-              ))}
-            </div>
           </Card>
         </div>
       )}
@@ -318,6 +341,57 @@ const DailyFinanceTracker: React.FC = () => {
                 <div className="text-xs font-bold text-emerald-500 dark:text-emerald-400 uppercase mb-1">Net Profit</div>
                 <div className="text-2xl font-black text-emerald-900 dark:text-emerald-100">{formatCurrency(summaryStats.profit)}</div>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* VIEW: RECENT */}
+      {view === 'RECENT' && (
+        <div className="grid grid-cols-1 gap-6">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4 gap-3">
+              <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2"><History size={18} /> Recent Entries</h3>
+              <div className="flex items-center gap-2 w-full max-w-2xl">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3 text-slate-400" />
+                  <input value={recentSearch} onChange={e => setRecentSearch(e.target.value)} placeholder="Search notes, date or amount" className="w-full pl-10 p-2 border rounded bg-white dark:bg-slate-900 text-sm outline-none" />
+                </div>
+                <button onClick={() => { setRecentSearch(''); setRecentFrom(''); setRecentTo(''); setNetMin(''); setNetMax(''); setRecentSortBy('date'); setRecentSortDir('desc'); }} className="px-3 py-2 text-sm bg-slate-100 dark:bg-slate-700 rounded">Clear</button>
+              </div>
+            </div>
+
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <input type="date" value={recentFrom} onChange={e => setRecentFrom(e.target.value)} className="p-2 border rounded text-sm" />
+              <input type="date" value={recentTo} onChange={e => setRecentTo(e.target.value)} className="p-2 border rounded text-sm" />
+              <input type="number" placeholder="Min net" value={netMin} onChange={e => setNetMin(e.target.value)} className="p-2 border rounded text-sm" />
+              <input type="number" placeholder="Max net" value={netMax} onChange={e => setNetMax(e.target.value)} className="p-2 border rounded text-sm" />
+              <select value={recentSortBy} onChange={e => setRecentSortBy(e.target.value as any)} className="p-2 border rounded text-sm">
+                <option value="date">Date</option>
+                <option value="net">Net Amount</option>
+                <option value="notes">Notes</option>
+              </select>
+              <select value={recentSortDir} onChange={e => setRecentSortDir(e.target.value as any)} className="p-2 border rounded text-sm">
+                <option value="desc">Desc</option>
+                <option value="asc">Asc</option>
+              </select>
+            </div>
+
+            <div className="flex-1 overflow-auto space-y-3 pr-2 custom-scrollbar max-h-[600px]">
+              {recentFiltered.length === 0 && <div className="text-center py-10 text-slate-400">No records found.</div>}
+              {recentFiltered.map(t => (
+                <div key={t.id} className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
+                    <div>Sales: <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(t.totalSales)}</span></div>
+                    <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
+                  </div>
+                  {t.cashInDrawer > 0 && <div className="text-[10px] text-slate-400 mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">Drawer: {formatCurrency(t.cashInDrawer)}</div>}
+                </div>
+              ))}
             </div>
           </Card>
         </div>

@@ -7,7 +7,13 @@ export const useBranchResolver = () => {
     const { tenants, branches } = useSelector((state: RootState) => state.tenant);
 
     const getBranchName = useCallback((branchId: string | undefined): string => {
-        if (!branchId) return 'Unknown Branch';
+        if (!branchId) {
+            // If there's only one known branch across tenants or DB, return its name instead of Unknown
+            const tenantBranches = tenants.flatMap(t => t.locations?.flatMap(l => l.branches) || []);
+            if (tenantBranches.length === 1) return tenantBranches[0].name;
+            if (branches && branches.length === 1) return branches[0].name;
+            return 'Unknown Branch';
+        }
         if (branchId === 'All') return 'All Branches';
 
         // 1. Try to find in any tenant
@@ -25,7 +31,7 @@ export const useBranchResolver = () => {
 
 
         return branchId; // Return ID if no name found
-    }, [tenants]);
+    }, [tenants, branches]);
 
     return { getBranchName };
 };

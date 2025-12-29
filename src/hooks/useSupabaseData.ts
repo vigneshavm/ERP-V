@@ -57,7 +57,8 @@ export const useSupabaseData = () => {
                         layout: t.layout || 'standard',
                         domain: t.domain,
                         primaryColor: t.primary_color,
-                        locations: t.locations || []
+                        locations: t.locations || [],
+                        updatedAt: t.updated_at || t.updatedAt
                     })) as Tenant[];
 
                     dispatch(setTenants(validTenants));
@@ -74,7 +75,8 @@ export const useSupabaseData = () => {
                                 name: b.name,
                                 city: b.city,
                                 address: b.address,
-                                sector: tenant?.sector || 'General'
+                                sector: tenant?.sector || 'General',
+                                updatedAt: b.updated_at || b.updatedAt
                             };
                         })));
                     }

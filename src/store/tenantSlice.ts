@@ -19,7 +19,54 @@ const tenantSlice = createSlice({
   initialState: initialTenantState,
   reducers: {
     addTenant: (state, action: PayloadAction<Tenant>) => {
-      state.tenants.push(action.payload);
+      const now = new Date().toISOString();
+      const rawTenant = action.payload;
+      if (!rawTenant) return;
+      const normalizedLocations = (rawTenant.locations || []).map(loc => {
+        if (!loc.branches || loc.branches.length === 0) {
+          return {
+            ...loc,
+            branches: [{
+              id: `br-fallback-${loc.city.toLowerCase()}-${rawTenant.id}`,
+              name: loc.city,
+              city: loc.city,
+              address: 'Main Office',
+              updatedAt: now
+            }]
+          };
+        }
+        return loc;
+      });
+      const tenantToAdd = { ...rawTenant, locations: normalizedLocations, updatedAt: rawTenant.updatedAt || now } as Tenant;
+      state.tenants.push(tenantToAdd);
+
+      // Ensure branches from this tenant are recorded in global branch table
+      if (action.payload.locations) {
+        for (const loc of action.payload.locations) {
+          const branches = loc.branches || [];
+          if (branches.length === 0) {
+            // Fallback: If no branches, use location city as default branch
+            const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${action.payload.id}`;
+            const exists = state.branches.find(sb => sb.id === fallbackId);
+            if (!exists) {
+              state.branches.push({
+                id: fallbackId,
+                name: loc.city,
+                city: loc.city,
+                address: 'Main Office',
+                updatedAt: now
+              });
+            }
+          } else {
+            for (const b of branches) {
+              const exists = state.branches.find(sb => sb.id === b.id || sb.name === b.name);
+              if (!exists) {
+                state.branches.push({ id: b.id || b.name, name: b.name || b.id, city: b.city || loc.city || '', address: b.address || '', updatedAt: b.updatedAt });
+              }
+            }
+          }
+        }
+      }
     },
     toggleTenantStatus: (state, action: PayloadAction<string>) => {
       const tenant = state.tenants.find(t => t.id === action.payload);
@@ -32,11 +79,109 @@ const tenantSlice = createSlice({
     updateTenantDetails: (state, action: PayloadAction<Tenant>) => {
       const index = state.tenants.findIndex(t => t.id === action.payload.id);
       if (index !== -1) {
-        state.tenants[index] = action.payload;
+        const now = new Date().toISOString();
+        const rawTenant = action.payload;
+        if (!rawTenant) return;
+        const normalizedLocations = (rawTenant.locations || []).map(loc => {
+          if (!loc.branches || loc.branches.length === 0) {
+            return {
+              ...loc,
+              branches: [{
+                id: `br-fallback-${loc.city.toLowerCase()}-${rawTenant.id}`,
+                name: loc.city,
+                city: loc.city,
+                address: 'Main Office',
+                updatedAt: now
+              }]
+            };
+          }
+          return loc;
+        });
+        state.tenants[index] = { ...rawTenant, locations: normalizedLocations, updatedAt: rawTenant.updatedAt || now } as Tenant;
+
+        // Ensure branches from updated tenant exist in global branch table
+        if (action.payload.locations) {
+          for (const loc of action.payload.locations) {
+            const branches = loc.branches || [];
+            if (branches.length === 0) {
+              // Fallback: If no branches, use location city as default branch
+              const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${action.payload.id}`;
+              const exists = state.branches.find(sb => sb.id === fallbackId);
+              if (!exists) {
+                state.branches.push({
+                  id: fallbackId,
+                  name: loc.city,
+                  city: loc.city,
+                  address: 'Main Office',
+                  updatedAt: now
+                });
+              }
+            } else {
+              for (const b of branches) {
+                const exists = state.branches.find(sb => sb.id === b.id || sb.name === b.name);
+                if (!exists) {
+                  state.branches.push({ id: b.id || b.name, name: b.name || b.id, city: b.city || loc.city || '', address: b.address || '', updatedAt: b.updatedAt });
+                }
+              }
+            }
+          }
+        }
       }
     },
     setTenants: (state, action: PayloadAction<Tenant[]>) => {
-      state.tenants = action.payload;
+      // Normalize tenants to ensure updatedAt exists and locations have branches
+      const now = new Date().toISOString();
+      state.tenants = (action.payload || []).map(t => {
+        const normalizedLocations = (t.locations || []).map(loc => {
+          if (!loc.branches || loc.branches.length === 0) {
+            return {
+              ...loc,
+              branches: [{
+                id: `br-fallback-${loc.city.toLowerCase()}-${t.id}`,
+                name: loc.city,
+                city: loc.city,
+                address: 'Main Office',
+                updatedAt: t.updatedAt || now
+              }]
+            };
+          }
+          return loc;
+        });
+        return { ...t, locations: normalizedLocations, updatedAt: t.updatedAt || now } as Tenant;
+      });
+
+      // Ensure all branches referenced in tenants are present in global branch table
+      const collected: any[] = [];
+      for (const t of state.tenants) {
+        if (!t.locations) continue;
+        for (const loc of t.locations) {
+          const branches = loc.branches || [];
+          if (branches.length === 0) {
+            // Fallback: If no branches, use location city as default branch
+            const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${t.id}`;
+            const exists = state.branches.find(sb => sb.id === fallbackId) || collected.find(cb => cb.id === fallbackId);
+            if (!exists) {
+              collected.push({
+                id: fallbackId,
+                name: loc.city,
+                city: loc.city,
+                address: 'Main Office',
+                updatedAt: t.updatedAt || now
+              });
+            }
+          } else {
+            for (const b of branches) {
+              const exists = state.branches.find(sb => sb.id === b.id || sb.name === b.name) || collected.find(cb => cb.id === b.id || cb.name === b.name);
+              if (!exists) {
+                collected.push({ id: b.id || b.name, name: b.name || b.id, city: b.city || loc.city || '', address: b.address || '', updatedAt: b.updatedAt });
+              }
+            }
+          }
+        }
+      }
+      if (collected.length > 0) {
+        state.branches = [...(state.branches || []), ...collected];
+      }
     },
     updateBranchSettings: (state, action: PayloadAction<{ tenantId: string, branchId: string, settings: Partial<SettingsState> }>) => {
       const tenant = state.tenants.find(t => t.id === action.payload.tenantId);
@@ -50,13 +195,42 @@ const tenantSlice = createSlice({
         }
       }
     },
+    // Ensure the global branch table contains a record for the given branchId.
+    // If missing, attempt to find the branch inside tenant.locations and add it.
+    ensureBranchRecorded: (state, action: PayloadAction<{ branchId: string }>) => {
+      const bid = action.payload.branchId;
+      if (!bid) return;
+      const exists = state.branches.find(b => b.id === bid || b.name === bid);
+      if (exists) return;
+
+      // Search tenants' locations for a matching branch id/name
+      for (const tenant of state.tenants) {
+        if (!tenant.locations) continue;
+        for (const loc of tenant.locations) {
+          const found = (loc.branches || []).find(b => b.id === bid || b.name === bid);
+          if (found) {
+            const normalized = {
+              id: found.id || bid,
+              name: found.name || bid,
+              city: found.city || loc.city || '',
+              address: found.address || ''
+            };
+            state.branches.push(normalized);
+            return;
+          }
+        }
+      }
+
+      // If not found in tenant data, add a minimal record using the id as name.
+      state.branches.push({ id: bid, name: bid, city: '', address: '' });
+    },
     setBranches: (state, action: PayloadAction<any[]>) => {
       state.branches = action.payload;
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches } = tenantSlice.actions;
+export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded } = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---

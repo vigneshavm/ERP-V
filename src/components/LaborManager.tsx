@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment } from '../store';
+import { RootState, AppDispatch, addEmployee, markAttendance, addLaborPayment, ensureBranchRecorded } from '../store';
 import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, } from 'lucide-react';
@@ -16,6 +16,7 @@ export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { employees, attendance, payments } = useSelector((state: RootState) => state.labor);
   const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+  const tenantBranches = useSelector((state: RootState) => state.tenant.branches);
 
   // -- State --
   const [selectedLaborerId, setSelectedLaborerId] = useState<string | null>(null);
@@ -140,6 +141,10 @@ export const LaborManager = () => {
 
   const handleAddLaborer = (e: React.FormEvent) => {
     e.preventDefault();
+    // Ensure branch recorded in global branch table (attempt to find in tenant locations first)
+    const branchIdentifier = newEmp.branch || (currentBranch === 'All' ? 'Alpha' : currentBranch);
+    dispatch(ensureBranchRecorded({ branchId: branchIdentifier }));
+
     dispatch(addEmployee({
       id: generateId(),
       name: newEmp.name,

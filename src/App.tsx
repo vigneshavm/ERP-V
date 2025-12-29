@@ -45,6 +45,17 @@ const App: React.FC = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    // --- Role-based Default Page ---
+    React.useEffect(() => {
+        if (isLoggedIn && role) {
+            if (role === 'Staff') {
+                setActiveTab('POS');
+            } else {
+                setActiveTab('DASHBOARD');
+            }
+        }
+    }, [isLoggedIn, role]);
+
     // --- Permission Helper ---
     const checkAccess = (view: AppView): boolean => {
         // 1. Check if user is logged in

@@ -27,7 +27,8 @@ CREATE TABLE tenants (
     domain TEXT,
     primary_color TEXT DEFAULT '#f97316',
     locations JSONB DEFAULT '[]', -- Complex nested locations/branches
-    created_at TIMESTAMPTZ DEFAULT now()
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- 2. Branches Table (Optional but good for normalization, though frontend uses locations JSONB above)
@@ -37,7 +38,8 @@ CREATE TABLE branches (
     name TEXT NOT NULL,
     city TEXT NOT NULL,
     address TEXT,
-    created_at TIMESTAMPTZ DEFAULT now()
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- 3. Customers Table
@@ -184,3 +186,25 @@ CREATE POLICY "Enable all for authenticated users" ON cheques FOR ALL TO authent
 CREATE POLICY "Enable all for authenticated users" ON sales FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all for authenticated users" ON purchase_orders FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all for authenticated users" ON labor_payments FOR ALL TO authenticated USING (true);
+
+-- Trigger function to auto-update updated_at timestamp on row modifications
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS trigger AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Attach triggers to keep updated_at in sync for tenants and branches
+DROP TRIGGER IF EXISTS tenants_updated_at_trigger ON tenants;
+CREATE TRIGGER tenants_updated_at_trigger
+BEFORE UPDATE ON tenants
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS branches_updated_at_trigger ON branches;
+CREATE TRIGGER branches_updated_at_trigger
+BEFORE UPDATE ON branches
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
