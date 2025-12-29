@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, processSale, setActiveSession, setTaxMode } from '../store';
-import { Sale } from '../types/sales';
+import { Sale, Customer } from '../types/sales';
 import { ShoppingCart } from 'lucide-react';
 
 import { POSHeader } from './pos/POSHeader';
@@ -11,7 +11,21 @@ import { POSCartGrid } from './pos/POSCartGrid';
 import { POSFooter } from './pos/POSFooter';
 import { ReceiptModal } from './ReceiptModal';
 import { useBranchResolver } from '../hooks/useBranchResolver';
+
 import { useAppSettings } from '../hooks/useAppSettings';
+
+const DEFAULT_CUSTOMER: Customer = {
+    id: 'c1',
+    name: 'Walk-in Customer',
+    phone: '',
+    points: 0,
+    creditBalance: 0,
+    creditLimit: 0,
+    riskScore: 0,
+    tenantId: '',
+    totalVisits: 0,
+    totalSpent: 0
+};
 
 const POSModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +39,7 @@ const POSModule: React.FC = () => {
     const activeSession = useMemo(() => sessions[activeSessionIndex], [sessions, activeSessionIndex]);
     const cart = activeSession.cart;
     const activeCustomerId = activeSession.customerId;
-    const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0];
+    const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
     const isBranchAll = currentBranch === 'All';
 
     // --- Local State ---

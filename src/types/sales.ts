@@ -15,6 +15,9 @@ export interface Customer {
     creditLimit?: number;
     riskScore?: number;
     lastPaymentDate?: string;
+    tenantId?: string;
+    totalVisits?: number;
+    totalSpent?: number;
 }
 
 export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';
