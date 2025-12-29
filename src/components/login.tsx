@@ -125,14 +125,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenantName, tenantId, allowedSec
                     </button>
                 </form>
 
-                <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-                    <p className="text-xs text-slate-400 mb-2">Testing Credentials (Auto-detected):</p>
-                    <div className="inline-block bg-slate-100 px-3 py-1 rounded-lg">
-                        <span className="text-xs text-slate-500 font-mono">
-                            Current User PIN: <strong className="text-slate-900">{employees.find(e => e.id === selectedUserId)?.pin || '----'}</strong>
-                        </span>
-                    </div>
-                </div>
+
             </div>
         </div>
     );
