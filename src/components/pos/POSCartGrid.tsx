@@ -263,7 +263,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                 </div>
             )}
 
-            {/* Billing Table */}
+            {/* Cart Content */}
             <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-800 relative transition-colors">
                 {cart.length === 0 ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 opacity-60">
@@ -272,73 +272,115 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         <p className="text-sm">Scan items or search to begin</p>
                     </div>
                 ) : (
-                    <table className="w-full text-left text-sm text-slate-700 dark:text-slate-300">
-                        <thead className="bg-slate-100 dark:bg-slate-900 text-xs uppercase font-bold text-slate-500 sticky top-0 z-10 shadow-sm">
-                            <tr>
-                                <th className="p-4 w-12 text-center hidden md:table-cell">#</th>
-                                <th className="p-4">Item Details</th>
-                                <th className="p-4 w-32 text-center hidden sm:table-cell">Unit Price</th>
-                                <th className="p-4 w-40 text-center">Quantity</th>
-                                <th className="p-4 w-32 text-right">Total</th>
-                                <th className="p-4 w-16 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-700/50">
-                            {cart.map((item, idx) => (
-                                <tr key={item.id} className="hover:bg-slate-200/50 dark:hover:bg-slate-700/30 transition-colors bg-white dark:bg-slate-800">
-                                    <td className="p-4 text-center text-slate-400 font-mono hidden md:table-cell">{idx + 1}</td>
-                                    <td className="p-4">
-                                        <p className="font-bold text-slate-800 dark:text-slate-200 text-base">{item.name}</p>
-                                        <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
-                                    </td>
-                                    <td className="p-4 text-center font-mono text-slate-600 hidden sm:table-cell">
-                                        ₹{item.price.toFixed(2)}
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg p-1 border border-slate-200 w-fit mx-auto">
+                    <>
+                        {/* Desktop Table View */}
+                        <table className="hidden md:table w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                            <thead className="bg-slate-100 dark:bg-slate-900 text-xs uppercase font-bold text-slate-500 sticky top-0 z-10 shadow-sm">
+                                <tr>
+                                    <th className="p-4 w-12 text-center hidden md:table-cell">#</th>
+                                    <th className="p-4">Item Details</th>
+                                    <th className="p-4 w-32 text-center hidden sm:table-cell">Unit Price</th>
+                                    <th className="p-4 w-40 text-center">Quantity</th>
+                                    <th className="p-4 w-32 text-right">Total</th>
+                                    <th className="p-4 w-16 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700/50">
+                                {cart.map((item, idx) => (
+                                    <tr key={item.id} className="hover:bg-slate-200/50 dark:hover:bg-slate-700/30 transition-colors bg-white dark:bg-slate-800">
+                                        <td className="p-4 text-center text-slate-400 font-mono hidden md:table-cell">{idx + 1}</td>
+                                        <td className="p-4">
+                                            <p className="font-bold text-slate-800 dark:text-slate-200 text-base">{item.name}</p>
+                                            <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
+                                        </td>
+                                        <td className="p-4 text-center font-mono text-slate-600 hidden sm:table-cell">
+                                            ₹{item.price.toFixed(2)}
+                                        </td>
+                                        <td className="p-4">
+                                            <div className="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg p-1 border border-slate-200 w-fit mx-auto">
+                                                <button
+                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty - 1 }))}
+                                                    className="w-8 h-8 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600"
+                                                    tabIndex={-1}
+                                                >-</button>
+                                                <input
+                                                    ref={(el) => { cartQtyRefs.current[item.id] = el; }}
+                                                    type="number"
+                                                    value={item.qty}
+                                                    onChange={(e) => {
+                                                        const val = parseInt(e.target.value);
+                                                        if (!isNaN(val) && val >= 0) {
+                                                            dispatch(updateCartQty({ id: item.id, qty: val }));
+                                                        }
+                                                    }}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') skuInputRef.current?.focus();
+                                                    }}
+                                                    className="w-14 text-center bg-transparent border-none font-bold focus:ring-2 focus:ring-indigo-500 rounded h-8 spin-hide"
+                                                />
+                                                <button
+                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
+                                                    className="w-8 h-8 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600"
+                                                    tabIndex={-1}
+                                                >+</button>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-right font-bold text-emerald-600 font-mono text-base">
+                                            ₹{(item.price * item.qty).toFixed(2)}
+                                        </td>
+                                        <td className="p-4 text-center">
                                             <button
-                                                onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty - 1 }))}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600"
+                                                onClick={() => dispatch(removeFromCart(item.id))}
+                                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
                                                 tabIndex={-1}
-                                            >-</button>
-                                            <input
-                                                ref={(el) => { cartQtyRefs.current[item.id] = el; }}
-                                                type="number"
-                                                value={item.qty}
-                                                onChange={(e) => {
-                                                    const val = parseInt(e.target.value);
-                                                    if (!isNaN(val) && val >= 0) {
-                                                        dispatch(updateCartQty({ id: item.id, qty: val }));
-                                                    }
-                                                }}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') skuInputRef.current?.focus();
-                                                }}
-                                                className="w-14 text-center bg-transparent border-none font-bold focus:ring-2 focus:ring-indigo-500 rounded h-8 spin-hide"
-                                            />
-                                            <button
-                                                onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600"
-                                                tabIndex={-1}
-                                            >+</button>
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden flex flex-col gap-2 p-2 pb-20">
+                            {cart.map((item) => (
+                                <div key={item.id} className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-3">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="font-bold text-slate-800 dark:text-slate-100 line-clamp-2">{item.name}</p>
+                                            <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
                                         </div>
-                                    </td>
-                                    <td className="p-4 text-right font-bold text-emerald-600 font-mono text-base">
-                                        ₹{(item.price * item.qty).toFixed(2)}
-                                    </td>
-                                    <td className="p-4 text-center">
+                                        <p className="font-bold font-mono text-emerald-600">₹{(item.price * item.qty).toFixed(2)}</p>
+                                    </div>
+
+                                    <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 p-2 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
+                                                <button
+                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: Math.max(0, item.qty - 1) }))}
+                                                    className="w-8 h-8 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-md"
+                                                >-</button>
+                                                <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
+                                                <button
+                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
+                                                    className="w-8 h-8 flex items-center justify-center text-indigo-600 active:bg-indigo-50 rounded-md"
+                                                >+</button>
+                                            </div>
+                                            <p className="text-xs text-slate-400">@ ₹{item.price}</p>
+                                        </div>
+
                                         <button
                                             onClick={() => dispatch(removeFromCart(item.id))}
-                                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
-                                            tabIndex={-1}
+                                            className="p-2 text-red-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
+                        </div>
+                    </>
                 )}
             </div>
         </div>

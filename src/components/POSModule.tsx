@@ -147,7 +147,7 @@ const POSModule: React.FC = () => {
         <>
             <div
                 ref={posContainerRef}
-                className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4' : 'h-[calc(100vh-9rem)]'}`}
+                className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-slate-50 dark:bg-slate-950 p-4 pb-20 lg:pb-4' : 'h-[calc(100vh-9rem)] pb-20 lg:pb-0'}`}
             >
                 {/* Modals */}
                 {completedSale && (
@@ -207,23 +207,37 @@ const POSModule: React.FC = () => {
                 </div>
 
                 {/* Mobile Tab Nav */}
-                <div className="lg:hidden mt-4 grid grid-cols-2 gap-4 shrink-0">
-                    <button
-                        onClick={() => setMobileTab('CART')}
-                        className={`p-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'CART' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'}`}
-                    >
-                        <ShoppingCart className="w-6 h-6" />
-                        <span className="text-xs font-bold uppercase">Cart ({cart.reduce((a, b) => a + b.qty, 0)})</span>
-                    </button>
-                    <button
-                        onClick={() => setMobileTab('CHECKOUT')}
-                        className={`p-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors ${mobileTab === 'CHECKOUT' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'}`}
-                    >
-                        <div className="flex gap-1">
-                            <span className="font-bold">₹{cartTotal.toFixed(2)}</span>
-                        </div>
-                        <span className="text-xs font-bold uppercase">Checkout</span>
-                    </button>
+                {/* Mobile Bottom Navigation Bar - Native App Style */}
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe z-50">
+                    <div className="flex justify-around items-center h-16 px-2">
+                        <button
+                            onClick={() => setMobileTab('CART')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'CART' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}
+                        >
+                            <div className="relative">
+                                <ShoppingCart className="w-6 h-6" />
+                                {cart.length > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                                        {cart.reduce((a, b) => a + b.qty, 0)}
+                                    </span>
+                                )}
+                            </div>
+                            <span className="text-[10px] font-medium">Cart</span>
+                        </button>
+
+                        <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
+
+                        <button
+                            onClick={() => setMobileTab('CHECKOUT')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'CHECKOUT' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}
+                        >
+                            <div className="flex flex-col items-center leading-none">
+                                <span className="text-[10px] uppercase font-bold text-slate-400">Total</span>
+                                <span className="text-sm font-bold">₹{cartTotal.toFixed(2)}</span>
+                            </div>
+                            <span className="text-[10px] font-medium text-emerald-600">Checkout</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </>

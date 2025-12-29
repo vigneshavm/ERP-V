@@ -207,26 +207,49 @@ const FinanceTracker: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex-1 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
-                                <tr>
-                                    <th className="p-4">Date</th>
-                                    <th className="p-4">Category</th>
-                                    <th className="p-4">Description</th>
-                                    <th className="p-4 text-right">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                {sectorTx.filter(t => t.type === 'EXPENSE').map(t => (
-                                    <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                                        <td className="p-4 text-slate-500 dark:text-slate-400">{new Date(t.date).toLocaleDateString()}</td>
-                                        <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs text-slate-700 dark:text-slate-300">{t.category}</span></td>
-                                        <td className="p-4 text-slate-800 dark:text-slate-200">{t.description}</td>
-                                        <td className="p-4 text-right font-bold text-red-500 dark:text-red-400">-₹{t.amount.toFixed(2)}</td>
+                        {/* Desktop Table */}
+                        <div className="hidden lg:block overflow-x-auto">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
+                                    <tr>
+                                        <th className="p-4">Date</th>
+                                        <th className="p-4">Category</th>
+                                        <th className="p-4">Description</th>
+                                        <th className="p-4 text-right">Amount</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                    {sectorTx.filter(t => t.type === 'EXPENSE').map(t => (
+                                        <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                            <td className="p-4 text-slate-500 dark:text-slate-400">{new Date(t.date).toLocaleDateString()}</td>
+                                            <td className="p-4"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs text-slate-700 dark:text-slate-300">{t.category}</span></td>
+                                            <td className="p-4 text-slate-800 dark:text-slate-200">{t.description}</td>
+                                            <td className="p-4 text-right font-bold text-red-500 dark:text-red-400">-₹{t.amount.toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="lg:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                            {sectorTx.filter(t => t.type === 'EXPENSE').length === 0 ? (
+                                <div className="p-8 text-center text-slate-500">No expenses recorded.</div>
+                            ) : (
+                                sectorTx.filter(t => t.type === 'EXPENSE').map(t => (
+                                    <div key={t.id} className="p-4 bg-white dark:bg-slate-800">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <h4 className="font-bold text-slate-900 dark:text-white">{t.description}</h4>
+                                            <span className="font-bold text-red-500 dark:text-red-400">-₹{t.amount.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+                                            <span>{new Date(t.date).toLocaleDateString()}</span>
+                                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{t.category}</span>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

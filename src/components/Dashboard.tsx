@@ -71,9 +71,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
+      <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
         Dashboard
-        <span className="text-lg font-normal text-slate-500 border-l border-slate-300 dark:border-slate-700 pl-3">
+        <span className="text-sm md:text-lg font-normal text-slate-500 md:border-l md:border-slate-300 dark:md:border-slate-700 md:pl-3">
           {currentSector} / {getBranchName(currentBranch)}
         </span>
       </h2>

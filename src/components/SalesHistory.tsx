@@ -149,7 +149,8 @@ const SalesHistory = () => {
 
             {/* List */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-lg transition-colors">
-                <div className="overflow-x-auto">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
                             <tr>
@@ -194,6 +195,45 @@ const SalesHistory = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                    {filteredSales.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500">No sales found.</div>
+                    ) : (
+                        filteredSales.map(sale => (
+                            <div key={sale.id} className="p-4 bg-white dark:bg-slate-800">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-mono text-xs text-slate-500 dark:text-slate-400">#{sale.id.substring(0, 6)}</span>
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 ${getStatusColor(sale.status)}`}>
+                                                {sale.status}
+                                            </span>
+                                        </div>
+                                        <p className="font-bold text-slate-900 dark:text-white mt-1">{getCustomerName(sale.customerId)}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-bold text-emerald-600 dark:text-emerald-400">₹{sale.total.toFixed(2)}</p>
+                                        <p className="text-xs text-slate-400">{new Date(sale.date).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg mt-3">
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                                        <span className="font-bold">{sale.items.length} Items</span> • {sale.paymentMethod}
+                                    </div>
+                                    <button
+                                        onClick={() => setSelectedSale(sale)}
+                                        className="flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 text-xs font-bold rounded-lg"
+                                    >
+                                        <Printer className="w-3 h-3" /> Receipt
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>

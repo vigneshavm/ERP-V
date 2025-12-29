@@ -275,37 +275,64 @@ const App: React.FC = () => {
 
         return (
             <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 dark:text-slate-100">
-                {/* Mobile Sidebar Toggle */}
-                <div className="lg:hidden fixed top-0 left-0 w-full bg-slate-900 text-white p-4 z-50 flex justify-between items-center">
-                    <span className="font-bold text-lg">{currentTenant?.name || 'Ent. Manager'}</span>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => {
-                                requestConfirm("Logout?", "Are you sure you want to log out?", () => setIsLoggedIn(false));
-                            }}
-                            className="text-slate-400 hover:text-white"
-                        >
-                            <LogOut className="w-5 h-5" />
-                        </button>
-                        <button onClick={() => setSidebarOpen(!sidebarOpen)}>
-                            {sidebarOpen ? <X /> : <Menu />}
-                        </button>
-                    </div>
-                </div>
+                {/* Mobile Bottom Navigation (Native App Shell) */}
+                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
+                    <button
+                        onClick={() => setActiveTab('DASHBOARD')}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
+                    >
+                        <LayoutDashboard className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">Home</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('POS')}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                    >
+                        <ShoppingCart className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">POS</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('INVENTORY')}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
+                    >
+                        <Archive className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">Stock</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('SETTINGS')}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                    >
+                        <Settings className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">Settings</span>
+                    </button>
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
+                    >
+                        <Menu className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">More</span>
+                    </button>
+                </nav>
 
-                {/* Sidebar */}
+                {/* Sidebar (Desktop Persistent, Mobile Drawer) */}
                 <aside className={`
                     fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col transition-transform duration-300 transform 
                     ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}>
-                    <div className="flex items-center space-x-2 px-4 mb-2 mt-2 lg:mt-0">
-                        <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                            <span className="font-bold text-white">{user?.name.charAt(0) || 'T'}</span>
+                    <div className="flex items-center justify-between mb-4 mt-2 lg:mt-0 px-4">
+                        <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                <span className="font-bold text-white">{user?.name.charAt(0) || 'T'}</span>
+                            </div>
+                            <div className="overflow-hidden">
+                                <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
+                            </div>
                         </div>
-                        <div className="overflow-hidden">
-                            <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
-                        </div>
+                        {/* Mobile Only Close Button */}
+                        <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
+                            <X className="w-6 h-6" />
+                        </button>
                     </div>
 
                     <div className="mb-6 px-4">
@@ -368,8 +395,8 @@ const App: React.FC = () => {
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full pt-16 lg:pt-0 bg-slate-50 dark:bg-slate-900 relative">
-                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 custom-scrollbar text-slate-900 dark:text-slate-100">
+                <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
+                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
                         {renderContent()}
                     </div>
                 </main>
