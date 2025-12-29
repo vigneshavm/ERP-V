@@ -9,6 +9,7 @@ export interface Employee {
     dailyRate: number;
     sector: Sector;
     branchId: Branch;
+    tenantId?: string;
 }
 
 export interface LaborPayment {

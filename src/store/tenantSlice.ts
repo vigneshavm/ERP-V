@@ -6,11 +6,12 @@ import { ModuleType, Sector, SystemRole, AppView } from '../types/common'
 import { AuthState, SettingsState } from '../types/settings'
 import { Employee } from '../types/hr'
 
-import { MOCK_TENANTS, APP_DEFAULTS } from '../../mockData';
+
 
 // --- Tenant Slice ---
 const initialTenantState: TenantState = {
-  tenants: MOCK_TENANTS
+  tenants: [],
+  branches: []
 };
 
 const tenantSlice = createSlice({
@@ -33,20 +34,38 @@ const tenantSlice = createSlice({
       if (index !== -1) {
         state.tenants[index] = action.payload;
       }
+    },
+    setTenants: (state, action: PayloadAction<Tenant[]>) => {
+      state.tenants = action.payload;
+    },
+    updateBranchSettings: (state, action: PayloadAction<{ tenantId: string, branchId: string, settings: Partial<SettingsState> }>) => {
+      const tenant = state.tenants.find(t => t.id === action.payload.tenantId);
+      if (tenant && tenant.locations) {
+        for (const location of tenant.locations) {
+          const branch = location.branches.find(b => b.id === action.payload.branchId);
+          if (branch) {
+            branch.settings = { ...(branch.settings || {}), ...action.payload.settings };
+            break;
+          }
+        }
+      }
+    },
+    setBranches: (state, action: PayloadAction<any[]>) => {
+      state.branches = action.payload;
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails } = tenantSlice.actions;
+export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches } = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---
 const initialAuthState: AuthState = {
   user: null,
-  currentSector: APP_DEFAULTS.currentSector as Sector,
+  currentSector: Sector.GENERAL,
   currentBranch: 'All',
-  role: APP_DEFAULTS.role as SystemRole,
-  theme: APP_DEFAULTS.theme as 'light' | 'dark'
+  role: 'Staff',
+  theme: 'light'
 };
 
 const authSlice = createSlice({

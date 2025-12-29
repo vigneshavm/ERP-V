@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { updateTenantDetails, addTenant, toggleTenantStatus } from '../store/tenantSlice';
-import { ModuleType, Sector } from '../types/common';
+import { ModuleType, Sector, SystemRole } from '../types/common';
 import { Tenant } from '../types/tenant';
-import { Check, Plus, Globe, LogIn, Settings, Building2, Pencil, X } from 'lucide-react';
-
-
-
-
-
+import { Check, Plus, Globe, LogIn, Settings, Building2, Pencil, X, Loader2, Users, ArrowLeft, Trash2, ShieldCheck } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { APP_CONFIG } from '../config';
 
 const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'ANALYTICS'];
 
@@ -21,16 +18,34 @@ const CURRENCIES = [
     { code: 'JPY', symbol: '¥', label: 'Japanese Yen (¥)' },
 ];
 
-
 interface TenantManagerProps {
     onLoginAs?: (tenant: Tenant) => void;
 }
 
+const mapDbTenantToTenant = (t: any): Tenant => ({
+    id: t.id,
+    name: t.name,
+    subdomain: t.subdomain,
+    modules: t.modules || [],
+    isActive: t.is_active ?? true,
+    region: t.region || { currency: 'INR', currencySymbol: '₹', dateFormat: 'DD/MM/YYYY' },
+    sector: t.sector,
+    theme: t.theme || 'light',
+    layout: t.layout || 'standard',
+    domain: t.domain,
+    primaryColor: t.primary_color,
+    locations: t.locations || []
+});
+
 const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const [activeSection, setActiveSection] = useState<'provision' | 'list'>('provision');
+    const [activeSection, setActiveSection] = useState<'provision' | 'list' | 'staffing'>('provision');
     const [activeTab, setActiveTab] = useState<'business' | 'geography'>('business');
+    const [selectedTenantForStaff, setSelectedTenantForStaff] = useState<Tenant | null>(null);
+    const [tenantEmployees, setTenantEmployees] = useState<any[]>([]);
+    const [isLoadingEmployees, setIsLoadingEmployees] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const [newTenant, setNewTenant] = useState<{
         name: string;
@@ -56,13 +71,19 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         locations: []
     });
 
-    // Temporary state for adding new locations/branches
     const [tempCity, setTempCity] = useState('');
     const [tempBranch, setTempBranch] = useState({ cityIndex: -1, name: '', address: '' });
-
-
-
     const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
+
+    // New Employee Form State
+    const [newEmp, setNewEmp] = useState({
+        name: '',
+        role: '',
+        systemRole: 'Staff' as SystemRole,
+        pin: '',
+        dailyRate: '',
+        branchId: ''
+    });
 
     const handleModuleToggle = (mod: ModuleType) => {
         if (newTenant.modules.includes(mod)) {
@@ -72,10 +93,9 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         }
     };
 
-    // --- Location Handlers ---
     const addCity = () => {
         if (!tempCity.trim()) return;
-        if (newTenant.locations.find(l => l.city.toLowerCase() === tempCity.toLowerCase())) return; // Prevent dupes
+        if (newTenant.locations.find(l => l.city.toLowerCase() === tempCity.toLowerCase())) return;
 
         setNewTenant(prev => ({
             ...prev,
@@ -102,7 +122,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             branches: [
                 ...city.branches,
                 {
-                    id: `BR-${Date.now()}`, // Simple ID generation
+                    id: `BR-${Date.now()}`,
                     name: tempBranch.name,
                     city: city.city,
                     address: tempBranch.address
@@ -119,7 +139,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         updatedLocations[cityIndex].branches = updatedLocations[cityIndex].branches.filter((_, i) => i !== branchIndex);
         setNewTenant(prev => ({ ...prev, locations: updatedLocations }));
     };
-
 
     const handleStartEdit = (tenant: Tenant) => {
         setEditingTenant(tenant);
@@ -148,13 +167,12 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
         setActiveSection('list');
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newTenant.name || !newTenant.subdomain) return;
 
         const currencyObj = CURRENCIES.find(c => c.code === newTenant.currency) || CURRENCIES[0];
 
-        // Construct base tenant object from form data
         const tenantData: Partial<Tenant> = {
             name: newTenant.name,
             subdomain: newTenant.subdomain,
@@ -168,64 +186,192 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             theme: newTenant.theme,
             layout: newTenant.layout,
             domain: newTenant.domain || `${newTenant.subdomain}.app.com`,
-            locations: newTenant.locations
+            locations: newTenant.locations,
+            primaryColor: '#4f46e5'
         };
 
-        if (editingTenant) {
-            // Update Existing
-            dispatch(updateTenantDetails({
-                ...editingTenant,
-                ...tenantData
-            }));
-            setEditingTenant(null);
-        } else {
-            // Create New
-            const newTenantObj: Tenant = {
-                id: `TEN-${Date.now()}`,
-                isActive: true, // Default active
-                ...tenantData
-            } as Tenant;
-            dispatch(addTenant(newTenantObj));
-        }
+        setIsSaving(true);
 
-        // Reset Form
-        setNewTenant({
-            name: '', subdomain: '', modules: [], currency: 'USD', dateFormat: 'MM/DD/YYYY',
-            sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '', locations: []
-        });
-        setActiveTab('business');
-        setActiveSection('list'); // Switch to list view after action
+        try {
+            if (APP_CONFIG.USE_SUPABASE && supabase) {
+                const dbData = {
+                    name: tenantData.name,
+                    subdomain: tenantData.subdomain,
+                    modules: tenantData.modules,
+                    region: tenantData.region,
+                    sector: tenantData.sector,
+                    theme: tenantData.theme,
+                    layout: tenantData.layout,
+                    domain: tenantData.domain,
+                    locations: tenantData.locations,
+                    primary_color: tenantData.primaryColor,
+                    is_active: true
+                };
+
+                if (editingTenant) {
+                    const { data, error } = await supabase
+                        .from('tenants')
+                        .update(dbData)
+                        .eq('id', editingTenant.id)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    if (data) {
+                        dispatch(updateTenantDetails(mapDbTenantToTenant(data)));
+                    }
+                } else {
+                    const { data, error } = await supabase
+                        .from('tenants')
+                        .insert([dbData])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    if (data) {
+                        dispatch(addTenant(mapDbTenantToTenant(data)));
+                    }
+                }
+            } else {
+                if (editingTenant) {
+                    dispatch(updateTenantDetails({
+                        ...editingTenant,
+                        ...tenantData
+                    }));
+                } else {
+                    const newTenantObj: Tenant = {
+                        id: `TEN-${Date.now()}`,
+                        isActive: true,
+                        ...tenantData
+                    } as Tenant;
+                    dispatch(addTenant(newTenantObj));
+                }
+            }
+
+            setEditingTenant(null);
+            setNewTenant({
+                name: '', subdomain: '', modules: [], currency: 'USD', dateFormat: 'MM/DD/YYYY',
+                sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '', locations: []
+            });
+            setActiveTab('business');
+            setActiveSection('list');
+        } catch (error: any) {
+            console.error('Error saving tenant:', error);
+            alert(`Failed to save tenant: ${error.message}`);
+        } finally {
+            setIsSaving(false);
+        }
     };
+
+    // --- Staff Logic ---
+    const fetchTenantEmployees = async (tenantId: string) => {
+        setIsLoadingEmployees(true);
+        try {
+            if (APP_CONFIG.USE_SUPABASE && supabase) {
+                const { data, error } = await supabase
+                    .from('employees')
+                    .select('*')
+                    .eq('tenant_id', tenantId);
+
+                if (error) throw error;
+                setTenantEmployees(data || []);
+            }
+        } catch (err) {
+            console.error('Error fetching employees:', err);
+        } finally {
+            setIsLoadingEmployees(false);
+        }
+    };
+
+    const handleOpenStaffing = (tenant: Tenant) => {
+        setSelectedTenantForStaff(tenant);
+        fetchTenantEmployees(tenant.id);
+        setActiveSection('staffing');
+    };
+
+    const handleAddEmployee = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedTenantForStaff || !newEmp.name || !newEmp.pin) return;
+
+        try {
+            if (APP_CONFIG.USE_SUPABASE && supabase) {
+                const { data, error } = await supabase
+                    .from('employees')
+                    .insert([{
+                        name: newEmp.name,
+                        role: newEmp.role,
+                        system_role: newEmp.systemRole,
+                        pin: newEmp.pin,
+                        daily_rate: parseFloat(newEmp.dailyRate) || 0,
+                        branch_id: newEmp.branchId,
+                        tenant_id: selectedTenantForStaff.id,
+                        sector: selectedTenantForStaff.sector
+                    }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                if (data) {
+                    setTenantEmployees(prev => [...prev, data]);
+                    setNewEmp({ name: '', role: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '' });
+                }
+            }
+        } catch (err: any) {
+            console.error('Error adding employee:', err);
+            alert(`Error: ${err.message}`);
+        }
+    };
+
+    const handleDeleteEmployee = async (id: string) => {
+        if (!window.confirm('Are you sure you want to remove this employee?')) return;
+
+        try {
+            if (APP_CONFIG.USE_SUPABASE && supabase) {
+                const { error } = await supabase
+                    .from('employees')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                setTenantEmployees(prev => prev.filter(e => e.id !== id));
+            }
+        } catch (err: any) {
+            console.error('Error deleting employee:', err);
+        }
+    };
+
+    // --- End Staff Logic ---
+
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-800">Tenant Management</h1>
-                    <p className="text-slate-500 mt-1">Provision and manage client access.</p>
-                </div>
+            {activeSection !== 'staffing' && (
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-800">Tenant Management</h1>
+                        <p className="text-slate-500 mt-1">Provision and manage client access.</p>
+                    </div>
 
-                {/* Main Tabs */}
-                <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                    <button
-                        onClick={() => setActiveSection('provision')}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'provision' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        <Plus className="w-4 h-4" />
-                        Provision
-                    </button>
-                    <button
-                        onClick={() => setActiveSection('list')}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        <Building2 className="w-4 h-4" />
-                        Active Tenants
-                    </button>
+                    <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+                        <button
+                            onClick={() => setActiveSection('provision')}
+                            className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'provision' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <Plus className="w-4 h-4" />
+                            Provision
+                        </button>
+                        <button
+                            onClick={() => setActiveSection('list')}
+                            className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <Building2 className="w-4 h-4" />
+                            Active Tenants
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="w-full">
-                {/* Creation Form */}
                 {activeSection === 'provision' && (
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 h-fit overflow-hidden max-w-4xl mx-auto animate-in slide-in-from-left-4 duration-300">
                         <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
@@ -250,8 +396,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-
-                            {/* BUSINESS LOGIC TAB */}
                             {activeTab === 'business' && (
                                 <div className="space-y-5 animate-in slide-in-from-left-4 duration-300">
                                     <div className="space-y-4">
@@ -373,7 +517,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                 </div>
                             )}
 
-                            {/* GEOGRAPHY TAB */}
                             {activeTab === 'geography' && (
                                 <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
                                     <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
@@ -382,7 +525,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                         </p>
                                     </div>
 
-                                    {/* Add Region Section */}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Regions / Cities</label>
                                         <div className="flex gap-2 mb-4">
@@ -402,7 +544,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                             </button>
                                         </div>
 
-                                        {/* List of Regions */}
                                         <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
                                             {newTenant.locations.length === 0 && (
                                                 <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-lg">
@@ -421,7 +562,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                     </div>
 
                                                     <div className="p-3 bg-slate-50/50">
-                                                        {/* Branches List */}
                                                         <div className="space-y-2 mb-3">
                                                             {loc.branches.map((br, brIdx) => (
                                                                 <div key={br.id} className="flex justify-between items-center bg-white p-2 rounded border border-slate-100 text-xs">
@@ -439,12 +579,10 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                                             )}
                                                         </div>
 
-                                                        {/* Add Branch Field */}
                                                         {tempBranch.cityIndex === cityIdx ? (
                                                             <div className="bg-white p-2 rounded border border-blue-100 animate-in fade-in zoom-in-95 duration-200">
                                                                 <input
                                                                     autoFocus
-                                                                    ref={input => input && input.focus()}
                                                                     placeholder="Branch Name (e.g. Main St)"
                                                                     className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-blue-500"
                                                                     value={tempBranch.name}
@@ -503,9 +641,10 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                 )}
                                 <button
                                     type="submit"
-                                    disabled={!newTenant.name || !newTenant.subdomain}
-                                    className="flex-1 bg-slate-900 text-white py-2 rounded-lg font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    disabled={!newTenant.name || !newTenant.subdomain || isSaving}
+                                    className="flex-1 bg-slate-900 text-white py-2 rounded-lg font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                                 >
+                                    {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {editingTenant ? 'Update Tenant' : 'Provision Tenant'}
                                 </button>
                             </div>
@@ -513,7 +652,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                     </div>
                 )}
 
-                {/* Tenant List */}
                 {activeSection === 'list' && (
                     <div className="lg:col-span-2 space-y-4 animate-in slide-in-from-right-4 duration-300">
                         <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -535,7 +673,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                             <span className="font-medium text-blue-600 underline cursor-pointer">{tenant.domain || `${tenant.subdomain}.app.com`}</span>
                                             <span className="text-slate-300">|</span>
                                             <span className="text-xs font-medium bg-slate-100 px-2 py-0.5 rounded">{tenant.region.currency} ({tenant.region.currencySymbol})</span>
-                                            {/* Location Count Badge */}
                                             {tenant.locations && tenant.locations.length > 0 && (
                                                 <>
                                                     <span className="text-slate-300">|</span>
@@ -560,6 +697,13 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                     </div>
                                     <div className="flex items-center gap-2 w-full md:w-auto mt-4 md:mt-0">
                                         <button
+                                            onClick={() => handleOpenStaffing(tenant)}
+                                            className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                            title="Manage Staff"
+                                        >
+                                            <Users className="w-4 h-4" />
+                                        </button>
+                                        <button
                                             onClick={() => handleStartEdit(tenant)}
                                             className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                             title="Edit Tenant"
@@ -567,7 +711,24 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                             <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
-                                            onClick={() => dispatch(toggleTenantStatus(tenant.id))}
+                                            onClick={async () => {
+                                                const newStatus = !tenant.isActive;
+                                                if (APP_CONFIG.USE_SUPABASE && supabase) {
+                                                    try {
+                                                        const { error } = await supabase
+                                                            .from('tenants')
+                                                            .update({ is_active: newStatus })
+                                                            .eq('id', tenant.id);
+                                                        if (error) throw error;
+                                                        dispatch(toggleTenantStatus(tenant.id));
+                                                    } catch (err: any) {
+                                                        console.error('Error toggling status:', err);
+                                                        alert(`Failed to update status: ${err.message}`);
+                                                    }
+                                                } else {
+                                                    dispatch(toggleTenantStatus(tenant.id));
+                                                }
+                                            }}
                                             className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${tenant.isActive ? 'border-red-100 text-red-600 hover:bg-red-50' : 'border-green-100 text-green-600 hover:bg-green-50'}`}
                                         >
                                             {tenant.isActive ? 'Suspend' : 'Activate'}
@@ -587,10 +748,169 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                         </div>
                     </div>
                 )}
+
+                {activeSection === 'staffing' && selectedTenantForStaff && (
+                    <div className="space-y-6 animate-in slide-in-from-right-4 duration-300 max-w-5xl mx-auto">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setActiveSection('list')}
+                                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                                >
+                                    <ArrowLeft className="w-5 h-5 text-slate-500" />
+                                </button>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-slate-800">Staffing: {selectedTenantForStaff.name}</h2>
+                                    <p className="text-slate-500 text-sm">Manage users and roles for this tenant.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid lg:grid-cols-3 gap-6">
+                            {/* Add Employee Form */}
+                            <div className="lg:col-span-1">
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-6">
+                                    <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-slate-700 flex items-center gap-2">
+                                        <Plus className="w-4 h-4" /> Add New Staff
+                                    </div>
+                                    <form onSubmit={handleAddEmployee} className="p-4 space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+                                            <input
+                                                required
+                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                value={newEmp.name}
+                                                onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
+                                                placeholder="e.g. John Doe"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title / Role</label>
+                                            <input
+                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                value={newEmp.role}
+                                                onChange={e => setNewEmp({ ...newEmp, role: e.target.value })}
+                                                placeholder="e.g. Senior Pharmacist"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">System Role</label>
+                                                <select
+                                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    value={newEmp.systemRole}
+                                                    onChange={e => setNewEmp({ ...newEmp, systemRole: e.target.value as SystemRole })}
+                                                >
+                                                    <option value="Staff">Staff</option>
+                                                    <option value="Manager">Manager</option>
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Owner">Owner</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Login PIN (4 Digits)</label>
+                                                <input
+                                                    required
+                                                    maxLength={4}
+                                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono tracking-widest"
+                                                    value={newEmp.pin}
+                                                    onChange={e => setNewEmp({ ...newEmp, pin: e.target.value.replace(/\D/g, '') })}
+                                                    placeholder="1234"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Assigned Branch</label>
+                                            <select
+                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                value={newEmp.branchId}
+                                                onChange={e => setNewEmp({ ...newEmp, branchId: e.target.value })}
+                                            >
+                                                <option value="">Select Branch</option>
+                                                {(selectedTenantForStaff.locations?.flatMap(l => l.branches) || []).map(br => (
+                                                    <option key={br.id} value={br.id}>{br.name} ({br.city})</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Daily Rate (Optional)</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                value={newEmp.dailyRate}
+                                                onChange={e => setNewEmp({ ...newEmp, dailyRate: e.target.value })}
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700"
+                                        >
+                                            Add Employee
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            {/* Employee List */}
+                            <div className="lg:col-span-2 space-y-4">
+                                {isLoadingEmployees ? (
+                                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200 border-dashed">
+                                        <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
+                                        <p className="text-slate-500 font-medium font-bold">Synchronizing Staff Members...</p>
+                                    </div>
+                                ) : tenantEmployees.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200 border-dashed">
+                                        <Users className="w-12 h-12 text-slate-300 mb-4" />
+                                        <h3 className="text-lg font-bold text-slate-800">No Staff Members Found</h3>
+                                        <p className="text-slate-500 max-w-xs text-center mt-2">Add employees to this tenant to enable store operations and logins.</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid gap-3">
+                                        {tenantEmployees.map(emp => (
+                                            <div key={emp.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all flex items-center justify-between group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                                                        {emp.name.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-2">
+                                                            <h4 className="font-bold text-slate-800">{emp.name}</h4>
+                                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 text-purple-700 border-purple-200' : emp.system_role === 'Admin' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                                                                {emp.system_role}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                                                            <span className="flex items-center gap-1"><Pencil className="w-3 h-3" /> {emp.role || 'No Title'}</span>
+                                                            <span className="text-slate-300">|</span>
+                                                            <span className="flex items-center gap-1 font-mono uppercase tracking-wider bg-slate-50 px-1 rounded border border-slate-100 text-[10px]">PIN: {emp.pin}</span>
+                                                            {emp.branch_id && (
+                                                                <>
+                                                                    <span className="text-slate-300">|</span>
+                                                                    <span className="flex items-center gap-1 text-blue-600 font-medium">{(selectedTenantForStaff.locations?.flatMap(l => l.branches) || []).find(b => b.id === emp.branch_id)?.name || 'Unknown Branch'}</span>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleDeleteEmployee(emp.id)}
+                                                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                                        title="Remove Staff"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
-
-            {/* Edit Modal */}
-
         </div>
     );
 };

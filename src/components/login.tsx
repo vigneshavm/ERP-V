@@ -9,10 +9,11 @@ import { Sector } from '../types/common';
 interface LoginProps {
     onLogin: () => void;
     tenantName: string;
+    tenantId: string | undefined;
     allowedSector: Sector;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, tenantName, allowedSector }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, tenantName, tenantId, allowedSector }) => {
     const dispatch = useDispatch();
     const { employees } = useSelector((state: RootState) => state.labor);
 
@@ -21,9 +22,9 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenantName, allowedSector }) => 
     const [error, setError] = useState('');
 
     const sortedEmployees = useMemo(() => {
-        // Filter by Sector (Allow Owners or matching Sector)
+        // Filter by Tenant ID and Sector (Allow Owners or matching Sector)
         const relevantEmployees = employees.filter(e =>
-            e.systemRole === 'Owner' || e.sector === allowedSector
+            e.tenantId === tenantId && (e.systemRole === 'Owner' || e.sector === allowedSector)
         );
 
         // Sort by role priority (Owner -> Manager -> Staff) then name

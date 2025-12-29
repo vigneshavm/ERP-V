@@ -1,4 +1,5 @@
 import { Sector, ModuleType } from './common';
+import { SettingsState } from './settings';
 
 export interface RegionConfig {
     currency: string;
@@ -19,6 +20,7 @@ export interface BranchConfig {
     city: string;
     address: string;
     config?: Partial<TenantConfig>;
+    settings?: Partial<SettingsState>;
 }
 
 export interface TenantLocation {
@@ -45,4 +47,5 @@ export interface Tenant {
 // Redux State Interface
 export interface TenantState {
     tenants: Tenant[];
+    branches: any[];
 }

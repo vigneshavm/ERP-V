@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Product, InventoryState } from '../types/product';
 import { Sector, Branch } from '../types/common';
 import { APP_CONFIG } from '../config';
-import { MOCK_PRODUCTS } from '../../mockData';
+
 import { loadState, saveState } from './storage';
 
 // Initial state logic: Use Mock if Demo and LS is empty
 const initialInventoryState: InventoryState = {
-  products: APP_CONFIG.IS_DEMO ? MOCK_PRODUCTS : []
+  products: []
 };
 
 const inventorySlice = createSlice({
@@ -59,9 +59,12 @@ const inventorySlice = createSlice({
         }
       });
       saveState('inventory', state);
+    },
+    setProducts: (state, action: PayloadAction<Product[]>) => {
+      state.products = action.payload;
     }
   },
 });
 
-export const { addProduct, editProduct, updateStock, deductStock, addStockBulk } = inventorySlice.actions;
+export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts } = inventorySlice.actions;
 export default inventorySlice.reducer;

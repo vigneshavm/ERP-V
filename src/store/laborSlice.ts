@@ -3,13 +3,13 @@ import { LaborState, Employee, Attendance, LaborPayment } from '../types/hr';
 
 
 import { APP_CONFIG } from '../../config';
-import { MOCK_EMPLOYEES, MOCK_LABOR_PAYMENTS } from '../../mockData';
+
 import { loadState, saveState } from './storage';
 
 const initialLaborState: LaborState = {
-  employees: APP_CONFIG.IS_DEMO ? MOCK_EMPLOYEES : [],
+  employees: [],
   attendance: [],
-  payments: APP_CONFIG.IS_DEMO ? MOCK_LABOR_PAYMENTS : [],
+  payments: [],
 };
 
 const laborSlice = createSlice({
@@ -29,9 +29,15 @@ const laborSlice = createSlice({
     addLaborPayment: (state, action: PayloadAction<LaborPayment>) => {
       state.payments.push(action.payload);
       saveState('labor', state);
+    },
+    setEmployees: (state, action: PayloadAction<Employee[]>) => {
+      state.employees = action.payload;
+    },
+    setLaborPayments: (state, action: PayloadAction<LaborPayment[]>) => {
+      state.payments = action.payload;
     }
   },
 });
 
-export const { addEmployee, markAttendance, addLaborPayment } = laborSlice.actions;
+export const { addEmployee, markAttendance, addLaborPayment, setEmployees, setLaborPayments } = laborSlice.actions;
 export default laborSlice.reducer;

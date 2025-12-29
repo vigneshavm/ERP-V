@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PaymentMethod, TaxMode, } from '../types/common';
 import { POSState, Sale } from '../types/sales';
-import { CartItem, Session } from '../types/sales';
+import { CartItem, Session, SaleStatus, PaymentStatus } from '../types/sales';
 
 
 
@@ -70,9 +70,6 @@ const posSlice = createSlice({
         const customer = state.customers.find(c => c.id === action.payload.customerId);
         if (customer) {
           customer.points += Math.floor(action.payload.total / 10);
-
-          // If Payment Method is implied 'CREDIT' (Not currently in Enum, but logic placeholder)
-          // Or update strictly based on custom logic. For now, assume Credit if flagged (future enhancement).
         }
       }
 
@@ -82,6 +79,15 @@ const posSlice = createSlice({
       session.paymentMethod = 'CASH';
       session.taxMode = 'EXCLUSIVE';
     },
+    updateSaleStatus: (state, action: PayloadAction<{ id: string, status: SaleStatus, paymentStatus?: PaymentStatus }>) => {
+      const sale = state.salesHistory.find(s => s.id === action.payload.id);
+      if (sale) {
+        sale.status = action.payload.status;
+        if (action.payload.paymentStatus) {
+          sale.paymentStatus = action.payload.paymentStatus;
+        }
+      }
+    },
     setCustomer: (state, action: PayloadAction<string>) => {
       state.sessions[state.activeSessionIndex].customerId = action.payload;
     },
@@ -90,9 +96,15 @@ const posSlice = createSlice({
     },
     setPaymentMethod: (state, action: PayloadAction<PaymentMethod>) => {
       state.sessions[state.activeSessionIndex].paymentMethod = action.payload;
+    },
+    setCustomersList: (state, action: PayloadAction<any[]>) => {
+      state.customers = action.payload;
+    },
+    setSalesHistory: (state, action: PayloadAction<Sale[]>) => {
+      state.salesHistory = action.payload;
     }
   }
 });
 
-export const { setActiveSession, addToCart, removeFromCart, updateCartQty, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod } = posSlice.actions;
+export const { setActiveSession, addToCart, removeFromCart, updateCartQty, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod, setCustomersList, setSalesHistory, updateSaleStatus } = posSlice.actions;
 export default posSlice.reducer;

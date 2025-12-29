@@ -5,12 +5,13 @@ import { RootState, AppDispatch, addTransaction, addCheque, updateChequeStatus }
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ArrowDownLeft, ArrowUpRight, Plus, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { TransactionType } from '../types/common';
-import { MOCK_BRANCHES } from '../../mockData';
+
 
 const FinanceTracker: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { transactions, cheques } = useSelector((state: RootState) => state.finance);
     const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
+    const { branches: dbBranches } = useSelector((state: RootState) => state.tenant);
     const { employees, attendance } = useSelector((state: RootState) => state.labor);
     const { salesHistory } = useSelector((state: RootState) => state.pos);
 
@@ -90,7 +91,7 @@ const FinanceTracker: React.FC = () => {
             date: new Date().toISOString(),
             description: newExpense.description,
             sector: currentSector,
-            branchId: currentBranch === 'All' ? MOCK_BRANCHES.find(b => b.sector === currentSector)?.id || 'Main' : currentBranch
+            branchId: currentBranch === 'All' ? dbBranches.find(b => b.sector === currentSector)?.id || 'Main' : currentBranch
         }));
         setShowExpenseModal(false);
         setNewExpense({ category: '', amount: '', description: '' });

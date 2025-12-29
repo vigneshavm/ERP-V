@@ -1,31 +1,42 @@
-
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { Calendar, Search, Printer } from 'lucide-react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, updateSaleStatus } from '../store';
+import { Calendar, Search, Printer, ChevronDown, CheckCircle, PackageCheck } from 'lucide-react';
 import { ReceiptModal } from './ReceiptModal';
 import { useBranchResolver } from '../hooks/useBranchResolver';
 import { Sale } from '../types/sales';
 
 const SalesHistory = () => {
+    const dispatch = useDispatch();
     const { salesHistory, customers } = useSelector((state: RootState) => state.pos);
-    const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const { user, role, currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
     const { getBranchName } = useBranchResolver();
 
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [searchId, setSearchId] = useState('');
+    const [statusFilter, setStatusFilter] = useState<string>('ALL');
     const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+    const [expandedSaleId, setExpandedSaleId] = useState<string | null>(null);
 
     const filteredSales = salesHistory.filter(sale => {
-        // 1. Branch/Sector Filter
+        // 1. Role-based Access Control
+        // Owner/Admin sees everything in the current branch/sector
+        // Staff only sees THEIR own sales
+        if (role === 'Staff' && sale.userId !== user?.id) return false;
+
+        // 2. Branch/Sector Filter
         if (sale.sector !== currentSector) return false;
         if (currentBranch !== 'All' && sale.branchId !== currentBranch) return false;
 
-        // 2. Search ID
+        // 3. Search ID
         if (searchId && !sale.id.includes(searchId)) return false;
 
-        // 3. Date Range
+        // 4. Status Filter
+        if (statusFilter !== 'ALL' && sale.status !== statusFilter) return false;
+
+        // 5. Date Range
         if (dateFrom && new Date(sale.date) < new Date(dateFrom)) return false;
         if (dateTo) {
             const nextDay = new Date(dateTo);
@@ -36,9 +47,23 @@ const SalesHistory = () => {
         return true;
     });
 
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'COMPLETED': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+            case 'PREORDER': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+            case 'FULFILLED': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+            case 'CANCELLED': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+            default: return 'bg-slate-100 text-slate-700';
+        }
+    };
+
     const getCustomerName = (id?: string) => {
         if (!id) return 'Unknown';
         return customers.find(c => c.id === id)?.name || 'Walk-in';
+    };
+
+    const handleFulfillment = (saleId: string) => {
+        dispatch(updateSaleStatus({ id: saleId, status: 'FULFILLED' }));
     };
 
     const totalFilteredRevenue = filteredSales.reduce((acc, s) => acc + s.total, 0);
@@ -99,11 +124,26 @@ const SalesHistory = () => {
                     </div>
                 </div>
 
+                <div>
+                    <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase mb-1 block">Status</label>
+                    <select
+                        className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        value={statusFilter}
+                        onChange={e => setStatusFilter(e.target.value)}
+                    >
+                        <option value="ALL">All Statuses</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="PREORDER">Pre-order</option>
+                        <option value="FULFILLED">Fulfilled</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+
                 <button
-                    onClick={() => { setDateFrom(''); setDateTo(''); setSearchId(''); }}
-                    className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold"
+                    onClick={() => { setDateFrom(''); setDateTo(''); setSearchId(''); setStatusFilter('ALL'); }}
+                    className="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold transition-colors"
                 >
-                    Clear
+                    Clear Filters
                 </button>
             </div>
 

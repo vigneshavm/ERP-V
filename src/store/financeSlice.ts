@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FinanceState, Transaction, Cheque } from '../types/finance';
 import { TransactionType } from '../types/common';
-import { APP_CONFIG } from '../../config';
-import { MOCK_TRANSACTIONS, MOCK_CHEQUES } from '../../mockData';
 import { loadState, saveState } from './storage';
 
 const initialFinanceState: FinanceState = {
-  transactions: APP_CONFIG.IS_DEMO ? MOCK_TRANSACTIONS : [],
-  cheques: APP_CONFIG.IS_DEMO ? MOCK_CHEQUES : [],
-  bankBalance: 250000, // Higher default for demo
+  transactions: [],
+  cheques: [],
+  bankBalance: 250000,
 };
 
 const financeSlice = createSlice({
@@ -63,9 +61,15 @@ const financeSlice = createSlice({
         }
       }
       saveState('finance', state);
+    },
+    setTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      state.transactions = action.payload;
+    },
+    setCheques: (state, action: PayloadAction<Cheque[]>) => {
+      state.cheques = action.payload;
     }
   },
 });
 
-export const { addTransaction, addCheque, updateChequeStatus } = financeSlice.actions;
+export const { addTransaction, addCheque, updateChequeStatus, setTransactions, setCheques } = financeSlice.actions;
 export default financeSlice.reducer;

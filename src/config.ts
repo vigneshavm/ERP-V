@@ -4,7 +4,8 @@ import { AppView, SystemRole } from "./types";
 export const APP_CONFIG = {
     IS_DEMO: true,
     API_BASE_URL: 'http://localhost:3000',
-    DEMO_DATA_VERSION: '1.0'
+    DEMO_DATA_VERSION: '1.0',
+    USE_SUPABASE: import.meta.env.VITE_USE_SUPABASE === 'true'
 };
 
 // Role-Based Access Control Configuration

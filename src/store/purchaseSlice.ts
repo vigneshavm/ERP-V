@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PurchaseState, PurchaseOrder } from '../types/purchase';
 import { APP_CONFIG } from '../../config';
-import { MOCK_ORDERS } from '../../mockData';
+
 import { loadState, saveState } from './storage';
 
 const initialPurchaseState: PurchaseState = {
-  orders: APP_CONFIG.IS_DEMO ? MOCK_ORDERS : [],
+  orders: [],
   pendingInvoice: null,
   isProcessing: false,
 };
@@ -22,9 +22,12 @@ const purchaseSlice = createSlice({
       const order = state.orders.find(o => o.id === action.payload);
       if (order) order.status = 'APPROVED';
       saveState('purchase', state);
+    },
+    setOrders: (state, action: PayloadAction<PurchaseOrder[]>) => {
+      state.orders = action.payload;
     }
   },
 });
 
-export const { addOrder, approveOrder } = purchaseSlice.actions;
+export const { addOrder, approveOrder, setOrders } = purchaseSlice.actions;
 export default purchaseSlice.reducer;

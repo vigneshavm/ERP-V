@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useConfig } from './ConfigContext';
 import { useBranchResolver } from '../hooks/useBranchResolver';
 import { RootState, AppDispatch, addProduct, editProduct } from '../store';
-import { MOCK_BRANCHES } from '../../mockData';
+
 import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square } from 'lucide-react';
 import { Sector, Branch } from '../types/common';
 import { Product } from '../types/product';
@@ -32,7 +32,7 @@ const InventoryManager: React.FC = () => {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
   const { tenantId } = useConfig();
-  const { tenants } = useSelector((state: RootState) => state.tenant);
+  const { tenants, branches: dbBranches } = useSelector((state: RootState) => state.tenant);
   const { getBranchName } = useBranchResolver();
 
   // Get valid branch IDs for the current tenant
@@ -364,8 +364,8 @@ const InventoryManager: React.FC = () => {
                 onChange={e => setFormData({ ...formData, branch: e.target.value })}
               >
                 <option value="">Select Branch</option>
-                {MOCK_BRANCHES
-                  .filter(b => b.sector === currentSector)
+                {dbBranches
+                  .filter(b => b.tenantId === currentTenant?.id)
                   .map(b => (
                     <option key={b.id} value={b.id}>{b.name}</option>
                   ))}

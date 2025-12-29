@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, updateSettings, resetSettings, updateTenantDetails } from '../store';
+import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings } from '../store';
 import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
@@ -63,9 +62,10 @@ interface SettingsFormProps {
     onReset: () => void;
     currentTheme: 'light' | 'dark';
     isSaved: boolean;
+    onUpdateBranchSettings: (branchId: string, settings: Partial<SettingsData>) => void;
 }
 
-const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved }) => {
+const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved, onUpdateBranchSettings }) => {
     // Initialize state from props. using 'key' in parent will force re-init when props change.
     const [appName, setAppName] = useState(initialSettings.appName);
     const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl || '');
@@ -74,6 +74,10 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
     const [taxMode, setTaxMode] = useState<TaxMode>(initialSettings.defaultTaxMode);
     const [permissions, setPermissions] = useState(initialSettings.rolePermissions);
     const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
+
+    // Branch Override State
+    const [selectedBranchId, setSelectedBranchId] = useState<string>('');
+    const [isBranchMode, setIsBranchMode] = useState(false);
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -119,11 +123,46 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
                         <SettingsIcon className="w-8 h-8 text-indigo-600" />
-                        System Configuration
+                        {isBranchMode ? 'Branch Configuration' : 'System Configuration'}
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Customize branding, features, and security.</p>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                        {isBranchMode ? `Managing overrides for branch: ${selectedBranchId} ` : 'Customize branding, features, and security.'}
+                    </p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-4">
+                    {!isBranchMode && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">Override per Branch</span>
+                            <select
+                                onChange={(e) => {
+                                    if (e.target.value) {
+                                        setSelectedBranchId(e.target.value);
+                                        setIsBranchMode(true);
+                                        // Find branch settings
+                                        const loc = activeTenant?.locations?.find(l => l.branches.some(b => b.id === e.target.value));
+                                        const branch = loc?.branches.find(b => b.id === e.target.value);
+                                        if (branch?.settings) {
+                                            setTaxMode(branch.settings.defaultTaxMode || initialSettings.defaultTaxMode);
+                                        }
+                                    }
+                                }}
+                                className="bg-transparent text-xs font-bold outline-none border-none dark:text-white"
+                            >
+                                <option value="">Select Branch...</option>
+                                {activeTenant?.locations?.flatMap(l => l.branches).map(b => (
+                                    <option key={b.id} value={b.id}>{b.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    {isBranchMode && (
+                        <button
+                            onClick={() => setIsBranchMode(false)}
+                            className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold"
+                        >
+                            Back to Global
+                        </button>
+                    )}
                     <button
                         onClick={onReset}
                         className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 font-bold transition-colors flex items-center gap-2"
@@ -131,13 +170,24 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                         <RotateCcw className="w-4 h-4" /> Reset
                     </button>
                     <button
-                        onClick={triggerSave}
+                        onClick={isBranchMode ? () => onUpdateBranchSettings(selectedBranchId, { defaultTaxMode: taxMode }) : triggerSave}
                         className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95"
                     >
-                        <Save className="w-4 h-4" /> {isSaved ? 'Saved!' : 'Save Changes'}
+                        <Save className="w-4 h-4" /> {isSaved ? 'Saved!' : isBranchMode ? 'Apply Override' : 'Save Changes'}
                     </button>
                 </div>
             </div>
+
+            {/* Warning if in Branch Mode */}
+            {isBranchMode && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-4 text-amber-700 dark:text-amber-400">
+                    <Shield className="w-6 h-6 shrink-0" />
+                    <div>
+                        <p className="text-sm font-bold uppercase tracking-tight">Branch-specific Override Active</p>
+                        <p className="text-xs opacity-80">You are currently editing settings only for <strong>{selectedBranchId}</strong>. Other branches will continue to use global defaults.</p>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Branding Section */}
@@ -166,13 +216,13 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                             <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700 w-fit">
                                 <button
                                     onClick={() => setTenantTheme('light')}
-                                    className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-md transition-all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex items - center gap - 2 px - 4 py - 2 text - sm font - bold rounded - md transition - all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
                                 >
                                     <Sun className="w-4 h-4" /> Light
                                 </button>
                                 <button
                                     onClick={() => setTenantTheme('dark')}
-                                    className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-md transition-all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex items - center gap - 2 px - 4 py - 2 text - sm font - bold rounded - md transition - all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
                                 >
                                     <Moon className="w-4 h-4" /> Dark
                                 </button>
@@ -212,7 +262,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                     <button
                                         key={c.name}
                                         onClick={() => setPrimaryColor(c.hex)}
-                                        className={`w-8 h-8 rounded-full border-2 transition-all ${primaryColor === c.hex ? 'border-slate-900 dark:border-white scale-110 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                        className={`w - 8 h - 8 rounded - full border - 2 transition - all ${primaryColor === c.hex ? 'border-slate-900 dark:border-white scale-110 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'} `}
                                         style={{ backgroundColor: c.hex }}
                                         title={c.name}
                                     />
@@ -270,13 +320,13 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                             <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
                                 <button
                                     onClick={() => setTaxMode('EXCLUSIVE')}
-                                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex - 1 py - 2 text - sm font - bold rounded - md transition - all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
                                 >
                                     Exclusive (+ Tax)
                                 </button>
                                 <button
                                     onClick={() => setTaxMode('INCLUSIVE')}
-                                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex - 1 py - 2 text - sm font - bold rounded - md transition - all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
                                 >
                                     Inclusive (Inc. Tax)
                                 </button>
@@ -368,6 +418,17 @@ const SettingsManager: React.FC = () => {
         setTimeout(() => setIsSaved(false), 2000);
     };
 
+    const handleUpdateBranchSettings = (branchId: string, updatedSettings: Partial<SettingsData>) => {
+        if (!tenantId) return;
+        dispatch(updateBranchSettings({
+            tenantId,
+            branchId,
+            settings: updatedSettings
+        }));
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 2000);
+    };
+
     const handleReset = () => {
         if (window.confirm("Reset all settings to default?")) {
             dispatch(resetSettings());
@@ -386,7 +447,7 @@ const SettingsManager: React.FC = () => {
 
     // Key includes settings version (derived from settings object) and theme/tenant props
     // to ensure form resets when external data changes
-    const formKey = `${tenantId}-${currentTheme}-${JSON.stringify(settings)}`;
+    const formKey = `${tenantId} -${currentTheme} -${JSON.stringify(settings)} `;
 
     return (
         <SettingsForm
@@ -396,13 +457,14 @@ const SettingsManager: React.FC = () => {
             currentTheme={currentTheme || 'light'}
             onSave={handleSave}
             onReset={handleReset}
+            onUpdateBranchSettings={handleUpdateBranchSettings}
             isSaved={isSaved}
         />
     );
 };
 
 const CheckToggle = ({ checked, onChange, disabled = false }: { checked: boolean, onChange?: () => void, disabled?: boolean }) => (
-    <label className={`relative inline-flex items-center cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+    <label className={`relative inline - flex items - center cursor - pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''} `}>
         <input type="checkbox" className="sr-only peer" checked={checked} onChange={onChange} disabled={disabled} />
         <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
     </label>

@@ -17,6 +17,9 @@ export interface Customer {
     lastPaymentDate?: string;
 }
 
+export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';
+export type PaymentStatus = 'PAID' | 'PENDING' | 'PARTIAL';
+
 export interface Sale {
     id: string;
     date: string;
@@ -28,6 +31,9 @@ export interface Sale {
     branchId?: string;
     taxMode?: TaxMode;
     paymentMethod?: PaymentMethod;
+    status: SaleStatus;
+    paymentStatus: PaymentStatus;
+    userId?: string; // For role-based filtering (Staff view their own)
 }
 
 export interface BillSession {

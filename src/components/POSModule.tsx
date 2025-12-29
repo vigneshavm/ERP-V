@@ -11,13 +11,15 @@ import { POSCartGrid } from './pos/POSCartGrid';
 import { POSFooter } from './pos/POSFooter';
 import { ReceiptModal } from './ReceiptModal';
 import { useBranchResolver } from '../hooks/useBranchResolver';
+import { useAppSettings } from '../hooks/useAppSettings';
 
 const POSModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const { user, currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
     const { products } = useSelector((state: RootState) => state.inventory);
     const { sessions, activeSessionIndex, customers, salesHistory } = useSelector((state: RootState) => state.pos);
-    const { defaultTaxMode } = useSelector((state: RootState) => state.settings);
+    const settings = useAppSettings();
+    const { defaultTaxMode } = settings;
 
     // --- Global State ---
     const activeSession = useMemo(() => sessions[activeSessionIndex], [sessions, activeSessionIndex]);
@@ -31,6 +33,7 @@ const POSModule: React.FC = () => {
     const [mobileTab, setMobileTab] = useState<'CART' | 'CHECKOUT'>('CART');
     const [completedSale, setCompletedSale] = useState<Sale | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isPreOrder, setIsPreOrder] = useState(false);
 
     const posContainerRef = useRef<HTMLDivElement>(null);
     const { getBranchName } = useBranchResolver();
@@ -79,40 +82,29 @@ const POSModule: React.FC = () => {
         setIsProcessing(true);
         await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
 
-        const branchName = getBranchName(currentBranch);
-        const branchCode = branchName ? branchName.substring(0, 3).toUpperCase() : 'BRN';
-
-        const now = new Date();
-        const dd = String(now.getDate()).padStart(2, '0');
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const yy = String(now.getFullYear()).slice(-2);
-        const dateStr = `${dd}${mm}${yy}`;
-        const todayISO = now.toISOString().split('T')[0];
-
-        const todaysCount = salesHistory.filter(s =>
-            s.branchId === currentBranch && s.date.startsWith(todayISO)
-        ).length + 1;
-
-        const billId = `${branchCode}${dd}${dateStr}${String(todaysCount).padStart(3, '0')}`;
-
-        const saleData: Sale = {
-            id: billId,
-            date: now.toISOString(),
-            items: [...cart],
-            total: cartTotal,
-            customerId: activeCustomerId || undefined,
+        const saleId = Math.random().toString(36).substr(2, 9).toUpperCase();
+        const sale: Sale = {
+            id: saleId,
+            date: new Date().toISOString(),
+            items: activeSession.cart,
+            total: activeSession.cart.reduce((acc, item) => acc + (item.price * item.qty), 0),
+            customerId: activeSession.customerId || undefined,
             sector: currentSector,
             branchId: currentBranch,
             taxMode: activeSession.taxMode,
-            paymentMethod: activeSession.paymentMethod
+            paymentMethod: activeSession.paymentMethod,
+            status: isPreOrder ? 'PREORDER' : 'COMPLETED',
+            paymentStatus: activeSession.paymentMethod === 'CASH' || activeSession.paymentMethod === 'CARD' || activeSession.paymentMethod === 'UPI' ? 'PAID' : 'PENDING',
+            userId: user?.id
         };
 
-        dispatch(processSale(saleData));
-        setCompletedSale(saleData);
+        dispatch(processSale(sale));
+        setCompletedSale(sale);
         setIsProcessing(false);
+        setIsPreOrder(false); // Reset for next sale
 
         setTimeout(() => dispatch(setTaxMode(defaultTaxMode)), 100);
-    }, [cart, isBranchAll, isProcessing, cartTotal, activeCustomerId, currentSector, currentBranch, activeSession, dispatch, defaultTaxMode, getBranchName, salesHistory]);
+    }, [cart, isBranchAll, isProcessing, activeSession, currentSector, currentBranch, isPreOrder, dispatch, defaultTaxMode, user]);
 
     // --- Global Shortcuts (Session Switch & Checkout) ---
     useEffect(() => {
@@ -183,13 +175,17 @@ const POSModule: React.FC = () => {
                         />
 
                         <POSFooter
+                            cart={activeSession.cart}
+                            taxMode={activeSession.taxMode}
+                            paymentMethod={activeSession.paymentMethod}
                             cartSubtotal={cartSubtotal}
                             taxAmount={taxAmount}
                             cartTotal={cartTotal}
-                            activeSession={activeSession}
                             isProcessing={isProcessing}
                             isBranchAll={isBranchAll}
                             isEmpty={cart.length === 0}
+                            isPreOrder={isPreOrder} // Pass the isPreOrder flag
+                            onSetIsPreOrder={setIsPreOrder} // Pass setter for isPreOrder
                             onCheckout={handleCheckout}
                             dispatch={dispatch}
                         />
