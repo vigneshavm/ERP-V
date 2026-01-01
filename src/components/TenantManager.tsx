@@ -114,7 +114,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             locations: [...prev.locations, {
                 city: tempCity,
                 branches: [{
-                    id: `BR-${Date.now()}`,
+                    id: `temp-${Date.now()}`,
                     name: tempCity,
                     city: tempCity,
                     address: 'Main Office'
@@ -142,7 +142,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             branches: [
                 ...city.branches,
                 {
-                    id: `BR-${Date.now()}`,
+                    id: `temp-${Date.now()}`,
                     name: tempBranch.name,
                     city: city.city,
                     address: tempBranch.address
@@ -198,20 +198,8 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
 
         const currencyObj = CURRENCIES.find(c => c.code === newTenant.currency) || CURRENCIES[0];
 
-        const normalizedLocations = newTenant.locations.map(loc => {
-            if (loc.branches.length === 0) {
-                return {
-                    ...loc,
-                    branches: [{
-                        id: `BR-FALLBACK-${loc.city.toUpperCase()}-${Date.now()}`,
-                        name: loc.city,
-                        city: loc.city,
-                        address: 'Main Office'
-                    }]
-                };
-            }
-            return loc;
-        });
+        // Pass through locations directly (no auto-generation of fallback branches)
+        const normalizedLocations = newTenant.locations;
 
         const tenantData: Partial<Tenant> = {
             name: newTenant.name,
@@ -252,31 +240,95 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                     is_active: true
                 };
 
+                let data: any;
+                let error: any;
+
                 if (editingTenant) {
-                    const { data, error } = await supabase
+                    const res = await supabase
                         .from('tenants')
                         .update(dbData)
                         .eq('id', editingTenant.id)
                         .select()
                         .single();
-
-                    if (error) throw error;
-                    if (data) {
-                        dispatch(updateTenantDetails(mapDbTenantToTenant(data)));
-                    }
+                    data = res.data;
+                    error = res.error;
                 } else {
-                    const { data, error } = await supabase
+                    const res = await supabase
                         .from('tenants')
                         .insert([dbData])
                         .select()
                         .single();
+                    data = res.data;
+                    error = res.error;
+                }
 
-                    if (error) throw error;
-                    if (data) {
-                        dispatch(addTenant(mapDbTenantToTenant(data)));
+                if (error) throw error;
+                if (data) {
+                    // --- Branch Synchronization Logic ---
+                    const branchesToUpsert: any[] = [];
+                    // Flatten locations to get branches
+                    tenantData.locations?.forEach(loc => {
+                        loc.branches.forEach(b => {
+                            const branchPayload: any = {
+                                tenant_id: data.id,
+                                name: b.name,
+                                city: loc.city,
+                                address: b.address,
+                                updated_at: new Date().toISOString()
+                            };
+                            // Only include ID if it's a valid UUID (not temp)
+                            if (b.id && !b.id.startsWith('temp-') && !b.id.startsWith('BR-')) {
+                                branchPayload.id = b.id;
+                            }
+                            branchesToUpsert.push(branchPayload);
+                        });
+                    });
+
+                    if (branchesToUpsert.length > 0) {
+                        const { data: savedBranches, error: bError } = await supabase
+                            .from('branches')
+                            .upsert(branchesToUpsert, { onConflict: 'id' })
+                            .select();
+
+                        if (bError) {
+                            console.error("Failed to sync branches:", bError);
+                        } else if (savedBranches) {
+                            // Re-construct locations JSON with REAL IDs
+                            const updatedLocations = tenantData.locations?.map(loc => {
+                                const locBranches = savedBranches.filter((sb: any) => sb.city === loc.city);
+                                return {
+                                    ...loc,
+                                    branches: locBranches.map((sb: any) => ({
+                                        id: sb.id,
+                                        name: sb.name,
+                                        city: sb.city,
+                                        address: sb.address
+                                    }))
+                                };
+                            });
+
+                            // Update Tenant with validated locations JSON
+                            const { data: finalTenant } = await supabase
+                                .from('tenants')
+                                .update({ locations: updatedLocations })
+                                .eq('id', data.id)
+                                .select()
+                                .single();
+
+                            if (finalTenant) {
+                                dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(finalTenant)) : addTenant(mapDbTenantToTenant(finalTenant)));
+                            } else {
+                                dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
+                            }
+                        } else {
+                            dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
+                        }
+                    } else {
+                        dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
                     }
                 }
             } else {
+                // Non-Supabase Handling
                 if (editingTenant) {
                     dispatch(updateTenantDetails({
                         ...editingTenant,
@@ -300,6 +352,7 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
             });
             setActiveTab('business');
             setActiveSection('list');
+            setLogoInput('');
         } catch (error: any) {
             console.error('Error saving tenant:', error);
             alert(`Failed to save tenant: ${error.message}`);

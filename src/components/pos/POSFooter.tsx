@@ -13,6 +13,7 @@ interface POSFooterProps {
     paymentMethod: PaymentMethod;
     isProcessing: boolean;
     isBranchAll: boolean;
+    hasMultipleBranches: boolean;
     isEmpty: boolean;
     isPreOrder: boolean;
     onSetIsPreOrder: (val: boolean) => void;
@@ -28,6 +29,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     paymentMethod,
     isProcessing,
     isBranchAll,
+    hasMultipleBranches,
     isEmpty,
     isPreOrder,
     onSetIsPreOrder,
@@ -35,16 +37,16 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     dispatch
 }) => {
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
-            <h3 className="text-indigo-500 dark:text-indigo-400 font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
-                <CreditCard className="w-4 h-4" /> Settlement
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
+            <h3 className="text-indigo-500 dark:text-indigo-400 font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
+                <CreditCard className="w-3.5 h-4 text-indigo-400" /> Settlement
             </h3>
 
             {/* Toggles */}
-            <div className="space-y-4 mb-6">
+            <div className="space-y-3 mb-4">
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 mb-1.5 block uppercase">Tax Mode</span>
+                        <span className="text-[9px] font-bold text-slate-400 mb-1 block uppercase">Tax Mode</span>
                         <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                             {(['EXCLUSIVE', 'INCLUSIVE'] as TaxMode[]).map(mode => (
                                 <button
@@ -58,7 +60,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                         </div>
                     </div>
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 mb-1.5 block uppercase">Payment</span>
+                        <span className="text-[9px] font-bold text-slate-400 mb-1 block uppercase">Payment</span>
                         <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button
@@ -77,49 +79,34 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     </div>
                 </div>
 
-                {/* Pre-order Toggle */}
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 mt-2">
-                    <div className="flex items-center gap-2">
-                        <PackageCheck className={`w-4 h-4 ${isPreOrder ? 'text-amber-500' : 'text-slate-400'}`} />
-                        <div>
-                            <p className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase leading-tight">Pre-order Mode</p>
-                            <p className="text-[9px] text-slate-500">Hold stock for later fulfillment</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={() => onSetIsPreOrder(!isPreOrder)}
-                        className={`w-10 h-5 rounded-full transition-colors relative ${isPreOrder ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}
-                    >
-                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${isPreOrder ? 'left-5.5' : 'left-0.5'}`} />
-                    </button>
-                </div>
+                {/* Pre-order Toggle Removed */}
             </div>
 
-            {isBranchAll && (
+            {isBranchAll && hasMultipleBranches && (
                 <div className="p-3 mb-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg flex items-start gap-3 text-yellow-700 dark:text-yellow-200 text-xs">
                     <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>Select a specific branch from the top menu to enable checkout.</span>
                 </div>
             )}
 
-            <div className="mt-auto space-y-3">
-                <div className="flex justify-between items-center text-sm border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <span className="text-slate-500 dark:text-slate-400">Subtotal</span>
+            <div className="mt-auto space-y-1.5">
+                <div className="flex justify-between items-center text-xs border-t border-slate-200 dark:border-slate-700 pt-2">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Subtotal</span>
                     <span className="text-slate-800 dark:text-slate-200 font-mono">₹{cartSubtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500 dark:text-slate-400">Tax {taxMode === 'INCLUSIVE' ? '(Included)' : ''}</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-mono">₹{taxAmount.toFixed(2)}</span>
+                <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-mono text-indigo-500">₹{taxAmount.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-end pt-2">
-                    <span className="text-slate-700 dark:text-slate-300 font-bold text-lg">Total Payable</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-3xl font-mono tracking-tight">₹{cartTotal.toFixed(2)}</span>
+                <div className="flex justify-between items-end pt-1">
+                    <span className="text-slate-700 dark:text-slate-300 font-bold text-sm">Total Payable</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl font-mono tracking-tight">₹{cartTotal.toFixed(2)}</span>
                 </div>
 
                 <button
                     onClick={onCheckout}
-                    disabled={isEmpty || isBranchAll || isProcessing}
-                    className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 mt-4 text-lg group"
+                    disabled={isEmpty || (isBranchAll && hasMultipleBranches) || isProcessing}
+                    className="relative w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 mt-2 text-base group"
                     title="Shortcut: Ctrl + Space"
                 >
                     {isProcessing ? (

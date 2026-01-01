@@ -2,7 +2,7 @@ import { APP_CONFIG } from '../config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { supabase } from '../lib/supabase';
-import { setTenants, setBranches } from '../store/tenantSlice';
+import { setTenants, setBranches, setUser } from '../store/tenantSlice';
 import { setProducts } from '../store/inventorySlice';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { setEmployees, setLaborPayments } from '../store/laborSlice';
@@ -19,6 +19,7 @@ import { PurchaseOrder } from '../types/purchase';
 export const useSupabaseData = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state: RootState) => state.auth);
+    const { tenants, branches } = useSelector((state: RootState) => state.tenant);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -130,7 +131,7 @@ export const useSupabaseData = () => {
     // 2. Fetch Tenant Specific Data (Products, Customers, Sales) - On Login
     useEffect(() => {
         if (!APP_CONFIG.USE_SUPABASE) return;
-        if (!user || !user.branchId) return;
+        if (!user) return;
 
         const fetchData = async () => {
             setLoading(true);
@@ -140,9 +141,30 @@ export const useSupabaseData = () => {
 
                 const tId = user.tenantId; // User already filtered by login, but safe to filter again
 
+                // Determine if we should apply branch filtering
+                // Logic: IF user has a branchId, AND the tenant actually HAS branches, then filter.
+                // IF tenant has NO branches (e.g. single location or cleared), ignore the stale branchId on user.
+                let applyBranchFilter = false;
+                if (user.branchId && user.branchId !== 'All') {
+                    // Check if tenant has branches loaded
+                    const tenantHasBranches = branches.some(b => b.tenantId === tId);
+
+                    // If we have loaded tenants (system initialized) and tenant has branches, enforce filter.
+                    // If tenant has NO branches, we relax the filter.
+                    if (tenants.length > 0 && !tenantHasBranches) {
+                        console.warn(`User ${user.name} has branchId ${user.branchId} but tenant has 0 branches. Ignoring branch filter.`);
+                        applyBranchFilter = false;
+                    } else {
+                        applyBranchFilter = true;
+                    }
+                }
+
                 // Products
                 let pQuery = supabase.from('products').select('*');
                 if (tId) pQuery = pQuery.eq('tenant_id', tId);
+                // Conditional Branch Filter
+                if (applyBranchFilter && user.branchId) pQuery = pQuery.eq('branch_id', user.branchId);
+
                 const { data: productsData, error: prodError } = await pQuery;
                 if (prodError) throw prodError;
                 if (productsData) {
@@ -286,7 +308,7 @@ export const useSupabaseData = () => {
         };
 
         fetchData();
-    }, [dispatch, user]);
+    }, [dispatch, user, branches, tenants]);
 
     return { loading, error };
 };

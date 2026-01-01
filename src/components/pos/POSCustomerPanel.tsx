@@ -49,40 +49,47 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
         }
     };
 
-    // Listen for global shortcut (Ctrl+K)
+    // Listen for global shortcut
     useEffect(() => {
-        const handleGlobalKeyDown = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === 'k') {
-                e.preventDefault();
-                phoneInputRef.current?.focus();
+        const handleFocus = () => {
+            phoneInputRef.current?.focus();
+            phoneInputRef.current?.select();
+        };
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setPhoneQuery('');
+                setPhoneSuggestions([]);
             }
         };
-        window.addEventListener('keydown', handleGlobalKeyDown);
-        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+
+        window.addEventListener('pos-focus-customer', handleFocus);
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('pos-focus-customer', handleFocus);
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, []);
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-lg shrink-0 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 font-bold uppercase text-xs tracking-wider">
-                    <User className="w-4 h-4" /> Customer Info
-                </div>
-                {activeCustomer.id !== 'c1' && (
-                    <button onClick={() => dispatch(setCustomer('c1'))} className="text-xs text-red-500 dark:text-red-400 hover:underline">Reset</button>
-                )}
-            </div>
+        <div className="bg-white dark:bg-slate-800 p-2 border-b border-slate-200 dark:border-slate-700 shadow-sm shrink-0 transition-colors">
 
-            <div className="relative mb-3">
-                <input
-                    ref={phoneInputRef}
-                    type="text"
-                    placeholder="Search Phone or Name (Ctrl+K)..."
-                    className={`w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border ${activeCustomer.id !== 'c1' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-300 ring-1 ring-emerald-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
-                    value={phoneQuery}
-                    onChange={e => setPhoneQuery(e.target.value)}
-                    onKeyDown={handlePhoneKeyDown}
-                />
-                <Smartphone className={`absolute left-3 top-3 w-4 h-4 ${activeCustomer.id !== 'c1' ? 'text-emerald-500' : 'text-slate-400'}`} />
+
+            <div className="relative mb-2">
+                <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <input
+                            ref={phoneInputRef}
+                            type="text"
+                            placeholder="Search Customer (Ctrl+K)"
+                            className={`w-full pl-8 pr-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border ${activeCustomer.id !== 'c1' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-300 ring-1 ring-emerald-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200'} rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+                            value={phoneQuery}
+                            onChange={e => setPhoneQuery(e.target.value)}
+                            onKeyDown={handlePhoneKeyDown}
+                        />
+                        <User className={`absolute left-2 top-1.5 w-3.5 h-3.5 ${activeCustomer.id !== 'c1' ? 'text-emerald-500' : 'text-slate-400'}`} />
+                    </div>
+                </div>
 
                 {/* Customer Suggestions */}
                 {phoneSuggestions.length > 0 && (
@@ -105,16 +112,19 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                 )}
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-                <div className="flex justify-between items-center mb-1">
-                    <span className="text-slate-500 dark:text-slate-400 text-xs">Customer Name</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-bold text-sm">{activeCustomer.name}</span>
+
+
+            <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded p-1.5 border border-slate-100 dark:border-slate-700/50">
+                <div className="flex items-center gap-2">
+                    <span className="text-slate-800 dark:text-slate-200 font-bold text-xs truncate max-w-[120px]">{activeCustomer.name}</span>
+                    {activeCustomer.points > 0 && (
+                        <span className="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded font-bold">{activeCustomer.points} pts</span>
+                    )}
                 </div>
-                <div className="flex justify-between items-center">
-                    <span className="text-slate-500 dark:text-slate-400 text-xs">Loyalty Points</span>
-                    <span className="text-indigo-500 dark:text-indigo-400 font-bold text-sm">{activeCustomer.points} pts</span>
-                </div>
+                {activeCustomer.id !== 'c1' && (
+                    <button onClick={() => dispatch(setCustomer('c1'))} className="text-[10px] text-red-500 hover:text-red-600 px-1">Reset</button>
+                )}
             </div>
-        </div>
+        </div >
     );
 };

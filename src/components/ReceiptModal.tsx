@@ -5,6 +5,7 @@ import { Sale } from '../types/sales';
 import { Tenant } from '../types/tenant';
 import { X, Printer, CheckCircle } from 'lucide-react';
 import { useConfig } from './ConfigContext';
+import { printSaleReceipt } from '../utils/printService';
 
 interface ReceiptModalProps {
   sale: Sale;
@@ -20,44 +21,14 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, onClose }) => 
   const tenantName = tenant ? tenant.name : 'Enterprise Mgr';
 
   const handlePrint = () => {
-    const content = document.getElementById('receipt-content');
-    if (!content) return;
+    const branchName = sale.branchId ? (sale as any).branch : 'Main Branch'; // Fallback if Sale object has branch name injected
+    // Since Sale interface has branchId, but POSModule passes branchName usually or we resolver it
+    // For now, if we call it from Modal, we need to be sure we have the name.
+    // In ReceiptModal, the resolver isn't here, but we can use the tenants list.
+    const branch = tenant?.locations?.flatMap(l => l.branches).find(b => b.id === sale.branchId || b.name === sale.branchId);
+    const bName = branch ? branch.name : (sale.branchId || 'Main Branch');
 
-    // Open a new window for printing to bypass sandbox 'allow-modals' restriction
-    const printWindow = window.open('', '_blank', 'width=400,height=600');
-    if (!printWindow) {
-      alert("Please allow popups to print the receipt.");
-      return;
-    }
-
-    // Construct the printable document
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Receipt #${sale.id}</title>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <style>
-            body { background: white; color: black; font-family: monospace; }
-            .no-print { display: none !important; }
-            @page { margin: 0; size: auto; }
-          </style>
-        </head>
-        <body>
-          <div class="p-6">
-            ${content.innerHTML}
-          </div>
-          <script>
-            // Wait for styles to load before printing
-            setTimeout(() => {
-                window.print();
-                // window.close(); // User can close manually
-            }, 800);
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    printSaleReceipt(sale, tenantName, bName);
   };
 
   return (

@@ -85,10 +85,26 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
         if (pin === user.pin) {
             const sessionUser = { ...user };
+
+            // --- Auto-Heal Stale Branch IDs ---
+            // Verify if the assigned branchId actually exists in the tenant's current location/branch list.
+            if (sessionUser.branchId) {
+                const allTenantBranches = (tenant?.locations || []).flatMap(loc => loc.branches || []);
+                const branchExists = allTenantBranches.some(b => b.id === sessionUser.branchId);
+
+                if (!branchExists) {
+                    console.warn(`[Login] Detected stale branchId ${sessionUser.branchId} for user ${sessionUser.name}. Removing it from session.`);
+                    // If the branch doesn't exist anymore, clear it to avoid API filter errors.
+                    // For Owners, this defaults to 'All' view. For Staff, they might need reassignment, but better to show global/default than crash.
+                    sessionUser.branchId = '';
+                }
+            }
+
             if (user.systemRole === 'Owner' && allowedSector) {
                 sessionUser.sector = allowedSector;
             }
 
+            localStorage.setItem('erp_auth_user', JSON.stringify(sessionUser));
             dispatch(setUser(sessionUser));
             onLogin();
         } else {

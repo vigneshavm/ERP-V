@@ -37,7 +37,8 @@ export * from './tenantSlice';
 export const processSale = (sale: Sale) => (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(recordSale(sale));
     sale.items.forEach(item => {
-        dispatch(deductStock({ id: item.id, qty: item.qty }));
+        const deductionQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
+        dispatch(deductStock({ id: item.id, qty: deductionQty }));
     });
 
     // Resolve branch name: prefer sale.branchId, then tenant locations, then DB branches, else fallback

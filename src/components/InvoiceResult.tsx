@@ -33,7 +33,9 @@ const CATEGORIES_BY_SECTOR: Record<Sector, string[]> = {
     Grocery: ['Vegetables', 'Fruits', 'Rice', 'Spices', 'Dal', 'Oil', 'Snacks'],
     Supermarket: ['Grocery', 'Beverages', 'Snacks', 'Household', 'Personal Care', 'Dairy', 'Frozen'],
     Textile: ['Saree', 'Kurta', 'Shirt', 'Trousers', 'Fabric', 'Accessories', 'Kids Wear'],
-    'Mobile Shop': ['Smartphones', 'Accessories', 'Tablets', 'Audio', 'Chargers', 'Wearables']
+    'Mobile Shop': ['Smartphones', 'Accessories', 'Tablets', 'Audio', 'Chargers', 'Wearables'],
+    Services: ['Installation', 'Repair', 'Maintenance', 'Consulting'],
+    FMCG: ['Biscuits', 'Snacks', 'Beverages', 'Personal Care', 'Dairy']
 };
 
 

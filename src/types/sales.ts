@@ -3,6 +3,7 @@ import { Sector, TaxMode, PaymentMethod } from './common';
 
 export interface CartItem extends Product {
     qty: number;
+    cutLength?: number;
 }
 
 export interface Customer {
@@ -63,4 +64,5 @@ export interface POSState {
     activeSessionIndex: number;
     customers: Customer[];
     salesHistory: Sale[];
+    heldBills?: any[]; // Temporary loose type to avoid circular dependency, or better yet, define HeldBill here or keep it generic
 }

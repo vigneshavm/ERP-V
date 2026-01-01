@@ -4,6 +4,16 @@ import { PaymentMethod, TaxMode, } from '../types/common';
 import { POSState, Sale } from '../types/sales';
 import { CartItem, Session, SaleStatus, PaymentStatus } from '../types/sales';
 
+export interface HeldBill {
+  id: string;
+  timestamp: number;
+  cart: CartItem[];
+  customerId: string; // Store ID to reconnect
+  customerName?: string; // Cache name for display
+  note?: string;
+  total: number;
+}
+
 
 
 const defaultSession: Session = {
@@ -24,7 +34,8 @@ const initialState: POSState = {
     { id: 'c3', name: 'Rahul Enterprise', phone: '9988776655', points: 500, creditBalance: 12000, creditLimit: 10000, riskScore: 90, lastPaymentDate: '2023-08-01' },
     { id: 'c4', name: 'Alice Baker', phone: '5551234567', points: 50, creditBalance: 0, creditLimit: 2000, riskScore: 10 },
   ],
-  salesHistory: []
+  salesHistory: [],
+  heldBills: [] as HeldBill[] // Using the locally defined interface
 };
 
 const posSlice = createSlice({
@@ -38,11 +49,19 @@ const posSlice = createSlice({
     },
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const session = state.sessions[state.activeSessionIndex];
-      const existing = session.cart.find(item => item.sku === action.payload.sku);
-      if (existing) {
-        existing.qty += action.payload.qty;
+      const existingIndex = session.cart.findIndex(item => item.sku === action.payload.sku);
+
+      if (existingIndex !== -1) {
+        // Move to top and update qty
+        const [existingItem] = session.cart.splice(existingIndex, 1);
+        existingItem.qty += action.payload.qty;
+        session.cart.unshift(existingItem);
       } else {
-        session.cart.push({ ...action.payload });
+        // Add new to top
+        session.cart.unshift({
+          ...action.payload,
+          cutLength: action.payload.unit === 'Meter' ? 1 : undefined
+        });
       }
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
@@ -54,6 +73,13 @@ const posSlice = createSlice({
       const item = session.cart.find(i => i.id === action.payload.id);
       if (item && action.payload.qty > 0) {
         item.qty = action.payload.qty;
+      }
+    },
+    updateCartLength: (state, action: PayloadAction<{ id: string; length: number }>) => {
+      const session = state.sessions[state.activeSessionIndex];
+      const item = session.cart.find(i => i.id === action.payload.id);
+      if (item && action.payload.length > 0) {
+        item.cutLength = action.payload.length;
       }
     },
     clearCart: (state) => {
@@ -102,9 +128,51 @@ const posSlice = createSlice({
     },
     setSalesHistory: (state, action: PayloadAction<Sale[]>) => {
       state.salesHistory = action.payload;
+    },
+    // Queue / Hold Bill Actions
+    holdCurrentBill: (state, action: PayloadAction<{ note?: string }>) => {
+      const session = state.sessions[state.activeSessionIndex];
+      if (session.cart.length === 0) return;
+
+      const customer = state.customers.find(c => c.id === session.customerId);
+      const total = session.cart.reduce((sum, item) => sum + (item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)), 0);
+
+      const heldBill: HeldBill = {
+        id: Date.now().toString(),
+        timestamp: Date.now(),
+        cart: [...session.cart],
+        customerId: session.customerId,
+        customerName: customer ? customer.name : 'Unknown',
+        note: action.payload.note,
+        total
+      };
+
+      // @ts-ignore - Dynamic property addition if type is strict, otherwise need to update POSState interface
+      state.heldBills = [heldBill, ...(state.heldBills || [])];
+
+      // Clear Session
+      session.cart = [];
+      session.customerId = 'c1';
+    },
+    resumeBill: (state, action: PayloadAction<string>) => {
+      const index = (state.heldBills || []).findIndex(b => b.id === action.payload);
+      if (index !== -1) {
+        const bill = state.heldBills![index];
+        const session = state.sessions[state.activeSessionIndex];
+
+        // Restore State
+        session.cart = [...bill.cart];
+        session.customerId = bill.customerId;
+
+        // Remove from Queue
+        state.heldBills!.splice(index, 1);
+      }
+    },
+    discardHeldBill: (state, action: PayloadAction<string>) => {
+      state.heldBills = (state.heldBills || []).filter(b => b.id !== action.payload);
     }
   }
 });
 
-export const { setActiveSession, addToCart, removeFromCart, updateCartQty, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod, setCustomersList, setSalesHistory, updateSaleStatus } = posSlice.actions;
+export const { setActiveSession, addToCart, removeFromCart, updateCartQty, updateCartLength, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod, setCustomersList, setSalesHistory, updateSaleStatus, holdCurrentBill, resumeBill, discardHeldBill } = posSlice.actions;
 export default posSlice.reducer;

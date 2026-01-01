@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setBranch } from './store';
+import { RootState, setBranch, setUser } from './store';
 import { APP_CONFIG } from './config';
 
 
 import Dashboard from './components/Dashboard';
-import POSModule from './components/POSModule';
+import POSModule from './components/pos/POSModule';
 import InventoryManager from './components/InventoryManager';
 import PurchaseManager from './components/PurchaseManager';
 import FinanceTracker from './components/FinanceTracker';
@@ -20,6 +20,7 @@ import ProfitPulse from './components/ProfitPulse';
 import AgedStockManager from './components/AgedStockManager';
 import Login from './components/login';
 import TenantManager from './components/TenantManager';
+import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
 
 import { ConfigProvider } from './components/ConfigProvider';
 import { useBranchResolver } from './hooks/useBranchResolver';
@@ -35,6 +36,14 @@ const App: React.FC = () => {
     const dispatch = useDispatch();
     const { user, role } = useSelector((state: RootState) => state.auth);
     const { rolePermissions } = useSelector((state: RootState) => state.settings);
+
+    // Check for Customer Display Mode (Standalone)
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+
+    if (mode === 'customer_display') {
+        return <POSCustomerDisplay />;
+    }
 
     // Initialize Supabase Data
     useSupabaseData();
@@ -61,7 +70,22 @@ const App: React.FC = () => {
     // --- Tenant specific state ---
     const [activeTab, setActiveTab] = useState<AppView>('DASHBOARD');
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('erp_auth_user'));
+
+    // --- Restore Session on Mount ---
+    React.useEffect(() => {
+        const stored = localStorage.getItem('erp_auth_user');
+        if (stored && !user) {
+            try {
+                const parsedUser = JSON.parse(stored);
+                dispatch(setUser(parsedUser));
+            } catch (e) {
+                console.error("Failed to restore session", e);
+                localStorage.removeItem('erp_auth_user');
+            }
+        }
+    }, [dispatch, user]);
 
     // --- Role-based Default Page ---
     React.useEffect(() => {
@@ -69,7 +93,10 @@ const App: React.FC = () => {
             if (role === 'Staff') {
                 setActiveTab('POS');
             } else {
-                setActiveTab('DASHBOARD');
+                // Only reset to Dashboard if not already on a specific tab (preserves current view on refresh)
+                if (activeTab === 'DASHBOARD') {
+                    setActiveTab('DASHBOARD');
+                }
             }
         }
     }, [isLoggedIn, role]);
@@ -231,13 +258,14 @@ const App: React.FC = () => {
                         setActiveTab(id);
                         setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${activeTab === id
+                    title={desktopCollapsed ? label : ''}
+                    className={`w-full flex items-center ${desktopCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-lg transition-colors duration-200 ${activeTab === id
                         ? 'bg-indigo-600 text-white shadow-md'
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                         }`}
                 >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{label}</span>
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {!desktopCollapsed && <span className="font-medium truncate">{label}</span>}
                 </button>
             );
         };
@@ -316,52 +344,70 @@ const App: React.FC = () => {
 
                 {/* Sidebar (Desktop Persistent, Mobile Drawer) */}
                 <aside className={`
-                    fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col transition-transform duration-300 transform 
+                    fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-2 flex flex-col transition-all duration-300 transform 
                     ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                    ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
                 `}>
-                    <div className="flex items-center justify-between mb-4 mt-2 lg:mt-0 px-4">
-                        <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
+                        <div className="flex items-center space-x-2 overflow-hidden">
+                            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <span className="font-bold text-white">{user?.name.charAt(0) || 'T'}</span>
                             </div>
-                            <div className="overflow-hidden">
-                                <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                                <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
-                            </div>
+                            {!desktopCollapsed && (
+                                <div className="overflow-hidden">
+                                    <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
+                                    <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
+                                </div>
+                            )}
                         </div>
                         {/* Mobile Only Close Button */}
                         <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
                             <X className="w-6 h-6" />
                         </button>
+                        {/* Desktop Collapse Toggle */}
+                        <button
+                            onClick={() => setDesktopCollapsed(!desktopCollapsed)}
+                            className="hidden lg:flex p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                        >
+                            {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                        </button>
                     </div>
 
-                    <div className="mb-6 px-4">
-                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{currentTenant?.name}</span>
+                    <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
+                        {!desktopCollapsed && <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{currentTenant?.name}</span>}
 
                         {/* Branch Selector (Owner Only) or Display (Staff) */}
-                        <div className="mt-2">
-                            {role === 'Owner' ? (
-                                <div className="relative">
-                                    <select
-                                        value={selectedBranch}
-                                        onChange={(e) => dispatch(setBranch(e.target.value))}
-                                        className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                                    >
-                                        <option value="All">All Branches (HQ View)</option>
-                                        {(currentTenant?.locations?.flatMap(l => l.branches) ||
-                                            branchesFromDB.filter(b => b.tenantId === currentTenant?.id)
-                                        ).map(b => (
-                                            <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
-                                        ))}
-                                    </select>
+                        {(() => {
+                            const availableBranches = (currentTenant?.locations?.flatMap(l => l.branches) ||
+                                branchesFromDB.filter(b => b.tenantId === currentTenant?.id) || [])
+                                .filter(Boolean); // Ensure no nulls/undefined
+
+                            if (availableBranches.length <= 1) return null;
+
+                            return (
+                                <div className="mt-2 text-center">
+                                    {role === 'Owner' ? (
+                                        <div className="relative">
+                                            <select
+                                                value={selectedBranch}
+                                                onChange={(e) => dispatch(setBranch(e.target.value))}
+                                                className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                            >
+                                                <option value="All">All Branches (HQ View)</option>
+                                                {availableBranches.map(b => (
+                                                    <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                            {getBranchName(selectedBranch)}
+                                        </div>
+                                    )}
                                 </div>
-                            ) : (
-                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                    {getBranchName(selectedBranch)}
-                                </div>
-                            )}
-                        </div>
+                            );
+                        })()}
                     </div>
 
                     <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
@@ -384,13 +430,33 @@ const App: React.FC = () => {
                     <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
                         <button
                             onClick={() => {
-                                requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => setIsLoggedIn(false));
+                                requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
+                                    localStorage.removeItem('erp_auth_user');
+                                    localStorage.removeItem('erp_current_tenant');
+                                    setIsLoggedIn(false);
+                                });
                             }}
-                            className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
                         >
                             <Lock className="w-5 h-5" />
                             <span className="font-medium">Staff Logout</span>
                         </button>
+
+                        {desktopCollapsed && (
+                            <button
+                                onClick={() => {
+                                    requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
+                                        localStorage.removeItem('erp_auth_user');
+                                        localStorage.removeItem('erp_current_tenant');
+                                        setIsLoggedIn(false);
+                                    });
+                                }}
+                                title="Logout"
+                                className="w-full flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                                <Lock className="w-5 h-5" />
+                            </button>
+                        )}
                     </div>
                 </aside>
 

@@ -5,7 +5,9 @@ export const Sector = {
     GROCERY: 'Grocery',
     SUPERMARKET: 'Supermarket',
     TEXTILE: 'Textile',
-    MOBILE_SHOP: 'Mobile Shop'
+    MOBILE_SHOP: 'Mobile Shop',
+    SERVICES: 'Services',
+    FMCG: 'FMCG'
 } as const;
 
 export type Sector = typeof Sector[keyof typeof Sector];
@@ -22,7 +24,7 @@ export enum TransactionType {
 
 export type ModuleType = 'POS' | 'INVENTORY' | 'HR' | 'FINANCE' | 'ANALYTICS' | 'PURCHASE' | 'SALES' | 'DAILY' | 'STOREFRONT' | 'SERIAL_TRACKING' | 'INSTALLATION_SERVICE' | 'WEIGHT_SCALE_INTEGRATION';
 export type Branch = string;
-export type TaxMode = 'EXCLUSIVE' | 'INCLUSIVE';
+export { TaxMode } from './product/enums';
 export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
 export type AppView = 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE' | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS' | 'AGED_STOCK';
 export type SystemRole = 'Owner' | 'Manager' | 'Staff';

@@ -29,20 +29,23 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                             key={session.id}
                             onClick={() => onSwitchSession(index)}
                             title={`Switch to ${session.label} (Alt+${index + 1})`}
-                            className={`flex-1 py-2 px-4 rounded-t-lg font-bold flex items-center justify-center gap-2 transition-all border-b-2 ${activeSessionIndex === index
+                            className={`flex flex-col items-center justify-center p-2 rounded-t-lg font-bold transition-all border-b-2 gap-1 ${activeSessionIndex === index
                                 ? 'bg-indigo-600 text-white border-indigo-400 shadow-sm'
                                 : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700'
                                 }`}
                         >
-                            <span className="text-sm">{session.label}</span>
-                            {totalQty > 0 && (
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${activeSessionIndex === index
-                                    ? 'bg-indigo-500 text-white'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                                    }`}>
-                                    {totalQty}
-                                </span>
-                            )}
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">{session.label}</span>
+                                {totalQty > 0 && (
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${activeSessionIndex === index
+                                        ? 'bg-indigo-500 text-white'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                                        }`}>
+                                        {totalQty}
+                                    </span>
+                                )}
+                            </div>
+                            <kbd className={`text-[9px] opacity-40 font-mono tracking-tighter ${activeSessionIndex === index ? 'text-white' : ''}`}>Alt+{index + 1}</kbd>
                         </button>
                     )
                 })}
