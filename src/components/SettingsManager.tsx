@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users } from 'lucide-react';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2 } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
 import { Tenant } from '../types/tenant';
@@ -358,11 +358,21 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                         </div>
                     </div>
 
+
+                    {/* Security & Data Maintenance */}
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <Lock className="w-5 h-5 text-indigo-500" /> Security & Maintenance
+                        </h3>
+                        <SecurityMigrationManager />
+                    </div>
+
                     {/* Role Access Control (Full Width) */}
                     <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                             <Shield className="w-5 h-5 text-indigo-500" /> Role Access Control
                         </h3>
+
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
@@ -401,6 +411,135 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                     </div>
                 </div>
             )}
+        </div>
+    );
+};
+
+
+// --- Helper Component for Migration ---
+import { isSecuredIdeally, securePassword } from '../utils/auth';
+import { supabase } from '../lib/supabase';
+
+const SecurityMigrationManager: React.FC = () => {
+    // We access employees from labor slice or where they are stored globally
+    const { employees } = useSelector((state: RootState) => state.labor);
+    const [isMigrating, setIsMigrating] = useState(false);
+    const [progress, setProgress] = useState({ total: 0, done: 0 });
+
+    // Identify users who need migration (Not in ideal format)
+    const insecureUsers = React.useMemo(() => {
+        return employees.filter(e => e.pin && !isSecuredIdeally(e.pin));
+    }, [employees]);
+
+    const handleMigrateAll = async () => {
+        if (!confirm(`Are you sure you want to secure ${insecureUsers.length} passwords? This operation cannot be undone.`)) return;
+
+        setIsMigrating(true);
+        setProgress({ total: insecureUsers.length, done: 0 });
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const user of insecureUsers) {
+            try {
+                // 1. Secure the existing plain text (or re-secure/re-hash)
+                // Note: user.pin might be an old hash or encrypted string if we are switching modes. 
+                // Wait, if it's already a hash/encrypted but NOT the ideal one, we can't easily re-secure it 
+                // unless we have the plain text.
+                // However, the `insecureUsers` check relies on `isSecuredIdeally`.
+                // If I am in HASH mode, and I have an `enc_` password, `isSecuredIdeally` returns false.
+                // But I CANNOT convert `enc_` to Hash without decrypting first.
+                // This tool assumes we are migrating PLAIN TEXT primarily.
+                // If we want to support Mode Switching (Encrypt -> Hash), we need the plain text.
+                // We can't get plain text from Hash.
+                // We CAN get plain text from Encrypt (if we have the key).
+
+                // For safety: This specific batch tool is risky if we are migrating FROM a secure format TO another without decryption logic here.
+                // But `isSecuredIdeally` handles generic "is it good?".
+                // If `user.pin` is `enc_` and we are in HASH mode, `securePassword` will try to HASH the `enc_` string!
+                // That results in double-wrapping invalidly.
+                // Let's refine this tool to only migrate PLAIN text for safety in this iteration, 
+                // OR attempt detection.
+
+                let rawPin = user.pin;
+                // If it looks like encryption and we can decrypt it, do so?
+                // `comparePassword` does this logic but returns bool.
+                // `auth.ts` doesn't export decrypt.
+                // For now, let's assume this tool deals with PLAIN text legacy users. 
+                // If the user is already "secure" in a different format, we might skip them to avoid corrupting, 
+                // OR we trust the admin knows what they are doing.
+                // Let's stick to migrating PLAIN TEXT (length < 20 usually, hashes are long).
+                // Or better: check if it starts with enc_ or $2a$. If so, SKIP automated migration here 
+                // because we can't know the plain text securely.
+
+                // Helper to check if it looks like ANY secure format
+                const isAnySecure = (p: string) => p.startsWith('enc_') || p.startsWith('$2a$') || p.startsWith('$2b$');
+
+                if (isAnySecure(rawPin)) {
+                    // It is secure, just not "ideally" (e.g. Encrypted when we want Hash). 
+                    // We skip batch migration for these to avoid data loss.
+                    // They will be auto-migrated on login!
+                    console.warn(`Skipping user ${user.name} - already has a secure format, cannot auto-convert without login.`);
+                    continue;
+                }
+
+                const secured = await securePassword(rawPin);
+
+                // 2. Update Supabase
+                const { error } = await supabase
+                    .from('employees')
+                    .update({ pin: secured })
+                    .eq('id', user.id);
+
+                if (error) throw error;
+
+                successCount++;
+            } catch (err) {
+                console.error(`Failed to migrate user ${user.name}:`, err);
+                failCount++;
+            }
+            setProgress(prev => ({ ...prev, done: prev.done + 1 }));
+        }
+
+        alert(`Migration Complete.\nSecured: ${successCount}\nSkipped/Failed: ${insecureUsers.length - successCount}`);
+        setIsMigrating(false);
+        window.location.reload();
+    };
+
+    if (insecureUsers.length === 0) {
+        return (
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-xl flex items-center gap-3">
+                <CheckCircle className="w-6 h-6 shrink-0" />
+                <div>
+                    <p className="font-bold text-sm">System Secure</p>
+                    <p className="text-xs opacity-80">All {employees.length} user passwords are hashed and secured.</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4">
+            <div className="p-4 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 rounded-xl border border-amber-100 dark:border-amber-800">
+                <div className="flex items-start gap-3">
+                    <Shield className="w-6 h-6 shrink-0 mt-0.5" />
+                    <div>
+                        <p className="font-bold text-sm">Security Action Required</p>
+                        <p className="text-xs mt-1 mb-3 opacity-90">
+                            Found <strong>{insecureUsers.length}</strong> users with legacy insecure passwords.
+                            These should be migrated to the new hashing standard immediately.
+                        </p>
+                        <button
+                            onClick={handleMigrateAll}
+                            disabled={isMigrating}
+                            className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+                            {isMigrating ? `Securing ${progress.done}/${progress.total}...` : 'Secure All Passwords Now'}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

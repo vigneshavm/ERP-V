@@ -102,10 +102,36 @@ export const useSupabaseData = () => {
                             };
                         })));
                     }
+
+                    // --- Fetch Employees (Critical for Login) ---
+                    let eQuery = supabase.from('employees').select('*');
+                    if (isolatedTenantId) {
+                        eQuery = eQuery.eq('tenant_id', isolatedTenantId);
+                    }
+                    const { data: empData, error: empErr } = await eQuery;
+                    if (empErr) throw empErr;
+
+                    if (empData) {
+                        const mappedEmployees = empData.map((e: any) => ({
+                            id: e.id,
+                            name: e.name,
+                            role: e.role,
+                            systemRole: e.system_role,
+                            pin: e.pin,
+                            dailyRate: e.daily_rate,
+                            sector: e.sector,
+                            branchId: e.branch_id,
+                            tenantId: e.tenant_id,
+                            phoneNumber: e.phone_number
+                        })) as Employee[];
+
+                        dispatch(setEmployees(mappedEmployees));
+                        // Optional: Cache employees
+                        // SyncManager.cacheEmployees(mappedEmployees);
+                    }
                 }
-            } catch (err: any) {
-                console.error('Error fetching tenants:', err);
-                // Fallback to local if needed, although tenants are usually small
+            } catch (error) {
+                console.error('Error fetching tenants:', error);
             }
         };
 

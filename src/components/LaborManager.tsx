@@ -6,6 +6,7 @@ import { Card } from './Card';
 import { TimeEntryModal } from './TimeEntryModal';
 import { Users, Plus, CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ListChecks, Wallet, CheckCircle2, Clock, PieChart, XCircle, IndianRupee, Calculator, X, } from 'lucide-react';
 import { formatCurrency, getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../utils/helpers';
+import { securePassword } from '../utils/auth';
 import { Branch, AttendanceStatus } from '../types/common';
 import { DailyLog } from '../types/hr';
 import { Sector } from '../types/common';
@@ -139,11 +140,13 @@ export const LaborManager = () => {
 
   // -- Handlers --
 
-  const handleAddLaborer = (e: React.FormEvent) => {
+  const handleAddLaborer = async (e: React.FormEvent) => {
     e.preventDefault();
     // Ensure branch recorded in global branch table (attempt to find in tenant locations first)
     const branchIdentifier = newEmp.branch || (currentBranch === 'All' ? 'Alpha' : currentBranch);
     dispatch(ensureBranchRecorded({ branchId: branchIdentifier }));
+
+    const hashedPin = await securePassword('0000');
 
     dispatch(addEmployee({
       id: generateId(),
@@ -153,7 +156,7 @@ export const LaborManager = () => {
       sector: currentSector as Sector,
       branchId: newEmp.branch as Branch,
       systemRole: 'Staff',
-      pin: '0000',
+      pin: hashedPin,
       phoneNumber: newEmp.phoneNumber
     }));
     setIsAddingLaborer(false);

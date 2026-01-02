@@ -7,6 +7,8 @@ import { Store, Lock, ArrowRight, AlertCircle, UserCircle } from 'lucide-react';
 
 import { Sector } from '../types/common';
 import { Tenant } from '../types/tenant';
+import { comparePassword, securePassword, isSecuredIdeally } from '../utils/auth';
+import { supabase } from '../lib/supabase';
 
 const SECTOR_IMAGES: Record<string, string> = {
     [Sector.GENERAL]: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop',
@@ -62,55 +64,141 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
         e.preventDefault();
         setError('');
 
-        console.log('Debugging Login:', {
-            identity,
-            tenantId,
-            employeesCount: employees.length,
-            sampleEmployee: employees[0]
-        });
+        // Helper to normalize phone numbers (remove all non-digits)
+        const normalizePhone = (phone: string | undefined): string => {
+            if (!phone) return '';
+            return phone.replace(/\D/g, '');
+        };
 
-        const user = employees.find(e =>
-            e.tenantId === tenantId &&
-            (
-                e.name.toLowerCase() === identity.toLowerCase() ||
-                e.id === identity ||
-                (e.phoneNumber && e.phoneNumber === identity)
-            )
-        );
+        const cleanIdentity = identity.trim();
+        const cleanIdentityPhone = normalizePhone(cleanIdentity);
 
-        if (!user) {
-            setError("Please select a valid user.");
-            return;
-        }
 
-        if (pin === user.pin) {
-            const sessionUser = { ...user };
 
-            // --- Auto-Heal Stale Branch IDs ---
-            // Verify if the assigned branchId actually exists in the tenant's current location/branch list.
-            if (sessionUser.branchId) {
-                const allTenantBranches = (tenant?.locations || []).flatMap(loc => loc.branches || []);
-                const branchExists = allTenantBranches.some(b => b.id === sessionUser.branchId);
 
-                if (!branchExists) {
-                    console.warn(`[Login] Detected stale branchId ${sessionUser.branchId} for user ${sessionUser.name}. Removing it from session.`);
-                    // If the branch doesn't exist anymore, clear it to avoid API filter errors.
-                    // For Owners, this defaults to 'All' view. For Staff, they might need reassignment, but better to show global/default than crash.
-                    sessionUser.branchId = '';
+        const checkUser = async () => {
+            const user = employees.find(e =>
+                e.tenantId === tenantId &&
+                (
+                    e.name.toLowerCase() === cleanIdentity.toLowerCase() ||
+                    e.id === cleanIdentity ||
+                    (normalizePhone(e.phoneNumber) === cleanIdentityPhone && cleanIdentityPhone.length >= 10)
+                )
+            );
+
+            if (!user) {
+                console.warn(`[Login Failed] No user found for identity: "${cleanIdentity}" in tenant: ${tenantId}`);
+                setError("Please select a valid user.");
+                return;
+            }
+
+            // --- Database Synchronization Layer ---
+            // Fetch the absolutely latest record from Supabase to ensure we aren't using stale Redux state
+            // This satisfies the requirement to "check their record in the employee table" during login.
+            let freshUser = { ...user };
+            if (supabase) {
+                try {
+                    const { data: dbUser, error: dbError } = await supabase
+                        .from('employees')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (dbUser && !dbError) {
+                        freshUser = { ...freshUser, ...dbUser };
+                        // Ensure we map snake_case from DB to camelCase if needed, 
+                        // but usually our Supabase client types might match or we rely on the `pin` field which is `pin`.
+                        // Note: Our Redux logic maps snake_case keys usually? 
+                        // If DB returns `daily_rate`, Redux might expect `dailyRate`. 
+                        // But for `pin`, it's just `pin`. 
+                        // We primarily care about the PIN here.
+                        freshUser.pin = dbUser.pin;
+                    }
+                } catch (err) {
+                    console.warn("Failed to sync with DB, falling back to local state.", err);
                 }
             }
 
-            if (user.systemRole === 'Owner' && allowedSector) {
-                sessionUser.sector = allowedSector;
+            let loginSuccess = false;
+            let needsMigration = false;
+
+            // 1. Try secure comparison (Primary) using FRESH PIN
+            // comparePassword handles Encrypted, Hashed, AND Plain text (fallback)
+            const isMatch = await comparePassword(pin, freshUser.pin);
+
+            if (isMatch) {
+                loginSuccess = true;
+                // Check if migration is needed based on FRESH PIN
+                // This covers the case where comparePassword matched a plain text PIN
+                if (!isSecuredIdeally(freshUser.pin)) {
+                    needsMigration = true;
+                }
             }
 
-            localStorage.setItem('erp_auth_user', JSON.stringify(sessionUser));
-            dispatch(setUser(sessionUser));
-            onLogin();
-        } else {
-            setError("Invalid PIN.");
-            setPin('');
-        }
+            if (loginSuccess) {
+                // --- Auto-Migration Check & Action ---
+                // We check if the stored PIN matches the *current* ideal format (Hash or Encrypt).
+                // If not, we migrate it AND force a re-login to verify the new credential works.
+                if (needsMigration) {
+                    console.log(`[Migration] Migrating user ${user.id} to secure storage (Configured Mode)...`);
+                    try {
+                        const newSecuredPin = await securePassword(pin);
+                        // Update Supabase
+                        if (supabase) {
+                            const { error: updateError } = await supabase
+                                .from('employees')
+                                .update({ pin: newSecuredPin })
+                                .eq('id', user.id);
+
+                            if (updateError) {
+                                console.error("Failed to migrate user PIN:", updateError);
+                                // If migration failed, we probably still want to let them login or show error?
+                                // Let's show error to be safe.
+                                setError("Security update failed. Please try again.");
+                                return;
+                            } else {
+                                console.log("User PIN migrated successfully to secure storage.");
+                                // FORCE RE-LOGIN
+                                setError("Security update applied successfully. Please log in again with your PIN to verify.");
+                                setPin('');
+                                return; // Stop login process
+                            }
+                        }
+                    } catch (migErr) {
+                        console.error("Migration exception:", migErr);
+                        setError("Security update error. Please contact admin.");
+                        return;
+                    }
+                }
+
+                // --- Standard Login Flow (Only if no migration needed or it was already secure) ---
+                const sessionUser = { ...user };
+
+                // --- Auto-Heal Stale Branch IDs ---
+                if (sessionUser.branchId) {
+                    const allTenantBranches = (tenant?.locations || []).flatMap(loc => loc.branches || []);
+                    const branchExists = allTenantBranches.some(b => b.id === sessionUser.branchId);
+
+                    if (!branchExists) {
+                        console.warn(`[Login] Detected stale branchId ${sessionUser.branchId} for user ${sessionUser.name}. Removing it from session.`);
+                        sessionUser.branchId = '';
+                    }
+                }
+
+                if (user.systemRole === 'Owner' && allowedSector) {
+                    sessionUser.sector = allowedSector;
+                }
+
+                localStorage.setItem('erp_auth_user', JSON.stringify(sessionUser));
+                dispatch(setUser(sessionUser));
+                onLogin();
+            } else {
+                setError("Invalid PIN.");
+                setPin('');
+            }
+        };
+
+        checkUser();
     };
 
 
@@ -187,8 +275,8 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                         </div>
 
                         {error && (
-                            <div className="flex items-center gap-2 text-red-400 text-xs font-bold bg-red-500/10 border border-red-500/20 p-3 rounded-xl animate-in zoom-in-95">
-                                <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+                            <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 ${error.includes('Security update applied') ? 'text-green-400 bg-green-500/10 border border-green-500/20' : 'text-red-400 bg-red-500/10 border border-red-500/20'}`}>
+                                {error.includes('Security update applied') ? <Lock className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />} {error}
                             </div>
                         )}
 

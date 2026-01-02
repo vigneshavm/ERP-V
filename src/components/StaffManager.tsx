@@ -6,6 +6,7 @@ import { SystemRole } from '../types/common';
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { APP_CONFIG } from '../config';
+import { securePassword } from '../utils/auth';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -56,21 +57,35 @@ const StaffManager: React.FC = () => {
 
     const handleAddEmployee = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!activeTenant || !newEmp.name || !newEmp.pin) return;
+        if (!activeTenant || !newEmp.name) return;
+
+        // Validation for new user
+        if (!editingEmpId && (!newEmp.pin || newEmp.pin.length === 0)) {
+            alert("PIN is required for new users.");
+            return;
+        }
 
         try {
             if (APP_CONFIG.USE_SUPABASE && supabase) {
-                const empData = {
+                let pinToSave = '';
+
+                // Secure PIN if provided
+                if (newEmp.pin && newEmp.pin.length > 0) {
+                    pinToSave = await securePassword(newEmp.pin);
+                }
+
+                const empData: any = {
                     name: newEmp.name,
                     role: newEmp.role,
                     system_role: newEmp.systemRole,
-                    pin: newEmp.pin,
                     daily_rate: parseFloat(newEmp.dailyRate) || 0,
                     branch_id: newEmp.branchId,
                     tenant_id: activeTenant.id,
                     sector: activeTenant.sector,
                     phone_number: newEmp.phoneNumber,
-                    assigned_counter_id: newEmp.assignedCounterId
+                    assigned_counter_id: newEmp.assignedCounterId,
+                    // Only include PIN if we have a new one (encrypted)
+                    ...(pinToSave && pinToSave.length > 0 ? { pin: pinToSave } : {}),
                 };
 
                 if (editingEmpId) {
@@ -111,7 +126,7 @@ const StaffManager: React.FC = () => {
             name: emp.name,
             role: emp.role || '',
             systemRole: emp.system_role as SystemRole,
-            pin: emp.pin,
+            pin: '', // Do NOT verify or populate existing PIN for security
             dailyRate: emp.daily_rate?.toString() || '',
             branchId: emp.branch_id || '',
             phoneNumber: emp.phone_number || '',

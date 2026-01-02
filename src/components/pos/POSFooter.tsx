@@ -97,7 +97,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     {redemptionAmount > 0 && (
                         <div className="mt-1.5 flex justify-between items-center text-[10px]">
                             <span className="text-emerald-600 dark:text-emerald-400 font-bold">Redemption Value:</span>
-                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">-₹{redemptionAmount.toFixed(2)}</span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">-₹{(redemptionAmount || 0).toFixed(2)}</span>
                         </div>
                     )}
                 </div>
@@ -140,7 +140,6 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     </div>
                 </div>
 
-                {/* Pre-order Toggle Removed */}
             </div>
 
             {isBranchAll && hasMultipleBranches && (
@@ -153,15 +152,15 @@ export const POSFooter: React.FC<POSFooterProps> = ({
             <div className="mt-auto space-y-1.5">
                 <div className="flex justify-between items-center text-xs border-t border-slate-200 dark:border-slate-700 pt-2">
                     <span className="text-slate-500 dark:text-slate-400 font-medium">Subtotal</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-mono">₹{cartSubtotal.toFixed(2)}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
                     <span className="text-slate-500 dark:text-slate-400 font-medium">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-mono text-indigo-500">₹{taxAmount.toFixed(2)}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-mono text-indigo-500">₹{(taxAmount || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-end pt-1">
                     <span className="text-slate-700 dark:text-slate-300 font-bold text-sm">Total Payable</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl font-mono tracking-tight">₹{finalTotal.toFixed(2)}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl font-mono tracking-tight">₹{(finalTotal || 0).toFixed(2)}</span>
                 </div>
 
                 <button
