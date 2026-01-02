@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck } from 'lucide-react';
-import { AppDispatch, setTaxMode, setPaymentMethod } from '../../store';
 import { TaxMode, PaymentMethod } from '../../types/common';
-import { Session } from '../../types/sales';
+import { Customer } from '../../types/sales';
+import { LoyaltyConfig } from '../../types/tenant';
 
 interface POSFooterProps {
     cartSubtotal: number;
     taxAmount: number;
     cartTotal: number;
+    redemptionAmount: number;
+    finalTotal: number;
     taxMode: TaxMode;
     paymentMethod: PaymentMethod;
     isProcessing: boolean;
@@ -16,15 +18,21 @@ interface POSFooterProps {
     hasMultipleBranches: boolean;
     isEmpty: boolean;
     isPreOrder: boolean;
+    activeCustomer: Customer;
+    loyaltyConfig?: LoyaltyConfig;
+    onSetTaxMode: (mode: TaxMode) => void;
+    onSetPaymentMethod: (method: PaymentMethod) => void;
+    onSetRedeemedPoints: (points: number) => void;
     onSetIsPreOrder: (val: boolean) => void;
     onCheckout: () => void;
-    dispatch: AppDispatch;
 }
 
 export const POSFooter: React.FC<POSFooterProps> = ({
     cartSubtotal,
     taxAmount,
     cartTotal,
+    redemptionAmount,
+    finalTotal,
     taxMode,
     paymentMethod,
     isProcessing,
@@ -32,15 +40,68 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     hasMultipleBranches,
     isEmpty,
     isPreOrder,
+    activeCustomer,
+    loyaltyConfig,
+    onSetTaxMode,
+    onSetPaymentMethod,
+    onSetRedeemedPoints,
     onSetIsPreOrder,
-    onCheckout,
-    dispatch
+    onCheckout
 }) => {
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
             <h3 className="text-indigo-500 dark:text-indigo-400 font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
                 <CreditCard className="w-3.5 h-4 text-indigo-400" /> Settlement
             </h3>
+
+            {/* Redemption Section */}
+            {activeCustomer.id !== 'c1' && loyaltyConfig && (
+                <div className="mb-4 p-2.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-lg">
+                    <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 uppercase">Loyalty Redemption</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">Bal: <span className="font-bold text-indigo-600 dark:text-indigo-400">{activeCustomer.points} pts</span></span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 relative">
+                            <input
+                                type="number"
+                                placeholder="Points to redeem"
+                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                                min="0"
+                                max={activeCustomer.points}
+                                onChange={(e) => {
+                                    const val = parseInt(e.target.value) || 0;
+                                    const maxPerBill = loyaltyConfig.maxRedemptionPerBill || Infinity;
+                                    if (val > activeCustomer.points) return;
+                                    if (val > maxPerBill) return;
+                                    onSetRedeemedPoints(val);
+                                }}
+                            />
+                            <span className="absolute right-2 top-1.5 text-[10px] font-bold text-slate-400">PTS</span>
+                        </div>
+                        <button
+                            onClick={() => {
+                                const min = loyaltyConfig.minPointsToRedeem || 0;
+                                if (activeCustomer.points < min) {
+                                    alert(`Minimum ${min} points required to redeem.`);
+                                    return;
+                                }
+                                onSetRedeemedPoints(activeCustomer.points);
+                            }}
+                            className="px-2 py-1.5 text-[10px] font-bold bg-indigo-600 text-white rounded hover:bg-indigo-500 transition-colors"
+                        >
+                            MAX
+                        </button>
+                    </div>
+                    {redemptionAmount > 0 && (
+                        <div className="mt-1.5 flex justify-between items-center text-[10px]">
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">Redemption Value:</span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">-₹{redemptionAmount.toFixed(2)}</span>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Toggles */}
             <div className="space-y-3 mb-4">
@@ -51,7 +112,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             {(['EXCLUSIVE', 'INCLUSIVE'] as TaxMode[]).map(mode => (
                                 <button
                                     key={mode}
-                                    onClick={() => dispatch(setTaxMode(mode))}
+                                    onClick={() => onSetTaxMode(mode)}
                                     className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
                                 >
                                     {mode === 'EXCLUSIVE' ? '+ Tax' : 'Incl.'}
@@ -65,7 +126,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button
                                     key={method}
-                                    onClick={() => dispatch(setPaymentMethod(method))}
+                                    onClick={() => onSetPaymentMethod(method)}
                                     className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-emerald-600 text-white shadow font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
                                     title={method}
                                 >
@@ -100,7 +161,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 </div>
                 <div className="flex justify-between items-end pt-1">
                     <span className="text-slate-700 dark:text-slate-300 font-bold text-sm">Total Payable</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl font-mono tracking-tight">₹{cartTotal.toFixed(2)}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl font-mono tracking-tight">₹{finalTotal.toFixed(2)}</span>
                 </div>
 
                 <button

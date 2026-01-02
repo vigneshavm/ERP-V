@@ -8,6 +8,8 @@ import { POSCartGrid } from '../POSCartGrid';
 import { POSCustomerPanel } from '../POSCustomerPanel';
 import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
+import { POSTerminalInfo } from '../POSTerminalInfo';
+import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -34,18 +36,40 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         cartSubtotal,
         taxAmount,
         cartTotal,
+        redemptionAmount,
+        finalTotal,
         hasMultipleBranches,
         products,
+        loyaltyConfig,
         toggleFullScreen,
         setViewMode,
         setMobileTab,
         setIsPreOrder,
         setIsHeldBillsOpen,
         handleCheckout,
+        activeCounterId,
+        activeCounterName,
+        branches,
+        onAddToCart,
+        onRemoveFromCart,
+        onUpdateCartQty,
+        onUpdateCartLength,
+        onSetCustomer,
+        onLookupOrCreateCustomer,
+        onSetTaxMode,
+        onSetPaymentMethod,
+        onSetRedeemedPoints,
+        onSetActiveCounter,
         switchSession,
+        addSession,
+        removeSession,
         resumeBill,
         discardHeldBill,
-        dispatch,
+        isCategoryBrowserOpen,
+        setIsCategoryBrowserOpen,
+        categories,
+        getSubcategories,
+        allProductTypes,
         posContainerRef
     } = logic;
 
@@ -63,6 +87,15 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 onDiscard={discardHeldBill}
             />
 
+            <POSCategoryBrowserModal
+                isOpen={isCategoryBrowserOpen}
+                onClose={() => setIsCategoryBrowserOpen(false)}
+                products={products}
+                categories={categories}
+                getSubcategories={getSubcategories}
+                onAddToCart={onAddToCart}
+            />
+
             {/* Header with View Toggle */}
             <div className="flex flex-col gap-2 mb-2">
                 <div className="flex justify-between items-center gap-2">
@@ -70,8 +103,14 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         sessions={sessions}
                         activeSessionIndex={activeSessionIndex}
                         onSwitchSession={switchSession}
+                        onAddSession={addSession}
+                        onRemoveSession={removeSession}
                         isFullScreen={isFullScreen}
                         onToggleFullScreen={toggleFullScreen}
+                        activeCounterId={activeCounterId}
+                        onSwitchCounter={onSetActiveCounter}
+                        branches={branches}
+                        currentBranch={currentBranch}
                     />
                     <div className="flex gap-2 mr-2">
                         <button
@@ -129,6 +168,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             products={products}
                             currentBranch={currentBranch}
                             currentSector={currentSector}
+                            onAddToCart={onAddToCart}
                         />
                     ) : (
                         <POSCartGrid
@@ -136,56 +176,90 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             products={products}
                             currentSector={currentSector}
                             currentBranch={currentBranch}
-                            dispatch={dispatch}
                             isProcessing={isProcessing}
+                            onAddToCart={onAddToCart}
+                            onRemoveFromCart={onRemoveFromCart}
+                            onUpdateCartQty={onUpdateCartQty}
+                            onUpdateCartLength={onUpdateCartLength}
+                            onOpenCategoryBrowser={() => setIsCategoryBrowserOpen(true)}
+                            allProductTypes={allProductTypes}
                         />
                     )}
                 </div>
 
                 <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-slate-200 dark:border-slate-800 ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
                     {viewMode === 'VISUAL' ? (
-                        <POSSidebar
-                            activeCustomer={activeCustomer}
-                            customers={customers}
-                            cart={cart}
-                            taxMode={activeSession.taxMode}
-                            paymentMethod={activeSession.paymentMethod}
-                            cartSubtotal={cartSubtotal}
-                            taxAmount={taxAmount}
-                            cartTotal={cartTotal}
-                            isProcessing={isProcessing}
-                            isBranchAll={currentBranch === 'All'}
-                            hasMultipleBranches={hasMultipleBranches}
-                            isPreOrder={isPreOrder}
-                            onSetIsPreOrder={setIsPreOrder}
-                            onCheckout={handleCheckout}
-                            dispatch={dispatch}
-                        />
+                        <div className="flex flex-col h-full">
+                            <POSTerminalInfo
+                                cashierName={user?.name}
+                                counterName={activeCounterName}
+                                counterId={activeCounterId}
+                            />
+                            <POSSidebar
+                                activeCustomer={activeCustomer}
+                                customers={customers}
+                                cart={cart}
+                                taxMode={activeSession.taxMode}
+                                paymentMethod={activeSession.paymentMethod}
+                                cartSubtotal={cartSubtotal}
+                                taxAmount={taxAmount}
+                                cartTotal={cartTotal}
+                                redemptionAmount={redemptionAmount}
+                                finalTotal={finalTotal}
+                                isProcessing={isProcessing}
+                                isBranchAll={currentBranch === 'All'}
+                                hasMultipleBranches={hasMultipleBranches}
+                                isPreOrder={isPreOrder}
+                                loyaltyConfig={loyaltyConfig}
+                                onSetIsPreOrder={setIsPreOrder}
+                                onCheckout={handleCheckout}
+                                onSetCustomer={onSetCustomer}
+                                onLookupOrCreateCustomer={onLookupOrCreateCustomer}
+                                onRemoveFromCart={onRemoveFromCart}
+                                onUpdateCartQty={onUpdateCartQty}
+                                onUpdateCartLength={onUpdateCartLength}
+                                onSetTaxMode={onSetTaxMode}
+                                onSetPaymentMethod={onSetPaymentMethod}
+                                onSetRedeemedPoints={onSetRedeemedPoints}
+                            />
+                        </div>
                     ) : (
                         <div className="flex flex-col h-full bg-white dark:bg-slate-800 shadow-xl z-20">
+                            <POSTerminalInfo
+                                cashierName={user?.name}
+                                counterName={activeCounterName}
+                                counterId={activeCounterId}
+                            />
                             <div className="shrink-0 p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                                 <POSCustomerPanel
                                     activeCustomer={activeCustomer}
                                     customers={customers}
-                                    dispatch={dispatch}
+                                    onSetCustomer={onSetCustomer}
+                                    onLookupOrCreateCustomer={onLookupOrCreateCustomer}
                                 />
                             </div>
                             <div className="flex-1 bg-slate-50 dark:bg-slate-900/20" />
                             <div className="shrink-0">
                                 <POSFooter
-                                    cart={cart}
-                                    taxMode={activeSession.taxMode}
-                                    paymentMethod={activeSession.paymentMethod}
                                     cartSubtotal={cartSubtotal}
                                     taxAmount={taxAmount}
                                     cartTotal={cartTotal}
+                                    redemptionAmount={redemptionAmount}
+                                    finalTotal={finalTotal}
+                                    taxMode={activeSession.taxMode}
+                                    paymentMethod={activeSession.paymentMethod}
                                     isProcessing={isProcessing}
                                     isBranchAll={currentBranch === 'All'}
+                                    hasMultipleBranches={hasMultipleBranches}
                                     isEmpty={cart.length === 0}
                                     isPreOrder={isPreOrder}
+                                    activeCustomer={activeCustomer}
+                                    loyaltyConfig={loyaltyConfig}
+                                    onSetTaxMode={onSetTaxMode}
+                                    onSetPaymentMethod={onSetPaymentMethod}
+                                    onSetRedeemedPoints={onSetRedeemedPoints}
                                     onSetIsPreOrder={setIsPreOrder}
                                     onCheckout={handleCheckout}
-                                    dispatch={dispatch}
                                 />
                             </div>
                         </div>

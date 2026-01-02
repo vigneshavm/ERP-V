@@ -8,6 +8,8 @@ import { POSCartGrid } from '../POSCartGrid';
 import { POSCustomerPanel } from '../POSCustomerPanel';
 import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
+import { POSTerminalInfo } from '../POSTerminalInfo';
+import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -40,9 +42,23 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         cartSubtotal,
         taxAmount,
         cartTotal,
+        redemptionAmount,
+        finalTotal,
         hasMultipleBranches,
         products,
+        loyaltyConfig,
         currentBranch,
+        activeCounterId,
+        onAddToCart,
+        onRemoveFromCart,
+        onUpdateCartQty,
+        onUpdateCartLength,
+        onSetCustomer,
+        onLookupOrCreateCustomer,
+        onSetTaxMode,
+        onSetPaymentMethod,
+        onSetRedeemedPoints,
+        onSetActiveCounter,
         toggleFullScreen,
         setViewMode,
         setMobileTab,
@@ -50,10 +66,20 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         setIsHeldBillsOpen,
         handleCheckout,
         switchSession,
+        addSession,
+        removeSession,
         resumeBill,
         discardHeldBill,
-        dispatch,
-        posContainerRef
+        posContainerRef,
+        user,
+        activeCounterName,
+        currentSector,
+        branches,
+        isCategoryBrowserOpen,
+        setIsCategoryBrowserOpen,
+        categories,
+        getSubcategories,
+        allProductTypes
     } = logic;
 
     return (
@@ -76,6 +102,15 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 onDiscard={discardHeldBill}
             />
 
+            <POSCategoryBrowserModal
+                isOpen={isCategoryBrowserOpen}
+                onClose={() => setIsCategoryBrowserOpen(false)}
+                products={products}
+                categories={categories}
+                getSubcategories={getSubcategories}
+                onAddToCart={onAddToCart}
+            />
+
             {/* Header */}
             <div className="flex flex-col gap-2 mb-2">
                 <div className="flex justify-between items-center gap-2">
@@ -83,8 +118,14 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         sessions={sessions}
                         activeSessionIndex={activeSessionIndex}
                         onSwitchSession={switchSession}
+                        onAddSession={addSession}
+                        onRemoveSession={removeSession}
                         isFullScreen={isFullScreen}
                         onToggleFullScreen={toggleFullScreen}
+                        activeCounterId={activeCounterId}
+                        onSwitchCounter={onSetActiveCounter}
+                        branches={branches}
+                        currentBranch={currentBranch}
                     />
                     <div className="flex gap-2 mr-2">
                         <button
@@ -118,17 +159,23 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                     {viewMode === 'VISUAL' ? (
                         <POSProductBrowser
                             products={products}
-                            currentBranch={logic.currentBranch}
-                            currentSector={logic.currentSector}
+                            currentBranch={currentBranch}
+                            currentSector={currentSector}
+                            onAddToCart={onAddToCart}
                         />
                     ) : (
                         <POSCartGrid
                             cart={cart}
                             products={products}
-                            currentSector={logic.currentSector}
-                            currentBranch={logic.currentBranch}
-                            dispatch={dispatch}
+                            currentSector={currentSector}
+                            currentBranch={currentBranch}
                             isProcessing={isProcessing}
+                            onAddToCart={onAddToCart}
+                            onRemoveFromCart={onRemoveFromCart}
+                            onUpdateCartQty={onUpdateCartQty}
+                            onUpdateCartLength={onUpdateCartLength}
+                            onOpenCategoryBrowser={() => setIsCategoryBrowserOpen(true)}
+                            allProductTypes={allProductTypes}
                         />
                     )}
                 </div>
@@ -136,11 +183,17 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 {/* Sidebar Area */}
                 <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-slate-200 dark:border-slate-800 ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
                     <div className="flex overflow-hidden flex-col h-full">
+                        <POSTerminalInfo
+                            cashierName={user?.name}
+                            counterName={activeCounterName}
+                            counterId={activeCounterId}
+                        />
                         <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
                             <POSCustomerPanel
                                 activeCustomer={activeCustomer}
                                 customers={customers}
-                                dispatch={dispatch}
+                                onSetCustomer={onSetCustomer}
+                                onLookupOrCreateCustomer={onLookupOrCreateCustomer}
                             />
                         </div>
 
@@ -148,19 +201,25 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
 
                         <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
                             <POSFooter
-                                cart={cart}
-                                taxMode={activeSession.taxMode}
-                                paymentMethod={activeSession.paymentMethod}
                                 cartSubtotal={cartSubtotal}
                                 taxAmount={taxAmount}
                                 cartTotal={cartTotal}
+                                redemptionAmount={redemptionAmount}
+                                finalTotal={finalTotal}
+                                taxMode={activeSession.taxMode}
+                                paymentMethod={activeSession.paymentMethod}
                                 isProcessing={isProcessing}
                                 isBranchAll={currentBranch === 'All'}
+                                hasMultipleBranches={hasMultipleBranches}
                                 isEmpty={cart.length === 0}
                                 isPreOrder={isPreOrder}
+                                activeCustomer={activeCustomer}
+                                loyaltyConfig={loyaltyConfig}
+                                onSetTaxMode={onSetTaxMode}
+                                onSetPaymentMethod={onSetPaymentMethod}
+                                onSetRedeemedPoints={onSetRedeemedPoints}
                                 onSetIsPreOrder={setIsPreOrder}
                                 onCheckout={handleCheckout}
-                                dispatch={dispatch}
                             />
                         </div>
                     </div>

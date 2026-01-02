@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setBranch, setUser } from './store';
 import { APP_CONFIG } from './config';
@@ -21,6 +21,7 @@ import AgedStockManager from './components/AgedStockManager';
 import Login from './components/login';
 import TenantManager from './components/TenantManager';
 import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
+import ReportsModule from './components/reports/ReportsModule';
 
 import { ConfigProvider } from './components/ConfigProvider';
 import { useBranchResolver } from './hooks/useBranchResolver';
@@ -297,6 +298,7 @@ const App: React.FC = () => {
                 case 'LABOR': return <LaborManager />;
                 case 'STOREFRONT': return <Storefront />;
                 case 'SETTINGS': return <SettingsManager />;
+                case 'REPORTS': return <ReportsModule />;
                 default: return <Dashboard />;
             }
         };
@@ -422,6 +424,7 @@ const App: React.FC = () => {
                         <NavItem id="DAILY" icon={LogOut} label="Daily Tracker" />
                         <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
                         <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
+                        <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
                         <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
                             <NavItem id="SETTINGS" icon={Settings} label="Settings" />
                         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square, Copy } from 'lucide-react';
+import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square, Copy, Inbox, TrendingUp, AlertTriangle, AlertCircle, Calendar, ChevronLeft, ChevronRight, Filter, Maximize, Minimize } from 'lucide-react';
 import { useInventoryLogic } from '../../hooks/useInventoryLogic';
 import { Sector } from '../../types/common';
 import BarcodeGenerator from '../BarcodeGenerator';
@@ -15,14 +15,21 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
     isFormOpen,
     editingId,
     searchTerm,
-    activeTab,
+    page,
+    rowsPerPage,
+    totalPages,
+    currentView,
+    filters,
     bulkFormData,
     selectedProductIds,
     isPrintMode,
     isPrintModalOpen,
     setIsFormOpen,
     setSearchTerm,
-    setActiveTab,
+    setCurrentView,
+    setPage,
+    setRowsPerPage,
+    setFilters,
     setIsPrintMode,
     setIsPrintModalOpen,
     handleImageUpload,
@@ -82,40 +89,66 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
         printWindow.document.close();
     };
 
-    return (
-        <div className="hidden md:block space-y-6 animate-fade-in">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        Inventory <span className="text-slate-500 text-base font-normal">/ {currentBranch}</span>
-                    </h2>
-                    <div className="flex gap-2 mt-2">
-                        <button
-                            onClick={() => setActiveTab('ALL')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeTab === 'ALL' ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-                        >
-                            <List className="w-3 h-3" /> All Items
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('RECENT')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeTab === 'RECENT' ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-                        >
-                            <Clock className="w-3 h-3" /> Recently Added
-                        </button>
-                    </div>
-                </div>
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [isFullScreen, setIsFullScreen] = React.useState(false);
 
-                <div className="flex gap-4 w-full md:w-auto items-center">
-                    <div className="relative flex-1 md:w-64">
+    React.useEffect(() => {
+        const handleFullScreenChange = () => setIsFullScreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    }, []);
+
+    const toggleFullScreen = () => {
+        if (!document.fullscreenElement) {
+            containerRef.current?.requestFullscreen().catch(console.error);
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    return (
+
+        <div
+            ref={containerRef}
+            className={`flex flex-col animate-fade-in overflow-hidden transition-all duration-300 ${isFullScreen ? 'fixed inset-0 z-50 bg-slate-50 dark:bg-slate-900 p-4' : 'hidden md:flex h-[calc(100vh-80px)] pr-4 pb-4 space-y-4'}`}
+        >
+            {/* Main Content Area - Full Width */}
+
+            {/* Top Toolbar */}
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
+                <div className="flex gap-4 w-full xl:w-auto items-center">
+                    <div className="relative flex-1 xl:w-80">
                         <input
                             type="text"
-                            placeholder="Search SKU, Name or Type..."
-                            className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
+                            placeholder="Search SKU, Barcode, Name..."
+                            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
                         <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                     </div>
+                    {/* Filters Popover or Inline */}
+                    <div className="flex gap-2">
+                        <input
+                            placeholder="Min Price"
+                            type="number"
+                            className="w-24 px-2 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
+                            value={filters.minPrice}
+                            onChange={e => setFilters({ ...filters, minPrice: e.target.value })}
+                        />
+                        <input
+                            placeholder="Max Price"
+                            type="number"
+                            className="w-24 px-2 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
+                            value={filters.maxPrice}
+                            onChange={e => setFilters({ ...filters, maxPrice: e.target.value })}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex gap-2">
                     <button
                         onClick={() => { resetForm(); setIsFormOpen(!isFormOpen); }}
                         className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg flex items-center gap-2 font-medium transition-colors shadow-lg shadow-indigo-500/20 whitespace-nowrap"
@@ -126,9 +159,40 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                         onClick={() => setIsPrintMode(!isPrintMode)}
                         className={`px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors whitespace-nowrap border ${isPrintMode ? 'bg-slate-800 text-white border-slate-800' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
                     >
-                        <Printer className="w-4 h-4" /> {isPrintMode ? 'Done Printing' : 'Print Labels'}
+                        <Printer className="w-4 h-4" /> {isPrintMode ? 'Done' : 'Labels'}
+                    </button>
+                    <button
+                        onClick={toggleFullScreen}
+                        className="p-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                        title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
+                    >
+                        {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
                     </button>
                 </div>
+            </div>
+
+            {/* Smart Folders - Horizontal Bar */}
+            <div className="flex gap-2 overflow-x-auto pb-2 shrink-0">
+                {[
+                    { id: 'ALL', label: 'All Items', icon: List, color: 'text-slate-600 dark:text-slate-400' },
+                    { id: 'RECENT', label: 'Recently Added', icon: Clock, color: 'text-indigo-600' },
+                    { id: 'LOW_STOCK', label: 'Low Stock (<10)', icon: AlertTriangle, color: 'text-amber-500' },
+                    { id: 'OUT_OF_STOCK', label: 'Out of Stock', icon: AlertCircle, color: 'text-red-500' },
+                    { id: 'HIGH_VALUE', label: 'High Value', icon: TrendingUp, color: 'text-emerald-500' },
+                    { id: 'EXPIRING', label: 'Expiring Soon', icon: Calendar, color: 'text-rose-500' },
+                ].map(view => (
+                    <button
+                        key={view.id}
+                        onClick={() => { setCurrentView(view.id as any); setPage(1); }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold border transition-all whitespace-nowrap ${currentView === view.id
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200 dark:shadow-none'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        <view.icon className={`w-4 h-4 ${currentView === view.id ? 'text-white' : view.color}`} />
+                        {view.label}
+                    </button>
+                ))}
             </div>
 
             {/* Print Modal */}
@@ -278,31 +342,10 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                 </form>
             )}
 
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-lg transition-colors">
-                <div className="block overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        {isPrintMode && (
-                            <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 flex justify-between items-center border-b border-indigo-100 dark:border-indigo-500/30">
-                                <div className="flex items-center gap-3">
-                                    <button onClick={selectAll} className="flex items-center gap-2 text-sm font-bold text-indigo-700 dark:text-indigo-300 hover:underline">
-                                        {selectedProductIds.size === displayedProducts.length ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
-                                        {selectedProductIds.size === displayedProducts.length ? 'Deselect All' : 'Select All'}
-                                    </button>
-                                    <span className="text-sm text-indigo-600 dark:text-indigo-400">
-                                        {selectedProductIds.size} Selected
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={handlePrintLabels}
-                                    disabled={selectedProductIds.size === 0}
-                                    className="px-4 py-1.5 bg-indigo-600 text-white text-sm font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-500 transition-colors"
-                                >
-                                    Preview & Print
-                                </button>
-                            </div>
-                        )}
-
-                        <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm flex-1 flex flex-col min-h-0">
+                <div className="flex-1 overflow-auto">
+                    <table className="w-full text-left text-sm relative">
+                        <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium sticky top-0 z-10 shadow-sm">
                             <tr>
                                 {isPrintMode && <th className="p-4 w-10"></th>}
                                 <th className="p-4 w-16">Img</th>
@@ -321,6 +364,7 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
+                            {/* ... Using displayedProducts which is now paginated ... */}
                             {displayedProducts.map(product => (
                                 <tr key={product.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                                     {isPrintMode && (
@@ -375,13 +419,43 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                             ))}
                             {displayedProducts.length === 0 && (
                                 <tr>
-                                    <td colSpan={isOwner ? 12 : 10} className="p-8 text-center text-slate-500">No products found matching criteria.</td>
+                                    <td colSpan={isOwner ? 12 : 10} className="p-8 text-center text-slate-500">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Inbox className="w-8 h-8 text-slate-300" />
+                                            <p>No products found matching criteria.</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Footer */}
+                <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center shrink-0">
+                    <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Page <span className="font-bold text-slate-700 dark:text-slate-200">{page}</span> of <span className="font-bold text-slate-700 dark:text-slate-200">{totalPages || 1}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setPage(Math.max(1, page - 1))}
+                            disabled={page === 1}
+                            className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={() => setPage(Math.min(totalPages, page + 1))}
+                            disabled={page === totalPages || totalPages === 0}
+                            className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
             </div>
+
         </div>
+
     );
 };

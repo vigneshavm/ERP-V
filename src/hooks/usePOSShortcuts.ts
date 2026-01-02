@@ -10,6 +10,7 @@ interface POSShortcutsProps {
     onToggleView?: () => void;
     onNewSale?: () => void;
     onEscape?: () => void;
+    onSwitchSession?: (index: number) => void;
 }
 
 export const usePOSShortcuts = (handlers: POSShortcutsProps) => {
@@ -71,6 +72,13 @@ export const usePOSShortcuts = (handlers: POSShortcutsProps) => {
             if (e.altKey && e.key.toLowerCase() === 'n') {
                 e.preventDefault();
                 (handlers as any).onNewSale?.();
+            }
+
+            // Alt+1-4 or Ctrl+1-4: Switch Session
+            if ((e.altKey || (e.ctrlKey && !e.shiftKey)) && e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
+                const index = parseInt(e.key) - 1;
+                handlers.onSwitchSession?.(index);
             }
 
             // Esc: General Cancel/Clear

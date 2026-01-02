@@ -51,7 +51,8 @@ CREATE TABLE customers (
     name TEXT NOT NULL,
     phone TEXT,
     points INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT now()
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (tenant_id, phone)
 );
 
 -- 4. Products Table
@@ -136,6 +137,9 @@ CREATE TABLE sales (
     status TEXT DEFAULT 'COMPLETED', -- 'COMPLETED', 'PREORDER', 'FULFILLED', 'CANCELLED'
     payment_status TEXT DEFAULT 'PAID', -- 'PAID', 'PENDING', 'PARTIAL'
     items JSONB DEFAULT '[]', -- Items snapshots
+    loyalty_points_earned INTEGER DEFAULT 0,
+    redeemed_points INTEGER DEFAULT 0,
+    redemption_amount DECIMAL(12,2) DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 

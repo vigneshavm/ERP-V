@@ -11,6 +11,7 @@ export interface Customer {
     name: string;
     phone: string;
     points: number;
+    tier?: 'Silver' | 'Gold' | 'Platinum' | 'General';
     creditBias?: number; // Just in case, but sticking to knowns
     creditBalance?: number;
     creditLimit?: number;
@@ -38,6 +39,11 @@ export interface Sale {
     status: SaleStatus;
     paymentStatus: PaymentStatus;
     userId?: string; // For role-based filtering (Staff view their own)
+    counterId?: string;
+    counterName?: string;
+    loyaltyPointsEarned?: number;
+    redeemedPoints?: number;
+    redemptionAmount?: number;
 }
 
 export interface BillSession {
@@ -47,6 +53,7 @@ export interface BillSession {
     customerId: string | null;
     taxMode: TaxMode;
     paymentMethod: PaymentMethod;
+    redeemedPoints?: number;
 }
 
 export interface Session {
@@ -54,8 +61,10 @@ export interface Session {
     label: string;
     cart: CartItem[];
     customerId: string | null;
+    counterId?: string;
     taxMode: TaxMode;
     paymentMethod: PaymentMethod;
+    redeemedPoints?: number;
 }
 
 // Redux State Interface
@@ -64,5 +73,6 @@ export interface POSState {
     activeSessionIndex: number;
     customers: Customer[];
     salesHistory: Sale[];
+    activeCounterId?: string;
     heldBills?: any[]; // Temporary loose type to avoid circular dependency, or better yet, define HeldBill here or keep it generic
 }

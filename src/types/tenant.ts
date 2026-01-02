@@ -7,11 +7,27 @@ export interface RegionConfig {
     dateFormat: string;
 }
 
+export interface LoyaltyConfig {
+    earningRate: number; // e.g., 100
+    pointsPerRate: number; // e.g., 1
+    redemptionValue: number; // e.g., 1
+    minPointsToRedeem?: number;
+    maxRedemptionPerBill?: number;
+    categoryPercentages?: Record<string, number>; // e.g., { 'Saree': 1.0 }
+}
+
 export interface TenantConfig {
     modules: string[];
     theme: 'light' | 'dark';
     primaryColor: string;
     layout: 'standard' | 'compact';
+}
+
+export interface Counter {
+    id: string; // e.g., 'C1'
+    name: string; // e.g., 'Main Counter'
+    cashierId?: string; // Assigned Cashier (Employee ID)
+    lastBillNumber: number; // For sequential series
 }
 
 export interface BranchConfig {
@@ -21,6 +37,7 @@ export interface BranchConfig {
     address: string;
     config?: Partial<TenantConfig>;
     settings?: Partial<SettingsState>;
+    counters?: Counter[];
     updatedAt?: string;
 }
 
@@ -45,6 +62,7 @@ export interface Tenant {
     locations?: TenantLocation[];
     loginLogoUrl?: string;
     loginBgUrl?: string;
+    loyaltyConfig?: LoyaltyConfig;
     updatedAt?: string;
 }
 

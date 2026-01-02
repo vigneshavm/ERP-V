@@ -1,27 +1,37 @@
 import React from 'react';
-import { Customer } from '../../types/sales';
-import { AppDispatch, removeFromCart, updateCartQty } from '../../store';
+import { Customer, CartItem } from '../../types/sales';
+import { TaxMode, PaymentMethod } from '../../types/common';
 import { POSCustomerPanel } from './POSCustomerPanel';
 import { POSFooter } from './POSFooter';
-import { CartItem } from '../../types/sales';
 import { Trash2 } from 'lucide-react';
+import { LoyaltyConfig } from '../../types/tenant';
 
 interface POSSidebarProps {
     activeCustomer: Customer;
     customers: Customer[];
     cart: CartItem[];
-    taxMode: 'INCLUSIVE' | 'EXCLUSIVE';
-    paymentMethod: 'CASH' | 'CARD' | 'UPI';
+    taxMode: TaxMode;
+    paymentMethod: PaymentMethod;
     cartSubtotal: number;
     taxAmount: number;
     cartTotal: number;
+    redemptionAmount: number;
+    finalTotal: number;
     isProcessing: boolean;
     isBranchAll: boolean;
     hasMultipleBranches: boolean;
     isPreOrder: boolean;
+    loyaltyConfig?: LoyaltyConfig;
     onSetIsPreOrder: (val: boolean) => void;
     onCheckout: () => void;
-    dispatch: AppDispatch;
+    onSetCustomer: (id: string) => void;
+    onLookupOrCreateCustomer: (phone: string, name?: string) => void;
+    onRemoveFromCart: (id: string) => void;
+    onUpdateCartQty: (id: string, qty: number) => void;
+    onUpdateCartLength: (id: string, length: number) => void;
+    onSetTaxMode: (mode: TaxMode) => void;
+    onSetPaymentMethod: (method: PaymentMethod) => void;
+    onSetRedeemedPoints: (points: number) => void;
 }
 
 export const POSSidebar: React.FC<POSSidebarProps> = ({
@@ -33,13 +43,23 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
     cartSubtotal,
     taxAmount,
     cartTotal,
+    redemptionAmount,
+    finalTotal,
     isProcessing,
     isBranchAll,
     hasMultipleBranches,
     isPreOrder,
+    loyaltyConfig,
     onSetIsPreOrder,
     onCheckout,
-    dispatch
+    onSetCustomer,
+    onLookupOrCreateCustomer,
+    onRemoveFromCart,
+    onUpdateCartQty,
+    onUpdateCartLength,
+    onSetTaxMode,
+    onSetPaymentMethod,
+    onSetRedeemedPoints
 }) => {
     return (
         <div className="flex flex-col h-full bg-white dark:bg-slate-800 shadow-xl z-20">
@@ -48,7 +68,8 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                 <POSCustomerPanel
                     activeCustomer={activeCustomer}
                     customers={customers}
-                    dispatch={dispatch}
+                    onSetCustomer={onSetCustomer}
+                    onLookupOrCreateCustomer={onLookupOrCreateCustomer}
                 />
             </div>
 
@@ -78,7 +99,7 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                             </div>
 
                             <button
-                                onClick={() => dispatch(removeFromCart(item.id))}
+                                onClick={() => onRemoveFromCart(item.id)}
                                 className="absolute top-2 right-2 p-1 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -90,12 +111,12 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                                 </div>
                                 <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 rounded p-0.5">
                                     <button
-                                        onClick={() => dispatch(updateCartQty({ id: item.id, qty: Math.max(0, item.qty - 1) }))}
+                                        onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
                                         className="w-6 h-6 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-400 font-bold"
                                     >-</button>
                                     <span className="w-8 text-center text-xs font-bold">{item.qty}</span>
                                     <button
-                                        onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
+                                        onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
                                         className="w-6 h-6 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 rounded text-indigo-600 font-bold"
                                     >+</button>
                                 </div>
@@ -108,20 +129,13 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
             {/* Footer */}
             <div className="shrink-0">
                 <POSFooter
-                    cart={cart}
-                    taxMode={taxMode}
-                    paymentMethod={paymentMethod}
-                    cartSubtotal={cartSubtotal}
-                    taxAmount={taxAmount}
-                    cartTotal={cartTotal}
-                    isProcessing={isProcessing}
-                    isBranchAll={isBranchAll}
-                    hasMultipleBranches={hasMultipleBranches}
-                    isEmpty={cart.length === 0}
-                    isPreOrder={isPreOrder}
+                    activeCustomer={activeCustomer}
+                    loyaltyConfig={loyaltyConfig}
+                    onSetTaxMode={onSetTaxMode}
+                    onSetPaymentMethod={onSetPaymentMethod}
+                    onSetRedeemedPoints={onSetRedeemedPoints}
                     onSetIsPreOrder={onSetIsPreOrder}
                     onCheckout={onCheckout}
-                    dispatch={dispatch}
                 />
             </div>
         </div>

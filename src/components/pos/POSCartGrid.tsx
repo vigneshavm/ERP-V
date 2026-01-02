@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { AppDispatch, addToCart, removeFromCart, updateCartQty, updateCartLength } from '../../store';
 import { Product } from '../../types/product';
 import { CartItem } from '../../types/sales';
 import { Sector } from '../../types/common';
-import { Barcode, Search, ShoppingCart, Trash2 } from 'lucide-react'; // Camera, X removed
+import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from '../../services/geminiService';
 
@@ -13,8 +12,13 @@ interface POSCartGridProps {
     products: Product[];
     currentSector: Sector;
     currentBranch: string;
-    dispatch: AppDispatch;
     isProcessing: boolean;
+    onAddToCart: (item: any) => void;
+    onRemoveFromCart: (id: string) => void;
+    onUpdateCartQty: (id: string, qty: number) => void;
+    onUpdateCartLength: (id: string, length: number) => void;
+    onOpenCategoryBrowser: () => void;
+    allProductTypes: string[];
 }
 
 import { useFuzzySearch } from '../../hooks/useFuzzySearch';
@@ -27,12 +31,20 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     products,
     currentSector,
     currentBranch,
-    dispatch,
-    isProcessing
+    isProcessing,
+    onAddToCart,
+    onRemoveFromCart,
+    onUpdateCartQty,
+    onUpdateCartLength,
+    onOpenCategoryBrowser,
+    allProductTypes
 }) => {
     // Local State
+    const [typeQuery, setTypeQuery] = useState('');
+    const [selectedType, setSelectedType] = useState('');
+    const [selectedTypeIndex, setSelectedTypeIndex] = useState(-1);
+
     const [nameQuery, setNameQuery] = useState('');
-    // const [nameSuggestions, setNameSuggestions] = useState<Product[]>([]); // Removed manual state
     const [selectedNameIndex, setSelectedNameIndex] = useState(-1);
 
     // Matrix Modal State - Removed per user request
@@ -42,6 +54,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
     // Refs
     const skuInputRef = useRef<HTMLInputElement>(null);
+    const typeInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
     const cartQtyRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
@@ -52,8 +65,56 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         );
     }, [products, currentBranch]);
 
+    // Type Suggestions
+    const typeSuggestions = useMemo(() => {
+        if (!typeQuery) return [];
+        return allProductTypes.filter(t => t.toLowerCase().includes(typeQuery.toLowerCase())).slice(0, 5);
+    }, [allProductTypes, typeQuery]);
+
+    // Name Suggestions (Dependent on Selected Type)
+    // Dependent Filter: Products matching selected Type
+    const typeFilteredProducts = useMemo(() => {
+        if (!selectedType) return [];
+        return baseFilteredProducts.filter(p =>
+            p.productType === selectedType || p.subCategory === selectedType || p.category === selectedType
+        );
+    }, [baseFilteredProducts, selectedType]);
+
+    const fuzzyResults = useFuzzySearch(typeFilteredProducts, ['name', 'price'], nameQuery);
+
+    const nameSuggestions = useMemo(() => {
+        if (!nameQuery) return [];
+        return fuzzyResults.slice(0, 10);
+    }, [fuzzyResults, nameQuery]);
+
+    // Handlers
+    const handleTypeKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSelectedTypeIndex(prev => Math.min(prev + 1, typeSuggestions.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSelectedTypeIndex(prev => Math.max(prev - 1, -1));
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (selectedTypeIndex >= 0 && typeSuggestions[selectedTypeIndex]) {
+                handleSelectType(typeSuggestions[selectedTypeIndex]);
+            } else if (typeSuggestions.length === 1) {
+                // Auto-select if exact match or only one option
+                handleSelectType(typeSuggestions[0]);
+            }
+        }
+    };
+
+    const handleSelectType = (type: string) => {
+        setSelectedType(type);
+        setTypeQuery(type);
+        setSelectedTypeIndex(-1);
+        setTimeout(() => nameInputRef.current?.focus(), 50);
+    };
+
     // Fuzzy Search for Suggestions
-    const nameSuggestions = useFuzzySearch<Product>(baseFilteredProducts, ['name'], nameQuery).slice(0, 5);
+    /* removed old useFuzzySearch call since it is now inside useMemo */
 
     // Removed manual useEffect for nameSuggestions since hook handles it
 
@@ -68,7 +129,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
             if (match) {
                 if (match.stock > 0) {
-                    dispatch(addToCart({ ...match, qty: 1 }));
+                    onAddToCart({ ...match, qty: 1 });
                     e.currentTarget.value = '';
                 } else {
                     alert(`Product "${match.name}" is out of stock!`);
@@ -85,9 +146,12 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     };
 
     const handleSelectProduct = (product: Product) => {
-        // Direct Add (Reverted Matrix Logic)
-        dispatch(addToCart({ ...product, qty: 1 }));
+        // Direct Add
+        onAddToCart({ ...product, qty: 1 });
+        // Reset Name only, keep Type for rapid entry of similar items
         setNameQuery('');
+        // Focus back to Name input to allow typing next product immediately
+        setTimeout(() => nameInputRef.current?.focus(), 50);
     };
 
     const handleNameKeyDown = (e: React.KeyboardEvent) => {
@@ -143,8 +207,9 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
     useEffect(() => {
         const handleFocusSearch = () => {
-            skuInputRef.current?.focus();
-            skuInputRef.current?.select();
+            // Ctrl+F now focuses Type Input
+            typeInputRef.current?.focus();
+            typeInputRef.current?.select();
         };
 
         const handleFocusQty = () => {
@@ -157,23 +222,27 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             }
         };
 
-        window.addEventListener('pos-focus-search', handleFocusSearch);
-        window.addEventListener('pos-focus-qty', handleFocusQty);
-
-        // Internal override for Esc still useful for local state
-        const handleKeyDown = (e: KeyboardEvent) => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'F2') {
+                // F2 Shortcut for global browser removed/repurposed? Keeping null for now.
+                // onOpenCategoryBrowser(); 
+            }
             if (e.key === 'Escape') {
-                skuInputRef.current?.focus();
-                if (skuInputRef.current) skuInputRef.current.value = '';
+                setTypeQuery('');
+                setSelectedType('');
                 setNameQuery('');
+                skuInputRef.current?.focus();
             }
         };
-        window.addEventListener('keydown', handleKeyDown);
+
+        window.addEventListener('pos-focus-search', handleFocusSearch);
+        window.addEventListener('pos-focus-qty', handleFocusQty);
+        window.addEventListener('keydown', handleGlobalKeyDown);
 
         return () => {
             window.removeEventListener('pos-focus-search', handleFocusSearch);
             window.removeEventListener('pos-focus-qty', handleFocusQty);
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keydown', handleGlobalKeyDown);
         };
     }, [cart]);
 
@@ -202,8 +271,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
             {/* Search Bar Row */}
             <div className="p-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-2 shrink-0 relative z-30 rounded-t-xl">
-                {/* SKU Input */}
-                <div className="relative group flex-1">
+                {/* 1. Global SKU Input */}
+                <div className="relative group w-full md:w-1/3">
                     <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
                         <Barcode className="w-4 h-4" />
                     </div>
@@ -218,54 +287,83 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     <kbd className="absolute right-2 top-2.5 text-[9px] bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+B</kbd>
                 </div>
 
-                {/* Camera Trigger */}
-                {/* Camera Trigger - COMMENTED OUT
-                <button
-                    onClick={() => setIsCameraOpen(true)}
-                    className="p-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:border-indigo-500 transition-colors rounded-lg shadow-sm shrink-0"
-                    title="Scan Product via Camera"
-                >
-                    <Camera className="w-4 h-4" />
-                </button>
-                */}
-
-                {/* Name Input */}
-                <div className="relative group flex-[1.5]">
-                    <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
-                        <Search className="w-4 h-4" />
-                    </div>
-                    <input
-                        ref={nameInputRef}
-                        type="text"
-                        placeholder="Search Name (Ctrl+F)..."
-                        className="w-full pl-9 pr-14 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm"
-                        value={nameQuery}
-                        onChange={e => setNameQuery(e.target.value)}
-                        onKeyDown={handleNameKeyDown}
-                        autoComplete="off"
-                    />
-                    <kbd className="absolute right-2 top-2.5 text-[9px] bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+F</kbd>
-
-                    {/* Suggestions */}
-                    {nameQuery.length > 1 && nameSuggestions.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto ring-1 ring-black/5">
-                            {nameSuggestions.map((prod, idx) => (
-                                <button
-                                    key={prod.id}
-                                    onClick={() => handleSelectProduct(prod)}
-                                    className={`w-full text-left px-3 py-2 border-b border-slate-100 dark:border-slate-700/50 flex justify-between items-center group transition-colors ${idx === selectedNameIndex ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
-                                >
-                                    <div className="min-w-0">
-                                        <p className="font-bold text-xs truncate">{prod.name}</p>
-                                        <span className="text-[9px] text-slate-500">{prod.sku}</span>
-                                    </div>
-                                    <div className="text-right shrink-0 ml-2">
-                                        <p className="font-bold font-mono text-xs">₹{prod.price.toFixed(2)}</p>
-                                    </div>
-                                </button>
-                            ))}
+                {/* 2. Type Interaction Row */}
+                <div className="flex flex-1 gap-2">
+                    {/* Type Input */}
+                    <div className="relative group flex-1">
+                        <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
+                            <Folder className="w-4 h-4" />
                         </div>
-                    )}
+                        <input
+                            ref={typeInputRef}
+                            type="text"
+                            placeholder="Type (e.g. Saree)"
+                            className={`w-full pl-9 pr-2 py-2 text-sm border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm ${selectedType ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100'}`}
+                            value={typeQuery}
+                            onChange={e => {
+                                setTypeQuery(e.target.value);
+                                if (selectedType && e.target.value !== selectedType) {
+                                    setSelectedType(''); // Reset if user changes type text
+                                }
+                            }}
+                            onKeyDown={handleTypeKeyDown}
+                            autoComplete="off"
+                        />
+                        {/* Type Suggestions */}
+                        {typeQuery && !selectedType && typeSuggestions.length > 0 && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+                                {typeSuggestions.map((type, idx) => (
+                                    <button
+                                        key={type}
+                                        onClick={() => handleSelectType(type)}
+                                        className={`w-full text-left px-3 py-2 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 ${idx === selectedTypeIndex ? 'bg-indigo-50 text-indigo-700' : 'text-slate-700 dark:text-slate-200'}`}
+                                    >
+                                        {type}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Name Input */}
+                    <div className="relative group flex-[1.5]">
+                        <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
+                            <Search className="w-4 h-4" />
+                        </div>
+                        <input
+                            ref={nameInputRef}
+                            type="text"
+                            placeholder={selectedType ? `Search ${selectedType} (Name/Rate)...` : "Select Type first..."}
+                            className={`w-full pl-9 pr-14 py-2 text-sm border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm ${!selectedType ? 'bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100'}`}
+                            value={nameQuery}
+                            onChange={e => setNameQuery(e.target.value)}
+                            onKeyDown={handleNameKeyDown}
+                            disabled={!selectedType}
+                            autoComplete="off"
+                        />
+                        <kbd className="absolute right-2 top-2.5 text-[9px] bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+F</kbd>
+
+                        {/* Name Suggestions */}
+                        {nameQuery && nameSuggestions.length > 0 && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto ring-1 ring-black/5">
+                                {nameSuggestions.map((prod, idx) => (
+                                    <button
+                                        key={prod.id}
+                                        onClick={() => handleSelectProduct(prod)}
+                                        className={`w-full text-left px-3 py-2 border-b border-slate-100 dark:border-slate-700/50 flex justify-between items-center group transition-colors ${idx === selectedNameIndex ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                    >
+                                        <div className="min-w-0">
+                                            <p className="font-bold text-xs truncate">{prod.name}</p>
+                                            <span className="text-[9px] opacity-70">{prod.sku}</span>
+                                        </div>
+                                        <div className="text-right shrink-0 ml-2">
+                                            <p className="font-bold font-mono text-xs">₹{prod.price.toFixed(2)}</p>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -341,7 +439,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                                         onChange={(e) => {
                                                             const val = parseFloat(e.target.value);
                                                             if (!isNaN(val) && val > 0) {
-                                                                dispatch(updateCartLength({ id: item.id, length: val }));
+                                                                onUpdateCartLength(item.id, val);
                                                             }
                                                         }}
                                                         onKeyDown={(e) => {
@@ -362,7 +460,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         <td className="py-1.5 px-2 text-center">
                                             <div className="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg p-0.5 border border-slate-200 w-fit mx-auto">
                                                 <button
-                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty - 1 }))}
+                                                    onClick={() => onUpdateCartQty(item.id, item.qty - 1)}
                                                     className="w-6 h-6 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 text-xs"
                                                     tabIndex={-1}
                                                 >-</button>
@@ -373,7 +471,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                                     onChange={(e) => {
                                                         const val = parseFloat(e.target.value);
                                                         if (!isNaN(val) && val >= 0) {
-                                                            dispatch(updateCartQty({ id: item.id, qty: val }));
+                                                            onUpdateCartQty(item.id, val);
                                                         }
                                                     }}
                                                     onKeyDown={(e) => {
@@ -382,7 +480,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                                     className="w-10 text-center bg-transparent border-none font-bold focus:ring-2 focus:ring-indigo-500 rounded h-6 text-xs spin-hide"
                                                 />
                                                 <button
-                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
+                                                    onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
                                                     className="w-6 h-6 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 text-xs"
                                                     tabIndex={-1}
                                                 >+</button>
@@ -393,7 +491,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         </td>
                                         <td className="py-1.5 px-2 text-center">
                                             <button
-                                                onClick={() => dispatch(removeFromCart(item.id))}
+                                                onClick={() => onRemoveFromCart(item.id)}
                                                 className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
                                                 tabIndex={-1}
                                             >
@@ -427,12 +525,12 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         <div className="flex items-center gap-3">
                                             <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
                                                 <button
-                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: Math.max(0, item.qty - 1) }))}
+                                                    onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
                                                     className="w-8 h-8 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-md"
                                                 >-</button>
                                                 <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
                                                 <button
-                                                    onClick={() => dispatch(updateCartQty({ id: item.id, qty: item.qty + 1 }))}
+                                                    onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
                                                     className="w-8 h-8 flex items-center justify-center text-indigo-600 active:bg-indigo-50 rounded-md"
                                                 >+</button>
                                             </div>
@@ -440,7 +538,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         </div>
 
                                         <button
-                                            onClick={() => dispatch(removeFromCart(item.id))}
+                                            onClick={() => onRemoveFromCart(item.id)}
                                             className="p-2 text-red-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm"
                                         >
                                             <Trash2 className="w-4 h-4" />

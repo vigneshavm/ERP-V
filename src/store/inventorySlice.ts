@@ -62,9 +62,18 @@ const inventorySlice = createSlice({
     },
     setProducts: (state, action: PayloadAction<Product[]>) => {
       state.products = action.payload;
+    },
+    upsertProduct: (state, action: PayloadAction<Product>) => {
+      const index = state.products.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) {
+        state.products[index] = action.payload;
+      } else {
+        state.products.push(action.payload);
+      }
+      saveState('inventory', state);
     }
   },
 });
 
-export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts } = inventorySlice.actions;
+export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts, upsertProduct } = inventorySlice.actions;
 export default inventorySlice.reducer;

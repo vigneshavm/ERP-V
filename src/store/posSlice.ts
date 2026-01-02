@@ -1,7 +1,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PaymentMethod, TaxMode, } from '../types/common';
-import { POSState, Sale } from '../types/sales';
+import { POSState, Sale, Customer } from '../types/sales';
 import { CartItem, Session, SaleStatus, PaymentStatus } from '../types/sales';
 
 export interface HeldBill {
@@ -21,12 +21,13 @@ const defaultSession: Session = {
   label: 'Tab 1',
   cart: [],
   customerId: 'c1',
+  counterId: 'C1',
   taxMode: 'EXCLUSIVE',
   paymentMethod: 'CASH'
 };
 
 const initialState: POSState = {
-  sessions: [defaultSession, { ...defaultSession, id: '2', label: 'Tab 2' }, { ...defaultSession, id: '3', label: 'Tab 3' }, { ...defaultSession, id: '4', label: 'Tab 4' }],
+  sessions: [defaultSession],
   activeSessionIndex: 0,
   customers: [
     { id: 'c1', name: 'Walk-in Customer', phone: '', points: 0, creditBalance: 0, creditLimit: 0, riskScore: 10 },
@@ -35,6 +36,7 @@ const initialState: POSState = {
     { id: 'c4', name: 'Alice Baker', phone: '5551234567', points: 50, creditBalance: 0, creditLimit: 2000, riskScore: 10 },
   ],
   salesHistory: [],
+  activeCounterId: 'C1',
   heldBills: [] as HeldBill[] // Using the locally defined interface
 };
 
@@ -45,6 +47,43 @@ const posSlice = createSlice({
     setActiveSession: (state, action: PayloadAction<number>) => {
       if (action.payload >= 0 && action.payload < state.sessions.length) {
         state.activeSessionIndex = action.payload;
+      }
+    },
+    addSession: (state) => {
+      if (state.sessions.length < 4) {
+        // Find max ID effectively, filtering out NaNs
+        const currentIds = state.sessions.map(s => parseInt(s.id)).filter(id => !isNaN(id));
+        const maxId = currentIds.length > 0 ? Math.max(...currentIds) : 0;
+        const nextId = (maxId + 1).toString();
+
+        const newSession: Session = {
+          ...defaultSession,
+          id: nextId,
+          label: `Tab ${nextId}`,
+          cart: [],
+          customerId: 'c1',
+          counterId: state.activeCounterId || 'C1'
+        };
+        state.sessions.push(newSession);
+        state.activeSessionIndex = state.sessions.length - 1;
+      }
+    },
+    removeSession: (state, action: PayloadAction<number>) => {
+      if (state.sessions.length > 1) {
+        const index = action.payload;
+        state.sessions.splice(index, 1);
+        // Adjust active index
+        if (state.activeSessionIndex >= state.sessions.length) {
+          state.activeSessionIndex = state.sessions.length - 1;
+        } else if (state.activeSessionIndex > index) {
+          state.activeSessionIndex -= 1;
+        }
+      }
+    },
+    setActiveCounter: (state, action: PayloadAction<string>) => {
+      state.activeCounterId = action.payload;
+      if (state.sessions[state.activeSessionIndex]) {
+        state.sessions[state.activeSessionIndex].counterId = action.payload;
       }
     },
     addToCart: (state, action: PayloadAction<CartItem>) => {
@@ -91,14 +130,6 @@ const posSlice = createSlice({
       state.salesHistory.unshift(action.payload);
       const session = state.sessions[state.activeSessionIndex];
 
-      // Update points and Credit Balance (Khata)
-      if (action.payload.customerId) {
-        const customer = state.customers.find(c => c.id === action.payload.customerId);
-        if (customer) {
-          customer.points += Math.floor(action.payload.total / 10);
-        }
-      }
-
       // Clear session
       session.cart = [];
       session.customerId = 'c1';
@@ -123,8 +154,20 @@ const posSlice = createSlice({
     setPaymentMethod: (state, action: PayloadAction<PaymentMethod>) => {
       state.sessions[state.activeSessionIndex].paymentMethod = action.payload;
     },
-    setCustomersList: (state, action: PayloadAction<any[]>) => {
+    setRedeemedPoints: (state, action: PayloadAction<number>) => {
+      state.sessions[state.activeSessionIndex].redeemedPoints = action.payload;
+    },
+    setCustomersList: (state, action: PayloadAction<Customer[]>) => {
       state.customers = action.payload;
+    },
+    addCustomer: (state, action: PayloadAction<Customer>) => {
+      state.customers.push(action.payload);
+    },
+    updateCustomerPoints: (state, action: PayloadAction<{ id: string, points: number }>) => {
+      const customer = state.customers.find(c => c.id === action.payload.id);
+      if (customer) {
+        customer.points += action.payload.points;
+      }
     },
     setSalesHistory: (state, action: PayloadAction<Sale[]>) => {
       state.salesHistory = action.payload;
@@ -174,5 +217,5 @@ const posSlice = createSlice({
   }
 });
 
-export const { setActiveSession, addToCart, removeFromCart, updateCartQty, updateCartLength, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod, setCustomersList, setSalesHistory, updateSaleStatus, holdCurrentBill, resumeBill, discardHeldBill } = posSlice.actions;
+export const { setActiveSession, addSession, removeSession, setActiveCounter, addToCart, removeFromCart, updateCartQty, updateCartLength, clearCart, recordSale, setCustomer, setTaxMode, setPaymentMethod, setRedeemedPoints, setCustomersList, addCustomer, updateCustomerPoints, setSalesHistory, updateSaleStatus, holdCurrentBill, resumeBill, discardHeldBill } = posSlice.actions;
 export default posSlice.reducer;

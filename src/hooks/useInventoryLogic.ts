@@ -45,7 +45,19 @@ export const useInventoryLogic = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [activeTab, setActiveTab] = useState<'ALL' | 'RECENT'>('ALL');
+
+    // Advanced Browsing State
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [currentView, setCurrentView] = useState<'ALL' | 'RECENT' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'HIGH_VALUE' | 'EXPIRING'>('ALL');
+    const [filters, setFilters] = useState({
+        minPrice: '',
+        maxPrice: '',
+        category: '',
+        productType: '',
+        branch: ''
+    });
+
     const [bulkFormData, setBulkFormData] = useState<ProductFormRow[]>([defaultRow]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
@@ -59,23 +71,78 @@ export const useInventoryLogic = () => {
         : [], [currentTenant]);
 
     // Filter Logic
-    const sectorProducts = useMemo(() => products.filter(p => {
-        // 1. Branch/Location Check
-        const matchesBranch = currentBranch === 'All'
-            ? (tenantBranchIds.includes(p.branchId || '') || !p.branchId)
-            : p.branchId === currentBranch;
+    // ------------------------------------------------------------------
+    // Advanced Filter Pipeline
+    // ------------------------------------------------------------------
+    const filteredProducts = useMemo(() => {
+        let result = products;
 
-        if (!matchesBranch) return false;
+        // 1. Base Security (Tenant Scope) & Branch Logic
+        if (currentBranch !== 'All') {
+            result = result.filter(p => p.branchId === currentBranch);
+        } else {
+            // If Global Branch is ALL, restrict to Tenant's valid branches only
+            // logic: Must be in tenant branch list OR have no branch assigned (Global)
+            result = result.filter(p =>
+                tenantBranchIds.includes(p.branchId || '') || !p.branchId
+            );
 
-        // 2. Search Check
-        return (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.productType.toLowerCase().includes(searchTerm.toLowerCase()));
-    }), [products, currentBranch, tenantBranchIds, searchTerm]);
+            // Apply local sidebar filter on top if selected
+            if (filters.branch) {
+                result = result.filter(p => p.branchId === filters.branch);
+            }
+        }
 
-    const displayedProducts = useMemo(() => activeTab === 'RECENT'
-        ? [...sectorProducts].reverse().slice(0, 50)
-        : sectorProducts, [activeTab, sectorProducts]);
+        // 3. Smart Views
+        switch (currentView) {
+            case 'RECENT':
+                result = [...result].reverse();
+                break;
+            case 'LOW_STOCK':
+                result = result.filter(p => p.stock > 0 && p.stock < 10);
+                break;
+            case 'OUT_OF_STOCK':
+                result = result.filter(p => p.stock <= 0);
+                break;
+            case 'HIGH_VALUE':
+                result = result.filter(p => (p.price * p.stock) > 10000);
+                break;
+            case 'EXPIRING':
+                // Placeholder for date logic
+                result = result.filter(p => p.expiryDate);
+                break;
+            case 'ALL':
+            default:
+                break;
+        }
+
+        // 4. Attribute Filters
+        if (filters.category) result = result.filter(p => p.category === filters.category);
+        if (filters.productType) result = result.filter(p => p.productType === filters.productType);
+        if (filters.minPrice) result = result.filter(p => p.price >= parseFloat(filters.minPrice));
+        if (filters.maxPrice) result = result.filter(p => p.price <= parseFloat(filters.maxPrice));
+
+        // 5. Search (Enhanced)
+        if (searchTerm) {
+            const lower = searchTerm.toLowerCase();
+            result = result.filter(p =>
+                p.name.toLowerCase().includes(lower) ||
+                p.sku.toLowerCase().includes(lower) ||
+                (p.barcode && p.barcode.toLowerCase().includes(lower)) ||
+                p.productType.toLowerCase().includes(lower)
+            );
+        }
+
+        return result;
+    }, [products, currentSector, currentBranch, currentView, filters, searchTerm]);
+
+    // Pagination Logic
+    const totalPages = Math.ceil(filteredProducts.length / rowsPerPage);
+    const displayedProducts = useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        return filteredProducts.slice(start, start + rowsPerPage);
+    }, [filteredProducts, page, rowsPerPage]);
+
 
     // Handlers
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +304,11 @@ export const useInventoryLogic = () => {
         isFormOpen,
         editingId,
         searchTerm,
-        activeTab,
+        page,
+        rowsPerPage,
+        totalPages,
+        currentView,
+        filters,
         bulkFormData,
         imagePreview,
         selectedProductIds,
@@ -247,7 +318,10 @@ export const useInventoryLogic = () => {
         // Actions/Setters
         setIsFormOpen,
         setSearchTerm,
-        setActiveTab,
+        setCurrentView,
+        setPage,
+        setRowsPerPage,
+        setFilters,
         setIsPrintMode,
         setIsPrintModalOpen,
 

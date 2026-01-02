@@ -11,7 +11,9 @@ import { Employee } from '../types/hr'
 // --- Tenant Slice ---
 const initialTenantState: TenantState = {
   tenants: [],
-  branches: []
+  branches: [
+    { id: 'All', name: 'All Branches', city: 'Various', address: '', counters: [{ id: 'C1', name: 'Main Counter', lastBillNumber: 0 }, { id: 'C2', name: 'Express Counter', lastBillNumber: 0 }] }
+  ]
 };
 
 const tenantSlice = createSlice({
@@ -226,11 +228,28 @@ const tenantSlice = createSlice({
     },
     setBranches: (state, action: PayloadAction<any[]>) => {
       state.branches = action.payload;
+    },
+    incrementCounterBillNumber: (state, action: PayloadAction<{ branchId: string, counterId: string }>) => {
+      const branch = state.branches.find(b => b.id === action.payload.branchId);
+      if (branch) {
+        if (!branch.counters) branch.counters = [];
+        const counter = branch.counters.find((c: any) => c.id === action.payload.counterId);
+        if (counter) {
+          counter.lastBillNumber = (counter.lastBillNumber || 0) + 1;
+        } else {
+          // Initialize if it doesn't exist (though it should have been defined)
+          branch.counters.push({
+            id: action.payload.counterId,
+            name: `Counter ${action.payload.counterId}`,
+            lastBillNumber: 1
+          });
+        }
+      }
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded } = tenantSlice.actions;
+export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded, incrementCounterBillNumber } = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---
@@ -286,8 +305,8 @@ const initialSettingsState: SettingsState = {
   primaryColor: '#4f46e5',
   enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
   rolePermissions: {
-    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS'],
-    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT'],
+    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
+    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
     'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
   },
   defaultTaxMode: 'EXCLUSIVE',

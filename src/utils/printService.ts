@@ -1,15 +1,15 @@
 import { Sale } from '../types/sales';
 
-export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: string) => {
-    // Construct the printable document
-    const printWindow = window.open('', '_blank', 'width=400,height=600');
+export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: string, address: string) => {
+  // Construct the printable document
+  const printWindow = window.open('', '_blank', 'width=400,height=600');
 
-    if (!printWindow) {
-        alert("Please allow popups to print the receipt.");
-        return;
-    }
+  if (!printWindow) {
+    alert("Please allow popups to print the receipt.");
+    return;
+  }
 
-    const itemsHtml = sale.items.map(item => `
+  const itemsHtml = sale.items.map(item => `
     <tr>
       <td style="padding: 8px 0;">
         <div style="font-weight: bold;">${item.name}</div>
@@ -21,10 +21,10 @@ export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: str
     </tr>
   `).join('');
 
-    const subtotal = (sale.total / (sale.taxMode === 'EXCLUSIVE' ? 1.18 : 1)).toFixed(2);
-    const tax = (sale.total - parseFloat(subtotal)).toFixed(2);
+  const subtotal = (sale.total / (sale.taxMode === 'EXCLUSIVE' ? 1.18 : 1)).toFixed(2);
+  const tax = (sale.total - parseFloat(subtotal)).toFixed(2);
 
-    printWindow.document.write(`
+  printWindow.document.write(`
     <!DOCTYPE html>
     <html>
       <head>
@@ -56,6 +56,7 @@ export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: str
         <div class="header">
           <h1>${tenantName}</h1>
           <p>${sale.sector} &bull; ${branchName}</p>
+          <p style="text-transform: none; max-width: 80%; margin: 5px auto;">${address}</p>
           <div class="dashed-line"></div>
         </div>
 
@@ -121,5 +122,5 @@ export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: str
       </body>
     </html>
   `);
-    printWindow.document.close();
+  printWindow.document.close();
 };

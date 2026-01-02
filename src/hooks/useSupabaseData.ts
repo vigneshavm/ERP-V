@@ -2,8 +2,8 @@ import { APP_CONFIG } from '../config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { supabase } from '../lib/supabase';
-import { setTenants, setBranches, setUser } from '../store/tenantSlice';
-import { setProducts } from '../store/inventorySlice';
+import { setBranches, setUser, setTenants } from '../store/tenantSlice';
+import { setProducts, upsertProduct } from '../store/inventorySlice';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { setEmployees, setLaborPayments } from '../store/laborSlice';
 import { setTransactions, setCheques } from '../store/financeSlice';
@@ -15,6 +15,7 @@ import { Sale, Customer } from '../types/sales';
 import { Employee, LaborPayment } from '../types/hr';
 import { Transaction, Cheque } from '../types/finance';
 import { PurchaseOrder } from '../types/purchase';
+import { SyncManager } from '../services/SyncManager';
 
 export const useSupabaseData = () => {
     const dispatch = useDispatch();
@@ -43,6 +44,7 @@ export const useSupabaseData = () => {
 
                 if (data) {
                     const allTenants = data.map((t: any) => ({
+                        // ... existing mapping logic
                         id: t.id,
                         name: t.name,
                         subdomain: t.subdomain,
@@ -76,6 +78,9 @@ export const useSupabaseData = () => {
 
                     dispatch(setTenants(finalTenants));
 
+                    // Cache Tenants (Optional, but good for offline login)
+                    // SyncManager.cacheTenants(finalTenants); 
+
                     // Fetch Branches (Filter if isolated)
                     let bQuery = supabase.from('branches').select('*');
                     if (isolatedTenantId) {
@@ -97,31 +102,10 @@ export const useSupabaseData = () => {
                             };
                         })));
                     }
-
-                    // Fetch Employees (Filter if isolated)
-                    let eQuery = supabase.from('employees').select('*');
-                    if (isolatedTenantId) {
-                        eQuery = eQuery.eq('tenant_id', isolatedTenantId);
-                    }
-                    const { data: empData, error: empError } = await eQuery;
-                    if (empError) throw empError;
-                    if (empData) {
-                        dispatch(setEmployees(empData.map((e: any) => ({
-                            id: e.id,
-                            name: e.name,
-                            role: e.role,
-                            dailyRate: e.daily_rate,
-                            sector: e.sector,
-                            systemRole: e.system_role,
-                            pin: e.pin,
-                            branchId: e.branch_id,
-                            tenantId: e.tenant_id,
-                            phoneNumber: e.phone_number
-                        })) as Employee[]));
-                    }
                 }
             } catch (err: any) {
                 console.error('Error fetching tenants:', err);
+                // Fallback to local if needed, although tenants are usually small
             }
         };
 
@@ -139,11 +123,14 @@ export const useSupabaseData = () => {
             try {
                 if (!supabase) return;
 
-                const tId = user.tenantId; // User already filtered by login, but safe to filter again
+                const tId = user.tenantId;
 
-                // Determine if we should apply branch filtering
-                // Logic: IF user has a branchId, AND the tenant actually HAS branches, then filter.
-                // IF tenant has NO branches (e.g. single location or cleared), ignore the stale branchId on user.
+                // Sync background data if online
+                if (navigator.onLine) {
+                    SyncManager.syncOfflineSales().catch(err => console.error('Background sync failed:', err));
+                }
+
+                // ... branch filtering logic
                 let applyBranchFilter = false;
                 if (user.branchId && user.branchId !== 'All') {
                     // Check if tenant has branches loaded
@@ -166,8 +153,10 @@ export const useSupabaseData = () => {
                 if (applyBranchFilter && user.branchId) pQuery = pQuery.eq('branch_id', user.branchId);
 
                 const { data: productsData, error: prodError } = await pQuery;
-                if (prodError) throw prodError;
-                if (productsData) {
+                if (prodError && !navigator.onLine) {
+                    const offlineProducts = await SyncManager.getOfflineProducts();
+                    dispatch(setProducts(offlineProducts));
+                } else if (!prodError && productsData) {
                     const mappedProducts = productsData.map((p: any) => ({
                         id: p.id,
                         sku: p.sku,
@@ -190,14 +179,20 @@ export const useSupabaseData = () => {
                         expiryDate: p.expiry_date
                     })) as Product[];
                     dispatch(setProducts(mappedProducts));
+                    SyncManager.cacheProducts(mappedProducts);
                 }
 
                 // Customers
                 let cQuery = supabase.from('customers').select('*');
                 if (tId) cQuery = cQuery.eq('tenant_id', tId);
                 const { data: custData, error: custError } = await cQuery;
-                if (custError) throw custError;
-                if (custData) dispatch(setCustomersList(custData as Customer[]));
+                if (custError && !navigator.onLine) {
+                    const offlineCustomers = await SyncManager.getOfflineCustomers();
+                    dispatch(setCustomersList(offlineCustomers));
+                } else if (!custError && custData) {
+                    dispatch(setCustomersList(custData as Customer[]));
+                    SyncManager.cacheCustomers(custData as Customer[]);
+                }
 
                 // Labor Payments
                 let lpQuery = supabase.from('labor_payments').select('*');
@@ -308,6 +303,49 @@ export const useSupabaseData = () => {
         };
 
         fetchData();
+
+        // 3. Real-time Subscription for Products (Central Stock Sync)
+        const tenantId = user.tenantId;
+        const productChannel = supabase
+            .channel('public:products')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'products',
+                filter: tenantId ? `tenant_id=eq.${tenantId}` : undefined
+            }, (payload) => {
+                if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+                    const p = payload.new;
+                    const mappedProduct: Product = {
+                        id: p.id,
+                        sku: p.sku,
+                        name: p.name,
+                        category: p.category,
+                        price: p.price,
+                        cost: p.cost,
+                        stock: p.stock,
+                        sector: p.sector,
+                        branchId: p.branch_id,
+                        productType: p.product_type,
+                        barcode: p.barcode,
+                        brand: p.brand,
+                        hsnCode: p.hsn_code,
+                        gstPercentage: p.gst_percentage,
+                        composition: p.composition,
+                        unit: p.unit,
+                        tenantId: p.tenant_id,
+                        lastRestocked: p.last_restocked,
+                        expiryDate: p.expiry_date
+                    };
+
+                    dispatch(upsertProduct(mappedProduct));
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(productChannel);
+        };
     }, [dispatch, user, branches, tenants]);
 
     return { loading, error };
