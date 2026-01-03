@@ -4,12 +4,15 @@ import { Sector, Branch } from '../types/common';
 import { ScannedInvoice, FinalizedPurchaseItem } from '../types/purchase';
 import { LayoutTemplate, Table, FileText, Save, CheckCircle2, X, IndianRupee, Plus, Barcode } from 'lucide-react';
 
+import { Vendor } from '../types/vendor';
+
 interface InvoiceResultProps {
     initialData: ScannedInvoice;
     file: File | null;
     sector: Sector;
     branch: Branch;
-    onSave: (items: FinalizedPurchaseItem[]) => void;
+    vendors: Vendor[];
+    onSave: (items: FinalizedPurchaseItem[], vendorId: string | null) => void;
     onCancel: () => void;
 }
 
@@ -204,7 +207,7 @@ const DataGrid: React.FC<DataGridProps> = ({ items, sector, onItemChange, onAddI
     </div>
 );
 
-const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector, branch, onSave, onCancel }) => {
+const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector, branch, vendors, onSave, onCancel }) => {
     // --- Logic ---
     const generateItems = (data: ScannedInvoice, sec: Sector): EditableItem[] => {
         return data.items.map(i => {
@@ -230,8 +233,17 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
     // --- State ---
     const [viewMode, setViewMode] = useState<'SPLIT' | 'DETAILS' | 'PREVIEW'>('SPLIT');
     const [items, setItems] = useState<EditableItem[]>(() => generateItems(initialData, sector));
+    const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
     const [isSaved, setIsSaved] = useState(false);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+    // Try to auto-match vendor by name from Gemini
+    useEffect(() => {
+        if (initialData.vendor && vendors.length > 0) {
+            const match = vendors.find(v => v.name.toLowerCase().includes(initialData.vendor!.toLowerCase()));
+            if (match) setSelectedVendorId(match.id);
+        }
+    }, [initialData.vendor, vendors]);
 
     // --- Initialization ---
     useEffect(() => {
@@ -326,7 +338,7 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
 
         // Trigger callback
         setTimeout(() => {
-            onSave(finalItems);
+            onSave(finalItems, selectedVendorId);
         }, 1000);
     };
 
@@ -340,7 +352,20 @@ const InvoiceResult: React.FC<InvoiceResultProps> = ({ initialData, file, sector
                     </div>
                     <div>
                         <h3 className="font-bold text-slate-800 dark:text-white">Review Extracted Data</h3>
-                        <p className="text-xs text-slate-500">{items.length} items found • {sector} ({branch})</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xs text-slate-500">{items.length} items found • {sector} ({branch})</p>
+                            <span className="text-slate-300">|</span>
+                            <select
+                                value={selectedVendorId || ''}
+                                onChange={(e) => setSelectedVendorId(e.target.value || null)}
+                                className="text-xs bg-transparent border-none focus:ring-0 font-bold text-indigo-600 dark:text-indigo-400 cursor-pointer p-0"
+                            >
+                                <option value="">Select Vendor...</option>
+                                {vendors.map(v => (
+                                    <option key={v.id} value={v.id}>{v.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
 

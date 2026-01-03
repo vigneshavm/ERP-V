@@ -77,20 +77,13 @@ export const useInventoryLogic = () => {
     const filteredProducts = useMemo(() => {
         let result = products;
 
-        // 1. Base Security (Tenant Scope) & Branch Logic
-        if (currentBranch !== 'All') {
-            result = result.filter(p => p.branchId === currentBranch);
-        } else {
-            // If Global Branch is ALL, restrict to Tenant's valid branches only
-            // logic: Must be in tenant branch list OR have no branch assigned (Global)
-            result = result.filter(p =>
-                tenantBranchIds.includes(p.branchId || '') || !p.branchId
-            );
+        // 1. Base Security (Tenant Scope) - No branch isolation requested by user
+        // We show all products the tenant owns. All products are already tenant-scoped from the fetch.
+        // result = result.filter(p => !p.branchId || tenantBranchIds.includes(p.branchId)); // REMOVED: Redundant and error-prone
 
-            // Apply local sidebar filter on top if selected
-            if (filters.branch) {
-                result = result.filter(p => p.branchId === filters.branch);
-            }
+        // Apply local sidebar filter on top if selected (optional UI filter)
+        if (filters.branch) {
+            result = result.filter(p => p.branchId === filters.branch);
         }
 
         // 3. Smart Views

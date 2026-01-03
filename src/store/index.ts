@@ -3,8 +3,10 @@ import inventoryReducer, { deductStock, addStockBulk } from './inventorySlice';
 import posReducer, { recordSale, setCustomer, addCustomer, updateCustomerPoints, addSession, removeSession, setRedeemedPoints, setActiveSession, setTaxMode, setActiveCounter, holdCurrentBill, resumeBill, discardHeldBill, removeFromCart, clearCart } from './posSlice';
 import financeReducer, { addTransaction } from './financeSlice';
 import laborReducer from './laborSlice';
-import purchaseReducer, { approveOrder } from './purchaseSlice';
+import purchaseReducer, { approveOrder, addOrder } from './purchaseSlice';
 import tenantReducer, { authReducer, settingsReducer, incrementCounterBillNumber } from './tenantSlice';
+import vendorReducer, { recordVendorTransaction, fetchVendors } from './vendorSlice';
+
 import { PurchaseOrder } from '../types/purchase';
 import { TransactionType } from '../types/common';
 import { CartItem } from '../types/sales';
@@ -24,6 +26,7 @@ export const store = configureStore({
         tenant: tenantReducer,
         auth: authReducer,
         settings: settingsReducer,
+        vendor: vendorReducer,
     },
 });
 
@@ -37,6 +40,8 @@ export * from './financeSlice';
 export * from './laborSlice';
 export * from './purchaseSlice';
 export * from './tenantSlice';
+export * from './vendorSlice';
+
 
 // --- Thunks migrated from old store.ts ---
 
@@ -170,7 +175,7 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
     }));
 };
 
-export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch) => {
+export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(approveOrder(order.id));
     dispatch(addStockBulk(order.items.map(i => ({
         sku: i.sku || 'UNKNOWN',
@@ -193,6 +198,17 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
         sector: order.sector,
         branchId: order.branchId
     }));
+
+    // Record Vendor Transaction if vendorId exists
+    if (order.vendorId) {
+        dispatch(recordVendorTransaction(
+            order.vendorId,
+            'PURCHASE',
+            order.total,
+            `Purchase Bill #${order.id}`,
+            order.id
+        ));
+    }
 };
 const calculateTier = (points: number): 'Silver' | 'Gold' | 'Platinum' | 'General' => {
     if (points >= 5000) return 'Platinum';

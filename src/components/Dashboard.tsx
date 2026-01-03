@@ -34,14 +34,9 @@ const Dashboard: React.FC = () => {
   const { currentSector, currentBranch, theme, role } = useSelector((state: RootState) => state.auth);
   const { getBranchName } = useBranchResolver();
 
-  // Filtered Data based on Sector and Branch
-  const sectorTransactions = transactions.filter(t =>
-    t.sector === currentSector && (currentBranch === 'All' || t.branchId === currentBranch)
-  );
-
-  const sectorProducts = products.filter(p =>
-    p.sector === currentSector && (currentBranch === 'All' || p.branchId === currentBranch)
-  );
+  // Filtered Data based on Sector
+  const sectorTransactions = transactions.filter(t => t.sector === currentSector);
+  const sectorProducts = products.filter(p => p.sector === currentSector);
 
   const totalRevenue = sectorTransactions
     .filter(t => t.type === 'INCOME')

@@ -11,6 +11,7 @@ export interface ScanItem {
 export interface PurchaseOrder {
     id: string;
     vendor: string;
+    vendorId?: string;
     date: string;
     items: ScanItem[];
     total: number;

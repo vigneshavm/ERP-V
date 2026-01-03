@@ -1,6 +1,8 @@
-
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key } from 'lucide-react';
+import ChangePasswordModal from './components/ChangePasswordModal';
+
+
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setBranch, setUser } from './store';
 import { APP_CONFIG } from './config';
@@ -22,6 +24,8 @@ import Login from './components/login';
 import TenantManager from './components/TenantManager';
 import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
 import ReportsModule from './components/reports/ReportsModule';
+import VendorManager from './components/VendorManager';
+
 
 import { ConfigProvider } from './components/ConfigProvider';
 import { useBranchResolver } from './hooks/useBranchResolver';
@@ -222,6 +226,9 @@ const App: React.FC = () => {
             onConfirm: () => void;
         }>({ isOpen: false, title: '', message: '', onConfirm: () => { } });
 
+        const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+
+
         // Hooks must be at the top level
         const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
         const branchesFromDB = useSelector((state: RootState) => state.tenant.branches);
@@ -292,6 +299,7 @@ const App: React.FC = () => {
                 case 'POS': return <POSModule />;
                 case 'INVENTORY': return <InventoryManager />;
                 case 'PURCHASE': return <PurchaseManager />;
+                case 'VENDORS': return <VendorManager />;
                 case 'FINANCE': return <FinanceTracker />;
                 case 'SALES': return <SalesHistory />;
                 case 'DAILY': return <DailyFinanceTracker />;
@@ -418,6 +426,7 @@ const App: React.FC = () => {
                         <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
                         <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
                         <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
+                        <NavItem id="VENDORS" icon={Users} label="Vendors (Suppliers)" />
                         <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
                         <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
                         <NavItem id="SALES" icon={List} label="Sales History" />
@@ -446,19 +455,28 @@ const App: React.FC = () => {
                         </button>
 
                         {desktopCollapsed && (
-                            <button
-                                onClick={() => {
-                                    requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                        clearSession();
-                                        localStorage.removeItem('erp_current_tenant');
-                                        setIsLoggedIn(false);
-                                    });
-                                }}
-                                title="Logout"
-                                className="w-full flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                            >
-                                <Lock className="w-5 h-5" />
-                            </button>
+                            <div className="flex flex-col gap-2 w-full px-2">
+                                <button
+                                    onClick={() => {
+                                        requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
+                                            clearSession();
+                                            localStorage.removeItem('erp_current_tenant');
+                                            setIsLoggedIn(false);
+                                        });
+                                    }}
+                                    title="Logout"
+                                    className="flex-1 flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    <Lock className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => setIsChangePasswordOpen(true)}
+                                    title="Change Password"
+                                    className="px-3 flex justify-center py-3 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    <Key className="w-5 h-5" />
+                                </button>
+                            </div>
                         )}
                     </div>
                 </aside>
@@ -477,6 +495,12 @@ const App: React.FC = () => {
                         onClick={() => setSidebarOpen(false)}
                     />
                 )}
+
+                {/* Modals */}
+                <ChangePasswordModal
+                    isOpen={isChangePasswordOpen}
+                    onClose={() => setIsChangePasswordOpen(false)}
+                />
 
                 {/* Confirmation Modal */}
                 {confirmDialog.isOpen && (

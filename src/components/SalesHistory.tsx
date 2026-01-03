@@ -28,7 +28,6 @@ const SalesHistory = () => {
 
         // 2. Branch/Sector Filter
         if (sale.sector !== currentSector) return false;
-        if (currentBranch !== 'All' && sale.branchId !== currentBranch) return false;
 
         // 3. Search ID
         if (searchId && !sale.id.includes(searchId)) return false;

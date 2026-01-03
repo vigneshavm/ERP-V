@@ -27,8 +27,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, onClose }) => 
     // In ReceiptModal, the resolver isn't here, but we can use the tenants list.
     const branch = tenant?.locations?.flatMap(l => l.branches).find(b => b.id === sale.branchId || b.name === sale.branchId);
     const bName = branch ? branch.name : (sale.branchId || 'Main Branch');
+    const bAddress = branch?.address || tenant?.companyDetails?.addressLine1 || 'No Address Provided';
 
-    printSaleReceipt(sale, tenantName, bName);
+    printSaleReceipt(sale, tenantName, bName, bAddress);
   };
 
   return (

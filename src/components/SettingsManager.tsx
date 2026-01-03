@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2 } from 'lucide-react';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
 import { setStoredTheme } from '../utils/theme';
 import { Tenant } from '../types/tenant';
 import StaffManager from './StaffManager';
+import { isSecuredIdeally, securePassword } from '../utils/auth';
+import { supabase } from '../lib/supabase';
 
+// --- Constants ---
 const COLORS = [
     { name: 'Indigo', hex: '#4f46e5' },
     { name: 'Emerald', hex: '#10b981' },
@@ -33,10 +36,9 @@ const MODULES = [
     { id: 'storefront', label: 'Web Storefront' },
 ];
 
-// Mapping readable labels to View IDs for Permissions
 const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
     { id: 'DASHBOARD', label: 'Dashboard' },
-    { id: 'PROFIT_PULSE', label: 'Profit Pulse AI' }, // Added Profit Pulse
+    { id: 'PROFIT_PULSE', label: 'Profit Pulse AI' },
     { id: 'POS', label: 'Point of Sale' },
     { id: 'INVENTORY', label: 'Inventory' },
     { id: 'PURCHASE', label: 'Purchases' },
@@ -48,6 +50,7 @@ const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
     { id: 'SETTINGS', label: 'Settings' },
 ];
 
+// --- Types ---
 interface SettingsData {
     appName: string;
     logoUrl?: string;
@@ -60,375 +63,28 @@ interface SettingsData {
 interface SettingsFormProps {
     initialSettings: SettingsData;
     activeTenant?: Tenant;
-    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark' }) => void;
+    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => void;
     onReset: () => void;
     currentTheme: 'light' | 'dark';
     isSaved: boolean;
     onUpdateBranchSettings: (branchId: string, settings: Partial<SettingsData>) => void;
 }
 
-const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved, onUpdateBranchSettings }) => {
-    // Initialize state from props. using 'key' in parent will force re-init when props change.
-    const [appName, setAppName] = useState(initialSettings.appName);
-    const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl || '');
-    const [primaryColor, setPrimaryColor] = useState(activeTenant?.primaryColor || initialSettings.primaryColor);
-    const [modules, setModules] = useState(initialSettings.enabledModules);
-    const [taxMode, setTaxMode] = useState<TaxMode>(initialSettings.defaultTaxMode);
-    const [permissions, setPermissions] = useState(initialSettings.rolePermissions);
-    const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
+// --- Helper Components ---
 
-    // Navigation State
-    const [activeSection, setActiveSection] = useState<'SYSTEM' | 'STAFF'>('SYSTEM');
-
-    // Branch Override State
-    const [selectedBranchId, setSelectedBranchId] = useState<string>('');
-    const [isBranchMode, setIsBranchMode] = useState(false);
-
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setLogoUrl(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleModuleToggle = (id: keyof typeof modules) => {
-        setModules(prev => ({ ...prev, [id]: !prev[id] }));
-    };
-
-    const handlePermissionToggle = (roleKey: SystemRole, view: AppView) => {
-        if (roleKey === 'Owner') return; // Owner always has access
-        setPermissions(prev => {
-            const current = prev[roleKey] || [];
-            const updated = current.includes(view)
-                ? current.filter(v => v !== view)
-                : [...current, view];
-            return { ...prev, [roleKey]: updated };
-        });
-    };
-
-    const triggerSave = () => {
-        onSave({
-            appName,
-            logoUrl,
-            primaryColor,
-            enabledModules: modules,
-            defaultTaxMode: taxMode,
-            rolePermissions: permissions,
-            tenantTheme
-        });
-    };
-
-    return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in pb-10">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                        <SettingsIcon className="w-8 h-8 text-indigo-600" />
-                        {isBranchMode ? 'Branch Configuration' : 'System Configuration'}
-                    </h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
-                        {activeSection === 'STAFF' ? 'Manage your team and terminal assignments.' : isBranchMode ? `Managing overrides for branch: ${selectedBranchId} ` : 'Customize branding, features, and security.'}
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 mr-4">
-                        <button
-                            onClick={() => setActiveSection('SYSTEM')}
-                            className={`flex items-center gap-2 px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeSection === 'SYSTEM' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                        >
-                            <SettingsIcon className="w-4 h-4" /> Configuration
-                        </button>
-                        <button
-                            onClick={() => setActiveSection('STAFF')}
-                            className={`flex items-center gap-2 px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeSection === 'STAFF' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                        >
-                            <Users className="w-4 h-4" /> Team & Staff
-                        </button>
-                    </div>
-
-                    {!isBranchMode && activeSection === 'SYSTEM' && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase">Override per Branch</span>
-                            <select
-                                onChange={(e) => {
-                                    if (e.target.value) {
-                                        setSelectedBranchId(e.target.value);
-                                        setIsBranchMode(true);
-                                        // Find branch settings
-                                        const loc = activeTenant?.locations?.find(l => l.branches.some(b => b.id === e.target.value));
-                                        const branch = loc?.branches.find(b => b.id === e.target.value);
-                                        if (branch?.settings) {
-                                            setTaxMode(branch.settings.defaultTaxMode || initialSettings.defaultTaxMode);
-                                        }
-                                    }
-                                }}
-                                className="bg-transparent text-xs font-bold outline-none border-none dark:text-white"
-                            >
-                                <option value="">Select Branch...</option>
-                                {activeTenant?.locations?.flatMap(l => l.branches).map(b => (
-                                    <option key={b.id} value={b.id}>{b.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-                    {isBranchMode && (
-                        <button
-                            onClick={() => setIsBranchMode(false)}
-                            className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold"
-                        >
-                            Back to Global
-                        </button>
-                    )}
-                    <button
-                        onClick={onReset}
-                        className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 font-bold transition-colors flex items-center gap-2"
-                    >
-                        <RotateCcw className="w-4 h-4" /> Reset
-                    </button>
-                    <button
-                        onClick={activeSection === 'STAFF' ? () => { } : isBranchMode ? () => onUpdateBranchSettings(selectedBranchId, { defaultTaxMode: taxMode }) : triggerSave}
-                        className={`px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95 ${activeSection === 'STAFF' ? 'opacity-0 pointer-events-none' : ''}`}
-                    >
-                        <Save className="w-4 h-4" /> {isSaved ? 'Saved!' : isBranchMode ? 'Apply Override' : 'Save Changes'}
-                    </button>
-                </div>
-            </div>
-
-            {/* Warning if in Branch Mode */}
-            {isBranchMode && (
-                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-4 text-amber-700 dark:text-amber-400">
-                    <Shield className="w-6 h-6 shrink-0" />
-                    <div>
-                        <p className="text-sm font-bold uppercase tracking-tight">Branch-specific Override Active</p>
-                        <p className="text-xs opacity-80">You are currently editing settings only for <strong>{selectedBranchId}</strong>. Other branches will continue to use global defaults.</p>
-                    </div>
-                </div>
-            )}
-
-            {activeSection === 'STAFF' ? (
-                <StaffManager />
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Branding Section */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <Palette className="w-5 h-5 text-indigo-500" /> Branding & Theme
-                        </h3>
-
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Company Name</label>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={appName}
-                                        onChange={e => setAppName(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                        placeholder="e.g. Adidas Store"
-                                    />
-                                    <Type className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Theme</label>
-                                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700 w-fit">
-                                    <button
-                                        onClick={() => setTenantTheme('light')}
-                                        className={`flex items - center gap - 2 px - 4 py - 2 text - sm font - bold rounded - md transition - all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                                    >
-                                        <Sun className="w-4 h-4" /> Light
-                                    </button>
-                                    <button
-                                        onClick={() => setTenantTheme('dark')}
-                                        className={`flex items - center gap - 2 px - 4 py - 2 text - sm font - bold rounded - md transition - all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                                    >
-                                        <Moon className="w-4 h-4" /> Dark
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Company Logo</label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden">
-                                        {logoUrl ? (
-                                            <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
-                                        ) : (
-                                            <span className="text-slate-400 text-xs">No Logo</span>
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <input
-                                            type="file"
-                                            id="logo-upload"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={handleLogoUpload}
-                                        />
-                                        <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-bold transition-colors">
-                                            <Upload className="w-4 h-4" /> Upload Logo
-                                        </label>
-                                        <p className="text-[10px] text-slate-400 mt-2">Recommended: 200x200px PNG transparent.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Primary Brand Color</label>
-                                <div className="flex flex-wrap gap-3">
-                                    {COLORS.map(c => (
-                                        <button
-                                            key={c.name}
-                                            onClick={() => setPrimaryColor(c.hex)}
-                                            className={`w - 8 h - 8 rounded - full border - 2 transition - all ${primaryColor === c.hex ? 'border-slate-900 dark:border-white scale-110 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'} `}
-                                            style={{ backgroundColor: c.hex }}
-                                            title={c.name}
-                                        />
-                                    ))}
-                                    <div className="relative group">
-                                        <input
-                                            type="color"
-                                            value={primaryColor}
-                                            onChange={e => setPrimaryColor(e.target.value)}
-                                            className="w-8 h-8 opacity-0 absolute inset-0 cursor-pointer"
-                                        />
-                                        <div className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-pink-500">
-                                            <div className="w-6 h-6 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-bold">+</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Module Configuration */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <LayoutGrid className="w-5 h-5 text-indigo-500" /> Module Configuration
-                        </h3>
-
-                        <div className="space-y-4">
-                            {MODULES.map(mod => (
-                                <div key={mod.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                                    <span className="font-medium text-slate-700 dark:text-slate-200">{mod.label}</span>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            className="sr-only peer"
-                                            checked={modules[mod.id as keyof typeof modules]}
-                                            onChange={() => handleModuleToggle(mod.id as keyof typeof modules)}
-                                        />
-                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-xs text-slate-400 mt-6 text-center">Disabled modules will be hidden globally.</p>
-                    </div>
-
-                    {/* Financial Defaults */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <Calculator className="w-5 h-5 text-indigo-500" /> Financial Defaults
-                        </h3>
-
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Default Tax Mode</label>
-                                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <button
-                                        onClick={() => setTaxMode('EXCLUSIVE')}
-                                        className={`flex - 1 py - 2 text - sm font - bold rounded - md transition - all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                                    >
-                                        Exclusive (+ Tax)
-                                    </button>
-                                    <button
-                                        onClick={() => setTaxMode('INCLUSIVE')}
-                                        className={`flex - 1 py - 2 text - sm font - bold rounded - md transition - all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'} `}
-                                    >
-                                        Inclusive (Inc. Tax)
-                                    </button>
-                                </div>
-                                <p className="text-[10px] text-slate-400 mt-2">This will be the default selection for new POS sessions.</p>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {/* Security & Data Maintenance */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <Lock className="w-5 h-5 text-indigo-500" /> Security & Maintenance
-                        </h3>
-                        <SecurityMigrationManager />
-                    </div>
-
-                    {/* Role Access Control (Full Width) */}
-                    <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <Shield className="w-5 h-5 text-indigo-500" /> Role Access Control
-                        </h3>
-
-
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
-                                    <tr>
-                                        <th className="px-6 py-3">Module / View</th>
-                                        <th className="px-6 py-3 text-center text-emerald-600">Owner <span className="block text-[9px] text-slate-400">Full Access</span></th>
-                                        <th className="px-6 py-3 text-center">Manager</th>
-                                        <th className="px-6 py-3 text-center">Staff</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                    {PERMISSION_VIEWS.map(view => (
-                                        <tr key={view.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30">
-                                            <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{view.label}</td>
-                                            <td className="px-6 py-4 text-center">
-                                                <CheckToggle checked={true} disabled />
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <CheckToggle
-                                                    checked={permissions['Manager'].includes(view.id)}
-                                                    onChange={() => handlePermissionToggle('Manager', view.id)}
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <CheckToggle
-                                                    checked={permissions['Staff'].includes(view.id)}
-                                                    onChange={() => handlePermissionToggle('Staff', view.id)}
-                                                />
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-
-// --- Helper Component for Migration ---
-import { isSecuredIdeally, securePassword } from '../utils/auth';
-import { supabase } from '../lib/supabase';
+const CheckToggle = ({ checked, onChange, disabled = false }: { checked: boolean, onChange?: () => void, disabled?: boolean }) => (
+    <label className={`relative inline-flex items-center cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <input type="checkbox" className="sr-only peer" checked={checked} onChange={onChange} disabled={disabled} />
+        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+    </label>
+);
 
 const SecurityMigrationManager: React.FC = () => {
-    // We access employees from labor slice or where they are stored globally
     const { employees } = useSelector((state: RootState) => state.labor);
     const [isMigrating, setIsMigrating] = useState(false);
     const [progress, setProgress] = useState({ total: 0, done: 0 });
 
-    // Identify users who need migration (Not in ideal format)
-    const insecureUsers = React.useMemo(() => {
+    const insecureUsers = useMemo(() => {
         return employees.filter(e => e.pin && !isSecuredIdeally(e.pin));
     }, [employees]);
 
@@ -443,50 +99,16 @@ const SecurityMigrationManager: React.FC = () => {
 
         for (const user of insecureUsers) {
             try {
-                // 1. Secure the existing plain text (or re-secure/re-hash)
-                // Note: user.pin might be an old hash or encrypted string if we are switching modes. 
-                // Wait, if it's already a hash/encrypted but NOT the ideal one, we can't easily re-secure it 
-                // unless we have the plain text.
-                // However, the `insecureUsers` check relies on `isSecuredIdeally`.
-                // If I am in HASH mode, and I have an `enc_` password, `isSecuredIdeally` returns false.
-                // But I CANNOT convert `enc_` to Hash without decrypting first.
-                // This tool assumes we are migrating PLAIN TEXT primarily.
-                // If we want to support Mode Switching (Encrypt -> Hash), we need the plain text.
-                // We can't get plain text from Hash.
-                // We CAN get plain text from Encrypt (if we have the key).
-
-                // For safety: This specific batch tool is risky if we are migrating FROM a secure format TO another without decryption logic here.
-                // But `isSecuredIdeally` handles generic "is it good?".
-                // If `user.pin` is `enc_` and we are in HASH mode, `securePassword` will try to HASH the `enc_` string!
-                // That results in double-wrapping invalidly.
-                // Let's refine this tool to only migrate PLAIN text for safety in this iteration, 
-                // OR attempt detection.
-
                 let rawPin = user.pin;
-                // If it looks like encryption and we can decrypt it, do so?
-                // `comparePassword` does this logic but returns bool.
-                // `auth.ts` doesn't export decrypt.
-                // For now, let's assume this tool deals with PLAIN text legacy users. 
-                // If the user is already "secure" in a different format, we might skip them to avoid corrupting, 
-                // OR we trust the admin knows what they are doing.
-                // Let's stick to migrating PLAIN TEXT (length < 20 usually, hashes are long).
-                // Or better: check if it starts with enc_ or $2a$. If so, SKIP automated migration here 
-                // because we can't know the plain text securely.
-
-                // Helper to check if it looks like ANY secure format
                 const isAnySecure = (p: string) => p.startsWith('enc_') || p.startsWith('$2a$') || p.startsWith('$2b$');
 
                 if (isAnySecure(rawPin)) {
-                    // It is secure, just not "ideally" (e.g. Encrypted when we want Hash). 
-                    // We skip batch migration for these to avoid data loss.
-                    // They will be auto-migrated on login!
                     console.warn(`Skipping user ${user.name} - already has a secure format, cannot auto-convert without login.`);
                     continue;
                 }
 
                 const secured = await securePassword(rawPin);
 
-                // 2. Update Supabase
                 const { error } = await supabase
                     .from('employees')
                     .update({ pin: secured })
@@ -545,6 +167,412 @@ const SecurityMigrationManager: React.FC = () => {
     );
 };
 
+// --- Main Form Component ---
+
+const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved, onUpdateBranchSettings }) => {
+    // Top Level Tabs
+    const [activeTab, setActiveTab] = useState<'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'SECURITY'>('GENERAL');
+
+    // Local State (initialized from Tenant or Settings)
+    const [appName, setAppName] = useState(activeTenant?.name || initialSettings.appName);
+    const [logoUrl, setLogoUrl] = useState(activeTenant?.loginLogoUrl || initialSettings.logoUrl || '');
+    const [primaryColor, setPrimaryColor] = useState(activeTenant?.primaryColor || initialSettings.primaryColor);
+    const [modules, setModules] = useState(initialSettings.enabledModules);
+    const [taxMode, setTaxMode] = useState<TaxMode>(
+        (activeTenant?.systemConfig?.pricingMode as TaxMode) || initialSettings.defaultTaxMode
+    );
+    const [permissions, setPermissions] = useState(initialSettings.rolePermissions);
+    const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
+
+    // Additional Tenant Fields
+    const [gstin, setGstin] = useState(activeTenant?.taxDetails?.gstin || '');
+    const [pan, setPan] = useState(activeTenant?.taxDetails?.pan || '');
+    const [bankName, setBankName] = useState(activeTenant?.bankingDetails?.bankName || '');
+    const [accNo, setAccNo] = useState(activeTenant?.bankingDetails?.accountNumber || '');
+
+    // Branch Override
+    const [selectedBranchId, setSelectedBranchId] = useState<string>('');
+    const [isBranchMode, setIsBranchMode] = useState(false);
+
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setLogoUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleModuleToggle = (id: keyof typeof modules) => {
+        setModules(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    const handlePermissionToggle = (roleKey: SystemRole, view: AppView) => {
+        if (roleKey === 'Owner') return;
+        setPermissions(prev => {
+            const current = prev[roleKey] || [];
+            const updated = current.includes(view) ? current.filter(v => v !== view) : [...current, view];
+            return { ...prev, [roleKey]: updated };
+        });
+    };
+
+    const triggerSave = () => {
+        // Construct updated data
+        onSave({
+            appName,
+            logoUrl,
+            primaryColor,
+            enabledModules: modules,
+            defaultTaxMode: taxMode,
+            rolePermissions: permissions,
+            tenantTheme,
+            // Extra data passed to handler to update Tenant details
+            gstin, pan, bankName, accNo
+        });
+    };
+
+    const TabButton = ({ id, label, icon: Icon }: { id: typeof activeTab, label: string, icon: any }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-bold rounded-xl transition-all w-full md:w-auto ${activeTab === id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' : 'bg-white dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+        >
+            <Icon className="w-4 h-4" />
+            {label}
+        </button>
+    );
+
+    return (
+        <div className="max-w-6xl mx-auto space-y-6 pb-20 animate-in fade-in slide-in-from-bottom-4">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <SettingsIcon className="w-8 h-8 text-indigo-600" />
+                        System Configuration
+                    </h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                        Customize your tenant environment, branding, and security policies.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    {/* Branch Override Selector */}
+                    {!isBranchMode && (
+                        <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">Branch Override</span>
+                            <select
+                                onChange={(e) => {
+                                    if (e.target.value) {
+                                        setSelectedBranchId(e.target.value);
+                                        setIsBranchMode(true);
+                                        // Logic to load branch specific settings would go here
+                                    }
+                                }}
+                                className="bg-transparent text-xs font-bold outline-none border-none dark:text-white cursor-pointer"
+                                value=""
+                            >
+                                <option value="">Select Branch...</option>
+                                {activeTenant?.locations?.flatMap(l => l.branches).map(b => (
+                                    <option key={b.id} value={b.id}>{b.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {isBranchMode && (
+                        <button
+                            onClick={() => setIsBranchMode(false)}
+                            className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold"
+                        >
+                            Exit Override
+                        </button>
+                    )}
+
+                    <button
+                        onClick={onReset}
+                        className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 font-bold transition-colors flex items-center gap-2"
+                    >
+                        <RotateCcw className="w-4 h-4" /> Reset
+                    </button>
+                    <button
+                        onClick={isBranchMode ? () => onUpdateBranchSettings(selectedBranchId, { defaultTaxMode: taxMode }) : triggerSave}
+                        className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95"
+                    >
+                        {isSaved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                        {isSaved ? 'Saved!' : isBranchMode ? 'Apply Override' : 'Save Changes'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Warning if in Branch Mode */}
+            {isBranchMode && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-4 text-amber-700 dark:text-amber-400 animate-pulse">
+                    <Shield className="w-6 h-6 shrink-0" />
+                    <div>
+                        <p className="text-sm font-bold uppercase tracking-tight">Branch-specific Override Active</p>
+                        <p className="text-xs opacity-80">You are currently editing settings only for <strong>{selectedBranchId}</strong>. Other branches will continue to use global defaults.</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Navigation Tabs */}
+            <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-200 dark:border-slate-800">
+                <TabButton id="GENERAL" label="General Info" icon={Store} />
+                <TabButton id="BRANDING" label="Branding & Theme" icon={Palette} />
+                <TabButton id="MODULES" label="Modules" icon={LayoutGrid} />
+                <TabButton id="FINANCE" label="Finance & Tax" icon={Calculator} />
+                <TabButton id="SECURITY" label="Security & Roles" icon={Shield} />
+            </div>
+
+            {/* Content Area */}
+            <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm min-h-[500px]">
+
+                {/* GENERAL TAB */}
+                {activeTab === 'GENERAL' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Store className="w-5 h-5 text-indigo-500" /> General Information
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Tenant Name</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={appName}
+                                            onChange={e => setAppName(e.target.value)}
+                                            className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                                            placeholder="e.g. Acme Retail"
+                                        />
+                                        <Type className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-2">This name appears on the dashboard and reports.</p>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Sector / Industry</label>
+                                    <div className="px-4 py-3 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 font-medium">
+                                        {activeTenant?.sector || 'General'}
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-2">Sector cannot be changed after provisioning.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Users className="w-5 h-5 text-indigo-500" /> Staff Management
+                            </h3>
+                            <p className="text-sm text-slate-500 mb-4">Manage your workforce, create accounts, and assign branches.</p>
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                <StaffManager />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* BRANDING TAB */}
+                {activeTab === 'BRANDING' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Palette className="w-5 h-5 text-indigo-500" /> Visual Identity
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Theme</label>
+                                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
+                                        <button onClick={() => setTenantTheme('light')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Sun className="w-4 h-4" /> Light
+                                        </button>
+                                        <button onClick={() => setTenantTheme('dark')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Moon className="w-4 h-4" /> Dark
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-2 text-balance">Choose the default appearance for all terminals. Users can override this locally if allowed.</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Primary Brand Color</label>
+                                    <div className="flex flex-wrap gap-3">
+                                        {COLORS.map(c => (
+                                            <button
+                                                key={c.name}
+                                                onClick={() => setPrimaryColor(c.hex)}
+                                                className={`w-10 h-10 rounded-full border-4 transition-all ${primaryColor === c.hex ? 'border-indigo-100 dark:border-slate-600 scale-110 shadow-md ring-2 ring-indigo-500' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                                style={{ backgroundColor: c.hex }}
+                                                title={c.name}
+                                            />
+                                        ))}
+                                        <div className="relative group">
+                                            <input type="color" value={primaryColor} onChange={e => setPrimaryColor(e.target.value)} className="w-10 h-10 opacity-0 absolute inset-0 cursor-pointer" />
+                                            <div className="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-pink-500 hover:opacity-90 transition-opacity">
+                                                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-bold">+</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Login & Dashboard Logo</label>
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-32 h-32 bg-slate-100 dark:bg-slate-900 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group">
+                                            {logoUrl ? (
+                                                <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-4" />
+                                            ) : (
+                                                <span className="text-slate-400 text-xs font-medium">No Logo</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3">
+                                            <input type="file" id="logo-upload" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                                            <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-50 dark:bg-slate-700 hover:bg-indigo-100 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm font-bold transition-colors">
+                                                <Upload className="w-4 h-4" /> Upload New Logo
+                                            </label>
+                                            <p className="text-xs text-slate-400 max-w-xs">Recommended: 400x400px PNG with transparent background. Max size 2MB.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* MODULES TAB */}
+                {activeTab === 'MODULES' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <LayoutGrid className="w-5 h-5 text-indigo-500" /> Feature Modules
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {MODULES.map(mod => (
+                                    <div key={mod.id} className={`flex items-center justify-between p-4 rounded-xl border transition-all ${modules[mod.id as keyof typeof modules] ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-2 h-2 rounded-full ${modules[mod.id as keyof typeof modules] ? 'bg-indigo-500' : 'bg-slate-300'}`} />
+                                            <span className={`font-bold ${modules[mod.id as keyof typeof modules] ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-500'}`}>{mod.label}</span>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={modules[mod.id as keyof typeof modules]}
+                                                onChange={() => handleModuleToggle(mod.id as keyof typeof modules)}
+                                            />
+                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            <p className="text-xs text-slate-400 mt-6 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-800 inline-block">
+                                <span className="font-bold">Note:</span> Disabling a module hides it from the sidebar for ALL users immediately. Data remains intact.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* FINANCE TAB */}
+                {activeTab === 'FINANCE' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Calculator className="w-5 h-5 text-indigo-500" /> Tax & Pricing
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Default Tax Logic</label>
+                                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                                        <button onClick={() => setTaxMode('EXCLUSIVE')} className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            Exclusive (+ Tax)
+                                        </button>
+                                        <button onClick={() => setTaxMode('INCLUSIVE')} className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            Inclusive (Inc. Tax)
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-2">New products will use this default unless specified otherwise.</p>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">GSTIN / VAT Number</label>
+                                        <input type="text" value={gstin} onChange={e => setGstin(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 29ABCDE1234F1Z5" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">PAN Number</label>
+                                        <input type="text" value={pan} onChange={e => setPan(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. ABCDE1234F" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Store className="w-5 h-5 text-indigo-500" /> Banking Details (For Invoices)
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Bank Name</label>
+                                    <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. HDFC Bank" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Account Number / IBAN</label>
+                                    <input type="text" value={accNo} onChange={e => setAccNo(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 50100..." />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* SECURITY TAB */}
+                {activeTab === 'SECURITY' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-indigo-500" /> Role Based Access
+                            </h3>
+                            <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-900/50">
+                                        <tr>
+                                            <th className="px-6 py-4">Module / View</th>
+                                            <th className="px-6 py-4 text-center text-emerald-600">Owner <span className="block text-[9px] text-slate-400">Full Access</span></th>
+                                            <th className="px-6 py-4 text-center">Manager</th>
+                                            <th className="px-6 py-4 text-center">Staff</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                        {PERMISSION_VIEWS.map(view => (
+                                            <tr key={view.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30">
+                                                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{view.label}</td>
+                                                <td className="px-6 py-4 text-center"><CheckToggle checked={true} disabled /></td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <CheckToggle checked={permissions['Manager'].includes(view.id)} onChange={() => handlePermissionToggle('Manager', view.id)} />
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <CheckToggle checked={permissions['Staff'].includes(view.id)} onChange={() => handlePermissionToggle('Staff', view.id)} />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Lock className="w-5 h-5 text-indigo-500" /> Data Security & Migrations
+                            </h3>
+                            <SecurityMigrationManager />
+                        </div>
+                    </div>
+                )}
+
+            </div>
+        </div>
+    );
+};
+
+// --- Container Component ---
+
 const SettingsManager: React.FC = () => {
     const dispatch = useDispatch();
     const settings = useSelector((state: RootState) => state.settings);
@@ -555,7 +583,7 @@ const SettingsManager: React.FC = () => {
 
     const activeTenant = tenantsList.find(t => t.id === tenantId);
 
-    const handleSave = (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark' }) => {
+    const handleSave = (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => {
         dispatch(updateSettings({
             appName: updatedSettings.appName,
             logoUrl: updatedSettings.logoUrl,
@@ -565,14 +593,45 @@ const SettingsManager: React.FC = () => {
             rolePermissions: updatedSettings.rolePermissions
         }));
 
-        // Update Tenant Theme & Primary Color
+        // Update Tenant Details (Branding, Tax, Banking)
         if (tenantId) {
             const currentTenant = tenantsList.find(t => t.id === tenantId);
             if (currentTenant) {
                 dispatch(updateTenantDetails({
                     ...currentTenant,
+                    name: updatedSettings.appName,
+                    loginLogoUrl: updatedSettings.logoUrl,
+                    primaryColor: updatedSettings.primaryColor,
                     theme: updatedSettings.tenantTheme,
-                    primaryColor: updatedSettings.primaryColor
+                    // Modules
+                    modules: Object.entries(updatedSettings.enabledModules)
+                        .filter(([_, enabled]) => enabled)
+                        .map(([key]) => key.toUpperCase() as any),
+
+                    // Tax & Banking
+                    taxDetails: {
+                        ...currentTenant.taxDetails,
+                        gstin: updatedSettings.gstin || '',
+                        pan: updatedSettings.pan || '',
+                        taxSystem: updatedSettings.gstin ? 'GST' : 'NONE',
+                        isGstEnabled: !!updatedSettings.gstin
+                    },
+                    bankingDetails: {
+                        ...currentTenant.bankingDetails,
+                        bankName: updatedSettings.bankName || '',
+                        accountNumber: updatedSettings.accNo || '',
+                        // Preserve others
+                        accountHolderName: currentTenant.bankingDetails?.accountHolderName || updatedSettings.appName,
+                        ifsc: currentTenant.bankingDetails?.ifsc || ''
+                    },
+                    systemConfig: {
+                        ...currentTenant.systemConfig,
+                        pricingMode: updatedSettings.defaultTaxMode === 'EXCLUSIVE' ? 'EXCLUSIVE' : 'INCLUSIVE',
+                        isPosEnabled: updatedSettings.enabledModules['pos'],
+                        isInventoryEnabled: updatedSettings.enabledModules['inventory'],
+                        isLoyaltyEnabled: true,
+                        isMultiBranch: true
+                    }
                 }));
             }
         }
@@ -611,9 +670,8 @@ const SettingsManager: React.FC = () => {
         );
     }
 
-    // Key includes settings version (derived from settings object) and theme/tenant props
-    // to ensure form resets when external data changes
-    const formKey = `${tenantId} -${currentTheme} -${JSON.stringify(settings)} `;
+    // Key includes settings version and theme/tenant props to ensure form resets when external data changes
+    const formKey = `${tenantId}-${currentTheme}-${JSON.stringify(settings)}`;
 
     return (
         <SettingsForm
@@ -628,12 +686,5 @@ const SettingsManager: React.FC = () => {
         />
     );
 };
-
-const CheckToggle = ({ checked, onChange, disabled = false }: { checked: boolean, onChange?: () => void, disabled?: boolean }) => (
-    <label className={`relative inline - flex items - center cursor - pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''} `}>
-        <input type="checkbox" className="sr-only peer" checked={checked} onChange={onChange} disabled={disabled} />
-        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-    </label>
-);
 
 export default SettingsManager;

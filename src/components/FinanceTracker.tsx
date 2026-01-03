@@ -39,15 +39,13 @@ const FinanceTracker: React.FC = () => {
     });
 
     // Filter Data
-    const sectorTx = transactions.filter(t =>
-        t.sector === currentSector && (currentBranch === 'All' || t.branchId === currentBranch)
-    );
+    const sectorTx = transactions.filter(t => t.sector === currentSector);
 
     const sectorCheques = cheques.filter(c => c.sector === currentSector);
 
     // P&L Calculations
     const totalSales = salesHistory
-        .filter(s => s.sector === currentSector && (currentBranch === 'All' || s.branchId === currentBranch))
+        .filter(s => s.sector === currentSector)
         .reduce((acc, s) => acc + s.total, 0);
 
     const totalExpenses = sectorTx
@@ -56,7 +54,7 @@ const FinanceTracker: React.FC = () => {
 
     // Calculate Accrued Labor Cost (Liability)
     const sectorLaborCost = employees
-        .filter(e => e.sector === currentSector && (currentBranch === 'All' || e.branchId === currentBranch))
+        .filter(e => e.sector === currentSector)
         .reduce((acc, emp) => {
             const empAtt = attendance.filter(a => a.employeeId === emp.id && a.status === 'PRESENT');
             const days = empAtt.length;
@@ -91,7 +89,7 @@ const FinanceTracker: React.FC = () => {
             date: new Date().toISOString(),
             description: newExpense.description,
             sector: currentSector,
-            branchId: currentBranch === 'All' ? dbBranches.find(b => b.sector === currentSector)?.id || 'Main' : currentBranch
+            branchId: currentBranch === 'All' ? (dbBranches.find(b => b.sector === currentSector)?.id || 'Main') : currentBranch
         }));
         setShowExpenseModal(false);
         setNewExpense({ category: '', amount: '', description: '' });

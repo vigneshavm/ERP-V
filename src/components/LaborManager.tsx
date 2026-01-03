@@ -48,9 +48,7 @@ export const LaborManager = () => {
   const currentMonthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   // Filter Employees
-  const sectorEmps = employees.filter(e =>
-    e.sector === currentSector && (currentBranch === 'All' || e.branchId === currentBranch)
-  );
+  const sectorEmps = employees.filter(e => e.sector === currentSector);
 
   // Default selection
   if (!selectedLaborerId && sectorEmps.length > 0) {

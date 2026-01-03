@@ -71,16 +71,6 @@ export const useSupabaseData = () => {
                         }
                     }
 
-                    // If isolating and found, show only that tenant. Otherwise show all (common mode).
-                    const finalTenants = isolatedTenantId
-                        ? allTenants.filter(t => t.id === isolatedTenantId)
-                        : allTenants;
-
-                    dispatch(setTenants(finalTenants));
-
-                    // Cache Tenants (Optional, but good for offline login)
-                    // SyncManager.cacheTenants(finalTenants); 
-
                     // Fetch Branches (Filter if isolated)
                     let bQuery = supabase.from('branches').select('*');
                     if (isolatedTenantId) {
@@ -88,20 +78,44 @@ export const useSupabaseData = () => {
                     }
                     const { data: branchData, error: bErr } = await bQuery;
                     if (bErr) throw bErr;
-                    if (branchData) {
-                        dispatch(setBranches(branchData.map((b: any) => {
-                            const tenant = allTenants.find(t => t.id === b.tenant_id);
-                            return {
-                                id: b.id,
-                                tenantId: b.tenant_id,
-                                name: b.name,
-                                city: b.city,
-                                address: b.address,
-                                sector: tenant?.sector || 'General',
-                                updatedAt: b.updated_at || b.updatedAt
-                            };
-                        })));
-                    }
+
+                    const mappedBranches = branchData ? branchData.map((b: any) => {
+                        const t = allTenants.find(ten => ten.id === b.tenant_id);
+                        return {
+                            id: b.id,
+                            tenantId: b.tenant_id,
+                            name: b.name,
+                            city: b.city,
+                            address: b.address,
+                            sector: t?.sector || 'General',
+                            updatedAt: b.updated_at || b.updatedAt
+                        };
+                    }) : [];
+
+                    // --- RECONCILIATION LOGIC ---
+                    // Sync temporary BR- IDs in tenants locations with actual branch UUIDs
+                    const reconciledTenants = allTenants.map(t => {
+                        const tenantBranches = branchData?.filter((b: any) => b.tenant_id === t.id) || [];
+                        const updatedLocations = (t.locations || []).map((loc: any) => ({
+                            ...loc,
+                            branches: (loc.branches || []).map((b: any) => {
+                                if (b.id && b.id.toString().startsWith('BR-')) {
+                                    const realBranch = tenantBranches.find((rb: any) => rb.name === b.name);
+                                    if (realBranch) return { ...b, id: realBranch.id };
+                                }
+                                return b;
+                            })
+                        }));
+                        return { ...t, locations: updatedLocations };
+                    });
+
+                    // If isolating and found, show only that tenant. Otherwise show all (common mode).
+                    const finalTenants = isolatedTenantId
+                        ? reconciledTenants.filter(t => t.id === isolatedTenantId)
+                        : reconciledTenants;
+
+                    dispatch(setTenants(finalTenants));
+                    dispatch(setBranches(mappedBranches));
 
                     // --- Fetch Employees (Critical for Login) ---
                     let eQuery = supabase.from('employees').select('*');
@@ -112,22 +126,42 @@ export const useSupabaseData = () => {
                     if (empErr) throw empErr;
 
                     if (empData) {
-                        const mappedEmployees = empData.map((e: any) => ({
-                            id: e.id,
-                            name: e.name,
-                            role: e.role,
-                            systemRole: e.system_role,
-                            pin: e.pin,
-                            dailyRate: e.daily_rate,
-                            sector: e.sector,
-                            branchId: e.branch_id,
-                            tenantId: e.tenant_id,
-                            phoneNumber: e.phone_number
-                        })) as Employee[];
+                        const mappedEmployees = empData.map((e: any) => {
+                            let bId = e.branch_id;
+                            // Repair branchId if it holds a temporary BR- ID
+                            if (bId && bId.toString().startsWith('BR-')) {
+                                const tenant = allTenants.find(t => t.id === e.tenant_id);
+                                const tempBranchEntry = tenant?.locations?.flatMap((l: any) => l.branches || []).find((b: any) => b.id === bId);
+                                if (tempBranchEntry) {
+                                    const realBranch = branchData?.find((rb: any) => rb.tenant_id === e.tenant_id && rb.name === tempBranchEntry.name);
+                                    if (realBranch) bId = realBranch.id;
+                                }
+                            }
+
+                            return {
+                                id: e.id,
+                                name: e.name,
+                                role: e.role,
+                                systemRole: e.system_role,
+                                pin: e.pin,
+                                dailyRate: e.daily_rate,
+                                sector: e.sector,
+                                branchId: bId,
+                                tenantId: e.tenant_id,
+                                phoneNumber: e.phone_number
+                            };
+                        }) as Employee[];
 
                         dispatch(setEmployees(mappedEmployees));
-                        // Optional: Cache employees
-                        // SyncManager.cacheEmployees(mappedEmployees);
+
+                        // Auto-Repair current session user branchId if it's lagging with temporary ID
+                        if (user && user.id) {
+                            const currentUserInList = mappedEmployees.find(me => me.id === user.id);
+                            if (currentUserInList && currentUserInList.branchId !== user.branchId) {
+                                console.log(`[Repair] Updating session branchId for ${user.name}: ${user.branchId} -> ${currentUserInList.branchId}`);
+                                dispatch(setUser(currentUserInList));
+                            }
+                        }
                     }
                 }
             } catch (error) {
@@ -156,27 +190,9 @@ export const useSupabaseData = () => {
                     SyncManager.syncOfflineSales().catch(err => console.error('Background sync failed:', err));
                 }
 
-                // ... branch filtering logic
-                let applyBranchFilter = false;
-                if (user.branchId && user.branchId !== 'All') {
-                    // Check if tenant has branches loaded
-                    const tenantHasBranches = branches.some(b => b.tenantId === tId);
-
-                    // If we have loaded tenants (system initialized) and tenant has branches, enforce filter.
-                    // If tenant has NO branches, we relax the filter.
-                    if (tenants.length > 0 && !tenantHasBranches) {
-                        console.warn(`User ${user.name} has branchId ${user.branchId} but tenant has 0 branches. Ignoring branch filter.`);
-                        applyBranchFilter = false;
-                    } else {
-                        applyBranchFilter = true;
-                    }
-                }
-
                 // Products
                 let pQuery = supabase.from('products').select('*');
                 if (tId) pQuery = pQuery.eq('tenant_id', tId);
-                // Conditional Branch Filter
-                if (applyBranchFilter && user.branchId) pQuery = pQuery.eq('branch_id', user.branchId);
 
                 const { data: productsData, error: prodError } = await pQuery;
                 if (prodError && !navigator.onLine) {
@@ -188,7 +204,9 @@ export const useSupabaseData = () => {
                         sku: p.sku,
                         name: p.name,
                         category: p.category,
+                        subCategory: p.sub_category || p.subCategory,
                         price: p.price,
+                        mrp: p.mrp,
                         cost: p.cost,
                         stock: p.stock,
                         sector: p.sector,
@@ -202,7 +220,14 @@ export const useSupabaseData = () => {
                         unit: p.unit,
                         tenantId: p.tenant_id,
                         lastRestocked: p.last_restocked,
-                        expiryDate: p.expiry_date
+                        expiryDate: p.expiry_date,
+                        image: p.image,
+                        description: p.description,
+                        size: p.size,
+                        color: p.color,
+                        material: p.material,
+                        location: p.location,
+                        discount: p.discount || 0
                     })) as Product[];
                     dispatch(setProducts(mappedProducts));
                     SyncManager.cacheProducts(mappedProducts);

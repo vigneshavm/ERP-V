@@ -279,20 +279,12 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.role = action.payload.systemRole;
       state.currentSector = action.payload.sector;
-
-      // Strict Branch Locking Logic
-      if (action.payload.systemRole === 'Owner') {
-        // Owners default to their home branch but CAN switch to 'All' or others
-        // For convenience, let's default to 'All' if they are an Owner to give the "Super View"
-        state.currentBranch = 'All';
-      } else {
-        // Staff/Managers are STRICTLY locked to their assigned branch
-        state.currentBranch = action.payload.branchId;
-      }
+      state.currentBranch = 'All';
     },
     logout: (state) => {
       state.user = null;
       state.role = 'Staff';
+      state.currentBranch = 'All';
     }
   }
 });
@@ -306,8 +298,8 @@ const initialSettingsState: SettingsState = {
   primaryColor: '#4f46e5',
   enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
   rolePermissions: {
-    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
-    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
+    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
+    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
     'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
   },
   defaultTaxMode: 'EXCLUSIVE',

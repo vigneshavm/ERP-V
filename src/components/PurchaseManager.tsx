@@ -1,9 +1,10 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { parseInvoiceWithGemini } from '../services/geminiService';
 import { useConfig } from './ConfigContext';
 import { useBranchResolver } from '../hooks/useBranchResolver';
-import { processPurchaseApproval, RootState, AppDispatch, addOrder, addStockBulk, addTransaction } from '../store';
+import { fetchVendors, processPurchaseApproval, RootState, AppDispatch, addOrder, addStockBulk, addTransaction, recordVendorTransaction } from '../store';
+
 import { Upload, FileText, Check, Loader2, AlertCircle, X, Eye, Lock, Printer } from 'lucide-react';
 import { ScannedInvoice, PurchaseOrder, FinalizedPurchaseItem } from '../types/purchase';
 import { Branch, TransactionType } from '../types/common';
@@ -16,6 +17,7 @@ const PurchaseManager = () => {
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { tenantId } = useConfig();
     const { getBranchName } = useBranchResolver();
+    const { vendors } = useSelector((state: RootState) => state.vendor);
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,9 +27,12 @@ const PurchaseManager = () => {
     const [viewOrder, setViewOrder] = useState<PurchaseOrder | null>(null);
 
     // Filter orders by current sector and branch (if specific branch selected)
-    const sectorOrders = orders.filter(o =>
-        o.sector === currentSector && (currentBranch === 'All' || o.branchId === currentBranch)
-    );
+    const sectorOrders = orders.filter(o => o.sector === currentSector);
+
+    useEffect(() => {
+        dispatch(fetchVendors());
+    }, [dispatch]);
+
 
     const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -50,7 +55,7 @@ const PurchaseManager = () => {
         }
     };
 
-    const handleCommitInventory = (items: FinalizedPurchaseItem[]) => {
+    const handleCommitInventory = (items: FinalizedPurchaseItem[], vendorId: string | null) => {
         // 1. Create Purchase Order Record
         // Staff creates PENDING orders, Owner creates APPROVED orders instantly
         const isOwner = role === 'Owner';
@@ -58,7 +63,8 @@ const PurchaseManager = () => {
 
         const newOrder = {
             id: Math.random().toString(36).substr(2, 9),
-            vendor: scannedData?.vendor || "Unknown Vendor",
+            vendor: vendors.find(v => v.id === vendorId)?.name || scannedData?.vendor || "Unknown Vendor",
+            vendorId: vendorId || undefined,
             date: scannedData?.date || new Date().toISOString(),
             items: items.map(i => ({ name: i.name, qty: i.qty, cost: i.cost, sku: i.sku, productType: i.productType })), // Simplified for PO record
             total: orderTotal,
@@ -95,6 +101,17 @@ const PurchaseManager = () => {
                 sector: currentSector,
                 branchId: targetBranch
             }));
+
+            // 4. Record Vendor Transaction
+            if (vendorId) {
+                dispatch(recordVendorTransaction(
+                    vendorId,
+                    'PURCHASE',
+                    orderTotal,
+                    `Purchase Bill #${newOrder.id}`,
+                    newOrder.id
+                ));
+            }
         } else {
             alert("Purchase Order created with PENDING status. An Owner must approve it to update inventory.");
         }
@@ -156,6 +173,7 @@ const PurchaseManager = () => {
                     file={uploadedFile}
                     sector={currentSector}
                     branch={targetBranch}
+                    vendors={vendors}
                     onSave={handleCommitInventory}
                     onCancel={() => { setScannedData(null); setUploadedFile(null); }}
                 />

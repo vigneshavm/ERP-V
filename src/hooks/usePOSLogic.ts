@@ -117,25 +117,22 @@ export const usePOSLogic = () => {
 
     // --- Category Management ---
     const categories = useMemo(() => {
-        const branchProds = products.filter(p => currentBranch === 'All' || p.branchId === currentBranch);
-        const cats = new Set(branchProds.map(p => p.category));
+        const cats = new Set(products.map(p => p.category));
         return ['All', ...Array.from(cats)].filter(Boolean);
-    }, [products, currentBranch]);
+    }, [products]);
 
     const getSubcategories = useCallback((category: string) => {
-        const branchProds = products.filter(p => currentBranch === 'All' || p.branchId === currentBranch);
         const filtered = category === 'All'
-            ? branchProds
-            : branchProds.filter(p => p.category === category);
+            ? products
+            : products.filter(p => p.category === category);
         const subCats = new Set(filtered.map(p => p.productType || p.subCategory));
         return Array.from(subCats).filter(Boolean) as string[];
-    }, [products, currentBranch]);
+    }, [products]);
 
     const allProductTypes = useMemo(() => {
-        const branchProds = products.filter(p => currentBranch === 'All' || p.branchId === currentBranch);
-        const types = new Set(branchProds.map(p => p.productType || p.subCategory));
+        const types = new Set(products.map(p => p.productType || p.subCategory));
         return Array.from(types).filter(Boolean).sort();
-    }, [products, currentBranch]);
+    }, [products]);
 
     // --- Computed Branch Logic ---
     const allBranches = useMemo(() => {
@@ -166,10 +163,6 @@ export const usePOSLogic = () => {
 
     // --- Checkout Logic ---
     const handleCheckout = useCallback(async () => {
-        if (hasMultipleBranches && isBranchAll) {
-            alert("Please select a specific branch to checkout.");
-            return;
-        }
 
         if (cart.length === 0 || isProcessing) return;
 
@@ -233,7 +226,8 @@ export const usePOSLogic = () => {
 
         const tenantName = currentTenant ? currentTenant.name : 'Enterprise Mgr';
         const branchName = getBranchName(currentBranch);
-        printSaleReceipt(sale, tenantName, branchName);
+        const branchAddress = branches.find(b => b.id === currentBranch)?.address || currentTenant?.companyDetails?.addressLine1 || 'No Address Provided';
+        printSaleReceipt(sale, tenantName, branchName, branchAddress);
 
         setIsProcessing(false);
         setIsPreOrder(false);

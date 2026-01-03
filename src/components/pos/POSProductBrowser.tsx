@@ -29,28 +29,25 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
 
     // Get unique categories
     const categories = useMemo(() => {
-        const branchProds = products.filter(p => currentBranch === 'All' || p.branchId === currentBranch);
-        const cats = new Set(branchProds.map(p => p.category));
+        const cats = new Set(products.map(p => p.category));
         return ['All', ...Array.from(cats)].filter(Boolean);
-    }, [products, currentBranch]);
+    }, [products]);
 
     const subcategories = useMemo(() => {
         if (selectedCategory === 'All') return [];
-        const branchProds = products.filter(p => currentBranch === 'All' || p.branchId === currentBranch);
-        const filteredByCat = branchProds.filter(p => p.category === selectedCategory);
+        const filteredByCat = products.filter(p => p.category === selectedCategory);
         const subcats = new Set(filteredByCat.map(p => p.productType || p.subCategory));
         return ['All', ...Array.from(subcats)].filter(Boolean) as string[];
-    }, [products, currentBranch, selectedCategory]);
+    }, [products, selectedCategory]);
 
     // Initial Filter (Branch/Category)
     const baseFilteredProducts = useMemo(() => {
         return products.filter(p => {
-            const branchMatch = currentBranch === 'All' || p.branchId === currentBranch;
             const catMatch = selectedCategory === 'All' || p.category === selectedCategory;
             const subcatMatch = selectedSubcategory === 'All' || (p.productType === selectedSubcategory || p.subCategory === selectedSubcategory);
-            return branchMatch && catMatch && subcatMatch;
+            return catMatch && subcatMatch;
         });
-    }, [products, currentBranch, selectedCategory, selectedSubcategory]);
+    }, [products, selectedCategory, selectedSubcategory]);
 
     // Fuzzy Search Application (Using debounced search)
     const filteredProducts = useFuzzySearch<Product>(baseFilteredProducts, ['name', 'sku', 'barcode'], debouncedSearch);
@@ -73,10 +70,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
             if (!query) return;
 
             // Search in full product list for exact match, scoped to sector/branch
-            const match = products.find(p =>
-                (p.sku === query || p.barcode === query) &&
-                (currentBranch === 'All' || p.branchId === currentBranch)
-            );
+            const match = products.find(p => p.sku === query || p.barcode === query);
 
             if (match) {
                 e.preventDefault(); // Prevent default enter behavior

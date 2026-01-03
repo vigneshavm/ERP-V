@@ -39,7 +39,6 @@ const AgedStockManager: React.FC = () => {
         return products.filter(p => {
             // Basic Sector/Branch Filter
             if (p.sector !== currentSector) return false;
-            if (currentBranch !== 'All' && p.branchId !== currentBranch) return false;
 
             if (viewMode === 'AGED') {
                 if (!p.lastRestocked) return false;
