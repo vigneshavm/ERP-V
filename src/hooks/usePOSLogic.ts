@@ -56,6 +56,7 @@ export const usePOSLogic = () => {
     const [isPreOrder, setIsPreOrder] = useState(false);
     const [isHeldBillsOpen, setIsHeldBillsOpen] = useState(false);
     const [isCategoryBrowserOpen, setIsCategoryBrowserOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const posContainerRef = useRef<HTMLDivElement>(null);
     const { getBranchName } = useBranchResolver();
@@ -341,6 +342,8 @@ export const usePOSLogic = () => {
         setIsHeldBillsOpen,
         isCategoryBrowserOpen,
         setIsCategoryBrowserOpen,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
         handleCheckout,
         switchSession,
         addSession: () => dispatch(addSession()),

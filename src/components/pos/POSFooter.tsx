@@ -49,7 +49,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 sm:p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
             <h3 className="text-indigo-500 dark:text-indigo-400 font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
                 <CreditCard className="w-3.5 h-4 text-indigo-400" /> Settlement
             </h3>

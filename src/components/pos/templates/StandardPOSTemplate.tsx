@@ -10,6 +10,8 @@ import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
 import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
+import { POSMobileMenu } from '../POSMobileMenu';
+import { Menu, CreditCard } from 'lucide-react';
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -67,10 +69,13 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         discardHeldBill,
         isCategoryBrowserOpen,
         setIsCategoryBrowserOpen,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
         categories,
         getSubcategories,
         allProductTypes,
-        posContainerRef
+        posContainerRef,
+        onClearCart
     } = logic;
 
     return (
@@ -94,6 +99,12 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 categories={categories}
                 getSubcategories={getSubcategories}
                 onAddToCart={onAddToCart}
+            />
+
+            <POSMobileMenu
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
+                logic={logic}
             />
 
             {/* Header with View Toggle */}
@@ -274,6 +285,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         onClick={() => setMobileTab('MAIN')}
                         className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'MAIN' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}
                     >
+                        <LayoutGrid className="w-6 h-6" />
                         <span className="text-[10px] font-medium">{viewMode === 'SCANNER' ? 'Scanner' : 'Products'}</span>
                     </button>
                     <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
@@ -289,7 +301,30 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 </span>
                             )}
                         </div>
-                        <span className="text-[10px] font-medium">Cart: ₹{cartTotal.toFixed(2)}</span>
+                        <span className="text-[10px] font-medium">Cart</span>
+                    </button>
+                    <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                        onClick={() => {
+                            if (cart.length === 0) {
+                                setMobileTab('MAIN');
+                                return;
+                            }
+                            setMobileTab('CART');
+                            // This would ideally scroll to footer or open settlement drawer
+                        }}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-emerald-600 dark:text-emerald-400`}
+                    >
+                        <CreditCard className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Settlement</span>
+                    </button>
+                    <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-500 dark:text-slate-400`}
+                    >
+                        <Menu className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Menu</span>
                     </button>
                 </div>
             </div>

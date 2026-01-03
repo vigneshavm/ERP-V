@@ -39,7 +39,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
     return (
         <div className="flex gap-4 mb-2 shrink-0 items-end">
             {/* Session Tabs */}
-            <div className="flex gap-2 flex-1">
+            <div className="hidden md:flex gap-2 flex-1">
                 {sessions.map((session, index) => {
                     const totalQty = session.cart.reduce((acc, item) => acc + item.qty, 0);
                     return (
@@ -96,7 +96,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
             {/* Counter Selector */}
             {availableCounters.length > 0 && (
-                <div className="flex flex-col gap-1">
+                <div className="hidden lg:flex flex-col gap-1">
                     <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Terminal</label>
                     <select
                         value={activeCounterId}
@@ -124,7 +124,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
                 <button
                     onClick={onToggleFullScreen}
-                    className="p-2.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all"
+                    className="hidden sm:block p-2.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all"
                     title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
                 >
                     {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
