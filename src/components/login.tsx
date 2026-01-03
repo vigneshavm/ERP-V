@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, setUser } from '../store';
-import { Store, Lock, ArrowRight, AlertCircle, UserCircle } from 'lucide-react';
+import { Store, Lock, ArrowRight, AlertCircle, UserCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 
 import { Sector } from '../types/common';
@@ -43,6 +43,8 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     const [error, setError] = useState('');
     const [logoError, setLogoError] = useState(false);
     const [bgError, setBgError] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -60,9 +62,10 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     }, [employees, allowedSector, tenantId]);
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setIsLoading(true);
 
         // Helper to normalize phone numbers (remove all non-digits)
         const normalizePhone = (phone: string | undefined): string => {
@@ -73,10 +76,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
         const cleanIdentity = identity.trim();
         const cleanIdentityPhone = normalizePhone(cleanIdentity);
 
-
-
-
-        const checkUser = async () => {
+        try {
             const user = employees.find(e =>
                 e.tenantId === tenantId &&
                 (
@@ -88,13 +88,12 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
             if (!user) {
                 console.warn(`[Login Failed] No user found for identity: "${cleanIdentity}" in tenant: ${tenantId}`);
-                setError("Please select a valid user.");
+                setError("No user found with these details.");
+                setIsLoading(false);
                 return;
             }
 
             // --- Database Synchronization Layer ---
-            // Fetch the absolutely latest record from Supabase to ensure we aren't using stale Redux state
-            // This satisfies the requirement to "check their record in the employee table" during login.
             let freshUser = { ...user };
             if (supabase) {
                 try {
@@ -106,12 +105,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
                     if (dbUser && !dbError) {
                         freshUser = { ...freshUser, ...dbUser };
-                        // Ensure we map snake_case from DB to camelCase if needed, 
-                        // but usually our Supabase client types might match or we rely on the `pin` field which is `pin`.
-                        // Note: Our Redux logic maps snake_case keys usually? 
-                        // If DB returns `daily_rate`, Redux might expect `dailyRate`. 
-                        // But for `pin`, it's just `pin`. 
-                        // We primarily care about the PIN here.
                         freshUser.pin = dbUser.pin;
                     }
                 } catch (err) {
@@ -122,28 +115,20 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
             let loginSuccess = false;
             let needsMigration = false;
 
-            // 1. Try secure comparison (Primary) using FRESH PIN
-            // comparePassword handles Encrypted, Hashed, AND Plain text (fallback)
             const isMatch = await comparePassword(pin, freshUser.pin);
 
             if (isMatch) {
                 loginSuccess = true;
-                // Check if migration is needed based on FRESH PIN
-                // This covers the case where comparePassword matched a plain text PIN
                 if (!isSecuredIdeally(freshUser.pin)) {
                     needsMigration = true;
                 }
             }
 
             if (loginSuccess) {
-                // --- Auto-Migration Check & Action ---
-                // We check if the stored PIN matches the *current* ideal format (Hash or Encrypt).
-                // If not, we migrate it AND force a re-login to verify the new credential works.
                 if (needsMigration) {
-                    console.log(`[Migration] Migrating user ${user.id} to secure storage (Configured Mode)...`);
+                    console.log(`[Migration] Migrating user ${user.id} to secure storage...`);
                     try {
                         const newSecuredPin = await securePassword(pin);
-                        // Update Supabase
                         if (supabase) {
                             const { error: updateError } = await supabase
                                 .from('employees')
@@ -152,37 +137,30 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
                             if (updateError) {
                                 console.error("Failed to migrate user PIN:", updateError);
-                                // If migration failed, we probably still want to let them login or show error?
-                                // Let's show error to be safe.
                                 setError("Security update failed. Please try again.");
+                                setIsLoading(false);
                                 return;
                             } else {
-                                console.log("User PIN migrated successfully to secure storage.");
-                                // FORCE RE-LOGIN
-                                setError("Security update applied successfully. Please log in again with your PIN to verify.");
+                                console.log("User PIN migrated successfully.");
+                                setError("Security update applied. Please log in again.");
                                 setPin('');
-                                return; // Stop login process
+                                setIsLoading(false);
+                                return;
                             }
                         }
                     } catch (migErr) {
                         console.error("Migration exception:", migErr);
-                        setError("Security update error. Please contact admin.");
+                        setError("Security update error. Contact admin.");
+                        setIsLoading(false);
                         return;
                     }
                 }
 
-                // --- Standard Login Flow (Only if no migration needed or it was already secure) ---
                 const sessionUser = { ...user };
-
-                // --- Auto-Heal Stale Branch IDs ---
                 if (sessionUser.branchId) {
                     const allTenantBranches = (tenant?.locations || []).flatMap(loc => loc.branches || []);
                     const branchExists = allTenantBranches.some(b => b.id === sessionUser.branchId);
-
-                    if (!branchExists) {
-                        console.warn(`[Login] Detected stale branchId ${sessionUser.branchId} for user ${sessionUser.name}. Removing it from session.`);
-                        sessionUser.branchId = '';
-                    }
+                    if (!branchExists) sessionUser.branchId = '';
                 }
 
                 if (user.systemRole === 'Owner' && allowedSector) {
@@ -193,12 +171,15 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                 dispatch(setUser(sessionUser));
                 onLogin();
             } else {
-                setError("Invalid PIN.");
+                setError("Incorrect Credentials.");
                 setPin('');
+                setIsLoading(false);
             }
-        };
-
-        checkUser();
+        } catch (err) {
+            console.error("Login process error:", err);
+            setError("An unexpected error occurred.");
+            setIsLoading(false);
+        }
     };
 
 
@@ -264,13 +245,23 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                             <div className="relative group">
                                 <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={pin}
                                     onChange={(e) => setPin(e.target.value)}
                                     placeholder="Enter Secure PIN"
-                                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-600 font-mono tracking-widest text-base transition-all hover:bg-white/10"
+                                    className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-600 font-mono tracking-widest text-base transition-all hover:bg-white/10"
                                     autoFocus
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    autoComplete="current-password"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-3.5 text-slate-400 hover:text-indigo-400 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
                             </div>
                         </div>
 
@@ -282,9 +273,10 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
                         <button
                             type="submit"
-                            className="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50"
+                            disabled={isLoading}
+                            className={`w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
                         >
-                            Log In to Terminal <ArrowRight className="w-4 h-4" />
+                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Log In to Terminal <ArrowRight className="w-4 h-4" /></>}
                         </button>
                     </form>
 

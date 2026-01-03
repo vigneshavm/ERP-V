@@ -1,705 +1,116 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { updateTenantDetails, addTenant, toggleTenantStatus } from '../store/tenantSlice';
-import { ModuleType, Sector } from '../types/common';
-import { Tenant } from '../types/tenant';
-import { Check, Plus, Globe, LogIn, Settings, Building2, Pencil, X, Loader2, ShieldCheck } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import React from 'react';
+import { Building2, Pencil, Globe, Loader2, LogIn } from 'lucide-react';
 import { APP_CONFIG } from '../config';
-
-const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'ANALYTICS'];
-
-const CURRENCIES = [
-    { code: 'USD', symbol: '$', label: 'US Dollar ($)' },
-    { code: 'EUR', symbol: '€', label: 'Euro (€)' },
-    { code: 'GBP', symbol: '£', label: 'British Pound (£)' },
-    { code: 'INR', symbol: '₹', label: 'Indian Rupee (₹)' },
-    { code: 'JPY', symbol: '¥', label: 'Japanese Yen (¥)' },
-];
+import { supabase } from '../lib/supabase';
+import { toggleTenantStatus } from '../store/tenantSlice';
+import { useTenantForm } from '../hooks/useTenantForm';
+import { Tenant } from '../types/tenant';
+import { BusinessTab } from './tenant-manager/BusinessTab';
+import { CompanyTab } from './tenant-manager/CompanyTab';
+import { TaxTab } from './tenant-manager/TaxTab';
+import { BankingTab } from './tenant-manager/BankingTab';
+import { SystemTab } from './tenant-manager/SystemTab';
+import { GeographyTab } from './tenant-manager/GeographyTab';
+import { UserTab } from './tenant-manager/UserTab';
+import { BrandingTab } from './tenant-manager/BrandingTab';
+import { IntegrationsTab } from './tenant-manager/IntegrationsTab';
+import { useDispatch } from 'react-redux';
 
 interface TenantManagerProps {
     onLoginAs?: (tenant: Tenant) => void;
 }
 
-const mapDbTenantToTenant = (t: any): Tenant => ({
-    id: t.id,
-    name: t.name,
-    subdomain: t.subdomain,
-    modules: t.modules || [],
-    isActive: t.is_active ?? true,
-    region: t.region || { currency: 'INR', currencySymbol: '₹', dateFormat: 'DD/MM/YYYY' },
-    sector: t.sector,
-    theme: t.theme || 'light',
-    layout: t.layout || 'standard',
-    domain: t.domain,
-    primaryColor: t.primary_color,
-    locations: t.locations || [],
-    loginLogoUrl: t.login_logo_url,
-    loginBgUrl: t.login_bg_url,
-    updatedAt: t.updated_at || t.updatedAt
-});
-
 const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
-    const { tenants } = useSelector((state: RootState) => state.tenant);
-    const [activeSection, setActiveSection] = useState<'provision' | 'list'>('provision');
-    const [activeTab, setActiveTab] = useState<'business' | 'geography' | 'branding'>('business');
-    const [isSaving, setIsSaving] = useState(false);
+    const {
+        // State
+        activeSection, setActiveSection,
+        activeTab, setActiveTab,
+        isSaving,
+        newTenant, setNewTenant,
+        logoInput, setLogoInput,
+        editingTenant,
+        tempCity, setTempCity,
+        tempBranch, setTempBranch,
+        tenants,
 
-    const [newTenant, setNewTenant] = useState<{
-        name: string;
-        subdomain: string;
-        modules: ModuleType[];
-        currency: string;
-        dateFormat: string;
-        sector: Sector;
-        theme: 'light' | 'dark';
-        layout: 'standard' | 'compact';
-        domain: string;
-        loginLogoUrl: string;
-        loginBgUrl: string;
-        locations: { city: string; branches: { id: string; name: string; city: string; address: string; }[] }[];
-    }>({
-        name: '',
-        subdomain: '',
-        modules: [] as ModuleType[],
-        currency: 'USD',
-        dateFormat: 'MM/DD/YYYY',
-        sector: Sector.GENERAL,
-        theme: 'light',
-        layout: 'standard',
-        domain: '',
-        loginLogoUrl: '',
-        loginBgUrl: '',
-        locations: []
-    });
-
-    const [tempCity, setTempCity] = useState('');
-    const [tempBranch, setTempBranch] = useState({ cityIndex: -1, name: '', address: '' });
-    // New Tenant Form State
-    const [logoInput, setLogoInput] = useState('');
-    const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
-
-
-    const handleModuleToggle = (mod: ModuleType) => {
-        if (newTenant.modules.includes(mod)) {
-            setNewTenant({ ...newTenant, modules: newTenant.modules.filter(m => m !== mod) });
-        } else {
-            setNewTenant({ ...newTenant, modules: [...newTenant.modules, mod] });
-        }
-    };
-
-    const addCity = () => {
-        if (!tempCity.trim()) return;
-        if (newTenant.locations.find(l => l.city.toLowerCase() === tempCity.toLowerCase())) return;
-
-        setNewTenant(prev => ({
-            ...prev,
-            locations: [...prev.locations, {
-                city: tempCity,
-                branches: [{
-                    id: `temp-${Date.now()}`,
-                    name: tempCity,
-                    city: tempCity,
-                    address: 'Main Office'
-                }]
-            }]
-        }));
-        setTempCity('');
-    };
-
-    const removeCity = (index: number) => {
-        setNewTenant(prev => ({
-            ...prev,
-            locations: prev.locations.filter((_, i) => i !== index)
-        }));
-    };
-
-    const addBranch = (cityIndex: number) => {
-        if (!tempBranch.name || !tempBranch.address) return;
-
-        const updatedLocations = [...newTenant.locations];
-        const city = updatedLocations[cityIndex];
-
-        updatedLocations[cityIndex] = {
-            ...city,
-            branches: [
-                ...city.branches,
-                {
-                    id: `temp-${Date.now()}`,
-                    name: tempBranch.name,
-                    city: city.city,
-                    address: tempBranch.address
-                }
-            ]
-        };
-
-        setNewTenant(prev => ({ ...prev, locations: updatedLocations }));
-        setTempBranch({ cityIndex: -1, name: '', address: '' });
-    };
-
-    const removeBranch = (cityIndex: number, branchIndex: number) => {
-        const updatedLocations = [...newTenant.locations];
-        updatedLocations[cityIndex].branches = updatedLocations[cityIndex].branches.filter((_, i) => i !== branchIndex);
-        setNewTenant(prev => ({ ...prev, locations: updatedLocations }));
-    };
-
-    const handleStartEdit = (tenant: Tenant) => {
-        setEditingTenant(tenant);
-        setNewTenant({
-            name: tenant.name,
-            subdomain: tenant.subdomain || '',
-            modules: tenant.modules || [],
-            currency: tenant.region?.currency || 'USD',
-            dateFormat: tenant.region?.dateFormat || 'MM/DD/YYYY',
-            sector: tenant.sector,
-            theme: tenant.theme || 'light',
-            layout: tenant.layout || 'standard',
-            domain: tenant.domain || '',
-            loginLogoUrl: tenant.loginLogoUrl || '',
-            loginBgUrl: tenant.loginBgUrl || '',
-            locations: tenant.locations || []
-        });
-        setActiveSection('provision');
-        setActiveTab('business');
-        setLogoInput(tenant.loginLogoUrl || '');
-    };
-
-    const handleCancelEdit = () => {
-        setEditingTenant(null);
-        setNewTenant({
-            name: '', subdomain: '', modules: [], currency: 'USD', dateFormat: 'MM/DD/YYYY',
-            sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '',
-            loginLogoUrl: '', loginBgUrl: '', locations: []
-        });
-        setLogoInput('');
-        setActiveSection('list');
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newTenant.name || !newTenant.subdomain) return;
-
-        const currencyObj = CURRENCIES.find(c => c.code === newTenant.currency) || CURRENCIES[0];
-
-        // Pass through locations directly (no auto-generation of fallback branches)
-        const normalizedLocations = newTenant.locations;
-
-        const tenantData: Partial<Tenant> = {
-            name: newTenant.name,
-            subdomain: newTenant.subdomain,
-            modules: newTenant.modules,
-            region: {
-                currency: newTenant.currency,
-                currencySymbol: currencyObj.symbol,
-                dateFormat: newTenant.dateFormat
-            },
-            sector: newTenant.sector,
-            theme: newTenant.theme,
-            layout: newTenant.layout,
-            domain: newTenant.domain || `${newTenant.subdomain}.app.com`,
-            locations: normalizedLocations,
-            primaryColor: '#4f46e5',
-            loginLogoUrl: logoInput,
-            loginBgUrl: newTenant.loginBgUrl
-        };
-
-        setIsSaving(true);
-
-        try {
-            if (APP_CONFIG.USE_SUPABASE && supabase) {
-                const dbData = {
-                    name: tenantData.name,
-                    subdomain: tenantData.subdomain,
-                    modules: tenantData.modules,
-                    region: tenantData.region,
-                    sector: tenantData.sector,
-                    theme: tenantData.theme,
-                    layout: tenantData.layout,
-                    domain: tenantData.domain,
-                    locations: tenantData.locations,
-                    primary_color: tenantData.primaryColor,
-                    login_logo_url: tenantData.loginLogoUrl,
-                    login_bg_url: tenantData.loginBgUrl,
-                    is_active: true
-                };
-
-                let data: any;
-                let error: any;
-
-                if (editingTenant) {
-                    const res = await supabase
-                        .from('tenants')
-                        .update(dbData)
-                        .eq('id', editingTenant.id)
-                        .select()
-                        .single();
-                    data = res.data;
-                    error = res.error;
-                } else {
-                    const res = await supabase
-                        .from('tenants')
-                        .insert([dbData])
-                        .select()
-                        .single();
-                    data = res.data;
-                    error = res.error;
-                }
-
-                if (error) throw error;
-                if (data) {
-                    // --- Branch Synchronization Logic ---
-                    const branchesToUpsert: any[] = [];
-                    // Flatten locations to get branches
-                    tenantData.locations?.forEach(loc => {
-                        loc.branches.forEach(b => {
-                            const branchPayload: any = {
-                                tenant_id: data.id,
-                                name: b.name,
-                                city: loc.city,
-                                address: b.address,
-                                updated_at: new Date().toISOString()
-                            };
-                            // Only include ID if it's a valid UUID (not temp)
-                            if (b.id && !b.id.startsWith('temp-') && !b.id.startsWith('BR-')) {
-                                branchPayload.id = b.id;
-                            }
-                            branchesToUpsert.push(branchPayload);
-                        });
-                    });
-
-                    if (branchesToUpsert.length > 0) {
-                        const { data: savedBranches, error: bError } = await supabase
-                            .from('branches')
-                            .upsert(branchesToUpsert, { onConflict: 'id' })
-                            .select();
-
-                        if (bError) {
-                            console.error("Failed to sync branches:", bError);
-                        } else if (savedBranches) {
-                            // Re-construct locations JSON with REAL IDs
-                            const updatedLocations = tenantData.locations?.map(loc => {
-                                const locBranches = savedBranches.filter((sb: any) => sb.city === loc.city);
-                                return {
-                                    ...loc,
-                                    branches: locBranches.map((sb: any) => ({
-                                        id: sb.id,
-                                        name: sb.name,
-                                        city: sb.city,
-                                        address: sb.address
-                                    }))
-                                };
-                            });
-
-                            // Update Tenant with validated locations JSON
-                            const { data: finalTenant } = await supabase
-                                .from('tenants')
-                                .update({ locations: updatedLocations })
-                                .eq('id', data.id)
-                                .select()
-                                .single();
-
-                            if (finalTenant) {
-                                dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(finalTenant)) : addTenant(mapDbTenantToTenant(finalTenant)));
-                            } else {
-                                dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
-                            }
-                        } else {
-                            dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
-                        }
-                    } else {
-                        dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
-                    }
-                }
-            } else {
-                // Non-Supabase Handling
-                if (editingTenant) {
-                    dispatch(updateTenantDetails({
-                        ...editingTenant,
-                        ...tenantData
-                    }));
-                } else {
-                    const newTenantObj: Tenant = {
-                        id: `TEN-${Date.now()}`,
-                        isActive: true,
-                        updatedAt: new Date().toISOString(),
-                        ...tenantData
-                    } as Tenant;
-                    dispatch(addTenant(newTenantObj));
-                }
-            }
-
-            setEditingTenant(null);
-            setNewTenant({
-                name: '', subdomain: '', modules: [], currency: 'USD', dateFormat: 'MM/DD/YYYY',
-                sector: Sector.GENERAL, theme: 'light', layout: 'standard', domain: '', locations: []
-            });
-            setActiveTab('business');
-            setActiveSection('list');
-            setLogoInput('');
-        } catch (error: any) {
-            console.error('Error saving tenant:', error);
-            alert(`Failed to save tenant: ${error.message}`);
-        } finally {
-            setIsSaving(false);
-        }
-    };
+        // Actions
+        handleModuleToggle,
+        addCity, removeCity,
+        addBranch, removeBranch,
+        handleStartEdit,
+        handleCancelEdit,
+        handleSubmit
+    } = useTenantForm();
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-800">Tenant Management</h1>
-                    <p className="text-slate-500 mt-1">Provision and manage client access.</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tenant Management</h1>
+                    <p className="text-slate-500 mt-1 text-sm font-medium">Provision and manage multi-tenant environments</p>
                 </div>
-
-                <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <div className="flex gap-3">
                     <button
                         onClick={() => setActiveSection('provision')}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'provision' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm ${activeSection === 'provision' ? 'bg-slate-900 text-white ring-2 ring-slate-900 ring-offset-2' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'}`}
                     >
-                        <Plus className="w-4 h-4" />
-                        Provision
+                        Provision New
                     </button>
                     <button
                         onClick={() => setActiveSection('list')}
-                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeSection === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm ${activeSection === 'list' ? 'bg-slate-900 text-white ring-2 ring-slate-900 ring-offset-2' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'}`}
                     >
-                        <Building2 className="w-4 h-4" />
                         Active Tenants
                     </button>
                 </div>
             </div>
 
-            <div className="w-full">
+            <div className={`space-y-6 ${activeSection === 'provision' ? 'max-w-5xl mx-auto' : ''}`}>
                 {activeSection === 'provision' && (
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 h-fit overflow-hidden max-w-4xl mx-auto animate-in slide-in-from-left-4 duration-300">
-                        <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                {editingTenant ? <Pencil className="w-5 h-5 text-blue-600" /> : <Plus className="w-5 h-5 text-blue-600" />}
-                                {editingTenant ? 'Edit Tenant Details' : 'Onboard New Client'}
-                            </h2>
-                            <div className="flex bg-white rounded-lg p-1 border border-slate-200">
-                                <button
-                                    onClick={() => setActiveTab('business')}
-                                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${activeTab === 'business' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
-                                >
-                                    Business
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('geography')}
-                                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${activeTab === 'geography' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
-                                >
-                                    Geography
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('branding')}
-                                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${activeTab === 'branding' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
-                                >
-                                    Branding
-                                </button>
+                    <>
+                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-6 z-10">
+                            <div className="flex overflow-x-auto no-scrollbar border-b border-slate-100">
+                                {(['business', 'contact', 'tax', 'banking', 'system', 'geography', 'user', 'branding', 'integrations'] as const).map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap flex items-center justify-center gap-2 border-b-2 ${activeTab === tab ? 'border-blue-600 text-blue-700 bg-blue-50/50' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                                    >
+                                        <span className="capitalize">{tab === 'user' ? 'Users' : tab}</span>
+                                        {activeTab === tab && <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                            {activeTab === 'business' && (
-                                <div className="space-y-5 animate-in slide-in-from-left-4 duration-300">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
-                                            <input
-                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                                value={newTenant.name}
-                                                onChange={e => setNewTenant({ ...newTenant, name: e.target.value })}
-                                                placeholder="e.g. Acme Corp"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Subdomain</label>
-                                            <div className="flex">
-                                                <input
-                                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                                    value={newTenant.subdomain}
-                                                    onChange={e => {
-                                                        const val = e.target.value;
-                                                        setNewTenant(prev => {
-                                                            let domain = prev.domain;
-                                                            if (val && !domain) {
-                                                                const exts = ['.com', '.io', '.net', '.biz', '.org', '.co'];
-                                                                domain = val + exts[Math.floor(Math.random() * exts.length)];
-                                                            }
-                                                            return { ...prev, subdomain: val, domain };
-                                                        });
-                                                    }}
-                                                    placeholder="acme"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Public Domain</label>
-                                            <input
-                                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                                value={newTenant.domain}
-                                                onChange={e => setNewTenant({ ...newTenant, domain: e.target.value })}
-                                                placeholder="e.g. acme.com"
-                                            />
-                                        </div>
-                                    </div>
+                        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-lg relative overflow-hidden min-h-[500px]">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-                                    <div className="pt-2 border-t border-slate-100">
-                                        <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                                            <Settings className="w-4 h-4 text-slate-400" />
-                                            Preference & Appearance
-                                        </h3>
-                                        <div className="space-y-3">
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <label className="block text-xs font-medium text-slate-700 mb-1">Sector</label>
-                                                    <select
-                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                                        value={newTenant.sector}
-                                                        onChange={e => setNewTenant({ ...newTenant, sector: e.target.value as Sector })}
-                                                    >
-                                                        {Object.values(Sector).map(s => <option key={s} value={s}>{s}</option>)}
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs font-medium text-slate-700 mb-1">Theme</label>
-                                                    <select
-                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                                        value={newTenant.theme}
-                                                        onChange={e => setNewTenant({ ...newTenant, theme: e.target.value as 'light' | 'dark' })}
-                                                    >
-                                                        <option value="light">Light</option>
-                                                        <option value="dark">Dark</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <label className="block text-xs font-medium text-slate-700 mb-1">Currency</label>
-                                                    <select
-                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                                        value={newTenant.currency}
-                                                        onChange={e => setNewTenant({ ...newTenant, currency: e.target.value })}
-                                                    >
-                                                        {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs font-medium text-slate-700 mb-1">Layout</label>
-                                                    <select
-                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                                        value={newTenant.layout}
-                                                        onChange={e => setNewTenant({ ...newTenant, layout: e.target.value as 'standard' | 'compact' })}
-                                                    >
-                                                        <option value="standard">Standard</option>
-                                                        <option value="compact">Compact</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div className="mb-6 pb-6 border-b border-slate-100">
+                                <h2 className="text-xl font-bold text-slate-800 capitalize">
+                                    {activeTab === 'user' ? 'Super Admin Provisioning' : `${activeTab} Configuration`}
+                                </h2>
+                                <p className="text-sm text-slate-400 mt-1">Configure the {activeTab} details for the new tenant environment.</p>
+                            </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Enable Modules</label>
-                                        <div className="space-y-2">
-                                            {AVAILABLE_MODULES.map(mod => (
-                                                <label key={mod} className="flex items-center space-x-3 cursor-pointer p-2 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-100 transition-all">
-                                                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newTenant.modules.includes(mod) ? 'bg-blue-600 border-blue-600' : 'border-slate-300 bg-white'}`}>
-                                                        {newTenant.modules.includes(mod) && <Check className="w-3 h-3 text-white" />}
-                                                    </div>
-                                                    <input
-                                                        type="checkbox"
-                                                        className="hidden"
-                                                        checked={newTenant.modules.includes(mod)}
-                                                        onChange={() => handleModuleToggle(mod)}
-                                                    />
-                                                    <span className="text-sm text-slate-700 font-medium">{mod}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            {activeTab === 'business' && <BusinessTab newTenant={newTenant} setNewTenant={setNewTenant} />}
+                            {activeTab === 'contact' && <CompanyTab newTenant={newTenant} setNewTenant={setNewTenant} />}
+                            {activeTab === 'tax' && <TaxTab newTenant={newTenant} setNewTenant={setNewTenant} />}
+                            {activeTab === 'banking' && <BankingTab newTenant={newTenant} setNewTenant={setNewTenant} />}
+                            {activeTab === 'system' && <SystemTab newTenant={newTenant} setNewTenant={setNewTenant} handleModuleToggle={handleModuleToggle} />}
+                            {activeTab === 'geography' && <GeographyTab
+                                newTenant={newTenant} setNewTenant={setNewTenant}
+                                tempCity={tempCity} setTempCity={setTempCity}
+                                addCity={addCity} removeCity={removeCity}
+                                tempBranch={tempBranch} setTempBranch={setTempBranch}
+                                addBranch={addBranch} removeBranch={removeBranch}
+                            />}
+                            {activeTab === 'user' && <UserTab newTenant={newTenant} setNewTenant={setNewTenant} />}
+                            {activeTab === 'branding' && <BrandingTab newTenant={newTenant} setNewTenant={setNewTenant} logoInput={logoInput} setLogoInput={setLogoInput} />}
+                            {activeTab === 'integrations' && <IntegrationsTab newTenant={newTenant} setNewTenant={setNewTenant} />}
 
-                            {activeTab === 'geography' && (
-                                <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
-                                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                        <p className="text-xs text-blue-800">
-                                            Manage your tenant's hierarchy by adding Regions (Cities) first, then assigning Branches to them.
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Regions / Cities</label>
-                                        <div className="flex gap-2 mb-4">
-                                            <input
-                                                value={tempCity}
-                                                onChange={e => setTempCity(e.target.value)}
-                                                placeholder="Enter City Name (e.g. Chennai)"
-                                                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } }}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={addCity}
-                                                className="px-3 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700"
-                                            >
-                                                Add
-                                            </button>
-                                        </div>
-
-                                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-                                            {newTenant.locations.length === 0 && (
-                                                <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-lg">
-                                                    <Globe className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                                                    <p className="text-xs text-slate-400">No regions added yet.</p>
-                                                </div>
-                                            )}
-
-                                            {newTenant.locations.map((loc, cityIdx) => (
-                                                <div key={cityIdx} className="border border-slate-200 rounded-lg overflow-hidden bg-white">
-                                                    <div className="bg-slate-50 px-3 py-2 flex justify-between items-center border-b border-slate-100">
-                                                        <span className="font-bold text-slate-700 text-sm">{loc.city}</span>
-                                                        <button type="button" onClick={() => removeCity(cityIdx)} className="text-slate-400 hover:text-red-500">
-                                                            <X className="w-4 h-4" />
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="p-3 bg-slate-50/50">
-                                                        <div className="space-y-2 mb-3">
-                                                            {loc.branches.map((br, brIdx) => (
-                                                                <div key={br.id} className="flex justify-between items-center bg-white p-2 rounded border border-slate-100 text-xs">
-                                                                    <div>
-                                                                        <div className="font-semibold text-slate-700">{br.name}</div>
-                                                                        <div className="text-slate-500 truncate max-w-[150px]">{br.address}</div>
-                                                                    </div>
-                                                                    <button type="button" onClick={() => removeBranch(cityIdx, brIdx)} className="text-slate-300 hover:text-red-500">
-                                                                        <X className="w-3 h-3" />
-                                                                    </button>
-                                                                </div>
-                                                            ))}
-                                                            {loc.branches.length === 0 && (
-                                                                <p className="text-[10px] text-slate-400 italic pl-1">No branches in this region.</p>
-                                                            )}
-                                                        </div>
-
-                                                        {tempBranch.cityIndex === cityIdx ? (
-                                                            <div className="bg-white p-2 rounded border border-blue-100 animate-in fade-in zoom-in-95 duration-200">
-                                                                <input
-                                                                    autoFocus
-                                                                    placeholder="Branch Name (e.g. Main St)"
-                                                                    className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-blue-500"
-                                                                    value={tempBranch.name}
-                                                                    onChange={e => setTempBranch(prev => ({ ...prev, name: e.target.value }))}
-                                                                />
-                                                                <input
-                                                                    placeholder="Address / Area"
-                                                                    className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-blue-500"
-                                                                    value={tempBranch.address}
-                                                                    onChange={e => setTempBranch(prev => ({ ...prev, address: e.target.value }))}
-                                                                />
-                                                                <div className="flex gap-2">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => addBranch(cityIdx)}
-                                                                        className="flex-1 bg-blue-600 text-white py-1 rounded text-xs font-medium hover:bg-blue-700"
-                                                                    >
-                                                                        Save Branch
-                                                                    </button>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => setTempBranch({ cityIndex: -1, name: '', address: '' })}
-                                                                        className="px-2 border border-slate-200 text-slate-600 py-1 rounded text-xs hover:bg-slate-50"
-                                                                    >
-                                                                        Cancel
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setTempBranch({ cityIndex: cityIdx, name: '', address: '' })}
-                                                                className="w-full py-1.5 border border-dashed border-slate-300 text-slate-500 rounded text-xs hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-1"
-                                                            >
-                                                                <Plus className="w-3 h-3" />
-                                                                Add Branch
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'branding' && (
-                                <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                                    <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-3 text-indigo-900">
-                                        <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
-                                        <div>
-                                            <p className="text-sm font-bold">Login Page Customization</p>
-                                            <p className="text-xs opacity-80">Provide publicly accessible image URLs for the tenant's login portal.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Company Logo URL</label>
-                                            <div className="flex flex-col gap-4">
-                                                <div className="flex-1 space-y-2">
-                                                    <input
-                                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                                                        value={logoInput}
-                                                        onChange={e => setLogoInput(e.target.value)}
-                                                        onBlur={() => setNewTenant({ ...newTenant, loginLogoUrl: logoInput })}
-                                                        placeholder="https://example.com/logo.png"
-                                                    />
-                                                    <p className="text-[10px] text-slate-400">Recommended: Square PNG with transparency. Preview updates after you click away.</p>
-                                                </div>
-                                                {newTenant.loginLogoUrl && (
-                                                    <div className="w-[200px] h-[200px] border-2 border-dashed border-slate-200 rounded-2xl p-2 bg-slate-50/50 flex items-center justify-center overflow-hidden shrink-0 mx-auto group relative">
-                                                        <img
-                                                            src={newTenant.loginLogoUrl}
-                                                            alt="Logo"
-                                                            className="w-[200px] h-[200px] object-contain transition-transform duration-500 group-hover:scale-110"
-                                                            onError={(e) => (e.currentTarget.style.display = 'none')}
-                                                        />
-                                                        <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-[8px] font-bold text-slate-500 uppercase border border-slate-100 shadow-sm">200 x 200</div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Login Background Image URL</label>
-                                            <div className="space-y-2">
-                                                <input
-                                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                                                    value={newTenant.loginBgUrl}
-                                                    onChange={e => setNewTenant({ ...newTenant, loginBgUrl: e.target.value })}
-                                                    placeholder="https://images.unsplash.com/..."
-                                                />
-                                                {newTenant.loginBgUrl && (
-                                                    <div className="aspect-video w-full rounded-lg bg-slate-100 border border-slate-200 overflow-hidden relative">
-                                                        <img src={newTenant.loginBgUrl} alt="Background" className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                                            <span className="text-[10px] font-black text-white uppercase tracking-widest bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">Preview</span>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                <p className="text-[10px] text-slate-400">High Resolution (1920x1080px or higher) landscape images work best.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex gap-3 pt-4 border-t border-slate-100">
+                            <div className="flex gap-3 pt-4 border-t border-slate-100 mt-6">
                                 {editingTenant && (
                                     <button
                                         type="button"
@@ -719,11 +130,11 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                                 </button>
                             </div>
                         </form>
-                    </div>
+                    </>
                 )}
 
                 {activeSection === 'list' && (
-                    <div className="lg:col-span-2 space-y-4 animate-in slide-in-from-right-4 duration-300">
+                    <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                         <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                             <Building2 className="w-5 h-5 text-blue-600" />
                             Active Tenants
@@ -811,7 +222,6 @@ const TenantManager: React.FC<TenantManagerProps> = ({ onLoginAs }) => {
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );

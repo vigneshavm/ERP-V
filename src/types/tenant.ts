@@ -39,11 +39,65 @@ export interface BranchConfig {
     settings?: Partial<SettingsState>;
     counters?: Counter[];
     updatedAt?: string;
+    // Enhanced Branch Fields
+    code?: string; // e.g., 'HO'
+    warehouse?: string;
+    pincode?: string;
+    phone?: string;
+    isHeadOffice?: boolean;
 }
 
 export interface TenantLocation {
     city: string;
     branches: BranchConfig[];
+}
+
+export interface CompanyDetails {
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    state: string;
+    stateCode: string;
+    country: string;
+    pincode: string;
+    phone: string;
+    alternatePhone?: string;
+    email: string;
+    website?: string;
+}
+
+export interface TaxDetails {
+    taxSystem: 'GST' | 'VAT' | 'NONE';
+    gstin?: string; // VAT Number
+    pan?: string; // Legal Registration Number
+    isGstEnabled: boolean;
+    isEInvoiceEnabled?: boolean;
+    isEWayBillEnabled?: boolean;
+}
+
+export interface BankingDetails {
+    bankName: string;
+    accountNumber: string;
+    accountHolderName: string;
+    ifsc: string; // SWIFT code
+    booksStartDate?: string;
+    financialYearClosing?: string; // e.g. "03-31"
+}
+
+export interface SystemConfig {
+    isPosEnabled: boolean;
+    isInventoryEnabled: boolean;
+    isLoyaltyEnabled: boolean;
+    isMultiBranch: boolean;
+    isEcommerceEnabled?: boolean;
+    pricingMode: 'INCLUSIVE' | 'EXCLUSIVE';
+}
+
+export interface Integrations {
+    paymentGatewayKey?: string;
+    smsProviderKey?: string;
+    emailProviderKey?: string;
+    webhookUrl?: string;
 }
 
 export interface Tenant {
@@ -63,7 +117,17 @@ export interface Tenant {
     loginLogoUrl?: string;
     loginBgUrl?: string;
     loyaltyConfig?: LoyaltyConfig;
+    businessType?: string;
+    natureOfBusiness?: 'Retail' | 'Wholesale' | 'Services' | 'Manufacturing';
+    tradeDescription?: string;
     updatedAt?: string;
+
+    // Enhanced onboarding fields
+    companyDetails?: CompanyDetails;
+    taxDetails?: TaxDetails;
+    bankingDetails?: BankingDetails;
+    systemConfig?: SystemConfig;
+    integrations?: Integrations;
 }
 
 // Redux State Interface
