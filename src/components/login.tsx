@@ -8,6 +8,7 @@ import { Store, Lock, ArrowRight, AlertCircle, UserCircle, Eye, EyeOff, Loader2 
 import { Sector } from '../types/common';
 import { Tenant } from '../types/tenant';
 import { comparePassword, securePassword, isSecuredIdeally } from '../utils/auth';
+import { setSession } from '../utils/session';
 import { supabase } from '../lib/supabase';
 
 const SECTOR_IMAGES: Record<string, string> = {
@@ -45,6 +46,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     const [bgError, setBgError] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -167,7 +169,12 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                     sessionUser.sector = allowedSector;
                 }
 
-                localStorage.setItem('erp_auth_user', JSON.stringify(sessionUser));
+                if (user.systemRole === 'Owner' && allowedSector) {
+                    sessionUser.sector = allowedSector;
+                }
+
+                // Replace insecure localStorage with Encrypted Cookie Session
+                setSession(sessionUser, rememberMe);
                 dispatch(setUser(sessionUser));
                 onLogin();
             } else {
@@ -263,6 +270,19 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="flex items-center">
+                            <input
+                                id="remember-me"
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                                className="w-4 h-4 text-indigo-600 bg-white/5 border-white/10 rounded focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                            />
+                            <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400 cursor-pointer select-none">
+                                Remember me
+                            </label>
                         </div>
 
                         {error && (

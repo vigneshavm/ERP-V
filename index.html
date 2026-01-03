@@ -1,84 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Enterprise Manager ERP & POS</title>
-     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              // Override indigo to use CSS variables for dynamic runtime customization
-              indigo: {
-                50: 'rgb(var(--color-brand-50) / <alpha-value>)',
-                100: 'rgb(var(--color-brand-100) / <alpha-value>)',
-                200: 'rgb(var(--color-brand-200) / <alpha-value>)',
-                300: 'rgb(var(--color-brand-300) / <alpha-value>)',
-                400: 'rgb(var(--color-brand-400) / <alpha-value>)',
-                500: 'rgb(var(--color-brand-500) / <alpha-value>)',
-                600: 'rgb(var(--color-brand-600) / <alpha-value>)',
-                700: 'rgb(var(--color-brand-700) / <alpha-value>)',
-                800: 'rgb(var(--color-brand-800) / <alpha-value>)',
-                900: 'rgb(var(--color-brand-900) / <alpha-value>)',
-                950: 'rgb(var(--color-brand-950) / <alpha-value>)',
-              }
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Enterprise Manager ERP & POS</title>
+  <script>
+    (function () {
+      try {
+        const stored = localStorage.getItem('erp_theme');
+        if (stored === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) { }
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Override indigo to use CSS variables for dynamic runtime customization
+            indigo: {
+              50: 'rgb(var(--color-brand-50) / <alpha-value>)',
+              100: 'rgb(var(--color-brand-100) / <alpha-value>)',
+              200: 'rgb(var(--color-brand-200) / <alpha-value>)',
+              300: 'rgb(var(--color-brand-300) / <alpha-value>)',
+              400: 'rgb(var(--color-brand-400) / <alpha-value>)',
+              500: 'rgb(var(--color-brand-500) / <alpha-value>)',
+              600: 'rgb(var(--color-brand-600) / <alpha-value>)',
+              700: 'rgb(var(--color-brand-700) / <alpha-value>)',
+              800: 'rgb(var(--color-brand-800) / <alpha-value>)',
+              900: 'rgb(var(--color-brand-900) / <alpha-value>)',
+              950: 'rgb(var(--color-brand-950) / <alpha-value>)',
             }
           }
         }
       }
-    </script>
-    <style>
-      /* Custom scrollbar with CSS variables for theme support */
-      :root {
-        --scrollbar-track: #f1f5f9;
-        --scrollbar-thumb: #cbd5e1;
-        --scrollbar-thumb-hover: #94a3b8;
-        
-        /* Default Brand Colors (Indigo) - will be overridden by JS */
-        --color-brand-50: 238 242 255;
-        --color-brand-100: 224 231 255;
-        --color-brand-200: 199 210 254;
-        --color-brand-300: 165 180 252;
-        --color-brand-400: 129 140 248;
-        --color-brand-500: 99 102 241;
-        --color-brand-600: 79 70 229;
-        --color-brand-700: 67 56 202;
-        --color-brand-800: 55 48 163;
-        --color-brand-900: 49 46 129;
-        --color-brand-950: 30 27 75;
-      }
-      .dark {
-        --scrollbar-track: #1e293b;
-        --scrollbar-thumb: #475569;
-        --scrollbar-thumb-hover: #64748b;
+    }
+  </script>
+  <style>
+    /* Custom scrollbar with CSS variables for theme support */
+    :root {
+      --scrollbar-track: #f1f5f9;
+      --scrollbar-thumb: #cbd5e1;
+      --scrollbar-thumb-hover: #94a3b8;
+
+      /* Default Brand Colors (Indigo) - will be overridden by JS */
+      --color-brand-50: 238 242 255;
+      --color-brand-100: 224 231 255;
+      --color-brand-200: 199 210 254;
+      --color-brand-300: 165 180 252;
+      --color-brand-400: 129 140 248;
+      --color-brand-500: 99 102 241;
+      --color-brand-600: 79 70 229;
+      --color-brand-700: 67 56 202;
+      --color-brand-800: 55 48 163;
+      --color-brand-900: 49 46 129;
+      --color-brand-950: 30 27 75;
+    }
+
+    .dark {
+      --scrollbar-track: #1e293b;
+      --scrollbar-thumb: #475569;
+      --scrollbar-thumb-hover: #64748b;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+
+    @keyframes pulse-subtle {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
       }
 
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+      50% {
+        opacity: 0.8;
+        transform: scale(0.995);
+        border-color: rgb(165 180 252);
       }
-      ::-webkit-scrollbar-track {
-        background: var(--scrollbar-track); 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: var(--scrollbar-thumb); 
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: var(--scrollbar-thumb-hover); 
-      }
+    }
 
-      @keyframes pulse-subtle {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.8; transform: scale(0.995); border-color: rgb(165 180 252); }
-      }
-      .animate-pulse-subtle {
-        animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-    </style>
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -95,10 +121,11 @@
 }
 </script>
 </head>
-  
 
-  <body>
+
+<body>
   <div id="root"></div>
   <script type="module" src="/src/index.tsx"></script>
 </body>
+
 </html>

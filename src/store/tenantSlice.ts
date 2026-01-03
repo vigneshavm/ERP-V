@@ -5,6 +5,7 @@ import { TenantState, Tenant } from '../types/tenant'
 import { ModuleType, Sector, SystemRole, AppView } from '../types/common'
 import { AuthState, SettingsState } from '../types/settings'
 import { Employee } from '../types/hr'
+import { getStoredTheme } from '../utils/theme'
 
 
 
@@ -258,7 +259,7 @@ const initialAuthState: AuthState = {
   currentSector: Sector.GENERAL,
   currentBranch: 'All',
   role: 'Staff',
-  theme: 'light'
+  theme: getStoredTheme() || 'light'
 };
 
 const authSlice = createSlice({

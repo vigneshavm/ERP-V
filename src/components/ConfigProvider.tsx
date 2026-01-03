@@ -4,6 +4,7 @@ import { RootState } from '../store';
 import { Tenant } from '../types/tenant';
 
 import { generatePalette } from '../utils/colorUtils';
+import { getStoredTheme, setStoredTheme, applyTheme, Theme } from '../utils/theme';
 import { ConfigContext } from './ConfigContext';
 
 interface ConfigProviderProps {
@@ -28,17 +29,19 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
 
     useEffect(() => {
         const root = document.documentElement;
-        // Set CSS variables for global styling access if needed
+        // Set CSS variables
         root.style.setProperty('--currency-symbol', `"${config.currencySymbol}"`);
         root.style.setProperty('--date-format', `"${config.dateFormat}"`);
         root.style.setProperty('--currency-code', config.currency);
 
-        // Apply Theme
-        if (activeTenant?.theme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
+        // Apply Theme Strategy:
+        // 1. LocalStorage (User Preference)
+        // 2. Tenant Default (Branding)
+        // 3. Fallback (Light)
+        const storedTheme = getStoredTheme();
+        const effectiveTheme: Theme = storedTheme || activeTenant?.theme || 'light';
+
+        applyTheme(effectiveTheme);
 
         // Apply Primary Color
         if (activeTenant?.primaryColor) {
@@ -49,11 +52,14 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
         }
     }, [config, activeTenant?.theme, activeTenant?.primaryColor]);
 
+    // Compute effective theme for context
+    const effectiveTheme = getStoredTheme() || activeTenant?.theme || 'light';
+
     const contextValue = useMemo(() => ({
         ...config,
         tenantId: activeTenant?.id,
-        theme: activeTenant?.theme
-    }), [config, activeTenant?.id, activeTenant?.theme]);
+        theme: effectiveTheme
+    }), [config, activeTenant?.id, effectiveTheme]);
 
     return (
         <ConfigContext.Provider value={contextValue}>

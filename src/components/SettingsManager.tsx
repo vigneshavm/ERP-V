@@ -4,6 +4,7 @@ import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBr
 import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2 } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
+import { setStoredTheme } from '../utils/theme';
 import { Tenant } from '../types/tenant';
 import StaffManager from './StaffManager';
 
@@ -575,6 +576,9 @@ const SettingsManager: React.FC = () => {
                 }));
             }
         }
+
+        // Persist theme to localStorage for immediate and consistent application
+        setStoredTheme(updatedSettings.tenantTheme);
 
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);

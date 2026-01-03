@@ -26,6 +26,7 @@ import ReportsModule from './components/reports/ReportsModule';
 import { ConfigProvider } from './components/ConfigProvider';
 import { useBranchResolver } from './hooks/useBranchResolver';
 import { useSupabaseData } from './hooks/useSupabaseData';
+import { getSession, clearSession } from './utils/session';
 
 import { AppView } from './types/common';
 import { Sector } from './types/common';
@@ -72,18 +73,17 @@ const App: React.FC = () => {
     const [activeTab, setActiveTab] = useState<AppView>('DASHBOARD');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [desktopCollapsed, setDesktopCollapsed] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('erp_auth_user'));
+    const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
 
     // --- Restore Session on Mount ---
     React.useEffect(() => {
-        const stored = localStorage.getItem('erp_auth_user');
-        if (stored && !user) {
+        const sessionUser = getSession();
+        if (sessionUser && !user) {
             try {
-                const parsedUser = JSON.parse(stored);
-                dispatch(setUser(parsedUser));
+                dispatch(setUser(sessionUser));
             } catch (e) {
                 console.error("Failed to restore session", e);
-                localStorage.removeItem('erp_auth_user');
+                clearSession();
             }
         }
     }, [dispatch, user]);
@@ -434,7 +434,7 @@ const App: React.FC = () => {
                         <button
                             onClick={() => {
                                 requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                    localStorage.removeItem('erp_auth_user');
+                                    clearSession();
                                     localStorage.removeItem('erp_current_tenant');
                                     setIsLoggedIn(false);
                                 });
@@ -449,7 +449,7 @@ const App: React.FC = () => {
                             <button
                                 onClick={() => {
                                     requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                        localStorage.removeItem('erp_auth_user');
+                                        clearSession();
                                         localStorage.removeItem('erp_current_tenant');
                                         setIsLoggedIn(false);
                                     });
