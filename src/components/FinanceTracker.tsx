@@ -9,7 +9,7 @@ import { TransactionType } from '../types/common';
 
 const FinanceTracker: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { transactions, cheques } = useSelector((state: RootState) => state.finance);
+    const { transactions, cheques, dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
     const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
     const { branches: dbBranches } = useSelector((state: RootState) => state.tenant);
     const { employees, attendance } = useSelector((state: RootState) => state.labor);
@@ -44,9 +44,11 @@ const FinanceTracker: React.FC = () => {
     const sectorCheques = cheques.filter(c => c.sector === currentSector);
 
     // P&L Calculations
-    const totalSales = salesHistory
+    const totalSales = (salesHistory
         .filter(s => s.sector === currentSector)
-        .reduce((acc, s) => acc + s.total, 0);
+        .reduce((acc, s) => acc + s.total, 0)) +
+        (dailyFinanceRecords
+            .reduce((acc, curr) => acc + (curr.totalSales || 0), 0));
 
     const totalExpenses = sectorTx
         .filter(t => t.type === TransactionType.EXPENSE)

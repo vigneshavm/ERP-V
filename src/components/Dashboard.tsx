@@ -29,7 +29,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) 
 
 
 const Dashboard: React.FC = () => {
-  const { transactions } = useSelector((state: RootState) => state.finance);
+  const { transactions, dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
   const { products } = useSelector((state: RootState) => state.inventory);
   const { currentSector, currentBranch, theme, role } = useSelector((state: RootState) => state.auth);
   const { getBranchName } = useBranchResolver();
@@ -40,7 +40,9 @@ const Dashboard: React.FC = () => {
 
   const totalRevenue = sectorTransactions
     .filter(t => t.type === 'INCOME')
-    .reduce((acc, curr) => acc + curr.amount, 0);
+    .reduce((acc, curr) => acc + curr.amount, 0) +
+    dailyFinanceRecords
+      .reduce((acc, curr) => acc + (curr.totalSales || 0), 0);
 
   const totalStockValue = sectorProducts.reduce((acc, curr) => acc + (curr.cost * curr.stock), 0);
 

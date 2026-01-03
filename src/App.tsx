@@ -430,7 +430,7 @@ const App: React.FC = () => {
                         <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
                         <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
                         <NavItem id="SALES" icon={List} label="Sales History" />
-                        <NavItem id="DAILY" icon={LogOut} label="Daily Tracker" />
+                        <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
                         <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
                         <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
                         <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />

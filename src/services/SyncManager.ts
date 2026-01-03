@@ -1,8 +1,10 @@
 import { db, OfflineSale } from './db';
 import { supabase } from '../lib/supabase';
+import { store, setDailyRecordSynced } from '../store';
 
 export class SyncManager {
     private static isSyncing = false;
+    private static isSyncingDF = false;
 
     static async syncOfflineSales() {
         if (this.isSyncing || !navigator.onLine) return;
@@ -114,5 +116,68 @@ export class SyncManager {
 
     static async getOfflineCustomers() {
         return await db.customers.toArray();
+    }
+
+    static async syncDailyFinanceEntries() {
+        if (this.isSyncingDF || !navigator.onLine) return;
+        this.isSyncingDF = true;
+
+        try {
+            const pending = await db.dailyFinanceQueue
+                .where('synced')
+                .equals(0)
+                .toArray();
+
+            for (const item of pending) {
+                try {
+                    const { recordId, operation, data } = item;
+                    let result;
+
+                    if (!supabase) throw new Error('Supabase client not initialized');
+
+                    if (operation === 'INSERT') {
+                        result = await supabase
+                            .from('daily_finance')
+                            .insert([data]);
+                    } else if (operation === 'UPDATE') {
+                        result = await supabase
+                            .from('daily_finance')
+                            .update(data)
+                            .eq('id', recordId)
+                            .eq('tenant_id', data.tenant_id);
+                    } else if (operation === 'DELETE') {
+                        result = await supabase
+                            .from('daily_finance')
+                            .delete()
+                            .eq('id', recordId)
+                            .eq('tenant_id', data.tenant_id);
+                    }
+
+                    if (result?.error) {
+                        console.error(`Sync error for ${operation} ${recordId}:`, result.error);
+                        await db.dailyFinanceQueue.update(item.localId!, {
+                            error: result.error.message,
+                            retryCount: (item.retryCount || 0) + 1
+                        });
+                    } else {
+                        await db.dailyFinanceQueue.update(item.localId!, { synced: true });
+                        console.log(`Synced ${operation} for ${recordId}`);
+
+                        // Update Redux state
+                        if (operation !== 'DELETE') {
+                            store.dispatch(setDailyRecordSynced({ id: recordId, synced: true }));
+                        }
+                    }
+                } catch (err: any) {
+                    console.error(`Unexpected sync error for item ${item.recordId}:`, err);
+                    await db.dailyFinanceQueue.update(item.localId!, {
+                        error: err.message,
+                        retryCount: (item.retryCount || 0) + 1
+                    });
+                }
+            }
+        } finally {
+            this.isSyncingDF = false;
+        }
     }
 }

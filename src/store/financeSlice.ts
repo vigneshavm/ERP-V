@@ -6,6 +6,7 @@ import { loadState, saveState } from './storage';
 const initialFinanceState: FinanceState = {
   transactions: [],
   cheques: [],
+  dailyFinanceRecords: [],
   bankBalance: 250000,
 };
 
@@ -67,9 +68,45 @@ const financeSlice = createSlice({
     },
     setCheques: (state, action: PayloadAction<Cheque[]>) => {
       state.cheques = action.payload;
+    },
+    setDailyRecords: (state, action: PayloadAction<any[]>) => {
+      state.dailyFinanceRecords = action.payload;
+    },
+    addDailyRecord: (state, action: PayloadAction<any>) => {
+      state.dailyFinanceRecords.unshift(action.payload);
+      saveState('finance', state);
+    },
+    updateDailyRecord: (state, action: PayloadAction<any>) => {
+      const index = state.dailyFinanceRecords.findIndex(r => r.id === action.payload.id);
+      if (index !== -1) {
+        state.dailyFinanceRecords[index] = action.payload;
+        saveState('finance', state);
+      }
+    },
+    deleteDailyRecord: (state, action: PayloadAction<string>) => {
+      state.dailyFinanceRecords = state.dailyFinanceRecords.filter(r => r.id !== action.payload);
+      saveState('finance', state);
+    },
+    setDailyRecordSynced: (state, action: PayloadAction<{ id: string, synced: boolean }>) => {
+      const record = state.dailyFinanceRecords.find(r => r.id === action.payload.id);
+      if (record) {
+        record.synced = action.payload.synced;
+        saveState('finance', state);
+      }
     }
   },
 });
 
-export const { addTransaction, addCheque, updateChequeStatus, setTransactions, setCheques } = financeSlice.actions;
+export const {
+  addTransaction,
+  addCheque,
+  updateChequeStatus,
+  setTransactions,
+  setCheques,
+  setDailyRecords,
+  addDailyRecord,
+  updateDailyRecord,
+  deleteDailyRecord,
+  setDailyRecordSynced
+} = financeSlice.actions;
 export default financeSlice.reducer;

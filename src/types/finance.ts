@@ -9,6 +9,20 @@ export interface Expense {
     sector: Sector;
 }
 
+export interface DailyFinanceRecord {
+    id: string;
+    date: string;
+    cashSales: number;
+    onlineSales: number;
+    totalSales: number;
+    expenses: number;
+    cashInDrawer: number;
+    notes: string;
+    timestamp: string;
+    tenantId: string;
+    synced?: boolean;
+}
+
 export interface Transaction {
     id: string;
     type: TransactionType;
@@ -37,4 +51,5 @@ export interface FinanceState {
     bankBalance: number;
     cheques: Cheque[];
     transactions: Transaction[];
+    dailyFinanceRecords: DailyFinanceRecord[];
 }

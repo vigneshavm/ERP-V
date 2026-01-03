@@ -1,14 +1,17 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch, saveDailyFinanceRecord, updateDailyFinanceRecord, deleteDailyFinanceRecord } from '../store';
+import { SyncManager } from '../services/SyncManager';
 import { APP_CONFIG } from '../../config';
 import {
   Briefcase, History, IndianRupee, Plus, CheckCircle,
-  Activity, AlertCircle, CalendarDays, CreditCard, Search
+  Activity, AlertCircle, CalendarDays, CreditCard, Search,
+  Edit2, Trash2, X, Clock
 } from 'lucide-react';
 import { Card } from './Card';
 import { formatCurrency } from '../utils/helpers';
+import { useBranchResolver } from '../hooks/useBranchResolver';
 
 import {
   BarChart, Bar, CartesianGrid, Legend,
@@ -30,30 +33,19 @@ interface TrackerTransaction {
 type PeriodType = 'DAILY' | 'MONTHLY' | 'YEARLY' | 'CUSTOM';
 
 const DailyFinanceTracker: React.FC = () => {
-  const { theme } = useSelector((state: RootState) => state.auth);
-  const [tx, setTx] = useState<TrackerTransaction[]>(() => {
-    try {
-      const saved = localStorage.getItem("omni_fin_tracker");
-      if (saved && JSON.parse(saved).length > 0) return JSON.parse(saved);
+  const dispatch = useDispatch<AppDispatch>();
+  const { theme, user } = useSelector((state: RootState) => state.auth);
+  const { getBranchName } = useBranchResolver();
+  const { dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
 
-      if (APP_CONFIG.IS_DEMO) {
-        const subDays = (d: number) => {
-          const date = new Date();
-          date.setDate(date.getDate() - d);
-          return date.toISOString().split('T')[0];
-        };
-
-        return [
-          { id: 'dt1', date: subDays(0), cashSales: 12000, onlineSales: 8000, totalSales: 20000, expenses: 500, cashInDrawer: 11500, notes: 'Good footfall', timestamp: new Date().toISOString() },
-          { id: 'dt2', date: subDays(1), cashSales: 15000, onlineSales: 5000, totalSales: 20000, expenses: 1500, cashInDrawer: 13500, notes: 'Paid electricity', timestamp: new Date().toISOString() },
-          { id: 'dt3', date: subDays(2), cashSales: 8000, onlineSales: 12000, totalSales: 20000, expenses: 200, cashInDrawer: 7800, notes: 'Rainy day', timestamp: new Date().toISOString() },
-          { id: 'dt4', date: subDays(3), cashSales: 20000, onlineSales: 15000, totalSales: 35000, expenses: 5000, cashInDrawer: 15000, notes: 'Weekend rush', timestamp: new Date().toISOString() },
-        ];
-      }
-      return [];
-    } catch { return []; }
-  });
+  const tx = useMemo(() => dailyFinanceRecords, [dailyFinanceRecords]);
   const [view, setView] = useState<'ENTRY' | 'CHARTS' | 'RECENT'>('ENTRY');
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Trigger sync on mount to catch up
+    SyncManager.syncDailyFinanceEntries();
+  }, []);
 
   // Analytics State
   const [period, setPeriod] = useState<PeriodType>('MONTHLY');
@@ -83,21 +75,57 @@ const DailyFinanceTracker: React.FC = () => {
   // Auto-calc for form
   const currentTotalSales = (parseFloat(cash) || 0) + (parseFloat(online) || 0);
 
-  useEffect(() => { localStorage.setItem("omni_fin_tracker", JSON.stringify(tx)); }, [tx]);
-
   const uid = () => crypto.randomUUID();
 
   const saveTransaction = (e: React.FormEvent) => {
     e.preventDefault();
-    const newTx: TrackerTransaction = {
-      id: uid(), date, cashSales: parseFloat(cash) || 0, onlineSales: parseFloat(online) || 0,
-      totalSales: currentTotalSales, expenses: parseFloat(exp) || 0, cashInDrawer: parseFloat(drawerCash) || 0,
-      notes: notes || '', timestamp: new Date().toISOString()
+    const payload = {
+      id: editingId || uid(),
+      date,
+      cashSales: parseFloat(cash) || 0,
+      onlineSales: parseFloat(online) || 0,
+      totalSales: currentTotalSales,
+      expenses: parseFloat(exp) || 0,
+      cashInDrawer: parseFloat(drawerCash) || 0,
+      notes: notes || '',
+      timestamp: new Date().toISOString(),
+      tenantId: user?.tenantId
     };
-    setTx(prev => [newTx, ...prev]);
+
+    if (editingId) {
+      dispatch(updateDailyFinanceRecord(payload));
+      setEditingId(null);
+    } else {
+      dispatch(saveDailyFinanceRecord(payload));
+    }
+
     setCash(""); setOnline(""); setExp(""); setDrawerCash(""); setNotes("");
-    setStatusMsg({ type: 'success', text: 'Record saved successfully!' });
+    setStatusMsg({ type: 'success', text: editingId ? 'Record updated and syncing...' : 'Record saved and syncing...' });
     setTimeout(() => setStatusMsg(null), 3000);
+  };
+
+  const handleEdit = (record: any) => {
+    setEditingId(record.id);
+    setDate(record.date);
+    setCash(record.cashSales.toString());
+    setOnline(record.onlineSales.toString());
+    setExp(record.expenses.toString());
+    setDrawerCash(record.cashInDrawer.toString());
+    setNotes(record.notes);
+    setView('ENTRY');
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setCash(""); setOnline(""); setExp(""); setDrawerCash(""); setNotes("");
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this record?")) {
+      dispatch(deleteDailyFinanceRecord(id));
+      setStatusMsg({ type: 'success', text: 'Record deleted from syncing...' });
+      setTimeout(() => setStatusMsg(null), 3000);
+    }
   };
 
   // 1. Centralized Filter Logic
@@ -185,15 +213,17 @@ const DailyFinanceTracker: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          Daily Finance <span className="text-slate-500 text-base font-normal">/ Tracker</span>
-        </h2>
-        <div className="flex bg-slate-100 dark:bg-slate-700/50 rounded-lg p-1">
-          <button onClick={() => setView('ENTRY')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'ENTRY' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Data Entry</button>
-          <button onClick={() => setView('CHARTS')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'CHARTS' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Analytics</button>
-          <button onClick={() => setView('RECENT')} className={`px-4 py-2 rounded-md text-sm font-bold transition ${view === 'RECENT' ? 'bg-white dark:bg-slate-600 shadow text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Recent</button>
-        </div>
+      <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+        Daily Finance
+        <span className="text-sm md:text-lg font-normal text-slate-500 md:border-l md:border-slate-300 dark:md:border-slate-700 md:pl-3">
+          {user?.tenantId && getBranchName(user.branchId || 'All')}
+        </span>
+      </h2>
+
+      <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-fit">
+        <button onClick={() => setView('ENTRY')} className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${view === 'ENTRY' ? 'bg-white dark:bg-slate-600 shadow-md text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}>Data Entry</button>
+        <button onClick={() => setView('RECENT')} className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${view === 'RECENT' ? 'bg-white dark:bg-slate-600 shadow-md text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}>Recent Entries</button>
+        <button onClick={() => setView('CHARTS')} className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${view === 'CHARTS' ? 'bg-white dark:bg-slate-600 shadow-md text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}>Analytics</button>
       </div>
 
       {statusMsg && (
@@ -207,7 +237,20 @@ const DailyFinanceTracker: React.FC = () => {
       {view === 'ENTRY' && (
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <Card className="p-6">
-            <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">Record Daily Transactions</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                {editingId ? 'Edit Daily Entry' : 'Daily Transactions'}
+              </h3>
+              {editingId && (
+                <button
+                  onClick={cancelEdit}
+                  className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition"
+                  title="Cancel Edit"
+                >
+                  <X size={20} />
+                </button>
+              )}
+            </div>
             <form onSubmit={saveTransaction} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -262,20 +305,23 @@ const DailyFinanceTracker: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Notes</label>
                 <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Electricity bill..." className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-colors" />
               </div>
-              <button type="submit" className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2">
-                <Plus size={18} /> Save Daily Record
+              <button type="submit" className={`w-full py-3 ${editingId ? 'bg-indigo-700 hover:bg-indigo-600' : 'bg-indigo-600 hover:bg-indigo-500'} text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2`}>
+                {editingId ? <CheckCircle size={18} /> : <Plus size={18} />}
+                {editingId ? 'Update Record' : 'Save Daily Record'}
               </button>
             </form>
           </Card>
         </div>
       )}
 
-      {/* VIEW: CHARTS */}
+      {/* VIEW: ANALYTICS */}
       {view === 'CHARTS' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="p-6 lg:col-span-2">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2"><Activity size={18} className="text-indigo-600 dark:text-indigo-400" /> Financial Performance</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 underline underline-offset-8 decoration-indigo-500/30">
+                <Activity size={18} className="text-indigo-600 dark:text-indigo-400" /> Financial Performance
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {['DAILY', 'MONTHLY', 'YEARLY', 'CUSTOM'].map(p => (
                   <button key={p} onClick={() => setPeriod(p as PeriodType)} className={`px-3 py-1 rounded text-xs font-bold transition ${period === p ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}>
@@ -346,12 +392,14 @@ const DailyFinanceTracker: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW: RECENT */}
+      {/* VIEW: RECENT ENTRIES */}
       {view === 'RECENT' && (
         <div className="grid grid-cols-1 gap-6">
           <Card className="p-6">
-            <div className="flex items-center justify-between mb-4 gap-3">
-              <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2"><History size={18} /> Recent Entries</h3>
+            <div className="flex items-center justify-between mb-6 gap-3">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 underline underline-offset-8 decoration-indigo-500/30">
+                <History size={18} /> Recent Entries
+              </h3>
               <div className="flex items-center gap-2 w-full max-w-2xl">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 text-slate-400" />
@@ -382,7 +430,20 @@ const DailyFinanceTracker: React.FC = () => {
               {recentFiltered.map(t => (
                 <div key={t.id} className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        {t.synced === false ? (
+                          <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded">
+                            <Clock size={10} /> Pending
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 rounded">
+                            <CheckCircle size={10} /> Synced
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
@@ -390,6 +451,21 @@ const DailyFinanceTracker: React.FC = () => {
                     <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
                   </div>
                   {t.cashInDrawer > 0 && <div className="text-[10px] text-slate-400 mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">Drawer: {formatCurrency(t.cashInDrawer)}</div>}
+
+                  <div className="flex gap-2 mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <button
+                      onClick={() => handleEdit(t)}
+                      className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded transition"
+                    >
+                      <Edit2 size={10} /> Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t.id)}
+                      className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded transition"
+                    >
+                      <Trash2 size={10} /> Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

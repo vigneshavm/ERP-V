@@ -6,7 +6,7 @@ import { setBranches, setUser, setTenants } from '../store/tenantSlice';
 import { setProducts, upsertProduct } from '../store/inventorySlice';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { setEmployees, setLaborPayments } from '../store/laborSlice';
-import { setTransactions, setCheques } from '../store/financeSlice';
+import { setTransactions, setCheques, setDailyRecords } from '../store/financeSlice';
 import { setOrders } from '../store/purchaseSlice';
 import { RootState } from '../store';
 import { Tenant } from '../types/tenant';
@@ -325,6 +325,27 @@ export const useSupabaseData = () => {
                     dispatch(setCheques(mappedCheques));
                 }
 
+                // Daily Finance
+                let dfQuery = supabase.from('daily_finance').select('*');
+                if (tId) dfQuery = dfQuery.eq('tenant_id', tId);
+                const { data: dfData, error: dfError } = await dfQuery;
+                if (dfError) console.error('Error fetching daily finance:', dfError);
+                if (dfData) {
+                    const mappedDF = dfData.map((df: any) => ({
+                        id: df.id,
+                        date: df.date,
+                        cashSales: df.cash_sales,
+                        onlineSales: df.online_sales,
+                        totalSales: df.total_sales,
+                        expenses: df.expenses,
+                        cashInDrawer: df.cash_in_drawer,
+                        notes: df.notes,
+                        timestamp: df.timestamp,
+                        tenantId: df.tenant_id
+                    }));
+                    dispatch(setDailyRecords(mappedDF));
+                }
+
                 // Purchase Orders
                 let poQuery = supabase.from('purchase_orders').select('*');
                 if (tId) poQuery = poQuery.eq('tenant_id', tId);
@@ -394,8 +415,16 @@ export const useSupabaseData = () => {
             })
             .subscribe();
 
+        // 3. Periodic Background Sync for Daily Finance (30s)
+        const syncInterval = setInterval(() => {
+            if (navigator.onLine) {
+                SyncManager.syncDailyFinanceEntries();
+            }
+        }, 30000);
+
         return () => {
             supabase.removeChannel(productChannel);
+            clearInterval(syncInterval);
         };
     }, [dispatch, user, branches, tenants]);
 

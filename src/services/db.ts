@@ -13,11 +13,23 @@ export interface SyncMetadata {
     lastSynced: string;
 }
 
+export interface DailyFinanceQueueItem {
+    localId?: number;
+    recordId: string;
+    operation: 'INSERT' | 'UPDATE' | 'DELETE';
+    data: any;
+    synced: boolean;
+    retryCount: number;
+    timestamp: string;
+    error?: string;
+}
+
 export class AppDatabase extends Dexie {
     products!: Table<Product>;
     customers!: Table<Customer>;
     offlineSales!: Table<OfflineSale>;
     syncMetadata!: Table<SyncMetadata>;
+    dailyFinanceQueue!: Table<DailyFinanceQueueItem>;
 
     constructor() {
         super('ERPOfflineDB');
@@ -25,7 +37,8 @@ export class AppDatabase extends Dexie {
             products: 'id, sku, barcode, name, category, branchId, tenantId',
             customers: 'id, name, phone, tenantId',
             offlineSales: '++localId, id, date, customerId, tenantId, synced',
-            syncMetadata: 'key'
+            syncMetadata: 'key',
+            dailyFinanceQueue: '++localId, recordId, synced, operation'
         });
     }
 }
