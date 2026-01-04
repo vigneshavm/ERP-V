@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { supabase } from '../lib/supabase';
 import { setBranches, setUser, setTenants } from '../store/tenantSlice';
-import { setProducts, upsertProduct } from '../store/inventorySlice';
+import { setProducts, upsertProduct, setCategories } from '../store/inventorySlice';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { setEmployees, setLaborPayments } from '../store/laborSlice';
 import { setTransactions, setCheques, setDailyRecords } from '../store/financeSlice';
@@ -231,6 +231,15 @@ export const useSupabaseData = () => {
                     })) as Product[];
                     dispatch(setProducts(mappedProducts));
                     SyncManager.cacheProducts(mappedProducts);
+                }
+
+                // Textile Categories (Master Data)
+                let catQuery = supabase.from('cloth_product_master').select('*');
+                if (tId) catQuery = catQuery.eq('tenant_id', tId);
+                const { data: catData, error: catError } = await catQuery;
+                if (!catError && catData) {
+                    const uniqueCategories = Array.from(new Set(catData.map((c: any) => c.product_name).filter(Boolean)));
+                    dispatch(setCategories(uniqueCategories as string[]));
                 }
 
                 // Customers

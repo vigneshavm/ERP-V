@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square, Copy, Inbox, TrendingUp, AlertTriangle, AlertCircle, Calendar, ChevronLeft, ChevronRight, Filter, Maximize, Minimize } from 'lucide-react';
 import { useInventoryLogic } from '../../hooks/useInventoryLogic';
 import { Sector } from '../../types/common';
 import BarcodeGenerator from '../BarcodeGenerator';
+import { LabelPrintModal } from './LabelPrintModal';
 
 type InventoryLogic = ReturnType<typeof useInventoryLogic>;
 
@@ -43,9 +44,12 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
     toggleProductSelection,
     selectAll,
     getBranchName,
-    handlePrintLabels
+    handlePrintLabels,
+    categories,
+    clearSelection
 }) => {
     const isOwner = role === 'Owner';
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
     const executePrint = () => {
         const content = document.getElementById('barcode-print-area');
@@ -156,10 +160,10 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                         <Plus className="w-4 h-4" /> Add Product
                     </button>
                     <button
-                        onClick={() => setIsPrintMode(!isPrintMode)}
-                        className={`px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors whitespace-nowrap border ${isPrintMode ? 'bg-slate-800 text-white border-slate-800' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
+                        onClick={handlePrintLabels}
+                        className={`px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors whitespace-nowrap border ${isPrintModalOpen ? 'bg-slate-800 text-white border-slate-800' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
                     >
-                        <Printer className="w-4 h-4" /> {isPrintMode ? 'Done' : 'Labels'}
+                        <Printer className="w-4 h-4" /> Print Labels {selectedProductIds.size > 0 && `(${selectedProductIds.size})`}
                     </button>
                     <button
                         onClick={toggleFullScreen}
@@ -195,55 +199,41 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                 ))}
             </div>
 
-            {/* Print Modal */}
-            {isPrintModalOpen && (
-                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
-                        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded-t-xl">
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Printer className="w-5 h-5 text-indigo-500" /> Print Preview ({selectedProductIds.size} Items)
-                            </h3>
-                            <div className="flex gap-2">
-                                <button onClick={executePrint} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold flex items-center gap-2">
-                                    <Printer className="w-4 h-4" /> Print
-                                </button>
-                                <button onClick={() => setIsPrintModalOpen(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg">
-                                    <X className="w-5 h-5 text-slate-500" />
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-8 bg-slate-100 dark:bg-slate-900">
-                            <div id="barcode-print-area" className="bg-white p-8 shadow-sm grid grid-cols-3 gap-4 max-w-[210mm] mx-auto min-h-[297mm]">
-                                {products
-                                    .filter(p => selectedProductIds.has(p.id))
-                                    .flatMap(p => {
-                                        const count = Math.max(1, p.stock);
-                                        return Array(count).fill(p).map((_, i) => ({ ...p, uniqueKey: `${p.id}-${i}` }));
-                                    })
-                                    .map(p => (
-                                        <div key={p.uniqueKey} className="border border-dashed border-slate-300 p-4 rounded-lg flex flex-col items-center justify-center text-center h-48 bg-white break-inside-avoid">
-                                            <h3 className="font-bold text-slate-900 text-sm mb-1 line-clamp-2">{p.name}</h3>
-                                            <p className="text-xs text-slate-500 mb-2">{p.sku}</p>
-                                            <BarcodeGenerator
-                                                value={p.barcode || p.sku}
-                                                width={1.5}
-                                                height={40}
-                                                fontSize={12}
-                                                className="mb-2"
-                                            />
-                                            <p className="font-bold text-lg text-slate-900">₹{p.price.toFixed(2)}</p>
-                                        </div>
-                                    ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Label Print Modal */}
+            {(() => {
+                const productsToPrint = products.filter(p => selectedProductIds.has(p.id));
+                console.log('[InventoryTemplate] Label Print Debug:', {
+                    totalProducts: products.length,
+                    selectedIds: selectedProductIds.size,
+                    toPrint: productsToPrint.length
+                });
+
+                return (
+                    <LabelPrintModal
+                        isOpen={isPrintModalOpen}
+                        onClose={() => {
+                            setIsPrintModalOpen(false);
+                            clearSelection(); // Ensure we clear only ON CLOSE
+                        }}
+                        products={productsToPrint}
+                        onPrintComplete={() => {
+                            setIsPrintModalOpen(false);
+                            clearSelection();
+                        }}
+                    />
+                );
+            })()}
 
             {isFormOpen && (
                 <form onSubmit={handleSave} className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 animate-fade-in shadow-lg overflow-x-auto">
                     <div className="flex justify-between items-center mb-4 sticky left-0">
                         <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">{editingId ? 'Edit Product' : 'Bulk Add Products'}</h3>
+
+                        {/* Datalist for Categories */}
+                        <datalist id="category-list">
+                            {categories.map((cat, i) => <option key={i} value={cat} />)}
+                        </datalist>
+
                         <div className="flex gap-2">
                             {!editingId && (
                                 <button type="button" onClick={addRow} className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-bold border border-indigo-100 dark:border-indigo-800 flex items-center gap-1">
@@ -290,7 +280,7 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                                     <td className="p-2"><input className="w-full bg-transparent border border-slate-200 dark:border-slate-700 rounded px-1 text-slate-500 text-xs" value={row.sku} disabled placeholder="(Auto)" /></td>
                                     <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.name} onChange={e => handleRowChange(idx, 'name', e.target.value)} placeholder="Prod Name" /></td>
                                     <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.brand} onChange={e => handleRowChange(idx, 'brand', e.target.value)} placeholder="Brand" /></td>
-                                    <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.category} onChange={e => handleRowChange(idx, 'category', e.target.value)} placeholder="Cat" /></td>
+                                    <td className="p-2"><input required list="category-list" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.category} onChange={e => handleRowChange(idx, 'category', e.target.value)} placeholder="Cat" /></td>
                                     <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.productType} onChange={e => handleRowChange(idx, 'productType', e.target.value)} placeholder="Type" /></td>
                                     <td className="p-2">
                                         <select className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1 py-1 text-slate-900 dark:text-white text-xs" value={row.unit} onChange={e => handleRowChange(idx, 'unit', e.target.value)}>
@@ -347,7 +337,17 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                     <table className="w-full text-left text-sm relative">
                         <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium sticky top-0 z-10 shadow-sm">
                             <tr>
-                                {isPrintMode && <th className="p-4 w-10"></th>}
+                                <th className="p-4 w-10">
+                                    <button
+                                        onClick={selectAll}
+                                        className="text-slate-400 hover:text-indigo-600 transition-colors"
+                                    >
+                                        {displayedProducts.length > 0 && selectedProductIds.size === displayedProducts.length ?
+                                            <CheckSquare className="w-5 h-5 text-indigo-600" /> :
+                                            <Square className="w-5 h-5" />
+                                        }
+                                    </button>
+                                </th>
                                 <th className="p-4 w-16">Img</th>
                                 <th className="p-4 hidden md:table-cell">SKU</th>
                                 <th className="p-4 hidden lg:table-cell">Barcode</th>
@@ -366,20 +366,18 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                         <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
                             {/* ... Using displayedProducts which is now paginated ... */}
                             {displayedProducts.map(product => (
-                                <tr key={product.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                                    {isPrintMode && (
-                                        <td className="p-4">
-                                            <button
-                                                onClick={() => toggleProductSelection(product.id)}
-                                                className="text-slate-400 hover:text-indigo-600 transition-colors"
-                                            >
-                                                {selectedProductIds.has(product.id) ?
-                                                    <CheckSquare className="w-5 h-5 text-indigo-600" /> :
-                                                    <Square className="w-5 h-5" />
-                                                }
-                                            </button>
-                                        </td>
-                                    )}
+                                <tr key={product.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group ${selectedProductIds.has(product.id) ? 'bg-indigo-50 dark:bg-slate-800' : ''}`}>
+                                    <td className="p-4">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); toggleProductSelection(product.id); }}
+                                            className="text-slate-400 hover:text-indigo-600 transition-colors"
+                                        >
+                                            {selectedProductIds.has(product.id) ?
+                                                <CheckSquare className="w-5 h-5 text-indigo-600" /> :
+                                                <Square className="w-5 h-5" />
+                                            }
+                                        </button>
+                                    </td>
                                     <td className="p-4">
                                         {product.image ? (
                                             <img src={product.image} alt="Prod" className="w-8 h-8 rounded object-cover border border-slate-200 dark:border-slate-600" />

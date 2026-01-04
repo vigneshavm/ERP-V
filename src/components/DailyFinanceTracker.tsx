@@ -41,6 +41,7 @@ const DailyFinanceTracker: React.FC = () => {
   const tx = useMemo(() => dailyFinanceRecords, [dailyFinanceRecords]);
   const [view, setView] = useState<'ENTRY' | 'CHARTS' | 'RECENT'>('ENTRY');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     // Trigger sync on mount to catch up
@@ -395,79 +396,123 @@ const DailyFinanceTracker: React.FC = () => {
       {/* VIEW: RECENT ENTRIES */}
       {view === 'RECENT' && (
         <div className="grid grid-cols-1 gap-6">
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-6 gap-3">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 underline underline-offset-8 decoration-indigo-500/30">
-                <History size={18} /> Recent Entries
-              </h3>
-              <div className="flex items-center gap-2 w-full max-w-2xl">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 text-slate-400" />
-                  <input value={recentSearch} onChange={e => setRecentSearch(e.target.value)} placeholder="Search notes, date or amount" className="w-full pl-10 p-2 border rounded bg-white dark:bg-slate-900 text-sm outline-none" />
+          <Card className="p-0 overflow-hidden flex flex-col h-[600px]">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <History size={18} /> Recent Entries
+                </h3>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 text-slate-400" size={14} />
+                  <input value={recentSearch} onChange={e => setRecentSearch(e.target.value)} placeholder="Search..." className="pl-8 p-2 text-xs border rounded bg-white dark:bg-slate-900 outline-none w-32 md:w-48" />
                 </div>
-                <button onClick={() => { setRecentSearch(''); setRecentFrom(''); setRecentTo(''); setNetMin(''); setNetMax(''); setRecentSortBy('date'); setRecentSortDir('desc'); }} className="px-3 py-2 text-sm bg-slate-100 dark:bg-slate-700 rounded">Clear</button>
+                <input type="date" value={recentFrom} onChange={e => setRecentFrom(e.target.value)} className="p-2 text-xs border rounded bg-white dark:bg-slate-900" />
+                <span className="text-slate-400">-</span>
+                <input type="date" value={recentTo} onChange={e => setRecentTo(e.target.value)} className="p-2 text-xs border rounded bg-white dark:bg-slate-900" />
+
+                <button onClick={() => { setRecentSearch(''); setRecentFrom(''); setRecentTo(''); setNetMin(''); setNetMax(''); setRecentSortBy('date'); setRecentSortDir('desc'); setSelectedRowId(null); }} className="px-3 py-2 text-xs font-bold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-slate-600 dark:text-slate-300 transition">
+                  Clear
+                </button>
               </div>
             </div>
 
-            <div className="flex gap-2 mb-4 flex-wrap">
-              <input type="date" value={recentFrom} onChange={e => setRecentFrom(e.target.value)} className="p-2 border rounded text-sm" />
-              <input type="date" value={recentTo} onChange={e => setRecentTo(e.target.value)} className="p-2 border rounded text-sm" />
-              <input type="number" placeholder="Min net" value={netMin} onChange={e => setNetMin(e.target.value)} className="p-2 border rounded text-sm" />
-              <input type="number" placeholder="Max net" value={netMax} onChange={e => setNetMax(e.target.value)} className="p-2 border rounded text-sm" />
-              <select value={recentSortBy} onChange={e => setRecentSortBy(e.target.value as any)} className="p-2 border rounded text-sm">
-                <option value="date">Date</option>
-                <option value="net">Net Amount</option>
-                <option value="notes">Notes</option>
+            <div className="p-2 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex gap-2 overflow-x-auto">
+              <input type="number" placeholder="Min Net" value={netMin} onChange={e => setNetMin(e.target.value)} className="p-1.5 text-xs border rounded bg-white dark:bg-slate-900 w-24" />
+              <input type="number" placeholder="Max Net" value={netMax} onChange={e => setNetMax(e.target.value)} className="p-1.5 text-xs border rounded bg-white dark:bg-slate-900 w-24" />
+              <select value={recentSortBy} onChange={e => setRecentSortBy(e.target.value as any)} className="p-1.5 text-xs border rounded bg-white dark:bg-slate-900">
+                <option value="date">Sort: Date</option>
+                <option value="net">Sort: Net Amt</option>
+                <option value="notes">Sort: Notes</option>
               </select>
-              <select value={recentSortDir} onChange={e => setRecentSortDir(e.target.value as any)} className="p-2 border rounded text-sm">
-                <option value="desc">Desc</option>
-                <option value="asc">Asc</option>
-              </select>
+              <button onClick={() => setRecentSortDir(d => d === 'asc' ? 'desc' : 'asc')} className="p-1.5 px-3 text-xs border rounded bg-white dark:bg-slate-900 font-bold">
+                {recentSortDir === 'asc' ? '↑ Asc' : '↓ Desc'}
+              </button>
             </div>
 
-            <div className="flex-1 overflow-auto space-y-3 pr-2 custom-scrollbar max-h-[600px]">
-              {recentFiltered.length === 0 && <div className="text-center py-10 text-slate-400">No records found.</div>}
-              {recentFiltered.map(t => (
-                <div key={t.id} className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1"><CalendarDays size={12} /> {new Date(t.date).toLocaleDateString()}</span>
-                      <div className="flex items-center gap-2 mt-1">
-                        {t.synced === false ? (
-                          <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded">
-                            <Clock size={10} /> Pending
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 rounded">
-                            <CheckCircle size={10} /> Synced
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${(t.totalSales - t.expenses) >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>Net: {formatCurrency(t.totalSales - t.expenses)}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
-                    <div>Sales: <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(t.totalSales)}</span></div>
-                    <div>Exp: <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(t.expenses)}</span></div>
-                  </div>
-                  {t.cashInDrawer > 0 && <div className="text-[10px] text-slate-400 mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">Drawer: {formatCurrency(t.cashInDrawer)}</div>}
-
-                  <div className="flex gap-2 mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <button
-                      onClick={() => handleEdit(t)}
-                      className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded transition"
+            <div className="flex-1 overflow-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 shadow-sm">
+                  <tr>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Date</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Cash</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Online</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right text-indigo-600 dark:text-indigo-400">Total</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right text-rose-600 dark:text-rose-400">Exp</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Net</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Notes</th>
+                    <th className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[80px]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                  {recentFiltered.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="p-8 text-center text-slate-400 text-sm">
+                        No entries found matching your filters.
+                      </td>
+                    </tr>
+                  )}
+                  {recentFiltered.map((t) => (
+                    <tr
+                      key={t.id}
+                      onClick={() => setSelectedRowId(t.id === selectedRowId ? null : t.id)}
+                      className={`
+                        group transition-colors cursor-pointer text-sm
+                        ${selectedRowId === t.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}
+                      `}
                     >
-                      <Edit2 size={10} /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(t.id)}
-                      className="flex-1 flex items-center justify-center gap-1 py-1 text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded transition"
-                    >
-                      <Trash2 size={10} /> Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                      <td className="p-2 border-r border-transparent md:border-slate-100 dark:md:border-slate-800/50">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-1.5 h-1.5 rounded-full ${t.synced === false ? 'bg-amber-500' : 'bg-emerald-500'}`} title={t.synced === false ? 'Pending Sync' : 'Synced'} />
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
+                            {new Date(t.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-2 text-right font-mono text-slate-600 dark:text-slate-400">
+                        {t.cashSales > 0 ? formatCurrency(t.cashSales) : '-'}
+                      </td>
+                      <td className="p-2 text-right font-mono text-slate-600 dark:text-slate-400">
+                        {t.onlineSales > 0 ? formatCurrency(t.onlineSales) : '-'}
+                      </td>
+                      <td className="p-2 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                        {formatCurrency(t.totalSales)}
+                      </td>
+                      <td className="p-2 text-right font-mono text-rose-500 dark:text-rose-400">
+                        {t.expenses > 0 ? formatCurrency(t.expenses) : '-'}
+                      </td>
+                      <td className="p-2 text-right font-mono font-bold">
+                        <span className={(t.totalSales - t.expenses) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
+                          {formatCurrency(t.totalSales - t.expenses)}
+                        </span>
+                      </td>
+                      <td className="p-2 max-w-[200px] truncate text-slate-500 dark:text-slate-400" title={t.notes}>
+                        {t.notes}
+                      </td>
+                      <td className="p-2 text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleEdit(t); }}
+                            className="p-1.5 text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded"
+                            title="Edit"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }}
+                            className="p-1.5 text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </Card>
         </div>

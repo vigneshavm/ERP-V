@@ -7,7 +7,8 @@ import { loadState, saveState } from './storage';
 
 // Initial state logic: Use Mock if Demo and LS is empty
 const initialInventoryState: InventoryState = {
-  products: []
+  products: [],
+  categories: []
 };
 
 const inventorySlice = createSlice({
@@ -71,9 +72,12 @@ const inventorySlice = createSlice({
         state.products.push(action.payload);
       }
       saveState('inventory', state);
+    },
+    setCategories: (state, action: PayloadAction<string[]>) => {
+      state.categories = action.payload;
     }
   },
 });
 
-export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts, upsertProduct } = inventorySlice.actions;
+export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts, upsertProduct, setCategories } = inventorySlice.actions;
 export default inventorySlice.reducer;

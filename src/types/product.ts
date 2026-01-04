@@ -4,4 +4,5 @@ import { Product } from './product/index';
 export type { Product };
 export interface InventoryState {
     products: Product[];
+    categories: string[];
 }

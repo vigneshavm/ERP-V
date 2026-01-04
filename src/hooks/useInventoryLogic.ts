@@ -36,7 +36,7 @@ export const defaultRow: ProductFormRow = {
 
 export const useInventoryLogic = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { products } = useSelector((state: RootState) => state.inventory);
+    const { products, categories } = useSelector((state: RootState) => state.inventory);
     const { currentSector, currentBranch, role } = useSelector((state: RootState) => state.auth);
     const { tenantId } = useConfig();
     const { tenants } = useSelector((state: RootState) => state.tenant);
@@ -192,12 +192,27 @@ export const useInventoryLogic = () => {
     const handleRowChange = (index: number, field: keyof ProductFormRow, value: string) => {
         const updated = [...bulkFormData];
         updated[index] = { ...updated[index], [field]: value };
+
+        // Auto-SKU generation
         if (!updated[index].id && field === 'brand' && value) {
             const prefix = value.substring(0, 3).toUpperCase();
             const timestamp = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
             updated[index].sku = `${prefix}-${timestamp}-${index}`;
         }
+
         setBulkFormData(updated);
+
+        // Auto-add new row if last row is filled
+        const isLastRow = index === updated.length - 1;
+        if (isLastRow) {
+            const row = updated[index];
+            const isComplete = row.name && row.brand && row.category && row.productType && row.stock && row.cost && row.price;
+
+            if (isComplete) {
+                // Use functional state update to ensure correctness if multiple fast types occur
+                setBulkFormData(prev => [...prev, { ...defaultRow, branch: currentBranch === 'All' ? '' : currentBranch }]);
+            }
+        }
     };
 
     const addRow = () => {
@@ -226,7 +241,10 @@ export const useInventoryLogic = () => {
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        bulkFormData.forEach(row => {
+
+        const validRows = bulkFormData.filter(row => row.name && row.price); // Basic check to ignore empty auto-added rows
+
+        validRows.forEach(row => {
             const productData = {
                 name: row.name,
                 sku: row.sku,
@@ -275,7 +293,10 @@ export const useInventoryLogic = () => {
     };
 
     const handlePrintLabels = () => {
-        if (selectedProductIds.size === 0) return;
+        if (selectedProductIds.size === 0) {
+            alert("Please select at least one product to print labels.");
+            return;
+        }
         setIsPrintModalOpen(true);
     };
 
@@ -285,6 +306,10 @@ export const useInventoryLogic = () => {
         } else {
             setSelectedProductIds(new Set(displayedProducts.map(p => p.id)));
         }
+    };
+
+    const clearSelection = () => {
+        setSelectedProductIds(new Set());
     };
 
     return {
@@ -330,6 +355,8 @@ export const useInventoryLogic = () => {
         toggleProductSelection,
         selectAll,
         getBranchName,
-        handlePrintLabels
+        handlePrintLabels,
+        categories,
+        clearSelection
     };
 };
