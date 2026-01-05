@@ -1,4 +1,4 @@
-import { Sector, ModuleType } from './common';
+import { Sector, ModuleType, SystemRole } from './common';
 import { SettingsState } from './settings';
 
 export interface RegionConfig {
@@ -45,7 +45,10 @@ export interface BranchConfig {
     pincode?: string;
     phone?: string;
     isHeadOffice?: boolean;
+    tenantId?: string;
 }
+
+export type Branch = BranchConfig;
 
 export interface TenantLocation {
     city: string;
@@ -130,8 +133,39 @@ export interface Tenant {
     integrations?: Integrations;
 }
 
+export interface TenantUser {
+    id: string;
+    tenantId: string;
+    roleId?: string; // UUID from roles table
+    fullName: string;
+    name: string; // Alias for fullName (Backward Compatibility)
+    mobile?: string;
+    email?: string;
+    role: string; // Legacy/Display role name (e.g. 'Manager')
+    systemRole: SystemRole; // 'Owner' | 'Manager' | 'Staff'
+    branchId?: string; // Assigned Branch ID
+    sector: Sector; // For UI context
+    permissions?: string[]; // Code based permissions
+}
+
 // Redux State Interface
+export enum DbRoleCode {
+    ADMIN = 'admin',
+    OWNER = 'owner',
+    MANAGER = 'manager',
+    STAFF = 'staff'
+}
+
+export interface Role {
+    id: string;
+    code: string;
+    description?: string;
+    isSystemRole?: boolean;
+    tenantId?: string;
+}
+
 export interface TenantState {
     tenants: Tenant[];
-    branches: any[];
+    branches: Branch[];
+    roles: Role[]; // Master Roles Cache
 }

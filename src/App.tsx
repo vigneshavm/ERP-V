@@ -34,7 +34,7 @@ import { getSession, clearSession } from './utils/session';
 
 import { AppView } from './types/common';
 import { Sector } from './types/common';
-import { Tenant } from './types/tenant';
+import { Tenant, DbRoleCode } from './types/tenant';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -108,12 +108,11 @@ const App: React.FC = () => {
 
     // --- Permission Helper ---
     const checkAccess = (view: AppView): boolean => {
-        // 1. Check if user is logged in
         if (!user) return false;
-        // 2. Owner has all permissions
-        if (role === 'Owner') return true;
-        // 3. Check specific role permissions
-        const allowedViews = rolePermissions[role] || [];
+
+        let effectiveRoleCode = 'staff';
+        effectiveRoleCode = user.systemRole.toLowerCase();
+        const allowedViews = rolePermissions[effectiveRoleCode as DbRoleCode] || [];
         return allowedViews.includes(view);
     };
 
@@ -361,7 +360,7 @@ const App: React.FC = () => {
                     <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
                         <div className="flex items-center space-x-2 overflow-hidden">
                             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span className="font-bold text-white">{user?.name.charAt(0) || 'T'}</span>
+                                <span className="font-bold text-white">{user?.name?.charAt(0) || 'T'}</span>
                             </div>
                             {!desktopCollapsed && (
                                 <div className="overflow-hidden">

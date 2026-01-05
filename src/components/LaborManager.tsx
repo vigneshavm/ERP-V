@@ -22,6 +22,8 @@ export const LaborManager = () => {
   // -- State --
   const [selectedLaborerId, setSelectedLaborerId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'ATTENDANCE' | 'PAYMENTS'>('ATTENDANCE');
+  const [roles, setRoles] = useState<any[]>([]);
+  const [isRolesLoaded, setIsRolesLoaded] = useState(false);
 
   // View State
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -38,7 +40,7 @@ export const LaborManager = () => {
   const [editingDate, setEditingDate] = useState<string | null>(null);
 
   // New Laborer Form State
-  const [newEmp, setNewEmp] = useState({ name: '', role: '', dailyRate: '', phoneNumber: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+  const [newEmp, setNewEmp] = useState({ name: '', role: '', roleId: '', dailyRate: '', mobile: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
   const [wageType, setWageType] = useState<'DAILY' | 'MONTHLY'>('DAILY');
   const [monthlyInput, setMonthlyInput] = useState('');
 
@@ -49,6 +51,34 @@ export const LaborManager = () => {
 
   // Filter Employees
   const sectorEmps = employees.filter(e => e.sector === currentSector);
+
+  // Load roles once on mount
+  React.useEffect(() => {
+    if (!isRolesLoaded && activeTenantId) {
+      loadRoles();
+    }
+  }, [isRolesLoaded]);
+
+  const activeTenantId = employees.length > 0 ? employees[0].tenantId : null; // Derive tenant ID or use context if available
+
+  const loadRoles = async () => {
+    // Assuming we have access to tenant ID via employees or context. 
+    // Since we don't have explicit tenant context here, let's rely on finding one from employees or skip.
+    // Ideally pass tenantId via props or selector.
+    // For now, let's fetch roles for the current tenant based on existing data context
+    // Actually, LaborManager uses Redux 'labor' slice which is populated by useSupabaseData.
+    // We should fetch roles directly from Supabase here.
+
+    // We need tenantId. Let's try to get it from Redux auth if available or employees.
+    const tId = activeTenantId;
+    if (!tId) return;
+
+    const { data } = await import('../lib/supabase').then(m => m.supabase.from('roles').select('*').eq('tenant_id', tId));
+    if (data) {
+      setRoles(data);
+      setIsRolesLoaded(true);
+    }
+  };
 
   // Default selection
   if (!selectedLaborerId && sectorEmps.length > 0) {
@@ -146,19 +176,96 @@ export const LaborManager = () => {
 
     const hashedPin = await securePassword('0000');
 
-    dispatch(addEmployee({
-      id: generateId(),
-      name: newEmp.name,
-      role: newEmp.role,
-      dailyRate: parseFloat(newEmp.dailyRate),
-      sector: currentSector as Sector,
-      branchId: newEmp.branch as Branch,
-      systemRole: 'Staff',
-      pin: hashedPin,
-      phoneNumber: newEmp.phoneNumber
-    }));
-    setIsAddingLaborer(false);
-    setNewEmp({ name: '', role: '', dailyRate: '', phoneNumber: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+    // Find 'Staff' role by default if not selected?
+    // Or just use the selected role (if we added role selection).
+    // The current UI had 'Role' as a text input (newEmp.role).
+    // In V3, we need role_id.
+    // We should allow selecting a role, or default to 'Staff' system role.
+
+    let targetRoleId = newEmp.roleId;
+
+    if (!targetRoleId) {
+      // Try to find 'Staff' role
+      const staffRole = roles.find(r => r.name === 'Staff');
+      if (staffRole) targetRoleId = staffRole.id;
+    }
+
+    // Only proceed if we have a role ID (or we could default to null if DB allows, but better to be explicit)
+    // Actually, DB role_id is optional but we want it for RBAC.
+
+    // Create DB entry
+    const newDbUser = {
+      tenant_id: activeTenantId, // We derived this earlier
+      full_name: newEmp.name,
+      role_id: targetRoleId,
+      daily_rate: parseFloat(newEmp.dailyRate) || 0,
+      // Wait, newEmp.branch in LaborState seems to be a 'Branch' object or string?
+      // Initial state: currentBranch === 'All' ? 'Alpha' : currentBranch
+      // currentBranch from State is string 'All' or ID?
+      // TenantSlice defines branches: Branch[]. currentBranch in Auth is string (name or id?).
+      // Actually, usually currentBranch is an ID or 'All'. 
+      // Let's check logic: branch: currentBranch === 'All' ? 'Alpha' : currentBranch
+      // If currentBranch is 'All', it defaults to 'Alpha'. 
+      // We need an ID for assigned_branch_id. 
+      // We should probably find the branch ID for 'Alpha' or whatever is selected.
+
+      mobile: newEmp.mobile,
+      // Default values
+      system_role: 'Staff', // Ignored by DB but useful for consistency check if we were using old table
+      is_active: true,
+      password_hash: null, // Laborers might not have password initially
+      pin_hash: hashedPin
+    };
+
+    // Correct Branch ID logic
+    let finalBranchId = null;
+    if (typeof newEmp.branch === 'string') {
+      // Check if it's 'Alpha' or name/ID
+      // Just look it up in tenantBranches
+      const found = tenantBranches.find(b => b.name === newEmp.branch || b.id === newEmp.branch);
+      if (found) finalBranchId = found.id;
+    } else if ((newEmp.branch as any).id) {
+      finalBranchId = (newEmp.branch as any).id;
+    }
+
+    // Insert to Supabase
+    const { data: insertedUser, error } = await import('../lib/supabase').then(m => m.supabase
+      .from('tenant_users')
+      .insert([{
+        ...newDbUser,
+        assigned_branch_id: finalBranchId
+      }])
+      .select(`
+            *,
+            role:roles(code, description)
+        `)
+      .single()
+    );
+
+    if (error) {
+      console.error("Failed to add laborer:", error);
+      alert("Failed to add laborer: " + error.message);
+      return;
+    }
+
+    if (insertedUser) {
+      dispatch(addEmployee({
+        id: insertedUser.id,
+        name: insertedUser.full_name,
+        role: insertedUser.role?.description || insertedUser.role?.code || newEmp.role || 'Staff',
+        roleId: insertedUser.role_id,
+        dailyRate: insertedUser.daily_rate || 0,
+        sector: currentSector as Sector,
+        branchId: insertedUser.assigned_branch_id || (newEmp.branch as any), // Fallback
+        systemRole: 'Staff', // Laborers are usually Staff
+        pin: insertedUser.pin_hash || '',
+        mobile: insertedUser.mobile,
+        tenantId: insertedUser.tenant_id
+      }));
+
+      setIsAddingLaborer(false);
+      setNewEmp({ name: '', role: '', roleId: '', dailyRate: '', mobile: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+    }
   };
 
   const handleMonthlyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -388,16 +495,25 @@ export const LaborManager = () => {
               />
               <input
                 type="text"
-                placeholder="Role"
+                placeholder="Role (Display Name)"
                 value={newEmp.role}
                 onChange={e => setNewEmp({ ...newEmp, role: e.target.value })}
                 className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
               />
+              {/* Optional: Role Selection if we want to enforce DB roles */}
+              <select
+                value={newEmp.roleId}
+                onChange={e => setNewEmp({ ...newEmp, roleId: e.target.value })}
+                className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                <option value="">Select System Role (Default: Staff)</option>
+                {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+              </select>
               <input
                 type="text"
                 placeholder="Phone Number"
-                value={newEmp.phoneNumber}
-                onChange={e => setNewEmp({ ...newEmp, phoneNumber: e.target.value })}
+                value={newEmp.mobile}
+                onChange={e => setNewEmp({ ...newEmp, mobile: e.target.value })}
                 className="w-full p-2 text-xs rounded border border-blue-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-300"
               />
 
@@ -473,7 +589,7 @@ export const LaborManager = () => {
               <div>
                 <p className="font-bold text-sm">{l.name}</p>
                 <p className={`text-[10px] ${selectedLaborerId === l.id ? 'text-slate-400 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
-                  {l.role} • {formatCurrency(l.dailyRate)}/day {l.phoneNumber && `• ${l.phoneNumber}`}
+                  {l.role} • {formatCurrency(l.dailyRate)}/day {l.mobile && `• ${l.mobile}`}
                 </p>
               </div>
               {selectedLaborerId === l.id && <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />}

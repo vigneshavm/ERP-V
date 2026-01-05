@@ -1,10 +1,9 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { TenantState, Tenant } from '../types/tenant'
-import { ModuleType, Sector, SystemRole, AppView } from '../types/common'
-import { AuthState, SettingsState } from '../types/settings'
-import { Employee } from '../types/hr'
+import { Tenant, Branch, TenantState, TenantUser, DbRoleCode } from '../types/tenant';
+import { SettingsState, AuthState } from '../types/settings';
+import { ModuleType, Sector, SystemRole, AppView } from '../types/common';
 import { getStoredTheme } from '../utils/theme'
 
 
@@ -14,7 +13,8 @@ const initialTenantState: TenantState = {
   tenants: [],
   branches: [
     { id: 'All', name: 'All Branches', city: 'Various', address: '', counters: [{ id: 'C1', name: 'Main Counter', lastBillNumber: 0 }, { id: 'C2', name: 'Express Counter', lastBillNumber: 0 }] }
-  ]
+  ],
+  roles: []
 };
 
 const tenantSlice = createSlice({
@@ -30,7 +30,7 @@ const tenantSlice = createSlice({
           return {
             ...loc,
             branches: [{
-              id: `br-fallback-${loc.city.toLowerCase()}-${rawTenant.id}`,
+              id: `br - fallback - ${loc.city.toLowerCase()} -${rawTenant.id} `,
               name: loc.city,
               city: loc.city,
               address: 'Main Office',
@@ -49,7 +49,7 @@ const tenantSlice = createSlice({
           const branches = loc.branches || [];
           if (branches.length === 0) {
             // Fallback: If no branches, use location city as default branch
-            const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${action.payload.id}`;
+            const fallbackId = `br - fallback - ${loc.city.toLowerCase()} -${action.payload.id} `;
             const exists = state.branches.find(sb => sb.id === fallbackId);
             if (!exists) {
               state.branches.push({
@@ -90,7 +90,7 @@ const tenantSlice = createSlice({
             return {
               ...loc,
               branches: [{
-                id: `br-fallback-${loc.city.toLowerCase()}-${rawTenant.id}`,
+                id: `br - fallback - ${loc.city.toLowerCase()} -${rawTenant.id} `,
                 name: loc.city,
                 city: loc.city,
                 address: 'Main Office',
@@ -108,7 +108,7 @@ const tenantSlice = createSlice({
             const branches = loc.branches || [];
             if (branches.length === 0) {
               // Fallback: If no branches, use location city as default branch
-              const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${action.payload.id}`;
+              const fallbackId = `br - fallback - ${loc.city.toLowerCase()} -${action.payload.id} `;
               const exists = state.branches.find(sb => sb.id === fallbackId);
               if (!exists) {
                 state.branches.push({
@@ -140,7 +140,7 @@ const tenantSlice = createSlice({
             return {
               ...loc,
               branches: [{
-                id: `br-fallback-${loc.city.toLowerCase()}-${t.id}`,
+                id: `br - fallback - ${loc.city.toLowerCase()} -${t.id} `,
                 name: loc.city,
                 city: loc.city,
                 address: 'Main Office',
@@ -161,7 +161,7 @@ const tenantSlice = createSlice({
           const branches = loc.branches || [];
           if (branches.length === 0) {
             // Fallback: If no branches, use location city as default branch
-            const fallbackId = `br-fallback-${loc.city.toLowerCase()}-${t.id}`;
+            const fallbackId = `br - fallback - ${loc.city.toLowerCase()} -${t.id} `;
             const exists = state.branches.find(sb => sb.id === fallbackId) || collected.find(cb => cb.id === fallbackId);
             if (!exists) {
               collected.push({
@@ -241,16 +241,19 @@ const tenantSlice = createSlice({
           // Initialize if it doesn't exist (though it should have been defined)
           branch.counters.push({
             id: action.payload.counterId,
-            name: `Counter ${action.payload.counterId}`,
+            name: `Counter ${action.payload.counterId} `,
             lastBillNumber: 1
           });
         }
       }
+    },
+    setRoles: (state, action: PayloadAction<any[]>) => {
+      state.roles = action.payload;
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded, incrementCounterBillNumber } = tenantSlice.actions;
+export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded, incrementCounterBillNumber, setRoles } = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---
@@ -275,7 +278,13 @@ const authSlice = createSlice({
     setBranch: (state, action: PayloadAction<string>) => {
       state.currentBranch = action.payload;
     },
-    setUser: (state, action: PayloadAction<Employee>) => {
+    setUser: (state, action: PayloadAction<TenantUser | null>) => {
+      // Handle null (logout)
+      if (!action.payload) {
+        state.user = null;
+        state.role = 'Staff';
+        return;
+      }
       state.user = action.payload;
       state.role = action.payload.systemRole;
       state.currentSector = action.payload.sector;
@@ -298,9 +307,10 @@ const initialSettingsState: SettingsState = {
   primaryColor: '#4f46e5',
   enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
   rolePermissions: {
-    'Owner': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
-    'Manager': ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
-    'Staff': ['POS', 'DAILY', 'SALES', 'STOREFRONT']
+    [DbRoleCode.OWNER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
+    [DbRoleCode.ADMIN]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
+    [DbRoleCode.MANAGER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
+    [DbRoleCode.STAFF]: ['POS', 'DAILY', 'SALES', 'STOREFRONT']
   },
   defaultTaxMode: 'EXCLUSIVE',
   expiryRules: {

@@ -9,7 +9,7 @@ import { setEmployees, setLaborPayments } from '../store/laborSlice';
 import { setTransactions, setCheques, setDailyRecords } from '../store/financeSlice';
 import { setOrders } from '../store/purchaseSlice';
 import { RootState } from '../store';
-import { Tenant } from '../types/tenant';
+import { Tenant, DbRoleCode, TenantUser } from '../types/tenant';
 import { Product } from '../types/product';
 import { Sale, Customer } from '../types/sales';
 import { Employee, LaborPayment } from '../types/hr';
@@ -117,8 +117,12 @@ export const useSupabaseData = () => {
                     dispatch(setTenants(finalTenants));
                     dispatch(setBranches(mappedBranches));
 
-                    // --- Fetch Employees (Critical for Login) ---
-                    let eQuery = supabase.from('employees').select('*');
+                    // --- Fetch Employees (from tenant_users) ---
+                    let eQuery = supabase.from('tenant_users').select(`
+                        *,
+                        role:roles(code, description)
+                    `);
+
                     if (isolatedTenantId) {
                         eQuery = eQuery.eq('tenant_id', isolatedTenantId);
                     }
@@ -127,28 +131,24 @@ export const useSupabaseData = () => {
 
                     if (empData) {
                         const mappedEmployees = empData.map((e: any) => {
-                            let bId = e.branch_id;
-                            // Repair branchId if it holds a temporary BR- ID
-                            if (bId && bId.toString().startsWith('BR-')) {
-                                const tenant = allTenants.find(t => t.id === e.tenant_id);
-                                const tempBranchEntry = tenant?.locations?.flatMap((l: any) => l.branches || []).find((b: any) => b.id === bId);
-                                if (tempBranchEntry) {
-                                    const realBranch = branchData?.find((rb: any) => rb.tenant_id === e.tenant_id && rb.name === tempBranchEntry.name);
-                                    if (realBranch) bId = realBranch.id;
-                                }
-                            }
+                            let bId = e.assigned_branch_id; // V3 Schema uses assigned_branch_id
+
+                            // Determine system role from role code
+                            const roleCode = e.role?.code?.toLowerCase() || 'staff';
+                            const derivedSystemRole = (roleCode === DbRoleCode.OWNER || roleCode === DbRoleCode.ADMIN) ? 'Owner' : 'Staff';
 
                             return {
                                 id: e.id,
-                                name: e.name,
-                                role: e.role,
-                                systemRole: e.system_role,
-                                pin: e.pin,
-                                dailyRate: e.daily_rate,
-                                sector: e.sector,
+                                name: e.full_name, // Map full_name -> name
+                                role: e.role?.description || roleCode, // Use description if available, else code
+                                systemRole: derivedSystemRole,
+                                pin: e.pin_hash || '', // Map pin_hash -> pin
+                                dailyRate: 0, // Legacy field not in tenant_users
+                                sector: 'General', // Default
                                 branchId: bId,
                                 tenantId: e.tenant_id,
-                                phoneNumber: e.phone_number
+                                mobile: e.mobile, // Map mobile
+                                roleId: e.role_id
                             };
                         }) as Employee[];
 
@@ -159,7 +159,21 @@ export const useSupabaseData = () => {
                             const currentUserInList = mappedEmployees.find(me => me.id === user.id);
                             if (currentUserInList && currentUserInList.branchId !== user.branchId) {
                                 console.log(`[Repair] Updating session branchId for ${user.name}: ${user.branchId} -> ${currentUserInList.branchId}`);
-                                dispatch(setUser(currentUserInList));
+                                const updatedUser: TenantUser = {
+                                    id: currentUserInList.id,
+                                    tenantId: currentUserInList.tenantId || user.tenantId,
+                                    roleId: currentUserInList.roleId,
+                                    fullName: currentUserInList.name,
+                                    name: currentUserInList.name,
+                                    mobile: currentUserInList.mobile,
+                                    email: user.email,
+                                    role: currentUserInList.role,
+                                    systemRole: currentUserInList.systemRole,
+                                    branchId: currentUserInList.branchId as unknown as string,
+                                    sector: currentUserInList.sector,
+                                    permissions: user.permissions
+                                };
+                                dispatch(setUser(updatedUser));
                             }
                         }
                     }

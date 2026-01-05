@@ -1,26 +1,18 @@
-import { SystemRole, AppView, Sector, TaxMode } from './common';
-import { Employee } from './hr';
+import { TenantUser } from './tenant';
+import { Sector } from './common';
+
+export interface AuthState {
+    user: TenantUser | null;
+    currentSector: Sector;
+    currentBranch: string;
+    role: SystemRole;
+    theme: 'light' | 'dark';
+}
+
+import { AppView, SystemRole } from './common';
 
 export interface SettingsState {
     appName: string;
-    logoUrl?: string;
-    primaryColor: string;
-    enabledModules: Record<string, boolean>;
-    rolePermissions: Record<SystemRole, AppView[]>;
-    defaultTaxMode: TaxMode;
-    expiryRules?: {
-        criticalDays: number;
-        criticalDiscount: number;
-        highDays: number;
-        highDiscount: number;
-        mediumDays: number;
-        mediumDiscount: number;
-    };
-}
-
-export interface AppSettings {
-    appName: string;
-    logoUrl?: string;
     primaryColor: string;
     enabledModules: {
         pos: boolean;
@@ -28,18 +20,19 @@ export interface AppSettings {
         finance: boolean;
         labor: boolean;
         purchases: boolean;
-        storefront: boolean;
         sales: boolean;
         daily: boolean;
+        storefront: boolean;
+        [key: string]: boolean;
     };
-    rolePermissions: Record<SystemRole, AppView[]>;
-}
-
-// Redux State Interface
-export interface AuthState {
-    user: Employee | null;
-    currentSector: Sector;
-    currentBranch: string;
-    role: SystemRole;
-    theme: 'light' | 'dark';
+    rolePermissions: Record<string, AppView[]>;
+    defaultTaxMode: string;
+    expiryRules: {
+        criticalDays: number;
+        criticalDiscount: number;
+        highDays: number;
+        highDiscount: number;
+        mediumDays: number;
+        mediumDiscount: number;
+    };
 }

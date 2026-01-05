@@ -68,8 +68,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
             // Let's verify against the DB record to be ultra-safe.
 
             const { data: dbUser, error: fetchError } = await supabase
-                .from('employees')
-                .select('pin')
+                .from('tenant_users')
+                .select('password_hash')
                 .eq('id', user.id)
                 .single();
 
@@ -77,7 +77,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                 throw new Error('Failed to retrieve user record.');
             }
 
-            const isValid = await comparePassword(currentPassword, dbUser.pin);
+            const isValid = await comparePassword(currentPassword, dbUser.password_hash);
             if (!isValid) {
                 throw new Error('Incorrect current password.');
             }
@@ -87,8 +87,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
             // 4. Update Database
             const { error: updateError } = await supabase
-                .from('employees')
-                .update({ pin: securedPin })
+                .from('tenant_users')
+                .update({ password_hash: securedPin })
                 .eq('id', user.id);
 
             if (updateError) throw updateError;
@@ -209,8 +209,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                                     value={confirmPassword}
                                     onChange={e => setConfirmPassword(e.target.value)}
                                     className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border rounded-xl outline-none focus:ring-2 dark:text-white font-mono text-sm ${confirmPassword && confirmPassword !== newPassword
-                                            ? 'border-red-300 focus:ring-red-500'
-                                            : 'border-slate-200 dark:border-slate-700 focus:ring-indigo-500'
+                                        ? 'border-red-300 focus:ring-red-500'
+                                        : 'border-slate-200 dark:border-slate-700 focus:ring-indigo-500'
                                         }`}
                                     placeholder="Repeat new password"
                                     required

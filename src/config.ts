@@ -9,7 +9,8 @@ export const APP_CONFIG = {
     // Optional: restrict the app at build/runtime to a single tenant by subdomain or id
     DEPLOY_TENANT_SUBDOMAIN: import.meta.env.VITE_TENANT_SUBDOMAIN || null,
     DEPLOY_TENANT_ID: import.meta.env.VITE_TENANT_ID || null,
-    REQUIRE_TENANT_ID: import.meta.env.VITE_REQUIRE_TENANT_ID === 'true'
+    REQUIRE_TENANT_ID: import.meta.env.VITE_REQUIRE_TENANT_ID === 'true',
+
 };
 
 // Role-Based Access Control Configuration
@@ -49,3 +50,7 @@ export const hasAccess = (role: string, view: AppView): boolean => {
     const userRole = role as SystemRole;
     return PERMISSIONS[userRole]?.includes(view) || false;
 };
+
+
+
+

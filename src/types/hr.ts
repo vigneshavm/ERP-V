@@ -11,7 +11,8 @@ export interface Employee {
     branchId: Branch;
     assignedCounterId?: string;
     tenantId?: string;
-    phoneNumber?: string;
+    mobile?: string;
+    roleId?: string;
 }
 
 export interface LaborPayment {

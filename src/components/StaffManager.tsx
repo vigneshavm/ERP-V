@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
@@ -6,7 +5,9 @@ import { SystemRole } from '../types/common';
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { APP_CONFIG } from '../config';
+
 import { securePassword } from '../utils/auth';
+import { TenantUser, DbRoleCode } from '../types/tenant';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -16,16 +17,17 @@ const StaffManager: React.FC = () => {
     const activeTenant = tenants.find(t => t.id === user?.tenantId);
 
     const [tenantEmployees, setTenantEmployees] = useState<any[]>([]);
+    const [roles, setRoles] = useState<any[]>([]);
     const [isLoadingEmployees, setIsLoadingEmployees] = useState(false);
 
     const [newEmp, setNewEmp] = useState({
         name: '',
-        role: '',
-        systemRole: 'Staff' as SystemRole,
+        roleId: '', // Changed from role string to roleId
+        systemRole: 'Staff' as SystemRole, // Keep for UI logic if needed, or derive from selected role
         pin: '',
         dailyRate: '',
         branchId: '',
-        phoneNumber: '',
+        mobile: '',
         assignedCounterId: ''
     });
     const [editingEmpId, setEditingEmpId] = useState<string | null>(null);
@@ -39,14 +41,33 @@ const StaffManager: React.FC = () => {
     const fetchTenantEmployees = async (tenantId: string) => {
         setIsLoadingEmployees(true);
         try {
-            if (APP_CONFIG.USE_SUPABASE && supabase) {
+            if (APP_CONFIG?.USE_SUPABASE && supabase) {
                 const { data, error } = await supabase
-                    .from('employees')
-                    .select('*')
+                    .from('tenant_users') // Updated table
+                    .select(`
+    *,
+    role: roles(id, code, description)
+                    `)
                     .eq('tenant_id', tenantId);
 
+                const { data: rolesData } = await supabase
+                    .from('roles')
+                    .select('*')
+                    .eq('tenant_id', tenantId); // Note: V3 roles are shared if system roles, but this query is fine if RLS allows
+
+                if (rolesData) setRoles(rolesData);
+
                 if (error) throw error;
-                setTenantEmployees(data || []);
+                // Map tenant_users to expected UI format if needed, or use directly
+                setTenantEmployees(data?.map((u: any) => {
+                    const roleCode = u.role?.code?.toLowerCase() || DbRoleCode.STAFF;
+                    return {
+                        ...u,
+                        name: u.full_name,
+                        role: u.role?.description || roleCode,
+                        system_role: (roleCode === DbRoleCode.OWNER || roleCode === DbRoleCode.ADMIN) ? 'Owner' : 'Staff'
+                    };
+                }) || []);
             }
         } catch (err) {
             console.error('Error fetching employees:', err);
@@ -75,22 +96,22 @@ const StaffManager: React.FC = () => {
                 }
 
                 const empData: any = {
-                    name: newEmp.name,
-                    role: newEmp.role,
-                    system_role: newEmp.systemRole,
+                    full_name: newEmp.name, // Map name to full_name
+                    role_id: newEmp.roleId, // Use role_id
+                    // system_role removed, derived from role_id in DB relation
                     daily_rate: parseFloat(newEmp.dailyRate) || 0,
-                    branch_id: newEmp.branchId,
+                    assigned_branch_id: newEmp.branchId, // Map branchId to assigned_branch_id
                     tenant_id: activeTenant.id,
-                    sector: activeTenant.sector,
-                    phone_number: newEmp.phoneNumber,
-                    assigned_counter_id: newEmp.assignedCounterId,
+                    // sector: activeTenant.sector, // Not in tenant_users
+                    mobile: newEmp.mobile,
+                    assigned_counter_id: newEmp.assignedCounterId ? newEmp.assignedCounterId : null, // Ensure null if empty
                     // Only include PIN if we have a new one (encrypted)
-                    ...(pinToSave && pinToSave.length > 0 ? { pin: pinToSave } : {}),
+                    ...(pinToSave && pinToSave.length > 0 ? { pin_hash: pinToSave } : {}), // Map pin to pin_hash
                 };
 
                 if (editingEmpId) {
                     const { data, error } = await supabase
-                        .from('employees')
+                        .from('tenant_users') // Updated table
                         .update(empData)
                         .eq('id', editingEmpId)
                         .select()
@@ -103,7 +124,7 @@ const StaffManager: React.FC = () => {
                     }
                 } else {
                     const { data, error } = await supabase
-                        .from('employees')
+                        .from('tenant_users') // Updated table
                         .insert([empData])
                         .select()
                         .single();
@@ -117,26 +138,26 @@ const StaffManager: React.FC = () => {
             }
         } catch (err: any) {
             console.error('Error saving employee:', err);
-            alert(`Error: ${err.message}`);
+            alert(`Error: ${err.message} `);
         }
     };
 
     const handleStartEditEmp = (emp: any) => {
         setNewEmp({
             name: emp.name,
-            role: emp.role || '',
-            systemRole: emp.system_role as SystemRole,
+            roleId: emp.role_id || '',
+            systemRole: 'Staff', // Default, logic to derive from role would go here
             pin: '', // Do NOT verify or populate existing PIN for security
             dailyRate: emp.daily_rate?.toString() || '',
-            branchId: emp.branch_id || '',
-            phoneNumber: emp.phone_number || '',
+            branchId: emp.assigned_branch_id || '',
+            mobile: emp.mobile || '',
             assignedCounterId: emp.assigned_counter_id || ''
         });
         setEditingEmpId(emp.id);
     };
 
     const handleCancelEditEmp = () => {
-        setNewEmp({ name: '', role: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', phoneNumber: '', assignedCounterId: '' });
+        setNewEmp({ name: '', roleId: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', mobile: '', assignedCounterId: '' });
         setEditingEmpId(null);
     };
 
@@ -146,7 +167,7 @@ const StaffManager: React.FC = () => {
         try {
             if (APP_CONFIG.USE_SUPABASE && supabase) {
                 const { error } = await supabase
-                    .from('employees')
+                    .from('tenant_users')
                     .delete()
                     .eq('id', id);
 
@@ -198,22 +219,22 @@ const StaffManager: React.FC = () => {
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
                                 <input
                                     className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
-                                    value={newEmp.phoneNumber}
-                                    onChange={e => setNewEmp({ ...newEmp, phoneNumber: e.target.value })}
+                                    value={newEmp.mobile}
+                                    onChange={e => setNewEmp({ ...newEmp, mobile: e.target.value })}
                                     placeholder="e.g. 9876543210"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">System Role</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Role</label>
                                 <select
                                     className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
-                                    value={newEmp.systemRole}
-                                    onChange={e => setNewEmp({ ...newEmp, systemRole: e.target.value as SystemRole })}
+                                    value={newEmp.roleId}
+                                    onChange={e => setNewEmp({ ...newEmp, roleId: e.target.value })}
                                 >
-                                    <option value="Staff">Staff (POS Only)</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Owner">Owner</option>
+                                    <option value="">Select Role</option>
+                                    {roles.map(r => (
+                                        <option key={r.id} value={r.id}>{r.name}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div>
@@ -304,7 +325,7 @@ const StaffManager: React.FC = () => {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === 'Admin' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'}`}>
+                                                <span className={`px - 2 py - 0.5 rounded - full text - [10px] font - bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === 'Admin' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>

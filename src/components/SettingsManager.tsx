@@ -110,8 +110,11 @@ const SecurityMigrationManager: React.FC = () => {
                 const secured = await securePassword(rawPin);
 
                 const { error } = await supabase
-                    .from('employees')
-                    .update({ pin: secured })
+                    .from('tenant_users')
+                    .update({
+                        pin_hash: secured,
+                        password_hash: secured // Also update password_hash to allow login
+                    })
                     .eq('id', user.id);
 
                 if (error) throw error;
