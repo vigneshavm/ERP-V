@@ -45,6 +45,10 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [showOTP, setShowOTP] = useState(false);
+    const [otpCode, setOtpCode] = useState('');
+    const [otpMethod, setOtpMethod] = useState<'email' | 'sms'>('email');
+    const [tempUser, setTempUser] = useState<TenantUser | null>(null);
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -67,24 +71,17 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
         }
 
         try {
-            // New Auth Flow using RPC
             if (!supabase) {
                 throw new Error("Supabase client not initialized.");
             }
 
             // 1. Authenticate via Secure RPC
-
-            //login using tenan user table
-
-
             const { data, error: rpcError } = await supabase
                 .rpc('login_tenant_user', {
                     p_tenant_id: tenant.id,
                     p_identity: cleanIdentity,
                     p_password: password
                 });
-
-
 
             if (rpcError) {
                 console.error("Login RPC Error:", rpcError);
@@ -101,37 +98,25 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
             const apiUser = data.user;
 
-
-
-
-
-            // Map permissions/role if needed. For now default to basic access.
-            // 2. Map to Application User Object
-            // Determine system role (for now defaults or map if available, currently 'Staff')
+            // 2. Map role and create session object
             let systemRole: SystemRole = 'Staff';
             let displayRole = 'Staff';
 
             if (apiUser.role_id) {
-                const { data: roleData, error: roleError } = await supabase
+                const { data: roleData } = await supabase
                     .from('roles')
                     .select('code, description')
                     .eq('id', apiUser.role_id)
                     .single();
 
-
-
-                if (!roleError && roleData) {
+                if (roleData) {
                     const code = roleData.code.toLowerCase();
-                    // Map Code -> SystemRole
                     if (code === DbRoleCode.ADMIN || code === DbRoleCode.OWNER) {
                         systemRole = 'Owner';
                     } else if (code === DbRoleCode.MANAGER) {
                         systemRole = 'Manager';
                     }
-
                     displayRole = roleData.description || code;
-                } else {
-                    console.warn("Failed to resolve role for user:", apiUser.id, roleError);
                 }
             }
 
@@ -139,26 +124,98 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                 id: apiUser.id,
                 tenantId: apiUser.tenant_id,
                 fullName: apiUser.full_name,
-                name: apiUser.full_name, // Alias
+                name: apiUser.full_name,
                 mobile: apiUser.mobile,
                 email: apiUser.email,
-                role: displayRole, // Display Name from DB
-                roleId: apiUser.role_id, // Store ID for App.tsx check
+                role: displayRole,
+                roleId: apiUser.role_id,
                 systemRole: systemRole,
                 sector: allowedSector,
-                branchId: '' // Will need to assign/select branch later
+                branchId: ''
             };
 
-            console.log("Session User:", sessionUser);
+            setTempUser(sessionUser);
 
-            // 3. Establish Session
-            setSession(sessionUser, rememberMe);
-            dispatch(setUser(sessionUser));
-            onLogin();
+            if (sessionUser.email) {
+                setOtpMethod('email');
+                const { error: otpErr } = await supabase.auth.signInWithOtp({
+                    email: sessionUser.email,
+                    options: { shouldCreateUser: true }
+                });
+                if (otpErr) throw otpErr;
+            } else if (sessionUser.mobile) {
+                setOtpMethod('sms');
+                // Normalize phone number to E.164 if it's just 10 digits (assume +91 for India as per context)
+                let phoneNumber = sessionUser.mobile.trim();
+                if (phoneNumber.length === 10 && /^\d+$/.test(phoneNumber)) {
+                    phoneNumber = `+91${phoneNumber}`;
+                } else if (!phoneNumber.startsWith('+')) {
+                    phoneNumber = `+${phoneNumber}`;
+                }
 
-        } catch (err) {
+                const { error: otpErr } = await supabase.auth.signInWithOtp({
+                    phone: phoneNumber,
+                    options: { shouldCreateUser: true }
+                });
+
+                if (otpErr) {
+                    if (otpErr.message.includes("Unsupported phone provider")) {
+                        throw new Error("SMS OTP is not configured in Supabase. Please enable an SMS provider (Twilio/MessageBird) in Supabase Dashboard or provide an email address for the user.");
+                    }
+                    throw otpErr;
+                }
+            } else {
+                throw new Error("User does not have a registered email or mobile number for verification.");
+            }
+
+            setShowOTP(true);
+            setIsLoading(false);
+
+        } catch (err: any) {
             console.error("Login process error:", err);
-            setError("An unexpected error occurred.");
+            setError(err.message || "Failed to send verification code.");
+            setIsLoading(false);
+        }
+    };
+
+    const handleVerifyOTP = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            if (!tempUser?.email) {
+                throw new Error("Session expired. Please login again.");
+            }
+
+            let error;
+
+            if (otpMethod === 'email') {
+                if (!tempUser?.email) throw new Error("Missing email for verification.");
+                const res = await supabase.auth.verifyOtp({
+                    email: tempUser.email,
+                    token: otpCode,
+                    type: 'email'
+                });
+                error = res.error;
+            } else {
+                if (!tempUser?.mobile) throw new Error("Missing mobile for verification.");
+                const res = await supabase.auth.verifyOtp({
+                    phone: tempUser.mobile,
+                    token: otpCode,
+                    type: 'sms'
+                });
+                error = res.error;
+            }
+
+            if (error) throw error;
+
+            // OTP Success: Finalize Login
+            setSession(tempUser, rememberMe);
+            dispatch(setUser(tempUser));
+            onLogin();
+        } catch (err) {
+            setError("Invalid or expired OTP code.");
             setIsLoading(false);
         }
     };
@@ -206,69 +263,117 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                         </h1>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Identity</label>
-                            <div className="relative group">
-                                <UserCircle className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
-                                <input
-                                    type="text"
-                                    value={identity}
-                                    onChange={(e) => setIdentity(e.target.value)}
-                                    placeholder="Mobile Number or Email"
-                                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white font-semibold transition-all hover:bg-white/10 text-sm"
-                                />
-                            </div>
-                        </div>
+                    <form onSubmit={showOTP ? handleVerifyOTP : handleSubmit} className="space-y-4">
+                        {showOTP ? (
+                            <div className="space-y-4 animate-in fade-in">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                                    Verification Code sent to {otpMethod === 'email' ? tempUser?.email : tempUser?.mobile}
+                                </label>
+                                <div className="relative group">
+                                    <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
+                                    <input
+                                        type="text"
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value)}
+                                        placeholder="Verification code"
+                                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-mono tracking-[0.5em] text-center outline-none focus:ring-2 focus:ring-emerald-500"
+                                        maxLength={8}
+                                        autoFocus
+                                    />
+                                </div>
 
-                        <div>
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Password</label>
-                            <div className="relative group">
-                                <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Enter your password"
-                                    className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-600 font-mono tracking-widest text-base transition-all hover:bg-white/10"
-                                    autoComplete="current-password"
-                                />
+                                {error && (
+                                    <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 text-red-400 bg-red-500/10 border border-red-500/20`}>
+                                        <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+                                    </div>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-black shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Access <ArrowRight className="w-4 h-4" /></>}
+                                </button>
+
                                 <button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-3.5 text-slate-400 hover:text-indigo-400 transition-colors"
+                                    onClick={() => {
+                                        setShowOTP(false);
+                                        setOtpCode('');
+                                        setError('');
+                                    }}
+                                    className="w-full text-xs text-slate-400 hover:text-white transition-colors py-2"
                                 >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    Back to Login
                                 </button>
                             </div>
-                        </div>
+                        ) : (
+                            <>
+                                <div>
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Identity</label>
+                                    <div className="relative group">
+                                        <UserCircle className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
+                                        <input
+                                            type="text"
+                                            value={identity}
+                                            onChange={(e) => setIdentity(e.target.value)}
+                                            placeholder="Mobile Number or Email"
+                                            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white font-semibold transition-all hover:bg-white/10 text-sm"
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className="flex items-center">
-                            <input
-                                id="remember-me"
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className="w-4 h-4 text-indigo-600 bg-white/5 border-white/10 rounded focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
-                            />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400 cursor-pointer select-none">
-                                Remember me
-                            </label>
-                        </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Password</label>
+                                    <div className="relative group">
+                                        <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="Enter your password"
+                                            className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-600 font-mono tracking-widest text-base transition-all hover:bg-white/10"
+                                            autoComplete="current-password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-3.5 text-slate-400 hover:text-indigo-400 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
+                                </div>
 
-                        {error && (
-                            <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 text-red-400 bg-red-500/10 border border-red-500/20`}>
-                                <AlertCircle className="w-4 h-4 shrink-0" /> {error}
-                            </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="remember-me"
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        className="w-4 h-4 text-indigo-600 bg-white/5 border-white/10 rounded focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                                    />
+                                    <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400 cursor-pointer select-none">
+                                        Remember me
+                                    </label>
+                                </div>
+
+                                {error && (
+                                    <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 text-red-400 bg-red-500/10 border border-red-500/20`}>
+                                        <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+                                    </div>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className={`w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                                >
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Log In <ArrowRight className="w-4 h-4" /></>}
+                                </button>
+                            </>
                         )}
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-                        >
-                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Log In <ArrowRight className="w-4 h-4" /></>}
-                        </button>
                     </form>
 
                 </div>
