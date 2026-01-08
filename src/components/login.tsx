@@ -136,6 +136,14 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
             setTempUser(sessionUser);
 
+            // 3. Conditional 2FA check (Per-User)
+            if (!apiUser.is_2fa_enabled) {
+                setSession(sessionUser, rememberMe);
+                dispatch(setUser(sessionUser));
+                onLogin();
+                return;
+            }
+
             if (sessionUser.email) {
                 setOtpMethod('email');
                 const { error: otpErr } = await supabase.auth.signInWithOtp({

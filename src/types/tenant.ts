@@ -145,6 +145,7 @@ export interface TenantUser {
     systemRole: SystemRole; // 'Owner' | 'Manager' | 'Staff'
     branchId?: string; // Assigned Branch ID
     sector: Sector; // For UI context
+    is2faEnabled?: boolean; // Per-user 2FA Toggle
     permissions?: string[]; // Code based permissions
 }
 

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand Color Overrides (Indigo) using CSS variables for runtime customization */
   --color-indigo-50: rgb(var(--color-brand-50));
@@ -32,6 +34,9 @@
 /* Base Styles */
 @layer base {
   :root {
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+    
     --scrollbar-track: #f1f5f9;
     --scrollbar-thumb: #cbd5e1;
     --scrollbar-thumb-hover: #94a3b8;
@@ -51,6 +56,9 @@
   }
 
   .dark {
+    --background: 15 23 42;
+    --foreground: 248 250 252;
+
     --scrollbar-track: #1e293b;
     --scrollbar-thumb: #475569;
     --scrollbar-thumb-hover: #64748b;
@@ -79,3 +87,4 @@
 .animate-pulse-subtle {
   animation: var(--animate-pulse-subtle);
 }
+

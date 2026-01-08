@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Tenant, Branch, TenantState, TenantUser, DbRoleCode } from '../types/tenant';
-import { SettingsState, AuthState } from '../types/settings';
+import { SettingsState, AuthState, UserVisualIdentity } from '../types/settings';
 import { ModuleType, Sector, SystemRole, AppView } from '../types/common';
 import { getStoredTheme } from '../utils/theme'
 
@@ -283,6 +283,7 @@ const authSlice = createSlice({
       if (!action.payload) {
         state.user = null;
         state.role = 'Staff';
+        state.userPreferences = undefined;
         return;
       }
       state.user = action.payload;
@@ -290,15 +291,22 @@ const authSlice = createSlice({
       state.currentSector = action.payload.sector;
       state.currentBranch = 'All';
     },
+    setUserPreferences: (state, action: PayloadAction<UserVisualIdentity | undefined>) => {
+      state.userPreferences = action.payload;
+      if (action.payload?.theme && action.payload.theme !== 'system') {
+        state.theme = action.payload.theme as 'light' | 'dark';
+      }
+    },
     logout: (state) => {
       state.user = null;
       state.role = 'Staff';
       state.currentBranch = 'All';
+      state.userPreferences = undefined;
     }
   }
 });
 
-export const { setTheme, setSector, setBranch, setUser, logout } = authSlice.actions;
+export const { setTheme, setSector, setBranch, setUser, setUserPreferences, logout } = authSlice.actions;
 export const authReducer = authSlice.reducer;
 
 // --- Settings Slice ---

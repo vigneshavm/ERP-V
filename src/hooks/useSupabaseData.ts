@@ -2,7 +2,7 @@ import { APP_CONFIG } from '../config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { supabase } from '../lib/supabase';
-import { setBranches, setUser, setTenants } from '../store/tenantSlice';
+import { setBranches, setUser, setTenants, setUserPreferences } from '../store/tenantSlice';
 import { setProducts, upsertProduct, setCategories } from '../store/inventorySlice';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { setEmployees, setLaborPayments } from '../store/laborSlice';
@@ -37,28 +37,109 @@ export const useSupabaseData = () => {
                 return;
             }
             try {
-                // Fetch ALL tenants first to check for validity and support "common" mode
-                const { data, error } = await supabase.from('tenants').select('*');
+                // Fetch ALL tenants with related detail tables using joins
+                const { data, error } = await supabase.from('tenants').select(`
+                    *,
+                    tenant_business_info (*),
+                    tenant_company_details (*),
+                    tenant_tax_details (*),
+                    tenant_banking_details (*),
+                    tenant_system_config (*),
+                    tenant_integrations (*),
+                    tenant_active_modules (
+                        system_modules (
+                            code
+                        )
+                    )
+                `);
 
                 if (error) throw error;
 
                 if (data) {
                     const allTenants = data.map((t: any) => ({
-                        // ... existing mapping logic
                         id: t.id,
                         name: t.name,
                         subdomain: t.subdomain,
-                        modules: t.modules || [],
+                        modules: (t.tenant_active_modules || []).map((tam: any) =>
+                            Array.isArray(tam.system_modules) ? tam.system_modules[0]?.code : tam.system_modules?.code
+                        ).filter(Boolean),
                         isActive: t.is_active ?? true,
                         region: t.region || { currency: 'INR', currencySymbol: '₹', dateFormat: 'DD/MM/YYYY' },
                         sector: t.sector,
-                        theme: t.theme || 'light',
                         layout: t.layout || 'standard',
                         domain: t.domain,
-                        primaryColor: t.primary_color,
                         locations: t.locations || [],
-                        loginLogoUrl: t.login_logo_url,
-                        loginBgUrl: t.login_bg_url,
+
+                        // Map from joined tables
+                        // Map from joined tables
+                        // PostgREST might return an array for joins, even if 1-to-1
+                        businessType: Array.isArray(t.tenant_business_info) ? t.tenant_business_info[0]?.business_type : t.tenant_business_info?.business_type,
+                        natureOfBusiness: Array.isArray(t.tenant_business_info) ? t.tenant_business_info[0]?.nature_of_business : t.tenant_business_info?.nature_of_business,
+                        tradeDescription: Array.isArray(t.tenant_business_info) ? t.tenant_business_info[0]?.trade_description : t.tenant_business_info?.trade_description,
+
+                        companyDetails: (() => {
+                            const details = Array.isArray(t.tenant_company_details) ? t.tenant_company_details[0] : t.tenant_company_details;
+                            return details ? {
+                                addressLine1: details.address_line1,
+                                addressLine2: details.address_line2,
+                                city: details.city,
+                                state: details.state,
+                                stateCode: details.state_code,
+                                country: details.country,
+                                pincode: details.pincode,
+                                phone: details.phone,
+                                alternatePhone: details.alternate_phone,
+                                email: details.email,
+                                website: details.website
+                            } : undefined;
+                        })(),
+
+                        taxDetails: (() => {
+                            const tax = Array.isArray(t.tenant_tax_details) ? t.tenant_tax_details[0] : t.tenant_tax_details;
+                            return tax ? {
+                                taxSystem: tax.tax_system,
+                                gstin: tax.gstin,
+                                pan: tax.pan,
+                                isGstEnabled: tax.is_gst_enabled,
+                                isEInvoiceEnabled: tax.is_einvoice_enabled,
+                                isEWayBillEnabled: tax.is_eway_bill_enabled
+                            } : undefined;
+                        })(),
+
+                        bankingDetails: (() => {
+                            const bank = Array.isArray(t.tenant_banking_details) ? t.tenant_banking_details[0] : t.tenant_banking_details;
+                            return bank ? {
+                                bankName: bank.bank_name,
+                                accountNumber: bank.account_number,
+                                accountHolderName: bank.account_holder_name,
+                                ifsc: bank.ifsc,
+                                booksStartDate: bank.books_start_date,
+                                financialYearClosing: bank.financial_year_closing
+                            } : undefined;
+                        })(),
+
+                        systemConfig: (() => {
+                            const config = Array.isArray(t.tenant_system_config) ? t.tenant_system_config[0] : t.tenant_system_config;
+                            return config ? {
+                                isPosEnabled: config.is_pos_enabled,
+                                isInventoryEnabled: config.is_inventory_enabled,
+                                isLoyaltyEnabled: config.is_loyalty_enabled,
+                                isMultiBranch: config.is_multibranch_enabled,
+                                isEcommerceEnabled: config.is_ecommerce_enabled,
+                                pricingMode: config.pricing_mode
+                            } : undefined;
+                        })(),
+
+                        integrations: (() => {
+                            const integrations = Array.isArray(t.tenant_integrations) ? t.tenant_integrations[0] : t.tenant_integrations;
+                            return integrations ? {
+                                paymentGatewayKey: integrations.payment_gateway_key,
+                                smsProviderKey: integrations.sms_provider_key,
+                                emailProviderKey: integrations.email_provider_key,
+                                webhookUrl: integrations.webhook_url
+                            } : undefined;
+                        })(),
+
                         updatedAt: t.updated_at || t.updatedAt
                     })) as Tenant[];
 
@@ -389,6 +470,26 @@ export const useSupabaseData = () => {
                     dispatch(setOrders(mappedPO));
                 }
 
+                // --- User Specific Visual Preferences ---
+                if (tId && user?.id) {
+                    const { data: userVisual, error: userVisualError } = await supabase
+                        .from('tenant_user_visual_identity')
+                        .select('*')
+                        .eq('tenant_id', tId)
+                        .eq('user_id', user.id)
+                        .maybeSingle(); // maybeSingle handles "no rows" gracefully
+
+                    if (userVisualError) console.error('Error fetching user visual preferences:', userVisualError);
+                    if (userVisual) {
+                        dispatch(setUserPreferences({
+                            theme: userVisual.theme,
+                            primaryColor: userVisual.primary_color,
+                            loginLogoUrl: userVisual.login_logo_url,
+                            visualIdentityConfig: userVisual.visual_identity_config
+                        }));
+                    }
+                }
+
             } catch (err: any) {
                 console.error('Error fetching data:', err);
                 setError(err.message);
@@ -401,6 +502,7 @@ export const useSupabaseData = () => {
 
         // 3. Real-time Subscription for Products (Central Stock Sync)
         const tenantId = user.tenantId;
+        // 3. Real-time Subscription for Products (Central Stock Sync)
         const productChannel = supabase
             .channel('public:products')
             .on('postgres_changes', {
@@ -438,6 +540,48 @@ export const useSupabaseData = () => {
             })
             .subscribe();
 
+        // 4. Real-time Subscription for Tenant & Accessory Tables
+        const tenantTables = [
+            'tenants',
+            'tenant_business_info',
+            'tenant_company_details',
+            'tenant_tax_details',
+            'tenant_banking_details',
+            'tenant_system_config',
+            'tenant_integrations'
+        ];
+
+        const tenantChannels = tenantTables.map(tableName => {
+            return supabase
+                .channel(`public:${tableName}`)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: tableName,
+                    filter: tableName !== 'tenants' && tenantId ? `tenant_id=eq.${tenantId}` : undefined
+                }, () => {
+                    // When any tenant-related table changes, refresh tenant data
+                    fetchData();
+                })
+                .subscribe();
+        });
+
+        // 5. Real-time Subscription for User Visual Identity
+        if (user?.id && tenantId) {
+            const userVisualChannel = supabase
+                .channel(`public:tenant_user_visual_identity:${user.id}`)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'tenant_user_visual_identity',
+                    filter: `user_id=eq.${user.id}`
+                }, () => {
+                    fetchData();
+                })
+                .subscribe();
+            tenantChannels.push(userVisualChannel);
+        }
+
         // 3. Periodic Background Sync for Daily Finance (30s)
         const syncInterval = setInterval(() => {
             if (navigator.onLine) {
@@ -447,6 +591,7 @@ export const useSupabaseData = () => {
 
         return () => {
             supabase.removeChannel(productChannel);
+            tenantChannels.forEach(channel => supabase.removeChannel(channel));
             clearInterval(syncInterval);
         };
     }, [dispatch, user, branches, tenants]);

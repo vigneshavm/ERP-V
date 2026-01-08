@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { APP_CONFIG } from '../config';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store } from 'lucide-react';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store, User } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
 import { setStoredTheme } from '../utils/theme';
-import { Tenant } from '../types/tenant';
+import { Tenant, Role } from '../types/tenant';
 import StaffManager from './StaffManager';
 import { isSecuredIdeally, securePassword } from '../utils/auth';
 import { supabase } from '../lib/supabase';
@@ -55,15 +56,53 @@ interface SettingsData {
     appName: string;
     logoUrl?: string;
     primaryColor: string;
-    enabledModules: { [key: string]: boolean };
+    enabledModules: {
+        pos: boolean;
+        inventory: boolean;
+        finance: boolean;
+        labor: boolean;
+        purchases: boolean;
+        sales: boolean;
+        daily: boolean;
+        storefront: boolean;
+        [key: string]: boolean;
+    };
     defaultTaxMode: TaxMode;
-    rolePermissions: { [key in SystemRole]: AppView[] };
+    rolePermissions: { [key: string]: AppView[] };
+
+    // Multi-table fields
+    businessType?: string;
+    natureOfBusiness?: 'Retail' | 'Wholesale' | 'Services' | 'Manufacturing';
+    tradeDescription?: string;
+
+    addressLine1?: string;
+    addressLine2?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+
+    gstin?: string;
+    pan?: string;
+
+    bankName?: string;
+    accNo?: string;
+    ifsc?: string;
+    accountHolderName?: string;
+
+    // Personalization Overrides
+    userTheme?: 'light' | 'dark' | 'system';
+    userColor?: string;
+    userLogo?: string;
 }
 
 interface SettingsFormProps {
     initialSettings: SettingsData;
     activeTenant?: Tenant;
-    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => void;
+    roles: Role[];
+    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark' }) => void;
     onReset: () => void;
     currentTheme: 'light' | 'dark';
     isSaved: boolean;
@@ -172,9 +211,11 @@ const SecurityMigrationManager: React.FC = () => {
 
 // --- Main Form Component ---
 
-const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, onSave, onReset, currentTheme, isSaved, onUpdateBranchSettings }) => {
+const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTenant, roles, onSave, onReset, currentTheme, isSaved, onUpdateBranchSettings }) => {
     // Top Level Tabs
-    const [activeTab, setActiveTab] = useState<'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'SECURITY'>('GENERAL');
+    const { role } = useSelector((state: RootState) => state.auth);
+    // Top Level Tabs
+    const [activeTab, setActiveTab] = useState<'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'SECURITY' | 'PERSONAL'>(role === 'Owner' ? 'GENERAL' : 'PERSONAL');
 
     // Local State (initialized from Tenant or Settings)
     const [appName, setAppName] = useState(activeTenant?.name || initialSettings.appName);
@@ -188,10 +229,30 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
     const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
 
     // Additional Tenant Fields
+    const [businessType, setBusinessType] = useState(activeTenant?.businessType || '');
+    const [natureOfBusiness, setNatureOfBusiness] = useState(activeTenant?.natureOfBusiness || '');
+    const [tradeDescription, setTradeDescription] = useState(activeTenant?.tradeDescription || '');
+
+    const [addressLine1, setAddressLine1] = useState(activeTenant?.companyDetails?.addressLine1 || '');
+    const [addressLine2, setAddressLine2] = useState(activeTenant?.companyDetails?.addressLine2 || '');
+    const [city, setCity] = useState(activeTenant?.companyDetails?.city || '');
+    const [state, setState] = useState(activeTenant?.companyDetails?.state || '');
+    const [pincode, setPincode] = useState(activeTenant?.companyDetails?.pincode || '');
+    const [phone, setPhone] = useState(activeTenant?.companyDetails?.phone || '');
+    const [email, setEmail] = useState(activeTenant?.companyDetails?.email || '');
+    const [website, setWebsite] = useState(activeTenant?.companyDetails?.website || '');
+
     const [gstin, setGstin] = useState(activeTenant?.taxDetails?.gstin || '');
     const [pan, setPan] = useState(activeTenant?.taxDetails?.pan || '');
     const [bankName, setBankName] = useState(activeTenant?.bankingDetails?.bankName || '');
     const [accNo, setAccNo] = useState(activeTenant?.bankingDetails?.accountNumber || '');
+    const [ifsc, setIfsc] = useState(activeTenant?.bankingDetails?.ifsc || '');
+    const [accountHolderName, setAccountHolderName] = useState(activeTenant?.bankingDetails?.accountHolderName || '');
+
+    // User Specific Preferences
+    const [userTheme, setUserTheme] = useState<'light' | 'dark' | 'system'>(initialSettings.userTheme || 'system');
+    const [userColor, setUserColor] = useState(initialSettings.userColor || '');
+    const [userLogo, setUserLogo] = useState(initialSettings.userLogo || '');
 
     // Branch Override
     const [selectedBranchId, setSelectedBranchId] = useState<string>('');
@@ -212,12 +273,12 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
         setModules(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handlePermissionToggle = (roleKey: SystemRole, view: AppView) => {
-        if (roleKey === 'Owner') return;
+    const handlePermissionToggle = (roleCode: string, view: AppView) => {
+        if (roleCode === 'owner') return;
         setPermissions(prev => {
-            const current = prev[roleKey] || [];
+            const current = prev[roleCode] || [];
             const updated = current.includes(view) ? current.filter(v => v !== view) : [...current, view];
-            return { ...prev, [roleKey]: updated };
+            return { ...prev, [roleCode]: updated };
         });
     };
 
@@ -232,7 +293,10 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
             rolePermissions: permissions,
             tenantTheme,
             // Extra data passed to handler to update Tenant details
-            gstin, pan, bankName, accNo
+            businessType, natureOfBusiness, tradeDescription,
+            addressLine1, addressLine2, city, state, pincode, phone, email, website,
+            gstin, pan, bankName, accNo, ifsc, accountHolderName,
+            userTheme, userColor, userLogo
         });
     };
 
@@ -322,11 +386,16 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
 
             {/* Navigation Tabs */}
             <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-200 dark:border-slate-800">
-                <TabButton id="GENERAL" label="General Info" icon={Store} />
-                <TabButton id="BRANDING" label="Branding & Theme" icon={Palette} />
-                <TabButton id="MODULES" label="Modules" icon={LayoutGrid} />
-                <TabButton id="FINANCE" label="Finance & Tax" icon={Calculator} />
-                <TabButton id="SECURITY" label="Security & Roles" icon={Shield} />
+                {role === 'Owner' && (
+                    <>
+                        <TabButton id="GENERAL" label="General Info" icon={Store} />
+                        <TabButton id="BRANDING" label="Branding & Theme" icon={Palette} />
+                        <TabButton id="MODULES" label="Modules" icon={LayoutGrid} />
+                        <TabButton id="FINANCE" label="Finance & Tax" icon={Calculator} />
+                        <TabButton id="SECURITY" label="Security & Roles" icon={Shield} />
+                    </>
+                )}
+                <TabButton id="PERSONAL" label="Personalization" icon={User} />
             </div>
 
             {/* Content Area */}
@@ -352,14 +421,52 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                         />
                                         <Type className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
                                     </div>
-                                    <p className="text-xs text-slate-400 mt-2">This name appears on the dashboard and reports.</p>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Sector / Industry</label>
-                                    <div className="px-4 py-3 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 font-medium">
-                                        {activeTenant?.sector || 'General'}
-                                    </div>
-                                    <p className="text-xs text-slate-400 mt-2">Sector cannot be changed after provisioning.</p>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Business Type / Sector</label>
+                                    <input
+                                        type="text"
+                                        value={businessType}
+                                        onChange={e => setBusinessType(e.target.value)}
+                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                                        placeholder="e.g. Retail, Healthcare, Manufacturing"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <Users className="w-5 h-5 text-indigo-500" /> Company Contact & Address
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2">
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Address Line 1</label>
+                                    <input type="text" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Street, Building No." />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">City</label>
+                                    <input type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">State / Province</label>
+                                    <input type="text" value={state} onChange={e => setState(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Pincode / Zip</label>
+                                    <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Business Phone</label>
+                                    <input type="text" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Official Email</label>
+                                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Website</label>
+                                    <input type="url" value={website} onChange={e => setWebsite(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="https://..." />
                                 </div>
                             </div>
                         </div>
@@ -517,8 +624,16 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                     <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. HDFC Bank" />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Account Number / IBAN</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Account Number</label>
                                     <input type="text" value={accNo} onChange={e => setAccNo(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 50100..." />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">IFSC / Swift Code</label>
+                                    <input type="text" value={ifsc} onChange={e => setIfsc(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. HDFC0001234" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Account Holder Name</label>
+                                    <input type="text" value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
                                 </div>
                             </div>
                         </div>
@@ -537,22 +652,27 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                     <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-900/50">
                                         <tr>
                                             <th className="px-6 py-4">Module / View</th>
-                                            <th className="px-6 py-4 text-center text-emerald-600">Owner <span className="block text-[9px] text-slate-400">Full Access</span></th>
-                                            <th className="px-6 py-4 text-center">Manager</th>
-                                            <th className="px-6 py-4 text-center">Staff</th>
+                                            {roles.map(role => (
+                                                <th key={role.id} className={`px-6 py-4 text-center ${role.code === 'owner' ? 'text-emerald-600' : ''}`}>
+                                                    {role.code.charAt(0).toUpperCase() + role.code.slice(1)}
+                                                    {role.code === 'owner' && <span className="block text-[9px] text-slate-400">Full Access</span>}
+                                                </th>
+                                            ))}
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {PERMISSION_VIEWS.map(view => (
                                             <tr key={view.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30">
                                                 <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{view.label}</td>
-                                                <td className="px-6 py-4 text-center"><CheckToggle checked={true} disabled /></td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <CheckToggle checked={permissions['Manager'].includes(view.id)} onChange={() => handlePermissionToggle('Manager', view.id)} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <CheckToggle checked={permissions['Staff'].includes(view.id)} onChange={() => handlePermissionToggle('Staff', view.id)} />
-                                                </td>
+                                                {roles.map(role => (
+                                                    <td key={role.id} className="px-6 py-4 text-center">
+                                                        <CheckToggle
+                                                            checked={role.code === 'owner' ? true : (permissions[role.code] || []).includes(view.id)}
+                                                            disabled={role.code === 'owner'}
+                                                            onChange={() => handlePermissionToggle(role.code, view.id)}
+                                                        />
+                                                    </td>
+                                                ))}
                                             </tr>
                                         ))}
                                     </tbody>
@@ -580,70 +700,239 @@ const SettingsManager: React.FC = () => {
     const dispatch = useDispatch();
     const settings = useSelector((state: RootState) => state.settings);
     const tenantsList = useSelector((state: RootState) => state.tenant.tenants);
-    const { role } = useSelector((state: RootState) => state.auth);
+    const roles = useSelector((state: RootState) => state.tenant.roles);
+    const { role, user, userPreferences } = useSelector((state: RootState) => state.auth);
     const { tenantId, theme: currentTheme } = useConfig();
     const [isSaved, setIsSaved] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const activeTenant = tenantsList.find(t => t.id === tenantId);
 
-    const handleSave = (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => {
-        dispatch(updateSettings({
-            appName: updatedSettings.appName,
-            logoUrl: updatedSettings.logoUrl,
-            primaryColor: updatedSettings.primaryColor,
-            enabledModules: updatedSettings.enabledModules,
-            defaultTaxMode: updatedSettings.defaultTaxMode,
-            rolePermissions: updatedSettings.rolePermissions
-        }));
+    const handleSave = async (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => {
+        setIsSaving(true);
+        try {
+            // 1. Update Redux Settings state
+            dispatch(updateSettings({
+                appName: updatedSettings.appName,
+                logoUrl: updatedSettings.logoUrl,
+                primaryColor: updatedSettings.primaryColor,
+                enabledModules: updatedSettings.enabledModules,
+                defaultTaxMode: updatedSettings.defaultTaxMode,
+                rolePermissions: updatedSettings.rolePermissions
+            }));
 
-        // Update Tenant Details (Branding, Tax, Banking)
-        if (tenantId) {
-            const currentTenant = tenantsList.find(t => t.id === tenantId);
-            if (currentTenant) {
-                dispatch(updateTenantDetails({
-                    ...currentTenant,
-                    name: updatedSettings.appName,
-                    loginLogoUrl: updatedSettings.logoUrl,
-                    primaryColor: updatedSettings.primaryColor,
-                    theme: updatedSettings.tenantTheme,
-                    // Modules
-                    modules: Object.entries(updatedSettings.enabledModules)
-                        .filter(([_, enabled]) => enabled)
-                        .map(([key]) => key.toUpperCase() as any),
+            // 2. Update Tenant Details (Branding, Tax, Banking, Company)
+            if (tenantId) {
+                const currentTenant = tenantsList.find(t => t.id === tenantId);
+                if (currentTenant) {
+                    const updatedTenantData: Tenant = {
+                        ...currentTenant,
+                        name: updatedSettings.appName,
+                        loginLogoUrl: updatedSettings.logoUrl,
+                        primaryColor: updatedSettings.primaryColor,
+                        theme: updatedSettings.tenantTheme,
+                        // Modules
+                        modules: Object.entries(updatedSettings.enabledModules)
+                            .filter(([_, enabled]) => enabled)
+                            .map(([key]) => key.toUpperCase() as any),
 
-                    // Tax & Banking
-                    taxDetails: {
-                        ...currentTenant.taxDetails,
-                        gstin: updatedSettings.gstin || '',
-                        pan: updatedSettings.pan || '',
-                        taxSystem: updatedSettings.gstin ? 'GST' : 'NONE',
-                        isGstEnabled: !!updatedSettings.gstin
-                    },
-                    bankingDetails: {
-                        ...currentTenant.bankingDetails,
-                        bankName: updatedSettings.bankName || '',
-                        accountNumber: updatedSettings.accNo || '',
-                        // Preserve others
-                        accountHolderName: currentTenant.bankingDetails?.accountHolderName || updatedSettings.appName,
-                        ifsc: currentTenant.bankingDetails?.ifsc || ''
-                    },
-                    systemConfig: {
-                        ...currentTenant.systemConfig,
-                        pricingMode: updatedSettings.defaultTaxMode === 'EXCLUSIVE' ? 'EXCLUSIVE' : 'INCLUSIVE',
-                        isPosEnabled: updatedSettings.enabledModules['pos'],
-                        isInventoryEnabled: updatedSettings.enabledModules['inventory'],
-                        isLoyaltyEnabled: true,
-                        isMultiBranch: true
+                        businessType: updatedSettings.businessType,
+                        natureOfBusiness: updatedSettings.natureOfBusiness,
+                        tradeDescription: updatedSettings.tradeDescription,
+
+                        companyDetails: {
+                            ...currentTenant.companyDetails,
+                            addressLine1: updatedSettings.addressLine1 || '',
+                            addressLine2: updatedSettings.addressLine2 || '',
+                            city: updatedSettings.city || '',
+                            state: updatedSettings.state || '',
+                            country: currentTenant.companyDetails?.country || 'India',
+                            pincode: updatedSettings.pincode || '',
+                            phone: updatedSettings.phone || '',
+                            email: updatedSettings.email || '',
+                            website: updatedSettings.website || ''
+                        },
+
+                        // Tax & Banking
+                        taxDetails: {
+                            ...currentTenant.taxDetails,
+                            gstin: updatedSettings.gstin || '',
+                            pan: updatedSettings.pan || '',
+                            taxSystem: updatedSettings.gstin ? 'GST' : 'NONE',
+                            isGstEnabled: !!updatedSettings.gstin
+                        },
+                        bankingDetails: {
+                            ...currentTenant.bankingDetails,
+                            bankName: updatedSettings.bankName || '',
+                            accountNumber: updatedSettings.accNo || '',
+                            accountHolderName: updatedSettings.accountHolderName || updatedSettings.appName,
+                            ifsc: updatedSettings.ifsc || ''
+                        },
+                        systemConfig: {
+                            ...currentTenant.systemConfig,
+                            pricingMode: updatedSettings.defaultTaxMode === 'EXCLUSIVE' ? 'EXCLUSIVE' : 'INCLUSIVE',
+                            isPosEnabled: updatedSettings.enabledModules['pos'],
+                            isInventoryEnabled: updatedSettings.enabledModules['inventory'],
+                        }
+                    };
+
+                    dispatch(updateTenantDetails(updatedTenantData));
+
+                    // 3. Persist to Supabase across multiple tables
+                    if (supabase && APP_CONFIG.USE_SUPABASE) {
+                        const baseTenantUpdate = supabase
+                            .from('tenants')
+                            .update({
+                                name: updatedTenantData.name
+                            })
+                            .eq('id', tenantId);
+
+                        // Module Sync Logic
+                        const syncModules = async () => {
+                            try {
+                                const { data: systemModules, error: getErr } = await supabase.from('system_modules').select('id, code');
+                                if (getErr) return { error: getErr };
+
+                                if (systemModules) {
+                                    const activeModuleIds = updatedTenantData.modules
+                                        .map((code: string) => systemModules.find((m: any) => m.code === code)?.id)
+                                        .filter(Boolean);
+
+                                    // 1. Remove existing mappings
+                                    const { error: delErr } = await supabase.from('tenant_active_modules').delete().eq('tenant_id', tenantId);
+                                    if (delErr) return { error: delErr };
+
+                                    // 2. Insert new mappings
+                                    if (activeModuleIds.length > 0) {
+                                        const { error: insErr } = await supabase.from('tenant_active_modules').insert(
+                                            activeModuleIds.map((mid: string) => ({
+                                                tenant_id: tenantId,
+                                                module_id: mid,
+                                                status: 'ACTIVE'
+                                            }))
+                                        );
+                                        if (insErr) return { error: insErr };
+                                    }
+                                }
+                                return { error: null };
+                            } catch (e) {
+                                return { error: e };
+                            }
+                        };
+
+                        const businessUpsert = supabase
+                            .from('tenant_business_info')
+                            .upsert({
+                                tenant_id: tenantId,
+                                business_type: updatedSettings.businessType,
+                                nature_of_business: updatedSettings.natureOfBusiness,
+                                trade_description: updatedSettings.tradeDescription
+                            });
+
+                        const companyUpsert = supabase
+                            .from('tenant_company_details')
+                            .upsert({
+                                tenant_id: tenantId,
+                                address_line1: updatedSettings.addressLine1,
+                                address_line2: updatedSettings.addressLine2,
+                                city: updatedSettings.city,
+                                state: updatedSettings.state,
+                                pincode: updatedSettings.pincode,
+                                phone: updatedSettings.phone,
+                                email: updatedSettings.email,
+                                website: updatedSettings.website,
+                                country: updatedTenantData.companyDetails?.country
+                            });
+
+                        const taxUpsert = supabase
+                            .from('tenant_tax_details')
+                            .upsert({
+                                tenant_id: tenantId,
+                                tax_system: updatedTenantData.taxDetails?.taxSystem,
+                                gstin: updatedTenantData.taxDetails?.gstin,
+                                pan: updatedTenantData.taxDetails?.pan,
+                                is_gst_enabled: updatedTenantData.taxDetails?.isGstEnabled,
+                                is_einvoice_enabled: updatedTenantData.taxDetails?.isEInvoiceEnabled,
+                                is_eway_bill_enabled: updatedTenantData.taxDetails?.isEWayBillEnabled
+                            });
+
+                        const bankingUpsert = supabase
+                            .from('tenant_banking_details')
+                            .upsert({
+                                tenant_id: tenantId,
+                                bank_name: updatedTenantData.bankingDetails?.bankName,
+                                account_number: updatedTenantData.bankingDetails?.accountNumber,
+                                account_holder_name: updatedTenantData.bankingDetails?.accountHolderName,
+                                ifsc: updatedTenantData.bankingDetails?.ifsc,
+                                books_start_date: updatedTenantData.bankingDetails?.booksStartDate,
+                                financial_year_closing: updatedTenantData.bankingDetails?.financialYearClosing
+                            });
+
+                        const systemUpsert = supabase
+                            .from('tenant_system_config')
+                            .upsert({
+                                tenant_id: tenantId,
+                                is_pos_enabled: updatedTenantData.systemConfig?.isPosEnabled,
+                                is_inventory_enabled: updatedTenantData.systemConfig?.isInventoryEnabled,
+                                is_loyalty_enabled: updatedTenantData.systemConfig?.isLoyaltyEnabled,
+                                is_multibranch_enabled: updatedTenantData.systemConfig?.isMultiBranch,
+                                is_ecommerce_enabled: updatedTenantData.systemConfig?.isEcommerceEnabled,
+                                pricing_mode: updatedTenantData.systemConfig?.pricingMode
+                            });
+
+                        const integrationsUpsert = supabase
+                            .from('tenant_integrations')
+                            .upsert({
+                                tenant_id: tenantId,
+                                payment_gateway_key: updatedTenantData.integrations?.paymentGatewayKey,
+                                sms_provider_key: updatedTenantData.integrations?.smsProviderKey,
+                                email_provider_key: updatedTenantData.integrations?.emailProviderKey,
+                                webhook_url: updatedTenantData.integrations?.webhookUrl
+                            });
+
+                        const userVisualUpsert = supabase
+                            .from('tenant_user_visual_identity')
+                            .upsert({
+                                tenant_id: tenantId,
+                                user_id: user?.id,
+                                theme: updatedSettings.userTheme,
+                                primary_color: updatedSettings.userColor,
+                                login_logo_url: updatedSettings.userLogo,
+                                updated_at: new Date().toISOString()
+                            }, { onConflict: 'tenant_id,user_id' });
+
+                        const results = await Promise.all([
+                            baseTenantUpdate,
+                            businessUpsert,
+                            companyUpsert,
+                            taxUpsert,
+                            bankingUpsert,
+                            systemUpsert,
+                            integrationsUpsert,
+                            userVisualUpsert,
+                            syncModules()
+                        ]);
+
+                        const firstError = results.find(r => r && r.error)?.error;
+                        if (firstError) throw firstError;
                     }
-                }));
+                }
             }
+
+            // Persist theme to localStorage for immediate and consistent application
+            setStoredTheme(updatedSettings.tenantTheme);
+            setIsSaved(true);
+            setTimeout(() => setIsSaved(false), 3000);
+
+            // Optional: Show success alert or toast
+            // alert('Settings saved successfully!');
+
+        } catch (err: any) {
+            console.error('Failed to save settings:', err);
+            alert(`Error saving settings: ${err.message}`);
+        } finally {
+            setIsSaving(false);
         }
-
-        // Persist theme to localStorage for immediate and consistent application
-        setStoredTheme(updatedSettings.tenantTheme);
-
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 2000);
     };
 
     const handleUpdateBranchSettings = (branchId: string, updatedSettings: Partial<SettingsData>) => {
@@ -663,24 +952,48 @@ const SettingsManager: React.FC = () => {
         }
     };
 
-    if (role !== 'Owner') {
-        return (
-            <div className="flex flex-col items-center justify-center h-96 text-slate-400">
-                <Lock className="w-12 h-12 mb-4 opacity-50" />
-                <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300">Access Restricted</h2>
-                <p>Only the System Owner can modify settings.</p>
-            </div>
-        );
-    }
+    const enrichedSettings: SettingsData = useMemo(() => {
+        const base = activeTenant ? {
+            ...settings,
+            appName: activeTenant.name,
+            logoUrl: activeTenant.loginLogoUrl,
+            primaryColor: activeTenant.primaryColor,
+            businessType: activeTenant.businessType,
+            natureOfBusiness: activeTenant.natureOfBusiness as any,
+            tradeDescription: activeTenant.tradeDescription,
+            addressLine1: activeTenant.companyDetails?.addressLine1,
+            addressLine2: activeTenant.companyDetails?.addressLine2,
+            city: activeTenant.companyDetails?.city,
+            state: activeTenant.companyDetails?.state,
+            pincode: activeTenant.companyDetails?.pincode,
+            phone: activeTenant.companyDetails?.phone,
+            email: activeTenant.companyDetails?.email,
+            website: activeTenant.companyDetails?.website,
+            gstin: activeTenant.taxDetails?.gstin,
+            pan: activeTenant.taxDetails?.pan,
+            bankName: activeTenant.bankingDetails?.bankName,
+            accNo: activeTenant.bankingDetails?.accountNumber,
+            accountHolderName: activeTenant.bankingDetails?.accountHolderName,
+            ifsc: activeTenant.bankingDetails?.ifsc
+        } : settings;
+
+        return {
+            ...base,
+            userTheme: userPreferences?.theme,
+            userColor: userPreferences?.primaryColor,
+            userLogo: userPreferences?.loginLogoUrl
+        };
+    }, [activeTenant, settings, userPreferences]);
 
     // Key includes settings version and theme/tenant props to ensure form resets when external data changes
-    const formKey = `${tenantId}-${currentTheme}-${JSON.stringify(settings)}`;
+    const formKey = `${tenantId}-${currentTheme}-${JSON.stringify(enrichedSettings)}`;
 
     return (
         <SettingsForm
             key={formKey}
-            initialSettings={settings}
+            initialSettings={enrichedSettings}
             activeTenant={activeTenant}
+            roles={roles}
             currentTheme={currentTheme || 'light'}
             onSave={handleSave}
             onReset={handleReset}

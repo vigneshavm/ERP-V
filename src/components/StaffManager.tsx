@@ -28,7 +28,8 @@ const StaffManager: React.FC = () => {
         dailyRate: '',
         branchId: '',
         mobile: '',
-        assignedCounterId: ''
+        assignedCounterId: '',
+        is2faEnabled: false
     });
     const [editingEmpId, setEditingEmpId] = useState<string | null>(null);
 
@@ -105,6 +106,7 @@ const StaffManager: React.FC = () => {
                     // sector: activeTenant.sector, // Not in tenant_users
                     mobile: newEmp.mobile,
                     assigned_counter_id: newEmp.assignedCounterId ? newEmp.assignedCounterId : null, // Ensure null if empty
+                    is_2fa_enabled: newEmp.is2faEnabled,
                     // Only include PIN if we have a new one (encrypted)
                     ...(pinToSave && pinToSave.length > 0 ? { pin_hash: pinToSave } : {}), // Map pin to pin_hash
                 };
@@ -151,13 +153,14 @@ const StaffManager: React.FC = () => {
             dailyRate: emp.daily_rate?.toString() || '',
             branchId: emp.assigned_branch_id || '',
             mobile: emp.mobile || '',
-            assignedCounterId: emp.assigned_counter_id || ''
+            assignedCounterId: emp.assigned_counter_id || '',
+            is2faEnabled: emp.is_2fa_enabled || false
         });
         setEditingEmpId(emp.id);
     };
 
     const handleCancelEditEmp = () => {
-        setNewEmp({ name: '', roleId: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', mobile: '', assignedCounterId: '' });
+        setNewEmp({ name: '', roleId: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', mobile: '', assignedCounterId: '', is2faEnabled: false });
         setEditingEmpId(null);
     };
 
@@ -280,6 +283,22 @@ const StaffManager: React.FC = () => {
                                 </div>
                             )}
 
+                            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <div className="flex items-center gap-2">
+                                    <ShieldCheck className={`w-4 h-4 ${newEmp.is2faEnabled ? 'text-emerald-500' : 'text-slate-400'}`} />
+                                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Enable 2FA Protection</span>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={newEmp.is2faEnabled}
+                                        onChange={e => setNewEmp({ ...newEmp, is2faEnabled: e.target.checked })}
+                                    />
+                                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+
                             <div className="flex gap-2 pt-2">
                                 {editingEmpId && (
                                     <button
@@ -345,6 +364,11 @@ const StaffManager: React.FC = () => {
                                                         <span className="font-bold text-indigo-600 dark:text-indigo-400">Terminal: {emp.assigned_counter_id}</span>
                                                     </>
                                                 )}
+                                                <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                <span className={`font-bold flex items-center gap-1 ${emp.is_2fa_enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                                                    <ShieldCheck className="w-3 h-3" />
+                                                    {emp.is_2fa_enabled ? '2FA ON' : '2FA OFF'}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

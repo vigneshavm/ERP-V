@@ -28,6 +28,7 @@ import VendorManager from './components/VendorManager';
 
 
 import { ConfigProvider } from './components/ConfigProvider';
+import { useConfig } from './components/ConfigContext';
 import { useBranchResolver } from './hooks/useBranchResolver';
 import { useSupabaseData } from './hooks/useSupabaseData';
 import { getSession, clearSession } from './utils/session';
@@ -233,6 +234,14 @@ const App: React.FC = () => {
         const branchesFromDB = useSelector((state: RootState) => state.tenant.branches);
         const { getBranchName } = useBranchResolver();
 
+        // Derive effective tenant from user session or prop
+        const effectiveTenant = React.useMemo(() => {
+            if (user?.tenantId) {
+                return tenants.find(t => t.id === user.tenantId) || currentTenant;
+            }
+            return currentTenant;
+        }, [user?.tenantId, tenants, currentTenant]);
+
         const requestConfirm = (title: string, message: string, onConfirm: () => void) => {
             setConfirmDialog({ isOpen: true, title, message, onConfirm });
         };
@@ -245,9 +254,9 @@ const App: React.FC = () => {
         // 1. Check Login
         if (!isLoggedIn) {
             return (
-                <ConfigProvider tenant={currentTenant}>
+                <ConfigProvider tenant={effectiveTenant}>
                     <Login
-                        tenant={currentTenant}
+                        tenant={effectiveTenant}
                         onLogin={() => setIsLoggedIn(true)}
                     />
                 </ConfigProvider>
@@ -311,220 +320,226 @@ const App: React.FC = () => {
         };
 
         return (
-            <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 dark:text-slate-100">
-                {/* Mobile Bottom Navigation (Native App Shell) */}
-                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
-                    <button
-                        onClick={() => setActiveTab('DASHBOARD')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
-                    >
-                        <LayoutDashboard className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Home</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('POS')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
-                    >
-                        <ShoppingCart className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">POS</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('INVENTORY')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
-                    >
-                        <Archive className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Stock</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('SETTINGS')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
-                    >
-                        <Settings className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Settings</span>
-                    </button>
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
-                    >
-                        <Menu className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">More</span>
-                    </button>
-                </nav>
+            <ConfigProvider tenant={effectiveTenant}>
+                <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 dark:text-slate-100">
+                    {/* Mobile Bottom Navigation (Native App Shell) */}
+                    <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
+                        <button
+                            onClick={() => setActiveTab('DASHBOARD')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        >
+                            <LayoutDashboard className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">Home</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('POS')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        >
+                            <ShoppingCart className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">POS</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('INVENTORY')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        >
+                            <Archive className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">Stock</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('SETTINGS')}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        >
+                            <Settings className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">Settings</span>
+                        </button>
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
+                        >
+                            <Menu className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">More</span>
+                        </button>
+                    </nav>
 
-                {/* Sidebar (Desktop Persistent, Mobile Drawer) */}
-                <aside className={`
+                    {/* Sidebar (Desktop Persistent, Mobile Drawer) */}
+                    <aside className={`
                     fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-2 flex flex-col transition-all duration-300 transform 
                     ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                     ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
                 `}>
-                    <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                        <div className="flex items-center space-x-2 overflow-hidden">
-                            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span className="font-bold text-white">{user?.name?.charAt(0) || 'T'}</span>
+                        <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
+                            <div className="flex items-center space-x-2 overflow-hidden">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-emerald-500">
+                                    {useConfig().logoUrl ? (
+                                        <img src={useConfig().logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
+                                    ) : (
+                                        <span className="font-bold text-white">{user?.name?.charAt(0) || effectiveTenant?.name?.charAt(0) || 'T'}</span>
+                                    )}
+                                </div>
+                                {!desktopCollapsed && (
+                                    <div className="overflow-hidden">
+                                        <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
+                                        <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
+                                    </div>
+                                )}
                             </div>
-                            {!desktopCollapsed && (
-                                <div className="overflow-hidden">
-                                    <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
+                            {/* Mobile Only Close Button */}
+                            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
+                                <X className="w-6 h-6" />
+                            </button>
+                            {/* Desktop Collapse Toggle */}
+                            <button
+                                onClick={() => setDesktopCollapsed(!desktopCollapsed)}
+                                className="hidden lg:flex p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                            >
+                                {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                            </button>
+                        </div>
+
+                        <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
+                            {!desktopCollapsed && <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{effectiveTenant?.name}</span>}
+
+                            {/* Branch Selector (Owner Only) or Display (Staff) */}
+                            {(() => {
+                                const availableBranches = (effectiveTenant?.locations?.flatMap(l => l.branches) ||
+                                    branchesFromDB.filter(b => b.tenantId === effectiveTenant?.id) || [])
+                                    .filter(Boolean); // Ensure no nulls/undefined
+
+                                if (availableBranches.length <= 1) return null;
+
+                                return (
+                                    <div className="mt-2 text-center">
+                                        {role === 'Owner' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={selectedBranch}
+                                                    onChange={(e) => dispatch(setBranch(e.target.value))}
+                                                    className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                                >
+                                                    <option value="All">All Branches (HQ View)</option>
+                                                    {availableBranches.map(b => (
+                                                        <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                                {getBranchName(selectedBranch)}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+                        </div>
+
+                        <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
+                            <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
+                            <NavItem id="PROFIT_PULSE" icon={Zap} label="Profit Pulse AI" />
+                            <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
+                            <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
+                            <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
+                            <NavItem id="VENDORS" icon={Users} label="Vendors (Suppliers)" />
+                            <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
+                            <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
+                            <NavItem id="SALES" icon={List} label="Sales History" />
+                            <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
+                            <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
+                            <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
+                            <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
+                            <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
+                                <NavItem id="SETTINGS" icon={Settings} label="Settings" />
+                            </div>
+                        </nav>
+
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
+                            <button
+                                onClick={() => {
+                                    requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
+                                        clearSession();
+                                        localStorage.removeItem('erp_current_tenant');
+                                        setIsLoggedIn(false);
+                                    });
+                                }}
+                                className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
+                            >
+                                <Lock className="w-5 h-5" />
+                                <span className="font-medium">Staff Logout</span>
+                            </button>
+
+                            {desktopCollapsed && (
+                                <div className="flex flex-col gap-2 w-full px-2">
+                                    <button
+                                        onClick={() => {
+                                            requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
+                                                clearSession();
+                                                localStorage.removeItem('erp_current_tenant');
+                                                setIsLoggedIn(false);
+                                            });
+                                        }}
+                                        title="Logout"
+                                        className="flex-1 flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                        <Lock className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => setIsChangePasswordOpen(true)}
+                                        title="Change Password"
+                                        className="px-3 flex justify-center py-3 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                        <Key className="w-5 h-5" />
+                                    </button>
                                 </div>
                             )}
                         </div>
-                        {/* Mobile Only Close Button */}
-                        <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
-                            <X className="w-6 h-6" />
-                        </button>
-                        {/* Desktop Collapse Toggle */}
-                        <button
-                            onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-                            className="hidden lg:flex p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
-                        >
-                            {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                        </button>
-                    </div>
+                    </aside>
 
-                    <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                        {!desktopCollapsed && <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{currentTenant?.name}</span>}
-
-                        {/* Branch Selector (Owner Only) or Display (Staff) */}
-                        {(() => {
-                            const availableBranches = (currentTenant?.locations?.flatMap(l => l.branches) ||
-                                branchesFromDB.filter(b => b.tenantId === currentTenant?.id) || [])
-                                .filter(Boolean); // Ensure no nulls/undefined
-
-                            if (availableBranches.length <= 1) return null;
-
-                            return (
-                                <div className="mt-2 text-center">
-                                    {role === 'Owner' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={selectedBranch}
-                                                onChange={(e) => dispatch(setBranch(e.target.value))}
-                                                className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                                            >
-                                                <option value="All">All Branches (HQ View)</option>
-                                                {availableBranches.map(b => (
-                                                    <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                            {getBranchName(selectedBranch)}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })()}
-                    </div>
-
-                    <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
-                        <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
-                        <NavItem id="PROFIT_PULSE" icon={Zap} label="Profit Pulse AI" />
-                        <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
-                        <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
-                        <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
-                        <NavItem id="VENDORS" icon={Users} label="Vendors (Suppliers)" />
-                        <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
-                        <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
-                        <NavItem id="SALES" icon={List} label="Sales History" />
-                        <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
-                        <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
-                        <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
-                        <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
-                        <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
-                            <NavItem id="SETTINGS" icon={Settings} label="Settings" />
+                    {/* Main Content */}
+                    <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
+                        <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
+                            {renderContent()}
                         </div>
-                    </nav>
+                    </main>
 
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
-                        <button
-                            onClick={() => {
-                                requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                    clearSession();
-                                    localStorage.removeItem('erp_current_tenant');
-                                    setIsLoggedIn(false);
-                                });
-                            }}
-                            className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
-                        >
-                            <Lock className="w-5 h-5" />
-                            <span className="font-medium">Staff Logout</span>
-                        </button>
+                    {/* Overlay for mobile sidebar */}
+                    {sidebarOpen && (
+                        <div
+                            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                            onClick={() => setSidebarOpen(false)}
+                        />
+                    )}
 
-                        {desktopCollapsed && (
-                            <div className="flex flex-col gap-2 w-full px-2">
-                                <button
-                                    onClick={() => {
-                                        requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                            clearSession();
-                                            localStorage.removeItem('erp_current_tenant');
-                                            setIsLoggedIn(false);
-                                        });
-                                    }}
-                                    title="Logout"
-                                    className="flex-1 flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <Lock className="w-5 h-5" />
-                                </button>
-                                <button
-                                    onClick={() => setIsChangePasswordOpen(true)}
-                                    title="Change Password"
-                                    className="px-3 flex justify-center py-3 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <Key className="w-5 h-5" />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </aside>
-
-                {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
-                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
-                        {renderContent()}
-                    </div>
-                </main>
-
-                {/* Overlay for mobile sidebar */}
-                {sidebarOpen && (
-                    <div
-                        className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-                        onClick={() => setSidebarOpen(false)}
+                    {/* Modals */}
+                    <ChangePasswordModal
+                        isOpen={isChangePasswordOpen}
+                        onClose={() => setIsChangePasswordOpen(false)}
                     />
-                )}
 
-                {/* Modals */}
-                <ChangePasswordModal
-                    isOpen={isChangePasswordOpen}
-                    onClose={() => setIsChangePasswordOpen(false)}
-                />
-
-                {/* Confirmation Modal */}
-                {confirmDialog.isOpen && (
-                    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
-                            <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
-                            <div className="flex gap-3 justify-end">
-                                <button
-                                    onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                                    className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleConfirm}
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
-                                >
-                                    Confirm
-                                </button>
+                    {/* Confirmation Modal */}
+                    {confirmDialog.isOpen && (
+                        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
+                                <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
+                                <div className="flex gap-3 justify-end">
+                                    <button
+                                        onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                                        className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleConfirm}
+                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
+                                    >
+                                        Confirm
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            </ConfigProvider>
         );
     };
 

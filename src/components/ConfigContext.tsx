@@ -7,6 +7,8 @@ export interface ConfigContextType {
     dateFormat: string;
     tenantId?: string;
     theme?: 'light' | 'dark';
+    primaryColor?: string;
+    logoUrl?: string;
 }
 
 export const ConfigContext = createContext<ConfigContextType>({

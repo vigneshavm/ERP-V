@@ -408,16 +408,11 @@ export const useTenantForm = () => {
                 const dbData = {
                     name: tenantData.name,
                     subdomain: tenantData.subdomain,
-                    modules: tenantData.modules,
                     is_active: editingTenant ? editingTenant.isActive : true,
                     region: tenantData.region,
                     sector: tenantData.sector,
-                    theme: tenantData.theme,
                     layout: tenantData.layout,
                     domain: tenantData.domain,
-                    primary_color: tenantData.primaryColor,
-                    login_logo_url: tenantData.loginLogoUrl,
-                    login_bg_url: tenantData.loginBgUrl,
                     locations: tenantData.locations,
                     business_type: tenantData.businessType,
                     nature_of_business: tenantData.natureOfBusiness,
@@ -426,8 +421,7 @@ export const useTenantForm = () => {
                     tax_details: tenantData.taxDetails,
                     banking_details: tenantData.bankingDetails,
                     system_config: tenantData.systemConfig,
-                    integrations: tenantData.integrations,
-                    updated_at: new Date().toISOString()
+                    integrations: tenantData.integrations
                 };
 
                 let data, error;
@@ -443,6 +437,100 @@ export const useTenantForm = () => {
 
                 if (error) throw error;
                 if (data) {
+                    // Update Accessory Tables for Scalability (Consistent with SettingsManager)
+                    const tenantId = data.id;
+
+                    const businessUpsert = supabase.from('tenant_business_info').upsert({
+                        tenant_id: tenantId,
+                        business_type: tenantData.businessType,
+                        nature_of_business: tenantData.natureOfBusiness,
+                        trade_description: tenantData.tradeDescription
+                    });
+
+                    const companyUpsert = supabase.from('tenant_company_details').upsert({
+                        tenant_id: tenantId,
+                        address_line1: tenantData.companyDetails?.addressLine1,
+                        address_line2: tenantData.companyDetails?.addressLine2,
+                        city: tenantData.companyDetails?.city,
+                        state: tenantData.companyDetails?.state,
+                        pincode: tenantData.companyDetails?.pincode,
+                        phone: tenantData.companyDetails?.phone,
+                        email: tenantData.companyDetails?.email,
+                        website: tenantData.companyDetails?.website,
+                        country: tenantData.companyDetails?.country
+                    });
+
+                    const taxUpsert = supabase.from('tenant_tax_details').upsert({
+                        tenant_id: tenantId,
+                        tax_system: tenantData.taxDetails?.taxSystem,
+                        gstin: tenantData.taxDetails?.gstin,
+                        pan: tenantData.taxDetails?.pan,
+                        is_gst_enabled: tenantData.taxDetails?.isGstEnabled,
+                        is_einvoice_enabled: tenantData.taxDetails?.isEInvoiceEnabled,
+                        is_eway_bill_enabled: tenantData.taxDetails?.isEWayBillEnabled
+                    });
+
+                    const bankingUpsert = supabase.from('tenant_banking_details').upsert({
+                        tenant_id: tenantId,
+                        bank_name: tenantData.bankingDetails?.bankName,
+                        account_number: tenantData.bankingDetails?.accountNumber,
+                        account_holder_name: tenantData.bankingDetails?.accountHolderName,
+                        ifsc: tenantData.bankingDetails?.ifsc,
+                        books_start_date: tenantData.bankingDetails?.booksStartDate,
+                        financial_year_closing: tenantData.bankingDetails?.financialYearClosing
+                    });
+
+                    const systemUpsert = supabase.from('tenant_system_config').upsert({
+                        tenant_id: tenantId,
+                        is_pos_enabled: tenantData.systemConfig?.isPosEnabled,
+                        is_inventory_enabled: tenantData.systemConfig?.isInventoryEnabled,
+                        is_loyalty_enabled: tenantData.systemConfig?.isLoyaltyEnabled,
+                        is_multibranch_enabled: tenantData.systemConfig?.isMultiBranch,
+                        is_ecommerce_enabled: tenantData.systemConfig?.isEcommerceEnabled,
+                        pricing_mode: tenantData.systemConfig?.pricingMode
+                    });
+
+                    const integrationsUpsert = supabase.from('tenant_integrations').upsert({
+                        tenant_id: tenantId,
+                        payment_gateway_key: tenantData.integrations?.paymentGatewayKey,
+                        sms_provider_key: tenantData.integrations?.smsProviderKey,
+                        email_provider_key: tenantData.integrations?.emailProviderKey,
+                        webhook_url: tenantData.integrations?.webhookUrl
+                    });
+
+                    // Module Sync Helper
+                    const syncModules = async () => {
+                        const { data: systemModules } = await supabase.from('system_modules').select('id, code');
+                        if (systemModules) {
+                            const activeModuleIds = tenantData.modules
+                                .map((code: string) => systemModules.find((m: any) => m.code === code)?.id)
+                                .filter(Boolean);
+
+                            await supabase.from('tenant_active_modules').delete().eq('tenant_id', tenantId);
+                            if (activeModuleIds.length > 0) {
+                                await supabase.from('tenant_active_modules').insert(
+                                    activeModuleIds.map((mid: string) => ({
+                                        tenant_id: tenantId,
+                                        module_id: mid,
+                                        status: 'ACTIVE'
+                                    }))
+                                );
+                            }
+                        }
+                    };
+
+                    // Execute all upserts but don't block the main flow if they take a while
+                    // (though we should probably wait for them in a production app)
+                    await Promise.allSettled([
+                        businessUpsert,
+                        companyUpsert,
+                        taxUpsert,
+                        bankingUpsert,
+                        systemUpsert,
+                        integrationsUpsert,
+                        syncModules()
+                    ]);
+
                     // Create Admin User if provided
                     if (newTenant.adminUser.mobile && newTenant.adminUser.password && !editingTenant) {
                         try {

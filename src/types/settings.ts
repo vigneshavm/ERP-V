@@ -1,12 +1,20 @@
 import { TenantUser } from './tenant';
 import { Sector } from './common';
 
+export interface UserVisualIdentity {
+    theme?: 'light' | 'dark' | 'system';
+    primaryColor?: string;
+    loginLogoUrl?: string;
+    visualIdentityConfig?: Record<string, any>;
+}
+
 export interface AuthState {
     user: TenantUser | null;
     currentSector: Sector;
     currentBranch: string;
     role: SystemRole;
     theme: 'light' | 'dark';
+    userPreferences?: UserVisualIdentity;
 }
 
 import { AppView, SystemRole } from './common';
