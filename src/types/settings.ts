@@ -13,7 +13,7 @@ export interface AuthState {
     currentSector: Sector;
     currentBranch: string;
     role: SystemRole;
-    theme: 'light' | 'dark';
+    theme: 'light' | 'dark' | 'system';
     userPreferences?: UserVisualIdentity;
 }
 

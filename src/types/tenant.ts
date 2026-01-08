@@ -18,7 +18,7 @@ export interface LoyaltyConfig {
 
 export interface TenantConfig {
     modules: string[];
-    theme: 'light' | 'dark';
+    theme: 'light' | 'dark' | 'system';
     primaryColor: string;
     layout: 'standard' | 'compact';
 }
@@ -111,7 +111,7 @@ export interface Tenant {
     modules?: ModuleType[];
     isActive?: boolean;
     region?: RegionConfig;
-    theme?: 'light' | 'dark';
+    theme?: 'light' | 'dark' | 'system';
     layout?: 'standard' | 'compact';
     domain?: string;
     primaryColor?: string;

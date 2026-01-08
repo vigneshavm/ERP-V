@@ -5,7 +5,8 @@ import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBr
 import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store, User } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
-import { setStoredTheme } from '../utils/theme';
+import { setUserPreferences, settingsReducer } from '../store/tenantSlice';
+import { setStoredTheme, Theme } from '../utils/theme';
 import { Tenant, Role } from '../types/tenant';
 import StaffManager from './StaffManager';
 import { isSecuredIdeally, securePassword } from '../utils/auth';
@@ -102,7 +103,7 @@ interface SettingsFormProps {
     initialSettings: SettingsData;
     activeTenant?: Tenant;
     roles: Role[];
-    onSave: (data: SettingsData & { tenantTheme: 'light' | 'dark' }) => void;
+    onSave: (data: SettingsData & { tenantTheme: Theme }) => void;
     onReset: () => void;
     currentTheme: 'light' | 'dark';
     isSaved: boolean;
@@ -226,7 +227,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
         (activeTenant?.systemConfig?.pricingMode as TaxMode) || initialSettings.defaultTaxMode
     );
     const [permissions, setPermissions] = useState(initialSettings.rolePermissions);
-    const [tenantTheme, setTenantTheme] = useState<'light' | 'dark'>(currentTheme || 'light');
+    const [tenantTheme, setTenantTheme] = useState<Theme>(currentTheme || 'light');
 
     // Additional Tenant Fields
     const [businessType, setBusinessType] = useState(activeTenant?.businessType || '');
@@ -500,6 +501,9 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                         <button onClick={() => setTenantTheme('dark')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${tenantTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
                                             <Moon className="w-4 h-4" /> Dark
                                         </button>
+                                        <button onClick={() => setTenantTheme('system')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${tenantTheme === 'system' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-200 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Shield className="w-4 h-4" /> System
+                                        </button>
                                     </div>
                                     <p className="text-xs text-slate-400 mt-2 text-balance">Choose the default appearance for all terminals. Users can override this locally if allowed.</p>
                                 </div>
@@ -689,6 +693,55 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                     </div>
                 )}
 
+                {/* PERSONALIZATION TAB */}
+                {activeTab === 'PERSONAL' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                                <User className="w-5 h-5 text-indigo-500" /> Personalization Overrides
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-3">Your Theme Preference</label>
+                                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
+                                        <button onClick={() => setUserTheme('light')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${userTheme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Sun className="w-4 h-4" /> Light
+                                        </button>
+                                        <button onClick={() => setUserTheme('dark')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${userTheme === 'dark' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Moon className="w-4 h-4" /> Dark
+                                        </button>
+                                        <button onClick={() => setUserTheme('system')} className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${userTheme === 'system' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-200 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                                            <Shield className="w-4 h-4" /> System
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-2">Overrides the tenant default theme for your account.</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Personal Primary Color</label>
+                                    <div className="flex flex-wrap gap-3">
+                                        {COLORS.map(c => (
+                                            <button
+                                                key={c.name}
+                                                onClick={() => setUserColor(c.hex)}
+                                                className={`w-10 h-10 rounded-full border-4 transition-all ${userColor === c.hex ? 'border-indigo-100 dark:border-slate-600 scale-110 shadow-md ring-2 ring-indigo-500' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                                style={{ backgroundColor: c.hex }}
+                                                title={c.name}
+                                            />
+                                        ))}
+                                        <button
+                                            onClick={() => setUserColor('')}
+                                            className={`px-3 py-1 text-[10px] font-bold border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 ${!userColor ? 'bg-slate-100 dark:bg-slate-900 border-indigo-500 text-indigo-600' : ''}`}
+                                        >
+                                            REVERT TO DEFAULT
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );
@@ -708,9 +761,16 @@ const SettingsManager: React.FC = () => {
 
     const activeTenant = tenantsList.find(t => t.id === tenantId);
 
-    const handleSave = async (updatedSettings: SettingsData & { tenantTheme: 'light' | 'dark', gstin?: string, pan?: string, bankName?: string, accNo?: string }) => {
+    const handleSave = async (updatedSettings: SettingsData & { tenantTheme: Theme, gstin?: string, pan?: string, bankName?: string, accNo?: string }) => {
         setIsSaving(true);
         try {
+            // Update User Preferences in Redux IMMEDIATELY for instant UI feedback
+            dispatch(setUserPreferences({
+                theme: updatedSettings.userTheme,
+                primaryColor: updatedSettings.userColor,
+                loginLogoUrl: updatedSettings.userLogo
+            }));
+
             // 1. Update Redux Settings state
             dispatch(updateSettings({
                 appName: updatedSettings.appName,

@@ -269,7 +269,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialAuthState,
   reducers: {
-    setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
+    setTheme: (state, action: PayloadAction<'light' | 'dark' | 'system'>) => {
       state.theme = action.payload;
     },
     setSector: (state, action: PayloadAction<Sector>) => {
@@ -293,8 +293,8 @@ const authSlice = createSlice({
     },
     setUserPreferences: (state, action: PayloadAction<UserVisualIdentity | undefined>) => {
       state.userPreferences = action.payload;
-      if (action.payload?.theme && action.payload.theme !== 'system') {
-        state.theme = action.payload.theme as 'light' | 'dark';
+      if (action.payload?.theme) {
+        state.theme = action.payload.theme as 'light' | 'dark' | 'system';
       }
     },
     logout: (state) => {

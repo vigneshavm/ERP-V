@@ -1,28 +1,30 @@
 
 export const THEME_KEY = 'erp_theme';
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system';
 
 export const getStoredTheme = (): Theme | null => {
     const stored = localStorage.getItem(THEME_KEY);
-    return (stored === 'light' || stored === 'dark') ? stored : null;
+    return (stored === 'light' || stored === 'dark' || stored === 'system') ? stored : null;
 };
 
 export const setStoredTheme = (theme: Theme) => {
     localStorage.setItem(THEME_KEY, theme);
-    // Determine if we need to dispatch an event or rely on React state
-    // For immediate effect outside React:
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
+    applyTheme(theme);
 };
 
 export const applyTheme = (theme: Theme) => {
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
+    const root = document.documentElement;
+    if (theme === 'system') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+    } else if (theme === 'dark') {
+        root.classList.add('dark');
     } else {
-        document.documentElement.classList.remove('dark');
+        root.classList.remove('dark');
     }
 };

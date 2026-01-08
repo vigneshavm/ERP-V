@@ -37,14 +37,21 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
 
         // Apply Theme Strategy:
         // 1. User specific preference (Redux)
-        // 2. LocalStorage (Legacy/Explicit)
+        // 2. LocalStorage (Explicit override)
         // 3. Tenant Default (Branding)
         // 4. Fallback (Light)
         const storedTheme = getStoredTheme();
-        const userTheme = userPreferences?.theme === 'system' ? undefined : userPreferences?.theme;
-        const effectiveTheme: Theme = (userTheme as Theme) || (storedTheme as Theme) || activeTenant?.theme || 'light';
+        const effectiveTheme: Theme = (userPreferences?.theme as Theme) || (storedTheme as Theme) || (activeTenant?.theme as Theme) || 'light';
 
         applyTheme(effectiveTheme);
+
+        // Listen for system theme changes if in system mode
+        if (effectiveTheme === 'system') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = () => applyTheme('system');
+            mediaQuery.addEventListener('change', handleChange);
+            return () => mediaQuery.removeEventListener('change', handleChange);
+        }
 
         // Apply Primary Color Strategy: User -> Tenant
         const effectiveColor = userPreferences?.primaryColor || activeTenant?.primaryColor;
@@ -58,8 +65,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
 
     // Compute effective visual settings for context
     const storedTheme = getStoredTheme();
-    const userTheme = userPreferences?.theme === 'system' ? undefined : userPreferences?.theme;
-    const effectiveTheme = (userTheme as 'light' | 'dark') || storedTheme || activeTenant?.theme || 'light';
+    const effectiveTheme: Theme = (userPreferences?.theme as Theme) || (storedTheme as Theme) || (activeTenant?.theme as Theme) || 'light';
     const effectiveColor = userPreferences?.primaryColor || activeTenant?.primaryColor;
     const effectiveLogo = userPreferences?.loginLogoUrl || activeTenant?.loginLogoUrl;
 
