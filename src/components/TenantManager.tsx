@@ -2,7 +2,7 @@ import React from 'react';
 import { Building2, Pencil, Globe, Loader2, LogIn } from 'lucide-react';
 import { APP_CONFIG } from '../config';
 import { supabase } from '../lib/supabase';
-import { toggleTenantStatus } from '../store/tenantSlice';
+import { toggleTenantStatus } from '../store';
 import { useTenantForm } from '../hooks/useTenantForm';
 import { Tenant } from '../types/tenant';
 import { BusinessTab } from './tenant-manager/BusinessTab';

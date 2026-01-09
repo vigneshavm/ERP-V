@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Sector, Branch } from '../types/common';
+import { Sector, BranchId } from '../types/common';
 import { ScannedInvoice, FinalizedPurchaseItem } from '../types/purchase';
 import { LayoutTemplate, Table, FileText, Save, CheckCircle2, X, IndianRupee, Plus, Barcode } from 'lucide-react';
 
@@ -10,7 +10,7 @@ interface InvoiceResultProps {
     initialData: ScannedInvoice;
     file: File | null;
     sector: Sector;
-    branch: Branch;
+    branch: BranchId;
     vendors: Vendor[];
     onSave: (items: FinalizedPurchaseItem[], vendorId: string | null) => void;
     onCancel: () => void;

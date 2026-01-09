@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { updateTenantDetails, addTenant } from '../store/tenantSlice';
+import { updateTenantDetails, addTenant } from '../store';
 import { Tenant, BranchConfig, TenantLocation } from '../types/tenant';
 import { Sector, ModuleType } from '../types/common';
 import { securePassword } from '../utils/auth';
@@ -557,7 +557,8 @@ export const useTenantForm = () => {
                         }
                     }
 
-                    dispatch(editingTenant ? updateTenantDetails(mapDbTenantToTenant(data)) : addTenant(mapDbTenantToTenant(data)));
+                    const mappedTenant = mapDbTenantToTenant(data);
+                    dispatch(editingTenant ? updateTenantDetails({ id: mappedTenant.id, updates: mappedTenant }) : addTenant(mappedTenant));
                     handleCancelEdit();
                     setActiveSection('list');
                 }
@@ -570,7 +571,7 @@ export const useTenantForm = () => {
                     isActive: editingTenant ? editingTenant.isActive : true
                 } as Tenant;
 
-                dispatch(editingTenant ? updateTenantDetails(finalTenant) : addTenant(finalTenant));
+                dispatch(editingTenant ? updateTenantDetails({ id: finalTenant.id, updates: finalTenant }) : addTenant(finalTenant));
                 handleCancelEdit();
                 setActiveSection('list');
             }

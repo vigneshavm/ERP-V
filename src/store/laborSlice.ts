@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { LaborState, Employee, Attendance, LaborPayment } from '../types/hr';
 
 
-import { APP_CONFIG } from '../../config';
+import { APP_CONFIG } from '../config';
 
 import { loadState, saveState } from './storage';
 

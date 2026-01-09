@@ -311,6 +311,7 @@ export interface BranchConfig {
     phone?: string;
     isHeadOffice?: boolean;
     tenantId?: string;
+    sector?: Sector;
 }
 
 export type Branch = BranchConfig;
@@ -414,6 +415,7 @@ export interface TenantUser {
     sector: Sector; // For UI context
     is2faEnabled?: boolean; // Per-user 2FA Toggle
     permissions?: string[]; // Code based permissions
+    assignedCounterId?: string;
 }
 
 // Redux State Interface

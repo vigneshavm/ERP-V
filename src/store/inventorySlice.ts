@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Product, InventoryState } from '../types/product';
-import { Sector, Branch } from '../types/common';
+import { Sector, BranchId } from '../types/common';
 import { APP_CONFIG } from '../config';
 
 import { loadState, saveState } from './storage';
@@ -36,7 +36,7 @@ const inventorySlice = createSlice({
       if (p) p.stock = Math.max(0, p.stock - action.payload.qty);
       saveState('inventory', state);
     },
-    addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: Branch; category?: string; productType?: string; barcode?: string }[]>) => {
+    addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: BranchId; category?: string; productType?: string; barcode?: string }[]>) => {
       action.payload.forEach(item => {
         const existing = state.products.find(p => p.sku === item.sku && p.sector === item.sector && p.branchId === item.branch);
         if (existing) {

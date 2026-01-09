@@ -24,6 +24,7 @@ import { AppView, SystemRole } from './common';
 
 export interface SettingsState {
     appName: string;
+    logoUrl: string;
     primaryColor: string;
     enabledModules: {
         pos: boolean;

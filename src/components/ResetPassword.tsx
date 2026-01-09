@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
-import { updateUserPassword, logout, setAuthError, setAuthSuccess } from '../store/tenantSlice';
+import { updateUserPassword, logout, setAuthError, setAuthSuccess } from '../store';
 import { supabase } from '../lib/supabase';
 import { clearSession } from '../utils/session';
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react';

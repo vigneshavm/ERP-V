@@ -1,4 +1,4 @@
-import { Sector, Branch, SystemRole, AttendanceStatus } from './common';
+import { Sector, BranchId, SystemRole, AttendanceStatus } from './common';
 
 export interface Employee {
     id: string;
@@ -8,7 +8,7 @@ export interface Employee {
     pin: string;
     dailyRate: number;
     sector: Sector;
-    branchId: Branch;
+    branchId: BranchId;
     assignedCounterId?: string;
     tenantId?: string;
     mobile?: string;

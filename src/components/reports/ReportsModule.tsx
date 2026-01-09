@@ -99,7 +99,7 @@ const ReportsModule: React.FC = () => {
         })
         : [];
 
-    const ReportCard = ({ report, categoryId }: { report: ReportItem, categoryId: string }) => (
+    const ReportCard = ({ report, categoryId }: { report: ReportItem, categoryId: string, key?: string }) => (
         <div
             className="group relative bg-white dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
             onClick={() => navigate(`/reports/${categoryId}/${report.slug}`)}

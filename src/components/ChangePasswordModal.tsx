@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { comparePassword, securePassword } from '../utils/auth';
 import { supabase } from '../lib/supabase';
-import { logout } from '../store/tenantSlice'; // Synced from previous knowledge that authSlice is in tenantSlice file
+import { logout } from '../store';
 import { clearSession } from '../utils/session'; // Assuming this utility exists based on App.tsx usage
 
 interface ChangePasswordModalProps {

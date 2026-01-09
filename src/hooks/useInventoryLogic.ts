@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, addProduct, editProduct } from '../store';
 import { useConfig } from '../components/ConfigContext';
 import { useBranchResolver } from './useBranchResolver'; // Assuming this exists or will be moved/kept
-import { Sector, Branch } from '../types/common';
+import { Sector, BranchId } from '../types/common';
 import { Product } from '../types/product';
 
 export interface ProductFormRow {
@@ -263,7 +263,7 @@ export const useInventoryLogic = () => {
                 productType: row.productType || 'Standard',
                 brand: row.brand || 'Generic',
                 sector: currentSector as Sector,
-                branchId: (row.branch || currentBranch) as Branch,
+                branchId: (row.branch || currentBranch) as BranchId,
                 image: imagePreview || row.image || undefined,
                 subCategory: row.subCategory,
                 size: row.size,

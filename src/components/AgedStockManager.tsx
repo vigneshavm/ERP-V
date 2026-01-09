@@ -4,7 +4,7 @@ import { RootState } from '../store';
 import { useConfig } from './ConfigContext';
 import { Clock, AlertTriangle, TrendingDown, DollarSign, Calendar, Settings as SettingsIcon, X, Save } from 'lucide-react';
 import { Product } from '../types/product';
-import { updateSettings } from '../store/tenantSlice';
+import { updateSettings } from '../store';
 
 const AgedStockManager: React.FC = () => {
     const dispatch = useDispatch();

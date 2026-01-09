@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, saveDailyFinanceRecord, updateDailyFinanceRecord, deleteDailyFinanceRecord } from '../store';
 import { SyncManager } from '../services/SyncManager';
-import { APP_CONFIG } from '../../config';
+import { APP_CONFIG } from '../config';
 import {
   Briefcase, History, IndianRupee, Plus, CheckCircle,
   Activity, AlertCircle, CalendarDays, CreditCard, Search,

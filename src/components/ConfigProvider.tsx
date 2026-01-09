@@ -5,7 +5,8 @@ import { Tenant } from '../types/tenant';
 
 import { generatePalette } from '../utils/colorUtils';
 import { getStoredTheme, setStoredTheme, applyTheme, Theme } from '../utils/theme';
-import { ConfigContext } from './ConfigContext';
+import { ConfigContext, useConfig } from './ConfigContext';
+export { useConfig };
 
 interface ConfigProviderProps {
     tenant: Tenant | null;

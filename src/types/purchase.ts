@@ -1,4 +1,4 @@
-import { Sector, Branch } from './common';
+import { Sector, BranchId } from './common';
 
 export interface ScanItem {
     name: string;
@@ -17,7 +17,7 @@ export interface PurchaseOrder {
     total: number;
     status: 'PENDING' | 'APPROVED';
     sector: Sector;
-    branchId: Branch;
+    branchId: BranchId;
 }
 
 export interface InvoiceItem {

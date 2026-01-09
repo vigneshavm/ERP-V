@@ -1,77 +1,49 @@
-import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key, ArrowLeft, Plus, Landmark, Rocket, Share2, RotateCcw, Barcode, FileUp, FileDown } from 'lucide-react';
-import ChangePasswordModal from './components/ChangePasswordModal';
-
-
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setBranch, setUser, setActiveTab, setSidebarOpen, setDesktopCollapsed, toggleSidebar } from './store';
-import { APP_CONFIG } from './config';
-
-
-import Dashboard from './components/Dashboard';
-import POSModule from './components/pos/POSModule';
-import InventoryManager from './components/InventoryManager';
-import PurchaseManager from './components/PurchaseManager';
-import FinanceTracker from './components/FinanceTracker';
-import LaborManager from './components/LaborManager';
-import SalesHistory from './components/SalesHistory';
-import DailyFinanceTracker from './components/DailyFinanceTracker';
-import Storefront from './components/Storefront';
-import SettingsManager from './components/SettingsManager';
-import VendorForm from './components/VendorForm';
-import ProfitPulse from './components/ProfitPulse';
-import AgedStockManager from './components/AgedStockManager';
-import Login from './components/login';
-import ResetPassword from './components/ResetPassword';
-import TenantManager from './components/TenantManager';
-import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
-import ReportsModule from './components/reports/ReportsModule';
-import VendorManager from './components/VendorManager';
-import VendorDetails from './components/VendorDetails';
-import GrowBusiness from './components/grow/GrowBusiness';
-import SyncAndShare from './components/SyncAndShare';
-import RestoreManagement from './components/RestoreManagement';
-import BarcodeGenerator from './components/BarcodeGenerator';
-import BulkImport from './components/BulkImport';
-import DataExport from './components/DataExport';
 import { Routes, Route } from 'react-router-dom';
 
-
-import { ConfigProvider } from './components/ConfigProvider';
-import { useConfig } from './components/ConfigContext';
-import { useBranchResolver } from './hooks/useBranchResolver';
-import { useSupabaseData } from './hooks/useSupabaseData';
+import { RootState, setUser } from './store';
+import { APP_CONFIG } from './config';
 import { getSession, clearSession } from './utils/session';
+import { useSupabaseData } from './hooks/useSupabaseData';
+import { Tenant } from './types/tenant';
 
-import { AppView } from './types/common';
-import { Sector } from './types/common';
-import { Tenant, DbRoleCode } from './types/tenant';
+// Layout & Components
+import LoadingScreen from './components/layout/LoadingScreen';
+import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
+
+// Views
+import LandingPage from './views/LandingPage';
+import AdminView from './views/AdminView';
+import TenantView from './views/TenantView';
+
+// Standalone Pages
+const ResetPassword = lazy(() => import('./components/ResetPassword'));
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
 const App: React.FC = () => {
     const dispatch = useDispatch();
-    const { user, role } = useSelector((state: RootState) => state.auth);
-    const { rolePermissions } = useSelector((state: RootState) => state.settings);
+    const { user } = useSelector((state: RootState) => state.auth);
+    const { tenants } = useSelector((state: RootState) => state.tenant);
 
-    // Check for Customer Display Mode (Standalone)
+    // 1. Standalone Modes (Customer Display)
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-
-    if (mode === 'customer_display') {
+    if (urlParams.get('mode') === 'customer_display') {
         return <POSCustomerDisplay />;
     }
 
-    // Initialize Supabase Data
+    // 2. Initialize Data Sync Hook
     useSupabaseData();
 
+    // 3. View Management State
     const [viewMode, setViewMode] = useState<ViewMode>('LANDING');
-    const { tenants } = useSelector((state: RootState) => state.tenant);
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
     const [isResolving, setIsResolving] = useState(APP_CONFIG.REQUIRE_TENANT_ID);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
 
-    // --- Single Tenant Auto-Selection ---
-    React.useEffect(() => {
+    // 4. Auto-resolve Tenant if configured
+    useEffect(() => {
         if (tenants.length > 0) {
             if (APP_CONFIG.REQUIRE_TENANT_ID && APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
                 const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
@@ -84,13 +56,8 @@ const App: React.FC = () => {
         }
     }, [tenants, viewMode]);
 
-    // --- Tenant specific state ---
-    const { activeTab, sidebarOpen, desktopCollapsed } = useSelector((state: RootState) => state.ui);
-
-    const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
-
-    // --- Restore Session on Mount ---
-    React.useEffect(() => {
+    // 5. Restore Session
+    useEffect(() => {
         const sessionUser = getSession();
         if (sessionUser && !user) {
             try {
@@ -98,493 +65,63 @@ const App: React.FC = () => {
             } catch (e) {
                 console.error("Failed to restore session", e);
                 clearSession();
+                setIsLoggedIn(false);
             }
         }
     }, [dispatch, user]);
 
-    // --- Role-based Default Page ---
-    React.useEffect(() => {
-        if (isLoggedIn && role) {
-            if (role === 'Staff') {
-                dispatch(setActiveTab('POS'));
-            } else {
-                // Only reset to Dashboard if not already on a specific tab (preserves current view on refresh)
-                if (activeTab === 'DASHBOARD') {
-                    dispatch(setActiveTab('DASHBOARD'));
-                }
-            }
-        }
-    }, [isLoggedIn, role, dispatch]);
+    if (isResolving) return <LoadingScreen />;
 
-    // --- Permission Helper ---
-    const checkAccess = (view: AppView): boolean => {
-        if (!user) return false;
-
-        let effectiveRoleCode = 'staff';
-        effectiveRoleCode = user.systemRole.toLowerCase();
-        const allowedViews = rolePermissions[effectiveRoleCode as DbRoleCode] || [];
-        return allowedViews.includes(view);
-    };
-
-    // --- Views ---
-
-    const LoadingScreen = () => (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-            <div className="w-16 h-16 relative">
-                <div className="absolute inset-0 border-4 border-indigo-200 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-t-indigo-600 rounded-full animate-spin"></div>
-            </div>
-            <p className="mt-4 text-slate-500 font-medium animate-pulse">Initializing Terminal...</p>
-        </div>
-    );
-
-    const LandingPage = () => (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-            <div className="max-w-4xl w-full text-center mb-12">
-                <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/20">
-                    <span className="font-bold text-3xl text-white">E</span>
-                </div>
-                <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Enterprise Manager</h1>
-                <p className="text-xl text-slate-500 max-w-2xl mx-auto">
-                    The all-in-one ERP & POS platform for modern retail chains.
-                    Manage inventory, sales, finance, and workforce from a single dashboard.
-                </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-3xl w-full">
-                <button
-                    onClick={() => setViewMode('ADMIN')}
-                    className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-blue-600 hover:shadow-xl transition-all duration-300 text-left"
-                >
-                    <div className="absolute top-6 right-6 text-slate-300 group-hover:text-blue-600 transition-colors">
-                        <ArrowRight className="w-6 h-6" />
-                    </div>
-                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-                        <Shield className="w-6 h-6" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Super Admin</h2>
-                    <p className="text-slate-500">Provision new tenants, manage subscriptions, and oversee platform health.</p>
-                </button>
-
-                <button
-                    onClick={() => {
-                        // Setup demo tenant
-                        setCurrentTenant({
-                            id: 'demo',
-                            name: 'Demo Retail Co',
-                            subdomain: 'demo',
-                            modules: ['POS', 'INVENTORY', 'FINANCE', 'HR'],
-                            isActive: true,
-                            region: { currency: 'USD', currencySymbol: '$', dateFormat: 'MM/DD/YYYY' }
-                        });
-                        setViewMode('TENANT');
-                        setIsLoggedIn(false); // Force login
-                    }}
-                    className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-emerald-600 hover:shadow-xl transition-all duration-300 text-left"
-                >
-                    <div className="absolute top-6 right-6 text-slate-300 group-hover:text-emerald-600 transition-colors">
-                        <ArrowRight className="w-6 h-6" />
-                    </div>
-                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
-                        <Store className="w-6 h-6" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Tenant Login</h2>
-                    <p className="text-slate-500">Access your store's POS, Inventory, and Financial dashboards.</p>
-                </button>
-            </div>
-
-            <p className="mt-12 text-sm text-slate-400">© 2024 Enterprise Manager Platform. All rights reserved.</p>
-        </div>
-    );
-
-    const AdminView = () => (
-        <div className="min-h-screen bg-slate-100 flex flex-col">
-            <header className="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold">A</div>
-                        <span className="font-bold text-lg">Super Admin Portal</span>
-                    </div>
-                    <button
-                        onClick={() => setViewMode('LANDING')}
-                        className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                    </button>
-                </div>
-            </header>
-            <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-                <div className="max-w-7xl mx-auto">
-                    <TenantManager onLoginAs={(tenant) => {
-                        setCurrentTenant(tenant);
-                        setViewMode('TENANT');
-                        setIsLoggedIn(false);
-                    }} />
-                </div>
-            </main>
-        </div>
-    );
-
-    const TenantView = () => {
-        // Confirmation State
-        const [confirmDialog, setConfirmDialog] = useState<{
-            isOpen: boolean;
-            title: string;
-            message: string;
-            onConfirm: () => void;
-        }>({ isOpen: false, title: '', message: '', onConfirm: () => { } });
-
-        const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-
-
-        // Hooks must be at the top level
-        const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
-        const branchesFromDB = useSelector((state: RootState) => state.tenant.branches);
-        const { getBranchName } = useBranchResolver();
-
-        // Derive effective tenant from user session or prop
-        const effectiveTenant = React.useMemo(() => {
-            if (user?.tenantId) {
-                return tenants.find(t => t.id === user.tenantId) || currentTenant;
-            }
-            return currentTenant;
-        }, [user?.tenantId, tenants, currentTenant]);
-
-        const requestConfirm = (title: string, message: string, onConfirm: () => void) => {
-            setConfirmDialog({ isOpen: true, title, message, onConfirm });
-        };
-
-        const handleConfirm = () => {
-            confirmDialog.onConfirm();
-            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
-        };
-
-        // 1. Check Login
-        if (!isLoggedIn) {
-            return (
-                <ConfigProvider tenant={effectiveTenant}>
-                    <Login
-                        tenant={effectiveTenant}
-                        onLogin={() => setIsLoggedIn(true)}
-                    />
-                </ConfigProvider>
-            );
-        }
-
-        // 2. Navigation Item Component
-        const NavItem = ({ id, icon: Icon, label }: { id: AppView; icon: LucideIcon; label: string }) => {
-            // Hide if no access
-            if (!checkAccess(id)) return null;
-
-            return (
-                <button
-                    onClick={() => {
-                        dispatch(setActiveTab(id));
-                        dispatch(setSidebarOpen(false));
-                    }}
-                    title={desktopCollapsed ? label : ''}
-                    className={`w-full flex items-center ${desktopCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-lg transition-colors duration-200 ${activeTab === id
-                        ? 'bg-indigo-600 text-white shadow-md'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                        }`}
-                >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
-                    {!desktopCollapsed && <span className="font-medium truncate">{label}</span>}
-                </button>
-            );
-        };
-
-        // 3. Render Content (with Permission Check)
-        const renderContent = () => {
-            if (!checkAccess(activeTab)) {
-                // Access Denied View
-                return (
-                    <div className="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
-                        <Ban className="w-16 h-16 mb-4 text-red-400 opacity-80" />
-                        <h2 className="text-2xl font-bold text-slate-600 dark:text-slate-300">Access Denied</h2>
-                        <p className="mt-2 text-sm">You do not have permission to view the {activeTab} module.</p>
-                        <p className="text-xs mt-1">Role: {role}</p>
-                    </div>
-                );
-            }
-
-            switch (activeTab) {
-                case 'DASHBOARD': return <Dashboard />;
-                case 'PROFIT_PULSE': return <ProfitPulse />;
-                case 'AGED_STOCK': return <AgedStockManager />;
-                case 'POS': return <POSModule />;
-                case 'INVENTORY': return <InventoryManager />;
-                case 'PURCHASE': return <PurchaseManager />;
-                case 'VENDORS': return <VendorManager />;
-                case 'FINANCE': return <FinanceTracker />;
-                case 'SALES': return <SalesHistory />;
-                case 'DAILY': return <DailyFinanceTracker />;
-                case 'LABOR': return <LaborManager />;
-                case 'STOREFRONT': return <Storefront />;
-                case 'SETTINGS': return <SettingsManager />;
-                case 'VENDOR_FORM': return <VendorForm />;
-                case 'VENDOR_DETAILS': return <VendorDetails />;
-                case 'REPORTS': return <ReportsModule />;
-                case 'GROW': return <GrowBusiness />;
-                case 'SYNC_SHARE': return <SyncAndShare />;
-                case 'RESTORE': return <RestoreManagement />;
-                case 'BARCODE': return <BarcodeGenerator />;
-                case 'BULK_IMPORT': return <BulkImport />;
-                case 'DATA_EXPORT': return <DataExport />;
-                default: return <Dashboard />;
-            }
-        };
-
-        return (
-            <ConfigProvider tenant={effectiveTenant}>
-                <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 dark:text-slate-100">
-                    {/* Mobile Bottom Navigation (Native App Shell) */}
-                    <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
-                        <button
-                            onClick={() => dispatch(setActiveTab('DASHBOARD'))}
-                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
-                        >
-                            <LayoutDashboard className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">Home</span>
-                        </button>
-                        <button
-                            onClick={() => dispatch(setActiveTab('POS'))}
-                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
-                        >
-                            <ShoppingCart className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">POS</span>
-                        </button>
-                        <button
-                            onClick={() => dispatch(setActiveTab('INVENTORY'))}
-                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
-                        >
-                            <Archive className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">Stock</span>
-                        </button>
-                        <button
-                            onClick={() => dispatch(setActiveTab('SETTINGS'))}
-                            className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
-                        >
-                            <Settings className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">Settings</span>
-                        </button>
-                        <button
-                            onClick={() => dispatch(setSidebarOpen(true))}
-                            className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
-                        >
-                            <Menu className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">More</span>
-                        </button>
-                    </nav>
-
-                    {/* Sidebar (Desktop Persistent, Mobile Drawer) */}
-                    <aside className={`
-                    fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-2 flex flex-col transition-all duration-300 transform 
-                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-                    ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
-                `}>
-                        <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                            <div className="flex items-center space-x-2 overflow-hidden">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-emerald-500">
-                                    {useConfig().logoUrl ? (
-                                        <img src={useConfig().logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
-                                    ) : (
-                                        <span className="font-bold text-white">{user?.name?.charAt(0) || effectiveTenant?.name?.charAt(0) || 'T'}</span>
-                                    )}
-                                </div>
-                                {!desktopCollapsed && (
-                                    <div className="overflow-hidden">
-                                        <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                                        <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
-                                    </div>
-                                )}
-                            </div>
-                            {/* Mobile Only Close Button */}
-                            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
-                                <X className="w-6 h-6" />
-                            </button>
-                            {/* Desktop Collapse Toggle */}
-                            <button
-                                onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-                                className="hidden lg:flex p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
-                            >
-                                {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                            </button>
-                        </div>
-
-                        <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                            {!desktopCollapsed && <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{effectiveTenant?.name}</span>}
-
-                            {/* Branch Selector (Owner Only) or Display (Staff) */}
-                            {(() => {
-                                const availableBranches = (effectiveTenant?.locations?.flatMap(l => l.branches) ||
-                                    branchesFromDB.filter(b => b.tenantId === effectiveTenant?.id) || [])
-                                    .filter(Boolean); // Ensure no nulls/undefined
-
-                                if (availableBranches.length <= 1) return null;
-
-                                return (
-                                    <div className="mt-2 text-center">
-                                        {role === 'Owner' ? (
-                                            <div className="relative">
-                                                <select
-                                                    value={selectedBranch}
-                                                    onChange={(e) => dispatch(setBranch(e.target.value))}
-                                                    className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                                                >
-                                                    <option value="All">All Branches (HQ View)</option>
-                                                    {availableBranches.map(b => (
-                                                        <option key={b.id || b.name} value={b.id || b.name}>{b.name}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                                {getBranchName(selectedBranch)}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })()}
-                        </div>
-
-                        <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
-                            <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
-                            <NavItem id="PROFIT_PULSE" icon={Zap} label="Profit Pulse AI" />
-                            <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
-                            <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
-                            <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
-                            <NavItem id="VENDORS" icon={Users} label="Vendors (Suppliers)" />
-                            <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
-                            <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
-                            <NavItem id="SALES" icon={List} label="Sales History" />
-                            <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
-                            <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
-                            <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
-                            <NavItem id="GROW" icon={Rocket} label="Launch Online" />
-                            <NavItem id="SYNC_SHARE" icon={Share2} label="Sync & Share" />
-                            <NavItem id="RESTORE" icon={RotateCcw} label="Restore Data" />
-                            <NavItem id="BARCODE" icon={Barcode} label="Barcode Generator" />
-                            <NavItem id="BULK_IMPORT" icon={FileUp} label="Bulk Import" />
-                            <NavItem id="DATA_EXPORT" icon={FileDown} label="Data Export" />
-                            <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
-                            <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
-                                <NavItem id="SETTINGS" icon={Settings} label="Settings" />
-                            </div>
-                        </nav>
-
-                        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
-                            <button
-                                onClick={() => {
-                                    requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                        clearSession();
-                                        localStorage.removeItem('erp_current_tenant');
-                                        setIsLoggedIn(false);
-                                    });
-                                }}
-                                className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
-                            >
-                                <Lock className="w-5 h-5" />
-                                <span className="font-medium">Staff Logout</span>
-                            </button>
-
-                            {desktopCollapsed && (
-                                <div className="flex flex-col gap-2 w-full px-2">
-                                    <button
-                                        onClick={() => {
-                                            requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
-                                                clearSession();
-                                                localStorage.removeItem('erp_current_tenant');
-                                                setIsLoggedIn(false);
-                                            });
-                                        }}
-                                        title="Logout"
-                                        className="flex-1 flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                    >
-                                        <Lock className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => setIsChangePasswordOpen(true)}
-                                        title="Change Password"
-                                        className="px-3 flex justify-center py-3 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
-                                    >
-                                        <Key className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </aside>
-
-                    {/* Main Content */}
-                    <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
-                        <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
-                            <Routes>
-                                <Route path="/" element={renderContent()} />
-                                <Route path="/reports" element={<ReportsModule />} />
-                                <Route path="/reports/:category/:slug" element={<ReportsModule />} />
-                                <Route path="/suppliers/:id" element={<VendorDetails />} />
-                                <Route path="/suppliers/:id/edit" element={<VendorForm />} />
-                                <Route path="/grow" element={<GrowBusiness />} />
-                                <Route path="*" element={renderContent()} />
-                            </Routes>
-                        </div>
-                    </main>
-
-                    {/* Overlay for mobile sidebar */}
-                    {sidebarOpen && (
-                        <div
-                            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-                            onClick={() => setSidebarOpen(false)}
-                        />
-                    )}
-
-                    {/* Modals */}
-                    <ChangePasswordModal
-                        isOpen={isChangePasswordOpen}
-                        onClose={() => setIsChangePasswordOpen(false)}
-                    />
-
-                    {/* Confirmation Modal */}
-                    {confirmDialog.isOpen && (
-                        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
-                                <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
-                                <div className="flex gap-3 justify-end">
-                                    <button
-                                        onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                                        className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleConfirm}
-                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
-                                    >
-                                        Confirm
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </ConfigProvider>
-        );
-    };
-
-    // --- Main Render ---
+    // 6. Root Router / Switch
     return (
-        <Routes>
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/*" element={
-                isResolving ? <LoadingScreen /> :
-                    viewMode === 'ADMIN' ? <AdminView /> :
-                        viewMode === 'TENANT' ? <TenantView /> :
-                            <LandingPage />
-            } />
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="*" element={
+                    (() => {
+                        switch (viewMode) {
+                            case 'LANDING':
+                                return (
+                                    <LandingPage
+                                        onSelectAdmin={() => setViewMode('ADMIN')}
+                                        onSelectTenant={(tenant) => {
+                                            setCurrentTenant(tenant);
+                                            setViewMode('TENANT');
+                                            setIsLoggedIn(false); // Force login for new tenant
+                                        }}
+                                    />
+                                );
+                            case 'ADMIN':
+                                return (
+                                    <AdminView
+                                        onLogout={() => setViewMode('LANDING')}
+                                        onLoginAsTenant={(tenant) => {
+                                            setCurrentTenant(tenant);
+                                            setViewMode('TENANT');
+                                            setIsLoggedIn(false);
+                                        }}
+                                    />
+                                );
+                            case 'TENANT':
+                                return (
+                                    <TenantView
+                                        currentTenant={currentTenant}
+                                        isLoggedIn={isLoggedIn}
+                                        onLogin={() => setIsLoggedIn(true)}
+                                        onLogout={() => {
+                                            clearSession();
+                                            localStorage.removeItem('erp_current_tenant');
+                                            setIsLoggedIn(false);
+                                        }}
+                                    />
+                                );
+                            default:
+                                return <LandingPage onSelectAdmin={() => setViewMode('ADMIN')} onSelectTenant={() => { }} />;
+                        }
+                    })()
+                } />
+            </Routes>
+        </Suspense>
     );
 };
 

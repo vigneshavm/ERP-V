@@ -21,7 +21,7 @@ import {
     Calendar,
     ArrowRight
 } from 'lucide-react';
-import { syncGoogleProfile, updateGoogleBusinessProfile } from '../../store/tenantSlice';
+import { syncGoogleProfile, updateGoogleBusinessProfile } from '../../store';
 import { GoogleBusinessConfig, GooglePost, BusinessHour } from '../../types/tenant';
 
 const GoogleProfileManager: React.FC = () => {

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PurchaseState, PurchaseOrder } from '../types/purchase';
-import { APP_CONFIG } from '../../config';
+import { APP_CONFIG } from '../config';
 
 import { loadState, saveState } from './storage';
 
