@@ -36,18 +36,18 @@ const Dashboard: React.FC = () => {
   const { getBranchName } = useBranchResolver();
 
   // Filtered Data based on Sector
-  const sectorTransactions = transactions.filter(t => t.sector === currentSector);
-  const sectorProducts = products.filter(p => p.sector === currentSector);
+  const sectorTransactions = (transactions || []).filter(t => t.sector === currentSector);
+  const sectorProducts = (products || []).filter(p => p.sector === currentSector);
 
   const totalRevenue = sectorTransactions
     .filter(t => t.type === 'INCOME')
     .reduce((acc, curr) => acc + curr.amount, 0) +
-    dailyFinanceRecords
+    (dailyFinanceRecords || [])
       .reduce((acc, curr) => acc + (curr.totalSales || 0), 0);
 
-  const totalStockValue = sectorProducts.reduce((acc, curr) => acc + (curr.cost * curr.stock), 0);
+  const totalStockValue = sectorProducts.reduce((acc, curr) => acc + (curr.cost * (curr.stock || 0)), 0);
 
-  const lowStockItems = sectorProducts.filter(p => p.stock < 10);
+  const lowStockItems = sectorProducts.filter(p => (p.stock || 0) < 10);
 
   // Chart Data: Last 7 days revenue
   const chartData = (() => {

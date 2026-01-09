@@ -32,6 +32,10 @@ const DEFAULT_CUSTOMER: Customer = {
     totalSpent: 0
 };
 
+import { usePOSUIState } from './usePOSUIState';
+import { usePOSTotals } from './usePOSTotals';
+import { usePOSCheckout } from './usePOSCheckout';
+
 export const usePOSLogic = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user, currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
@@ -41,31 +45,33 @@ export const usePOSLogic = () => {
     const settings = useAppSettings();
     const { defaultTaxMode } = settings;
 
-    // --- Global State ---
     const activeSession = useMemo(() => sessions[activeSessionIndex], [sessions, activeSessionIndex]);
     const cart = activeSession.cart;
     const activeCustomerId = activeSession.customerId;
     const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
     const isBranchAll = currentBranch === 'All';
 
-    // --- Local State ---
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [viewMode, setViewMode] = useState<'SCANNER' | 'VISUAL'>('SCANNER');
-    const [mobileTab, setMobileTab] = useState<'MAIN' | 'CART'>('MAIN');
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [isPreOrder, setIsPreOrder] = useState(false);
-    const [isHeldBillsOpen, setIsHeldBillsOpen] = useState(false);
-    const [isCategoryBrowserOpen, setIsCategoryBrowserOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const {
+        isFullScreen, setViewMode, mobileTab, setMobileTab, viewMode,
+        isProcessing, setIsProcessing, isPreOrder, setIsPreOrder,
+        isHeldBillsOpen, setIsHeldBillsOpen, isCategoryBrowserOpen, setIsCategoryBrowserOpen,
+        isMobileMenuOpen, setIsMobileMenuOpen, posContainerRef, toggleFullScreen
+    } = usePOSUIState();
 
-    const posContainerRef = useRef<HTMLDivElement>(null);
     const { getBranchName } = useBranchResolver();
 
-    useEffect(() => {
-        const handleFullScreenChange = () => setIsFullScreen(!!document.fullscreenElement);
-        document.addEventListener('fullscreenchange', handleFullScreenChange);
-        return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
-    }, []);
+    const { cartSubtotal, taxAmount, cartTotal, redemptionAmount, finalTotal } = usePOSTotals({
+        cart,
+        activeSession,
+        tenants,
+        userId: user?.tenantId
+    });
+
+    const { handleCheckout } = usePOSCheckout({
+        cart, isProcessing, setIsProcessing, activeSession, activeCounterId,
+        currentBranch, currentSector, user, branches, tenants, getBranchName,
+        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, defaultTaxMode
+    });
 
     // --- User Terminal Sync ---
     useEffect(() => {
@@ -73,48 +79,6 @@ export const usePOSLogic = () => {
             dispatch(setActiveCounter(user.assignedCounterId));
         }
     }, [user, activeCounterId, dispatch]);
-
-    const toggleFullScreen = useCallback(() => {
-        if (!document.fullscreenElement) {
-            posContainerRef.current?.requestFullscreen().catch(console.error);
-        } else {
-            document.exitFullscreen();
-        }
-    }, []);
-
-    // --- Computed Totals ---
-    const { cartSubtotal, taxAmount, cartTotal, redemptionAmount, finalTotal } = useMemo(() => {
-        let subtotal = 0;
-        let tax = 0;
-
-        cart.forEach(item => {
-            const gstRate = (item.gstPercentage || 18) / 100;
-            const computedQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
-            const lineTotal = item.price * computedQty;
-
-            if (activeSession.taxMode === 'EXCLUSIVE') {
-                subtotal += lineTotal;
-                tax += lineTotal * gstRate;
-            } else {
-                const baseAmount = lineTotal / (1 + gstRate);
-                subtotal += baseAmount;
-                tax += (lineTotal - baseAmount);
-            }
-        });
-
-        const rawTotal = subtotal + tax;
-        const currentTenant = tenants.find(t => t.id === user?.tenantId);
-        const redValue = currentTenant?.loyaltyConfig?.redemptionValue || 1;
-        const redAmt = (activeSession.redeemedPoints || 0) * redValue;
-
-        return {
-            cartSubtotal: subtotal,
-            taxAmount: tax,
-            cartTotal: rawTotal,
-            redemptionAmount: redAmt,
-            finalTotal: Math.max(0, rawTotal - redAmt)
-        };
-    }, [cart, activeSession.taxMode, activeSession.redeemedPoints, tenants, user?.tenantId]);
 
     // --- Category Management ---
     const categories = useMemo(() => {
@@ -161,80 +125,6 @@ export const usePOSLogic = () => {
         const relevantTenant = tenants.find(t => t.id === user?.tenantId);
         return relevantTenant?.loyaltyConfig;
     }, [tenants, user?.tenantId]);
-
-    // --- Checkout Logic ---
-    const handleCheckout = useCallback(async () => {
-
-        if (cart.length === 0 || isProcessing) return;
-
-        setIsProcessing(true);
-        const isOnline = navigator.onLine;
-
-        // Artificial delay for UI feedback
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        const currentBranchData = branches.find(b => b.id === currentBranch);
-        const counter = currentBranchData?.counters?.find(c => c.id === activeCounterId);
-        const nextBillNumber = (counter?.lastBillNumber || 0) + 1;
-        const saleId = `${activeCounterId}-${nextBillNumber.toString().padStart(4, '0')}`;
-
-        const sale: Sale = {
-            id: saleId,
-            date: new Date().toISOString(),
-            items: cart,
-            total: finalTotal,
-            customerId: activeSession.customerId || undefined,
-            sector: currentSector,
-            branchId: currentBranch,
-            counterId: activeCounterId,
-            counterName: counter?.name || activeCounterId,
-            taxMode: activeSession.taxMode,
-            paymentMethod: activeSession.paymentMethod,
-            status: isPreOrder ? 'PREORDER' : 'COMPLETED',
-            paymentStatus: (['CASH', 'CARD', 'UPI'].includes(activeSession.paymentMethod)) ? 'PAID' : 'PENDING',
-            userId: user?.id,
-            redeemedPoints: activeSession.redeemedPoints,
-            redemptionAmount: redemptionAmount
-        };
-
-        const currentTenant = tenants.find(t => t.id === user?.tenantId);
-        if (currentTenant && sale.customerId) {
-            const earned = calculateLoyaltyPoints(sale.items, currentTenant);
-            if (earned > 0) sale.loyaltyPointsEarned = earned;
-        }
-
-        if (isOnline) {
-            dispatch(processSale(sale));
-            dispatch(incrementCounterBillNumber({ branchId: currentBranch, counterId: activeCounterId! }));
-        } else {
-            // Save to Offline Queue
-            try {
-                await db.offlineSales.add({
-                    ...sale,
-                    synced: false,
-                    retryCount: 0
-                });
-                // Still update local Redux state for immediate consistency
-                dispatch(processSale(sale));
-                dispatch(incrementCounterBillNumber({ branchId: currentBranch, counterId: activeCounterId! }));
-            } catch (err) {
-                console.error('Failed to save offline sale:', err);
-                alert('Critical Error: Could not save sale offline.');
-                setIsProcessing(false);
-                return;
-            }
-        }
-
-        const tenantName = currentTenant ? currentTenant.name : 'Enterprise Mgr';
-        const branchName = getBranchName(currentBranch);
-        const branchAddress = branches.find(b => b.id === currentBranch)?.address || currentTenant?.companyDetails?.addressLine1 || 'No Address Provided';
-        printSaleReceipt(sale, tenantName, branchName, branchAddress);
-
-        setIsProcessing(false);
-        setIsPreOrder(false);
-
-        setTimeout(() => dispatch(setTaxMode(defaultTaxMode)), 100);
-    }, [cart, isBranchAll, hasMultipleBranches, isProcessing, activeSession, currentSector, currentBranch, isPreOrder, dispatch, defaultTaxMode, user, tenants, getBranchName]);
 
     // --- Customer Display Broadcast ---
     useEffect(() => {
@@ -298,7 +188,7 @@ export const usePOSLogic = () => {
                 window.dispatchEvent(new CustomEvent('pos-focus-customer'));
             }
         }
-    }), [cart, sessions.length, handleCheckout, switchSession, dispatch]);
+    }), [cart, sessions.length, handleCheckout, switchSession, dispatch, setViewMode, setIsHeldBillsOpen]);
 
     usePOSShortcuts(shortcutHandlers);
 

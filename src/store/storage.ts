@@ -4,7 +4,8 @@ export const loadState = <T>(key: string, defaultState: T): T => {
     try {
         const serialized = localStorage.getItem(key);
         if (serialized) {
-            return JSON.parse(serialized);
+            const loadedState = JSON.parse(serialized);
+            return { ...defaultState, ...loadedState };
         }
         // If no local storage, and DEMO mode is on, return mock data merged with default structure
         if (APP_CONFIG.IS_DEMO) {

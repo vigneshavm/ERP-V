@@ -5,6 +5,16 @@ import App from './App';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -15,9 +25,11 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
     </Provider>
   </React.StrictMode>
 );
