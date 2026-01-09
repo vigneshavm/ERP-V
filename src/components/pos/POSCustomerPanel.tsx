@@ -114,7 +114,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
     }, []);
 
     return (
-        <div className="bg-white dark:bg-slate-800 p-2 border-b border-slate-200 dark:border-slate-700 shadow-sm shrink-0 transition-colors">
+        <div className="bg-white dark:bg-neutral-800 p-2 border-b border-neutral-200 dark:border-neutral-700 shadow-sm shrink-0 transition-colors">
 
 
             <div className="relative mb-2 flex flex-col gap-2">
@@ -124,12 +124,12 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             ref={phoneInputRef}
                             type="text"
                             placeholder="Identify Customer (Mobile No.)"
-                            className={`w-full pl-8 pr-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border ${activeCustomer.id !== 'c1' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-300 ring-2 ring-emerald-500/10' : 'border-indigo-300 dark:border-indigo-600 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+                            className={`w-full pl-8 pr-2 py-1.5 text-xs bg-neutral-50 dark:bg-neutral-900 border ${activeCustomer.id !== 'c1' ? 'border-success text-success dark:text-success/90 ring-2 ring-success/10' : 'border-primary/30 dark:border-primary/60 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all`}
                             value={phoneQuery}
                             onChange={e => setPhoneQuery(e.target.value)}
                             onKeyDown={handlePhoneKeyDown}
                         />
-                        <Smartphone className={`absolute left-2 top-1.5 w-3.5 h-3.5 ${activeCustomer.id !== 'c1' ? 'text-emerald-500' : 'text-indigo-400'}`} />
+                        <Smartphone className={`absolute left-2 top-1.5 w-3.5 h-3.5 ${activeCustomer.id !== 'c1' ? 'text-success' : 'text-primary/70'}`} />
                     </div>
                 </div>
 
@@ -140,12 +140,12 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                 ref={nameInputRef}
                                 type="text"
                                 placeholder="Customer Name (Optional)"
-                                className="w-full pl-8 pr-2 py-1.5 text-xs bg-indigo-50 dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                                className="w-full pl-8 pr-2 py-1.5 text-xs bg-primary/5 dark:bg-neutral-900 border border-primary/20 dark:border-primary/40 rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                                 value={nameQuery}
                                 onChange={e => setNameQuery(e.target.value)}
                                 onKeyDown={handleNameKeyDown}
                             />
-                            <User className="absolute left-2 top-1.5 w-3.5 h-3.5 text-indigo-400" />
+                            <User className="absolute left-2 top-1.5 w-3.5 h-3.5 text-primary/70" />
                         </div>
                         <button
                             onClick={() => {
@@ -154,7 +154,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                 setNameQuery('');
                                 setPhoneSuggestions([]);
                             }}
-                            className="bg-indigo-600 text-white px-3 py-1 text-[10px] font-bold rounded hover:bg-indigo-700 transition-colors"
+                            className="bg-primary text-white px-3 py-1 text-[10px] font-bold rounded hover:bg-primary/90 transition-colors"
                         >
                             CREATE
                         </button>
@@ -163,7 +163,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
                 {/* Customer Suggestions */}
                 {phoneSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
                         {phoneSuggestions.map((cust, idx) => (
                             <button
                                 key={cust.id}
@@ -173,15 +173,15 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                     setNameQuery('');
                                     setPhoneSuggestions([]);
                                 }}
-                                className={`w-full text-left px-3 py-2.5 text-sm border-b border-slate-100 dark:border-slate-700/50 block ${idx === selectedPhoneIndex ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                className={`w-full text-left px-3 py-2.5 text-sm border-b border-neutral-100 dark:border-neutral-700/50 block ${idx === selectedPhoneIndex ? 'bg-primary text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
                             >
                                 <span className="font-bold">{cust.name}</span>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-indigo-200' : 'text-slate-500'}`}>{cust.phone}</span>
-                                    <span className={`text-[10px] px-1 rounded font-bold ${idx === selectedPhoneIndex ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
+                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-neutral-500'}`}>{cust.phone}</span>
+                                    <span className={`text-[10px] px-1 rounded font-bold ${idx === selectedPhoneIndex ? 'bg-white/20 text-white' : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400'}`}>
                                         {cust.tier || 'General'}
                                     </span>
-                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-indigo-200' : 'text-slate-500'}`}>&bull; {cust.points} pts</span>
+                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-neutral-500'}`}>&bull; {cust.points} pts</span>
                                 </div>
                             </button>
                         ))}
@@ -191,24 +191,24 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
 
 
-            <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded p-1.5 border border-slate-100 dark:border-slate-700/50">
+            <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 rounded p-1.5 border border-neutral-100 dark:border-neutral-700/50">
                 <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold truncate max-w-[120px] ${activeCustomer.id !== 'c1' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>
+                    <span className={`text-xs font-bold truncate max-w-[120px] ${activeCustomer.id !== 'c1' ? 'text-success dark:text-success' : 'text-neutral-500'}`}>
                         {activeCustomer.id !== 'c1' ? activeCustomer.name : 'Unidentified Customer'}
                     </span>
                     {activeCustomer.points > 0 && (
                         <div className="flex items-center gap-1">
-                            <span className="text-[10px] bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded font-bold border border-emerald-100 dark:border-emerald-800/50">
+                            <span className="text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded font-bold border border-success/20">
                                 {activeCustomer.tier || 'General'}
                             </span>
-                            <span className="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded font-bold border border-indigo-100 dark:border-indigo-800/50">
+                            <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold border border-primary/20">
                                 {activeCustomer.points} pts
                             </span>
                         </div>
                     )}
                 </div>
                 {activeCustomer.id !== 'c1' && (
-                    <button onClick={() => onSetCustomer('c1')} className="text-[10px] text-red-500 hover:text-red-600 px-1">Reset</button>
+                    <button onClick={() => onSetCustomer('c1')} className="text-[10px] text-error hover:text-error/80 px-1 font-bold">Reset</button>
                 )}
             </div>
         </div >

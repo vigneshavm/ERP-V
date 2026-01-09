@@ -227,19 +227,19 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
     return (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-slate-800 w-full max-w-5xl h-[85vh] rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl flex overflow-hidden">
+            <div className="bg-white dark:bg-neutral-800 w-full max-w-5xl h-[85vh] rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-2xl flex overflow-hidden">
 
                 {/* Left Sidebar: Controls */}
-                <div className="w-80 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col">
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <div className="w-80 bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 flex flex-col">
+                    <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
+                        <h3 className="text-lg font-bold text-neutral-800 dark:text-white flex items-center gap-2">
                             <Settings size={18} /> Configuration
                         </h3>
                     </div>
 
                     {products.length === 0 ? (
-                        <div className="flex-1 p-8 flex flex-col items-center justify-center text-center text-slate-500">
-                            <AlertTriangle size={32} className="mb-2 text-amber-500" />
+                        <div className="flex-1 p-8 flex flex-col items-center justify-center text-center text-neutral-500">
+                            <AlertTriangle size={32} className="mb-2 text-warning" />
                             <p className="font-medium">No Products Selected</p>
                             <p className="text-xs mt-1">Please select products from the inventory list to print labels.</p>
                         </div>
@@ -247,17 +247,17 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                         <div className="flex-1 overflow-y-auto p-4 space-y-6">
                             {/* Layout */}
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Layout size={12} /> Layout Type</label>
+                                <label className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-1"><Layout size={12} /> Layout Type</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         onClick={() => setConfig(c => ({ ...c, type: 'THERMAL' }))}
-                                        className={`p-2 text-sm rounded border ${config.type === 'THERMAL' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'}`}
+                                        className={`p-2 text-sm rounded border ${config.type === 'THERMAL' ? 'bg-primary text-white border-primary' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600'}`}
                                     >
                                         Thermal Roll
                                     </button>
                                     <button
                                         onClick={() => setConfig(c => ({ ...c, type: 'A4_GRID' }))}
-                                        className={`p-2 text-sm rounded border ${config.type === 'A4_GRID' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'}`}
+                                        className={`p-2 text-sm rounded border ${config.type === 'A4_GRID' ? 'bg-primary text-white border-primary' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600'}`}
                                     >
                                         A4 Sheet
                                     </button>
@@ -268,13 +268,13 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
                             {/* Columns */}
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Layout size={12} /> Columns per Row</label>
+                                <label className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-1"><Layout size={12} /> Columns per Row</label>
                                 <div className="flex gap-2">
                                     {[1, 2, 3, 4, 5].map(n => (
                                         <button
                                             key={n}
                                             onClick={() => setConfig(c => ({ ...c, cols: n }))}
-                                            className={`w-8 h-8 flex items-center justify-center text-sm rounded border ${config.cols === n ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'}`}
+                                            className={`w-8 h-8 flex items-center justify-center text-sm rounded border ${config.cols === n ? 'bg-primary text-white border-primary' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600'}`}
                                         >
                                             {n}
                                         </button>
@@ -284,15 +284,15 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
                             {/* Dimensions */}
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Layout size={12} /> Size (mm)</label>
+                                <label className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-1"><Layout size={12} /> Size (mm)</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <span className="text-xs text-slate-400">Width</span>
-                                        <input type="number" value={config.width} onChange={e => setConfig(c => ({ ...c, width: Number(e.target.value) }))} className="w-full p-2 text-sm border rounded bg-white dark:bg-slate-800" />
+                                        <span className="text-xs text-neutral-400">Width</span>
+                                        <input type="number" value={config.width} onChange={e => setConfig(c => ({ ...c, width: Number(e.target.value) }))} className="w-full p-2 text-sm border rounded bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-primary outline-none" />
                                     </div>
                                     <div>
-                                        <span className="text-xs text-slate-400">Height</span>
-                                        <input type="number" value={config.height} onChange={e => setConfig(c => ({ ...c, height: Number(e.target.value) }))} className="w-full p-2 text-sm border rounded bg-white dark:bg-slate-800" />
+                                        <span className="text-xs text-neutral-400">Height</span>
+                                        <input type="number" value={config.height} onChange={e => setConfig(c => ({ ...c, height: Number(e.target.value) }))} className="w-full p-2 text-sm border rounded bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-primary outline-none" />
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
@@ -301,7 +301,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                                         { w: 40, h: 60, l: '4x6cm' },
                                         { w: 50, h: 25, l: '5x2.5cm' }
                                     ].map(s => (
-                                        <button key={s.l} onClick={() => setConfig(c => ({ ...c, width: s.w, height: s.h }))} className="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-600">
+                                        <button key={s.l} onClick={() => setConfig(c => ({ ...c, width: s.w, height: s.h }))} className="px-2 py-1 text-xs bg-neutral-200 dark:bg-neutral-700 rounded hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
                                             {s.l}
                                         </button>
                                     ))}
@@ -310,22 +310,22 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
                             {/* Content */}
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Type size={12} /> Content</label>
+                                <label className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-1"><Type size={12} /> Content</label>
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" checked={config.showName} onChange={e => setConfig(c => ({ ...c, showName: e.target.checked }))} className="rounded text-indigo-600" />
+                                        <input type="checkbox" checked={config.showName} onChange={e => setConfig(c => ({ ...c, showName: e.target.checked }))} className="rounded text-primary focus:ring-primary" />
                                         <span>Product Name</span>
                                     </label>
                                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" checked={config.showPrice} onChange={e => setConfig(c => ({ ...c, showPrice: e.target.checked }))} className="rounded text-indigo-600" />
+                                        <input type="checkbox" checked={config.showPrice} onChange={e => setConfig(c => ({ ...c, showPrice: e.target.checked }))} className="rounded text-primary focus:ring-primary" />
                                         <span>Price</span>
                                     </label>
                                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" checked={config.showSku} onChange={e => setConfig(c => ({ ...c, showSku: e.target.checked }))} className="rounded text-indigo-600" />
+                                        <input type="checkbox" checked={config.showSku} onChange={e => setConfig(c => ({ ...c, showSku: e.target.checked }))} className="rounded text-primary focus:ring-primary" />
                                         <span>SKU / Barcode</span>
                                     </label>
                                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                                        <input type="checkbox" checked={config.showVariant} onChange={e => setConfig(c => ({ ...c, showVariant: e.target.checked }))} className="rounded text-indigo-600" />
+                                        <input type="checkbox" checked={config.showVariant} onChange={e => setConfig(c => ({ ...c, showVariant: e.target.checked }))} className="rounded text-primary focus:ring-primary" />
                                         <span>Size / Color</span>
                                     </label>
                                 </div>
@@ -333,26 +333,26 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
                             {/* Product Quantities List */}
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Copy size={12} /> Quantities</label>
-                                <div className="max-h-60 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
+                                <label className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-1"><Copy size={12} /> Quantities</label>
+                                <div className="max-h-60 overflow-y-auto border border-neutral-200 dark:border-neutral-700 rounded-lg divide-y divide-neutral-100 dark:divide-neutral-700 bg-white dark:bg-neutral-800">
                                     {products.map(p => (
                                         <div key={p.id} className="p-2 flex items-center justify-between text-sm">
                                             <div className="truncate flex-1 pr-2">
-                                                <div className="font-medium text-slate-700 dark:text-slate-300 truncate" title={p.name}>{p.name}</div>
-                                                <div className="text-xs text-slate-500">Stock: {p.stock}</div>
+                                                <div className="font-medium text-neutral-700 dark:text-neutral-300 truncate" title={p.name}>{p.name}</div>
+                                                <div className="text-xs text-neutral-500">Stock: {p.stock}</div>
                                             </div>
                                             <input
                                                 type="number"
                                                 min="0"
                                                 value={quantities[p.id] ?? 0}
                                                 onChange={e => handleQuantityChange(p.id, parseInt(e.target.value) || 0)}
-                                                className="w-16 p-1 text-right border rounded bg-slate-50 dark:bg-slate-900"
+                                                className="w-16 p-1 text-right border rounded bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none"
                                             />
                                         </div>
                                     ))}
                                 </div>
                                 {/* Summary */}
-                                <div className="text-xs text-slate-500 pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between font-bold">
+                                <div className="text-xs text-neutral-500 pt-2 border-t border-neutral-200 dark:border-neutral-700 flex justify-between font-bold">
                                     <span>Total Labels:</span>
                                     <span>{totalLabels}</span>
                                 </div>
@@ -361,17 +361,17 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                         </div>
                     )}
 
-                    <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col gap-3">
+                    <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 flex flex-col gap-3">
                         <button
                             onClick={handlePrint}
                             disabled={totalLabels === 0}
-                            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98]"
+                            className="w-full py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98]"
                         >
                             <Printer size={18} /> Print {totalLabels} Labels
                         </button>
                         <button
                             onClick={handleCancel}
-                            className="w-full py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
+                            className="w-full py-2.5 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
                         >
                             Cancel
                         </button>
@@ -379,10 +379,10 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                 </div>
 
                 {/* Right Area: Preview */}
-                <div className="flex-1 flex flex-col bg-slate-100 dark:bg-slate-950">
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-                        <h3 className="font-bold text-slate-700 dark:text-slate-300">Live Preview</h3>
-                        <button onClick={handleCancel} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition"><X size={20} /></button>
+                <div className="flex-1 flex flex-col bg-neutral-100 dark:bg-neutral-950">
+                    <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-900">
+                        <h3 className="font-bold text-neutral-700 dark:text-neutral-300">Live Preview</h3>
+                        <button onClick={handleCancel} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition"><X size={20} /></button>
                     </div>
 
                     <div className="flex-1 overflow-auto p-8 flex justify-center">

@@ -44,25 +44,25 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm lg:hidden animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] bg-neutral-900/60 backdrop-blur-sm lg:hidden animate-in fade-in duration-200">
             <div
-                className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
+                className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-neutral-900 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center text-primary dark:text-primary-light">
                             <User className="w-5 h-5" />
                         </div>
                         <div className="min-w-0">
-                            <p className="font-bold text-slate-800 dark:text-white truncate">{user?.name || 'Cashier'}</p>
-                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{user?.systemRole || 'Staff'}</p>
+                            <p className="font-bold text-neutral-800 dark:text-white truncate">{user?.name || 'Cashier'}</p>
+                            <p className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">{user?.systemRole || 'Staff'}</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 transition-colors"
+                        className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full text-neutral-500 transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -71,18 +71,18 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                 <div className="flex-1 overflow-y-auto p-4 space-y-6">
                     {/* View Switching */}
                     <section>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">POS View Mode</h4>
+                        <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">POS View Mode</h4>
                         <div className="grid grid-cols-2 gap-2">
                             <button
                                 onClick={() => { setViewMode('SCANNER'); onClose(); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${viewMode === 'SCANNER' ? 'bg-indigo-50 border-indigo-600 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-400 dark:text-indigo-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${viewMode === 'SCANNER' ? 'bg-primary/5 border-primary text-primary dark:bg-primary/20 dark:border-primary-light dark:text-primary-light' : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500'}`}
                             >
                                 <TableIcon className="w-4 h-4" />
                                 <span className="font-bold text-sm">Scanner</span>
                             </button>
                             <button
                                 onClick={() => { setViewMode('VISUAL'); onClose(); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${viewMode === 'VISUAL' ? 'bg-indigo-50 border-indigo-600 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-400 dark:text-indigo-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'}`}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${viewMode === 'VISUAL' ? 'bg-primary/5 border-primary text-primary dark:bg-primary/20 dark:border-primary-light dark:text-primary-light' : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500'}`}
                             >
                                 <LayoutGrid className="w-4 h-4" />
                                 <span className="font-bold text-sm">Visual</span>
@@ -92,18 +92,18 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
 
                     {/* Quick Billing Actions */}
                     <section>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Billing Actions</h4>
+                        <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Billing Actions</h4>
                         <div className="space-y-2">
                             <button
                                 onClick={() => { setIsHeldBillsOpen(true); onClose(); }}
-                                className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors"
+                                className="w-full flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 transition-colors"
                             >
                                 <div className="flex items-center gap-3">
-                                    <PauseCircle className="w-5 h-5 text-amber-500" />
-                                    <span className="font-bold text-slate-700 dark:text-slate-200">Recall Held Bills</span>
+                                    <PauseCircle className="w-5 h-5 text-warning" />
+                                    <span className="font-bold text-neutral-700 dark:text-neutral-200">Recall Held Bills</span>
                                 </div>
                                 {(heldBills?.length || 0) > 0 && (
-                                    <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                    <span className="bg-warning text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                                         {heldBills?.length}
                                     </span>
                                 )}
@@ -116,10 +116,10 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                                         onClose();
                                     }
                                 }}
-                                className="w-full flex items-center gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 border border-red-100 dark:border-red-500/20 transition-colors"
+                                className="w-full flex items-center gap-3 p-3 rounded-xl bg-error/5 dark:bg-error/10 hover:bg-error/10 dark:hover:bg-error/20 border border-error/10 dark:border-error/20 transition-colors"
                             >
-                                <Trash2 className="w-5 h-5 text-red-600" />
-                                <span className="font-bold text-red-700 dark:text-red-400">Clear Current Cart</span>
+                                <Trash2 className="w-5 h-5 text-error" />
+                                <span className="font-bold text-error dark:text-error-light">Clear Current Cart</span>
                             </button>
                         </div>
                     </section>
@@ -127,10 +127,10 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                     {/* Session Tabs (Mobile View) */}
                     <section>
                         <div className="flex justify-between items-center mb-3">
-                            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Billing Tabs</h4>
+                            <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Billing Tabs</h4>
                             <button
                                 onClick={addSession}
-                                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-indigo-600 dark:text-indigo-400"
+                                className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg text-primary dark:text-primary-light"
                             >
                                 <PlusCircle className="w-4 h-4" />
                             </button>
@@ -141,13 +141,13 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                                     <button
                                         onClick={() => { switchSession(index); onClose(); }}
                                         className={`w-full text-left p-3 rounded-xl border transition-all ${activeSessionIndex === index
-                                            ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/30 font-bold'
-                                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50'}`}
+                                            ? 'bg-primary border-primary shadow-lg shadow-primary/20 text-white font-bold'
+                                            : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50'}`}
                                     >
                                         <div className="flex justify-between items-center">
                                             <span>{session.label}</span>
                                             {session.cart.length > 0 && (
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeSessionIndex === index ? 'bg-indigo-500' : 'bg-slate-100 dark:bg-slate-700'}`}>
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeSessionIndex === index ? 'bg-white/20' : 'bg-neutral-100 dark:bg-neutral-700'}`}>
                                                     {session.cart.length} items
                                                 </span>
                                             )}
@@ -156,7 +156,7 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                                     {sessions.length > 1 && (
                                         <button
                                             onClick={(e) => { e.stopPropagation(); removeSession(index); }}
-                                            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${activeSessionIndex === index ? 'hover:bg-indigo-500 text-indigo-200' : 'hover:bg-red-50 text-red-500'}`}
+                                            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${activeSessionIndex === index ? 'hover:bg-white/10 text-white/70' : 'hover:bg-error/10 text-error'}`}
                                         >
                                             <X className="w-3.5 h-3.5" />
                                         </button>
@@ -168,33 +168,33 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
 
                     {/* System Settings */}
                     <section>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">System Settings</h4>
+                        <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">System Settings</h4>
                         <div className="grid grid-cols-2 gap-2">
                             <button
                                 onClick={toggleFullScreen}
-                                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                             >
                                 {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-                                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{isFullScreen ? 'Minimize' : 'Full Screen'}</span>
+                                <span className="text-[10px] font-bold text-neutral-600 dark:text-neutral-400">{isFullScreen ? 'Minimize' : 'Full Screen'}</span>
                             </button>
                             <button
                                 onClick={() => {
                                     window.open(window.location.origin + '?mode=customer_display', 'CustomerDisplay', 'width=800,height=600');
                                     onClose();
                                 }}
-                                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                             >
                                 <Monitor className="w-5 h-5" />
-                                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">Cust. Display</span>
+                                <span className="text-[10px] font-bold text-neutral-600 dark:text-neutral-400">Cust. Display</span>
                             </button>
                         </div>
                     </section>
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80">
+                <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/80">
                     <button
-                        className="w-full flex items-center justify-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 transition-colors"
+                        className="w-full flex items-center justify-center gap-3 p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-bold hover:bg-neutral-200 transition-colors"
                         onClick={() => { /* Potential logout or settings page */ onClose(); }}
                     >
                         <Settings className="w-5 h-5" />

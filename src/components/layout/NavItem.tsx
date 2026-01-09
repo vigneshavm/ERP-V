@@ -28,8 +28,8 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label }) => {
             }}
             title={desktopCollapsed ? label : ''}
             className={`w-full flex items-center ${desktopCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-lg transition-colors duration-200 ${activeTab === id
-                ? 'bg-indigo-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-primary text-white shadow-md'
+                : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                 }`}
         >
             <Icon className="w-5 h-5 flex-shrink-0" />

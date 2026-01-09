@@ -127,9 +127,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
     const renderContent = () => {
         if (!checkAccess(activeTab)) {
             return (
-                <div className="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
-                    <Ban className="w-16 h-16 mb-4 text-red-400 opacity-80" />
-                    <h2 className="text-2xl font-bold text-slate-600 dark:text-slate-300">Access Denied</h2>
+                <div className="flex flex-col items-center justify-center h-full text-neutral-400 animate-in fade-in">
+                    <Ban className="w-16 h-16 mb-4 text-error/80 opacity-80" />
+                    <h2 className="text-2xl font-bold text-neutral-600 dark:text-neutral-300">Access Denied</h2>
                     <p className="mt-2 text-sm">You do not have permission to view the {activeTab} module.</p>
                     <p className="text-xs mt-1">Role: {role}</p>
                 </div>
@@ -137,7 +137,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
         }
 
         return (
-            <Suspense fallback={<div className="h-full flex items-center justify-center"><Zap className="animate-pulse text-indigo-500" /></div>}>
+            <Suspense fallback={<div className="h-full flex items-center justify-center"><Zap className="animate-pulse text-primary" /></div>}>
                 {(() => {
                     switch (activeTab) {
                         case 'DASHBOARD': return <Dashboard />;
@@ -171,40 +171,40 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     return (
         <ConfigProvider tenant={effectiveTenant}>
-            <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 dark:text-slate-100">
+            <div className="flex h-screen bg-neutral-50 overflow-hidden text-neutral-900 dark:text-neutral-100">
                 {/* Mobile Bottom Navigation */}
-                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
+                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 z-50 flex justify-around items-center h-16 pb-safe">
                     <button
                         onClick={() => dispatch(setActiveTab('DASHBOARD'))}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-primary' : 'text-neutral-400'}`}
                     >
                         <LayoutDashboard className="w-5 h-5" />
                         <span className="text-[10px] font-medium">Home</span>
                     </button>
                     <button
                         onClick={() => dispatch(setActiveTab('POS'))}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-primary' : 'text-neutral-400'}`}
                     >
                         <ShoppingCart className="w-5 h-5" />
                         <span className="text-[10px] font-medium">POS</span>
                     </button>
                     <button
                         onClick={() => dispatch(setActiveTab('INVENTORY'))}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-primary' : 'text-neutral-400'}`}
                     >
                         <Archive className="w-5 h-5" />
                         <span className="text-[10px] font-medium">Stock</span>
                     </button>
                     <button
                         onClick={() => dispatch(setActiveTab('SETTINGS'))}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-primary' : 'text-neutral-400'}`}
                     >
                         <Settings className="w-5 h-5" />
                         <span className="text-[10px] font-medium">Settings</span>
                     </button>
                     <button
                         onClick={() => dispatch(setSidebarOpen(true))}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-neutral-400`}
                     >
                         <Menu className="w-5 h-5" />
                         <span className="text-[10px] font-medium">More</span>
@@ -213,13 +213,13 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                 {/* Sidebar */}
                 <aside className={`
-                fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-2 flex flex-col transition-all duration-300 transform 
+                fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 p-2 flex flex-col transition-all duration-300 transform 
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
             `}>
                     <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
                         <div className="flex items-center space-x-2 overflow-hidden">
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-emerald-500">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-success">
                                 {useConfig().logoUrl ? (
                                     <img src={useConfig().logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                                 ) : (
@@ -229,23 +229,23 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             {!desktopCollapsed && (
                                 <div className="overflow-hidden">
                                     <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">{role}</span>
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400 uppercase font-bold tracking-wider">{role}</span>
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-slate-400">
+                        <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-neutral-400">
                             <X className="w-6 h-6" />
                         </button>
                         <button
                             onClick={() => dispatch(setDesktopCollapsed(!desktopCollapsed))}
-                            className="hidden lg:flex p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                            className="hidden lg:flex p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400"
                         >
                             {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                         </button>
                     </div>
 
                     <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                        {!desktopCollapsed && <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{effectiveTenant?.name}</span>}
+                        {!desktopCollapsed && <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">{effectiveTenant?.name}</span>}
 
                         {(() => {
                             const availableBranches = (effectiveTenant?.locations?.flatMap(l => l.branches) ||
@@ -261,7 +261,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                             <select
                                                 value={selectedBranch}
                                                 onChange={(e) => dispatch(setBranch(e.target.value))}
-                                                className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                                className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg py-1.5 px-2 text-xs font-bold text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
                                             >
                                                 <option value="All">All Branches (HQ View)</option>
                                                 {availableBranches.map(b => (
@@ -270,8 +270,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                             </select>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
                                             {getBranchName(selectedBranch)}
                                         </div>
                                     )}
@@ -300,19 +300,19 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         <NavItem id="BULK_IMPORT" icon={FileUp} label="Bulk Import" />
                         <NavItem id="DATA_EXPORT" icon={FileDown} label="Data Export" />
                         <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
-                        <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
+                        <div className="pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-800">
                             <NavItem id="SETTINGS" icon={Settings} label="Settings" />
                         </div>
                     </nav>
 
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
+                    <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-2 space-y-2">
                         <button
                             onClick={() => {
                                 requestConfirm('Lock Terminal', 'Lock terminal and return to PIN screen?', () => {
                                     onLogout();
                                 });
                             }}
-                            className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
+                            className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors`}
                         >
                             <Lock className="w-5 h-5" />
                             <span className="font-medium">Staff Logout</span>
@@ -327,14 +327,14 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                         });
                                     }}
                                     title="Logout"
-                                    className="flex-1 flex justify-center py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex-1 flex justify-center py-3 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                                 >
                                     <Lock className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => setIsChangePasswordOpen(true)}
                                     title="Change Password"
-                                    className="px-3 flex justify-center py-3 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="px-3 flex justify-center py-3 rounded-lg text-neutral-400 dark:text-neutral-500 hover:text-primary hover:bg-primary/10 dark:hover:bg-neutral-800 transition-colors"
                                 >
                                     <Key className="w-5 h-5" />
                                 </button>
@@ -344,8 +344,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
-                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
+                <main className="flex-1 overflow-hidden w-full bg-neutral-50 dark:bg-neutral-900 relative">
+                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-neutral-900 dark:text-neutral-100">
                         <Routes>
                             <Route path="/" element={renderContent()} />
                             <Route path="/reports" element={<Suspense fallback={<div>Loading Reports...</div>}><ReportsModule /></Suspense>} />
@@ -375,19 +375,19 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 {/* Confirmation Modal */}
                 {confirmDialog.isOpen && (
                     <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700">
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{confirmDialog.title}</h3>
-                            <p className="text-slate-500 dark:text-slate-400 mb-6">{confirmDialog.message}</p>
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-neutral-200 dark:border-neutral-700">
+                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{confirmDialog.title}</h3>
+                            <p className="text-neutral-500 dark:text-neutral-400 mb-6">{confirmDialog.message}</p>
                             <div className="flex gap-3 justify-end">
                                 <button
                                     onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                                    className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors"
+                                    className="px-4 py-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleConfirm}
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors"
+                                    className="px-4 py-2 bg-error hover:bg-error/90 text-white rounded-lg font-bold transition-colors"
                                 >
                                     Confirm
                                 </button>
