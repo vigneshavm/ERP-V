@@ -15,6 +15,9 @@ export interface AuthState {
     role: SystemRole;
     theme: 'light' | 'dark' | 'system';
     userPreferences?: UserVisualIdentity;
+    isLoading: boolean;
+    isSuccess: boolean;
+    isError: string | null;
 }
 
 import { AppView, SystemRole } from './common';

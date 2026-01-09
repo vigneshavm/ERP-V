@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store';
-import { Store, Lock, ArrowRight, AlertCircle, UserCircle, Eye, EyeOff, Loader2, Mail } from 'lucide-react';
+import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, UserCircle, Eye, EyeOff, Loader2, Mail, CheckCircle2 } from 'lucide-react';
 
 
 import { Sector, SystemRole } from '../types/common';
@@ -49,6 +49,9 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     const [otpCode, setOtpCode] = useState('');
     const [otpMethod, setOtpMethod] = useState<'email' | 'sms'>('email');
     const [tempUser, setTempUser] = useState<TenantUser | null>(null);
+    const [resetSent, setResetSent] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
+    const [authView, setAuthView] = useState<'login' | 'forgot'>('login');
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -186,6 +189,27 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
         }
     };
 
+    const handleForgotPassword = async () => {
+        if (!identity.trim() || !identity.includes('@')) {
+            setError("Please enter your registered email address above to reset password.");
+            return;
+        }
+
+        setError('');
+        setIsResetting(true);
+        try {
+            const { error: resetErr } = await supabase.auth.resetPasswordForEmail(identity.trim(), {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (resetErr) throw resetErr;
+            setResetSent(true);
+        } catch (err: any) {
+            setError(err.message || "Failed to send reset email.");
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
     const handleVerifyOTP = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -230,7 +254,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
 
     return (
-        <div className="h-screen relative flex items-center justify-start p-4 md:p-12 overflow-hidden bg-slate-900">
+        <div className="min-h-screen relative flex items-center justify-center lg:justify-start p-4 md:p-8 lg:p-12 overflow-x-hidden bg-slate-900">
             {/* Background Layer with Overlay */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-transform transition-transform duration-1000 scale-105"
@@ -248,7 +272,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
 
             {/* Premium Login Card */}
             <div className="relative z-10 w-full max-w-lg animate-in fade-in slide-in-from-left-8 duration-700">
-                <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8">
+                <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12">
                     <div className="mb-6 text-left">
                         <div className="w-20 h-20 bg-indigo-500 rounded-2xl flex items-center justify-center mb-4 shadow-xl shadow-indigo-500/20 group transform hover:rotate-6 transition-transform overflow-hidden relative">
                             {(!logoError && tenant?.loginLogoUrl) ? (
@@ -265,125 +289,207 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                                 </div>
                             )}
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-black text-white mb-1 tracking-tight group">
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 tracking-tight group">
                             {tenantName}
                             <span className="block h-1 w-10 bg-indigo-500 mt-1.5 rounded-full transition-all group-hover:w-16" />
                         </h1>
                     </div>
 
-                    <form onSubmit={showOTP ? handleVerifyOTP : handleSubmit} className="space-y-4">
-                        {showOTP ? (
-                            <div className="space-y-4 animate-in fade-in">
-                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
-                                    Verification Code sent to {otpMethod === 'email' ? tempUser?.email : tempUser?.mobile}
-                                </label>
-                                <div className="relative group">
-                                    <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
-                                    <input
-                                        type="text"
-                                        value={otpCode}
-                                        onChange={(e) => setOtpCode(e.target.value)}
-                                        placeholder="Verification code"
-                                        className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-mono tracking-[0.5em] text-center outline-none focus:ring-2 focus:ring-emerald-500"
-                                        maxLength={8}
-                                        autoFocus
-                                    />
-                                </div>
+                    <div className="flex flex-col gap-6">
+                        {authView === 'login' ? (
+                            <form onSubmit={showOTP ? handleVerifyOTP : handleSubmit} className="space-y-4">
+                                {showOTP ? (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">
+                                            Verification Node: {otpMethod === 'email' ? 'Mail Delivery' : 'Secure SMS'}
+                                        </label>
+                                        <div className="relative group">
+                                            <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
+                                            <input
+                                                type="text"
+                                                value={otpCode}
+                                                onChange={(e) => setOtpCode(e.target.value)}
+                                                placeholder="000000"
+                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-mono tracking-[0.8em] text-center outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all p-4"
+                                                maxLength={8}
+                                                autoFocus
+                                            />
+                                        </div>
 
-                                {error && (
-                                    <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 text-red-400 bg-red-500/10 border border-red-500/20`}>
-                                        <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+                                        {error && (
+                                            <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl animate-in zoom-in-95">
+                                                <AlertCircle className="w-5 h-5 shrink-0" />
+                                                <span>{error}</span>
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black shadow-xl shadow-emerald-600/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                        >
+                                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify Identity <ArrowRight className="w-4 h-4" /></>}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowOTP(false);
+                                                setOtpCode('');
+                                                setError('');
+                                            }}
+                                            className="w-full text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors py-2"
+                                        >
+                                            Return to Credentials
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-5 animate-in fade-in duration-500">
+                                        <div className="space-y-4">
+                                            <div className="group">
+                                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Identity Terminal</label>
+                                                <div className="relative">
+                                                    <UserCircle className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
+                                                    <input
+                                                        type="text"
+                                                        value={identity}
+                                                        onChange={(e) => setIdentity(e.target.value)}
+                                                        placeholder="Mobile or Email"
+                                                        className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-semibold transition-all hover:bg-white/10 text-sm p-4"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="group">
+                                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Security Key</label>
+                                                <div className="relative">
+                                                    <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
+                                                    <input
+                                                        type={showPassword ? "text" : "password"}
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        placeholder="••••••••"
+                                                        className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all hover:bg-white/10 p-4"
+                                                        autoComplete="current-password"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        className="absolute right-4 top-4 text-slate-500 hover:text-indigo-400 transition-colors"
+                                                    >
+                                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between px-1">
+                                            <label className="flex items-center cursor-pointer group">
+                                                <div className="relative">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={rememberMe}
+                                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                                        className="sr-only"
+                                                    />
+                                                    <div className={`w-8 h-4 rounded-full transition-colors ${rememberMe ? 'bg-indigo-600' : 'bg-slate-700'}`} />
+                                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${rememberMe ? 'translate-x-4' : 'translate-x-0'}`} />
+                                                </div>
+                                                <span className="ml-2 text-[10px] font-black text-slate-500 group-hover:text-slate-400 uppercase tracking-widest">Persist Session</span>
+                                            </label>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setAuthView('forgot')}
+                                                className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest"
+                                            >
+                                                Lost Access?
+                                            </button>
+                                        </div>
+
+                                        {error && (
+                                            <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl animate-in zoom-in-95">
+                                                <AlertCircle className="w-5 h-5 shrink-0" />
+                                                <span>{error}</span>
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="w-full h-16 bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.99] rounded-[1.25rem] font-black text-base flex items-center justify-center gap-3 transition-all shadow-xl shadow-white/5 disabled:opacity-50"
+                                        >
+                                            {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Initialize Login <ArrowRight className="w-5 h-5" /></>}
+                                        </button>
                                     </div>
                                 )}
+                            </form>
+                        ) : (
+                            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                                <div className="space-y-6">
+                                    <div className="text-left">
+                                        <h2 className="text-xl font-bold text-white mb-2">Recover Access</h2>
+                                        <p className="text-slate-400 text-xs leading-relaxed">
+                                            Enter your registered email address. We will synchronize a secure recovery node to your inbox.
+                                        </p>
+                                    </div>
 
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-black shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 transition-all flex items-center justify-center gap-2"
-                                >
-                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Access <ArrowRight className="w-4 h-4" /></>}
-                                </button>
+                                    <div className="group">
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Recovery Email</label>
+                                        <div className="relative">
+                                            <Mail className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
+                                            <input
+                                                type="email"
+                                                value={identity}
+                                                onChange={(e) => setIdentity(e.target.value)}
+                                                placeholder="user@enterprise.com"
+                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-semibold transition-all hover:bg-white/10 text-sm p-4"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {resetSent ? (
+                                    <div className="flex flex-col items-center gap-4 py-4 animate-in zoom-in-95">
+                                        <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                                            <CheckCircle2 className="w-8 h-8" />
+                                        </div>
+                                        <p className="text-emerald-400 text-xs font-bold text-center uppercase tracking-widest leading-relaxed">
+                                            Security link dispatched. Check your inbox to proceed.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {error && (
+                                            <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl animate-in zoom-in-95">
+                                                <AlertCircle className="w-5 h-5 shrink-0" />
+                                                <span>{error}</span>
+                                            </div>
+                                        )}
+                                        <button
+                                            onClick={handleForgotPassword}
+                                            disabled={isResetting}
+                                            className="w-full h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black shadow-xl shadow-indigo-600/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                        >
+                                            {isResetting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Request Recovery <ArrowRight className="w-4 h-4" /></>}
+                                        </button>
+                                    </>
+                                )}
 
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setShowOTP(false);
-                                        setOtpCode('');
+                                        setAuthView('login');
                                         setError('');
+                                        setResetSent(false);
                                     }}
-                                    className="w-full text-xs text-slate-400 hover:text-white transition-colors py-2"
+                                    className="w-full text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors py-2 flex items-center justify-center gap-2"
                                 >
-                                    Back to Login
+                                    <ArrowLeft className="w-3 h-3" /> Return to Login Terminal
                                 </button>
                             </div>
-                        ) : (
-                            <>
-                                <div>
-                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Identity</label>
-                                    <div className="relative group">
-                                        <UserCircle className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
-                                        <input
-                                            type="text"
-                                            value={identity}
-                                            onChange={(e) => setIdentity(e.target.value)}
-                                            placeholder="Mobile Number or Email"
-                                            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white font-semibold transition-all hover:bg-white/10 text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Password</label>
-                                    <div className="relative group">
-                                        <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-3.5 transition-colors group-focus-within:text-indigo-400" />
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Enter your password"
-                                            className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-600 font-mono tracking-widest text-base transition-all hover:bg-white/10"
-                                            autoComplete="current-password"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-3.5 text-slate-400 hover:text-indigo-400 transition-colors"
-                                        >
-                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <input
-                                        id="remember-me"
-                                        type="checkbox"
-                                        checked={rememberMe}
-                                        onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="w-4 h-4 text-indigo-600 bg-white/5 border-white/10 rounded focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
-                                    />
-                                    <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-400 cursor-pointer select-none">
-                                        Remember me
-                                    </label>
-                                </div>
-
-                                {error && (
-                                    <div className={`flex items-center gap-2 text-xs font-bold p-3 rounded-xl animate-in zoom-in-95 text-red-400 bg-red-500/10 border border-red-500/20`}>
-                                        <AlertCircle className="w-4 h-4 shrink-0" /> {error}
-                                    </div>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className={`w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-                                >
-                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Log In <ArrowRight className="w-4 h-4" /></>}
-                                </button>
-                            </>
                         )}
-                    </form>
-
+                    </div>
                 </div>
             </div>
 
@@ -391,6 +497,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
             <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-1/3 pointer-events-none">
                 <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-indigo-500/10 blur-[120px] rounded-full animate-pulse" />
                 <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-emerald-500/10 blur-[100px] rounded-full animate-pulse delay-1000" />
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05]" />
             </div>
         </div>
     );

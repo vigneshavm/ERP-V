@@ -6,6 +6,7 @@ import laborReducer from './laborSlice';
 import purchaseReducer, { approveOrder, addOrder } from './purchaseSlice';
 import tenantReducer, { authReducer, settingsReducer, incrementCounterBillNumber } from './tenantSlice';
 import vendorReducer, { recordVendorTransaction, fetchVendors } from './vendorSlice';
+import uiReducer from './uiSlice';
 import { db } from '../services/db';
 import { SyncManager } from '../services/SyncManager';
 
@@ -29,6 +30,7 @@ export const store = configureStore({
         auth: authReducer,
         settings: settingsReducer,
         vendor: vendorReducer,
+        ui: uiReducer,
     },
 });
 
@@ -43,6 +45,7 @@ export * from './laborSlice';
 export * from './purchaseSlice';
 export * from './tenantSlice';
 export * from './vendorSlice';
+export * from './uiSlice';
 
 
 // --- Thunks migrated from old store.ts ---

@@ -1,10 +1,12 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Tenant, Branch, TenantState, TenantUser, DbRoleCode } from '../types/tenant';
+import { Tenant, Branch, TenantState, TenantUser, DbRoleCode, TenantEcommerceConfig, GoogleBusinessConfig } from '../types/tenant';
 import { SettingsState, AuthState, UserVisualIdentity } from '../types/settings';
 import { ModuleType, Sector, SystemRole, AppView } from '../types/common';
 import { getStoredTheme } from '../utils/theme'
+import { supabase } from '../lib/supabase';
+import { AppDispatch } from './index';
 
 
 
@@ -249,11 +251,36 @@ const tenantSlice = createSlice({
     },
     setRoles: (state, action: PayloadAction<any[]>) => {
       state.roles = action.payload;
+    },
+    updateTenantEcommerce: (state, action: PayloadAction<{ tenantId: string, config: TenantEcommerceConfig }>) => {
+      const tenant = state.tenants.find(t => t.id === action.payload.tenantId);
+      if (tenant) {
+        tenant.ecommerceConfig = action.payload.config;
+      }
+    },
+    updateGoogleBusinessProfile: (state, action: PayloadAction<{ tenantId: string, config: GoogleBusinessConfig }>) => {
+      const tenant = state.tenants.find(t => t.id === action.payload.tenantId);
+      if (tenant) {
+        tenant.googleBusinessConfig = action.payload.config;
+      }
     }
   }
 });
 
-export const { addTenant, toggleTenantStatus, updateTenantModules, updateTenantDetails, setTenants, updateBranchSettings, setBranches, ensureBranchRecorded, incrementCounterBillNumber, setRoles } = tenantSlice.actions;
+export const {
+  addTenant,
+  toggleTenantStatus,
+  updateTenantModules,
+  updateTenantDetails,
+  setTenants,
+  updateBranchSettings,
+  setBranches,
+  ensureBranchRecorded,
+  incrementCounterBillNumber,
+  setRoles,
+  updateTenantEcommerce,
+  updateGoogleBusinessProfile
+} = tenantSlice.actions;
 export default tenantSlice.reducer;
 
 // --- Auth Slice ---
@@ -262,7 +289,10 @@ const initialAuthState: AuthState = {
   currentSector: Sector.GENERAL,
   currentBranch: 'All',
   role: 'Staff',
-  theme: getStoredTheme() || 'light'
+  theme: getStoredTheme() || 'light',
+  isLoading: false,
+  isSuccess: false,
+  isError: null
 };
 
 const authSlice = createSlice({
@@ -302,11 +332,22 @@ const authSlice = createSlice({
       state.role = 'Staff';
       state.currentBranch = 'All';
       state.userPreferences = undefined;
+      state.isSuccess = false;
+      state.isError = null;
+    },
+    setAuthLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    setAuthSuccess: (state, action: PayloadAction<boolean>) => {
+      state.isSuccess = action.payload;
+    },
+    setAuthError: (state, action: PayloadAction<string | null>) => {
+      state.isError = action.payload;
     }
   }
 });
 
-export const { setTheme, setSector, setBranch, setUser, setUserPreferences, logout } = authSlice.actions;
+export const { setTheme, setSector, setBranch, setUser, setUserPreferences, logout, setAuthLoading, setAuthSuccess, setAuthError } = authSlice.actions;
 export const authReducer = authSlice.reducer;
 
 // --- Settings Slice ---
@@ -315,9 +356,9 @@ const initialSettingsState: SettingsState = {
   primaryColor: '#4f46e5',
   enabledModules: { pos: true, inventory: true, finance: true, labor: true, purchases: true, sales: true, daily: true, storefront: true },
   rolePermissions: {
-    [DbRoleCode.OWNER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
-    [DbRoleCode.ADMIN]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS'],
-    [DbRoleCode.MANAGER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
+    [DbRoleCode.OWNER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'VENDOR_FORM', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS', 'GROW'],
+    [DbRoleCode.ADMIN]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'VENDOR_FORM', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'SETTINGS', 'REPORTS', 'GROW'],
+    [DbRoleCode.MANAGER]: ['DASHBOARD', 'PROFIT_PULSE', 'POS', 'INVENTORY', 'PURCHASE', 'VENDORS', 'VENDOR_FORM', 'AGED_STOCK', 'FINANCE', 'SALES', 'DAILY', 'LABOR', 'STOREFRONT', 'REPORTS'],
     [DbRoleCode.STAFF]: ['POS', 'DAILY', 'SALES', 'STOREFRONT']
   },
   defaultTaxMode: 'EXCLUSIVE',
@@ -347,3 +388,180 @@ const settingsSlice = createSlice({
 
 export const { updateSettings, updateRolePermissions, resetSettings } = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;
+
+// --- Thunks ---
+export const updateUserPassword = (newPassword: string) => async (dispatch: AppDispatch) => {
+  dispatch(setAuthLoading(true));
+  dispatch(setAuthError(null));
+  dispatch(setAuthSuccess(false));
+
+  try {
+    // 1. Update Supabase Auth password
+    const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      console.error('Supabase Password Update Error:', error);
+      throw error;
+    }
+
+    console.log('Password updated in Auth successfully:', data);
+
+    // 2. Synchronize with tenant_users table for custom Login RPC
+    if (data.user) {
+      const { data: syncData, error: syncError } = await supabase.rpc('sync_tenant_user_password', {
+        p_user_id: data.user.id,
+        p_email: data.user.email,
+        p_new_password: newPassword
+      });
+
+      if (syncError) {
+        console.error('Terminal Password Sync Error:', syncError);
+        throw new Error(`Auth updated, but terminal synchronization failed: ${syncError.message}`);
+      }
+
+      if (syncData && !syncData.success) {
+        console.warn('Terminal Sync Warning:', syncData.message);
+        // We don't necessarily want to throw here if Auth was successful, 
+        // but we should log it clearly.
+      }
+      console.log('Terminal password synchronized:', syncData);
+    }
+
+    dispatch(setAuthSuccess(true));
+  } catch (err: any) {
+    console.error('Catching Auth Error:', err);
+    // Be more explicit about common Supabase errors
+    let message = err.message || 'Failed to update password';
+    if (err.status === 422) {
+      message = `Update Rejected: ${err.message}. (Common causes: New password same as old, or link already used)`;
+    }
+    dispatch(setAuthError(message));
+  } finally {
+    dispatch(setAuthLoading(false));
+  }
+};
+
+// --- E-commerce Thunks ---
+export const activateEcommerce = (tenantId: string) => async (dispatch: AppDispatch) => {
+  try {
+    const { data: rpcData, error: rpcError } = await supabase.rpc('init_tenant_ecommerce', { p_tenant_id: tenantId });
+    if (rpcError) throw rpcError;
+
+    // Fetch the updated config to sync store
+    const { data: config, error: configError } = await supabase
+      .from('tenant_ecommerce')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .single();
+
+    if (configError) throw configError;
+
+    // Convert snake_case from DB to camelCase for TS
+    const normalizedConfig: any = {
+      id: config.id,
+      tenantId: config.tenant_id,
+      isEnabled: config.is_enabled,
+      plan: config.plan,
+      trialEndsAt: config.trial_ends_at,
+      domain: config.domain,
+      theme: config.theme,
+      paymentGatewayEnabled: config.payment_gateway_enabled,
+      customerPortalEnabled: config.customer_portal_enabled,
+      orderManagementEnabled: config.order_management_enabled
+    };
+
+    dispatch(updateTenantEcommerce({ tenantId, config: normalizedConfig }));
+    return { success: true, data: normalizedConfig };
+  } catch (err: any) {
+    console.error('Activate Ecommerce Error:', err);
+    return { success: false, error: err.message };
+  }
+};
+
+export const upgradeEcommercePlan = (tenantId: string, plan: any) => async (dispatch: AppDispatch) => {
+  try {
+    const featureUpdates: any = { plan };
+    if (plan === 'PROFESSIONAL' || plan === 'ENTERPRISE') {
+      featureUpdates.payment_gateway_enabled = true;
+      featureUpdates.customer_portal_enabled = true;
+    }
+
+    const { data, error } = await supabase
+      .from('tenant_ecommerce')
+      .update(featureUpdates)
+      .eq('tenant_id', tenantId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    const normalizedConfig: any = {
+      id: data.id,
+      tenantId: data.tenant_id,
+      isEnabled: data.is_enabled,
+      plan: data.plan,
+      trialEndsAt: data.trial_ends_at,
+      domain: data.domain,
+      theme: data.theme,
+      paymentGatewayEnabled: data.payment_gateway_enabled,
+      customer_portal_enabled: data.customer_portal_enabled,
+      order_management_enabled: data.order_management_enabled
+    };
+
+    dispatch(updateTenantEcommerce({ tenantId, config: normalizedConfig }));
+    return { success: true, data: normalizedConfig };
+  } catch (err: any) {
+    console.error('Upgrade Ecommerce Plan Error:', err);
+    return { success: false, error: err.message };
+  }
+};
+
+export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispatch) => {
+  try {
+    // In a real app, this would call Google My Business API via a backend/Supabase Edge Function
+    // Here we simulate a successful sync with mock data
+    const mockConfig: GoogleBusinessConfig = {
+      id: 'gbp-1',
+      tenantId,
+      isConnected: true,
+      businessName: 'My Global Store',
+      address: '123 Fashion Street, New York, NY 10001',
+      phone: '+1 212-555-0198',
+      email: 'contact@globalstore.com',
+      website: 'https://globalstore.com',
+      category: 'Clothing Store',
+      description: 'Your one-stop shop for global fashion trends and premium quality apparel.',
+      verificationStatus: 'VERIFIED',
+      lastSyncAt: new Date().toISOString(),
+      completeness: 85,
+      metrics: [
+        { name: 'Profile Views', value: 1240, description: 'How many saw the profile' },
+        { name: 'Phone Calls', value: 45, description: 'Calls from Google' },
+        { name: 'Direction Requests', value: 89, description: 'Navigation clicks' },
+        { name: 'Website Clicks', value: 210, description: 'Website visits' }
+      ],
+      hours: [
+        { day: 'Monday', open: '09:00', close: '20:00', isClosed: false },
+        { day: 'Tuesday', open: '09:00', close: '20:00', isClosed: false },
+        { day: 'Wednesday', open: '09:00', close: '20:00', isClosed: false },
+        { day: 'Thursday', open: '09:00', close: '20:00', isClosed: false },
+        { day: 'Friday', open: '09:00', close: '21:00', isClosed: false },
+        { day: 'Saturday', open: '10:00', close: '21:00', isClosed: false },
+        { day: 'Sunday', open: '10:00', close: '18:00', isClosed: false }
+      ],
+      photos: [
+        { id: 'logo-1', url: 'https://images.unsplash.com/photo-1541339907198-e08756eaa93e?w=800', type: 'LOGO', isSynced: true },
+        { id: 'cover-1', url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200', type: 'COVER', isSynced: true }
+      ],
+      posts: [
+        { id: 'post-1', content: 'Huge Summer Sale! Get 50% off on all items.', type: 'OFFER', publishedAt: new Date().toISOString(), status: 'LIVE' }
+      ]
+    };
+
+    dispatch(updateGoogleBusinessProfile({ tenantId, config: mockConfig }));
+    return { success: true, data: mockConfig };
+  } catch (err: any) {
+    console.error('Sync Google Profile Error:', err);
+    return { success: false, error: err.message };
+  }
+};

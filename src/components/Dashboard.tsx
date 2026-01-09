@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, setActiveTab } from '../store';
 import { useBranchResolver } from '../hooks/useBranchResolver';
 import { DollarSign, Package, TrendingUp, AlertTriangle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
@@ -29,6 +29,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) 
 
 
 const Dashboard: React.FC = () => {
+  const dispatch = useDispatch();
   const { transactions, dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
   const { products } = useSelector((state: RootState) => state.inventory);
   const { currentSector, currentBranch, theme, role } = useSelector((state: RootState) => state.auth);
@@ -74,6 +75,25 @@ const Dashboard: React.FC = () => {
           {currentSector} / {getBranchName(currentBranch)}
         </span>
       </h2>
+
+      {role === 'Owner' && (
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-3xl rounded-full -mr-32 -mt-32"></div>
+          <div className="relative z-10 text-center md:text-left">
+            <h3 className="text-xl font-bold mb-2">Grow Your Business Online</h3>
+            <p className="text-indigo-100 opacity-90 text-sm max-w-lg">
+              Reach more customers by launching your dedicated e-commerce store.
+              Fully integrated with your POS and Inventory.
+            </p>
+          </div>
+          <button
+            onClick={() => dispatch(setActiveTab('GROW'))}
+            className="relative z-10 bg-white text-indigo-600 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-50 transition-all shrink-0 shadow-lg shadow-indigo-900/20 active:scale-95"
+          >
+            Launch Online Store
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -153,7 +173,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

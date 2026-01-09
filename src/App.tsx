@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key, ArrowLeft, Plus, Landmark, Rocket } from 'lucide-react';
 import ChangePasswordModal from './components/ChangePasswordModal';
 
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setBranch, setUser } from './store';
+import { RootState, setBranch, setUser, setActiveTab, setSidebarOpen, setDesktopCollapsed, toggleSidebar } from './store';
 import { APP_CONFIG } from './config';
 
 
@@ -18,13 +18,18 @@ import SalesHistory from './components/SalesHistory';
 import DailyFinanceTracker from './components/DailyFinanceTracker';
 import Storefront from './components/Storefront';
 import SettingsManager from './components/SettingsManager';
+import VendorForm from './components/VendorForm';
 import ProfitPulse from './components/ProfitPulse';
 import AgedStockManager from './components/AgedStockManager';
 import Login from './components/login';
+import ResetPassword from './components/ResetPassword';
 import TenantManager from './components/TenantManager';
 import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
 import ReportsModule from './components/reports/ReportsModule';
 import VendorManager from './components/VendorManager';
+import VendorDetails from './components/VendorDetails';
+import GrowBusiness from './components/grow/GrowBusiness';
+import { Routes, Route } from 'react-router-dom';
 
 
 import { ConfigProvider } from './components/ConfigProvider';
@@ -75,9 +80,8 @@ const App: React.FC = () => {
     }, [tenants, viewMode]);
 
     // --- Tenant specific state ---
-    const [activeTab, setActiveTab] = useState<AppView>('DASHBOARD');
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+    const { activeTab, sidebarOpen, desktopCollapsed } = useSelector((state: RootState) => state.ui);
+
     const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
 
     // --- Restore Session on Mount ---
@@ -97,15 +101,15 @@ const App: React.FC = () => {
     React.useEffect(() => {
         if (isLoggedIn && role) {
             if (role === 'Staff') {
-                setActiveTab('POS');
+                dispatch(setActiveTab('POS'));
             } else {
                 // Only reset to Dashboard if not already on a specific tab (preserves current view on refresh)
                 if (activeTab === 'DASHBOARD') {
-                    setActiveTab('DASHBOARD');
+                    dispatch(setActiveTab('DASHBOARD'));
                 }
             }
         }
-    }, [isLoggedIn, role]);
+    }, [isLoggedIn, role, dispatch]);
 
     // --- Permission Helper ---
     const checkAccess = (view: AppView): boolean => {
@@ -271,8 +275,8 @@ const App: React.FC = () => {
             return (
                 <button
                     onClick={() => {
-                        setActiveTab(id);
-                        setSidebarOpen(false);
+                        dispatch(setActiveTab(id));
+                        dispatch(setSidebarOpen(false));
                     }}
                     title={desktopCollapsed ? label : ''}
                     className={`w-full flex items-center ${desktopCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-lg transition-colors duration-200 ${activeTab === id
@@ -314,7 +318,10 @@ const App: React.FC = () => {
                 case 'LABOR': return <LaborManager />;
                 case 'STOREFRONT': return <Storefront />;
                 case 'SETTINGS': return <SettingsManager />;
+                case 'VENDOR_FORM': return <VendorForm />;
+                case 'VENDOR_DETAILS': return <VendorDetails />;
                 case 'REPORTS': return <ReportsModule />;
+                case 'GROW': return <GrowBusiness />;
                 default: return <Dashboard />;
             }
         };
@@ -325,35 +332,35 @@ const App: React.FC = () => {
                     {/* Mobile Bottom Navigation (Native App Shell) */}
                     <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-50 flex justify-around items-center h-16 pb-safe">
                         <button
-                            onClick={() => setActiveTab('DASHBOARD')}
+                            onClick={() => dispatch(setActiveTab('DASHBOARD'))}
                             className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-indigo-600' : 'text-slate-400'}`}
                         >
                             <LayoutDashboard className="w-5 h-5" />
                             <span className="text-[10px] font-medium">Home</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('POS')}
+                            onClick={() => dispatch(setActiveTab('POS'))}
                             className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'POS' ? 'text-indigo-600' : 'text-slate-400'}`}
                         >
                             <ShoppingCart className="w-5 h-5" />
                             <span className="text-[10px] font-medium">POS</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('INVENTORY')}
+                            onClick={() => dispatch(setActiveTab('INVENTORY'))}
                             className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'INVENTORY' ? 'text-indigo-600' : 'text-slate-400'}`}
                         >
                             <Archive className="w-5 h-5" />
                             <span className="text-[10px] font-medium">Stock</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('SETTINGS')}
+                            onClick={() => dispatch(setActiveTab('SETTINGS'))}
                             className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'SETTINGS' ? 'text-indigo-600' : 'text-slate-400'}`}
                         >
                             <Settings className="w-5 h-5" />
                             <span className="text-[10px] font-medium">Settings</span>
                         </button>
                         <button
-                            onClick={() => setSidebarOpen(true)}
+                            onClick={() => dispatch(setSidebarOpen(true))}
                             className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400`}
                         >
                             <Menu className="w-5 h-5" />
@@ -446,6 +453,7 @@ const App: React.FC = () => {
                             <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
                             <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
                             <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
+                            <NavItem id="GROW" icon={Rocket} label="Launch Online" />
                             <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
                             <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
                                 <NavItem id="SETTINGS" icon={Settings} label="Settings" />
@@ -497,7 +505,15 @@ const App: React.FC = () => {
                     {/* Main Content */}
                     <main className="flex-1 overflow-hidden w-full bg-slate-50 dark:bg-slate-900 relative">
                         <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-slate-900 dark:text-slate-100">
-                            {renderContent()}
+                            <Routes>
+                                <Route path="/" element={renderContent()} />
+                                <Route path="/reports" element={<ReportsModule />} />
+                                <Route path="/reports/:category/:slug" element={<ReportsModule />} />
+                                <Route path="/suppliers/:id" element={<VendorDetails />} />
+                                <Route path="/suppliers/:id/edit" element={<VendorForm />} />
+                                <Route path="/grow" element={<GrowBusiness />} />
+                                <Route path="*" element={renderContent()} />
+                            </Routes>
                         </div>
                     </main>
 
@@ -544,10 +560,17 @@ const App: React.FC = () => {
     };
 
     // --- Main Render ---
-    if (isResolving) return <LoadingScreen />;
-    if (viewMode === 'ADMIN') return <AdminView />;
-    if (viewMode === 'TENANT') return <TenantView />;
-    return <LandingPage />;
+    return (
+        <Routes>
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/*" element={
+                isResolving ? <LoadingScreen /> :
+                    viewMode === 'ADMIN' ? <AdminView /> :
+                        viewMode === 'TENANT' ? <TenantView /> :
+                            <LandingPage />
+            } />
+        </Routes>
+    );
 };
 
 export default App;

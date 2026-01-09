@@ -1,4 +1,8 @@
 
+export type SupplierType = 'Manufacturer' | 'Wholesaler' | 'Distributor';
+export type BalanceType = 'Payable' | 'Receivable';
+export type VendorStatus = 'Active' | 'Inactive';
+
 export interface Vendor {
     id: string;
     tenantId: string;
@@ -9,7 +13,12 @@ export interface Vendor {
     contactPerson?: string;
     openingBalance: number; // Positive = Credit (Payable), Negative = Debit
     currentBalance: number;
-    isActive: boolean;
+    isActive: boolean; // Legacy field, will keep for compatibility
+    supplierType?: SupplierType;
+    balanceType?: BalanceType;
+    creditPeriod: number;
+    status: VendorStatus;
+    email?: string;
     createdAt?: string;
 }
 
@@ -30,6 +39,7 @@ export interface VendorTransaction {
 export interface VendorState {
     vendors: Vendor[];
     transactions: VendorTransaction[];
+    selectedVendor: Vendor | null;
     isLoading: boolean;
     error: string | null;
 }

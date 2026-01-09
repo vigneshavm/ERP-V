@@ -6,24 +6,29 @@ import {
     fetchVendors,
     recordVendorTransaction,
     addVendor,
-    updateVendor
+    updateVendor,
+    deleteVendor,
+    resetVendors
 } from '../store/vendorSlice';
 import { Vendor, VendorTransaction } from '../types/vendor';
 import {
     Users, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft,
     FileText, Phone, MapPin, Landmark, History, ChevronRight,
-    Loader2, AlertCircle, Trash2, Pencil, CheckCircle2, IndianRupee
+    Loader2, AlertCircle, Trash2, Pencil, CheckCircle2, IndianRupee, ArrowLeft, PlusCircle, Eye
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { setSelectedVendor } from '../store/vendorSlice';
+import { setActiveTab } from '../store/uiSlice';
 import { supabase } from '../lib/supabase';
 
 const VendorManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const { user } = useSelector((state: RootState) => state.auth);
     const { vendors, isLoading, error } = useSelector((state: RootState) => state.vendor);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [selectedVendorForModal, setSelectedVendorForModal] = useState<Vendor | null>(null);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [vendorHistory, setVendorHistory] = useState<VendorTransaction[]>([]);
@@ -35,76 +40,17 @@ const VendorManager: React.FC = () => {
         date: new Date().toISOString().split('T')[0]
     });
 
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        gstin: '',
-        address: '',
-        contactPerson: '',
-        openingBalance: 0
-    });
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [vendorToDelete, setVendorToDelete] = useState<Vendor | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         dispatch(fetchVendors());
+        return () => {
+            dispatch(resetVendors());
+        };
     }, [dispatch]);
 
-    const handleSaveVendor = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!user?.tenantId) return;
-
-        try {
-            const dataToSave = {
-                tenant_id: user.tenantId,
-                name: formData.name,
-                phone: formData.phone,
-                gstin: formData.gstin,
-                address: formData.address,
-                contact_person: formData.contactPerson,
-                opening_balance: formData.openingBalance,
-                current_balance: selectedVendor ? selectedVendor.currentBalance : formData.openingBalance
-            };
-
-            if (selectedVendor) {
-                const { data, error } = await supabase
-                    .from('vendors')
-                    .update(dataToSave)
-                    .eq('id', selectedVendor.id)
-                    .select()
-                    .single();
-                if (error) throw error;
-                dispatch(updateVendor({
-                    ...selectedVendor,
-                    ...formData,
-                    currentBalance: data.current_balance
-                }));
-            } else {
-                const { data, error } = await supabase
-                    .from('vendors')
-                    .insert([dataToSave])
-                    .select()
-                    .single();
-                if (error) throw error;
-                const newVendor: Vendor = {
-                    id: data.id,
-                    tenantId: data.tenant_id,
-                    name: data.name,
-                    phone: data.phone,
-                    gstin: data.gstin,
-                    address: data.address,
-                    contactPerson: data.contact_person,
-                    openingBalance: data.opening_balance,
-                    currentBalance: data.current_balance,
-                    isActive: data.is_active,
-                    createdAt: data.created_at
-                };
-                dispatch(addVendor(newVendor));
-            }
-            setIsFormOpen(false);
-            resetForm();
-        } catch (err: any) {
-            alert(err.message);
-        }
-    };
 
     const fetchHistory = async (vendorId: string) => {
         setIsLoadingHistory(true);
@@ -135,18 +81,17 @@ const VendorManager: React.FC = () => {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', phone: '', gstin: '', address: '', contactPerson: '', openingBalance: 0 });
         setPaymentData({ amount: 0, description: '', date: new Date().toISOString().split('T')[0] });
-        setSelectedVendor(null);
+        setSelectedVendorForModal(null);
     };
 
     const handleRecordPayment = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedVendor || paymentData.amount <= 0) return;
+        if (!selectedVendorForModal || paymentData.amount <= 0) return;
 
         try {
             await dispatch(recordVendorTransaction(
-                selectedVendor.id,
+                selectedVendorForModal.id,
                 'PAYMENT',
                 paymentData.amount,
                 paymentData.description || 'Vendor Payment',
@@ -161,9 +106,33 @@ const VendorManager: React.FC = () => {
 
     const filteredVendors = vendors.filter(v =>
         v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.contactPerson?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.phone?.includes(searchTerm) ||
+        v.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.gstin?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const activeCount = vendors.filter(v => v.status === 'Active').length;
+    const inactiveCount = vendors.filter(v => v.status === 'Inactive').length;
+
+    const handleDeleteClick = (vendor: Vendor) => {
+        setVendorToDelete(vendor);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!vendorToDelete) return;
+        setIsDeleting(true);
+        try {
+            await dispatch(deleteVendor(vendorToDelete.id));
+            setIsDeleteModalOpen(false);
+            setVendorToDelete(null);
+        } catch (err: any) {
+            alert(err.message);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -177,30 +146,29 @@ const VendorManager: React.FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 text-sm">Track wholesalers, bills, and payables.</p>
                 </div>
                 <button
-                    onClick={() => { resetForm(); setIsFormOpen(true); }}
+                    onClick={() => {
+                        dispatch(setSelectedVendor(null));
+                        dispatch(setActiveTab('VENDOR_FORM'));
+                    }}
                     className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg shadow-indigo-600/20"
                 >
                     <Plus className="w-5 h-5" /> Add New Vendor
                 </button>
             </div>
 
-            {/* Stats Card */}
+            {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Vendors</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Suppliers</p>
                     <h3 className="text-3xl font-black text-slate-900 dark:text-white">{vendors.length}</h3>
                 </div>
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-red-500">
-                    <p className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Total Payables</p>
-                    <h3 className="text-3xl font-black text-slate-900 dark:text-white">
-                        ₹{vendors.reduce((sum, v) => sum + (v.currentBalance > 0 ? v.currentBalance : 0), 0).toLocaleString()}
-                    </h3>
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-emerald-500">
+                    <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-2">Active Suppliers</p>
+                    <h3 className="text-3xl font-black text-slate-900 dark:text-white">{activeCount}</h3>
                 </div>
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-green-500">
-                    <p className="text-xs font-bold text-green-500 uppercase tracking-wider mb-2">Advance/Credit</p>
-                    <h3 className="text-3xl font-black text-slate-900 dark:text-white">
-                        ₹{Math.abs(vendors.reduce((sum, v) => sum + (v.currentBalance < 0 ? v.currentBalance : 0), 0)).toLocaleString()}
-                    </h3>
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-slate-400">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Inactive Suppliers</p>
+                    <h3 className="text-3xl font-black text-slate-900 dark:text-white">{inactiveCount}</h3>
                 </div>
             </div>
 
@@ -218,180 +186,128 @@ const VendorManager: React.FC = () => {
                 </div>
             </div>
 
-            {/* Vendor Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {isLoading ? (
-                    <div className="col-span-full flex flex-col items-center py-20">
-                        <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
-                        <p className="text-slate-500 font-medium">Loading vendors...</p>
-                    </div>
-                ) : filteredVendors.length === 0 ? (
-                    <div className="col-span-full py-20 text-center bg-white dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700">
-                        <Users className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-                        <h4 className="text-xl font-bold text-slate-800 dark:text-white">No Vendors Found</h4>
-                        <p className="text-slate-500 mt-2">Add your first supplier to start tracking purchases.</p>
-                    </div>
-                ) : (
-                    filteredVendors.map(vendor => (
-                        <div key={vendor.id} className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-all group">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h4 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{vendor.name}</h4>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{vendor.contactPerson || 'General Contact'}</p>
-                                </div>
-                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
-                                        onClick={() => {
-                                            setSelectedVendor(vendor);
-                                            setFormData({
-                                                name: vendor.name,
-                                                phone: vendor.phone || '',
-                                                gstin: vendor.gstin || '',
-                                                address: vendor.address || '',
-                                                contactPerson: vendor.contactPerson || '',
-                                                openingBalance: vendor.openingBalance
-                                            });
-                                            setIsFormOpen(true);
-                                        }}
-                                        className="p-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                                    >
-                                        <Pencil className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-3 mb-6">
-                                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                    <Phone className="w-4 h-4" />
-                                    <span>{vendor.phone || 'No phone'}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                    <Landmark className="w-4 h-4" />
-                                    <span className="font-mono text-[10px] uppercase">GST: {vendor.gstin || 'Unregistered'}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                    <MapPin className="w-4 h-4 shrink-0" />
-                                    <span className="line-clamp-1">{vendor.address || 'No address'}</span>
-                                </div>
-                            </div>
-
-                            <div className={`p-4 rounded-xl flex items-center justify-between border ${vendor.currentBalance >= 0 ? 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/20' : 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/20'}`}>
-                                <div>
-                                    <p className={`text-[10px] font-bold uppercase tracking-wider ${vendor.currentBalance >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                        {vendor.currentBalance >= 0 ? 'Payable Amount' : 'Credit Balance'}
-                                    </p>
-                                    <p className="text-xl font-black text-slate-900 dark:text-white">
-                                        ₹{Math.abs(vendor.currentBalance).toLocaleString()}
-                                    </p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => { setSelectedVendor(vendor); setIsPaymentOpen(true); }}
-                                        className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-1.5"
-                                    >
-                                        <IndianRupee className="w-3 h-3" /> Pay
-                                    </button>
-                                    <button
-                                        onClick={() => fetchHistory(vendor.id)}
-                                        className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-indigo-600 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700 transition-all"
-                                    >
-                                        <History className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )}
+            {/* Data Table */}
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50 dark:bg-slate-900 text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                                <th className="px-6 py-4">Business / Supplier Name</th>
+                                <th className="px-6 py-4">Contact Person</th>
+                                <th className="px-6 py-4">Phone / Email</th>
+                                <th className="px-6 py-4">Balance Status</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center">
+                                        <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mx-auto mb-4" />
+                                        <p className="text-slate-500 font-medium tracking-tight">Accessing supplier registry...</p>
+                                    </td>
+                                </tr>
+                            ) : filteredVendors.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center">
+                                        <Users className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+                                        <h4 className="text-lg font-bold text-slate-800 dark:text-white">No Suppliers Found</h4>
+                                        <p className="text-slate-500 text-sm mt-1">Try adjusting your search or add a new supplier.</p>
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredVendors.map(vendor => (
+                                    <tr key={vendor.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight">{vendor.name}</span>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">ID: {vendor.id.slice(0, 8)}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{vendor.contactPerson || '-'}</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                                                    <Phone className="w-3 h-3" /> {vendor.phone || 'NA'}
+                                                </div>
+                                                {vendor.email && (
+                                                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                        <FileText className="w-3 h-3" /> {vendor.email}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className={`text-xs font-black ${vendor.currentBalance >= 0 ? 'text-orange-600' : 'text-emerald-600'}`}>
+                                                    ₹{Math.abs(vendor.currentBalance).toLocaleString()}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    {vendor.currentBalance >= 0 ? 'Payable' : 'Advance'}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${vendor.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                                                {vendor.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => navigate(`/suppliers/${vendor.id}`)}
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
+                                                    title="View Details"
+                                                >
+                                                    <Eye className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => { setSelectedVendorForModal(vendor); setIsPaymentOpen(true); }}
+                                                    className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all"
+                                                    title="Record Payment"
+                                                >
+                                                    <IndianRupee className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        dispatch(setSelectedVendor(vendor));
+                                                        dispatch(setActiveTab('VENDOR_FORM'));
+                                                    }}
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
+                                                    title="Edit Supplier"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => fetchHistory(vendor.id)}
+                                                    className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all"
+                                                    title="View Ledger"
+                                                >
+                                                    <History className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteClick(vendor)}
+                                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                                                    title="Delete Supplier"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            {/* Vendor Form Modal */}
-            {isFormOpen && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                            <h3 className="text-xl font-black text-slate-800 dark:text-white">
-                                {selectedVendor ? 'Edit Vendor' : 'New Vendor Profile'}
-                            </h3>
-                            <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                                <Plus className="w-6 h-6 rotate-45" />
-                            </button>
-                        </div>
-                        <form onSubmit={handleSaveVendor} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="col-span-2">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Business Name</label>
-                                    <input
-                                        required
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold"
-                                        placeholder="e.g. Royal Textile Wholesalers"
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Contact Person</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white"
-                                        placeholder="e.g. Amit Kumar"
-                                        value={formData.contactPerson}
-                                        onChange={e => setFormData({ ...formData, contactPerson: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Phone Number</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white"
-                                        placeholder="e.g. 9876543210"
-                                        value={formData.phone}
-                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">GSTIN</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono tracking-wider dark:text-white"
-                                        placeholder="22AAAAA0000A1Z5"
-                                        value={formData.gstin}
-                                        onChange={e => setFormData({ ...formData, gstin: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Opening Balance</label>
-                                    <input
-                                        type="number"
-                                        disabled={!!selectedVendor}
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold disabled:opacity-50"
-                                        placeholder="0.00"
-                                        value={formData.openingBalance}
-                                        onChange={e => setFormData({ ...formData, openingBalance: Number(e.target.value) })}
-                                    />
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Business Address</label>
-                                    <textarea
-                                        rows={2}
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white text-sm"
-                                        placeholder="Store address, city, pin..."
-                                        value={formData.address}
-                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex gap-3 pt-4">
-                                <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20">
-                                    {selectedVendor ? 'Save Changes' : 'Create Vendor'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
 
             {/* Payment Modal */}
-            {isPaymentOpen && selectedVendor && (
+            {isPaymentOpen && selectedVendorForModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
                     <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div className="px-6 py-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -403,8 +319,8 @@ const VendorManager: React.FC = () => {
                         <form onSubmit={handleRecordPayment} className="p-6 space-y-4">
                             <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700 mb-4">
                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Paying To</p>
-                                <p className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{selectedVendor.name}</p>
-                                <p className="text-sm font-bold text-red-600 mt-1">Outstanding: ₹{selectedVendor.currentBalance.toLocaleString()}</p>
+                                <p className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{selectedVendorForModal.name}</p>
+                                <p className="text-sm font-bold text-red-600 mt-1">Outstanding: ₹{selectedVendorForModal.currentBalance.toLocaleString()}</p>
                             </div>
 
                             <div>
@@ -515,6 +431,38 @@ const VendorManager: React.FC = () => {
                                     </tbody>
                                 </table>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Delete Confirmation Modal */}
+            {isDeleteModalOpen && vendorToDelete && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform animate-in zoom-in-95 duration-200">
+                        <div className="p-8 text-center">
+                            <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trash2 className="w-10 h-10" />
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Delete Supplier?</h3>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
+                                You are about to remove <span className="font-black text-rose-600">{vendorToDelete.name}</span>. This action is critical and cannot be easily undone.
+                            </p>
+                        </div>
+                        <div className="p-6 bg-slate-50 dark:bg-slate-900/50 flex gap-4">
+                            <button
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                disabled={isDeleting}
+                                className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                disabled={isDeleting}
+                                className="flex-1 px-4 py-3 bg-rose-600 text-white rounded-2xl font-black hover:bg-rose-700 transition-all shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm'}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -50,6 +50,9 @@ const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
     { id: 'LABOR', label: 'Labor Mgmt' },
     { id: 'STOREFRONT', label: 'Storefront' },
     { id: 'SETTINGS', label: 'Settings' },
+    { id: 'VENDORS', label: 'Suppliers' },
+    { id: 'VENDOR_FORM', label: 'Add/Edit Supplier' },
+    { id: 'VENDOR_DETAILS', label: 'Supplier Details' },
 ];
 
 // --- Types ---

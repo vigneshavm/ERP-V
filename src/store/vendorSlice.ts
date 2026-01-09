@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from './index';
 const initialState: VendorState = {
     vendors: [],
     transactions: [],
+    selectedVendor: null,
     isLoading: false,
     error: null,
 };
@@ -45,13 +46,26 @@ const vendorSlice = createSlice({
         setError: (state, action: PayloadAction<string | null>) => {
             state.error = action.payload;
         },
+        setSelectedVendor: (state, action: PayloadAction<Vendor | null>) => {
+            state.selectedVendor = action.payload;
+        },
+        resetVendors: (state) => {
+            state.vendors = [];
+            state.transactions = [];
+            state.selectedVendor = null;
+            state.error = null;
+        },
+        deleteVendorLocal: (state, action: PayloadAction<string>) => {
+            state.vendors = state.vendors.filter(v => v.id !== action.payload);
+        },
     },
 });
 
 export const {
     setVendors, addVendor, updateVendor,
     setTransactions: setVendorTransactions, addVendorTransaction,
-    setLoading: setVendorLoading, setError: setVendorError
+    setLoading: setVendorLoading, setError: setVendorError,
+    setSelectedVendor, resetVendors, deleteVendorLocal
 } = vendorSlice.actions;
 
 // --- Thunks ---
@@ -80,6 +94,11 @@ export const fetchVendors = () => async (dispatch: AppDispatch, getState: () => 
             openingBalance: Number(v.opening_balance) || 0,
             currentBalance: Number(v.current_balance) || 0,
             isActive: v.is_active,
+            supplierType: v.supplier_type,
+            balanceType: v.balance_type,
+            creditPeriod: v.credit_period || 0,
+            status: v.status || 'Active',
+            email: v.email,
             createdAt: v.created_at
         }));
 
@@ -155,6 +174,97 @@ export const recordVendorTransaction = (
         dispatch(addVendorTransaction(mappedTx));
     } catch (err: any) {
         console.error('Failed to record vendor transaction:', err);
+    }
+};
+
+export const fetchVendorById = (id: string) => async (dispatch: AppDispatch) => {
+    dispatch(setVendorLoading(true));
+    try {
+        const { data, error } = await supabase
+            .from('vendors')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
+        const mappedVendor: Vendor = {
+            id: data.id,
+            tenantId: data.tenant_id,
+            name: data.name,
+            phone: data.phone,
+            gstin: data.gstin,
+            address: data.address,
+            contactPerson: data.contact_person,
+            openingBalance: Number(data.opening_balance) || 0,
+            currentBalance: Number(data.current_balance) || 0,
+            isActive: data.is_active,
+            supplierType: data.supplier_type,
+            balanceType: data.balance_type,
+            creditPeriod: data.credit_period || 0,
+            status: data.status || 'Active',
+            email: data.email,
+            createdAt: data.created_at
+        };
+
+        dispatch(setSelectedVendor(mappedVendor));
+        return mappedVendor;
+    } catch (err: any) {
+        dispatch(setVendorError(err.message));
+        throw err;
+    } finally {
+        dispatch(setVendorLoading(false));
+    }
+};
+
+export const fetchVendorHistory = (vendorId: string) => async (dispatch: AppDispatch) => {
+    dispatch(setVendorLoading(true));
+    try {
+        const { data, error } = await supabase
+            .from('vendor_transactions')
+            .select('*')
+            .eq('vendor_id', vendorId)
+            .order('date', { ascending: false });
+
+        if (error) throw error;
+
+        const mappedTransactions: VendorTransaction[] = (data || []).map(tx => ({
+            id: tx.id,
+            tenantId: tx.tenant_id,
+            vendorId: tx.vendor_id,
+            type: tx.type,
+            amount: Number(tx.amount) || 0,
+            balanceAfter: Number(tx.balance_after) || 0,
+            date: tx.date,
+            description: tx.description,
+            referenceId: tx.reference_id
+        }));
+
+        dispatch(setVendorTransactions(mappedTransactions));
+        return mappedTransactions;
+    } catch (err: any) {
+        dispatch(setVendorError(err.message));
+        throw err;
+    } finally {
+        dispatch(setVendorLoading(false));
+    }
+};
+
+export const deleteVendor = (id: string) => async (dispatch: AppDispatch) => {
+    dispatch(setVendorLoading(true));
+    try {
+        const { error } = await supabase
+            .from('vendors')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        dispatch(deleteVendorLocal(id));
+    } catch (err: any) {
+        dispatch(setVendorError(err.message));
+        throw err;
+    } finally {
+        dispatch(setVendorLoading(false));
     }
 };
 

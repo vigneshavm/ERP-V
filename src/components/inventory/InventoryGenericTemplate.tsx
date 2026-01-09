@@ -50,6 +50,7 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
 }) => {
     const isOwner = role === 'Owner';
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [formViewMode, setFormViewMode] = useState<'QUICK' | 'FULL'>('QUICK');
 
     const executePrint = () => {
         const content = document.getElementById('barcode-print-area');
@@ -235,6 +236,23 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                         </datalist>
 
                         <div className="flex gap-2">
+                            <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 mr-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormViewMode('QUICK')}
+                                    className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest transition-all ${formViewMode === 'QUICK' ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-500'}`}
+                                >
+                                    Quick Entry
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormViewMode('FULL')}
+                                    className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest transition-all ${formViewMode === 'FULL' ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-500'}`}
+                                >
+                                    Full Details
+                                </button>
+                            </div>
+
                             {!editingId && (
                                 <button type="button" onClick={addRow} className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-bold border border-indigo-100 dark:border-indigo-800 flex items-center gap-1">
                                     <Plus className="w-3 h-3" /> Add Row
@@ -247,86 +265,126 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                     <table className="w-full text-sm min-w-[1200px]">
                         <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
                             <tr>
-                                <th className="p-2 w-32">SKU</th>
-                                <th className="p-2 w-48">Name</th>
-                                <th className="p-2 w-32">Brand</th>
-                                <th className="p-2 w-32">Category</th>
-                                <th className="p-2 w-20">Type</th>
-                                <th className="p-2 w-20">Unit</th>
-                                {currentSector === Sector.TEXTILE && (
+                                <th className="p-2 w-48 text-left">Item (Product Name)</th>
+                                <th className="p-2 w-20 text-center">Qty</th>
+                                <th className="p-2 w-28 text-right">Rate (Cost)</th>
+                                <th className="p-2 w-20 text-center">Tax %</th>
+                                <th className="p-2 w-32 text-right">Amount</th>
+                                {formViewMode === 'FULL' && (
                                     <>
-                                        <th className="p-2 w-24">Sub Cat</th>
-                                        <th className="p-2 w-20">Size</th>
-                                        <th className="p-2 w-20">Color</th>
-                                        <th className="p-2 w-24">Material</th>
+                                        <th className="p-2 w-32">SKU</th>
+                                        <th className="p-2 w-32">Brand</th>
+                                        <th className="p-2 w-32">Category</th>
+                                        <th className="p-2 w-20">Type</th>
+                                        <th className="p-2 w-20">Unit</th>
+                                        <th className="p-2 w-28 text-right text-indigo-600">Sell Price</th>
+                                        {currentSector === Sector.TEXTILE && (
+                                            <>
+                                                <th className="p-2 w-24">Sub Cat</th>
+                                                <th className="p-2 w-20">Size</th>
+                                                <th className="p-2 w-20">Color</th>
+                                                <th className="p-2 w-24">Material</th>
+                                            </>
+                                        )}
+                                        {(currentSector === Sector.PHARMACY || currentSector === Sector.GROCERY) && (
+                                            <th className="p-2 w-24">Expiry</th>
+                                        )}
+                                        {currentSector === Sector.ELECTRONICS && (
+                                            <th className="p-2 w-24">Warranty</th>
+                                        )}
+                                        <th className="p-2 w-20">Loc</th>
                                     </>
                                 )}
-                                {(currentSector === Sector.PHARMACY || currentSector === Sector.GROCERY) && (
-                                    <th className="p-2 w-24">Expiry</th>
-                                )}
-                                {currentSector === Sector.ELECTRONICS && (
-                                    <th className="p-2 w-24">Warranty</th>
-                                )}
-                                <th className="p-2 w-16">Stock</th>
-                                <th className="p-2 w-20">Cost</th>
-                                <th className="p-2 w-20">Price</th>
-                                <th className="p-2 w-20">Loc</th>
                                 <th className="p-2 w-16">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                            {bulkFormData.map((row, idx) => (
-                                <tr key={idx} className="group hover:bg-slate-50 dark:hover:bg-slate-700/20">
-                                    <td className="p-2"><input className="w-full bg-transparent border border-slate-200 dark:border-slate-700 rounded px-1 text-slate-500 text-xs" value={row.sku} disabled placeholder="(Auto)" /></td>
-                                    <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.name} onChange={e => handleRowChange(idx, 'name', e.target.value)} placeholder="Prod Name" /></td>
-                                    <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.brand} onChange={e => handleRowChange(idx, 'brand', e.target.value)} placeholder="Brand" /></td>
-                                    <td className="p-2"><input required list="category-list" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.category} onChange={e => handleRowChange(idx, 'category', e.target.value)} placeholder="Cat" /></td>
-                                    <td className="p-2"><input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.productType} onChange={e => handleRowChange(idx, 'productType', e.target.value)} placeholder="Type" /></td>
-                                    <td className="p-2">
-                                        <select className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1 py-1 text-slate-900 dark:text-white text-xs" value={row.unit} onChange={e => handleRowChange(idx, 'unit', e.target.value)}>
-                                            <option value="Piece">Pcs</option>
-                                            <option value="Meter">Mtr</option>
-                                            <option value="Set">Set</option>
-                                            <option value="Kg">Kg</option>
-                                            <option value="Ltr">Ltr</option>
-                                            <option value="Box">Box</option>
-                                        </select>
-                                    </td>
-                                    {currentSector === Sector.TEXTILE && (
-                                        <>
-                                            <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.subCategory} onChange={e => handleRowChange(idx, 'subCategory', e.target.value)} placeholder="Sub" /></td>
-                                            <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.size} onChange={e => handleRowChange(idx, 'size', e.target.value)} placeholder="Size" /></td>
-                                            <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.color} onChange={e => handleRowChange(idx, 'color', e.target.value)} placeholder="Col" /></td>
-                                            <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.material} onChange={e => handleRowChange(idx, 'material', e.target.value)} placeholder="Mat" /></td>
-                                        </>
-                                    )}
-                                    {(currentSector === Sector.PHARMACY || currentSector === Sector.GROCERY) && (
-                                        <td className="p-2"><input type="date" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.expiryDate} onChange={e => handleRowChange(idx, 'expiryDate', e.target.value)} /></td>
-                                    )}
-                                    {currentSector === Sector.ELECTRONICS && (
-                                        <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.warrantyPeriod} onChange={e => handleRowChange(idx, 'warrantyPeriod', e.target.value)} placeholder="1 Year" /></td>
-                                    )}
-                                    <td className="p-2"><input required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.stock} onChange={e => handleRowChange(idx, 'stock', e.target.value)} /></td>
-                                    <td className="p-2"><input required type="number" step="0.01" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.cost} onChange={e => handleRowChange(idx, 'cost', e.target.value)} /></td>
-                                    <td className="p-2"><input required type="number" step="0.01" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.price} onChange={e => handleRowChange(idx, 'price', e.target.value)} /></td>
-                                    <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.location} onChange={e => handleRowChange(idx, 'location', e.target.value)} placeholder="Loc" /></td>
-                                    <td className="p-2 flex gap-1">
-                                        {!editingId && (
+                            {bulkFormData.map((row, idx) => {
+                                const amount = (parseFloat(row.stock) || 0) * (parseFloat(row.cost) || 0);
+                                return (
+                                    <tr key={idx} className="group hover:bg-slate-50 dark:hover:bg-slate-700/20">
+                                        <td className="p-2">
+                                            <input required className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white font-bold" value={row.name} onChange={e => handleRowChange(idx, 'name', e.target.value)} placeholder="Product Name" />
+                                        </td>
+                                        <td className="p-2">
+                                            <input required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-center font-bold" value={row.stock} onChange={e => handleRowChange(idx, 'stock', e.target.value)} />
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="relative">
+                                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 font-bold">₹</span>
+                                                <input required type="number" step="0.01" className="w-full pl-5 pr-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-slate-900 dark:text-white text-right font-mono" value={row.cost} onChange={e => handleRowChange(idx, 'cost', e.target.value)} />
+                                            </div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="relative">
+                                                <input required type="number" className="w-full pr-5 pl-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-slate-700 dark:text-white text-center font-bold text-xs" value={row.gstPercentage} onChange={e => handleRowChange(idx, 'gstPercentage', e.target.value)} />
+                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400">%</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="w-full px-2 py-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded text-right font-black text-indigo-600 dark:text-indigo-400 font-mono">
+                                                ₹{amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </div>
+                                        </td>
+
+                                        {formViewMode === 'FULL' && (
                                             <>
-                                                <button type="button" onClick={() => copyRow(idx)} className="p-1 hover:bg-indigo-50 text-indigo-600 rounded" title="Duplicate Row"><Copy className="w-4 h-4" /></button>
-                                                <button type="button" onClick={() => removeRow(idx)} className="p-1 hover:bg-red-50 text-red-500 rounded" title="Remove Row"><X className="w-4 h-4" /></button>
+                                                <td className="p-2"><input className="w-full bg-transparent border border-slate-200 dark:border-slate-700 rounded px-1 text-slate-500 text-[10px] font-mono" value={row.sku} disabled placeholder="(Auto)" /></td>
+                                                <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.brand} onChange={e => handleRowChange(idx, 'brand', e.target.value)} placeholder="Brand" /></td>
+                                                <td className="p-2"><input list="category-list" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.category} onChange={e => handleRowChange(idx, 'category', e.target.value)} placeholder="Cat" /></td>
+                                                <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white" value={row.productType} onChange={e => handleRowChange(idx, 'productType', e.target.value)} placeholder="Type" /></td>
+                                                <td className="p-2">
+                                                    <select className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1 py-1 text-slate-900 dark:text-white text-xs" value={row.unit} onChange={e => handleRowChange(idx, 'unit', e.target.value)}>
+                                                        <option value="Piece">Pcs</option>
+                                                        <option value="Meter">Mtr</option>
+                                                        <option value="Set">Set</option>
+                                                        <option value="Kg">Kg</option>
+                                                        <option value="Ltr">Ltr</option>
+                                                        <option value="Box">Box</option>
+                                                    </select>
+                                                </td>
+                                                <td className="p-2">
+                                                    <div className="relative">
+                                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-indigo-400 font-bold">₹</span>
+                                                        <input required type="number" step="0.01" className="w-full pl-5 pr-2 py-1 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-900/50 rounded text-indigo-600 dark:text-indigo-400 text-right font-black" value={row.price} onChange={e => handleRowChange(idx, 'price', e.target.value)} />
+                                                    </div>
+                                                </td>
+                                                {currentSector === Sector.TEXTILE && (
+                                                    <>
+                                                        <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.subCategory} onChange={e => handleRowChange(idx, 'subCategory', e.target.value)} placeholder="Sub" /></td>
+                                                        <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.size} onChange={e => handleRowChange(idx, 'size', e.target.value)} placeholder="Size" /></td>
+                                                        <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.color} onChange={e => handleRowChange(idx, 'color', e.target.value)} placeholder="Col" /></td>
+                                                        <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.material} onChange={e => handleRowChange(idx, 'material', e.target.value)} placeholder="Mat" /></td>
+                                                    </>
+                                                )}
+                                                {(currentSector === Sector.PHARMACY || currentSector === Sector.GROCERY) && (
+                                                    <td className="p-2"><input type="date" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-[10px]" value={row.expiryDate} onChange={e => handleRowChange(idx, 'expiryDate', e.target.value)} /></td>
+                                                )}
+                                                {currentSector === Sector.ELECTRONICS && (
+                                                    <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.warrantyPeriod} onChange={e => handleRowChange(idx, 'warrantyPeriod', e.target.value)} placeholder="1 Year" /></td>
+                                                )}
+                                                <td className="p-2"><input className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white text-xs" value={row.location} onChange={e => handleRowChange(idx, 'location', e.target.value)} placeholder="Loc" /></td>
                                             </>
                                         )}
-                                    </td>
-                                </tr>
-                            ))}
+
+                                        <td className="p-2 flex gap-1">
+                                            {!editingId && (
+                                                <>
+                                                    <button type="button" onClick={() => copyRow(idx)} className="p-1 hover:bg-indigo-50 text-indigo-600 rounded" title="Duplicate Row"><Copy className="w-4 h-4" /></button>
+                                                    <button type="button" onClick={() => removeRow(idx)} className="p-1 hover:bg-red-50 text-red-500 rounded" title="Remove Row"><X className="w-4 h-4" /></button>
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
 
                     <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 sticky left-0">
                         <button type="button" onClick={resetForm} className="px-4 py-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">Cancel</button>
                         <button type="submit" className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold">
-                            {editingId ? 'Update Product' : `Save ${bulkFormData.length} Products`}
+                            {editingId ? 'Update Product' : `Save ${bulkFormData.filter(row => row.name && row.cost).length} Products`}
                         </button>
                     </div>
                 </form>

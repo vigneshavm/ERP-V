@@ -7,6 +7,87 @@ export interface RegionConfig {
     dateFormat: string;
 }
 
+export type EcommercePlan = 'STARTER' | 'PROFESSIONAL' | 'ENTERPRISE';
+
+export interface TenantEcommerceConfig {
+    id: string;
+    tenantId: string;
+    isEnabled: boolean;
+    plan: EcommercePlan;
+    trialEndsAt: string;
+    domain?: string;
+    theme?: string;
+    paymentGatewayEnabled: boolean;
+    customerPortalEnabled: boolean;
+    orderManagementEnabled: boolean;
+}
+
+export type MarketingTemplateType = 'FLYER' | 'BANNER' | 'OFFER_CARD' | 'SQUARE' | 'EMAIL';
+
+export interface MarketingTemplate {
+    id: string;
+    name: string;
+    type: MarketingTemplateType;
+    useCase: string;
+    thumbnail?: string;
+}
+
+export interface MarketingCreative {
+    templateId: string;
+    message: string;
+    imageUrl?: string;
+    theme: string;
+    format: 'SQUARE' | 'A4' | 'BANNER' | 'EMAIL';
+}
+
+export interface BusinessHour {
+    day: string;
+    open: string;
+    close: string;
+    isClosed: boolean;
+}
+
+export interface GoogleMetric {
+    name: string;
+    value: number;
+    description: string;
+}
+
+export interface GooglePost {
+    id: string;
+    content: string;
+    type: 'OFFER' | 'PRODUCT' | 'EVENT' | 'UPDATE';
+    publishedAt: string;
+    status: 'LIVE' | 'SCHEDULED' | 'EXPIRED';
+}
+
+export interface GooglePhoto {
+    id: string;
+    url: string;
+    type: 'LOGO' | 'COVER' | 'INTERIOR';
+    isSynced: boolean;
+}
+
+export interface GoogleBusinessConfig {
+    id: string;
+    tenantId: string;
+    isConnected: boolean;
+    businessName: string;
+    address: string;
+    phone: string;
+    email: string;
+    website: string;
+    category: string;
+    description: string;
+    verificationStatus: 'VERIFIED' | 'PENDING' | 'UNVERIFIED';
+    lastSyncAt?: string;
+    completeness: number; // 0-100
+    metrics: GoogleMetric[];
+    hours: BusinessHour[];
+    photos: GooglePhoto[];
+    posts: GooglePost[];
+}
+
 export interface LoyaltyConfig {
     earningRate: number; // e.g., 100
     pointsPerRate: number; // e.g., 1
@@ -131,6 +212,8 @@ export interface Tenant {
     bankingDetails?: BankingDetails;
     systemConfig?: SystemConfig;
     integrations?: Integrations;
+    ecommerceConfig?: TenantEcommerceConfig;
+    googleBusinessConfig?: GoogleBusinessConfig;
 }
 
 export interface TenantUser {

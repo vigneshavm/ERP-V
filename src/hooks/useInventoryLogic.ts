@@ -27,11 +27,13 @@ export interface ProductFormRow {
     image?: string;
     expiryDate?: string;
     warrantyPeriod?: string;
+    gstPercentage: string;
 }
 
 export const defaultRow: ProductFormRow = {
     name: '', sku: '', price: '', cost: '', stock: '', category: '', productType: '', branch: 'Alpha', brand: '', unit: 'Piece',
-    subCategory: '', size: '', color: '', material: '', location: '', discount: '', expiryDate: '', warrantyPeriod: ''
+    subCategory: '', size: '', color: '', material: '', location: '', discount: '', expiryDate: '', warrantyPeriod: '',
+    gstPercentage: '18'
 };
 
 export const useInventoryLogic = () => {
@@ -171,6 +173,7 @@ export const useInventoryLogic = () => {
             unit: product.unit || 'Piece',
             image: product.image,
             expiryDate: product.expiryDate || '',
+            gstPercentage: product.gstPercentage?.toString() || '18',
             // Cast or handle safely if warrantyPeriod is missing in type but present in runtime
             warrantyPeriod: (product as any).warrantyPeriod || ''
         }]);
@@ -242,19 +245,23 @@ export const useInventoryLogic = () => {
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const validRows = bulkFormData.filter(row => row.name && row.price); // Basic check to ignore empty auto-added rows
+        const validRows = bulkFormData.filter(row => row.name && row.cost); // Price can be empty in Quick Entry
 
         validRows.forEach(row => {
+            const cost = parseFloat(row.cost) || 0;
+            const price = parseFloat(row.price) || (cost * 1.25); // 25% margin fallback
+            const stock = parseFloat(row.stock) || 0;
+
             const productData = {
                 name: row.name,
                 sku: row.sku,
-                price: parseFloat(row.price),
-                cost: parseFloat(row.cost),
-                stock: parseFloat(row.stock),
-                category: row.category,
-                unit: row.unit,
-                productType: row.productType,
-                brand: row.brand,
+                price: price,
+                cost: cost,
+                stock: stock,
+                category: row.category || 'General',
+                unit: row.unit || 'Piece',
+                productType: row.productType || 'Standard',
+                brand: row.brand || 'Generic',
                 sector: currentSector as Sector,
                 branchId: (row.branch || currentBranch) as Branch,
                 image: imagePreview || row.image || undefined,
@@ -266,6 +273,7 @@ export const useInventoryLogic = () => {
                 discount: row.discount ? parseFloat(row.discount) : 0,
                 expiryDate: row.expiryDate,
                 warrantyPeriod: row.warrantyPeriod,
+                gstPercentage: parseFloat(row.gstPercentage || '0'),
                 barcode: !row.id ? (row.sku || Math.random().toString().slice(2, 14)) : undefined
             };
 
