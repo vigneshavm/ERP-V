@@ -40,6 +40,190 @@ export interface MarketingCreative {
     format: 'SQUARE' | 'A4' | 'BANNER' | 'EMAIL';
 }
 
+export type WhatsAppCampaignStatus = 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'COMPLETED' | 'FAILED';
+
+export interface WhatsAppCampaign {
+    id: string;
+    name: string;
+    status: WhatsAppCampaignStatus;
+    scheduledAt?: string;
+    sentAt?: string;
+    audienceType: 'ALL' | 'LOYALTY' | 'RECENT' | 'CUSTOM';
+    recipientCount: number;
+    sent: number;
+    delivered: number;
+    read: number;
+    failed: number;
+    message: string;
+    estimatedCost: number;
+}
+
+export interface WhatsAppMetrics {
+    totalSent: number;
+    totalDelivered: number;
+    totalRead: number;
+    totalFailed: number;
+}
+
+export interface WhatsAppConfig {
+    isConnected: boolean;
+    phoneNumber?: string;
+    lastSyncAt?: string;
+    apiKeyConfigured: boolean;
+    metrics: WhatsAppMetrics;
+    campaigns: WhatsAppCampaign[];
+}
+
+export type DeviceStatus = 'ACTIVE' | 'INACTIVE' | 'OFFLINE';
+export type SyncStatus = 'UP_TO_DATE' | 'PENDING' | 'CONFLICT' | 'SYNCING';
+export type ConflictResolution = 'USE_LATEST' | 'MERGE' | 'MANUAL';
+
+export interface SyncedDevice {
+    id: string;
+    name: string;
+    platform: 'Windows' | 'macOS' | 'iOS' | 'Android' | 'Web';
+    appVersion: string;
+    lastSyncAt: string;
+    status: DeviceStatus;
+    isOnline: boolean;
+}
+
+export interface SyncConflict {
+    id: string;
+    entity: string;
+    field: string;
+    localValue: string;
+    remoteValue: string;
+    occurredAt: string;
+    resolvedAt?: string;
+    resolution?: ConflictResolution;
+}
+
+export interface SyncSettings {
+    autoSync: boolean;
+    syncInterval: 5 | 10 | 30; // minutes
+    syncOnWifiOnly: boolean;
+    backgroundSync: boolean;
+    syncDomains: {
+        invoices: boolean;
+        customers: boolean;
+        items: boolean;
+        reports: boolean;
+        inventory: boolean;
+        loyalty: boolean;
+        payments: boolean;
+    };
+}
+
+export interface SyncConfig {
+    tenantId: string;
+    devices: SyncedDevice[];
+    settings: SyncSettings;
+    lastSyncAt?: string;
+    syncStatus: SyncStatus;
+    conflicts: SyncConflict[];
+}
+
+export type BackupStatus = 'COMPLETED' | 'FAILED' | 'IN_PROGRESS' | 'SCHEDULED';
+export type BackupDestination = 'LOCAL' | 'GOOGLE_DRIVE' | 'S3' | 'AZURE_BLOB';
+
+export interface BackupEntry {
+    id: string;
+    date: string;
+    time: string;
+    size: number; // in bytes
+    destination: BackupDestination;
+    status: BackupStatus;
+    modules: string[];
+    log?: string;
+}
+
+export interface BackupSettings {
+    autoBackupEnabled: boolean;
+    scheduleTime: string; // HH:MM
+    retentionDays: 7 | 30 | 90;
+    destination: BackupDestination;
+    modulesToBackup: {
+        invoices: boolean;
+        customers: boolean;
+        products: boolean;
+        inventory: boolean;
+        finance: boolean;
+        reports: boolean;
+        loyalty: boolean;
+        configuration: boolean;
+        users: boolean;
+    };
+}
+
+export interface StorageUsage {
+    used: number; // bytes
+    total: number; // bytes
+    warningThreshold: number; // percentage
+}
+
+export interface BackupConfig {
+    tenantId: string;
+    settings: BackupSettings;
+    history: BackupEntry[];
+    lastBackup?: BackupEntry;
+    storage: StorageUsage;
+}
+
+// MIS (Management Information System) Configuration
+export interface MISConfig {
+    // Financial Controls
+    allowNegativeStock: boolean;
+    allowSaleBelowCost: boolean;
+    enableCreditSales: boolean;
+    enableVendorPayables: boolean;
+    enableCustomerReceivables: boolean;
+
+    // Billing Controls
+    allowPriceOverride: boolean;
+    allowDiscountOverride: boolean;
+    maxDiscountPercent: number;
+    allowBackdatedBills: boolean;
+    allowCancelledBillsEdit: boolean;
+
+    // Reporting & Audit Controls
+    enableAuditTrail: boolean;
+    lockFinancialYearAfterClose: boolean;
+    requireApprovalForHighDiscount: boolean;
+    requireApprovalForVoidBill: boolean;
+    requireApprovalForPriceChange: boolean;
+
+    // Inventory Controls
+    autoDeductStockOnInvoice: boolean;
+    allowManualStockAdjustments: boolean;
+    enableBatchExpiryTracking: boolean;
+    enableSerialNumberTracking: boolean;
+}
+
+// Default MIS settings for backward compatibility
+export const DEFAULT_MIS_CONFIG: MISConfig = {
+    allowNegativeStock: false,
+    allowSaleBelowCost: false,
+    enableCreditSales: true,
+    enableVendorPayables: true,
+    enableCustomerReceivables: true,
+    allowPriceOverride: true,
+    allowDiscountOverride: true,
+    maxDiscountPercent: 10,
+    allowBackdatedBills: false,
+    allowCancelledBillsEdit: false,
+    enableAuditTrail: true,
+    lockFinancialYearAfterClose: true,
+    requireApprovalForHighDiscount: false,
+    requireApprovalForVoidBill: true,
+    requireApprovalForPriceChange: false,
+    autoDeductStockOnInvoice: true,
+    allowManualStockAdjustments: true,
+    enableBatchExpiryTracking: false,
+    enableSerialNumberTracking: false
+};
+
+
 export interface BusinessHour {
     day: string;
     open: string;

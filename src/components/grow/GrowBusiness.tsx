@@ -24,6 +24,7 @@ import { activateEcommerce, upgradeEcommercePlan, syncGoogleProfile } from '../.
 import { EcommercePlan } from '../../types/tenant';
 import GoogleProfileManager from './GoogleProfileManager';
 import MarketingTools from './MarketingTools';
+import WhatsAppMarketing from './WhatsAppMarketing';
 
 const GrowBusiness: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -39,7 +40,7 @@ const GrowBusiness: React.FC = () => {
     const trialDaysLeft = 14;
 
     const [isLoading, setIsLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState<'storefront' | 'google' | 'marketing'>('storefront');
+    const [activeTab, setActiveTab] = useState<'storefront' | 'google' | 'marketing' | 'whatsapp'>('storefront');
 
     const handleActivate = async () => {
         if (!user?.tenantId) return;
@@ -121,6 +122,13 @@ const GrowBusiness: React.FC = () => {
                         >
                             <Zap className="w-4 h-4" />
                             Marketing
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('whatsapp')}
+                            className={`flex items-center gap-3 px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'whatsapp' ? 'bg-white dark:bg-[#020617] text-[#22C55E] shadow-lg' : 'text-[#64748B] hover:text-[#020617]'}`}
+                        >
+                            <Users className="w-4 h-4" />
+                            WhatsApp
                         </button>
                     </div>
 
@@ -378,9 +386,13 @@ const GrowBusiness: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <GoogleProfileManager />
                 </div>
-            ) : (
+            ) : activeTab === 'marketing' ? (
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <MarketingTools />
+                </div>
+            ) : (
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <WhatsAppMarketing />
                 </div>
             )}
         </div>

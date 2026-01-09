@@ -26,5 +26,5 @@ export type ModuleType = 'POS' | 'INVENTORY' | 'HR' | 'FINANCE' | 'ANALYTICS' | 
 export type Branch = string;
 export { TaxMode } from './product/enums';
 export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
-export type AppView = 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE' | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS' | 'AGED_STOCK' | 'REPORTS' | 'VENDORS' | 'VENDOR_FORM' | 'VENDOR_DETAILS' | 'GROW';
+export type AppView = 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE' | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS' | 'AGED_STOCK' | 'REPORTS' | 'VENDORS' | 'VENDOR_FORM' | 'VENDOR_DETAILS' | 'GROW' | 'SYNC_SHARE' | 'RESTORE' | 'BARCODE' | 'BULK_IMPORT' | 'DATA_EXPORT';
 export type SystemRole = 'Owner' | 'Manager' | 'Staff';

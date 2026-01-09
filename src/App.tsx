@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key, ArrowLeft, Plus, Landmark, Rocket } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Archive, Users, Menu, X, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag, Settings, Lock, Ban, Zap, LucideIcon, Clock, ChevronLeft, ChevronRight, FileText, Key, ArrowLeft, Plus, Landmark, Rocket, Share2, RotateCcw, Barcode, FileUp, FileDown } from 'lucide-react';
 import ChangePasswordModal from './components/ChangePasswordModal';
 
 
@@ -29,6 +29,11 @@ import ReportsModule from './components/reports/ReportsModule';
 import VendorManager from './components/VendorManager';
 import VendorDetails from './components/VendorDetails';
 import GrowBusiness from './components/grow/GrowBusiness';
+import SyncAndShare from './components/SyncAndShare';
+import RestoreManagement from './components/RestoreManagement';
+import BarcodeGenerator from './components/BarcodeGenerator';
+import BulkImport from './components/BulkImport';
+import DataExport from './components/DataExport';
 import { Routes, Route } from 'react-router-dom';
 
 
@@ -322,6 +327,11 @@ const App: React.FC = () => {
                 case 'VENDOR_DETAILS': return <VendorDetails />;
                 case 'REPORTS': return <ReportsModule />;
                 case 'GROW': return <GrowBusiness />;
+                case 'SYNC_SHARE': return <SyncAndShare />;
+                case 'RESTORE': return <RestoreManagement />;
+                case 'BARCODE': return <BarcodeGenerator />;
+                case 'BULK_IMPORT': return <BulkImport />;
+                case 'DATA_EXPORT': return <DataExport />;
                 default: return <Dashboard />;
             }
         };
@@ -454,6 +464,11 @@ const App: React.FC = () => {
                             <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
                             <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
                             <NavItem id="GROW" icon={Rocket} label="Launch Online" />
+                            <NavItem id="SYNC_SHARE" icon={Share2} label="Sync & Share" />
+                            <NavItem id="RESTORE" icon={RotateCcw} label="Restore Data" />
+                            <NavItem id="BARCODE" icon={Barcode} label="Barcode Generator" />
+                            <NavItem id="BULK_IMPORT" icon={FileUp} label="Bulk Import" />
+                            <NavItem id="DATA_EXPORT" icon={FileDown} label="Data Export" />
                             <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
                             <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
                                 <NavItem id="SETTINGS" icon={Settings} label="Settings" />

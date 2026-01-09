@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { APP_CONFIG } from '../config';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings } from '../store';
-import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store, User } from 'lucide-react';
+import { Save, RotateCcw, Upload, Settings as SettingsIcon, Palette, LayoutGrid, Type, Shield, Lock, Calculator, Moon, Sun, Users, CheckCircle, Loader2, Store, User, Sliders, DollarSign, Package, FileText, AlertTriangle, ToggleLeft } from 'lucide-react';
 import { AppView, SystemRole, TaxMode } from '../types/common';
 import { useConfig } from './ConfigContext';
 import { setUserPreferences, settingsReducer } from '../store/tenantSlice';
@@ -219,7 +219,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
     // Top Level Tabs
     const { role } = useSelector((state: RootState) => state.auth);
     // Top Level Tabs
-    const [activeTab, setActiveTab] = useState<'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'SECURITY' | 'PERSONAL'>(role === 'Owner' ? 'GENERAL' : 'PERSONAL');
+    const [activeTab, setActiveTab] = useState<'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'MIS' | 'SECURITY' | 'PERSONAL'>(role === 'Owner' ? 'GENERAL' : 'PERSONAL');
 
     // Local State (initialized from Tenant or Settings)
     const [appName, setAppName] = useState(activeTenant?.name || initialSettings.appName);
@@ -257,6 +257,33 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
     const [userTheme, setUserTheme] = useState<'light' | 'dark' | 'system'>(initialSettings.userTheme || 'system');
     const [userColor, setUserColor] = useState(initialSettings.userColor || '');
     const [userLogo, setUserLogo] = useState(initialSettings.userLogo || '');
+
+    // MIS Configuration State
+    const [misConfig, setMisConfig] = useState({
+        allowNegativeStock: activeTenant?.misConfig?.allowNegativeStock ?? false,
+        allowSaleBelowCost: activeTenant?.misConfig?.allowSaleBelowCost ?? false,
+        enableCreditSales: activeTenant?.misConfig?.enableCreditSales ?? true,
+        enableVendorPayables: activeTenant?.misConfig?.enableVendorPayables ?? true,
+        enableCustomerReceivables: activeTenant?.misConfig?.enableCustomerReceivables ?? true,
+        allowPriceOverride: activeTenant?.misConfig?.allowPriceOverride ?? true,
+        allowDiscountOverride: activeTenant?.misConfig?.allowDiscountOverride ?? true,
+        maxDiscountPercent: activeTenant?.misConfig?.maxDiscountPercent ?? 10,
+        allowBackdatedBills: activeTenant?.misConfig?.allowBackdatedBills ?? false,
+        allowCancelledBillsEdit: activeTenant?.misConfig?.allowCancelledBillsEdit ?? false,
+        enableAuditTrail: activeTenant?.misConfig?.enableAuditTrail ?? true,
+        lockFinancialYearAfterClose: activeTenant?.misConfig?.lockFinancialYearAfterClose ?? true,
+        requireApprovalForHighDiscount: activeTenant?.misConfig?.requireApprovalForHighDiscount ?? false,
+        requireApprovalForVoidBill: activeTenant?.misConfig?.requireApprovalForVoidBill ?? true,
+        requireApprovalForPriceChange: activeTenant?.misConfig?.requireApprovalForPriceChange ?? false,
+        autoDeductStockOnInvoice: activeTenant?.misConfig?.autoDeductStockOnInvoice ?? true,
+        allowManualStockAdjustments: activeTenant?.misConfig?.allowManualStockAdjustments ?? true,
+        enableBatchExpiryTracking: activeTenant?.misConfig?.enableBatchExpiryTracking ?? false,
+        enableSerialNumberTracking: activeTenant?.misConfig?.enableSerialNumberTracking ?? false
+    });
+
+    const handleMisToggle = (key: keyof typeof misConfig) => {
+        setMisConfig(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     // Branch Override
     const [selectedBranchId, setSelectedBranchId] = useState<string>('');
@@ -396,6 +423,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                         <TabButton id="BRANDING" label="Branding & Theme" icon={Palette} />
                         <TabButton id="MODULES" label="Modules" icon={LayoutGrid} />
                         <TabButton id="FINANCE" label="Finance & Tax" icon={Calculator} />
+                        <TabButton id="MIS" label="MIS Controls" icon={Sliders} />
                         <TabButton id="SECURITY" label="Security & Roles" icon={Shield} />
                     </>
                 )}
@@ -642,6 +670,163 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, activeTena
                                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Account Holder Name</label>
                                     <input type="text" value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* MIS CONTROLS TAB */}
+                {activeTab === 'MIS' && (
+                    <div className="p-6 md:p-8 space-y-8">
+                        {/* Info Banner */}
+                        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-2xl flex items-start gap-4">
+                            <AlertTriangle className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <p className="text-sm font-bold text-indigo-800 dark:text-indigo-200">Management Information System Controls</p>
+                                <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">These settings control how your staff can bill, handle inventory, and access system features. Changes apply immediately to all users.</p>
+                            </div>
+                        </div>
+
+                        {/* Financial Controls */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                                <DollarSign className="w-5 h-5 text-indigo-500" /> Financial Controls
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'allowNegativeStock', label: 'Allow Negative Stock', desc: 'Allow selling items even when stock is zero or negative' },
+                                    { key: 'allowSaleBelowCost', label: 'Allow Sale Below Cost', desc: 'Allow selling products below their cost price' },
+                                    { key: 'enableCreditSales', label: 'Enable Credit Sales', desc: 'Allow customers to purchase on credit' },
+                                    { key: 'enableVendorPayables', label: 'Enable Vendor Payables', desc: 'Track amounts owed to vendors/suppliers' },
+                                    { key: 'enableCustomerReceivables', label: 'Enable Customer Receivables', desc: 'Track amounts owed by customers' }
+                                ].map((item) => (
+                                    <div key={item.key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                        <div>
+                                            <p className="font-bold text-slate-800 dark:text-white text-sm">{item.label}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={misConfig[item.key as keyof typeof misConfig] as boolean}
+                                                onChange={() => handleMisToggle(item.key as keyof typeof misConfig)}
+                                            />
+                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Billing Controls */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                                <FileText className="w-5 h-5 text-indigo-500" /> Billing Controls
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'allowPriceOverride', label: 'Allow Price Override at POS', desc: 'Staff can change item price during billing' },
+                                    { key: 'allowDiscountOverride', label: 'Allow Discount Override', desc: 'Staff can apply custom discounts' },
+                                    { key: 'allowBackdatedBills', label: 'Allow Backdated Bills', desc: 'Create invoices with past dates' },
+                                    { key: 'allowCancelledBillsEdit', label: 'Allow Cancelled Bills to be Edited', desc: 'Re-open and modify cancelled invoices' }
+                                ].map((item) => (
+                                    <div key={item.key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                        <div>
+                                            <p className="font-bold text-slate-800 dark:text-white text-sm">{item.label}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={misConfig[item.key as keyof typeof misConfig] as boolean}
+                                                onChange={() => handleMisToggle(item.key as keyof typeof misConfig)}
+                                            />
+                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Max Discount */}
+                            <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-bold text-slate-800 dark:text-white text-sm">Maximum Discount Allowed (%)</p>
+                                        <p className="text-xs text-slate-500 mt-0.5">Staff cannot apply discounts above this percentage</p>
+                                    </div>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        value={misConfig.maxDiscountPercent}
+                                        onChange={(e) => setMisConfig(prev => ({ ...prev, maxDiscountPercent: parseInt(e.target.value) || 0 }))}
+                                        className="w-24 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Reporting & Audit Controls */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-indigo-500" /> Reporting & Audit Controls
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'enableAuditTrail', label: 'Enable Audit Trail', desc: 'Log all system changes for compliance' },
+                                    { key: 'lockFinancialYearAfterClose', label: 'Lock Financial Year After Close', desc: 'Prevent edits to closed financial years' },
+                                    { key: 'requireApprovalForHighDiscount', label: 'Require Approval for High Discount', desc: 'Supervisor must approve discounts above max %' },
+                                    { key: 'requireApprovalForVoidBill', label: 'Require Approval for Void Bill', desc: 'Supervisor must approve bill cancellations' },
+                                    { key: 'requireApprovalForPriceChange', label: 'Require Approval for Price Change', desc: 'Supervisor must approve price overrides' }
+                                ].map((item) => (
+                                    <div key={item.key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                        <div>
+                                            <p className="font-bold text-slate-800 dark:text-white text-sm">{item.label}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={misConfig[item.key as keyof typeof misConfig] as boolean}
+                                                onChange={() => handleMisToggle(item.key as keyof typeof misConfig)}
+                                            />
+                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Inventory Controls */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                                <Package className="w-5 h-5 text-indigo-500" /> Inventory Controls
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'autoDeductStockOnInvoice', label: 'Auto Deduct Stock on Invoice', desc: 'Automatically reduce inventory when invoicing' },
+                                    { key: 'allowManualStockAdjustments', label: 'Allow Manual Stock Adjustments', desc: 'Staff can manually adjust stock levels' },
+                                    { key: 'enableBatchExpiryTracking', label: 'Enable Batch / Expiry Tracking', desc: 'Track batch numbers and expiry dates' },
+                                    { key: 'enableSerialNumberTracking', label: 'Enable Serial Number Tracking', desc: 'Track individual item serial numbers' }
+                                ].map((item) => (
+                                    <div key={item.key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                        <div>
+                                            <p className="font-bold text-slate-800 dark:text-white text-sm">{item.label}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={misConfig[item.key as keyof typeof misConfig] as boolean}
+                                                onChange={() => handleMisToggle(item.key as keyof typeof misConfig)}
+                                            />
+                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
