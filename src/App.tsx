@@ -12,10 +12,10 @@ import { Tenant } from './types/tenant';
 import LoadingScreen from './components/layout/LoadingScreen';
 import { POSCustomerDisplay } from './components/pos/POSCustomerDisplay';
 
-// Views
-import LandingPage from './views/LandingPage';
-import AdminView from './views/AdminView';
-import TenantView from './views/TenantView';
+// Views - Lazy loaded for code splitting
+const LandingPage = lazy(() => import('./views/LandingPage'));
+const AdminView = lazy(() => import('./views/AdminView'));
+const TenantView = lazy(() => import('./views/TenantView'));
 
 // Standalone Pages
 const ResetPassword = lazy(() => import('./components/ResetPassword'));

@@ -6,6 +6,8 @@ import { RootState } from '../store';
 export const useBranchResolver = () => {
     const { tenants, branches } = useSelector((state: RootState) => state.tenant);
 
+    const currentBranchId = useSelector((state: RootState) => state.auth.currentBranch);
+
     const getBranchName = useCallback((branchId: string | undefined): string => {
         if (!branchId) {
             // If there's only one known branch across tenants or DB, return its name instead of Unknown
@@ -33,5 +35,5 @@ export const useBranchResolver = () => {
         return branchId; // Return ID if no name found
     }, [tenants, branches]);
 
-    return { getBranchName };
+    return { getBranchName, currentBranchId };
 };

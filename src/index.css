@@ -57,7 +57,53 @@
     }
   }
 
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-out-right {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
   --animate-pulse-subtle: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  /* ============================================
+     8-Point Grid Spacing System
+     Only use these values for margin/padding/gap.
+     VALID: 0, 4, 8, 16, 24, 32, 48, 64
+     AVOID: 3, 5, 7, 11, 13, etc.
+     ============================================ */
+  --space-0: 0px;
+  --space-1: 4px;
+  /* xs - Tight spacing */
+  --space-2: 8px;
+  /* sm - Small spacing */
+  --space-3: 16px;
+  /* md - Standard spacing */
+  --space-4: 24px;
+  /* lg - Large spacing */
+  --space-5: 32px;
+  /* xl - Extra large */
+  --space-6: 48px;
+  /* 2xl - Section spacing */
+  --space-7: 64px;
+  /* 3xl - Page-level */
 }
 
 /* Base Styles */
@@ -83,6 +129,29 @@
     /* This is Blue 800 */
     --color-brand-900: 30 58 138;
     --color-brand-950: 23 37 84;
+
+    /* ============================================
+       WCAG 2.1 AA Accessible Text Colors
+       Guaranteed minimum contrast ratios:
+       - Primary: 18:1+ (exceeds 4.5:1 for normal text)
+       - Secondary: 6:1+ (exceeds 4.5:1 for normal text)
+       - Muted: 4.5:1+ (meets normal text requirement)
+       - Disabled: 2.5:1+ (meets disabled state requirement)
+       ============================================ */
+    --color-text-primary: var(--color-neutral-900);
+    --color-text-secondary: var(--color-neutral-600);
+    --color-text-muted: var(--color-neutral-500);
+    --color-text-disabled: var(--color-neutral-400);
+
+    /* Accessible Icon Colors (≥3:1 contrast) */
+    --color-icon-primary: var(--color-neutral-700);
+    --color-icon-secondary: var(--color-neutral-500);
+    --color-icon-disabled: var(--color-neutral-400);
+
+    /* Accessible Button Text Colors */
+    --color-btn-text-primary: #ffffff;
+    --color-btn-text-secondary: var(--color-neutral-900);
+    --color-btn-text-disabled: var(--color-neutral-400);
   }
 
   .dark {
@@ -94,6 +163,25 @@
     --scrollbar-track: var(--color-neutral-900);
     --scrollbar-thumb: var(--color-neutral-700);
     --scrollbar-thumb-hover: var(--color-neutral-600);
+
+    /* ============================================
+       WCAG 2.1 AA Accessible Text Colors (Dark Mode)
+       All colors validated against slate-950 background
+       ============================================ */
+    --color-text-primary: var(--color-neutral-50);
+    --color-text-secondary: var(--color-neutral-300);
+    --color-text-muted: var(--color-neutral-400);
+    --color-text-disabled: var(--color-neutral-500);
+
+    /* Accessible Icon Colors (Dark Mode) */
+    --color-icon-primary: var(--color-neutral-200);
+    --color-icon-secondary: var(--color-neutral-400);
+    --color-icon-disabled: var(--color-neutral-500);
+
+    /* Accessible Button Text Colors (Dark Mode) */
+    --color-btn-text-primary: #ffffff;
+    --color-btn-text-secondary: var(--color-neutral-50);
+    --color-btn-text-disabled: var(--color-neutral-500);
   }
 
   /* Custom Scrollbar Styles */
@@ -116,6 +204,412 @@
   }
 }
 
+/* ============================================
+   Alignment & Layout Utilities
+   For consistent form and button alignment
+   ============================================ */
+@layer utilities {
+
+  /* Form row - horizontal alignment for label + field pairs */
+  .form-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Form label - consistent width and right alignment */
+  .form-label {
+    min-width: 120px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Form field - flexible width to fill remaining space */
+  .form-field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Button group - horizontal button alignment with consistent gap */
+  .btn-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* Vertical form stack */
+  .form-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* Grid-aligned container */
+  .grid-aligned {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+
+  /* Section with consistent spacing */
+  .section-spaced {
+    padding: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+}
+
 .animate-pulse-subtle {
   animation: var(--animate-pulse-subtle);
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-slide-out-right {
+  animation: slide-out-right 0.3s ease-in forwards;
+}
+
+/* ============================================
+   DESIGN SYSTEM - Standardized Components
+   Use these classes for consistent styling
+   ============================================ */
+
+/* ----------------------------------------
+   BUTTONS
+   Usage: .btn .btn-primary, .btn .btn-secondary
+   ---------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: var(--space-1) var(--space-2);
+  font-size: 12px;
+  gap: var(--space-1);
+}
+
+.btn-lg {
+  padding: var(--space-3) var(--space-4);
+  font-size: 16px;
+}
+
+.btn-primary {
+  background: rgb(var(--color-brand-600));
+  color: white;
+  border-color: rgb(var(--color-brand-700));
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: rgb(var(--color-brand-700));
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-neutral-700);
+  border-color: var(--color-neutral-300);
+}
+
+.dark .btn-secondary {
+  color: var(--color-neutral-300);
+  border-color: var(--color-neutral-600);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-neutral-100);
+}
+
+.dark .btn-secondary:hover:not(:disabled) {
+  background: var(--color-neutral-800);
+}
+
+.btn-danger {
+  background: var(--color-error);
+  color: white;
+  border-color: #b91c1c;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-success {
+  background: var(--color-success);
+  color: white;
+  border-color: #15803d;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-neutral-600);
+  border-color: transparent;
+}
+
+.dark .btn-ghost {
+  color: var(--color-neutral-400);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-neutral-100);
+}
+
+.dark .btn-ghost:hover:not(:disabled) {
+  background: var(--color-neutral-800);
+}
+
+/* ----------------------------------------
+   BADGES
+   Usage: .badge .badge-success
+   ---------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.dark .badge-success {
+  background: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+  border-color: rgba(22, 163, 74, 0.3);
+}
+
+.badge-error {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.dark .badge-error {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f87171;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.dark .badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.badge-info {
+  background: #dbeafe;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.dark .badge-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.badge-neutral {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+  border-color: var(--color-neutral-200);
+}
+
+.dark .badge-neutral {
+  background: var(--color-neutral-800);
+  color: var(--color-neutral-400);
+  border-color: var(--color-neutral-700);
+}
+
+/* ----------------------------------------
+   TYPOGRAPHY
+   Semantic text styles
+   ---------------------------------------- */
+.text-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.text-subhead {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.text-body {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.text-caption {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.text-micro {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+/* ----------------------------------------
+   FORM ELEMENTS
+   Consistent input styling
+   ---------------------------------------- */
+.input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  border: 1px solid var(--color-neutral-300);
+  border-radius: 8px;
+  background: white;
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dark .input {
+  background: var(--color-neutral-900);
+  border-color: var(--color-neutral-700);
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgb(var(--color-brand-500));
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-500), 0.1);
+}
+
+.input::placeholder {
+  color: var(--color-neutral-400);
+}
+
+.input:disabled {
+  background: var(--color-neutral-100);
+  cursor: not-allowed;
+}
+
+.dark .input:disabled {
+  background: var(--color-neutral-800);
+}
+
+.input-error {
+  border-color: var(--color-error);
+}
+
+.input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.label-required::after {
+  content: ' *';
+  color: var(--color-error);
+}
+
+.select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  border: 1px solid var(--color-neutral-300);
+  border-radius: 8px;
+  background: white;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+
+.dark .select {
+  background-color: var(--color-neutral-900);
+  border-color: var(--color-neutral-700);
+}
+
+.select:focus {
+  outline: none;
+  border-color: rgb(var(--color-brand-500));
+}
+
+/* ----------------------------------------
+   CARDS & SURFACES
+   Container styling
+   ---------------------------------------- */
+.card {
+  background: white;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 12px;
+  padding: var(--space-4);
+}
+
+.dark .card {
+  background: var(--color-neutral-900);
+  border-color: var(--color-neutral-800);
+}
+
+.card-elevated {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* ----------------------------------------
+   DIVIDERS
+   ---------------------------------------- */
+.divider {
+  height: 1px;
+  background: var(--color-neutral-200);
+  margin: var(--space-3) 0;
+}
+
+.dark .divider {
+  background: var(--color-neutral-800);
 }

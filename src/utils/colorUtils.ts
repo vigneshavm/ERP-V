@@ -1,4 +1,6 @@
 
+import { checkContrast, type ContrastResult } from './contrastUtils';
+
 /**
  * Converts a hex color string to an RGB object.
  */
@@ -10,6 +12,12 @@ export const hexToRgb = (hex: string): { r: number; g: number; b: number } | nul
         b: parseInt(result[3], 16)
     } : null;
 };
+
+/**
+ * Check contrast ratio between a foreground and background color.
+ * Re-exported from contrastUtils for convenience.
+ */
+export { checkContrast, type ContrastResult };
 
 /**
  * Converts various color formats to an RGB object.

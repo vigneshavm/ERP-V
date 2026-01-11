@@ -40,6 +40,8 @@ import { clearSession } from '../utils/session';
 import { useBranchResolver } from '../hooks/useBranchResolver';
 import { ConfigProvider, useConfig } from '../components/ConfigProvider';
 import NavItem from '../components/layout/NavItem';
+import NavGroup from '../components/layout/NavGroup';
+import NavSubmenu from '../components/layout/NavSubmenu';
 import { usePermissions } from '../hooks/usePermissions';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import { Tenant } from '../types/tenant';
@@ -51,7 +53,10 @@ const AgedStockManager = lazy(() => import('../components/AgedStockManager'));
 const POSModule = lazy(() => import('../components/pos/POSModule'));
 const InventoryManager = lazy(() => import('../components/InventoryManager'));
 const PurchaseManager = lazy(() => import('../components/PurchaseManager'));
+const PurchaseEntry = lazy(() => import('../components/purchase/PurchaseEntry'));
 const VendorManager = lazy(() => import('../components/VendorManager'));
+const ExpensesModule = lazy(() => import('../components/expenses/ExpensesModule'));
+const PurchaseOrdersModule = lazy(() => import('../components/purchase/orders/PurchaseOrdersModule'));
 const FinanceTracker = lazy(() => import('../components/FinanceTracker'));
 const SalesHistory = lazy(() => import('../components/SalesHistory'));
 const DailyFinanceTracker = lazy(() => import('../components/DailyFinanceTracker'));
@@ -68,6 +73,15 @@ const BarcodeGenerator = lazy(() => import('../components/BarcodeGenerator'));
 const BulkImport = lazy(() => import('../components/BulkImport'));
 const DataExport = lazy(() => import('../components/DataExport'));
 const Login = lazy(() => import('../components/login'));
+const SalesModulePlaceholder = lazy(() => import('../components/sales/SalesModulePlaceholder'));
+const SalesReturn = lazy(() => import('../components/sales/SalesReturn'));
+const ReturnedItemsManager = lazy(() => import('../components/sales/ReturnedItemsManager'));
+const SalesInvoiceRegister = lazy(() => import('../components/sales/SalesInvoiceRegister'));
+const EstimateCreator = lazy(() => import('../components/sales/EstimateCreator'));
+const PaymentInCreator = lazy(() => import('../components/sales/PaymentInCreator'));
+const PaymentInList = lazy(() => import('../components/sales/PaymentInList'));
+const SalesOrderCreator = lazy(() => import('../components/sales/SalesOrderCreator'));
+const DeliveryChallanCreator = lazy(() => import('../components/sales/DeliveryChallanCreator'));
 
 interface TenantViewProps {
     currentTenant: Tenant | null;
@@ -162,6 +176,21 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'BARCODE': return <BarcodeGenerator />;
                         case 'BULK_IMPORT': return <BulkImport />;
                         case 'DATA_EXPORT': return <DataExport />;
+                        // Sales subviews
+                        case 'SALES_INVOICE': return <SalesInvoiceRegister />;
+                        case 'SALES_ORDER': return <SalesOrderCreator />;
+                        case 'ESTIMATE': return <EstimateCreator />;
+                        case 'DELIVERY_CHALLAN': return <DeliveryChallanCreator />;
+                        case 'CHALLAN_LIST': return <SalesModulePlaceholder view="CHALLAN_LIST" />;
+                        case 'PAYMENT_IN': return <PaymentInCreator />;
+                        case 'PAYMENT_IN_LIST': return <PaymentInList />;
+                        case 'SALES_RETURN': return <SalesReturn />;
+                        case 'RETURNED_ITEMS': return <ReturnedItemsManager />;
+                        case 'INVOICE_REGISTER': return <SalesModulePlaceholder view="INVOICE_REGISTER" />;
+                        case 'ORDER_REGISTER': return <SalesModulePlaceholder view="ORDER_REGISTER" />;
+                        case 'PURCHASE_ENTRY': return <PurchaseEntry />;
+                        case 'EXPENSES': return <ExpensesModule />;
+                        case 'PURCHASE_ORDER': return <PurchaseOrdersModule />;
                         default: return <Dashboard />;
                     }
                 })()}
@@ -281,27 +310,104 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                     </div>
 
                     <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
+                        <div className="px-3 pt-4 pb-2">
+                            <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Main</h3>
+                        </div>
+                        {/* Dashboard */}
                         <NavItem id="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
                         <NavItem id="PROFIT_PULSE" icon={Zap} label="Profit Pulse AI" />
+
+                        {/* Sales Section */}
+                        <div className="px-3 pt-6 pb-2">
+                            <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Sales & Finance</h3>
+                        </div>
+
+                        <NavGroup icon={DollarSign} label="Sales" defaultOpen>
+                            <NavSubmenu icon={FileText} label="Transactions" defaultOpen>
+                                <NavItem id="SALES_INVOICE" icon={FileText} label="Sales Invoice" isSubItem />
+                                <NavItem id="SALES_ORDER" icon={ShoppingCart} label="Sales Order" isSubItem />
+                                <NavItem id="ESTIMATE" icon={FileText} label="Estimate" isSubItem />
+                                <NavItem id="DELIVERY_CHALLAN" icon={FileText} label="Delivery Challan" isSubItem />
+                            </NavSubmenu>
+                            <NavSubmenu icon={DollarSign} label="Payments">
+                                <NavItem id="PAYMENT_IN" icon={DollarSign} label="Payment In" isSubItem />
+                                <NavItem id="PAYMENT_IN_LIST" icon={List} label="Payment List" isSubItem />
+                            </NavSubmenu>
+                            <NavSubmenu icon={RotateCcw} label="Returns">
+                                <NavItem id="SALES_RETURN" icon={RotateCcw} label="Sales Return" isSubItem />
+                                <NavItem id="RETURNED_ITEMS" icon={List} label="Returned Items" isSubItem />
+                            </NavSubmenu>
+                            <NavSubmenu icon={List} label="Registers">
+                                <NavItem id="INVOICE_REGISTER" icon={List} label="Invoice Register" isSubItem />
+                                <NavItem id="ORDER_REGISTER" icon={List} label="Order Register" isSubItem />
+                            </NavSubmenu>
+                            <NavItem id="SALES" icon={List} label="Sales History" isSubItem />
+                            <NavItem id="DAILY" icon={FileText} label="Daily Summary" isSubItem />
+                        </NavGroup>
+
+                        {/* Purchase */}
+                        <NavGroup icon={ArrowRight} label="Purchase">
+                            <NavItem id="PURCHASE_ORDER" icon={FileText} label="Purchase Orders" isSubItem />
+                            <NavItem id="PURCHASE_ENTRY" icon={FileText} label="Purchase Entry" isSubItem />
+                            <NavItem id="PURCHASE" icon={ShoppingBag} label="Old Purchase List" isSubItem />
+                            <NavItem id="VENDORS" icon={Users} label="Suppliers" isSubItem />
+                        </NavGroup>
+
+                        {/* Finance */}
+                        {/* Finance */}
+                        <NavGroup icon={Landmark} label="Finance">
+                            <NavItem id="FINANCE" icon={Landmark} label="Cash & Bank" isSubItem />
+                            <NavItem id="EXPENSES" icon={DollarSign} label="Expenses" isSubItem />
+                        </NavGroup>
+
+
+                        {/* Operations Section */}
+                        <div className="px-3 pt-6 pb-2">
+                            <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Operations</h3>
+                        </div>
+
+                        {/* Inventory */}
+                        <NavGroup icon={Archive} label="Inventory">
+                            <NavItem id="INVENTORY" icon={Archive} label="Items & Stock" isSubItem />
+                            <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" isSubItem />
+                        </NavGroup>
+
+                        {/* POS */}
                         <NavItem id="POS" icon={ShoppingCart} label="Point of Sale" />
-                        <NavItem id="INVENTORY" icon={Archive} label="Inventory" />
-                        <NavItem id="PURCHASE" icon={ArrowRight} label="Purchases" />
-                        <NavItem id="VENDORS" icon={Users} label="Vendors (Suppliers)" />
-                        <NavItem id="AGED_STOCK" icon={Clock} label="Aged Stock" />
-                        <NavItem id="FINANCE" icon={DollarSign} label="Finance & P&L" />
-                        <NavItem id="SALES" icon={List} label="Sales History" />
-                        <NavItem id="DAILY" icon={LogOut} label="Daily Finance" />
-                        <NavItem id="LABOR" icon={Users} label="Labor & Staff" />
-                        <NavItem id="STOREFRONT" icon={ShoppingBag} label="Web Storefront" />
-                        <NavItem id="GROW" icon={Rocket} label="Launch Online" />
-                        <NavItem id="SYNC_SHARE" icon={Share2} label="Sync & Share" />
-                        <NavItem id="RESTORE" icon={RotateCcw} label="Restore Data" />
-                        <NavItem id="BARCODE" icon={Barcode} label="Barcode Generator" />
-                        <NavItem id="BULK_IMPORT" icon={FileUp} label="Bulk Import" />
-                        <NavItem id="DATA_EXPORT" icon={FileDown} label="Data Export" />
-                        <NavItem id="REPORTS" icon={FileText} label="Reports & Analytics" />
-                        <div className="pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-800">
+
+                        {/* Grow Section */}
+                        <div className="px-3 pt-6 pb-2">
+                            <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Growth & Tools</h3>
+                        </div>
+
+                        {/* Grow Business */}
+                        <NavGroup icon={Rocket} label="Grow Business">
+                            <NavItem id="GROW" icon={Rocket} label="Launch Online" isSubItem />
+                            <NavItem id="STOREFRONT" icon={Store} label="Storefront" isSubItem />
+                        </NavGroup>
+
+                        {/* Sync & Backup */}
+                        <NavGroup icon={Share2} label="Sync & Backup">
+                            <NavItem id="SYNC_SHARE" icon={Share2} label="Sync & Share" isSubItem />
+                            <NavItem id="RESTORE" icon={RotateCcw} label="Restore Data" isSubItem />
+                        </NavGroup>
+
+                        {/* Utilities */}
+                        <NavGroup icon={Barcode} label="Utilities">
+                            <NavItem id="BARCODE" icon={Barcode} label="Barcode Generator" isSubItem />
+                            <NavItem id="BULK_IMPORT" icon={FileUp} label="Bulk Import" isSubItem />
+                            <NavItem id="DATA_EXPORT" icon={FileDown} label="Data Export" isSubItem />
+                        </NavGroup>
+
+                        {/* HR - only if enabled */}
+                        <NavItem id="LABOR" icon={Users} label="HR & Staff" />
+
+                        <div className="mt-8 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                            <div className="px-3 pb-2">
+                                <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">System</h3>
+                            </div>
                             <NavItem id="SETTINGS" icon={Settings} label="Settings" />
+                            <NavItem id="REPORTS" icon={FileText} label="Reports" />
                         </div>
                     </nav>
 

@@ -6,10 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Enterprise Manager ERP & POS</title>
   <script>
+    // Theme flash prevention - runs synchronously before render
+    // Handles: explicit dark, explicit system, or default to system preference
     (function () {
       try {
-        const stored = localStorage.getItem('erp_theme');
+        var stored = localStorage.getItem('erp_theme');
+        var isDark = false;
+        
         if (stored === 'dark') {
+          isDark = true;
+        } else if (stored === 'system' || stored === null) {
+          // System mode or no preference: check OS setting
+          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        // stored === 'light' → isDark stays false
+        
+        if (isDark) {
           document.documentElement.classList.add('dark');
         }
       } catch (e) { }

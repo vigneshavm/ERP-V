@@ -1,7 +1,9 @@
-import React from 'react';
-import { LogOut } from 'lucide-react';
-import TenantManager from '../components/TenantManager';
+import React, { lazy, Suspense } from 'react';
+import { LogOut, Loader2 } from 'lucide-react';
 import { Tenant } from '../types/tenant';
+
+// Lazy load heavy component
+const TenantManager = lazy(() => import('../components/TenantManager'));
 
 interface AdminViewProps {
     onLogout: () => void;
@@ -27,7 +29,13 @@ const AdminView: React.FC<AdminViewProps> = ({ onLogout, onLoginAsTenant }) => (
         </header>
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
             <div className="max-w-7xl mx-auto">
-                <TenantManager onLoginAs={onLoginAsTenant} />
+                <Suspense fallback={
+                    <div className="flex items-center justify-center h-64">
+                        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                    </div>
+                }>
+                    <TenantManager onLoginAs={onLoginAsTenant} />
+                </Suspense>
             </div>
         </main>
     </div>

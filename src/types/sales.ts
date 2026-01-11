@@ -20,6 +20,7 @@ export interface Customer {
     tenantId?: string;
     totalVisits?: number;
     totalSpent?: number;
+    walletBalance?: number;
 }
 
 export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';

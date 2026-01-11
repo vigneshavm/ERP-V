@@ -26,5 +26,15 @@ export type ModuleType = 'POS' | 'INVENTORY' | 'HR' | 'FINANCE' | 'ANALYTICS' | 
 export type BranchId = string;
 export { TaxMode } from './product/enums';
 export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
-export type AppView = 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE' | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS' | 'AGED_STOCK' | 'REPORTS' | 'VENDORS' | 'VENDOR_FORM' | 'VENDOR_DETAILS' | 'GROW' | 'SYNC_SHARE' | 'RESTORE' | 'BARCODE' | 'BULK_IMPORT' | 'DATA_EXPORT';
+export type AppView =
+    // Core views
+    | 'DASHBOARD' | 'PROFIT_PULSE' | 'POS' | 'INVENTORY' | 'PURCHASE' | 'FINANCE'
+    | 'SALES' | 'DAILY' | 'LABOR' | 'STOREFRONT' | 'SETTINGS' | 'AGED_STOCK'
+    | 'REPORTS' | 'VENDORS' | 'VENDOR_FORM' | 'VENDOR_DETAILS' | 'GROW'
+    | 'SYNC_SHARE' | 'RESTORE' | 'BARCODE' | 'BULK_IMPORT' | 'DATA_EXPORT'
+    // Sales submenus
+    | 'SALES_INVOICE' | 'SALES_ORDER' | 'ESTIMATE' | 'DELIVERY_CHALLAN' | 'CHALLAN_LIST'
+    | 'PAYMENT_IN' | 'PAYMENT_IN_LIST'
+    | 'SALES_RETURN' | 'RETURNED_ITEMS'
+    | 'INVOICE_REGISTER' | 'ORDER_REGISTER' | 'PURCHASE_ENTRY' | 'EXPENSES' | 'PURCHASE_ORDER';
 export type SystemRole = 'Owner' | 'Manager' | 'Staff';
