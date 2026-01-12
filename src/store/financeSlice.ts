@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FinanceState, Transaction, Cheque } from '../types/finance';
 import { TransactionType } from '../types/common';
-import { loadState, saveState } from './storage';
+import { loadState } from './storage';
 
 const initialFinanceState: FinanceState = {
   transactions: [],
@@ -21,11 +21,9 @@ const financeSlice = createSlice({
       } else {
         state.bankBalance -= action.payload.amount;
       }
-      saveState('finance', state);
     },
     addCheque: (state, action: PayloadAction<Cheque>) => {
       state.cheques.push(action.payload);
-      saveState('finance', state);
     },
     updateChequeStatus: (state, action: PayloadAction<{ id: string, status: 'CLEARED' | 'BOUNCED' }>) => {
       const cheque = state.cheques.find(c => c.id === action.payload.id);
@@ -61,7 +59,6 @@ const financeSlice = createSlice({
           }
         }
       }
-      saveState('finance', state);
     },
     setTransactions: (state, action: PayloadAction<Transaction[]>) => {
       state.transactions = action.payload;
@@ -74,24 +71,20 @@ const financeSlice = createSlice({
     },
     addDailyRecord: (state, action: PayloadAction<any>) => {
       state.dailyFinanceRecords.unshift(action.payload);
-      saveState('finance', state);
     },
     updateDailyRecord: (state, action: PayloadAction<any>) => {
       const index = state.dailyFinanceRecords.findIndex(r => r.id === action.payload.id);
       if (index !== -1) {
         state.dailyFinanceRecords[index] = action.payload;
-        saveState('finance', state);
       }
     },
     deleteDailyRecord: (state, action: PayloadAction<string>) => {
       state.dailyFinanceRecords = state.dailyFinanceRecords.filter(r => r.id !== action.payload);
-      saveState('finance', state);
     },
     setDailyRecordSynced: (state, action: PayloadAction<{ id: string, synced: boolean }>) => {
       const record = state.dailyFinanceRecords.find(r => r.id === action.payload.id);
       if (record) {
         record.synced = action.payload.synced;
-        saveState('finance', state);
       }
     }
   },

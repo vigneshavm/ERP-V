@@ -2,22 +2,22 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { supabase } from '../lib/supabase';
 import { setUserPreferences } from '../store';
+import { getTable, DATA_MODE } from '../services/dataSource';
 
 export const useVisualPreferences = (tenantId: string | undefined, userId: string | undefined) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!supabase || !tenantId || !userId) return;
+        if (!tenantId || !userId) return;
 
         const fetchVisualPrefs = async () => {
-            const { data: userVisual, error: userVisualError } = await supabase
-                .from('tenant_user_visual_identity')
-                .select('*')
-                .eq('tenant_id', tenantId)
-                .eq('user_id', userId)
-                .maybeSingle();
+            const data = await getTable('tenant_user_visual_identity', {
+                filters: { tenant_id: tenantId, user_id: userId }
+            });
 
-            if (!userVisualError && userVisual) {
+            const userVisual = data?.[0];
+
+            if (userVisual) {
                 dispatch(setUserPreferences({
                     theme: userVisual.theme,
                     primaryColor: userVisual.primary_color,
@@ -29,21 +29,26 @@ export const useVisualPreferences = (tenantId: string | undefined, userId: strin
 
         fetchVisualPrefs();
 
-        // Real-time
-        const userVisualChannel = supabase
-            .channel(`public:tenant_user_visual_identity:${userId}`)
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'tenant_user_visual_identity',
-                filter: `user_id=eq.${userId}`
-            }, () => {
-                fetchVisualPrefs();
-            })
-            .subscribe();
+        // Real-time - Only enabled in DB mode
+        let userVisualChannel: any;
+        if (DATA_MODE === 'DB' && supabase) {
+            userVisualChannel = supabase
+                .channel(`public:tenant_user_visual_identity:${userId}`)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'tenant_user_visual_identity',
+                    filter: `user_id=eq.${userId}`
+                }, () => {
+                    fetchVisualPrefs();
+                })
+                .subscribe();
+        }
 
         return () => {
-            supabase.removeChannel(userVisualChannel);
+            if (userVisualChannel && supabase) {
+                supabase.removeChannel(userVisualChannel);
+            }
         };
     }, [dispatch, tenantId, userId]);
 };

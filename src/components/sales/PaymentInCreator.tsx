@@ -34,12 +34,8 @@ interface PaymentMethod {
     depositTo: string;
 }
 
-// Demo data
-const demoCustomers: Customer[] = [
-    { id: 'C001', name: 'Rajesh Kumar', phone: '9876543210', email: 'rajesh@example.com', outstandingBalance: 45000, advanceBalance: 0 },
-    { id: 'C002', name: 'Priya Sharma', phone: '9876543211', email: 'priya@example.com', outstandingBalance: 12500, advanceBalance: 2000 },
-    { id: 'C003', name: 'Tech Solutions Pvt Ltd', phone: '9876543212', outstandingBalance: 89000, advanceBalance: 0 },
-];
+// Demo data - replaced by Redux state
+// Customers fetched from Redux posSlice
 
 const generateDemoInvoices = (customerId: string): Invoice[] => {
     if (!customerId || customerId === 'WALKIN') return [];
@@ -66,6 +62,19 @@ const PaymentInCreator: React.FC = () => {
     const generateReceiptNo = () => `RCP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`;
 
     const { user } = useSelector((state: RootState) => state.auth);
+    const { customers: posCustomers } = useSelector((state: RootState) => state.pos);
+
+    // Filter customers by tenant
+    const availableCustomers: Customer[] = useMemo(() => {
+        return posCustomers.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            phone: c.phone || '',
+            email: c.email,
+            outstandingBalance: c.outstandingBalance || c.outstanding_balance || 0,
+            advanceBalance: c.advanceBalance || 0
+        }));
+    }, [posCustomers]);
 
     // State
     const [receiptNo] = useState(generateReceiptNo);
@@ -84,12 +93,12 @@ const PaymentInCreator: React.FC = () => {
 
     // Filtered customers
     const filteredCustomers = useMemo(() => {
-        if (!customerSearch) return demoCustomers;
+        if (!customerSearch) return availableCustomers;
         const q = customerSearch.toLowerCase();
-        return demoCustomers.filter(c =>
+        return availableCustomers.filter(c =>
             c.name.toLowerCase().includes(q) || c.phone.includes(q)
         );
-    }, [customerSearch]);
+    }, [customerSearch, availableCustomers]);
 
     // Select customer
     const selectCustomer = (c: Customer) => {

@@ -16,12 +16,10 @@ const purchaseSlice = createSlice({
   reducers: {
     addOrder: (state, action: PayloadAction<PurchaseOrder>) => {
       state.orders.unshift(action.payload);
-      saveState('purchase', state);
     },
     approveOrder: (state, action: PayloadAction<string>) => {
       const order = state.orders.find(o => o.id === action.payload);
       if (order) order.status = 'APPROVED';
-      saveState('purchase', state);
     },
     setOrders: (state, action: PayloadAction<PurchaseOrder[]>) => {
       state.orders = action.payload;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Settings, Check } from 'lucide-react';
 import { ModuleType } from '../../types/common';
 
-const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'ANALYTICS'];
+const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'ANALYTICS', 'GROW_PLATFORM'];
 
 export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModuleToggle: (mod: ModuleType) => void }> = ({ newTenant, setNewTenant, handleModuleToggle }) => {
     return (

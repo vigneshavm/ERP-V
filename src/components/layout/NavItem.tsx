@@ -1,20 +1,24 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { RootState } from '../../store';
 import { AppView } from '../../types/common';
 import { setActiveTab, setSidebarOpen } from '../../store/uiSlice';
 import { usePermissions } from '../../hooks/usePermissions';
+import { preloadByViewId } from '../../services/ModuleRegistry';
 
 interface NavItemProps {
     id: AppView;
     icon?: LucideIcon;
     label: string;
     isSubItem?: boolean;
+    path?: string;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = false }) => {
+const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = false, path }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { activeTab, desktopCollapsed } = useSelector((state: RootState) => state.ui);
     const { checkAccess } = usePermissions();
 
@@ -42,8 +46,6 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = fa
     // Better to use a relative container or shadow. 
     // Requirement: "Blue left border (2px)". If the button has rounded corners, an inset border might look weird. 
     // Usually standardized sidebar items cover full width minus margins.
-    // Let's use `border-l-2` and `rounded-r-lg` (not full rounded) or just `rounded-lg` with an inner indicator. 
-    // For "Zoho/Tally" style, often it's a full highlighter.
     // Let's try: No border radius on left if active? Or just a left accent bar.
 
     const activeClasses = isActive
@@ -55,9 +57,13 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = fa
 
     return (
         <button
+            onMouseEnter={() => preloadByViewId(id)}
             onClick={() => {
                 dispatch(setActiveTab(id));
                 dispatch(setSidebarOpen(false));
+                if (path) {
+                    navigate(path);
+                }
             }}
             title={desktopCollapsed ? label : ''}
             className={`${baseClasses} ${spacingClasses} ${activeClasses}`}

@@ -18,17 +18,14 @@ const laborSlice = createSlice({
   reducers: {
     addEmployee: (state, action: PayloadAction<Employee>) => {
       state.employees.push(action.payload);
-      saveState('labor', state);
     },
     markAttendance: (state, action: PayloadAction<Attendance>) => {
       // Remove existing for same day/person if any
       state.attendance = state.attendance.filter(a => !(a.employeeId === action.payload.employeeId && a.date === action.payload.date));
       state.attendance.push(action.payload);
-      saveState('labor', state);
     },
     addLaborPayment: (state, action: PayloadAction<LaborPayment>) => {
       state.payments.push(action.payload);
-      saveState('labor', state);
     },
     setEmployees: (state, action: PayloadAction<Employee[]>) => {
       state.employees = action.payload;

@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     Search, Plus, Filter, Download, Printer, Eye,
     MoreHorizontal, ArrowUpRight, Calendar, User
 } from 'lucide-react';
-import { setActiveTab } from '../../store';
+import { setActiveTab, RootState } from '../../store';
+import { getTable } from '../../services/dataSource';
 
 // Demo Data
 interface PaymentRecord {
@@ -18,27 +19,41 @@ interface PaymentRecord {
     reference: string;
 }
 
-const demoPayments: PaymentRecord[] = [
-    { id: '1', receiptNo: 'RCP-2026-00145', date: '2026-01-10', customerName: 'Rajesh Kumar', customerPhone: '9876543210', amount: 5000, modes: ['UPI'], reference: 'UPI/123456' },
-    { id: '2', receiptNo: 'RCP-2026-00146', date: '2026-01-10', customerName: 'Priya Sharma', customerPhone: '9876543211', amount: 12500, modes: ['Cash', 'Card'], reference: 'Mixed' },
-    { id: '3', receiptNo: 'RCP-2026-00147', date: '2026-01-09', customerName: 'Tech Solutions', customerPhone: '9876543212', amount: 25000, modes: ['Bank Transfer'], reference: 'NEFT-8899' },
-    { id: '4', receiptNo: 'RCP-2026-00148', date: '2026-01-08', customerName: 'Walk-in Customer', customerPhone: '', amount: 850, modes: ['Cash'], reference: '-' },
-];
-
 const PaymentInList: React.FC = () => {
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
+    const [payments, setPayments] = useState<PaymentRecord[]>([]);
+
+    // Fetch payments on mount
+    React.useEffect(() => {
+        const fetchPayments = async () => {
+            const data = await getTable<any>('payments', {});
+            if (data) {
+                setPayments(data.map((p: any) => ({
+                    id: p.id,
+                    receiptNo: `RCP-${p.id?.slice(-5) || '00000'}`,
+                    date: p.date,
+                    customerName: p.customer_name || 'Customer',
+                    customerPhone: p.customer_phone || '',
+                    amount: p.amount,
+                    modes: [p.mode || 'Cash'],
+                    reference: p.reference || '-'
+                })));
+            }
+        };
+        fetchPayments();
+    }, []);
 
     // Filter payments
     const filteredPayments = useMemo(() => {
-        if (!searchQuery) return demoPayments;
+        if (!searchQuery) return payments;
         const q = searchQuery.toLowerCase();
-        return demoPayments.filter(p =>
+        return payments.filter(p =>
             p.receiptNo.toLowerCase().includes(q) ||
             p.customerName.toLowerCase().includes(q) ||
             p.customerPhone.includes(q)
         );
-    }, [searchQuery]);
+    }, [searchQuery, payments]);
 
     // Format currency
     const formatCurrency = (amount: number) =>

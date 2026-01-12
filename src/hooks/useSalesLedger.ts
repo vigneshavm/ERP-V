@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { getTable, DATA_MODE } from '../services/dataSource';
 
 export interface SalesLedgerItem {
     id: string;
@@ -48,7 +49,68 @@ export const useSalesLedger = () => {
 
         setLoading(true);
         try {
-            // 1. Base Query
+            // DEMO MODE: Use getTable abstraction
+            if (DATA_MODE === 'DEMO') {
+                let data = await getTable<any>('sales_invoices', { filters: { tenant_id: tenantId } });
+
+                // Apply client-side filters for demo
+                if (filters.searchQuery) {
+                    const q = filters.searchQuery.toLowerCase();
+                    data = data.filter(item =>
+                        (item.invoice_no || '').toLowerCase().includes(q) ||
+                        (item.customer_name || '').toLowerCase().includes(q) ||
+                        (item.customer_phone || '').includes(q)
+                    );
+                }
+                if (filters.status !== 'ALL') {
+                    data = data.filter(item => item.status === filters.status);
+                }
+                if (filters.paymentMode !== 'ALL') {
+                    data = data.filter(item => item.payment_mode === filters.paymentMode);
+                }
+                if (filters.dateFrom) {
+                    data = data.filter(item => item.date >= filters.dateFrom);
+                }
+                if (filters.dateTo) {
+                    data = data.filter(item => item.date <= filters.dateTo);
+                }
+
+                // Sort by date descending
+                data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                const total = data.length;
+                const from = (page - 1) * itemsPerPage;
+                const paged = data.slice(from, from + itemsPerPage);
+
+                setInvoices(paged.map(item => ({
+                    id: item.id,
+                    invoiceNo: item.invoice_no,
+                    date: item.date,
+                    customerName: item.customer_name || 'Guest',
+                    customerPhone: item.customer_phone || '-',
+                    netAmount: item.net_amount || 0,
+                    paidAmount: item.paid_amount || 0,
+                    balanceAmount: item.balance_amount || 0,
+                    status: item.status,
+                    paymentMode: item.payment_mode || 'CASH',
+                    dueDate: item.due_date
+                })));
+                setTotalCount(total);
+
+                const totalSales = paged.reduce((acc, curr) => acc + (curr.net_amount || 0), 0);
+                const collected = paged.reduce((acc, curr) => acc + (curr.paid_amount || 0), 0);
+                setStats({
+                    totalSales,
+                    collected,
+                    outstanding: totalSales - collected,
+                    overdue: paged.filter(i => i.status === 'OVERDUE').reduce((acc, curr) => acc + (curr.balance_amount || 0), 0)
+                });
+
+                setLoading(false);
+                return;
+            }
+
+            // DB MODE: Original Supabase query
             let query = supabase
                 .from('sales_invoices')
                 .select('*', { count: 'exact' })

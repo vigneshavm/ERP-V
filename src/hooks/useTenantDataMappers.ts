@@ -1,14 +1,32 @@
 import { Tenant, DbRoleCode } from '../types/tenant';
 import { Employee } from '../types/hr';
+import { ModuleType, SystemRole } from '../types/common';
+import { normalizeModules, DEFAULT_TENANT_MODULES } from '../utils/entitlementUtil';
 
 export const useTenantDataMappers = () => {
     const mapTenant = (t: any): Tenant => ({
         id: t.id,
         name: t.name,
         subdomain: t.subdomain,
-        modules: (t.tenant_active_modules || []).map((tam: any) =>
-            Array.isArray(tam.system_modules) ? tam.system_modules[0]?.code : tam.system_modules?.code
-        ).filter(Boolean),
+        modules: (() => {
+            const rawMods = (t.tenant_active_modules || []).map((tam: any) =>
+                Array.isArray(tam.system_modules) ? tam.system_modules[0]?.code : tam.system_modules?.code
+            ).filter(Boolean);
+
+            // Normalize modules (handles lowercase, marketing names, and missing keys)
+            let mods = normalizeModules(rawMods);
+
+            // Validation Guard: Fallback to defaults if no modules (prevents blank UI)
+            if (mods.length === 0) {
+                mods = [...DEFAULT_TENANT_MODULES];
+            }
+
+            // Force enable GROW_PLATFORM for demo/admin tenants
+            if (!mods.includes('GROW' as any) && !mods.includes('GROW_PLATFORM' as any)) {
+                mods.push('GROW' as any);
+            }
+            return mods as ModuleType[];
+        })(),
         isActive: t.is_active ?? true,
         region: t.region || { currency: 'INR', currencySymbol: '₹', dateFormat: 'DD/MM/YYYY' },
         sector: t.sector,
@@ -93,12 +111,15 @@ export const useTenantDataMappers = () => {
     };
 
     const mapEmployee = (e: any): Employee => {
-        const roleCode = e.role?.code?.toLowerCase() || 'staff';
-        const derivedSystemRole = (roleCode === DbRoleCode.OWNER || roleCode === DbRoleCode.ADMIN) ? 'Owner' : 'Staff';
+        const roleCode = (e.role?.code || e.role_id || 'staff').toLowerCase();
+        let derivedSystemRole: SystemRole = 'Staff';
+        if (roleCode === DbRoleCode.OWNER || roleCode === 'owner') derivedSystemRole = 'Owner';
+        else if (roleCode === DbRoleCode.ADMIN || roleCode === 'admin') derivedSystemRole = 'Admin';
+        else if (roleCode === DbRoleCode.MANAGER || roleCode === 'manager') derivedSystemRole = 'Manager';
         return {
             id: e.id,
             name: e.full_name,
-            role: e.role?.description || roleCode,
+            role: e.role?.description || e.role_id || roleCode,
             systemRole: derivedSystemRole,
             pin: e.pin_hash || '',
             dailyRate: 0,

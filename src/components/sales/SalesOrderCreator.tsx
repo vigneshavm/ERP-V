@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import {
     ShoppingCart, Search, Plus, Trash2, Save, CheckCircle,
     Calendar, User, Package, ChevronLeft, Clock, AlertTriangle,
     ArrowRight, FileText
 } from 'lucide-react';
+import { RootState } from '../../store';
+import { useFilteredProducts, useFilteredCustomers, searchProducts, searchCustomers } from '../../utils/tenantFilters';
 
 // Types
 interface Customer {
@@ -37,19 +40,35 @@ interface OrderItem {
     amount: number;
 }
 
-// Demo Data
-const demoCustomers: Customer[] = [
-    { id: 'C001', name: 'Rajesh Kumar', phone: '9876543210', email: 'rajesh@example.com', loyaltyPoints: 150, outstandingBalance: 45000 },
-    { id: 'C002', name: 'Priya Sharma', phone: '9876543211', email: 'priya@example.com', loyaltyPoints: 50, outstandingBalance: 12500 },
-];
-
-const demoProducts: Product[] = [
-    { id: 'P001', name: 'Samsung Galaxy A54', sku: 'SAM-A54-128', price: 32999, stock: 15, category: 'Mobiles', taxRate: 18 },
-    { id: 'P002', name: 'iPhone 15 Pro Max', sku: 'APP-15PM-256', price: 159900, stock: 5, category: 'Mobiles', taxRate: 18 },
-    { id: 'P003', name: 'Sony WH-1000XM5', sku: 'SNY-WH5', price: 29990, stock: 0, category: 'Audio', taxRate: 18 }, // Out of stock
-];
-
 const SalesOrderCreator: React.FC = () => {
+    // Use reusable tenant filter hooks
+    const tenantProducts = useFilteredProducts({ includeOutOfStock: true });
+    const tenantCustomers = useFilteredCustomers();
+
+    // Map to local types
+    const availableProducts: Product[] = useMemo(() => {
+        return tenantProducts.map(p => ({
+            id: p.id,
+            name: p.name,
+            sku: p.sku,
+            price: p.price,
+            stock: p.stock,
+            category: p.category,
+            taxRate: p.taxRate
+        }));
+    }, [tenantProducts]);
+
+    const availableCustomers: Customer[] = useMemo(() => {
+        return tenantCustomers.map(c => ({
+            id: c.id,
+            name: c.name,
+            phone: c.phone,
+            email: c.email,
+            loyaltyPoints: c.loyaltyPoints || 0,
+            outstandingBalance: c.outstandingBalance
+        }));
+    }, [tenantCustomers]);
+
     // Generate Order No
     const [orderNo] = useState(`SO-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`);
 
@@ -74,17 +93,17 @@ const SalesOrderCreator: React.FC = () => {
 
     // Filter customers
     const filteredCustomers = useMemo(() => {
-        if (!customerSearch) return demoCustomers;
+        if (!customerSearch) return availableCustomers;
         const q = customerSearch.toLowerCase();
-        return demoCustomers.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q));
-    }, [customerSearch]);
+        return availableCustomers.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q));
+    }, [customerSearch, availableCustomers]);
 
     // Filter products
     const filteredProducts = useMemo(() => {
-        if (!productSearch) return demoProducts;
+        if (!productSearch) return availableProducts;
         const q = productSearch.toLowerCase();
-        return demoProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
-    }, [productSearch]);
+        return availableProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+    }, [productSearch, availableProducts]);
 
     // Add Item
     const addItem = (product: Product) => {

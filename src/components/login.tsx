@@ -10,6 +10,8 @@ import { Tenant, TenantUser, DbRoleCode } from '../types/tenant';
 import { setSession } from '../utils/session';
 import { supabase } from '../lib/supabase';
 import { securePassword } from '../utils/auth';
+import { getTable, DATA_MODE } from '../services/dataSource';
+import { demoDB } from '../data/demo';
 
 const SECTOR_IMAGES: Record<string, string> = {
     [Sector.GENERAL]: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop',
@@ -74,73 +76,114 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
         }
 
         try {
-            if (!supabase) {
-                throw new Error("Supabase client not initialized.");
-            }
+            let sessionUser: TenantUser | null = null;
+            let apiUser: any = null;
 
-            // 1. Authenticate via Secure RPC
-            const { data, error: rpcError } = await supabase
-                .rpc('login_tenant_user', {
-                    p_tenant_id: tenant.id,
-                    p_identity: cleanIdentity,
-                    p_password: password
-                });
+            if (DATA_MODE === 'DEMO') {
+                // Demo Authentication Logic - Use getTable to include dynamic registrations
+                const employees = await getTable('tenant_users');
+                const demoUser = employees.find((e: any) =>
+                    (e.email === cleanIdentity || e.id === cleanIdentity || e.mobile === cleanIdentity) &&
+                    (e.password === password || password === 'demo123') && // Fallback for demo
+                    e.tenant_id === tenant.id
+                );
 
-            if (rpcError) {
-                console.error("Login RPC Error:", rpcError);
-                setError("Authentication failed. " + rpcError.message);
-                setIsLoading(false);
-                return;
-            }
-
-            if (!data || !data.success || !data.user) {
-                setError(data?.message || "Invalid credentials.");
-                setIsLoading(false);
-                return;
-            }
-
-            const apiUser = data.user;
-
-            // 2. Map role and create session object
-            let systemRole: SystemRole = 'Staff';
-            let displayRole = 'Staff';
-
-            if (apiUser.role_id) {
-                const { data: roleData } = await supabase
-                    .from('roles')
-                    .select('code, description')
-                    .eq('id', apiUser.role_id)
-                    .single();
-
-                if (roleData) {
-                    const code = roleData.code.toLowerCase();
-                    if (code === DbRoleCode.ADMIN || code === DbRoleCode.OWNER) {
-                        systemRole = 'Owner';
-                    } else if (code === DbRoleCode.MANAGER) {
-                        systemRole = 'Manager';
-                    }
-                    displayRole = roleData.description || code;
+                if (!demoUser) {
+                    setError("Invalid demo credentials.");
+                    setIsLoading(false);
+                    return;
                 }
+
+                apiUser = demoUser;
+                const roleCode = demoUser.role_id?.toLowerCase();
+                let systemRole: SystemRole = 'Staff';
+                if (roleCode === 'admin') systemRole = 'Admin';
+                else if (roleCode === 'owner') systemRole = 'Owner';
+                else if (roleCode === 'manager') systemRole = 'Manager';
+
+                sessionUser = {
+                    id: demoUser.id,
+                    tenantId: demoUser.tenant_id,
+                    fullName: demoUser.full_name,
+                    name: demoUser.full_name,
+                    mobile: demoUser.mobile || '',
+                    email: demoUser.email || '',
+                    role: demoUser.role_id || 'Staff',
+                    roleId: demoUser.role_id,
+                    systemRole: systemRole,
+                    sector: allowedSector,
+                    branchId: demoUser.branch_id || ''
+                };
+            } else {
+                // Real DB Authentication Logic
+                if (!supabase) throw new Error("Supabase client not initialized.");
+
+                const { data, error: rpcError } = await supabase
+                    .rpc('login_tenant_user', {
+                        p_tenant_id: tenant.id,
+                        p_identity: cleanIdentity,
+                        p_password: password
+                    });
+
+                if (rpcError) {
+                    console.error("Login RPC Error:", rpcError);
+                    setError("Authentication failed. " + rpcError.message);
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (!data || !data.success || !data.user) {
+                    setError(data?.message || "Invalid credentials.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                apiUser = data.user;
+
+                // Map role and create session object
+                let systemRole: SystemRole = 'Staff';
+                let displayRole = 'Staff';
+
+                if (apiUser.role_id) {
+                    const { data: roleData } = await supabase
+                        .from('roles')
+                        .select('code, description')
+                        .eq('id', apiUser.role_id)
+                        .single();
+
+                    if (roleData) {
+                        const code = roleData.code.toLowerCase();
+                        if (code === DbRoleCode.OWNER) {
+                            systemRole = 'Owner';
+                        } else if (code === DbRoleCode.ADMIN) {
+                            systemRole = 'Admin';
+                        } else if (code === DbRoleCode.MANAGER) {
+                            systemRole = 'Manager';
+                        }
+                        displayRole = roleData.description || code;
+                    }
+                }
+
+                sessionUser = {
+                    id: apiUser.id,
+                    tenantId: apiUser.tenant_id,
+                    fullName: apiUser.full_name,
+                    name: apiUser.full_name,
+                    mobile: apiUser.mobile,
+                    email: apiUser.email,
+                    role: displayRole,
+                    roleId: apiUser.role_id,
+                    systemRole: systemRole,
+                    sector: allowedSector,
+                    branchId: ''
+                };
             }
 
-            const sessionUser: TenantUser = {
-                id: apiUser.id,
-                tenantId: apiUser.tenant_id,
-                fullName: apiUser.full_name,
-                name: apiUser.full_name,
-                mobile: apiUser.mobile,
-                email: apiUser.email,
-                role: displayRole,
-                roleId: apiUser.role_id,
-                systemRole: systemRole,
-                sector: allowedSector,
-                branchId: ''
-            };
-
+            if (!sessionUser) throw new Error("Session resolution failed.");
             setTempUser(sessionUser);
 
-            // 3. Conditional 2FA check (Per-User)
-            if (!apiUser.is_2fa_enabled) {
+            // 3. Conditional 2FA check (Per-User) - Skip for Demo
+            if (DATA_MODE === 'DEMO' || !apiUser.is_2fa_enabled) {
                 setSession(sessionUser, rememberMe);
                 dispatch(setUser(sessionUser));
                 onLogin();

@@ -1,12 +1,14 @@
 import { db, OfflineSale } from './db';
 import { supabase } from '../lib/supabase';
 import { store, setDailyRecordSynced } from '../store';
+import { DATA_MODE } from './dataSource';
 
 export class SyncManager {
     private static isSyncing = false;
     private static isSyncingDF = false;
 
     static async syncOfflineSales() {
+        if (DATA_MODE === 'DEMO') return; // Skip sync in demo mode
         if (this.isSyncing || !navigator.onLine) return;
         this.isSyncing = true;
 
@@ -18,67 +20,16 @@ export class SyncManager {
 
             for (const sale of pendingSales) {
                 try {
-                    // Remove local-only properties before sending to Supabase
-                    const { localId, synced, retryCount, ...supabaseSale } = sale as any;
-
-                    const { error } = await supabase
-                        .from('sales')
-                        .insert([{
-                            ...supabaseSale,
-                            id: supabaseSale.id || undefined // Let DB generate ID if missing, or use provided
-                        }]);
+                    // Optimized: Sync the entire sale and its inventory impact in one atomic transaction
+                    const { error } = await supabase.rpc('sync_sale_with_inventory', {
+                        p_sale_json: sale
+                    });
 
                     if (!error) {
                         await db.offlineSales.update(sale.localId!, { synced: true });
-                        console.log(`Synced sale: ${sale.id}`);
-
-                        // Deduct Stock in Supabase for each item in the synced sale
-                        if (supabaseSale.items && Array.isArray(supabaseSale.items)) {
-                            for (const item of supabaseSale.items) {
-                                const deductionQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
-
-                                const { data: prod } = await supabase
-                                    .from('products')
-                                    .select('stock')
-                                    .eq('id', item.id)
-                                    .single();
-
-                                if (prod) {
-                                    const newStock = Math.max(0, (prod.stock || 0) - deductionQty);
-                                    await supabase
-                                        .from('products')
-                                        .update({ stock: newStock })
-                                        .eq('id', item.id);
-                                }
-                            }
-                        }
-
-                        // NEW: Update Customer Loyalty Points in Supabase
-                        if (supabaseSale.customerId && !supabaseSale.customerId.startsWith('c')) {
-                            const pointsEarned = supabaseSale.loyaltyPointsEarned || 0;
-                            const pointsRedeemed = supabaseSale.redeemedPoints || 0;
-                            const netPoints = pointsEarned - pointsRedeemed;
-
-                            if (netPoints !== 0) {
-                                // Fetch current points to be safe
-                                const { data: cust } = await supabase
-                                    .from('customers')
-                                    .select('points')
-                                    .eq('id', supabaseSale.customerId)
-                                    .single();
-
-                                if (cust) {
-                                    const newPoints = (cust.points || 0) + netPoints;
-                                    await supabase
-                                        .from('customers')
-                                        .update({ points: newPoints })
-                                        .eq('id', supabaseSale.customerId);
-                                    console.log(`Updated points for customer ${supabaseSale.customerId}: ${newPoints}`);
-                                }
-                            }
-                        }
+                        console.log(`Synced sale atomically: ${sale.id}`);
                     } else {
-                        console.error(`Error syncing sale ${sale.id}:`, error);
+                        console.error(`Error syncing sale atomically ${sale.id}:`, error);
                         await db.offlineSales.update(sale.localId!, {
                             retryCount: (sale.retryCount || 0) + 1
                         });
@@ -110,17 +61,27 @@ export class SyncManager {
         }
     }
 
-    static async getOfflineProducts() {
-        return await db.products.toArray();
+    static async getOfflineProducts(tenantId: string) {
+        if (!tenantId) return [];
+        return await db.products
+            .where('tenantId')
+            .equals(tenantId)
+            .toArray();
     }
 
-    static async getOfflineCustomers() {
-        return await db.customers.toArray();
+    static async getOfflineCustomers(tenantId: string) {
+        if (!tenantId) return [];
+        return await db.customers
+            .where('tenantId')
+            .equals(tenantId)
+            .toArray();
     }
 
     static async syncDailyFinanceEntries() {
+        if (DATA_MODE === 'DEMO') return; // Skip sync in demo mode
         if (this.isSyncingDF || !navigator.onLine) return;
         this.isSyncingDF = true;
+        // ... rest of the code ...
 
         try {
             const pending = await db.dailyFinanceQueue

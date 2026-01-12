@@ -1,10 +1,11 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setActiveTab } from '../store';
 import { useBranchResolver } from '../hooks/useBranchResolver';
 import { DollarSign, Package, TrendingUp, AlertTriangle } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { CardSkeleton } from './layout/SkeletonLoader';
+
+const LazyRevenueChart = React.lazy(() => import('./dashboard/RevenueChart'));
 
 interface StatCardProps {
   title: string;
@@ -35,22 +36,30 @@ const Dashboard: React.FC = () => {
   const { currentSector, currentBranch, theme, role } = useSelector((state: RootState) => state.auth);
   const { getBranchName } = useBranchResolver();
 
-  // Filtered Data based on Sector
-  const sectorTransactions = (transactions || []).filter(t => t.sector === currentSector);
-  const sectorProducts = (products || []).filter(p => p.sector === currentSector);
+  // Filtered Data based on Sector - Memoized
+  const sectorTransactions = useMemo(() => (transactions || []).filter(t => t.sector === currentSector), [transactions, currentSector]);
+  const sectorProducts = useMemo(() => (products || []).filter(p => p.sector === currentSector), [products, currentSector]);
 
-  const totalRevenue = sectorTransactions
-    .filter(t => t.type === 'INCOME')
-    .reduce((acc, curr) => acc + curr.amount, 0) +
-    (dailyFinanceRecords || [])
-      .reduce((acc, curr) => acc + (curr.totalSales || 0), 0);
+  const totalRevenue = useMemo(() => {
+    return sectorTransactions
+      .filter(t => t.type === 'INCOME')
+      .reduce((acc, curr) => acc + curr.amount, 0) +
+      (dailyFinanceRecords || [])
+        .reduce((acc, curr) => acc + (curr.totalSales || 0), 0);
+  }, [sectorTransactions, dailyFinanceRecords]);
 
-  const totalStockValue = sectorProducts.reduce((acc, curr) => acc + (curr.cost * (curr.stock || 0)), 0);
+  const totalStockValue = useMemo(() =>
+    sectorProducts.reduce((acc, curr) => acc + (curr.cost * (curr.stock || 0)), 0),
+    [sectorProducts]
+  );
 
-  const lowStockItems = sectorProducts.filter(p => (p.stock || 0) < 10);
+  const lowStockItems = useMemo(() =>
+    sectorProducts.filter(p => (p.stock || 0) < 10),
+    [sectorProducts]
+  );
 
-  // Chart Data: Last 7 days revenue
-  const chartData = (() => {
+  // Chart Data: Last 7 days revenue - Memoized
+  const chartData = useMemo(() => {
     const days = 7;
     const data = [];
     for (let i = days - 1; i >= 0; i--) {
@@ -65,7 +74,7 @@ const Dashboard: React.FC = () => {
       data.push({ name: dateStr.substr(5), revenue: dayRev });
     }
     return data;
-  })();
+  }, [sectorTransactions]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -87,7 +96,7 @@ const Dashboard: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => dispatch(setActiveTab('GROW'))}
+            onClick={() => dispatch(setActiveTab('GROW_STORE'))}
             className="relative z-10 bg-white text-primary px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-neutral-50 transition-all shrink-0 shadow-lg shadow-black/20 active:scale-95"
           >
             Launch Online Store
@@ -133,24 +142,9 @@ const Dashboard: React.FC = () => {
         <div className="lg:col-span-2 bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-lg transition-colors">
           <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-6">Revenue Trend (Last 7 Days)</h3>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#334155" : "#e2e8f0"} />
-                <XAxis dataKey="name" stroke={theme === 'dark' ? "#94a3b8" : "#64748b"} />
-                <YAxis stroke={theme === 'dark' ? "#94a3b8" : "#64748b"} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff',
-                    borderColor: theme === 'dark' ? '#334155' : '#cbd5e1',
-                    color: theme === 'dark' ? '#f8fafc' : '#0f172a',
-                    borderRadius: '8px'
-                  }}
-                  itemStyle={{ color: theme === 'dark' ? '#f8fafc' : '#0f172a' }}
-                  formatter={(value) => [`₹${(value as number).toLocaleString()}`, 'Revenue']}
-                />
-                <Bar dataKey="revenue" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <React.Suspense fallback={<CardSkeleton />}>
+              <LazyRevenueChart data={chartData} theme={theme} />
+            </React.Suspense>
           </div>
         </div>
 

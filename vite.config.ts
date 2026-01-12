@@ -45,6 +45,18 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, '.'),
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-viz': ['recharts', 'framer-motion'],
+            'vendor-ui': ['lucide-react'],
+            'vendor-data': ['@supabase/supabase-js', '@reduxjs/toolkit', 'react-redux'],
+          }
+        }
+      }
     }
   };
 });

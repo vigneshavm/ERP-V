@@ -1,4 +1,4 @@
-import { AppDispatch, RootState } from '../index';
+import { AppDispatch, RootState } from '../types';
 import { Customer } from '../../types/sales';
 import { APP_CONFIG } from '../../config';
 import { supabase } from '../../lib/supabase';

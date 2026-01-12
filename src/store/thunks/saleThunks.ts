@@ -1,4 +1,4 @@
-import { AppDispatch, RootState } from '../index';
+import { AppDispatch, RootState } from '../types';
 import { Sale } from '../../types/sales';
 import { calculateLoyaltyPoints } from '../../utils/loyalty';
 import { updateCustomerPoints } from '../posSlice';
@@ -41,72 +41,18 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
     // 2. Push to Supabase if Online & Enabled
     if (APP_CONFIG.USE_SUPABASE && supabase && navigator.onLine) {
         try {
-            // Push Sale
-            const { error: saleError } = await supabase
-                .from('sales')
-                .insert([{
-                    id: sale.id,
-                    tenant_id: user?.tenantId,
-                    branch_id: sale.branchId,
-                    customer_id: sale.customerId && !sale.customerId.startsWith('c') ? sale.customerId : null,
-                    date: sale.date,
-                    total: sale.total,
-                    sector: sale.sector,
-                    payment_method: sale.paymentMethod,
-                    tax_mode: sale.taxMode,
-                    status: sale.status,
-                    payment_status: sale.paymentStatus,
-                    items: sale.items,
-                    loyalty_points_earned: sale.loyaltyPointsEarned || 0,
-                    redeemed_points: sale.redeemedPoints || 0,
-                    redemption_amount: sale.redemptionAmount || 0
-                }]);
-
-            if (saleError) throw saleError;
-
-            // Update Stock in Supabase for each item
-            for (const item of sale.items) {
-                const deductionQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
-
-                const { data: prod } = await supabase
-                    .from('products')
-                    .select('stock')
-                    .eq('id', item.id)
-                    .single();
-
-                if (prod) {
-                    const newStock = Math.max(0, (prod.stock || 0) - deductionQty);
-                    await supabase
-                        .from('products')
-                        .update({ stock: newStock })
-                        .eq('id', item.id);
+            // Optimized: Sync the entire sale and its inventory impact in one atomic transaction
+            const { error } = await supabase.rpc('sync_sale_with_inventory', {
+                p_sale_json: {
+                    ...sale,
+                    tenant_id: user?.tenantId
                 }
-            }
+            });
 
-            // Sync Loyalty Points in Supabase (Relative update)
-            if (sale.customerId && !sale.customerId.startsWith('c')) {
-                const pointsEarned = sale.loyaltyPointsEarned || 0;
-                const pointsRedeemed = sale.redeemedPoints || 0;
-                const netPoints = pointsEarned - pointsRedeemed;
-
-                if (netPoints !== 0) {
-                    const { data: dbCust } = await supabase
-                        .from('customers')
-                        .select('points')
-                        .eq('id', sale.customerId)
-                        .single();
-
-                    if (dbCust) {
-                        await supabase
-                            .from('customers')
-                            .update({ points: (dbCust.points || 0) + netPoints })
-                            .eq('id', sale.customerId);
-                    }
-                }
-            }
-
+            if (error) throw error;
+            console.log(`Synced sale atomically via thunk: ${sale.id}`);
         } catch (err) {
-            console.error('Failed to sync sale to Supabase:', err);
+            console.error('Failed to sync sale atomically to Supabase:', err);
         }
     }
 

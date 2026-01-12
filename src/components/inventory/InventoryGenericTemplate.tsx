@@ -2,8 +2,82 @@ import React, { useState } from 'react';
 import { Plus, Search, Image as ImageIcon, X, Pencil, Clock, List, Printer, CheckSquare, Square, Copy, Inbox, TrendingUp, AlertTriangle, AlertCircle, Calendar, ChevronLeft, ChevronRight, Filter, Maximize, Minimize } from 'lucide-react';
 import { useInventoryLogic } from '../../hooks/useInventoryLogic';
 import { Sector } from '../../types/common';
-import BarcodeGenerator from '../BarcodeGenerator';
+import BarcodeGenerator from '../GrowPlatform/Data/components/BarcodeGenerator';
 import { LabelPrintModal } from './LabelPrintModal';
+import { Product } from '../../types/product';
+
+interface InventoryItemRowProps {
+    product: Product;
+    isSelected: boolean;
+    toggleProductSelection: (id: string) => void;
+    handleEdit: (product: Product) => void;
+    getBranchName: (branchId: string) => string;
+    isOwner: boolean;
+    currentSector: Sector;
+}
+
+const InventoryItemRow = React.memo<InventoryItemRowProps>(({
+    product,
+    isSelected,
+    toggleProductSelection,
+    handleEdit,
+    getBranchName,
+    isOwner,
+    currentSector
+}) => {
+    return (
+        <tr className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors group ${isSelected ? 'bg-primary/5 dark:bg-neutral-800' : ''}`}>
+            <td className="p-4">
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleProductSelection(product.id); }}
+                    className="text-neutral-400 hover:text-primary transition-colors"
+                >
+                    {isSelected ?
+                        <CheckSquare className="w-5 h-5 text-primary" /> :
+                        <Square className="w-5 h-5" />
+                    }
+                </button>
+            </td>
+            <td className="p-4">
+                {product.image ? (
+                    <img src={product.image} alt="Prod" className="w-8 h-8 rounded object-cover border border-neutral-200 dark:border-neutral-600" />
+                ) : (
+                    <div className="w-8 h-8 rounded bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center">
+                        <ImageIcon className="w-4 h-4 text-neutral-400" />
+                    </div>
+                )}
+            </td>
+            <td className="p-4 hidden md:table-cell font-mono text-neutral-500 dark:text-neutral-400">{product.sku}</td>
+            <td className="p-4 hidden lg:table-cell font-mono text-xs text-neutral-500 dark:text-neutral-400 break-all">{product.barcode || '-'}</td>
+            <td className="p-4 font-bold">{product.name}</td>
+            <td className="p-4 hidden xl:table-cell"><span className="px-2 py-1 bg-primary/5 dark:bg-primary/20 text-primary-dark dark:text-primary-light rounded text-xs font-bold border border-primary/20">{product.productType}</span></td>
+            <td className="p-4 hidden xl:table-cell"><span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded text-xs text-neutral-600 dark:text-neutral-400">{getBranchName(product.branchId)}</span></td>
+            <td className="p-4 hidden lg:table-cell"><span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 rounded text-xs">{product.category}</span></td>
+            {currentSector === Sector.PHARMACY && (
+                <td className="p-4 text-xs font-mono text-neutral-500">{product.expiryDate || '-'}</td>
+            )}
+            <td className="p-4">
+                <span className={`font-bold ${product.stock < 10 ? 'text-error' : 'text-success'}`}>
+                    {product.stock} {product.unit === 'Meter' ? 'm' : ''}
+                </span>
+            </td>
+            {isOwner && <td className="p-4 hidden md:table-cell text-neutral-500 dark:text-neutral-400">₹{product.cost.toFixed(2)}</td>}
+            <td className="p-4 font-medium text-primary">₹{product.price.toFixed(2)}</td>
+            <td className="p-4 text-right font-bold hidden lg:table-cell">₹{(product.price * product.stock).toFixed(2)}</td>
+            <td className="p-4">
+                <button
+                    onClick={() => handleEdit(product)}
+                    className="p-2 text-neutral-400 hover:text-primary rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                    title="Edit Product"
+                >
+                    <Pencil className="w-4 h-4" />
+                </button>
+            </td>
+        </tr>
+    );
+});
+
+InventoryItemRow.displayName = 'InventoryItemRow';
 
 type InventoryLogic = ReturnType<typeof useInventoryLogic>;
 
@@ -422,56 +496,17 @@ export const InventoryGenericTemplate: React.FC<InventoryLogic> = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700 text-neutral-700 dark:text-neutral-200">
-                            {/* ... Using displayedProducts which is now paginated ... */}
                             {displayedProducts.map(product => (
-                                <tr key={product.id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors group ${selectedProductIds.has(product.id) ? 'bg-primary/5 dark:bg-neutral-800' : ''}`}>
-                                    <td className="p-4">
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); toggleProductSelection(product.id); }}
-                                            className="text-neutral-400 hover:text-primary transition-colors"
-                                        >
-                                            {selectedProductIds.has(product.id) ?
-                                                <CheckSquare className="w-5 h-5 text-primary" /> :
-                                                <Square className="w-5 h-5" />
-                                            }
-                                        </button>
-                                    </td>
-                                    <td className="p-4">
-                                        {product.image ? (
-                                            <img src={product.image} alt="Prod" className="w-8 h-8 rounded object-cover border border-neutral-200 dark:border-neutral-600" />
-                                        ) : (
-                                            <div className="w-8 h-8 rounded bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center">
-                                                <ImageIcon className="w-4 h-4 text-neutral-400" />
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="p-4 hidden md:table-cell font-mono text-neutral-500 dark:text-neutral-400">{product.sku}</td>
-                                    <td className="p-4 hidden lg:table-cell font-mono text-xs text-neutral-500 dark:text-neutral-400 break-all">{product.barcode || '-'}</td>
-                                    <td className="p-4 font-bold">{product.name}</td>
-                                    <td className="p-4 hidden xl:table-cell"><span className="px-2 py-1 bg-primary/5 dark:bg-primary/20 text-primary-dark dark:text-primary-light rounded text-xs font-bold border border-primary/20">{product.productType}</span></td>
-                                    <td className="p-4 hidden xl:table-cell"><span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded text-xs text-neutral-600 dark:text-neutral-400">{getBranchName(product.branchId)}</span></td>
-                                    <td className="p-4 hidden lg:table-cell"><span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 rounded text-xs">{product.category}</span></td>
-                                    {currentSector === Sector.PHARMACY && (
-                                        <td className="p-4 text-xs font-mono text-neutral-500">{product.expiryDate || '-'}</td>
-                                    )}
-                                    <td className="p-4">
-                                        <span className={`font-bold ${product.stock < 10 ? 'text-error' : 'text-success'}`}>
-                                            {product.stock} {product.unit === 'Meter' ? 'm' : ''}
-                                        </span>
-                                    </td>
-                                    {isOwner && <td className="p-4 hidden md:table-cell text-neutral-500 dark:text-neutral-400">₹{product.cost.toFixed(2)}</td>}
-                                    <td className="p-4 font-medium text-primary">₹{product.price.toFixed(2)}</td>
-                                    <td className="p-4 text-right font-bold hidden lg:table-cell">₹{(product.price * product.stock).toFixed(2)}</td>
-                                    <td className="p-4">
-                                        <button
-                                            onClick={() => handleEdit(product)}
-                                            className="p-2 text-neutral-400 hover:text-primary rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-                                            title="Edit Product"
-                                        >
-                                            <Pencil className="w-4 h-4" />
-                                        </button>
-                                    </td>
-                                </tr>
+                                <InventoryItemRow
+                                    key={product.id}
+                                    product={product}
+                                    isSelected={selectedProductIds.has(product.id)}
+                                    toggleProductSelection={toggleProductSelection}
+                                    handleEdit={handleEdit}
+                                    getBranchName={getBranchName}
+                                    isOwner={isOwner}
+                                    currentSector={currentSector}
+                                />
                             ))}
                             {displayedProducts.length === 0 && (
                                 <tr>

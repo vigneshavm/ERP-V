@@ -1,8 +1,9 @@
 import { APP_CONFIG } from '../config';
 
-export const loadState = <T>(key: string, defaultState: T): T => {
+export const loadState = <T>(key: string, defaultState: T, tenantId?: string): T => {
     try {
-        const serialized = localStorage.getItem(key);
+        const partitionKey = tenantId ? `${tenantId}_${key}` : key;
+        const serialized = localStorage.getItem(partitionKey);
         if (serialized) {
             const loadedState = JSON.parse(serialized);
             return { ...defaultState, ...loadedState };
@@ -17,9 +18,10 @@ export const loadState = <T>(key: string, defaultState: T): T => {
     }
 };
 
-export const saveState = <T>(key: string, state: T): void => {
+export const saveState = <T>(key: string, state: T, tenantId?: string): void => {
     try {
-        localStorage.setItem(key, JSON.stringify(state));
+        const partitionKey = tenantId ? `${tenantId}_${key}` : key;
+        localStorage.setItem(partitionKey, JSON.stringify(state));
     } catch (e) {
         console.warn("Could not save state", e);
     }

@@ -27,6 +27,18 @@ export const PERMISSIONS: Record<SystemRole, AppView[]> = {
         'STOREFRONT',
         'SETTINGS'
     ],
+    Admin: [
+        'DASHBOARD',
+        'POS',
+        'SALES',
+        'DAILY',
+        'INVENTORY',
+        'PURCHASE',
+        'FINANCE',
+        'LABOR',
+        'STOREFRONT',
+        'SETTINGS'
+    ],
     Manager: [
         'DASHBOARD',
         'POS',

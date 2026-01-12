@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { supabase } from '../lib/supabase';
 import { setOrders } from '../store/purchaseSlice';
 import { PurchaseOrder } from '../types/purchase';
+import { getTable } from '../services/dataSource';
 
 export const usePurchaseSync = (tenantId: string | undefined) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!supabase || !tenantId) return;
+        if (!tenantId) return;
 
         const fetchPurchaseOrders = async () => {
-            const { data: poData, error: poError } = await supabase.from('purchase_orders').select('*').eq('tenant_id', tenantId);
-            if (!poError && poData) {
+            const poData = await getTable('purchase_orders', { filters: { tenant_id: tenantId } });
+
+            if (poData) {
                 const mappedPO = poData.map((po: any) => ({
                     id: po.id,
                     vendor: po.vendor,

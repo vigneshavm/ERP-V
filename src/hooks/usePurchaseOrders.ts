@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setActiveTab } from '../store';
 import { supabase } from '../lib/supabase';
 import { toast } from 'react-hot-toast';
+import { getTable, DATA_MODE } from '../services/dataSource';
 
 export type PurchaseOrderStatus = 'Draft' | 'Pending' | 'Approved' | 'Converted' | 'Cancelled';
 
@@ -48,23 +49,32 @@ export const usePurchaseOrders = () => {
         if (!user?.tenantId) return;
         setLoading(true);
         try {
-            // Join with vendors table for names
-            const { data, error } = await supabase
-                .from('purchase_orders')
-                .select(`
-                    *,
-                    vendors:supplier_id (name)
-                `)
-                .eq('tenant_id', user.tenantId)
-                .order('created_at', { ascending: false });
+            // Switches between DEMO/DB
+            const data = await getTable('purchase_orders', {
+                filters: { tenant_id: user.tenantId }
+            });
 
-            if (error) throw error;
+            if (DATA_MODE === 'DEMO') {
+                setOrders(data as PurchaseOrder[]);
+            } else {
+                // For DB mode, we might need the join
+                const { data: dbData, error } = await supabase!
+                    .from('purchase_orders')
+                    .select(`
+                        *,
+                        vendors:supplier_id (name)
+                    `)
+                    .eq('tenant_id', user.tenantId)
+                    .order('created_at', { ascending: false });
 
-            const formatted = data.map(po => ({
-                ...po,
-                vendor_name: po.vendors?.name
-            }));
-            setOrders(formatted);
+                if (error) throw error;
+
+                const formatted = dbData.map(po => ({
+                    ...po,
+                    vendor_name: po.vendors?.name
+                }));
+                setOrders(formatted);
+            }
         } catch (err: any) {
             console.error('Error fetching POs:', err);
         } finally {
@@ -73,8 +83,13 @@ export const usePurchaseOrders = () => {
     }, [user?.tenantId]);
 
     const fetchOrderDetails = async (poId: string) => {
+        if (DATA_MODE === 'DEMO') {
+            const data = await getTable('purchase_orders', { filters: { id: poId } });
+            return data[0] || null;
+        }
+
         try {
-            const { data: po, error: poError } = await supabase
+            const { data: po, error: poError } = await supabase!
                 .from('purchase_orders')
                 .select(`
                     *,
@@ -85,7 +100,7 @@ export const usePurchaseOrders = () => {
 
             if (poError) throw poError;
 
-            const { data: items, error: itemsError } = await supabase
+            const { data: items, error: itemsError } = await supabase!
                 .from('purchase_order_items')
                 .select(`
                     *,
@@ -108,6 +123,11 @@ export const usePurchaseOrders = () => {
     };
 
     const saveOrder = async (order: Partial<PurchaseOrder>, items: PurchaseOrderItem[]) => {
+        if (DATA_MODE === 'DEMO') {
+            toast.success("PO saved successfully (Demo Mode - Local Only)");
+            return { id: `DEMO-PO-${Date.now()}` };
+        }
+
         try {
             if (!user?.tenantId) throw new Error('No tenant');
 
@@ -116,11 +136,10 @@ export const usePurchaseOrders = () => {
                 ...order,
                 tenant_id: user.tenantId,
                 created_by: user.id,
-                // Recalculate totals just in case
                 total_amount: items.reduce((sum, i) => sum + Number(i.line_total), 0)
             };
 
-            const { data: savedPo, error: poError } = await supabase
+            const { data: savedPo, error: poError } = await supabase!
                 .from('purchase_orders')
                 .upsert(poData)
                 .select()
@@ -128,10 +147,9 @@ export const usePurchaseOrders = () => {
 
             if (poError) throw poError;
 
-            // 2. Handle Items (Delete all and re-insert for simplicity in this MVP)
-            // If editing, delete old items
+            // 2. Handle Items
             if (order.id) {
-                await supabase.from('purchase_order_items').delete().eq('po_id', order.id);
+                await supabase!.from('purchase_order_items').delete().eq('po_id', order.id);
             }
 
             const itemsToInsert = items.map(i => ({
@@ -145,7 +163,7 @@ export const usePurchaseOrders = () => {
             }));
 
             if (itemsToInsert.length > 0) {
-                const { error: itemsError } = await supabase.from('purchase_order_items').insert(itemsToInsert);
+                const { error: itemsError } = await supabase!.from('purchase_order_items').insert(itemsToInsert);
                 if (itemsError) throw itemsError;
             }
 
@@ -158,13 +176,17 @@ export const usePurchaseOrders = () => {
     };
 
     const updateStatus = async (id: string, status: PurchaseOrderStatus) => {
+        if (DATA_MODE === 'DEMO') {
+            toast.success(`Status updated to ${status} (Demo Mode)`);
+            return;
+        }
+
         try {
-            // Validation
             if (status === 'Approved' && role === 'Staff') {
                 throw new Error('Unauthorized: Staff cannot approve POs');
             }
 
-            const { error } = await supabase
+            const { error } = await supabase!
                 .from('purchase_orders')
                 .update({ status, updated_at: new Date().toISOString() })
                 .eq('id', id);
@@ -178,12 +200,17 @@ export const usePurchaseOrders = () => {
     };
 
     const deleteOrder = async (id: string) => {
+        if (DATA_MODE === 'DEMO') {
+            toast.success("Order deleted successfully (Demo Mode)");
+            return;
+        }
+
         try {
-            const { error } = await supabase
+            const { error } = await supabase!
                 .from('purchase_orders')
                 .delete()
                 .eq('id', id)
-                .eq('status', 'Draft'); // Only Drafts
+                .eq('status', 'Draft');
 
             if (error) throw error;
             fetchOrders();

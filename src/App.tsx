@@ -19,6 +19,7 @@ const TenantView = lazy(() => import('./views/TenantView'));
 
 // Standalone Pages
 const ResetPassword = lazy(() => import('./components/ResetPassword'));
+const TenantOnboarding = lazy(() => import('./components/onboarding/TenantOnboarding'));
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -42,19 +43,40 @@ const App: React.FC = () => {
     const [isResolving, setIsResolving] = useState(APP_CONFIG.REQUIRE_TENANT_ID);
     const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
 
-    // 4. Auto-resolve Tenant if configured
+    // 4. Auto-resolve Tenant and handle view mode transitions
     useEffect(() => {
         if (tenants.length > 0) {
-            if (APP_CONFIG.REQUIRE_TENANT_ID && APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
-                const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+            // Priority 1: Logged in user's tenant
+            if (user?.tenantId) {
+                const tenant = tenants.find(t => t.id === user.tenantId);
                 if (tenant) {
                     setCurrentTenant(tenant);
                     setViewMode('TENANT');
+                    setIsLoggedIn(true);
+                }
+            }
+            // Priority 2: Stored tenant preference (if not logged in)
+            else {
+                const storedTenantId = localStorage.getItem('erp_current_tenant');
+                if (storedTenantId) {
+                    const tenant = tenants.find(t => t.id === storedTenantId);
+                    if (tenant) {
+                        setCurrentTenant(tenant);
+                        setViewMode('TENANT');
+                    }
+                }
+                // Priority 3: Hardcoded requirement
+                else if (APP_CONFIG.REQUIRE_TENANT_ID && APP_CONFIG.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
+                    const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+                    if (tenant) {
+                        setCurrentTenant(tenant);
+                        setViewMode('TENANT');
+                    }
                 }
             }
             setIsResolving(false);
         }
-    }, [tenants, viewMode]);
+    }, [tenants, viewMode, user]);
 
     // 5. Restore Session
     useEffect(() => {
@@ -62,6 +84,7 @@ const App: React.FC = () => {
         if (sessionUser && !user) {
             try {
                 dispatch(setUser(sessionUser));
+                setIsLoggedIn(true);
             } catch (e) {
                 console.error("Failed to restore session", e);
                 clearSession();
@@ -76,6 +99,11 @@ const App: React.FC = () => {
     return (
         <Suspense fallback={<LoadingScreen />}>
             <Routes>
+                {/* Signup / Onboarding Flow */}
+                <Route path="/signup" element={<TenantOnboarding />} />
+                <Route path="/onboarding" element={<TenantOnboarding />} />
+                <Route path="/register" element={<TenantOnboarding />} />
+
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={
                     (() => {

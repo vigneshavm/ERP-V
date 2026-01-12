@@ -23,6 +23,173 @@ interface POSCartGridProps {
 
 import { useFuzzySearch } from '../../hooks/useFuzzySearch';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
+// import { POSVariantSelectionModal } from './POSVariantSelectionModal';
+
+interface CartItemRowProps {
+    item: CartItem;
+    idx: number;
+    onUpdateCartQty: (id: string, qty: number) => void;
+    onUpdateCartLength: (id: string, length: number) => void;
+    onRemoveFromCart: (id: string) => void;
+    skuInputRef: React.RefObject<HTMLInputElement | null>;
+    cartQtyRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement | null }>;
+}
+
+const CartItemRow = React.memo<CartItemRowProps>(({
+    item,
+    idx,
+    onUpdateCartQty,
+    onUpdateCartLength,
+    onRemoveFromCart,
+    skuInputRef,
+    cartQtyRefs
+}) => {
+    const qtyInputRef = React.useRef<HTMLInputElement>(null);
+
+    return (
+        <tr className="hover:bg-neutral-200/50 dark:hover:bg-neutral-700/30 transition-colors bg-white dark:bg-neutral-800">
+            <td className="py-1.5 px-2 text-center text-neutral-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
+            <td className="py-1.5 px-2">
+                <p className="font-bold text-neutral-800 dark:text-neutral-200 text-xs">{item.name}</p>
+                <p className="text-[10px] text-neutral-500 font-mono">
+                    {item.sku} {item.unit === 'Meter' && <span className="bg-neutral-100 dark:bg-neutral-700 px-1 rounded ml-1">Per Meter</span>}
+                </p>
+                {(item.size || item.color) && (
+                    <div className="flex gap-2 mt-0.5">
+                        {item.size && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Size: {item.size}</span>}
+                        {item.color && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Col: {item.color}</span>}
+                    </div>
+                )}
+            </td>
+            <td className="py-1.5 px-2 text-center font-mono text-neutral-600 hidden sm:table-cell text-xs">
+                ₹{item.price.toFixed(2)}
+            </td>
+
+            {/* Meter Column */}
+            <td className="py-1.5 px-2 text-center">
+                {item.unit === 'Meter' ? (
+                    <div className="flex items-center justify-center gap-1 bg-primary/5 dark:bg-primary/20 rounded-lg p-0.5 border border-primary/20 w-fit mx-auto">
+                        <input
+                            ref={(el) => { cartQtyRefs.current[item.id] = el; }}
+                            type="number"
+                            value={item.cutLength || 1}
+                            onChange={(e) => {
+                                const val = parseFloat(e.target.value);
+                                if (!isNaN(val) && val > 0) {
+                                    onUpdateCartLength(item.id, val);
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') skuInputRef.current?.focus();
+                            }}
+                            className="w-14 text-center bg-transparent border-none font-bold text-primary focus:ring-0 rounded h-6 text-xs spin-hide"
+                            placeholder="1.00"
+                            step="0.01"
+                        />
+                        <span className="text-[10px] font-bold text-primary/60 mr-1">m</span>
+                    </div>
+                ) : (
+                    <span className="text-neutral-300 text-xs">-</span>
+                )}
+            </td>
+
+            {/* Quantity Column */}
+            <td className="py-1.5 px-2 text-center">
+                <div className="flex items-center justify-center gap-1 bg-neutral-100 dark:bg-neutral-900/50 rounded-lg p-0.5 border border-neutral-200 w-fit mx-auto">
+                    <button
+                        onClick={() => onUpdateCartQty(item.id, item.qty - 1)}
+                        className="w-6 h-6 flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-600 text-xs"
+                        tabIndex={-1}
+                    >-</button>
+                    <input
+                        ref={(el) => { if (item.unit !== 'Meter') cartQtyRefs.current[item.id] = el; }}
+                        type="number"
+                        value={item.qty}
+                        onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            if (!isNaN(val) && val >= 0) {
+                                onUpdateCartQty(item.id, val);
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') skuInputRef.current?.focus();
+                        }}
+                        className="w-10 text-center bg-transparent border-none font-bold focus:ring-2 focus:ring-primary rounded h-6 text-xs spin-hide"
+                    />
+                    <button
+                        onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
+                        className="w-6 h-6 flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-600 text-xs"
+                        tabIndex={-1}
+                    >+</button>
+                </div>
+            </td>
+            <td className="py-1.5 px-2 text-right font-bold text-success font-mono text-xs">
+                ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
+            </td>
+            <td className="py-1.5 px-2 text-center">
+                <button
+                    onClick={() => onRemoveFromCart(item.id)}
+                    className="p-1.5 text-neutral-400 hover:text-error hover:bg-error/10 rounded-lg"
+                    tabIndex={-1}
+                >
+                    <Trash2 className="w-3.5 h-3.5" />
+                </button>
+            </td>
+        </tr>
+    );
+});
+
+CartItemRow.displayName = 'CartItemRow';
+
+const CartItemCard = React.memo<CartItemRowProps>(({
+    item,
+    onUpdateCartQty,
+    onRemoveFromCart
+}) => {
+    return (
+        <div className="bg-white dark:bg-neutral-800 p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-3">
+            <div className="flex justify-between items-start">
+                <div>
+                    <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">{item.name}</p>
+                    <p className="text-xs text-neutral-500 font-mono mt-0.5">{item.sku}</p>
+                    {(item.size || item.color) && (
+                        <div className="flex gap-2 mt-1">
+                            {item.size && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Sz: {item.size}</span>}
+                            {item.color && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Col: {item.color}</span>}
+                        </div>
+                    )}
+                </div>
+                <p className="font-bold font-mono text-success">₹{(item.price * item.qty).toFixed(2)}</p>
+            </div>
+
+            <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 p-2 rounded-lg">
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-0.5 shadow-sm">
+                        <button
+                            onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
+                            className="w-8 h-8 flex items-center justify-center text-neutral-500 active:bg-neutral-100 rounded-md"
+                        >-</button>
+                        <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
+                        <button
+                            onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
+                            className="w-8 h-8 flex items-center justify-center text-primary active:bg-primary/5 rounded-md"
+                        >+</button>
+                    </div>
+                    <p className="text-xs text-neutral-400">@ ₹{item.price}</p>
+                </div>
+
+                <button
+                    onClick={() => onRemoveFromCart(item.id)}
+                    className="p-2 text-error bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm"
+                >
+                    <Trash2 className="w-4 h-4" />
+                </button>
+            </div>
+        </div>
+    );
+});
+
+CartItemCard.displayName = 'CartItemCard';
 
 // ... (props interface unchanged)
 
@@ -410,95 +577,16 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                             </thead>
                             <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700/50">
                                 {cart.map((item, idx) => (
-                                    <tr key={item.id} className="hover:bg-neutral-200/50 dark:hover:bg-neutral-700/30 transition-colors bg-white dark:bg-neutral-800">
-                                        <td className="py-1.5 px-2 text-center text-neutral-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
-                                        <td className="py-1.5 px-2">
-                                            <p className="font-bold text-neutral-800 dark:text-neutral-200 text-xs">{item.name}</p>
-                                            <p className="text-[10px] text-neutral-500 font-mono">
-                                                {item.sku} {item.unit === 'Meter' && <span className="bg-neutral-100 dark:bg-neutral-700 px-1 rounded ml-1">Per Meter</span>}
-                                            </p>
-                                            {(item.size || item.color) && (
-                                                <div className="flex gap-2 mt-0.5">
-                                                    {item.size && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Size: {item.size}</span>}
-                                                    {item.color && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Col: {item.color}</span>}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-neutral-600 hidden sm:table-cell text-xs">
-                                            ₹{item.price.toFixed(2)}
-                                        </td>
-
-                                        {/* Meter Column */}
-                                        <td className="py-1.5 px-2 text-center">
-                                            {item.unit === 'Meter' ? (
-                                                <div className="flex items-center justify-center gap-1 bg-primary/5 dark:bg-primary/20 rounded-lg p-0.5 border border-primary/20 w-fit mx-auto">
-                                                    <input
-                                                        ref={(el) => { cartQtyRefs.current[item.id] = el; }}
-                                                        type="number"
-                                                        value={item.cutLength || 1}
-                                                        onChange={(e) => {
-                                                            const val = parseFloat(e.target.value);
-                                                            if (!isNaN(val) && val > 0) {
-                                                                onUpdateCartLength(item.id, val);
-                                                            }
-                                                        }}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') skuInputRef.current?.focus();
-                                                        }}
-                                                        className="w-14 text-center bg-transparent border-none font-bold text-primary focus:ring-0 rounded h-6 text-xs spin-hide"
-                                                        placeholder="1.00"
-                                                        step="0.01"
-                                                    />
-                                                    <span className="text-[10px] font-bold text-primary/60 mr-1">m</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-neutral-300 text-xs">-</span>
-                                            )}
-                                        </td>
-
-                                        {/* Quantity Column */}
-                                        <td className="py-1.5 px-2 text-center">
-                                            <div className="flex items-center justify-center gap-1 bg-neutral-100 dark:bg-neutral-900/50 rounded-lg p-0.5 border border-neutral-200 w-fit mx-auto">
-                                                <button
-                                                    onClick={() => onUpdateCartQty(item.id, item.qty - 1)}
-                                                    className="w-6 h-6 flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-600 text-xs"
-                                                    tabIndex={-1}
-                                                >-</button>
-                                                <input
-                                                    ref={(el) => { if (item.unit !== 'Meter') cartQtyRefs.current[item.id] = el; }}
-                                                    type="number"
-                                                    value={item.qty}
-                                                    onChange={(e) => {
-                                                        const val = parseFloat(e.target.value);
-                                                        if (!isNaN(val) && val >= 0) {
-                                                            onUpdateCartQty(item.id, val);
-                                                        }
-                                                    }}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') skuInputRef.current?.focus();
-                                                    }}
-                                                    className="w-10 text-center bg-transparent border-none font-bold focus:ring-2 focus:ring-primary rounded h-6 text-xs spin-hide"
-                                                />
-                                                <button
-                                                    onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
-                                                    className="w-6 h-6 flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-600 text-xs"
-                                                    tabIndex={-1}
-                                                >+</button>
-                                            </div>
-                                        </td>
-                                        <td className="py-1.5 px-2 text-right font-bold text-success font-mono text-xs">
-                                            ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
-                                        </td>
-                                        <td className="py-1.5 px-2 text-center">
-                                            <button
-                                                onClick={() => onRemoveFromCart(item.id)}
-                                                className="p-1.5 text-neutral-400 hover:text-error hover:bg-error/10 rounded-lg"
-                                                tabIndex={-1}
-                                            >
-                                                <Trash2 className="w-3.5 h-3.5" />
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <CartItemRow
+                                        key={item.id}
+                                        item={item}
+                                        idx={idx}
+                                        onUpdateCartQty={onUpdateCartQty}
+                                        onUpdateCartLength={onUpdateCartLength}
+                                        onRemoveFromCart={onRemoveFromCart}
+                                        skuInputRef={skuInputRef}
+                                        cartQtyRefs={cartQtyRefs}
+                                    />
                                 ))}
                             </tbody>
                         </table>
@@ -506,45 +594,16 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         {/* Mobile Card View */}
                         <div className="md:hidden flex flex-col gap-2 p-2 pb-20">
                             {cart.map((item) => (
-                                <div key={item.id} className="bg-white dark:bg-neutral-800 p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-3">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">{item.name}</p>
-                                            <p className="text-xs text-neutral-500 font-mono mt-0.5">{item.sku}</p>
-                                            {(item.size || item.color) && (
-                                                <div className="flex gap-2 mt-1">
-                                                    {item.size && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Sz: {item.size}</span>}
-                                                    {item.color && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Col: {item.color}</span>}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <p className="font-bold font-mono text-success">₹{(item.price * item.qty).toFixed(2)}</p>
-                                    </div>
-
-                                    <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 p-2 rounded-lg">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center gap-1 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-0.5 shadow-sm">
-                                                <button
-                                                    onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
-                                                    className="w-8 h-8 flex items-center justify-center text-neutral-500 active:bg-neutral-100 rounded-md"
-                                                >-</button>
-                                                <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
-                                                <button
-                                                    onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
-                                                    className="w-8 h-8 flex items-center justify-center text-primary active:bg-primary/5 rounded-md"
-                                                >+</button>
-                                            </div>
-                                            <p className="text-xs text-neutral-400">@ ₹{item.price}</p>
-                                        </div>
-
-                                        <button
-                                            onClick={() => onRemoveFromCart(item.id)}
-                                            className="p-2 text-error bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
+                                <CartItemCard
+                                    key={item.id}
+                                    item={item}
+                                    idx={-1}
+                                    onUpdateCartQty={onUpdateCartQty}
+                                    onUpdateCartLength={onUpdateCartLength}
+                                    onRemoveFromCart={onRemoveFromCart}
+                                    skuInputRef={skuInputRef}
+                                    cartQtyRefs={cartQtyRefs}
+                                />
                             ))}
                         </div>
                     </>

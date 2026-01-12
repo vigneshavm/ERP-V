@@ -6,6 +6,7 @@ import {
     CheckCircle, Clock, XCircle, ArrowRight, Save, RefreshCw
 } from 'lucide-react';
 import { RootState } from '../../store';
+import { useFilteredProducts, useFilteredCustomers, searchProducts, searchCustomers, FilteredProduct } from '../../utils/tenantFilters';
 
 // Types
 interface Customer {
@@ -43,21 +44,6 @@ interface Estimate {
     convertedToInvoice?: string;
 }
 
-// Demo products for search
-const demoProducts = [
-    { id: 'P001', name: 'Samsung Galaxy A54', sku: 'SAM-A54-128', price: 32999, taxRate: 18 },
-    { id: 'P002', name: 'iPhone 15 Pro Max', sku: 'APP-15PM-256', price: 159900, taxRate: 18 },
-    { id: 'P003', name: 'OnePlus 12', sku: 'OP-12-256', price: 64999, taxRate: 18 },
-    { id: 'P004', name: 'Sony WH-1000XM5', sku: 'SNY-WH5', price: 29990, taxRate: 18 },
-    { id: 'P005', name: 'MacBook Air M3', sku: 'APP-MBA-M3', price: 114900, taxRate: 18 },
-];
-
-const demoCustomers: Customer[] = [
-    { id: 'C001', name: 'Rajesh Kumar', phone: '9876543210', email: 'rajesh@example.com', gstin: '33AABCU9603R1ZM' },
-    { id: 'C002', name: 'Priya Sharma', phone: '9876543211', email: 'priya@example.com' },
-    { id: 'C003', name: 'Tech Solutions Pvt Ltd', phone: '9876543212', gstin: '27AADCT1234F1ZP', address: 'Mumbai, MH' },
-];
-
 const statusConfig = {
     DRAFT: { label: 'Draft', color: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400' },
     SENT: { label: 'Sent', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
@@ -68,6 +54,20 @@ const statusConfig = {
 };
 
 const EstimateCreator: React.FC = () => {
+    // Use reusable tenant filter hooks
+    const availableProducts = useFilteredProducts({ includeOutOfStock: true });
+    const tenantCustomers = useFilteredCustomers();
+
+    // Map customers to local format
+    const availableCustomers: Customer[] = useMemo(() => {
+        return tenantCustomers.map(c => ({
+            id: c.id,
+            name: c.name,
+            phone: c.phone,
+            email: c.email
+        }));
+    }, [tenantCustomers]);
+
     // Generate estimate number
     const generateEstimateNo = () => `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`;
 
@@ -97,25 +97,25 @@ const EstimateCreator: React.FC = () => {
 
     // Filtered customers
     const filteredCustomers = useMemo(() => {
-        if (!customerSearch) return demoCustomers;
+        if (!customerSearch) return availableCustomers;
         const q = customerSearch.toLowerCase();
-        return demoCustomers.filter(c =>
+        return availableCustomers.filter(c =>
             c.name.toLowerCase().includes(q) || c.phone.includes(q)
         );
-    }, [customerSearch]);
+    }, [customerSearch, availableCustomers]);
 
     // Filtered products
     const filteredProducts = useMemo(() => {
-        if (!productSearch) return demoProducts;
+        if (!productSearch) return availableProducts;
         const q = productSearch.toLowerCase();
-        return demoProducts.filter(p =>
+        return availableProducts.filter(p =>
             p.name.toLowerCase().includes(q) ||
             p.sku.toLowerCase().includes(q)
         );
-    }, [productSearch]);
+    }, [productSearch, availableProducts]);
 
     // Add product to cart
-    const addToCart = (product: typeof demoProducts[0]) => {
+    const addToCart = (product: { id: string; name: string; sku: string; price: number; taxRate: number }) => {
         const existing = cartItems.find(i => i.id === product.id);
         if (existing) {
             setCartItems(items => items.map(i =>

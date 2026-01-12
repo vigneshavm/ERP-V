@@ -1,4 +1,4 @@
-import { AppDispatch, RootState } from '../index';
+import { AppDispatch, RootState } from '../types';
 import { db } from '../../services/db';
 import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '../financeSlice';
 import { supabase } from '../../lib/supabase';

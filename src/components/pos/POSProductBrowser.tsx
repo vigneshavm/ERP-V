@@ -4,6 +4,53 @@ import { Sector } from '../../types/common';
 import { Search, Package, Check } from 'lucide-react';
 import { useFuzzySearch } from '../../hooks/useFuzzySearch';
 
+interface ProductCardProps {
+    product: Product;
+    onAddToCart: (product: Product) => void;
+}
+
+const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
+    return (
+        <button
+            onClick={() => onAddToCart(product)}
+            disabled={product.stock <= 0}
+            className={`text-left group relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl border transition-all duration-200 ${product.stock <= 0
+                ? 'opacity-50 border-neutral-200 dark:border-neutral-700 cursor-not-allowed'
+                : 'border-neutral-200 dark:border-neutral-700 hover:border-primary dark:hover:border-primary hover:shadow-md'
+                }`}
+        >
+            <div className="h-28 w-full bg-neutral-100 dark:bg-neutral-700/50 rounded-t-xl overflow-hidden relative">
+                {product.image ? (
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
+                        <Package className="w-8 h-8" />
+                    </div>
+                )}
+                <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold ${product.stock > 10 ? 'bg-success/10 text-success' :
+                    product.stock > 0 ? 'bg-warning/10 text-warning' : 'bg-error/10 text-error'
+                    }`}>
+                    {product.stock} {product.unit === 'Meter' ? 'm' : ''}
+                </div>
+            </div>
+
+            <div className="p-3 flex flex-col flex-1">
+                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-2 mb-1">{product.name}</h3>
+                <div className="mt-auto flex justify-between items-end">
+                    <span className="text-xs text-neutral-500 font-mono">{product.sku}</span>
+                    <span className="font-bold text-primary">₹{product.price}</span>
+                </div>
+            </div>
+
+            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                {product.stock > 0 && <div className="bg-primary text-white p-2 rounded-full shadow-lg"><Check className="w-5 h-5" /></div>}
+            </div>
+        </button>
+    );
+});
+
+ProductCard.displayName = 'ProductCard';
+
 interface POSProductBrowserProps {
     products: Product[];
     currentBranch: string;
@@ -164,43 +211,11 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
             <div className="flex-1 overflow-y-auto p-4">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                     {paginatedProducts.map(product => (
-                        <button
+                        <ProductCard
                             key={product.id}
-                            onClick={() => handleAddToCart(product)}
-                            disabled={product.stock <= 0}
-                            className={`text-left group relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl border transition-all duration-200 ${product.stock <= 0
-                                ? 'opacity-50 border-neutral-200 dark:border-neutral-700 cursor-not-allowed'
-                                : 'border-neutral-200 dark:border-neutral-700 hover:border-primary dark:hover:border-primary hover:shadow-md'
-                                }`}
-                        >
-                            {/* ... existing card content ... */}
-                            <div className="h-28 w-full bg-neutral-100 dark:bg-neutral-700/50 rounded-t-xl overflow-hidden relative">
-                                {product.image ? (
-                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
-                                        <Package className="w-8 h-8" />
-                                    </div>
-                                )}
-                                <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold ${product.stock > 10 ? 'bg-success/10 text-success' :
-                                    product.stock > 0 ? 'bg-warning/10 text-warning' : 'bg-error/10 text-error'
-                                    }`}>
-                                    {product.stock} {product.unit === 'Meter' ? 'm' : ''}
-                                </div>
-                            </div>
-
-                            <div className="p-3 flex flex-col flex-1">
-                                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-2 mb-1">{product.name}</h3>
-                                <div className="mt-auto flex justify-between items-end">
-                                    <span className="text-xs text-neutral-500 font-mono">{product.sku}</span>
-                                    <span className="font-bold text-primary">₹{product.price}</span>
-                                </div>
-                            </div>
-
-                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                                {product.stock > 0 && <div className="bg-primary text-white p-2 rounded-full shadow-lg"><Check className="w-5 h-5" /></div>}
-                            </div>
-                        </button>
+                            product={product}
+                            onAddToCart={handleAddToCart}
+                        />
                     ))}
 
                     {filteredProducts.length > pageSize && (

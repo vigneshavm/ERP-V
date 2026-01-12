@@ -1,32 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import inventoryReducer from './inventorySlice';
-import posReducer from './posSlice';
-import financeReducer from './financeSlice';
-import laborReducer from './laborSlice';
-import purchaseReducer from './purchaseSlice';
-import tenantReducer from './tenantSlice';
-import authReducer from './authSlice';
-import settingsReducer from './settingsSlice';
-import vendorReducer from './vendorSlice';
-import uiReducer from './uiSlice';
+import rootReducer from './rootReducer';
+import { persistenceMiddleware } from './middleware/persistenceMiddleware';
 
 export const store = configureStore({
-    reducer: {
-        inventory: inventoryReducer,
-        pos: posReducer,
-        finance: financeReducer,
-        labor: laborReducer,
-        purchase: purchaseReducer,
-        tenant: tenantReducer,
-        auth: authReducer,
-        settings: settingsReducer,
-        vendor: vendorReducer,
-        ui: uiReducer,
-    },
+    reducer: rootReducer,
+    middleware: (getDefault) => getDefault().concat(persistenceMiddleware),
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export * from './types';
 
 // Re-export actions for easier imports in components
 export * from './inventorySlice';

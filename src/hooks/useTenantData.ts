@@ -6,16 +6,20 @@ import { setTenants, setBranches, setEmployees, setUser } from '../store';
 import { TenantUser } from '../types/tenant';
 import { useTenantDataMappers } from './useTenantDataMappers';
 import { fetchTenantsRaw, fetchBranchesRaw, fetchEmployeesRaw } from './tenantQueries';
+import { DATA_MODE } from '../services/dataSource';
 
 export const useTenantData = (user: any) => {
     const dispatch = useDispatch();
     const { mapTenant, mapBranch, mapEmployee } = useTenantDataMappers();
 
+    const isDemo = DATA_MODE === 'DEMO';
+    const isSupabase = APP_CONFIG.USE_SUPABASE || isDemo; // Allow demo mode to act like supabase for data resolution
+
     // 1. Fetch Tenants
     const { data: rawTenants } = useQuery({
-        queryKey: ['tenants'],
+        queryKey: ['tenants', user?.id],
         queryFn: fetchTenantsRaw,
-        enabled: APP_CONFIG.USE_SUPABASE
+        enabled: isSupabase
     });
 
     const allTenants = rawTenants?.map(mapTenant) || [];
@@ -30,16 +34,16 @@ export const useTenantData = (user: any) => {
 
     // 2. Fetch Branches
     const { data: rawBranches } = useQuery({
-        queryKey: ['branches', isolatedTenantId],
+        queryKey: ['branches', isolatedTenantId, user?.id],
         queryFn: () => fetchBranchesRaw(isolatedTenantId),
-        enabled: APP_CONFIG.USE_SUPABASE && !!rawTenants
+        enabled: isSupabase && !!rawTenants
     });
 
     // 3. Fetch Employees
     const { data: rawEmployees } = useQuery({
-        queryKey: ['employees', isolatedTenantId],
+        queryKey: ['employees', isolatedTenantId, user?.id],
         queryFn: () => fetchEmployeesRaw(isolatedTenantId),
-        enabled: APP_CONFIG.USE_SUPABASE && !!rawTenants
+        enabled: isSupabase && !!rawTenants
     });
 
     // 4. Sync to Redux (Bridge)
@@ -77,7 +81,8 @@ export const useTenantData = (user: any) => {
         const mappedEmployees = rawEmployees.map(mapEmployee);
         dispatch(setEmployees(mappedEmployees));
 
-        if (user && user.id) {
+        // CRITICAL: Skip session overwrite in DEMO mode to prevent role downgrades
+        if (user && user.id && !isDemo) {
             const currentUserInList = mappedEmployees.find(me => me.id === user.id);
             if (currentUserInList && currentUserInList.branchId !== user.branchId) {
                 const updatedUser: TenantUser = {
@@ -94,5 +99,5 @@ export const useTenantData = (user: any) => {
                 dispatch(setUser(updatedUser));
             }
         }
-    }, [rawEmployees, user?.id, dispatch]);
+    }, [rawEmployees, user?.id, dispatch, isDemo, mapEmployee]);
 };

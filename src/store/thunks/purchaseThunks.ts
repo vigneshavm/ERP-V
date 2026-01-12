@@ -1,4 +1,4 @@
-import { AppDispatch, RootState } from '../index';
+import { AppDispatch, RootState } from '../types';
 import { PurchaseOrder } from '../../types/purchase';
 import { approveOrder } from '../purchaseSlice';
 import { addStockBulk } from '../inventorySlice';

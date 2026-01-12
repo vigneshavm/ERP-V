@@ -5,12 +5,14 @@ interface UIState {
     activeTab: AppView;
     sidebarOpen: boolean;
     desktopCollapsed: boolean;
+    isSyncing: boolean;
 }
 
 const initialState: UIState = {
     activeTab: 'DASHBOARD',
     sidebarOpen: false,
     desktopCollapsed: false,
+    isSyncing: false,
 };
 
 const uiSlice = createSlice({
@@ -29,8 +31,11 @@ const uiSlice = createSlice({
         setDesktopCollapsed: (state, action: PayloadAction<boolean>) => {
             state.desktopCollapsed = action.payload;
         },
+        setSyncing: (state, action: PayloadAction<boolean>) => {
+            state.isSyncing = action.payload;
+        },
     },
 });
 
-export const { setActiveTab, toggleSidebar, setSidebarOpen, setDesktopCollapsed } = uiSlice.actions;
+export const { setActiveTab, toggleSidebar, setSidebarOpen, setDesktopCollapsed, setSyncing } = uiSlice.actions;
 export default uiSlice.reducer;

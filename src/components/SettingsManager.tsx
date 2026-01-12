@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, updateSettings, resetSettings, updateTenantDetails, updateBranchSettings, setUserPreferences } from '../store';
-import { Save, RotateCcw, Settings as SettingsIcon, Store, Palette, LayoutGrid, Calculator, Sliders, Shield, User, CheckCircle, RotateCw } from 'lucide-react';
+import { Save, RotateCcw, Settings as SettingsIcon, Store, Palette, LayoutGrid, Calculator, Sliders, Shield, User, CheckCircle, RotateCw, Building, Zap } from 'lucide-react';
 import { AppView, TaxMode } from '../types/common';
 import { setStoredTheme, Theme } from '../utils/theme';
 import { Tenant, Role } from '../types/tenant';
@@ -14,6 +14,9 @@ import FinanceTab from './settings/FinanceTab';
 import MISControlsTab from './settings/MISControlsTab';
 import SecurityTab from './settings/SecurityTab';
 import PersonalizationTab from './settings/PersonalizationTab';
+import IntegrationsTab from './settings/IntegrationsTab';
+import BranchSettingsTab from './settings/BranchSettingsTab';
+import { useSearchParams } from 'react-router-dom';
 
 // --- Types ---
 interface SettingsData {
@@ -45,8 +48,13 @@ interface SettingsData {
     userLogo?: string;
 }
 
+type SettingsTab = 'GENERAL' | 'BRANDING' | 'MODULES' | 'FINANCE' | 'MIS' | 'SECURITY' | 'PERSONAL' | 'INTEGRATIONS' | 'BRANCHES';
+
 const SettingsManager: React.FC = () => {
     const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab') as SettingsTab | null;
+
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { user, role } = useSelector((state: RootState) => state.auth);
     const settings = useSelector((state: RootState) => state.settings);
@@ -54,8 +62,20 @@ const SettingsManager: React.FC = () => {
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);
     const [isSaved, setIsSaved] = useState(false);
-    const [activeTab, setActiveTab] = useState<string>(role === 'Owner' ? 'GENERAL' : 'PERSONAL');
+    const [activeTab, setActiveTab] = useState<SettingsTab>(tabParam || (role === 'Owner' ? 'GENERAL' : 'PERSONAL'));
 
+    useEffect(() => {
+        if (tabParam && tabParam !== activeTab) {
+            setActiveTab(tabParam);
+        }
+    }, [tabParam]);
+
+    const handleTabChange = (tab: SettingsTab) => {
+        setActiveTab(tab);
+        setSearchParams({ tab });
+    };
+
+    // ... (rest of local states same)
     // Local States
     const [appName, setAppName] = useState(activeTenant?.name || settings.appName);
     const [logoUrl, setLogoUrl] = useState(activeTenant?.loginLogoUrl || settings.logoUrl || '');
@@ -139,9 +159,9 @@ const SettingsManager: React.FC = () => {
         }
     };
 
-    const TabButton = ({ id, label, icon: Icon }: { id: string, label: string, icon: any }) => (
+    const TabButton = ({ id, label, icon: Icon }: { id: SettingsTab, label: string, icon: any }) => (
         <button
-            onClick={() => setActiveTab(id)}
+            onClick={() => handleTabChange(id)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-bold rounded-xl transition-all w-full md:w-auto ${activeTab === id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' : 'bg-white dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
         >
             <Icon className="w-4 h-4" />
@@ -174,11 +194,13 @@ const SettingsManager: React.FC = () => {
                 {role === 'Owner' && (
                     <>
                         <TabButton id="GENERAL" label="General Info" icon={Store} />
+                        <TabButton id="BRANCHES" label="Branches" icon={Building} />
                         <TabButton id="BRANDING" label="Branding & Theme" icon={Palette} />
                         <TabButton id="MODULES" label="Modules" icon={LayoutGrid} />
                         <TabButton id="FINANCE" label="Finance & Tax" icon={Calculator} />
                         <TabButton id="MIS" label="MIS Controls" icon={Sliders} />
                         <TabButton id="SECURITY" label="Security & Roles" icon={Shield} />
+                        <TabButton id="INTEGRATIONS" label="Integrations" icon={Zap} />
                     </>
                 )}
                 <TabButton id="PERSONAL" label="Personalization" icon={User} />
@@ -195,6 +217,9 @@ const SettingsManager: React.FC = () => {
                         phone={phone} setPhone={setPhone} email={email} setEmail={setEmail}
                         website={website} setWebsite={setWebsite}
                     />
+                )}
+                {activeTab === 'BRANCHES' && (
+                    <BranchSettingsTab />
                 )}
                 {activeTab === 'BRANDING' && (
                     <BrandingTab
@@ -239,6 +264,9 @@ const SettingsManager: React.FC = () => {
                             setPermissions({ ...permissions, [roleCode]: updated });
                         }}
                     />
+                )}
+                {activeTab === 'INTEGRATIONS' && (
+                    <IntegrationsTab />
                 )}
                 {activeTab === 'PERSONAL' && (
                     <PersonalizationTab

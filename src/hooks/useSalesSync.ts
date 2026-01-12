@@ -4,27 +4,32 @@ import { supabase } from '../lib/supabase';
 import { setCustomersList, setSalesHistory } from '../store/posSlice';
 import { Sale, Customer } from '../types/sales';
 import { SyncManager } from '../services/SyncManager';
+import { getTable, DATA_MODE } from '../services/dataSource';
 
 export const useSalesSync = (tenantId: string | undefined) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!supabase || !tenantId) return;
+        if (!tenantId) return;
 
         const fetchSalesData = async () => {
-            // Customers
-            const { data: custData, error: custError } = await supabase.from('customers').select('*').eq('tenant_id', tenantId);
-            if (custError && !navigator.onLine) {
-                const offlineCustomers = await SyncManager.getOfflineCustomers();
-                dispatch(setCustomersList(offlineCustomers));
-            } else if (!custError && custData) {
+            // Customers - Switches between DEMO/DB
+            const custData = await getTable('customers', { filters: { tenant_id: tenantId } });
+
+            if (custData) {
                 dispatch(setCustomersList(custData as Customer[]));
-                SyncManager.cacheCustomers(custData as Customer[]);
+                if (DATA_MODE === 'DB') {
+                    SyncManager.cacheCustomers(custData as Customer[]);
+                }
+            } else if (DATA_MODE === 'DB' && !navigator.onLine) {
+                const offlineCustomers = await SyncManager.getOfflineCustomers(tenantId);
+                dispatch(setCustomersList(offlineCustomers));
             }
 
-            // Sales
-            const { data: salesData, error: salesError } = await supabase.from('sales').select('*').eq('tenant_id', tenantId).limit(100);
-            if (!salesError && salesData) {
+            // Sales - Switches between DEMO/DB
+            const salesData = await getTable('sales', { filters: { tenant_id: tenantId } });
+
+            if (salesData) {
                 const mappedSales = salesData.map((s: any) => ({
                     id: s.id,
                     date: s.date,
@@ -41,7 +46,7 @@ export const useSalesSync = (tenantId: string | undefined) => {
                 dispatch(setSalesHistory(mappedSales));
             }
 
-            if (navigator.onLine) {
+            if (DATA_MODE === 'DB' && navigator.onLine) {
                 SyncManager.syncOfflineSales().catch(err => console.error('Background sync failed:', err));
             }
         };

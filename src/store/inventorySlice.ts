@@ -3,12 +3,14 @@ import { Product, InventoryState } from '../types/product';
 import { Sector, BranchId } from '../types/common';
 import { APP_CONFIG } from '../config';
 
-import { loadState, saveState } from './storage';
+import { loadState } from './storage';
 
 // Initial state logic: Use Mock if Demo and LS is empty
 const initialInventoryState: InventoryState = {
   products: [],
-  categories: []
+  categories: [],
+  isHydrating: true,
+  lastSync: undefined
 };
 
 const inventorySlice = createSlice({
@@ -17,24 +19,20 @@ const inventorySlice = createSlice({
   reducers: {
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products.push(action.payload);
-      saveState('inventory', state);
     },
     editProduct: (state, action: PayloadAction<Product>) => {
       const index = state.products.findIndex(p => p.id === action.payload.id);
       if (index !== -1) {
         state.products[index] = action.payload;
-        saveState('inventory', state);
       }
     },
     updateStock: (state, action: PayloadAction<{ id: string; qty: number }>) => {
       const p = state.products.find(p => p.id === action.payload.id);
       if (p) p.stock = action.payload.qty;
-      saveState('inventory', state);
     },
     deductStock: (state, action: PayloadAction<{ id: string; qty: number }>) => {
       const p = state.products.find(p => p.id === action.payload.id);
       if (p) p.stock = Math.max(0, p.stock - action.payload.qty);
-      saveState('inventory', state);
     },
     addStockBulk: (state, action: PayloadAction<{ sku: string; qty: number; cost: number; price?: number; name: string; sector: Sector; branch: BranchId; category?: string; productType?: string; barcode?: string }[]>) => {
       action.payload.forEach(item => {
@@ -59,10 +57,11 @@ const inventorySlice = createSlice({
           });
         }
       });
-      saveState('inventory', state);
     },
     setProducts: (state, action: PayloadAction<Product[]>) => {
       state.products = action.payload;
+      state.isHydrating = false;
+      state.lastSync = Date.now();
     },
     upsertProduct: (state, action: PayloadAction<Product>) => {
       const index = state.products.findIndex(p => p.id === action.payload.id);
@@ -71,13 +70,25 @@ const inventorySlice = createSlice({
       } else {
         state.products.push(action.payload);
       }
-      saveState('inventory', state);
     },
     setCategories: (state, action: PayloadAction<string[]>) => {
       state.categories = action.payload;
+    },
+    setHydrating: (state, action: PayloadAction<boolean>) => {
+      state.isHydrating = action.payload;
+    },
+    clearInventory: (state) => {
+      state.products = [];
+      state.categories = [];
+      state.isHydrating = true;
+      state.lastSync = undefined;
     }
   },
 });
 
-export const { addProduct, editProduct, updateStock, deductStock, addStockBulk, setProducts, upsertProduct, setCategories } = inventorySlice.actions;
+export const {
+  addProduct, editProduct, updateStock, deductStock,
+  addStockBulk, setProducts, upsertProduct, setCategories,
+  setHydrating, clearInventory
+} = inventorySlice.actions;
 export default inventorySlice.reducer;

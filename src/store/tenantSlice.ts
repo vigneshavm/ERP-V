@@ -46,6 +46,7 @@ const tenantSlice = createSlice({
             if (!exists) {
               state.branches.push({
                 id: fallbackId,
+                tenantId: action.payload.id,
                 name: loc.city,
                 city: loc.city,
                 address: 'Main Office',
@@ -54,9 +55,16 @@ const tenantSlice = createSlice({
             }
           } else {
             for (const b of branches) {
-              const exists = state.branches.find(sb => sb.id === b.id || sb.name === b.name);
+              const exists = state.branches.find(sb => sb.id === b.id || (sb.name === b.name && sb.tenantId === action.payload.id));
               if (!exists) {
-                state.branches.push({ id: b.id || b.name, name: b.name || b.id, city: b.city || loc.city || '', address: b.address || '', updatedAt: b.updatedAt });
+                state.branches.push({
+                  id: b.id || b.name,
+                  tenantId: action.payload.id,
+                  name: b.name || b.id,
+                  city: b.city || loc.city || '',
+                  address: b.address || '',
+                  updatedAt: b.updatedAt
+                });
               }
             }
           }
@@ -129,6 +137,7 @@ const tenantSlice = createSlice({
             if (!exists) {
               collected.push({
                 id: fallbackId,
+                tenantId: t.id,
                 name: loc.city,
                 city: loc.city,
                 address: 'Main Office',
@@ -137,9 +146,16 @@ const tenantSlice = createSlice({
             }
           } else {
             for (const b of branches) {
-              const exists = state.branches.find(sb => sb.id === b.id || sb.name === b.name) || collected.find(cb => cb.id === b.id || cb.name === b.name);
+              const exists = state.branches.find(sb => sb.id === b.id || (sb.name === b.name && sb.tenantId === t.id)) || collected.find(cb => cb.id === b.id || (cb.name === b.name && cb.tenantId === t.id));
               if (!exists) {
-                state.branches.push({ id: b.id || b.name, name: b.name || b.id, city: b.city || loc.city || '', address: b.address || '', updatedAt: b.updatedAt });
+                collected.push({
+                  id: b.id || b.name,
+                  tenantId: t.id,
+                  name: b.name || b.id,
+                  city: b.city || loc.city || '',
+                  address: b.address || '',
+                  updatedAt: b.updatedAt
+                });
               }
             }
           }
@@ -219,6 +235,12 @@ const tenantSlice = createSlice({
         tenant.googleBusinessConfig = action.payload.config;
       }
     },
+    setEcommerceEnabled: (state, action: PayloadAction<{ tenantId: string, config: TenantEcommerceConfig }>) => {
+      const tenant = state.tenants.find(t => t.id === action.payload.tenantId);
+      if (tenant) {
+        tenant.ecommerceConfig = action.payload.config;
+      }
+    },
   }
 });
 
@@ -234,7 +256,8 @@ export const {
   incrementCounterBillNumber,
   setRoles,
   updateTenantEcommerce,
-  updateGoogleBusinessProfile
+  updateGoogleBusinessProfile,
+  setEcommerceEnabled
 } = tenantSlice.actions;
 
 export const tenantReducer = tenantSlice.reducer;

@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import {
     Truck, Search, Plus, Trash2, Save, Printer,
     Calendar, User, Package, AlertCircle, FileText, CheckCircle,
     MapPin, Box
 } from 'lucide-react';
+import { RootState } from '../../store';
 
 // Types
 interface SalesOrder {
@@ -34,33 +36,56 @@ interface ChallanItem {
     stock: number;
 }
 
-// Demo Data
-const demoSalesOrders: SalesOrder[] = [
-    {
-        id: 'SO001', orderNo: 'SO-2026-00045', date: '2026-01-10',
-        customer: { id: 'C001', name: 'Rajesh Kumar', phone: '9876543210' },
-        items: [
-            { id: 'I1', productId: 'P001', name: 'Samsung Galaxy A54', sku: 'SAM-A54', orderedQty: 5, deliveredQty: 2, unit: 'pcs' },
-            { id: 'I2', productId: 'P002', name: 'iPhone 15 Pro Max', sku: 'APP-15PM', orderedQty: 2, deliveredQty: 0, unit: 'pcs' }
-        ]
-    },
-    {
-        id: 'SO002', orderNo: 'SO-2026-00048', date: '2026-01-11',
-        customer: { id: 'C003', name: 'Tech Solutions', phone: '9876543212' },
-        items: [
-            { id: 'I3', productId: 'P003', name: 'Dell Monitor 24"', sku: 'DEL-MON-24', orderedQty: 10, deliveredQty: 0, unit: 'pcs' }
-        ]
-    }
-];
-
-const demoInventory = [
-    { id: 'P001', name: 'Samsung Galaxy A54', sku: 'SAM-A54', stock: 15, unit: 'pcs' },
-    { id: 'P002', name: 'iPhone 15 Pro Max', sku: 'APP-15PM', stock: 5, unit: 'pcs' },
-    { id: 'P003', name: 'Dell Monitor 24"', sku: 'DEL-MON-24', stock: 20, unit: 'pcs' },
-    { id: 'P004', name: 'Logitech Mouse', sku: 'LOG-M90', stock: 50, unit: 'pcs' },
-];
+interface InventoryProduct {
+    id: string;
+    name: string;
+    sku: string;
+    stock: number;
+    unit: string;
+}
 
 const DeliveryChallanCreator: React.FC = () => {
+    // Get tenant, branch, and sector from auth state
+    const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const { products } = useSelector((state: RootState) => state.inventory);
+    const { salesHistory } = useSelector((state: RootState) => state.pos);
+
+    // Filter products by tenant, branch, and sector
+    const availableInventory: InventoryProduct[] = useMemo(() => {
+        return products
+            .filter(p => {
+                if (currentSector && p.sector !== currentSector) return false;
+                if (currentBranch && currentBranch !== 'All' && p.branchId !== currentBranch) return false;
+                return true;
+            })
+            .map(p => ({
+                id: p.id,
+                name: p.name,
+                sku: p.sku,
+                stock: p.stock || 0,
+                unit: 'pcs'
+            }));
+    }, [products, currentSector, currentBranch]);
+
+    // Demo Sales Orders - would typically come from Redux/API
+    const demoSalesOrders: SalesOrder[] = useMemo(() => {
+        return salesHistory.slice(0, 5).map((s: any, idx: number) => ({
+            id: s.id || `SO${idx}`,
+            orderNo: `SO-${new Date().getFullYear()}-${String(idx + 1).padStart(5, '0')}`,
+            date: s.date || new Date().toISOString().split('T')[0],
+            customer: { id: s.customerId || 'C001', name: s.customerName || 'Customer', phone: '' },
+            items: (s.items || []).map((item: any, itemIdx: number) => ({
+                id: `I${itemIdx}`,
+                productId: item.id || item.sku,
+                name: item.name,
+                sku: item.sku,
+                orderedQty: item.qty || 1,
+                deliveredQty: 0,
+                unit: 'pcs'
+            }))
+        }));
+    }, [salesHistory]);
+
     // Generate Challan No
     const [challanNo] = useState(`DC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`);
 
@@ -88,7 +113,7 @@ const DeliveryChallanCreator: React.FC = () => {
 
         // Auto-populate items with pending quantities
         const newItems = so.items.map(item => {
-            const product = demoInventory.find(p => p.id === item.productId);
+            const product = availableInventory.find(p => p.id === item.productId || p.sku === item.sku);
             const pendingQty = item.orderedQty - item.deliveredQty;
             return {
                 id: `CI-${Date.now()}-${item.id}`,
@@ -108,7 +133,7 @@ const DeliveryChallanCreator: React.FC = () => {
     };
 
     // Add Manual Item
-    const addManualItem = (product: typeof demoInventory[0]) => {
+    const addManualItem = (product: InventoryProduct) => {
         setItems(prev => {
             const existing = prev.find(i => i.productId === product.id);
             if (existing) {
@@ -302,7 +327,7 @@ const DeliveryChallanCreator: React.FC = () => {
                             />
                             {showSearchDropdown && searchQuery && !selectedSO && (
                                 <div className="absolute top-full left-0 right-0 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl mt-1 z-20 max-h-60 overflow-auto">
-                                    {demoInventory.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
+                                    {availableInventory.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
                                         <button
                                             key={p.id}
                                             onClick={() => addManualItem(p)}

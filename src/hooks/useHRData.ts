@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { supabase } from '../lib/supabase';
 import { setLaborPayments } from '../store/laborSlice';
 import { LaborPayment } from '../types/hr';
+import { getTable } from '../services/dataSource';
 
 export const useHRData = (tenantId: string | undefined) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!supabase || !tenantId) return;
+        if (!tenantId) return;
 
         const fetchHRData = async () => {
-            const { data: lpData, error: lpError } = await supabase.from('labor_payments').select('*').eq('tenant_id', tenantId);
-            if (!lpError && lpData) {
+            const lpData = await getTable('labor_payments', { filters: { tenant_id: tenantId } });
+
+            if (lpData) {
                 const mappedLP = lpData.map((lp: any) => ({
                     id: lp.id,
                     employeeId: lp.employee_id,
