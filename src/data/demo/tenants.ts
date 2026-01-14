@@ -1,7 +1,7 @@
 export const tenants = [
     {
         "id": "TEN001",
-        "name": "RMKV Textiles Pvt Ltd",
+        "name": "Vijayalakshmi Textiles & Readymades",
         "type": "RETAIL",
         "business_type": "TEXTILE",
         "sector": "Textiles"

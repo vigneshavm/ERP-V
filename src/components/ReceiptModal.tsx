@@ -21,15 +21,23 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, onClose }) => 
   const tenantName = tenant ? tenant.name : 'Enterprise Mgr';
 
   const handlePrint = () => {
-    const branchName = sale.branchId ? (sale as any).branch : 'Main Branch'; // Fallback if Sale object has branch name injected
-    // Since Sale interface has branchId, but POSModule passes branchName usually or we resolver it
-    // For now, if we call it from Modal, we need to be sure we have the name.
-    // In ReceiptModal, the resolver isn't here, but we can use the tenants list.
-    const branch = tenant?.locations?.flatMap(l => l.branches).find(b => b.id === sale.branchId || b.name === sale.branchId);
-    const bName = branch ? branch.name : (sale.branchId || 'Main Branch');
-    const bAddress = branch?.address || tenant?.companyDetails?.addressLine1 || 'No Address Provided';
+    // Resolve full branch object
+    const branchCandidate = tenant?.locations?.flatMap(l => l.branches).find(b => b.id === sale.branchId || b.name === sale.branchId);
 
-    printSaleReceipt(sale, tenantName, bName, bAddress);
+    // Fallback if branch not found in tenant but we have ID (e.g. from historical sale or "All" context which is edge case)
+    // We construct a minimal valid Branch object to avoid crashes, using sale info if available.
+    const effectiveBranch: any = branchCandidate || {
+      id: sale.branchId || 'unknown',
+      name: (sale as any).branch || 'Unknown Branch',
+      address: tenant?.companyDetails?.addressLine1 || '',
+      phone: tenant?.companyDetails?.phone || ''
+    };
+
+    if (tenant && effectiveBranch) {
+      printSaleReceipt(sale, tenant, effectiveBranch);
+    } else {
+      alert("Cannot print: Missing Tenant or Branch context");
+    }
   };
 
   return (

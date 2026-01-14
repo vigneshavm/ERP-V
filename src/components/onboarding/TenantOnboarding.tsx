@@ -210,7 +210,7 @@ const TenantOnboarding: React.FC = () => {
                                 type="text"
                                 value={businessName}
                                 onChange={e => setBusinessName(e.target.value)}
-                                placeholder="e.g., RMKV Textiles Pvt Ltd"
+                                placeholder="e.g., Vijayalakshmi Textiles & Readymades"
                                 className="input text-xl py-4 px-6 rounded-2xl border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-black/20 focus:scale-[1.01] transition-transform"
                             />
                         </div>

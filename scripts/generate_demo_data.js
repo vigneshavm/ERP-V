@@ -8,7 +8,7 @@ const BASE_PATH = "c:/Users/vigne/Project/30/ERP/src/data/demo";
 const TENANTS = [
     {
         id: "TEN001",
-        name: "RMKV Textiles Pvt Ltd",
+        name: "Vijayalakshmi Textiles & Readymades",
         type: "RETAIL",
         business_type: "TEXTILE",
         sector: "Textiles",

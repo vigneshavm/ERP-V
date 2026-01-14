@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePOSLogic } from '../../hooks/usePOSLogic';
-import { POSTemplateRegistry } from './POSTemplateRegistry.tsx';
+import { POSTemplateRegistry } from './POSTemplateRegistry';
 
 const POSModule: React.FC = () => {
     const logic = usePOSLogic();

@@ -1,6 +1,12 @@
 import { Sale } from '../types/sales';
+import { Tenant, Branch } from '../types/tenant';
+import { generateReceiptJSON } from './receiptGenerator';
 
-export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: string, address: string) => {
+export const printSaleReceipt = (sale: Sale, tenant: Tenant, branch: Branch) => {
+  // Generate structured receipt data
+  const { receipt_data } = generateReceiptJSON(sale, tenant, branch);
+  const { header, transaction_details, items, totals, tax_details, footer } = receipt_data;
+
   // Construct the printable document
   const printWindow = window.open('', '_blank', 'width=400,height=600');
 
@@ -9,26 +15,23 @@ export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: str
     return;
   }
 
-  const itemsHtml = sale.items.map(item => `
+  const itemsHtml = items.map(item => `
     <tr>
       <td style="padding: 8px 0;">
         <div style="font-weight: bold;">${item.name}</div>
-        <div style="font-size: 10px; color: #666;">${item.sku}</div>
+        <!-- SKU handled if available in item logic, or if mapped in generator -->
       </td>
-      <td style="padding: 8px 0; text-align: center; vertical-align: top;">${item.qty}</td>
-      <td style="padding: 8px 0; text-align: right; vertical-align: top;">${item.price.toFixed(2)}</td>
-      <td style="padding: 8px 0; text-align: right; font-weight: bold; vertical-align: top;">${(item.price * item.qty).toFixed(2)}</td>
+      <td style="padding: 8px 0; text-align: center; vertical-align: top;">${item.quantity}</td>
+      <td style="padding: 8px 0; text-align: right; vertical-align: top;">${item.rate.toFixed(2)}</td>
+      <td style="padding: 8px 0; text-align: right; font-weight: bold; vertical-align: top;">${item.amount.toFixed(2)}</td>
     </tr>
   `).join('');
-
-  const subtotal = (sale.total / (sale.taxMode === 'EXCLUSIVE' ? 1.18 : 1)).toFixed(2);
-  const tax = (sale.total - parseFloat(subtotal)).toFixed(2);
 
   printWindow.document.write(`
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Receipt #${sale.id}</title>
+        <title>Receipt #${transaction_details.bill_no}</title>
         <style>
           body { 
             background: white; 
@@ -39,84 +42,116 @@ export const printSaleReceipt = (sale: Sale, tenantName: string, branchName: str
             padding: 20px;
           }
           table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-          th { border-bottom: 1px dashed #000; text-align: left; padding-bottom: 5px; color: #666; font-size: 10px; }
+          th { border-bottom: 1px dashed #000; text-align: left; padding-bottom: 5px; color: #000; font-size: 10px; font-weight: bold; }
           .header { text-align: center; margin-bottom: 20px; }
-          .header h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-          .header p { margin: 5px 0; font-size: 10px; color: #666; text-transform: uppercase; }
-          .dashed-line { border-bottom: 1px dashed #ccc; margin: 15px 0; }
-          .details { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 15px; }
-          .totals { border-top: 2px solid #000; pt-10px; }
+          .header h1 { margin: 0; font-size: 20px; text-transform: uppercase; font-weight: bold; }
+          .header p { margin: 5px 0; font-size: 12px; color: #000; text-transform: uppercase; }
+          .dashed-line { border-bottom: 1px dashed #000; margin: 10px 0; }
+          .details { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 15px; font-weight: bold; }
+          .totals { border-top: 1px dashed #000; padding-top: 10px; font-weight: bold; }
           .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-          .grand-total { font-size: 16px; font-weight: bold; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px; }
-          .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #888; }
+          .grand-total { font-size: 16px; font-weight: bold; margin-top: 10px; border-top: 1px dashed #000; padding-top: 10px; border-bottom: 1px dashed #000; padding-bottom: 10px;}
+          .tax-breakdown { font-size: 10px; margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 5px; font-weight: bold; }
+          .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #000; }
+          .feed { height: 50px; } 
           @page { margin: 0; size: auto; }
         </style>
       </head>
       <body>
         <div class="header">
-          <h1>${tenantName}</h1>
-          <p>${sale.sector} &bull; ${branchName}</p>
-          <p style="text-transform: none; max-width: 80%; margin: 5px auto;">${address}</p>
+          ${header.logo_url ? `<img src="${header.logo_url}" style="width: 100%; height: auto; display: block; margin: 0 auto 10px auto; image-rendering: -webkit-optimize-contrast;" alt="Store Logo" />` : `<h1>${header.store_name}</h1>`}
+          <p>${header.store_address}</p>
+          ${header.gstin ? `<p>GSTIN: ${header.gstin}</p>` : ''}
           <div class="dashed-line"></div>
         </div>
 
         <div class="details">
-          <div>
-            <p>Bill No: <strong>#${sale.id}</strong></p>
-          </div>
-          <div style="text-align: right;">
-            <p>Date: ${new Date(sale.date).toLocaleDateString()}</p>
-            <p>${new Date(sale.date).toLocaleTimeString()}</p>
-          </div>
+            <span>Bill No: ${transaction_details.bill_no}</span>
+            <span>${transaction_details.date}</span>
+            <span>${transaction_details.time}</span>
         </div>
+        <div class="dashed-line"></div>
 
-        <table>
+        <table class="items">
           <thead>
             <tr>
-              <th>Item</th>
-              <th style="text-align: center;">Qty</th>
-              <th style="text-align: right;">Price</th>
-              <th style="text-align: right;">Amt</th>
+              <th style="width: 35%; text-align: left;">NAME</th>
+              <th style="width: 15%; text-align: right;">RATE</th>
+              <th style="width: 15%; text-align: right;">MTR</th>
+              <th style="width: 15%; text-align: right;">QTY</th>
+              <th style="width: 20%; text-align: right;">AMT</th>
             </tr>
           </thead>
           <tbody>
-            ${itemsHtml}
+            ${items.map((item) => `
+              <tr>
+                <td style="text-align: left;">${item.name}</td>
+                <td style="text-align: right;">${item.rate.toFixed(2)}</td>
+                <td style="text-align: right;">${item.mtr ? item.mtr.toFixed(2) : '0'}</td>
+                <td style="text-align: right;">${item.quantity}</td>
+                <td style="text-align: right;">${item.amount.toFixed(2)}</td>
+              </tr>
+            `).join('')}
           </tbody>
         </table>
+        
+        <div class="dashed-line"></div>
 
         <div class="totals">
           <div class="total-row">
-            <span>Subtotal</span>
-            <span>₹${subtotal}</span>
+            <span>Net Total</span>
+            <span>${totals.net_total.toFixed(2)}</span>
           </div>
-          ${sale.taxMode === 'EXCLUSIVE' ? `
-            <div class="total-row" style="color: #666;">
-              <span>Tax (18%)</span>
-              <span>₹${tax}</span>
-            </div>
-          ` : ''}
           <div class="total-row grand-total">
-            <span>TOTAL</span>
-            <span>₹${sale.total.toFixed(2)}</span>
+            <span>Final Total</span>
+            <span>${totals.final_total.toFixed(2)}</span>
           </div>
-          <div class="total-row" style="font-size: 10px; margin-top: 5px;">
-            <span>Payment Mode</span>
-            <span style="text-transform: uppercase; font-weight: bold;">${sale.paymentMethod}</span>
+          <div class="total-row" style="margin-top: 5px;">
+             <span>Total Quantity: ${totals.total_quantity}</span>
           </div>
         </div>
 
+        <table style="width: 100%; font-size: 12px; margin-top: 5px; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px dashed #000;">
+                    <th style="text-align: left; padding: 2px 0;">GST%</th>
+                    <th style="text-align: right; padding: 2px 0;">Taxable</th>
+                    <th style="text-align: right; padding: 2px 0;">GST</th>
+                    <th style="text-align: right; padding: 2px 0;">CGST</th>
+                    <th style="text-align: right; padding: 2px 0;">SGST</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left; padding: 2px 0; font-weight: bold;">${tax_details.gst_percentage}%</td>
+                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.taxable_value.toFixed(2)}</td>
+                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(tax_details.cgst_amount + tax_details.sgst_amount).toFixed(2)}</td>
+                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.cgst_amount.toFixed(2)}</td>
+                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.sgst_amount.toFixed(2)}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="dashed-line"></div>
+
         <div class="footer">
-          <p>Thank you for your business!</p>
-          <p>No returns without invoice.</p>
-          <p style="margin-top: 20px; opacity: 0.3;">Powered by EnterpriseMgr</p>
+          <p>${footer.message_1}</p>
+          <p style="margin-top: 10px; font-weight: bold;">${footer.message_2}</p>
         </div>
+        
+        <!-- Feed Spacer -->
+        <div class="feed"></div>
 
         <script>
           window.onload = function() {
             setTimeout(() => {
+              window.focus(); // Ensure window has focus
               window.print();
-              setTimeout(() => window.close(), 500);
             }, 500);
+          };
+          
+          window.onafterprint = function() {
+              window.close();
           };
         </script>
       </body>
