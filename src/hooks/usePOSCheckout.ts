@@ -110,6 +110,13 @@ export const usePOSCheckout = ({
         const branchAddress = branches.find(b => b.id === currentBranch)?.address || currentTenant?.companyDetails?.addressLine1 || 'No Address Provided';
         printSaleReceipt(sale, tenantName, branchName, branchAddress);
 
+        // --- CX Feedback Trigger ---
+        if (sale.customerId && sale.status === 'COMPLETED') {
+            console.log(`[CX Intelligence] Triggering feedback request for Sale: ${sale.id} to Customer: ${sale.customerId}`);
+            // Logic to send WhatsApp/Email/SMS with Feedback Link
+            // In a real system: await FeedbackService.sendRequest(sale);
+        }
+
         setIsProcessing(false);
         setIsPreOrder(false);
 

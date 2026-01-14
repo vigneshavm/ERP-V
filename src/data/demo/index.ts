@@ -12,6 +12,7 @@ import { employees } from './employees';
 import { transactions } from './transactions';
 import { daily_finance } from './daily_finance';
 import { estimates } from './estimates';
+import { productTypes } from './productTypes';
 
 export const demoDB: Record<string, any[]> = {
     tenants,
@@ -27,5 +28,6 @@ export const demoDB: Record<string, any[]> = {
     employees,
     transactions,
     daily_finance,
-    estimates
+    estimates,
+    productTypes
 };

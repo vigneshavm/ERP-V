@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase';
 import { securePassword } from '../utils/auth';
 import { getTable, DATA_MODE } from '../services/dataSource';
 import { demoDB } from '../data/demo';
+import TenantSignUp from './TenantSignUp';
 
 const SECTOR_IMAGES: Record<string, string> = {
     [Sector.GENERAL]: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop',
@@ -53,7 +54,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     const [tempUser, setTempUser] = useState<TenantUser | null>(null);
     const [resetSent, setResetSent] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
-    const [authView, setAuthView] = useState<'login' | 'forgot'>('login');
+    const [authView, setAuthView] = useState<'login' | 'forgot' | 'signup'>('login');
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -296,6 +297,19 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
     };
 
 
+    // Render Sign Up Flow
+    if (authView === 'signup') {
+        return (
+            <TenantSignUp
+                onComplete={() => {
+                    setAuthView('login');
+                    // Could show a success message here
+                }}
+                onBackToLogin={() => setAuthView('login')}
+            />
+        );
+    }
+
     return (
         <div className="min-h-screen relative flex items-center justify-center lg:justify-start p-4 md:p-8 lg:p-12 overflow-x-hidden bg-slate-900">
             {/* Background Layer with Overlay */}
@@ -463,6 +477,15 @@ const Login: React.FC<LoginProps> = ({ onLogin, tenant }) => {
                                             className="w-full h-16 bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.99] rounded-[1.25rem] font-black text-base flex items-center justify-center gap-3 transition-all shadow-xl shadow-white/5 disabled:opacity-50"
                                         >
                                             {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Initialize Login <ArrowRight className="w-5 h-5" /></>}
+                                        </button>
+
+                                        {/* Sign Up Link */}
+                                        <button
+                                            type="button"
+                                            onClick={() => setAuthView('signup')}
+                                            className="w-full text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition-colors py-2 mt-2"
+                                        >
+                                            New Business? Register Now
                                         </button>
                                     </div>
                                 )}

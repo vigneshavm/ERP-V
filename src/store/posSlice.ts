@@ -99,7 +99,7 @@ const posSlice = createSlice({
         // Add new to top
         session.cart.unshift({
           ...action.payload,
-          cutLength: action.payload.unit === 'Meter' ? 1 : undefined
+          cutLength: action.payload.unit === 'Meter' ? (action.payload.cutLength || 1) : undefined
         });
       }
     },

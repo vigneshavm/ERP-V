@@ -26,8 +26,8 @@ export const useTenantFormSubmission = ({
 }: UseTenantFormSubmissionProps) => {
     const dispatch = useDispatch();
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (e?: FormEvent): Promise<boolean> => {
+        if (e) e.preventDefault();
 
         if (!newTenant.name || !newTenant.subdomain) {
             alert("Name and Subdomain are required.");
@@ -259,7 +259,9 @@ export const useTenantFormSubmission = ({
                     dispatch(editingTenant ? updateTenantDetails({ id: mappedTenant.id, updates: mappedTenant }) : addTenant(mappedTenant));
                     handleCancelEdit();
                     setActiveSection('list');
+                    return true;
                 }
+                return false;
             } else {
                 const finalTenant = {
                     ...editingTenant,
@@ -271,10 +273,12 @@ export const useTenantFormSubmission = ({
                 dispatch(editingTenant ? updateTenantDetails({ id: finalTenant.id, updates: finalTenant }) : addTenant(finalTenant));
                 handleCancelEdit();
                 setActiveSection('list');
+                return true;
             }
         } catch (error: any) {
             console.error('Error saving tenant:', error);
             alert(`Failed to save tenant: ${error.message}`);
+            return false;
         } finally {
             setIsSaving(false);
         }

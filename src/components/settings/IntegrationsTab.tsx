@@ -1,65 +1,103 @@
-import React from 'react';
-import { Globe, Shield, Zap, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle } from 'lucide-react';
+import { WhatsAppService } from '../../services/whatsappService';
 
 const IntegrationsTab: React.FC = () => {
-    const integrations = [
-        { id: 'payment', name: 'Payment Gateway', provider: 'Razorpay / Stripe', status: 'CONNECTED', icon: Zap },
-        { id: 'sms', name: 'SMS Service', provider: 'Twilio / MSG91', status: 'PENDING', icon: Globe },
-        { id: 'whatsapp', name: 'WhatsApp API', provider: 'Interakt / Meta', status: 'CONNECTED', icon: Globe },
-        { id: 'pos', name: 'External POS Sync', provider: 'Custom Webhook', status: 'NOT_CONFIGURED', icon: Shield },
-    ];
+    // In a real app, these should be synced with Redux/DB
+    const [config, setConfig] = useState({
+        accessToken: '',
+        phoneId: '',
+        accountId: ''
+    });
+
+    const [testStatus, setTestStatus] = useState<'IDLE' | 'SUCCESS' | 'ERROR'>('IDLE');
+
+    const handleTestConnection = async () => {
+        const result = await WhatsAppService.verifyConnection({
+            whatsappAccessToken: config.accessToken,
+            whatsappPhoneNumberId: config.phoneId,
+            whatsappBusinessAccountId: config.accountId
+        });
+        setTestStatus(result.success ? 'SUCCESS' : 'ERROR');
+    };
 
     return (
-        <div className="p-6 md:p-8 space-y-8">
-            <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-2xl flex items-start gap-4">
-                <Shield className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+        <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-start gap-4">
+                <Smartphone className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                 <div>
-                    <p className="text-sm font-bold text-indigo-800 dark:text-indigo-200">External Connectivity Hub</p>
-                    <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">Connect your ERP with third-party services. All API keys and secrets are encrypted at rest and never shared.</p>
+                    <p className="text-sm font-bold text-emerald-800 dark:text-emerald-200">WhatsApp Cloud API (Sandbox Mode)</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                        Get these credentials from <a href="https://developers.facebook.com" target="_blank" className="underline font-bold">Meta for Developers</a> {'>'} App {'>'} WhatsApp {'>'} API Setup.
+                    </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {integrations.map((integration) => {
-                    const Icon = integration.icon;
-                    return (
-                        <div key={integration.id} className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl hover:border-indigo-500/50 transition-all group">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-indigo-500 transition-colors">
-                                    <Icon className="w-6 h-6" />
-                                </div>
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${integration.status === 'CONNECTED' ? 'bg-green-100 text-green-600' :
-                                        integration.status === 'PENDING' ? 'bg-yellow-100 text-yellow-600' : 'bg-slate-100 text-slate-500'
-                                    }`}>
-                                    {integration.status.replace('_', ' ')}
-                                </span>
-                            </div>
-                            <h4 className="font-bold text-slate-900 dark:text-white">{integration.name}</h4>
-                            <p className="text-xs text-slate-500 mt-1">{integration.provider}</p>
-
-                            <div className="mt-6 space-y-4">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Secret Key</label>
-                                    <input type="password" value="************************" readOnly className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono outline-none" />
-                                </div>
-                                <button className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-bold transition-all">
-                                    Configure Integration
-                                </button>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-            <div className="pt-8 border-t border-slate-100 dark:border-slate-700">
-                <h4 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" /> Active Webhooks
-                </h4>
-                <div className="space-y-3">
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                        <code className="text-[10px] font-bold text-slate-500">https://api.myapp.com/webhooks/sales-sync</code>
-                        <span className="text-[10px] font-black text-green-600 uppercase">Active</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Temporary Access Token</label>
+                        <input
+                            type="password"
+                            value={config.accessToken}
+                            onChange={e => setConfig({ ...config, accessToken: e.target.value })}
+                            className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500"
+                            placeholder="EAAG..."
+                        />
                     </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Phone Number ID</label>
+                        <input
+                            type="text"
+                            value={config.phoneId}
+                            onChange={e => setConfig({ ...config, phoneId: e.target.value })}
+                            className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500"
+                            placeholder="1098..."
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">WhatsApp Business Account ID</label>
+                        <input
+                            type="text"
+                            value={config.accountId}
+                            onChange={e => setConfig({ ...config, accountId: e.target.value })}
+                            className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500"
+                            placeholder="1155..."
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleTestConnection}
+                        className="flex items-center justify-center gap-2 w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all"
+                    >
+                        {testStatus === 'SUCCESS' ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Zap className="w-4 h-4" />}
+                        {testStatus === 'SUCCESS' ? 'Connection Verified' : 'Test Connection'}
+                    </button>
+
+                    {testStatus === 'ERROR' && (
+                        <p className="text-xs text-red-500 font-medium flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" /> Connection failed. Check your token.
+                        </p>
+                    )}
+                </div>
+
+                {/* Integration Guide / Helper */}
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                    <h4 className="font-bold text-slate-900 dark:text-white mb-4">Sandbox Checklist</h4>
+                    <ul className="space-y-3">
+                        {[
+                            "Create Meta App (Business Type)",
+                            "Add 'WhatsApp' Product",
+                            "Copy Temporary Access Token (Expires in 24h)",
+                            "Add YOUR phone number to Sandbox list in Meta Dashboard",
+                            "Verify OTP on your phone"
+                        ].map((item, i) => (
+                            <li key={i} className="flex items-start gap-3 text-xs text-slate-500">
+                                <div className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[9px] font-bold shrink-0">{i + 1}</div>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </div>
         </div>

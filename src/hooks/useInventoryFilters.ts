@@ -52,7 +52,7 @@ export const useInventoryFilters = (products: Product[]) => {
                 p.name.toLowerCase().includes(lower) ||
                 p.sku.toLowerCase().includes(lower) ||
                 (p.barcode && p.barcode.toLowerCase().includes(lower)) ||
-                p.productType.toLowerCase().includes(lower)
+                (p.productType && p.productType.toLowerCase().includes(lower))
             );
         }
 

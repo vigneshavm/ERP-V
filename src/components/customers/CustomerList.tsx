@@ -16,6 +16,7 @@ import {
     Star,
     ShoppingBag
 } from 'lucide-react';
+import Customer360Modal from './Customer360Modal';
 
 const CustomerList: React.FC = () => {
     const { customers, salesHistory } = useSelector((state: RootState) => state.pos);
@@ -24,6 +25,8 @@ const CustomerList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState<'name' | 'purchases' | 'recent'>('name');
     const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+    const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Calculate customer stats from sales history
     const customerStats = useMemo(() => {
@@ -281,7 +284,14 @@ const CustomerList: React.FC = () => {
                                         </td>
                                         <td className="p-4">
                                             <div className="flex justify-center gap-1">
-                                                <button className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg" title="View">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedCustomer(customer);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                    className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg"
+                                                    title="View"
+                                                >
                                                     <Eye className="w-4 h-4 text-primary" />
                                                 </button>
                                                 <button className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg" title="Edit">
@@ -335,6 +345,14 @@ const CustomerList: React.FC = () => {
             <div className="text-center text-xs text-neutral-400">
                 Showing {filteredCustomers.length} of {totalCustomers} customers
             </div>
+
+            {selectedCustomer && (
+                <Customer360Modal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    customer={selectedCustomer}
+                />
+            )}
         </div>
     );
 };

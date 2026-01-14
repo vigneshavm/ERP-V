@@ -1,12 +1,12 @@
 import React from 'react';
 import { Plus, RotateCw, Power, Trash2 } from 'lucide-react';
-import { SyncedDevice, DeviceStatus } from '../../../../types/tenant';
+import { DeviceRegistryEntry, DeviceStatus } from '../../../../types/tenant';
 
 interface DevicesSectionProps {
-    devices: SyncedDevice[];
+    devices: DeviceRegistryEntry[];
     isOwnerOrAdmin: boolean;
     onAddDevice: () => void;
-    getPlatformIcon: (platform: SyncedDevice['platform']) => any;
+    getPlatformIcon: (platform: DeviceRegistryEntry['platform']) => any;
     getStatusBadge: (status: DeviceStatus, isOnline: boolean) => React.ReactNode;
     formatTimeAgo: (date: string) => string;
 }

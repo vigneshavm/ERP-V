@@ -234,3 +234,4 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         </div>
     );
 };
+export default TextilePOSTemplate;

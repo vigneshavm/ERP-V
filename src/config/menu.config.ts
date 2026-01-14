@@ -39,7 +39,8 @@ import {
     Key,
     Save,
     Palette,
-    LayoutGrid
+    LayoutGrid,
+    Shield
 } from 'lucide-react';
 import { AppView, ModuleType } from '../types/common';
 
@@ -338,21 +339,6 @@ export const MENU_ITEMS: MenuItem[] = [
         ]
     },
     {
-        id: 'GROW_DATA',
-        label: 'Data Tools',
-        icon: Database,
-        path: '/',
-        isGrow: true,
-        module: 'GROW',
-        children: [
-            { id: 'GROW_DATA_IMPORT', label: 'Import Data', path: '/', icon: Upload, module: 'GROW' },
-            { id: 'GROW_DATA_EXPORT', label: 'Export Data', path: '/', icon: Download, module: 'GROW' },
-            { id: 'GROW_DATA_CLEANUP', label: 'Data Cleanup', path: '/', icon: Wrench, module: 'GROW' },
-            { id: 'GROW_DATA_DUPLICATES', label: 'Duplicate Detection', path: '/', icon: AlertTriangle, module: 'GROW' },
-            { id: 'GROW_DATA_HEALTH', label: 'Data Health', path: '/', icon: Zap, module: 'GROW' }
-        ]
-    },
-    {
         id: 'GROW_REPORTS',
         label: 'Growth Reports',
         icon: BarChart,
@@ -365,6 +351,20 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'GROW_REPORT_CUSTOMER', label: 'Customer Growth', path: '/', icon: Users, module: 'GROW' },
             { id: 'GROW_REPORT_TRAFFIC', label: 'Traffic', path: '/', icon: ArrowRight, module: 'GROW' },
             { id: 'GROW_REPORT_CONVERSION', label: 'Conversion Reports', path: '/', icon: Zap, module: 'GROW' }
+        ]
+    },
+    // --- GROWTH INFRASTRUCTURE ---
+    {
+        id: 'GROW_DATA',
+        label: 'Growth Utils',
+        icon: Key,
+        path: '/',
+        isGrow: true,
+        module: 'GROW',
+        children: [
+            { id: 'GROW_DATA_IMPORT', label: 'Bulk Import', path: '/', icon: Upload, module: 'GROW' },
+            { id: 'GROW_DATA_EXPORT', label: 'Bulk Export', path: '/', icon: Download, module: 'GROW' },
+            { id: 'GROW_DATA_HEALTH', label: 'Data Health AI', path: '/', icon: Zap, module: 'GROW' }
         ]
     }
 ];

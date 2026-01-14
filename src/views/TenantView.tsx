@@ -296,10 +296,11 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'GROW_MARKETING':
                         case 'GROW_MARKETING_CAMPAIGNS': return <LazyModules.MarketingCampaigns />;
                         case 'GROW_MARKETING_TEMPLATES': return <LazyModules.MarketingTemplates />;
-                        case 'GROW_MARKETING_EMAIL':
-                        case 'GROW_ENGAGEMENT_EMAIL': return <LazyModules.EmailMarketing />;
-                        case 'GROW_MARKETING_WHATSAPP':
-                        case 'GROW_ENGAGEMENT_WHATSAPP': return <LazyModules.WhatsAppMarketing />;
+                        case 'GROW_MARKETING_EMAIL': return <LazyModules.EmailMarketing />;
+                        case 'GROW_ENGAGEMENT_EMAIL': return <LazyModules.EmailEngagement />;
+                        case 'GROW_MARKETING_WHATSAPP': return <LazyModules.WhatsAppMarketing />;
+                        case 'GROW_ENGAGEMENT_WHATSAPP': return <LazyModules.WhatsAppEngagement />;
+
                         case 'GROW_MARKETING_SOCIAL': return <LazyModules.SocialMediaMarketing />;
                         case 'GROW_MARKETING_COUPONS': return <LazyModules.MarketingCoupons />;
                         case 'GROW_MARKETING_OFFERS': return <LazyModules.MarketingOffers />;
@@ -313,11 +314,11 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                         case 'GROW_ENGAGEMENT':
                         case 'GROW_ENGAGEMENT_SMS':
-                        case 'GROW_ENGAGEMENT_LOYALTY':
-                        case 'GROW_ENGAGEMENT_FEEDBACK': return <LazyModules.Marketing />; // Marketing handles engagement
+                        case 'GROW_ENGAGEMENT_FEEDBACK': return <LazyModules.FeedbackEngagement />;
+                        case 'GROW_ENGAGEMENT_LOYALTY': return <LazyModules.LoyaltyEngagement />;
 
+                        case 'GROW_SYNC_DEVICE': return <LazyModules.DeviceIntelligence />;
                         case 'GROW_SYNC':
-                        case 'GROW_SYNC_DEVICE':
                         case 'GROW_SYNC_CLOUD':
                         case 'GROW_BACKUP':
                         case 'GROW_RESTORE_DATA':

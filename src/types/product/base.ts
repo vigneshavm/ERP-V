@@ -5,6 +5,7 @@ export interface BaseProduct {
     id: string;
     sku: string; // Stock Keeping Unit (Unique)
     name: string;
+    nameTamil?: string;
     category: string; // High-level category
     subCategory?: string; // Granular category
 

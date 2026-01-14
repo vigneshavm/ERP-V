@@ -35,7 +35,8 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
             </div>
 
             <div className="p-3 flex flex-col flex-1">
-                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-2 mb-1">{product.name}</h3>
+                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-1 mb-0.5">{product.name}</h3>
+                {product.nameTamil && <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-1 mb-1">{product.nameTamil}</p>}
                 <div className="mt-auto flex justify-between items-end">
                     <span className="text-xs text-neutral-500 font-mono">{product.sku}</span>
                     <span className="font-bold text-primary">₹{product.price}</span>
@@ -97,7 +98,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
     }, [products, selectedCategory, selectedSubcategory]);
 
     // Fuzzy Search Application (Using debounced search)
-    const filteredProducts = useFuzzySearch<Product>(baseFilteredProducts, ['name', 'sku', 'barcode'], debouncedSearch);
+    const filteredProducts = useFuzzySearch<Product>(baseFilteredProducts, ['name', 'nameTamil', 'sku', 'barcode'], debouncedSearch);
 
     // Pagination
     const paginatedProducts = useMemo(() => {

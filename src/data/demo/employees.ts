@@ -3,9 +3,10 @@ export const employees = [
         "id": "EMP-TEN001-1",
         "tenant_id": "TEN001",
         "branch_id": "BR001",
-        "full_name": "Admin - RMKV",
+        "full_name": "Antigravity Super Admin",
         "email": "admin@ten001.com",
         "role_id": "ADMIN",
+        "systemRole": "SuperAdmin",
         "password": "demo_password_123",
         "is_active": true,
         "sector": "Textiles"

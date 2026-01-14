@@ -14,7 +14,10 @@ import {
     Zap,
     LayoutDashboard,
     Calendar,
-    Download
+    Download,
+    Archive,
+    PieChart as PIE,
+    MapPin
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from '../../../store';
@@ -24,9 +27,9 @@ const MarketingMetrics: React.FC = () => {
 
     const mainMetrics = [
         { label: 'Total Marketing Spend', value: '₹12,450', change: '+5.2%', trend: 'up', icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-        { label: 'Marketing ROI', value: '4.8x', change: '+0.3x', trend: 'up', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
-        { label: 'Customer Acquisition Cost', value: '₹142', change: '-₹12', trend: 'down', icon: Target, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
-        { label: 'Conversion Rate', value: '3.8%', change: '+0.5%', trend: 'up', icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
+        { label: 'Gross Profit Impact', value: '₹58.2k', change: '+18.4%', trend: 'up', icon: PIE, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+        { label: 'Inventory Velocity', value: '2.4x', change: '+0.8x', trend: 'up', icon: Archive, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+        { label: 'Marketing ROI', value: '4.8x', change: '+0.3x', trend: 'up', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
     ];
 
     const channelPerformance = [
@@ -150,19 +153,43 @@ const MarketingMetrics: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Branch ROI Leaderboard */}
+                    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
+                            <MapPin className="w-3 h-3" /> Branch Growth Performance
+                        </h4>
+                        <div className="space-y-6">
+                            {[
+                                { branch: 'Mumbai Hub', impact: '₹2.4L', color: 'bg-indigo-500' },
+                                { branch: 'Pune Outlet', impact: '₹1.8L', color: 'bg-blue-500' },
+                                { branch: 'Bangalore Flagship', impact: '₹3.1L', color: 'bg-emerald-500' }
+                            ].map((b, i) => (
+                                <div key={i}>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-black">{b.branch}</span>
+                                        <span className="text-xs font-black">{b.impact}</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
+                                        <div className={`${b.color} h-full transition-all duration-1000`} style={{ width: (parseInt(b.impact.replace('₹', '').replace('L', '')) / 4 * 100) + '%' }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* AI Optimization Insight */}
-                    <div className="bg-indigo-600 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden group">
+                    <div className="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden group">
                         <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
                         <div className="flex items-center gap-2 mb-4 opacity-80">
-                            <Zap className="w-4 h-4 fill-current" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Growth Suggestion</span>
+                            <Zap className="w-4 h-4 fill-current text-indigo-400" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Wings ROI Engine</span>
                         </div>
-                        <h4 className="text-lg font-black mb-2 leading-tight">Maximize your WhatsApp Reach</h4>
-                        <p className="text-sm font-medium text-indigo-100 leading-relaxed opacity-90">
-                            Your WhatsApp campaigns have a 2.5x higher conversion rate than Social Media ads. Reallocating ₹2,000 to WhatsApp could potentially drive 12 additional sales.
+                        <h4 className="text-lg font-black mb-2 leading-tight">Sync Boost Opportunity</h4>
+                        <p className="text-sm font-medium text-slate-400 leading-relaxed">
+                            Your "Weekend Sale" items are moving 40% faster in Bangalore. We recommend increasing WhatsApp ad budget for this region to clear remaining stock.
                         </p>
-                        <button className="mt-6 w-full py-3 bg-white text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-neutral-50 transition-all active:scale-95">
-                            Reallocate Budget Now
+                        <button className="mt-6 w-full py-3 bg-white text-black rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-neutral-50 transition-all active:scale-95 leading-none">
+                            Execute Region Boost
                         </button>
                     </div>
                 </div>

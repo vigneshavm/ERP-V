@@ -139,7 +139,9 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'GROW_REPORTS': 'GROW',
     'GROW_REPORT_ROI': 'GROW',
     'GROW_REPORT_TRAFFIC': 'GROW',
-    'GROW_REPORT_CONVERSION': 'GROW'
+    'GROW_REPORT_CONVERSION': 'GROW',
+    'GROW_SUPER_ADMIN_CONSOLE': 'GROW',
+    'GROW_TENANT_CONFIG': 'GROW'
 };
 
 export const usePermissions = () => {
@@ -162,9 +164,18 @@ export const usePermissions = () => {
     const checkAccess = (view: AppView): boolean => {
         if (!user) return false;
 
-        // 1. Check Role-based Permissions (Staff Role)
-        const effectiveRoleCode = (user.systemRole as string).toLowerCase() as DbRoleCode;
+        if (view === 'GROW_SUPER_ADMIN_CONSOLE' && user.systemRole !== 'SuperAdmin') return false;
+
+        // 1. SuperAdmin Bypass for core infrastructure
+        if (user.systemRole === 'SuperAdmin') {
+            const infraViews: AppView[] = ['GROW_SUPER_ADMIN_CONSOLE', 'GROW_TENANT_CONFIG', 'GROW_DASHBOARD', 'DASHBOARD'];
+            if (infraViews.includes(view)) return true;
+        }
+
+        // 2. Check Role-based Permissions (Staff Role)
+        const effectiveRoleCode = (user.systemRole as string || 'staff').toLowerCase() as DbRoleCode;
         const allowedViews = rolePermissions[effectiveRoleCode] || [];
+
         if (!allowedViews.includes(view)) return false;
 
         // 2. Check Module-based Permissions (Tenant Plan)

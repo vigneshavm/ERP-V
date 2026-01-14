@@ -74,29 +74,65 @@ export interface WhatsAppConfig {
     campaigns: WhatsAppCampaign[];
 }
 
-export type DeviceStatus = 'ACTIVE' | 'INACTIVE' | 'OFFLINE';
-export type SyncStatus = 'UP_TO_DATE' | 'PENDING' | 'CONFLICT' | 'SYNCING';
+export type DeviceStatus = 'ACTIVE' | 'INACTIVE' | 'OFFLINE' | 'FROZEN';
+export type SyncStatus = 'UP_TO_DATE' | 'PENDING' | 'CONFLICT' | 'SYNCING' | 'ERROR';
 export type ConflictResolution = 'USE_LATEST' | 'MERGE' | 'MANUAL';
 
-export interface SyncedDevice {
+export interface DeviceRegistryEntry {
     id: string;
     name: string;
+    branchId: string;
+    userId: string;
     platform: 'Windows' | 'macOS' | 'iOS' | 'Android' | 'Web';
+    osVersion: string;
     appVersion: string;
     lastSyncAt: string;
+    lastOnlineAt: string;
+    ipAddress: string;
     status: DeviceStatus;
     isOnline: boolean;
+    syncHealth: number; // 0-100
+    errorRate: number;
+    pendingOps: number;
+    metadata?: Record<string, any>;
+}
+
+export interface SyncLedgerEntry {
+    id: string;
+    deviceId: string;
+    branchId: string;
+    eventType: 'SALE' | 'PAYMENT' | 'RETURN' | 'STOCK_ADJUST' | 'CUSTOMER_UPDATE';
+    entityId: string;
+    entityType: string;
+    timestamp: string;
+    status: 'PENDING' | 'SYNCED' | 'CONFLICT' | 'REPLAYED';
+    payload: any;
+    hash: string;
 }
 
 export interface SyncConflict {
     id: string;
+    ledgerEntryId: string;
     entity: string;
+    entityId: string;
     field: string;
-    localValue: string;
-    remoteValue: string;
+    localValue: any;
+    remoteValue: any;
     occurredAt: string;
     resolvedAt?: string;
     resolution?: ConflictResolution;
+    resolvedBy?: string;
+}
+
+export interface SyncIntelligenceConfig {
+    isEnabled: boolean;
+    retentionDays: number;
+    autoResolveRules: {
+        field: string;
+        strategy: ConflictResolution;
+    }[];
+    anomalyDetectionEnabled: boolean;
+    backupFrequency: 'HOURLY' | 'DAILY';
 }
 
 export interface SyncSettings {
@@ -117,7 +153,7 @@ export interface SyncSettings {
 
 export interface SyncConfig {
     tenantId: string;
-    devices: SyncedDevice[];
+    devices: DeviceRegistryEntry[];
     settings: SyncSettings;
     lastSyncAt?: string;
     syncStatus: SyncStatus;
@@ -252,6 +288,17 @@ export interface GooglePhoto {
     isSynced: boolean;
 }
 
+export interface GoogleReview {
+    id: string;
+    reviewerName: string;
+    reviewerPhotoUrl?: string;
+    rating: number; // 1-5
+    comment: string;
+    reply?: string;
+    status: 'PENDING' | 'REPLIED';
+    createdAt: string;
+}
+
 export interface GoogleBusinessConfig {
     id: string;
     tenantId: string;
@@ -270,15 +317,165 @@ export interface GoogleBusinessConfig {
     hours: BusinessHour[];
     photos: GooglePhoto[];
     posts: GooglePost[];
+    reviews: GoogleReview[];
+}
+
+export interface SMSCampaign {
+    id: string;
+    name: string;
+    content: string;
+    status: 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'COMPLETED' | 'FAILED';
+    scheduledAt?: string;
+    sentAt?: string;
+    recipientCount: number;
+    deliveredCount: number;
+    clickedCount: number; // For tracking links if supported
+    estimatedCost: number;
+}
+
+export interface SMSConfig {
+    isConnected: boolean;
+    provider: 'TWILIO' | 'MSG91' | 'CUSTOM';
+    apiKeyConfigured: boolean;
+    senderId?: string;
+    metrics: {
+        totalSent: number;
+        totalDelivered: number;
+        averageOpenRate: number;
+    };
+    campaigns: SMSCampaign[];
+}
+
+export interface EmailCampaign {
+    id: string;
+    name: string;
+    subject: string;
+    content: string;
+    status: 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'COMPLETED' | 'FAILED';
+    audienceType: 'ALL' | 'LOYALTY' | 'INACTIVE' | 'HIGH_VALUE' | 'CUSTOM';
+    scheduledAt?: string;
+    sentAt?: string;
+    metrics: {
+        sent: number;
+        delivered: number;
+        opened: number;
+        clicked: number;
+        bounced: number;
+        unsubscribed: number;
+        revenueGenerated: number;
+    };
+}
+
+export interface EmailMessage {
+    id: string;
+    from: string;
+    to: string;
+    subject: string;
+    body: string;
+    sentAt: string;
+    direction: 'INBOUND' | 'OUTBOUND';
+    status: 'READ' | 'UNREAD' | 'DELIVERED' | 'FAILED';
+}
+
+export interface EmailEngagementThread {
+    id: string;
+    customerId: string;
+    subject: string;
+    status: 'OPEN' | 'PENDING' | 'CLOSED' | 'ESCALATED';
+    agentId?: string;
+    lastMessageAt: string;
+    slaDeadline?: string;
+    messages: EmailMessage[];
+    customer360Summaries?: {
+        lifetimeSpend: number;
+        outstandingBalance: number;
+        lastPurchaseAt: string;
+        loyaltyPoints: number;
+        sentiment: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
+    };
+}
+
+export interface EmailConfig {
+    marketing: {
+        isConnected: boolean;
+        campaigns: EmailCampaign[];
+        totalSent: number;
+        avgOpenRate: number;
+    };
+    engagement: {
+        isConnected: boolean;
+        threads: EmailEngagementThread[];
+        avgResponseTime: string;
+        csat: number;
+    };
+    smtp: {
+        host: string;
+        port: number;
+        user: string;
+        isConfigured: boolean;
+    };
+}
+
+export interface LoyaltyTier {
+    id: string;
+    name: string;
+    minSpend: number;
+    earnMultiplier: number;
+    description: string;
+    color: string;
+    benefits: string[];
+}
+
+export interface LoyaltyRule {
+    id: string;
+    type: 'EARNING' | 'REDEMPTION' | 'BONUS';
+    ruleName: string;
+    conditions: {
+        minBillAmount?: number;
+        categories?: string[];
+        branches?: string[];
+        customerTiers?: string[];
+    };
+    reward: {
+        pointsPerValue?: number; // e.g. 5 points per 100
+        fixedPoints?: number;
+        multiplier?: number;
+    };
+    expiryDays?: number;
+    isActive: boolean;
+}
+
+export interface LoyaltyTransaction {
+    id: string;
+    customerId: string;
+    branchId: string;
+    type: 'EARN' | 'REDEEM' | 'EXPIRY' | 'ADJUST' | 'BONUS';
+    points: number;
+    value?: number; // Monetary value
+    refId?: string; // Invoice ID
+    description: string;
+    createdAt: string;
+}
+
+export interface LoyaltyWallet {
+    customerId: string;
+    currentBalance: number;
+    lifetimePointsEarned: number;
+    lifetimePointsRedeemed: number;
+    expiredPoints: number;
+    tierId: string;
+    branchWiseBalances: Record<string, number>;
+    history: LoyaltyTransaction[];
 }
 
 export interface LoyaltyConfig {
-    earningRate: number; // e.g., 100
-    pointsPerRate: number; // e.g., 1
-    redemptionValue: number; // e.g., 1
-    minPointsToRedeem?: number;
-    maxRedemptionPerBill?: number;
-    categoryPercentages?: Record<string, number>; // e.g., { 'Saree': 1.0 }
+    isEnabled: boolean;
+    pointValue: number; // e.g. 1 point = ₹0.10
+    minRedeemPoints: number;
+    maxRedeemPercentage: number; // e.g. 50% of bill
+    tiers: LoyaltyTier[];
+    rules: LoyaltyRule[];
+    isPremium: boolean; // Standalone module subscription status
 }
 
 export interface TenantConfig {
@@ -319,6 +516,42 @@ export type Branch = BranchConfig;
 export interface TenantLocation {
     city: string;
     branches: BranchConfig[];
+}
+
+export interface CustomerFeedback {
+    id: string;
+    customerId: string;
+    orderId?: string;
+    branchId: string;
+    staffId?: string;
+    channel: 'POS' | 'WHATSAPP' | 'EMAIL' | 'QR_CODE' | 'KIOSK';
+    rating: number; // 1-5 or 0-10 for NPS
+    npsCategory: 'PROMOTER' | 'PASSIVE' | 'DETRACTOR';
+    comment?: string;
+    mediaUrls?: string[]; // Photo/video feedback
+    sentiment: {
+        score: number; // -1 to 1
+        label: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
+        tags: ('STAFF' | 'PRICING' | 'QUALITY' | 'DELAY' | 'CLEANLINESS')[];
+    };
+    status: 'RECEIVED' | 'ESCALATED' | 'RESOLVED' | 'IGNORED';
+    escalationTicketId?: string;
+    createdAt: string;
+}
+
+export interface FeedbackConfig {
+    isEnabled: boolean;
+    npsGoal: number; // e.g. 70
+    autoEscalation: {
+        minRating: number; // e.g. 2
+        keywords: string[]; // e.g. 'refund', 'angry', 'court'
+        assignmentRole: string; // e.g. 'Store Manager'
+    };
+    reputationManagement: {
+        askGoogleReview: boolean;
+        promoterThreshold: number; // e.g. 9
+    };
+    isIntelligenceEnabled: boolean; // Premium AI features
 }
 
 export interface CompanyDetails {
@@ -367,6 +600,10 @@ export interface Integrations {
     smsProviderKey?: string;
     emailProviderKey?: string;
     webhookUrl?: string;
+    // Added WhatsApp Cloud API Credentials
+    whatsappAccessToken?: string;
+    whatsappPhoneNumberId?: string;
+    whatsappBusinessAccountId?: string;
 }
 
 export interface Tenant {
@@ -399,6 +636,57 @@ export interface Tenant {
     integrations?: Integrations;
     ecommerceConfig?: TenantEcommerceConfig;
     googleBusinessConfig?: GoogleBusinessConfig;
+    smsConfig?: SMSConfig;
+    growthConfig?: TenantGrowthConfig;
+}
+
+// --- Growth Platform Configuration (Super Admin & Tenant Isolation) ---
+
+export type GrowthChannelType = 'WHATSAPP' | 'EMAIL' | 'SMS' | 'SOCIAL' | 'ONLINE_STORE';
+
+export interface GrowthProvider {
+    id: string;
+    name: string;
+    channel: GrowthChannelType;
+    description: string;
+    logoUrl?: string;
+    baseApiUrl?: string;
+    documentationUrl?: string;
+    isVerified: boolean;
+}
+
+export interface GlobalGrowthConfig {
+    id: string; // 'GLOBAL'
+    allowedChannels: GrowthChannelType[];
+    allowedProviders: Record<GrowthChannelType, string[]>; // Map channel to provider IDs
+    complianceRules: {
+        requireOptIn: boolean;
+        disallowedKeywords: string[];
+    };
+    featureFlags: {
+        campaignsEnabled: boolean;
+        automationsEnabled: boolean;
+        aiInsightsEnabled: boolean;
+    };
+}
+
+export interface TenantGrowthConfig {
+    tenantId: string;
+    enabledChannels: GrowthChannelType[];
+    connections: {
+        channel: GrowthChannelType;
+        providerId: string;
+        isEnabled: boolean;
+        connectedAt?: string;
+        credentials: Record<string, string>; // e.g., { apiKey: '...', phoneNumberId: '...' }
+        settings: {
+            verifiedDomains?: string[];
+            senderNumbers?: string[];
+            usageLimit?: number;
+            optInRequired?: boolean;
+        };
+    }[];
+    analyticsEnabled: boolean;
 }
 
 export interface TenantUser {

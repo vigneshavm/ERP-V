@@ -2,6 +2,7 @@ import { db, OfflineSale } from './db';
 import { supabase } from '../lib/supabase';
 import { store, setDailyRecordSynced } from '../store';
 import { DATA_MODE } from './dataSource';
+import { SyncIntelligenceService } from './SyncIntelligenceService';
 
 export class SyncManager {
     private static isSyncing = false;
@@ -28,6 +29,17 @@ export class SyncManager {
                     if (!error) {
                         await db.offlineSales.update(sale.localId!, { synced: true });
                         console.log(`Synced sale atomically: ${sale.id}`);
+
+                        // Log to Sync Intelligence Ledger
+                        await SyncIntelligenceService.logEvent({
+                            deviceId: 'LOCAL_POS', // In real system, get actual device ID
+                            branchId: sale.branchId || 'UNKNOWN',
+                            eventType: 'SALE',
+                            entityId: sale.id!,
+                            entityType: 'Invoice',
+                            status: 'SYNCED',
+                            payload: { total: sale.total, itemsCount: sale.items?.length }
+                        });
                     } else {
                         console.error(`Error syncing sale atomically ${sale.id}:`, error);
                         await db.offlineSales.update(sale.localId!, {
@@ -128,6 +140,17 @@ export class SyncManager {
                         if (operation !== 'DELETE') {
                             store.dispatch(setDailyRecordSynced({ id: recordId, synced: true }));
                         }
+
+                        // Log to Sync Intelligence Ledger
+                        await SyncIntelligenceService.logEvent({
+                            deviceId: 'LOCAL_POS',
+                            branchId: data.branch_id || 'UNKNOWN',
+                            eventType: operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST', // Simplification for demo
+                            entityId: recordId,
+                            entityType: 'DailyFinance',
+                            status: 'SYNCED',
+                            payload: { operation }
+                        });
                     }
                 } catch (err: any) {
                     console.error(`Unexpected sync error for item ${item.recordId}:`, err);

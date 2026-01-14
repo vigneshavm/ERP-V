@@ -31,6 +31,7 @@ export const Modules = {
     MarketingCampaigns: () => import('../components/GrowPlatform/Marketing/MarketingCampaigns'),
     MarketingTemplates: () => import('../components/GrowPlatform/Marketing/MarketingTemplates'),
     EmailMarketing: () => import('../components/GrowPlatform/Marketing/EmailMarketing'),
+    EmailEngagement: () => import('../components/GrowPlatform/Marketing/EmailEngagement.tsx'),
     WhatsAppMarketing: () => import('../components/GrowPlatform/Marketing/WhatsAppMarketing'),
     SocialMediaMarketing: () => import('../components/GrowPlatform/Marketing/SocialMediaMarketing'),
     MarketingCoupons: () => import('../components/GrowPlatform/Marketing/MarketingCoupons'),
@@ -39,10 +40,19 @@ export const Modules = {
     Marketing: () => import('../components/GrowPlatform/Marketing'),
     GoogleBusiness: () => import('../components/GrowPlatform/GoogleBusiness'),
     Sync: () => import('../components/GrowPlatform/Sync'),
+    DeviceIntelligence: () => import('../components/GrowPlatform/Sync/DeviceIntelligence'),
     Data: () => import('../components/GrowPlatform/Data'),
     GrowReports: () => import('../components/GrowPlatform/Reports'),
     Architecture: () => import('../components/GrowPlatform/Architecture/ArchitectureIntelligence'),
     Login: () => import('../components/login'),
+    SMSMarketing: () => import('../components/GrowPlatform/Marketing/SMSMarketing'),
+    WhatsAppEngagement: () => import('../components/GrowPlatform/Marketing/WhatsAppEngagement.tsx'),
+    LoyaltyEngagement: () => import('../components/GrowPlatform/Marketing/LoyaltyEngagement.tsx'),
+    FeedbackEngagement: () => import('../components/GrowPlatform/Marketing/FeedbackEngagement.tsx'),
+    SuperAdminGrowthConsole: () => import('../components/GrowPlatform/Architecture/SuperAdminGrowthConsole.tsx'),
+    TenantManagement: () => import('../components/TenantManager.tsx'),
+    // Tenant Growth Settings (Consolidated)
+    TenantGrowthSettings: () => import('../components/GrowPlatform/Architecture/SuperAdminGrowthConsole.tsx'),
 
     // Sales Features
     SalesInvoiceRegister: () => import('../components/sales/SalesInvoiceRegister'),
@@ -136,6 +146,7 @@ export const LazyModules = {
     MarketingCampaigns: lazy(Modules.MarketingCampaigns),
     MarketingTemplates: lazy(Modules.MarketingTemplates),
     EmailMarketing: lazy(Modules.EmailMarketing),
+    EmailEngagement: lazy(Modules.EmailEngagement),
     WhatsAppMarketing: lazy(Modules.WhatsAppMarketing),
     SocialMediaMarketing: lazy(Modules.SocialMediaMarketing),
     MarketingCoupons: lazy(Modules.MarketingCoupons),
@@ -144,10 +155,18 @@ export const LazyModules = {
     Marketing: lazy(Modules.Marketing),
     GoogleBusiness: lazy(Modules.GoogleBusiness),
     Sync: lazy(Modules.Sync),
+    DeviceIntelligence: lazy(Modules.DeviceIntelligence),
     Data: lazy(Modules.Data),
     GrowReports: lazy(Modules.GrowReports),
     Architecture: lazy(Modules.Architecture),
     Login: lazy(Modules.Login),
+    SMSMarketing: lazy(Modules.SMSMarketing),
+    WhatsAppEngagement: lazy(Modules.WhatsAppEngagement),
+    LoyaltyEngagement: lazy(Modules.LoyaltyEngagement),
+    FeedbackEngagement: lazy(Modules.FeedbackEngagement),
+    SuperAdminGrowthConsole: lazy(Modules.SuperAdminGrowthConsole),
+    TenantManagement: lazy(Modules.TenantManagement),
+    TenantGrowthSettings: lazy(Modules.TenantGrowthSettings),
 
     // Sales
     SalesInvoiceRegister: lazy(Modules.SalesInvoiceRegister),
@@ -243,9 +262,16 @@ export const preloadByViewId = (viewId: string) => {
     else if (viewId === 'SETTINGS') preloadModule('Settings');
     else if (viewId === 'STOREFRONT') preloadModule('Storefront');
     else if (viewId.startsWith('GROW_MARKETING_EMAIL')) preloadModule('EmailMarketing');
-    else if (viewId.startsWith('GROW_MARKETING_WHATSAPP') || viewId.startsWith('GROW_ENGAGEMENT_WHATSAPP')) preloadModule('WhatsAppMarketing');
+    else if (viewId.startsWith('GROW_ENGAGEMENT_EMAIL')) preloadModule('EmailEngagement');
+    else if (viewId.startsWith('GROW_MARKETING_WHATSAPP')) preloadModule('WhatsAppMarketing');
+    else if (viewId.startsWith('GROW_ENGAGEMENT_WHATSAPP')) preloadModule('WhatsAppEngagement');
+    else if (viewId.startsWith('GROW_ENGAGEMENT_LOYALTY')) preloadModule('LoyaltyEngagement');
+    else if (viewId.startsWith('GROW_ENGAGEMENT_FEEDBACK')) preloadModule('FeedbackEngagement');
     else if (viewId.startsWith('GROW_MARKETING_SOCIAL')) preloadModule('SocialMediaMarketing');
     else if (viewId.startsWith('GROW_MARKETING_COUPONS')) preloadModule('MarketingCoupons');
     else if (viewId.startsWith('GROW_MARKETING_OFFERS')) preloadModule('MarketingOffers');
+    else if (viewId.startsWith('GROW_REPORTS')) preloadModule('GrowReports');
+    else if (viewId.startsWith('GROW_SYNC')) preloadModule('DeviceIntelligence');
+    else if (viewId === 'GROW_SUPER_ADMIN_CONSOLE' || viewId === 'GROW_TENANT_CONFIG') preloadModule('SuperAdminGrowthConsole');
     else if (viewId.startsWith('GROW_') || viewId === 'GROW_HUB') preloadModule('GrowDashboard');
 };

@@ -18,6 +18,7 @@ import { printSaleReceipt } from '../utils/printService';
 import { Sector, TaxMode, PaymentMethod } from '../types/common';
 import { db } from '../services/db';
 import { SyncManager } from '../services/SyncManager';
+import { productTypes } from '../data/demo/productTypes';
 
 const DEFAULT_CUSTOMER: Customer = {
     id: 'c1',
@@ -90,13 +91,16 @@ export const usePOSLogic = () => {
         const filtered = category === 'All'
             ? products
             : products.filter(p => p.category === category);
-        const subCats = new Set(filtered.map(p => p.productType || p.subCategory));
+        const subCats = new Set(filtered.map(p => p.productType || p.subCategory || p.category));
         return Array.from(subCats).filter(Boolean) as string[];
     }, [products]);
 
+    // Merge inventory product types with productTypes from ItemCategories
     const allProductTypes = useMemo(() => {
-        const types = new Set(products.map(p => p.productType || p.subCategory));
-        return Array.from(types).filter(Boolean).sort();
+        const inventoryTypes = new Set(products.map(p => p.productType || p.subCategory || p.category));
+        const categoryTypes = productTypes.map(pt => pt.name);
+        const combined = new Set([...inventoryTypes, ...categoryTypes]);
+        return Array.from(combined).filter(Boolean).sort() as string[];
     }, [products]);
 
     // --- Computed Branch Logic ---

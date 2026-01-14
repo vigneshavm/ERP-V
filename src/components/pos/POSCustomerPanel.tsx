@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Smartphone } from 'lucide-react';
+import { User, Smartphone, Mail, CreditCard, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
 import { Customer } from '../../types/sales';
+import Customer360Modal from '../customers/Customer360Modal';
 
 interface POSCustomerPanelProps {
     activeCustomer: Customer;
@@ -22,6 +23,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
     const [selectedPhoneIndex, setSelectedPhoneIndex] = useState(-1);
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
+    const [is360ModalOpen, setIs360ModalOpen] = useState(false);
 
     // Filter Suggestions and Auto-select
     useEffect(() => {
@@ -191,26 +193,129 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
 
 
-            <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 rounded p-1.5 border border-neutral-100 dark:border-neutral-700/50">
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold truncate max-w-[120px] ${activeCustomer.id !== 'c1' ? 'text-success dark:text-success' : 'text-neutral-500'}`}>
-                        {activeCustomer.id !== 'c1' ? activeCustomer.name : 'Unidentified Customer'}
-                    </span>
-                    {activeCustomer.points > 0 && (
-                        <div className="flex items-center gap-1">
-                            <span className="text-[10px] bg-success/10 text-success px-1.5 py-0.5 rounded font-bold border border-success/20">
-                                {activeCustomer.tier || 'General'}
-                            </span>
-                            <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold border border-primary/20">
-                                {activeCustomer.points} pts
-                            </span>
+            <div className="flex flex-col gap-2 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
+                <div className="flex justify-between items-center relative z-10">
+                    <div className="flex items-center gap-2">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] ${activeCustomer.id !== 'c1' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                            {activeCustomer.name.charAt(0)}
                         </div>
+                        <div>
+                            <span
+                                onClick={() => setIs360ModalOpen(true)}
+                                className={`text-xs font-black truncate max-w-[120px] italic block leading-none cursor-pointer hover:underline ${activeCustomer.id !== 'c1' ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}
+                            >
+                                {activeCustomer.id !== 'c1' ? activeCustomer.name : 'Unidentified Customer'}
+                            </span>
+                            {activeCustomer.id !== 'c1' && (
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{activeCustomer.phone}</p>
+                            )}
+                        </div>
+                    </div>
+                    {activeCustomer.id !== 'c1' && (
+                        <button onClick={() => onSetCustomer('c1')} className="p-1.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg transition-all">
+                            <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
                     )}
                 </div>
+
+                {/* Loyalty Tier & Points */}
                 {activeCustomer.id !== 'c1' && (
-                    <button onClick={() => onSetCustomer('c1')} className="text-[10px] text-error hover:text-error/80 px-1 font-bold">Reset</button>
+                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-100 dark:border-slate-800 relative z-10">
+                        <div className="flex items-center gap-2">
+                            <div className="flex flex-col">
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Customer Tier</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Crown className="w-3 h-3 text-amber-500" />
+                                    <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
+                                        {activeCustomer.tier || 'BRONZE'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <span className="text-[8px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block">Wallet Points</span>
+                            <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight">{activeCustomer.points.toLocaleString()} <span className="text-[10px] text-slate-400 uppercase ml-0.5">Pts</span></p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Points Earned Preview */}
+                {activeCustomer.id !== 'c1' && (
+                    <div className="mt-2 p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-2">
+                            <Zap className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+                            <span className="text-[9px] font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest">Points for this order</span>
+                        </div>
+                        <p className="text-xs font-black text-indigo-600 dark:text-indigo-400">+ 184</p>
+                    </div>
+                )}
+
+                {/* Engagement Quick Actions */}
+                {activeCustomer.id !== 'c1' && (
+                    <div className="flex items-center gap-4 pt-3 mt-1 border-t border-slate-100 dark:border-slate-800 relative z-10">
+                        {/* Email Actions */}
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-1">Reach:</span>
+                            <button
+                                onClick={() => alert("Invoice emailed!")}
+                                className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white rounded-xl transition-all shadow-sm border border-slate-200 dark:border-slate-700"
+                                title="Email Invoice"
+                            >
+                                <Mail className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                                onClick={() => alert("Invoice sent via WhatsApp!")}
+                                className="p-2 bg-emerald-50 dark:bg-emerald-900/10 hover:bg-emerald-600 hover:text-white rounded-xl text-emerald-600 transition-all shadow-sm border border-emerald-100 dark:border-emerald-900/30"
+                                title="WhatsApp Invoice"
+                            >
+                                <Send className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+
+                        {/* Loyalty Actions */}
+                        <div className="flex items-center gap-1.5 ml-auto">
+                            <button
+                                onClick={() => alert("Opening Loyalty Ledger...")}
+                                className="p-2 bg-amber-50 dark:bg-amber-900/10 hover:bg-amber-500 hover:text-white rounded-xl text-amber-600 transition-all shadow-sm border border-amber-100 dark:border-amber-900/30"
+                                title="Loyalty History"
+                            >
+                                <History className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                                onClick={() => alert("Redeeming points...")}
+                                className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-600/20"
+                                title="Redeem Points"
+                            >
+                                <Gift className="w-3.5 h-3.5" /> Redeem
+                            </button>
+                        </div>
+
+                        {/* CX Feedback Trigger */}
+                        <div className="flex items-center gap-1.5 ml-2 border-l border-slate-100 dark:border-slate-800 pl-4">
+                            <button
+                                onClick={() => alert("Feedback request sent to customer!")}
+                                className="p-2 bg-emerald-50 dark:bg-emerald-900/10 hover:bg-emerald-600 hover:text-white rounded-xl text-emerald-600 transition-all shadow-sm border border-emerald-100 dark:border-emerald-900/30"
+                                title="Trigger Feedback Request"
+                            >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                            </button>
+                            <div className="flex flex-col items-center">
+                                <Smile className="w-3.5 h-3.5 text-emerald-500" />
+                                <span className="text-[7px] font-black text-slate-400">92% CSAT</span>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
-        </div >
+
+            {is360ModalOpen && activeCustomer.id !== 'c1' && (
+                <Customer360Modal
+                    isOpen={is360ModalOpen}
+                    onClose={() => setIs360ModalOpen(false)}
+                    customer={activeCustomer}
+                />
+            )}
+        </div>
     );
 };

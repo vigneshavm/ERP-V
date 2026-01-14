@@ -4,6 +4,7 @@ import { Product } from '../../types/product';
 import { CartItem } from '../../types/sales';
 import { Sector } from '../../types/common';
 import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
+import { productTypes } from '../../data/demo/productTypes';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from '../../services/geminiService';
 
@@ -214,6 +215,18 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     const [nameQuery, setNameQuery] = useState('');
     const [selectedNameIndex, setSelectedNameIndex] = useState(-1);
 
+    // Quick Entry State (for items without barcode)
+    const [quickEntryPrice, setQuickEntryPrice] = useState('');
+    const [quickEntryQty, setQuickEntryQty] = useState('1');
+    const [quickEntryMeter, setQuickEntryMeter] = useState('1');
+
+    // Compute the selected type's unit
+    const selectedTypeUnit = useMemo(() => {
+        if (!selectedType) return 'Piece';
+        const typeInfo = productTypes.find(pt => pt.name === selectedType);
+        return typeInfo?.defaultUnit || 'Piece';
+    }, [selectedType]);
+
     // Matrix Modal State - Removed per user request
     // const [isMatrixOpen, setIsMatrixOpen] = useState(false);
     // const [matrixBaseProduct, setMatrixBaseProduct] = useState<Product | null>(null);
@@ -223,6 +236,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     const skuInputRef = useRef<HTMLInputElement>(null);
     const typeInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
+    const priceInputRef = useRef<HTMLInputElement>(null);
     const cartQtyRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
     // Filter Products Logic (Base)
@@ -232,10 +246,42 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         );
     }, [products, currentBranch]);
 
-    // Type Suggestions
+    // Type Suggestions with Relevance Ranking
     const typeSuggestions = useMemo(() => {
         if (!typeQuery) return [];
-        return allProductTypes.filter(t => t.toLowerCase().includes(typeQuery.toLowerCase())).slice(0, 5);
+        const query = typeQuery.toLowerCase().trim();
+
+        // Score each type by relevance
+        const scored = allProductTypes
+            .map(type => {
+                const typeLower = type.toLowerCase();
+                let score = 0;
+
+                // Exact match = highest priority
+                if (typeLower === query) {
+                    score = 100;
+                }
+                // Starts with query = high priority
+                else if (typeLower.startsWith(query)) {
+                    score = 80 - (typeLower.length - query.length); // Shorter = better
+                }
+                // Word starts with query (e.g., "COTTON SAREE" matches "saree")
+                else if (typeLower.split(' ').some(word => word.startsWith(query))) {
+                    score = 60;
+                }
+                // Contains query = lower priority
+                else if (typeLower.includes(query)) {
+                    score = 40 - typeLower.indexOf(query); // Earlier position = better
+                }
+
+                return { type, score };
+            })
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10)
+            .map(item => item.type);
+
+        return scored;
     }, [allProductTypes, typeQuery]);
 
     // Name Suggestions (Dependent on Selected Type)
@@ -277,7 +323,47 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         setSelectedType(type);
         setTypeQuery(type);
         setSelectedTypeIndex(-1);
-        setTimeout(() => nameInputRef.current?.focus(), 50);
+        setQuickEntryPrice('');
+        setQuickEntryQty('1');
+        // Focus on price input for quick entry
+        setTimeout(() => priceInputRef.current?.focus(), 50);
+    };
+
+    // Quick Entry Handler: Add item with manually entered price
+    const handleQuickEntryAdd = () => {
+        if (!selectedType || !quickEntryPrice) return;
+        const price = parseFloat(quickEntryPrice);
+        const qty = parseFloat(quickEntryQty) || 1;
+        if (isNaN(price) || price <= 0) return;
+
+        // Look up product type details for unit and GST
+        const typeInfo = productTypes.find(pt => pt.name === selectedType);
+        const defaultUnit = typeInfo?.defaultUnit || 'Piece';
+        const gstRate = typeInfo?.gstRate ?? 5;
+
+        // Create a transient cart item with UNIQUE SKU to prevent merging
+        const uniqueId = Date.now().toString();
+        const meterValue = defaultUnit === 'Meter' ? (parseFloat(quickEntryMeter) || 1) : undefined;
+        const quickItem = {
+            id: `QE-${uniqueId}`,
+            sku: `QE-${uniqueId}`, // Unique SKU prevents cart merging
+            name: selectedType,
+            price: price,
+            qty: qty,
+            gstPercentage: gstRate,
+            unit: defaultUnit,
+            cutLength: meterValue, // For Meter-based products
+            isQuickEntry: true // Flag for reporting
+        };
+        onAddToCart(quickItem);
+
+        // Reset for next entry - CLEAR type to allow selecting different type
+        setSelectedType('');
+        setTypeQuery('');
+        setQuickEntryPrice('');
+        setQuickEntryQty('1');
+        setQuickEntryMeter('1');
+        setTimeout(() => typeInputRef.current?.focus(), 50);
     };
 
     // Fuzzy Search for Suggestions
@@ -435,102 +521,170 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             */}
 
 
-
-            {/* Search Bar Row */}
-            <div className="p-2 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 flex flex-col md:flex-row gap-2 shrink-0 relative z-30 rounded-t-xl">
-                {/* 1. Global SKU Input */}
-                <div className="relative group w-full md:w-1/3">
-                    <div className="absolute left-3 top-2.5 text-neutral-400 dark:text-neutral-500">
-                        <Barcode className="w-4 h-4" />
+            {/* Search Bar Section */}
+            <div className="p-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 shrink-0 relative z-30 rounded-t-xl space-y-3">
+                {/* Row 1: Barcode Scanner */}
+                <div className="flex items-center gap-2">
+                    <label className="text-xs font-bold text-neutral-500 uppercase whitespace-nowrap hidden sm:block">Barcode:</label>
+                    <div className="relative flex-1 max-w-md">
+                        <div className="absolute left-3 top-2.5 text-neutral-400 dark:text-neutral-500">
+                            <Barcode className="w-4 h-4" />
+                        </div>
+                        <input
+                            ref={skuInputRef}
+                            type="text"
+                            placeholder="Scan Barcode / SKU"
+                            className="w-full pl-9 pr-16 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm"
+                            onKeyDown={handleSkuKeyDown}
+                            autoFocus
+                        />
+                        <kbd className="absolute right-2 top-2 text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 font-mono">Ctrl+B</kbd>
                     </div>
-                    <input
-                        ref={skuInputRef}
-                        type="text"
-                        placeholder="Scan SKU (Ctrl+B)"
-                        className="w-full pl-9 pr-14 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm"
-                        onKeyDown={handleSkuKeyDown}
-                        autoFocus
-                    />
-                    <kbd className="absolute right-2 top-2.5 text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 font-mono">Ctrl+B</kbd>
                 </div>
 
-                {/* 2. Type Interaction Row */}
-                <div className="flex flex-1 gap-2">
-                    {/* Type Input */}
-                    <div className="relative group flex-1">
-                        <div className="absolute left-3 top-2.5 text-neutral-400 dark:text-neutral-500">
-                            <Folder className="w-4 h-4" />
+                {/* Divider */}
+                <div className="flex items-center gap-2 text-xs text-neutral-400">
+                    <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700"></div>
+                    <span className="font-medium">OR Quick Entry</span>
+                    <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700"></div>
+                </div>
+
+                {/* Row 2: Quick Entry - Always Visible */}
+                <div className="flex flex-wrap gap-2 items-end">
+                    {/* Type Select */}
+                    <div className="relative flex-1 min-w-[180px]">
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Product Type</label>
+                        <div className="relative">
+                            <div className="absolute left-3 top-2.5 text-neutral-400 dark:text-neutral-500">
+                                <Folder className="w-4 h-4" />
+                            </div>
+                            <input
+                                ref={typeInputRef}
+                                type="text"
+                                placeholder="Search type..."
+                                className={`w-full pl-9 pr-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${selectedType ? 'bg-primary/10 border-primary text-primary font-bold' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100'}`}
+                                value={typeQuery}
+                                onChange={e => {
+                                    setTypeQuery(e.target.value);
+                                    if (selectedType && e.target.value !== selectedType) {
+                                        setSelectedType('');
+                                    }
+                                }}
+                                onKeyDown={handleTypeKeyDown}
+                                autoComplete="off"
+                            />
+                            {/* Type Suggestions Dropdown */}
+                            {typeQuery && !selectedType && typeSuggestions.length > 0 && (
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
+                                    {typeSuggestions.map((type, idx) => (
+                                        <button
+                                            key={type}
+                                            onClick={() => handleSelectType(type)}
+                                            className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 ${idx === selectedTypeIndex ? 'bg-primary/10 text-primary font-bold' : 'text-neutral-700 dark:text-neutral-200'}`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
+                    </div>
+
+                    {/* Price Input */}
+                    <div className="w-24">
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Price (₹)</label>
                         <input
-                            ref={typeInputRef}
-                            type="text"
-                            placeholder="Type (e.g. Saree)"
-                            className={`w-full pl-9 pr-2 py-2 text-sm border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm ${selectedType ? 'bg-primary/10 border-primary/20 text-primary font-bold' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100'}`}
-                            value={typeQuery}
-                            onChange={e => {
-                                setTypeQuery(e.target.value);
-                                if (selectedType && e.target.value !== selectedType) {
-                                    setSelectedType(''); // Reset if user changes type text
+                            ref={priceInputRef}
+                            type="number"
+                            placeholder="0.00"
+                            className="w-full px-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-bold"
+                            value={quickEntryPrice}
+                            onChange={e => setQuickEntryPrice(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleQuickEntryAdd();
                                 }
                             }}
-                            onKeyDown={handleTypeKeyDown}
-                            autoComplete="off"
-                        />
-                        {/* Type Suggestions */}
-                        {typeQuery && !selectedType && typeSuggestions.length > 0 && (
-                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
-                                {typeSuggestions.map((type, idx) => (
-                                    <button
-                                        key={type}
-                                        onClick={() => handleSelectType(type)}
-                                        className={`w-full text-left px-3 py-2 text-xs font-bold hover:bg-neutral-100 dark:hover:bg-neutral-700 ${idx === selectedTypeIndex ? 'bg-primary/10 text-primary' : 'text-neutral-700 dark:text-neutral-200'}`}
-                                    >
-                                        {type}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Name Input */}
-                    <div className="relative group flex-[1.5]">
-                        <div className="absolute left-3 top-2.5 text-neutral-400 dark:text-neutral-500">
-                            <Search className="w-4 h-4" />
-                        </div>
-                        <input
-                            ref={nameInputRef}
-                            type="text"
-                            placeholder={selectedType ? `Search ${selectedType} (Name/Rate)...` : "Select Type first..."}
-                            className={`w-full pl-9 pr-14 py-2 text-sm border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm ${!selectedType ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed border-neutral-200' : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100'}`}
-                            value={nameQuery}
-                            onChange={e => setNameQuery(e.target.value)}
-                            onKeyDown={handleNameKeyDown}
+                            min="0"
+                            step="0.01"
                             disabled={!selectedType}
-                            autoComplete="off"
                         />
-                        <kbd className="absolute right-2 top-2.5 text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 font-mono">Ctrl+F</kbd>
-
-                        {/* Name Suggestions */}
-                        {nameQuery && nameSuggestions.length > 0 && (
-                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto ring-1 ring-black/5">
-                                {nameSuggestions.map((prod, idx) => (
-                                    <button
-                                        key={prod.id}
-                                        onClick={() => handleSelectProduct(prod)}
-                                        className={`w-full text-left px-3 py-2 border-b border-neutral-100 dark:border-neutral-700/50 flex justify-between items-center group transition-colors ${idx === selectedNameIndex ? 'bg-primary text-white' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
-                                    >
-                                        <div className="min-w-0">
-                                            <p className="font-bold text-xs truncate">{prod.name}</p>
-                                            <span className="text-[9px] opacity-70">{prod.sku}</span>
-                                        </div>
-                                        <div className="text-right shrink-0 ml-2">
-                                            <p className="font-bold font-mono text-xs">₹{prod.price.toFixed(2)}</p>
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
                     </div>
+
+                    {/* Meter Input (only for Meter-based products) */}
+                    {selectedTypeUnit === 'Meter' && (
+                        <div className="w-20">
+                            <label className="text-[10px] font-bold text-primary uppercase mb-1 block">Meter</label>
+                            <input
+                                type="number"
+                                placeholder="1.0"
+                                className="w-full px-2 py-2 text-sm bg-primary/5 dark:bg-primary/10 border-2 border-primary/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-center font-bold text-primary"
+                                value={quickEntryMeter}
+                                onChange={e => setQuickEntryMeter(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleQuickEntryAdd();
+                                    }
+                                }}
+                                min="0.1"
+                                step="0.1"
+                                disabled={!selectedType}
+                            />
+                        </div>
+                    )}
+
+                    {/* Qty Input */}
+                    <div className="w-16">
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Qty</label>
+                        <input
+                            type="number"
+                            placeholder="1"
+                            className="w-full px-2 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-center font-bold"
+                            value={quickEntryQty}
+                            onChange={e => setQuickEntryQty(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleQuickEntryAdd();
+                                }
+                            }}
+                            min="1"
+                            disabled={!selectedType}
+                        />
+                    </div>
+
+                    {/* Add to Cart Button */}
+                    <div>
+                        <label className="text-[10px] font-bold text-transparent uppercase mb-1 block">Action</label>
+                        <button
+                            onClick={handleQuickEntryAdd}
+                            disabled={!selectedType || !quickEntryPrice || parseFloat(quickEntryPrice) <= 0}
+                            className="px-4 py-2 bg-success hover:bg-success/90 text-white rounded-lg font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap"
+                        >
+                            + Add
+                        </button>
+                    </div>
+
+                    {/* Clear Button */}
+                    {selectedType && (
+                        <div>
+                            <label className="text-[10px] font-bold text-transparent uppercase mb-1 block">Clear</label>
+                            <button
+                                onClick={() => {
+                                    setSelectedType('');
+                                    setTypeQuery('');
+                                    setQuickEntryPrice('');
+                                    setQuickEntryQty('1');
+                                }}
+                                className="px-3 py-2 text-neutral-500 hover:text-error hover:bg-error/10 border border-neutral-300 dark:border-neutral-700 rounded-lg text-sm font-bold"
+                                title="Clear selection"
+                            >
+                                ✕ Clear
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 

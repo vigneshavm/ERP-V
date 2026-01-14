@@ -5,9 +5,10 @@ import { RootState, setActiveTab } from '../../../store';
 import { useDispatch } from 'react-redux';
 import {
     Smartphone, Monitor, Laptop, Tablet, RefreshCw, CheckCircle, AlertCircle, Clock,
-    Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Archive, Cloud, XCircle
+    Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Archive, Cloud, XCircle,
+    Cpu, Zap, Activity
 } from 'lucide-react';
-import { SyncedDevice, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from '../../../types/tenant';
+import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from '../../../types/tenant';
 
 // Components
 import DevicesSection from './components/DevicesSection';
@@ -62,10 +63,10 @@ const Sync: React.FC = () => {
     const syncConfig: SyncConfig = {
         tenantId: activeTenant?.id || '',
         devices: [
-            { id: 'd1', name: 'Desktop – Office', platform: 'Windows', appVersion: '2.4.1', lastSyncAt: new Date(Date.now() - 2 * 60000).toISOString(), status: 'ACTIVE', isOnline: true },
-            { id: 'd2', name: 'Laptop – Home', platform: 'macOS', appVersion: '2.4.0', lastSyncAt: new Date(Date.now() - 60 * 60000).toISOString(), status: 'ACTIVE', isOnline: true },
-            { id: 'd3', name: 'Mobile – iPhone', platform: 'iOS', appVersion: '2.4.1', lastSyncAt: new Date(Date.now() - 5 * 60000).toISOString(), status: 'ACTIVE', isOnline: true },
-            { id: 'd4', name: 'Tablet – Store', platform: 'Android', appVersion: '2.3.9', lastSyncAt: new Date(Date.now() - 3 * 60 * 60000).toISOString(), status: 'INACTIVE', isOnline: false }
+            { id: 'd1', name: 'Desktop – Office', branchId: 'BR-001', userId: 'user_01', platform: 'Windows', osVersion: '10', appVersion: '2.4.1', lastSyncAt: new Date(Date.now() - 2 * 60000).toISOString(), lastOnlineAt: new Date().toISOString(), ipAddress: '192.168.1.10', status: 'ACTIVE', isOnline: true, syncHealth: 98, errorRate: 0, pendingOps: 0 },
+            { id: 'd2', name: 'Laptop – Home', branchId: 'BR-001', userId: 'user_01', platform: 'macOS', osVersion: '12', appVersion: '2.4.0', lastSyncAt: new Date(Date.now() - 60 * 60000).toISOString(), lastOnlineAt: new Date(Date.now() - 30 * 60000).toISOString(), ipAddress: '192.168.1.15', status: 'ACTIVE', isOnline: true, syncHealth: 85, errorRate: 2, pendingOps: 0 },
+            { id: 'd3', name: 'Mobile – iPhone', branchId: 'BR-001', userId: 'user_01', platform: 'iOS', osVersion: '15', appVersion: '2.4.1', lastSyncAt: new Date(Date.now() - 5 * 60000).toISOString(), lastOnlineAt: new Date().toISOString(), ipAddress: '192.168.1.20', status: 'ACTIVE', isOnline: true, syncHealth: 99, errorRate: 0, pendingOps: 0 },
+            { id: 'd4', name: 'Tablet – Store', branchId: 'BR-001', userId: 'user_02', platform: 'Android', osVersion: '11', appVersion: '2.3.9', lastSyncAt: new Date(Date.now() - 3 * 60 * 60000).toISOString(), lastOnlineAt: new Date(Date.now() - 60 * 60000).toISOString(), ipAddress: '192.168.1.25', status: 'INACTIVE', isOnline: false, syncHealth: 45, errorRate: 15, pendingOps: 12 }
         ],
         settings: {
             autoSync: true,
@@ -77,7 +78,7 @@ const Sync: React.FC = () => {
         lastSyncAt: new Date(Date.now() - 2 * 60000).toISOString(),
         syncStatus: 'UP_TO_DATE',
         conflicts: [
-            { id: 'cf1', entity: 'Customer', field: 'phone', localValue: '+91-9876543210', remoteValue: '+91-9876543211', occurredAt: new Date(Date.now() - 30 * 60000).toISOString() }
+            { id: 'cf1', ledgerEntryId: 'LE-001', entity: 'Customer', entityId: 'CUST-99', field: 'phone', localValue: '+91-9876543210', remoteValue: '+91-9876543211', occurredAt: new Date(Date.now() - 30 * 60000).toISOString() }
         ]
     };
 
@@ -102,7 +103,7 @@ const Sync: React.FC = () => {
     const [backupSettings, setBackupSettings] = useState(backupConfig.settings);
 
     // Helpers
-    const getPlatformIcon = (platform: SyncedDevice['platform']) => {
+    const getPlatformIcon = (platform: DeviceRegistryEntry['platform']) => {
         switch (platform) {
             case 'Windows': return Monitor;
             case 'macOS': return Laptop;
@@ -123,7 +124,8 @@ const Sync: React.FC = () => {
             UP_TO_DATE: { bg: 'bg-green-100', text: 'text-green-600', icon: CheckCircle },
             PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-600', icon: Clock },
             CONFLICT: { bg: 'bg-red-100', text: 'text-red-600', icon: AlertCircle },
-            SYNCING: { bg: 'bg-blue-100', text: 'text-blue-600', icon: RefreshCw }
+            SYNCING: { bg: 'bg-blue-100', text: 'text-blue-600', icon: RefreshCw },
+            ERROR: { bg: 'bg-red-100', text: 'text-red-500', icon: XCircle }
         };
         const s = styles[status];
         const Icon = s.icon;
@@ -185,7 +187,32 @@ const Sync: React.FC = () => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Sync Intelligence Premium Portal */}
+            <div className="bg-slate-900 rounded-[2.5rem] p-8 border border-slate-800 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -mr-32 -mt-32 blur-[80px]" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
+                            <Cpu className="w-8 h-8" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Sync <span className="text-indigo-400">Intelligence</span></h3>
+                                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">Premium System</span>
+                            </div>
+                            <p className="text-slate-400 font-medium max-w-xl">Access transaction-level ledger, real-time node topology, and AI-driven sync anomaly detection.</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => dispatch(setActiveTab('GROW_SYNC_DEVICE'))}
+                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                    >
+                        <Activity className="w-4 h-4" /> Switch to Intelligence View
+                    </button>
+                </div>
+            </div>
+
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white">Sync & Share</h1>

@@ -124,5 +124,6 @@ export type AppView =
 
     // Growth Reports
     | 'GROW_REPORTS' | 'GROW_REPORT_SALES' | 'GROW_REPORT_ROI'
-    | 'GROW_REPORT_CUSTOMER' | 'GROW_REPORT_TRAFFIC' | 'GROW_REPORT_CONVERSION';
-export type SystemRole = 'Owner' | 'Admin' | 'Manager' | 'Staff';
+    | 'GROW_REPORT_CUSTOMER' | 'GROW_REPORT_TRAFFIC' | 'GROW_REPORT_CONVERSION'
+    | 'GROW_SUPER_ADMIN_CONSOLE' | 'GROW_TENANT_CONFIG' | 'TENANT_MANAGEMENT';
+export type SystemRole = 'SuperAdmin' | 'Owner' | 'Admin' | 'Manager' | 'Staff';

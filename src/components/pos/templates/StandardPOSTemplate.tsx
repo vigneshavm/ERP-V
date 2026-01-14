@@ -331,3 +331,4 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         </div>
     );
 };
+export default StandardPOSTemplate;
