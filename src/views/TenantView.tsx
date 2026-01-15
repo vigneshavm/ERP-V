@@ -84,8 +84,23 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
     // Sync active tab with URL
     useEffect(() => {
         const path = location.pathname;
-        if (path === '/') dispatch(setActiveTab('DASHBOARD'));
-    }, [location.pathname, dispatch]);
+        const searchParams = new URLSearchParams(location.search);
+        const tabParam = searchParams.get('tab');
+
+        if (path === '/') {
+            if (tabParam) {
+                // If we have a settings tab param, ensure we show the settings view
+                if (activeTab !== 'SETTINGS') {
+                    dispatch(setActiveTab('SETTINGS'));
+                }
+            } else if (activeTab === 'DASHBOARD' || !activeTab) {
+                // Only default to DASHBOARD if we don't have a tab param and no specific tab is active
+                // However, the original logic forced DASHBOARD on mount/path change. 
+                // We should only force it if we are "reset" to root without state.
+                dispatch(setActiveTab('DASHBOARD'));
+            }
+        }
+    }, [location.pathname, location.search, dispatch]);
 
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;

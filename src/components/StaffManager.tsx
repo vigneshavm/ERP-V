@@ -344,7 +344,7 @@ const StaffManager: React.FC = () => {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px - 2 py - 0.5 rounded - full text - [10px] font - bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === 'Admin' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === 'Admin' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>
