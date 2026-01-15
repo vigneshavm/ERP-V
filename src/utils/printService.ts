@@ -1,33 +1,15 @@
 import { Sale } from '../types/sales';
 import { Tenant, Branch } from '../types/tenant';
 import { generateReceiptJSON } from './receiptGenerator';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-export const printSaleReceipt = (sale: Sale, tenant: Tenant, branch: Branch) => {
-  // Generate structured receipt data
+// Helper to generate HTML string (shared between print and download)
+const generateReceiptHTML = (sale: Sale, tenant: Tenant, branch: Branch): string => {
   const { receipt_data } = generateReceiptJSON(sale, tenant, branch);
   const { header, transaction_details, items, totals, tax_details, footer } = receipt_data;
 
-  // Construct the printable document
-  const printWindow = window.open('', '_blank', 'width=400,height=600');
-
-  if (!printWindow) {
-    alert("Please allow popups to print the receipt.");
-    return;
-  }
-
-  const itemsHtml = items.map(item => `
-    <tr>
-      <td style="padding: 8px 0;">
-        <div style="font-weight: bold;">${item.name}</div>
-        <!-- SKU handled if available in item logic, or if mapped in generator -->
-      </td>
-      <td style="padding: 8px 0; text-align: center; vertical-align: top;">${item.quantity}</td>
-      <td style="padding: 8px 0; text-align: right; vertical-align: top;">${item.rate.toFixed(2)}</td>
-      <td style="padding: 8px 0; text-align: right; font-weight: bold; vertical-align: top;">${item.amount.toFixed(2)}</td>
-    </tr>
-  `).join('');
-
-  printWindow.document.write(`
+  return `
     <!DOCTYPE html>
     <html>
       <head>
@@ -40,6 +22,7 @@ export const printSaleReceipt = (sale: Sale, tenant: Tenant, branch: Branch) => 
             font-size: 12px;
             margin: 0;
             padding: 20px;
+            width: 80mm; /* Standard Thermal Paper Width */
           }
           table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
           th { border-bottom: 1px dashed #000; text-align: left; padding-bottom: 5px; color: #000; font-size: 10px; font-weight: bold; }
@@ -58,104 +41,188 @@ export const printSaleReceipt = (sale: Sale, tenant: Tenant, branch: Branch) => 
         </style>
       </head>
       <body>
-        <div class="header">
-          ${header.logo_url ? `<img src="${header.logo_url}" style="width: 100%; height: auto; display: block; margin: 0 auto 10px auto; image-rendering: -webkit-optimize-contrast;" alt="Store Logo" />` : `<h1>${header.store_name}</h1>`}
-          <p>${header.store_address}</p>
-          ${header.gstin ? `<p>GSTIN: ${header.gstin}</p>` : ''}
-          <div class="dashed-line"></div>
-        </div>
+        <div id="receipt-content">
+            <div class="header">
+            ${header.logo_url ? `<img src="${header.logo_url}" style="width: 100%; height: auto; display: block; margin: 0 auto 10px auto; image-rendering: -webkit-optimize-contrast;" alt="Store Logo" />` : `<h1>${header.store_name}</h1>`}
+            <p>${header.store_address}</p>
+            ${header.gstin ? `<p>GSTIN: ${header.gstin}</p>` : ''}
+            <div class="dashed-line"></div>
+            </div>
 
-        <div class="details">
-            <span>Bill No: ${transaction_details.bill_no}</span>
-            <span>${transaction_details.date}</span>
-            <span>${transaction_details.time}</span>
-        </div>
-        <div class="dashed-line"></div>
+            <div class="details">
+                <span>Bill No: ${transaction_details.bill_no}</span>
+                <span>${transaction_details.date}</span>
+                <span>${transaction_details.time}</span>
+            </div>
+            <div class="dashed-line"></div>
 
-        <table class="items">
-          <thead>
-            <tr>
-              <th style="width: 35%; text-align: left;">NAME</th>
-              <th style="width: 15%; text-align: right;">RATE</th>
-              <th style="width: 15%; text-align: right;">MTR</th>
-              <th style="width: 15%; text-align: right;">QTY</th>
-              <th style="width: 20%; text-align: right;">AMT</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map((item) => `
-              <tr>
-                <td style="text-align: left;">${item.name}</td>
-                <td style="text-align: right;">${item.rate.toFixed(2)}</td>
-                <td style="text-align: right;">${item.mtr ? item.mtr.toFixed(2) : '0'}</td>
-                <td style="text-align: right;">${item.quantity}</td>
-                <td style="text-align: right;">${item.amount.toFixed(2)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        
-        <div class="dashed-line"></div>
-
-        <div class="totals">
-          <div class="total-row">
-            <span>Net Total</span>
-            <span>${totals.net_total.toFixed(2)}</span>
-          </div>
-          <div class="total-row grand-total">
-            <span>Final Total</span>
-            <span>${totals.final_total.toFixed(2)}</span>
-          </div>
-          <div class="total-row" style="margin-top: 5px;">
-             <span>Total Quantity: ${totals.total_quantity}</span>
-          </div>
-        </div>
-
-        <table style="width: 100%; font-size: 12px; margin-top: 5px; border-collapse: collapse;">
+            <table class="items">
             <thead>
-                <tr style="border-bottom: 1px dashed #000;">
-                    <th style="text-align: left; padding: 2px 0;">GST%</th>
-                    <th style="text-align: right; padding: 2px 0;">Taxable</th>
-                    <th style="text-align: right; padding: 2px 0;">GST</th>
-                    <th style="text-align: right; padding: 2px 0;">CGST</th>
-                    <th style="text-align: right; padding: 2px 0;">SGST</th>
+                <tr>
+                <th style="width: 35%; text-align: left;">NAME</th>
+                <th style="width: 15%; text-align: right;">RATE</th>
+                <th style="width: 15%; text-align: right;">MTR</th>
+                <th style="width: 15%; text-align: right;">QTY</th>
+                <th style="width: 20%; text-align: right;">AMT</th>
                 </tr>
             </thead>
             <tbody>
+                ${items.map((item) => `
                 <tr>
-                    <td style="text-align: left; padding: 2px 0; font-weight: bold;">${tax_details.gst_percentage}%</td>
-                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.taxable_value.toFixed(2)}</td>
-                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(tax_details.cgst_amount + tax_details.sgst_amount).toFixed(2)}</td>
-                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.cgst_amount.toFixed(2)}</td>
-                    <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.sgst_amount.toFixed(2)}</td>
+                    <td style="text-align: left;">${item.name}</td>
+                    <td style="text-align: right;">${item.rate.toFixed(2)}</td>
+                    <td style="text-align: right;">${item.mtr ? item.mtr.toFixed(2) : '0'}</td>
+                    <td style="text-align: right;">${item.quantity}</td>
+                    <td style="text-align: right;">${item.amount.toFixed(2)}</td>
                 </tr>
+                `).join('')}
             </tbody>
-        </table>
+            </table>
+            
+            <div class="dashed-line"></div>
 
-        <div class="dashed-line"></div>
+            <div class="totals">
+            <div class="total-row">
+                <span>Net Total</span>
+                <span>${totals.net_total.toFixed(2)}</span>
+            </div>
+            <div class="total-row grand-total">
+                <span>Final Total</span>
+                <span>${totals.final_total.toFixed(2)}</span>
+            </div>
+            <div class="total-row" style="margin-top: 5px;">
+                <span>Total Quantity: ${totals.total_quantity}</span>
+            </div>
+            </div>
 
-        <div class="footer">
-          <p>${footer.message_1}</p>
-          <p style="margin-top: 10px; font-weight: bold;">${footer.message_2}</p>
+            <table style="width: 100%; font-size: 12px; margin-top: 5px; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px dashed #000;">
+                        <th style="text-align: left; padding: 2px 0;">GST%</th>
+                        <th style="text-align: right; padding: 2px 0;">Taxable</th>
+                        <th style="text-align: right; padding: 2px 0;">GST</th>
+                        <th style="text-align: right; padding: 2px 0;">CGST</th>
+                        <th style="text-align: right; padding: 2px 0;">SGST</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: left; padding: 2px 0; font-weight: bold;">${tax_details.gst_percentage}%</td>
+                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.taxable_value.toFixed(2)}</td>
+                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(tax_details.cgst_amount + tax_details.sgst_amount).toFixed(2)}</td>
+                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.cgst_amount.toFixed(2)}</td>
+                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.sgst_amount.toFixed(2)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="dashed-line"></div>
+
+            <div class="footer">
+            <p>${footer.message_1}</p>
+            <p style="margin-top: 10px; font-weight: bold;">${footer.message_2}</p>
+            </div>
+            
+            <!-- Feed Spacer -->
+            <div class="feed"></div>
         </div>
-        
-        <!-- Feed Spacer -->
-        <div class="feed"></div>
-
-        <script>
-          window.onload = function() {
-            setTimeout(() => {
-              window.focus(); // Ensure window has focus
-              window.print();
-            }, 500);
-          };
-          
-          window.onafterprint = function() {
-              window.close();
-          };
-        </script>
       </body>
     </html>
-  `);
-  printWindow.document.close();
+  `;
+};
+
+export const printSaleReceipt = (sale: Sale, tenant: Tenant, branch: Branch, onAfterPrint?: () => void) => {
+  const htmlContent = generateReceiptHTML(sale, tenant, branch);
+
+  // Use a hidden iframe instead of a new window for "Silent" printing
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.srcdoc = htmlContent;
+
+  document.body.appendChild(iframe);
+
+  iframe.onload = () => {
+    if (iframe.contentWindow) {
+      iframe.contentWindow.focus();
+      try {
+        iframe.contentWindow.print();
+      } catch (e) {
+        console.error("Print failed", e);
+      }
+    }
+
+    // Execute callback immediately after print dialog closes (print() is blocking in most browsers)
+    // This gives us the best chance to restore fullscreen while the "interaction" is still fresh-ish.
+    if (onAfterPrint) onAfterPrint();
+
+    // Remove after a delay to ensure print dialog has cleanly detached from internal states
+    setTimeout(() => {
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+    }, 1000);
+  };
+};
+
+export const downloadSaleReceiptPDF = async (sale: Sale, tenant: Tenant, branch: Branch) => {
+  // We need to render the HTML to a visible container to capture it with html2canvas
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = '80mm'; // Receipt width
+  container.style.background = 'white';
+  container.style.padding = '20px';
+
+  // Reset basic styles to ensure correct capture
+  container.style.color = 'black';
+  container.style.fontFamily = "'Courier New', Courier, monospace";
+
+  // Extract body content from the full HTML
+  const fullHtml = generateReceiptHTML(sale, tenant, branch);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(fullHtml, 'text/html');
+  const content = doc.getElementById('receipt-content'); // We added this ID in generateReceiptHTML
+
+  if (content) {
+    container.innerHTML = content.innerHTML;
+    // Re-inject styles manually or rely on inline styles we used. 
+    // The HTML we generated uses <style> in head, which won't apply to this isolated div easily unless we scope it.
+    // BUT, we used inline styles for table cells mostly.
+    // To be safe, let's append the style block too.
+    const styleBlock = doc.querySelector('style');
+    if (styleBlock) {
+      container.appendChild(styleBlock.cloneNode(true));
+    }
+
+    document.body.appendChild(container);
+
+    try {
+      const canvas = await html2canvas(container, {
+        scale: 2, // Improve quality
+        useCORS: true,
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [80, canvas.height * (80 / canvas.width)] // Auto height based on width ratio
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, 80, canvas.height * (80 / canvas.width));
+      pdf.save(`Receipt-${sale.id}.pdf`);
+    } catch (error) {
+      console.error("PDF Download failed", error);
+      alert("Could not generate PDF.");
+    } finally {
+      document.body.removeChild(container);
+    }
+  }
 };

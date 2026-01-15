@@ -8,7 +8,7 @@ export const usePOSUIState = () => {
     const [isPreOrder, setIsPreOrder] = useState(false);
     const [isHeldBillsOpen, setIsHeldBillsOpen] = useState(false);
     const [isCategoryBrowserOpen, setIsCategoryBrowserOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isReturnMode, setIsReturnMode] = useState(false);
 
     const posContainerRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +34,7 @@ export const usePOSUIState = () => {
         isPreOrder, setIsPreOrder,
         isHeldBillsOpen, setIsHeldBillsOpen,
         isCategoryBrowserOpen, setIsCategoryBrowserOpen,
-        isMobileMenuOpen, setIsMobileMenuOpen,
+        isReturnMode, setIsReturnMode,
         posContainerRef,
         toggleFullScreen
     };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Scissors } from 'lucide-react';
+import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Scissors, Printer, Download } from 'lucide-react';
 import { POSLogic } from '../../../hooks/usePOSLogic';
 import { POSHeader } from '../POSHeader';
 import { POSSidebar } from '../POSSidebar';
@@ -38,6 +38,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         mobileTab,
         isProcessing,
         isPreOrder,
+        isReturnMode,
         isHeldBillsOpen,
         cartSubtotal,
         taxAmount,
@@ -63,6 +64,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         setViewMode,
         setMobileTab,
         setIsPreOrder,
+        setIsReturnMode,
         setIsHeldBillsOpen,
         handleCheckout,
         switchSession,
@@ -79,7 +81,10 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         setIsCategoryBrowserOpen,
         categories,
         getSubcategories,
-        allProductTypes
+        allProductTypes,
+        lastBill,
+        reprintLastBill,
+        downloadLastBill
     } = logic;
 
     return (
@@ -136,6 +141,22 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         </button>
 
                         <div className="bg-neutral-100 p-1 rounded-lg flex gap-1 ml-2">
+                            {/* Sale / Return Toggle */}
+                            <div className="flex bg-gray-200 p-0.5 rounded-lg mr-2">
+                                <button
+                                    onClick={() => setIsReturnMode(false)}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    Sale
+                                </button>
+                                <button
+                                    onClick={() => setIsReturnMode(true)}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    Return
+                                </button>
+                            </div>
+
                             <button
                                 onClick={() => setViewMode('SCANNER')}
                                 className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'SCANNER' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}
@@ -188,7 +209,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             counterName={activeCounterName}
                             counterId={activeCounterId}
                         />
-                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200 dark:border-neutral-800">
+                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200 dark:border-neutral-800">
                             <POSCustomerPanel
                                 activeCustomer={activeCustomer}
                                 customers={customers}
@@ -197,15 +218,52 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             />
                         </div>
 
-                        <div className="flex-1" />
 
-                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-200 dark:border-neutral-800">
+                        {/* Last Bill Card */}
+                        {lastBill && (
+                            <div className="px-2 pb-1">
+                                <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 shadow-sm">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Last Bill</span>
+                                        <div className="flex gap-1">
+                                            <button
+                                                onClick={downloadLastBill}
+                                                className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                title="Download PDF"
+                                            >
+                                                <Download className="w-3.5 h-3.5" />
+                                            </button>
+                                            <button
+                                                onClick={reprintLastBill}
+                                                className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                title="Reprint Last Bill"
+                                            >
+                                                <Printer className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center justify-center pb-0.5">
+                                        <span className="text-xl font-black text-primary tracking-tight leading-none mb-1">
+                                            ₹{lastBill.total.toFixed(2)}
+                                        </span>
+                                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-400 leading-none">
+                                            <span className="font-medium text-neutral-600 dark:text-neutral-300">#{lastBill.id.split('-').pop()}</span>
+                                            <div className="w-0.5 h-0.5 rounded-full bg-neutral-300" />
+                                            <span>{new Date(lastBill.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).toLowerCase()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-200 dark:border-neutral-800">
                             <POSFooter
                                 cartSubtotal={cartSubtotal}
                                 taxAmount={taxAmount}
                                 cartTotal={cartTotal}
                                 redemptionAmount={redemptionAmount}
                                 finalTotal={finalTotal}
+                                isRefund={finalTotal < 0}
                                 taxMode={activeSession.taxMode}
                                 paymentMethod={activeSession.paymentMethod}
                                 isProcessing={isProcessing}

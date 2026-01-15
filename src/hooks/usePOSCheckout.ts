@@ -25,6 +25,7 @@ interface UsePOSCheckoutProps {
     finalTotal: number;
     redemptionAmount: number;
     defaultTaxMode: TaxMode;
+    onCheckoutSuccess?: (sale: Sale) => void;
 }
 
 export const usePOSCheckout = ({
@@ -43,7 +44,8 @@ export const usePOSCheckout = ({
     setIsPreOrder,
     finalTotal,
     redemptionAmount,
-    defaultTaxMode
+    defaultTaxMode,
+    onCheckoutSuccess
 }: UsePOSCheckoutProps) => {
     const dispatch = useDispatch<AppDispatch>();
 
@@ -145,7 +147,15 @@ export const usePOSCheckout = ({
 
         // Print Receipt using resolved data
         if (effectiveTenant && effectiveBranch) {
-            printSaleReceipt(sale, effectiveTenant, effectiveBranch);
+            const wasFullScreen = !!document.fullscreenElement;
+            printSaleReceipt(sale, effectiveTenant, effectiveBranch, () => {
+                if (wasFullScreen && !document.fullscreenElement) {
+                    // This will need to be passed down or handled by a context, but since we are inside a hook, 
+                    // we don't have direct access to `toggleFullScreen` unless passed in.
+                    // However, standard `document.documentElement.requestFullscreen()` works if allowed.
+                    document.documentElement.requestFullscreen().catch(err => console.log("Auto-restore fullscreen blocked:", err));
+                }
+            });
         } else {
             // Should not happen due to check above, but safe to keep
             console.error("Critical: Cannot print receipt. Missing Tenant or Branch data.", { effectiveTenant, effectiveBranch });
@@ -161,11 +171,15 @@ export const usePOSCheckout = ({
         setIsProcessing(false);
         setIsPreOrder(false);
 
+        if (onCheckoutSuccess) {
+            onCheckoutSuccess(sale);
+        }
+
         setTimeout(() => dispatch(setTaxMode(defaultTaxMode)), 100);
     }, [
         cart, isProcessing, activeSession, activeCounterId, currentBranch,
         currentSector, user, branches, tenants, getBranchName, isPreOrder,
-        finalTotal, redemptionAmount, defaultTaxMode, dispatch, setIsProcessing, setIsPreOrder
+        finalTotal, redemptionAmount, defaultTaxMode, dispatch, setIsProcessing, setIsPreOrder, onCheckoutSuccess
     ]);
 
     return { handleCheckout };

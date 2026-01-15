@@ -51,7 +51,10 @@ const CartItemRow = React.memo<CartItemRowProps>(({
         <tr className="hover:bg-neutral-200/50 dark:hover:bg-neutral-700/30 transition-colors bg-white dark:bg-neutral-800">
             <td className="py-1.5 px-2 text-center text-neutral-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
             <td className="py-1.5 px-2">
-                <p className="font-bold text-neutral-800 dark:text-neutral-200 text-xs">{item.name}</p>
+                <p className="font-bold text-neutral-800 dark:text-neutral-200 text-xs">
+                    {item.name}
+                    {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-red-500 px-1 rounded-sm">RETURN</span>}
+                </p>
                 <p className="text-[10px] text-neutral-500 font-mono">
                     {item.sku} {item.unit === 'Meter' && <span className="bg-neutral-100 dark:bg-neutral-700 px-1 rounded ml-1">Per Meter</span>}
                 </p>
@@ -124,7 +127,10 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                     >+</button>
                 </div>
             </td>
-            <td className="py-1.5 px-2 text-right font-bold text-success font-mono text-xs">
+            <td className={`py-1.5 px-2 text-right font-bold font-mono text-xs ${(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)) < 0
+                    ? 'text-red-500'
+                    : 'text-success'
+                }`}>
                 ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
             </td>
             <td className="py-1.5 px-2 text-center">
@@ -151,7 +157,10 @@ const CartItemCard = React.memo<CartItemRowProps>(({
         <div className="bg-white dark:bg-neutral-800 p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-3">
             <div className="flex justify-between items-start">
                 <div>
-                    <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">{item.name}</p>
+                    <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">
+                        {item.name}
+                        {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-red-500 px-1 rounded-sm">RET</span>}
+                    </p>
                     <p className="text-xs text-neutral-500 font-mono mt-0.5">{item.sku}</p>
                     {(item.size || item.color) && (
                         <div className="flex gap-2 mt-1">
@@ -160,7 +169,9 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                         </div>
                     )}
                 </div>
-                <p className="font-bold font-mono text-success">₹{(item.price * item.qty).toFixed(2)}</p>
+                <p className={`font-bold font-mono ${item.qty < 0 ? 'text-red-500' : 'text-success'}`}>
+                    ₹{(item.price * item.qty).toFixed(2)}
+                </p>
             </div>
 
             <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 p-2 rounded-lg">

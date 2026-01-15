@@ -14,7 +14,7 @@ import { Sale, Customer, CartItem, Session } from '../types/sales';
 import { usePOSShortcuts } from './usePOSShortcuts';
 import { useBranchResolver } from './useBranchResolver';
 import { useAppSettings } from './useAppSettings';
-import { printSaleReceipt } from '../utils/printService';
+import { printSaleReceipt, downloadSaleReceiptPDF } from '../utils/printService';
 import { Sector, TaxMode, PaymentMethod } from '../types/common';
 import { db } from '../services/db';
 import { SyncManager } from '../services/SyncManager';
@@ -52,12 +52,58 @@ export const usePOSLogic = () => {
     const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
     const isBranchAll = currentBranch === 'All';
 
-    const {
-        isFullScreen, setViewMode, mobileTab, setMobileTab, viewMode,
+    const { isFullScreen, setViewMode, mobileTab, setMobileTab, viewMode,
         isProcessing, setIsProcessing, isPreOrder, setIsPreOrder,
         isHeldBillsOpen, setIsHeldBillsOpen, isCategoryBrowserOpen, setIsCategoryBrowserOpen,
-        isMobileMenuOpen, setIsMobileMenuOpen, posContainerRef, toggleFullScreen
+        isMobileMenuOpen, setIsMobileMenuOpen, isReturnMode, setIsReturnMode, posContainerRef, toggleFullScreen
     } = usePOSUIState();
+
+    const [lastBill, setLastBill] = useState<Sale | null>(null);
+
+    useEffect(() => {
+        if (activeCounterId) {
+            const stored = localStorage.getItem(`POS_LAST_BILL_${activeCounterId}`);
+            if (stored) {
+                try {
+                    setLastBill(JSON.parse(stored));
+                } catch (e) {
+                    console.error("Failed to load last bill", e);
+                }
+            } else {
+                setLastBill(null);
+            }
+        }
+    }, [activeCounterId]);
+
+    const handleCheckoutSuccess = useCallback((sale: Sale) => {
+        setLastBill(sale);
+        if (activeCounterId) {
+            localStorage.setItem(`POS_LAST_BILL_${activeCounterId}`, JSON.stringify(sale));
+        }
+    }, [activeCounterId]);
+
+    const reprintLastBill = useCallback(() => {
+        if (!lastBill) return;
+        const effectiveTenant = tenants.find(t => t.id === user?.tenantId) || tenants[0];
+        const effectiveBranch = branches.find(b => b.id === currentBranch) || branches[0];
+        if (effectiveTenant && effectiveBranch) {
+            const wasFullScreen = !!document.fullscreenElement;
+            printSaleReceipt(lastBill, effectiveTenant, effectiveBranch, () => {
+                if (wasFullScreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.log("Auto-restore fullscreen blocked:", err));
+                }
+            });
+        }
+    }, [lastBill, tenants, branches, user, currentBranch]);
+
+    const downloadLastBill = useCallback(() => {
+        if (!lastBill) return;
+        const effectiveTenant = tenants.find(t => t.id === user?.tenantId) || tenants[0];
+        const effectiveBranch = branches.find(b => b.id === currentBranch) || branches[0];
+        if (effectiveTenant && effectiveBranch) {
+            downloadSaleReceiptPDF(lastBill, effectiveTenant, effectiveBranch);
+        }
+    }, [lastBill, tenants, branches, user, currentBranch]);
 
     const { getBranchName } = useBranchResolver();
 
@@ -71,7 +117,15 @@ export const usePOSLogic = () => {
     const { handleCheckout } = usePOSCheckout({
         cart, isProcessing, setIsProcessing, activeSession, activeCounterId,
         currentBranch, currentSector, user, branches, tenants, getBranchName,
-        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, defaultTaxMode
+        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, defaultTaxMode,
+        onCheckoutSuccess: (sale) => {
+            handleCheckoutSuccess(sale);
+            const wasFullScreen = isFullScreen;
+            // Pass a simplified print callback wrapper if needed, 
+            // BUT usePOSCheckout calls printSaleReceipt directly. 
+            // We need to update usePOSCheckout as well if we want auto-print to respect fullscreen restore there.
+            // For now, let's update usePOSCheckout in next step.
+        }
     });
 
     // --- User Terminal Sync ---
@@ -213,6 +267,7 @@ export const usePOSLogic = () => {
         mobileTab,
         isProcessing,
         isPreOrder,
+        isReturnMode,
         isHeldBillsOpen,
         activeCounterName: branches.find(b => b.id === currentBranch)?.counters?.find(c => c.id === activeCounterId)?.name,
         activeCounterId,
@@ -233,6 +288,7 @@ export const usePOSLogic = () => {
         setViewMode,
         setMobileTab,
         setIsPreOrder,
+        setIsReturnMode,
         setIsHeldBillsOpen,
         isCategoryBrowserOpen,
         setIsCategoryBrowserOpen,
@@ -242,7 +298,13 @@ export const usePOSLogic = () => {
         switchSession,
         addSession: () => dispatch(addSession()),
         removeSession: (idx: number) => dispatch(removeSession(idx)),
-        onAddToCart: (item: CartItem) => dispatch(addToCart(item)),
+        onAddToCart: (item: CartItem) => {
+            // Apply return logic: If Return Mode is ON, ensure qty is negative.
+            // If Return Mode is OFF, ensure qty is positive (standard add).
+            // However, typical POS "Return Mode" just flips the sign of whatever is scanned.
+            const quantity = isReturnMode ? -Math.abs(item.qty) : Math.abs(item.qty);
+            dispatch(addToCart({ ...item, qty: quantity }));
+        },
         onRemoveFromCart: (id: string) => dispatch(removeFromCart(id)),
         onUpdateCartQty: (id: string, qty: number) => dispatch(updateCartQty({ id, qty })),
         onUpdateCartLength: (id: string, length: number) => dispatch(updateCartLength({ id, length })),
@@ -260,6 +322,9 @@ export const usePOSLogic = () => {
         getSubcategories,
         allProductTypes,
         dispatch,
+        lastBill,
+        reprintLastBill,
+        downloadLastBill,
 
         // Refs
         posContainerRef

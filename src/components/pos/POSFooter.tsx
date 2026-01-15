@@ -18,6 +18,7 @@ interface POSFooterProps {
     hasMultipleBranches: boolean;
     isEmpty: boolean;
     isPreOrder: boolean;
+    isRefund?: boolean;
     activeCustomer: Customer;
     loyaltyConfig?: LoyaltyConfig;
     onSetTaxMode: (mode: TaxMode) => void;
@@ -40,6 +41,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     hasMultipleBranches,
     isEmpty,
     isPreOrder,
+    isRefund,
     activeCustomer,
     loyaltyConfig,
     onSetTaxMode,
@@ -153,8 +155,12 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     <span className="text-secondary font-mono">₹{(taxAmount || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-end pt-1">
-                    <span className="text-neutral-700 dark:text-neutral-300 font-bold text-sm">Total Payable</span>
-                    <span className="text-success font-bold text-2xl font-mono tracking-tight">₹{(finalTotal || 0).toFixed(2)}</span>
+                    <span className="text-neutral-700 dark:text-neutral-300 font-bold text-sm">
+                        {isRefund ? 'Refund Amount' : 'Total Payable'}
+                    </span>
+                    <span className={`font-bold text-2xl font-mono tracking-tight ${isRefund ? 'text-error' : 'text-success'}`}>
+                        ₹{Math.abs(finalTotal || 0).toFixed(2)}
+                    </span>
                 </div>
 
                 <button
