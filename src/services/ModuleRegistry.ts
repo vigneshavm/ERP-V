@@ -91,7 +91,7 @@ export const Modules = {
     SupplierGroups: () => import('../components/suppliers/SupplierGroups'),
 
     // Inventory Features
-    ItemCategories: () => import('../components/inventory/ItemCategories'),
+    ItemCategories: () => import('../components/inventory/CategoryManager'),
     StockSummary: () => import('../components/inventory/StockSummary'),
     StockMovement: () => import('../components/inventory/StockMovement'),
     LowStockAlerts: () => import('../components/inventory/LowStockAlerts'),
