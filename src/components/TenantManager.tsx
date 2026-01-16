@@ -92,6 +92,17 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     const [selectedTenants, setSelectedTenants] = useState<string[]>([]);
     const [advancedFilters, setAdvancedFilters] = useState<{ sector: string; region: string }>({ sector: 'ALL', region: 'ALL' });
 
+    // System Configuration State
+    const [sysConfig, setSysConfig] = useState({
+        allowProvisioning: true,
+        maintenanceMode: false,
+        defaultRegion: 'US-EAST',
+        enforceMFA: true,
+        sessionTimeout: 30,
+        passwordComplexity: 'HIGH'
+    });
+    const [announcement, setAnnouncement] = useState('');
+
     // Extract unique values for filters
     const sectors = useMemo(() => {
         const unique = new Set(tenants.map(t => t.sector));
@@ -237,106 +248,84 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     if (isDeployView) {
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 lg:p-12 animate-in fade-in zoom-in-95 duration-500">
-                {/* Advanced Deployment Layout Header */}
-                <div className="max-w-[1600px] mx-auto mb-12 flex flex-col md:flex-row items-center justify-between gap-8 bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl p-10 rounded-[3rem] border border-white/20 dark:border-slate-800 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-600/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
-                    <div className="flex items-center gap-8 relative z-10">
+                {/* Deployment Header */}
+                <div className="max-w-[1600px] mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="flex items-center gap-6">
                         <button
                             onClick={() => {
                                 setIsDeployView(false);
                                 setSelectedTenant(null);
                             }}
-                            className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 shadow-sm group/back"
+                            className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                         >
-                            <ArrowRightCircle className="w-8 h-8 rotate-180 group-hover/back:-translate-x-1 transition-transform" />
+                            <ArrowRightCircle className="w-6 h-6 rotate-180" />
                         </button>
                         <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="px-3 py-1 bg-indigo-600/10 text-indigo-600 text-[10px] font-black uppercase tracking-tighter rounded-full border border-indigo-600/20">Protocol: Environment_Deployment</span>
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Live Connection Active</span>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tenantForm.editingTenant ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'}`}>
+                                    {tenantForm.editingTenant ? 'Edit Mode' : 'Creation Mode'}
+                                </span>
                             </div>
-                            <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">
-                                {tenantForm.editingTenant ? 'Edit' : 'Provision'} <span className="text-indigo-600">Infrastructure</span>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {tenantForm.editingTenant ? 'Configure Tenant' : 'Provision New Tenant'}
                             </h2>
                         </div>
                     </div>
 
-                    <div className="flex gap-4 relative z-10">
+                    <div className="flex gap-3">
                         <button
                             type="button"
                             onClick={() => setIsDeployView(false)}
-                            className="px-10 py-5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-white dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                            className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                         >
-                            Abort Operations
+                            Cancel
                         </button>
                         <button
                             form="tenant-full-form"
                             type="submit"
                             disabled={!tenantForm.newTenant.name || !tenantForm.newTenant.subdomain || tenantForm.isSaving}
-                            className="px-12 py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-3 overflow-hidden relative group/commit"
+                            className="px-8 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/commit:animate-[shimmer_3s_infinite]"></div>
-                            {tenantForm.isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
-                            Commit Changes
+                            {tenantForm.isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                            {tenantForm.editingTenant ? 'Save Changes' : 'Create Tenant'}
                         </button>
                     </div>
                 </div>
 
-                {/* Primary Content Area: Tabbed Neural Form */}
-                <div className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-12">
-                    {/* Sidebar: Tactical Segmented Navigation */}
-                    <div className="xl:col-span-1 space-y-6">
-                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl p-4 rounded-[2.5rem] border border-white/20 dark:border-slate-800 shadow-xl overflow-hidden relative">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-indigo-600/30"></div>
-                            <div className="flex flex-col gap-2 relative z-10">
+                {/* Main Content Area */}
+                <div className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-8">
+                    {/* Navigation Sidebar */}
+                    <div className="xl:col-span-1 space-y-4">
+                        <div className="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div className="flex flex-col gap-1">
                                 {[
-                                    { id: 'business', label: 'Business', icon: Building2 },
-                                    { id: 'contact', label: 'Company', icon: Mail },
-                                    { id: 'tax', label: 'Taxation', icon: Database },
+                                    { id: 'business', label: 'Business Profile', icon: Building2 },
+                                    { id: 'contact', label: 'Contact Details', icon: Mail },
+                                    { id: 'tax', label: 'Tax Configuration', icon: Database },
                                     { id: 'banking', label: 'Banking', icon: Sparkles },
-                                    { id: 'system', label: 'Modules', icon: Cpu },
+                                    { id: 'system', label: 'Modules & Features', icon: Cpu },
                                     { id: 'geography', label: 'Locations', icon: Globe },
-                                    { id: 'user', label: 'Admin User', icon: Users },
+                                    { id: 'user', label: 'Admin Access', icon: Users },
                                     { id: 'branding', label: 'Branding', icon: Paintbrush },
-                                    { id: 'integrations', label: 'API Links', icon: Zap }
+                                    { id: 'integrations', label: 'Integrations', icon: Zap }
                                 ].map(tab => (
                                     <button
                                         key={tab.id}
                                         onClick={() => tenantForm.setActiveTab(tab.id as any)}
-                                        className={`w-full px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-4 group/tab relative overflow-hidden ${tenantForm.activeTab === tab.id ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-600/30 ring-4 ring-indigo-600/10' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                        className={`w-full px-4 py-3 rounded-xl text-xs font-bold text-left transition-all flex items-center gap-3 ${tenantForm.activeTab === tab.id ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                     >
-                                        <tab.icon className={`w-4 h-4 transition-all ${tenantForm.activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'}`} />
-                                        <span className="relative z-10">{tab.label}</span>
-                                        {tenantForm.activeTab === tab.id && <ChevronRight className="w-4 h-4 ml-auto animate-in slide-in-from-left-2" />}
+                                        <tab.icon className={`w-4 h-4 ${tenantForm.activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}`} />
+                                        <span>{tab.label}</span>
+                                        {tenantForm.activeTab === tab.id && <ChevronRight className="w-3 h-3 ml-auto text-indigo-400" />}
                                     </button>
                                 ))}
                             </div>
                         </div>
-
-                        {/* Status Hub Sidebar Widget */}
-                        <div className="bg-slate-900 dark:bg-black p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl text-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl"></div>
-                            <div className="flex items-center gap-3 mb-6">
-                                <Activity className="w-5 h-5 text-indigo-400" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Node Health</span>
-                            </div>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Latency</span>
-                                    <span className="text-xs font-black italic">12ms - Optimal</span>
-                                </div>
-                                <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-indigo-500 w-[92%] shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    {/* Main Deployment Viewport */}
+                    {/* Form Viewport */}
                     <div className="xl:col-span-3">
-                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-[3.5rem] border border-white/20 dark:border-slate-800 shadow-2xl p-12 lg:p-20 relative overflow-hidden min-h-[800px]">
-                            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[100px] -mr-48 -mt-48 transition-all duration-1000"></div>
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-8 min-h-[600px]">
 
                             <form id="tenant-full-form" onSubmit={handlePanelSubmit} className="relative z-10 h-full flex flex-col">
                                 <div className="flex-1 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -386,57 +375,45 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
     return (
         <div className="max-w-[1800px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-            {/* Premium Header 2.0: Glassmorphism & Animated Depth */}
-            <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[3.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl p-10 rounded-[3rem] border border-white/20 dark:border-slate-800/50 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full -mr-64 -mt-64 blur-[100px] animate-pulse" />
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-600/10 rounded-full -ml-40 -mb-40 blur-[80px]" />
-
-                    <div className="relative z-10 flex items-center gap-6">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-indigo-600 blur-xl opacity-20 animate-pulse"></div>
-                            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-indigo-600/40 transform rotate-3 hover:rotate-0 transition-transform duration-500 border border-white/20">
-                                <Building2 className="w-8 h-8" />
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="px-2 py-0.5 bg-indigo-600 text-[10px] font-black text-white uppercase tracking-tighter rounded-md">Super Admin</span>
-                                <span className="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full"></span>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">V2.0 Command</span>
-                            </div>
-                            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none italic uppercase">
-                                Fleet <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">Intelligence</span>
-                            </h1>
-                            <p className="text-slate-500 dark:text-slate-400 font-bold text-sm mt-2 flex items-center gap-2">
-                                <Activity className="w-3.5 h-3.5 text-emerald-500" />
-                                Monitoring and provisioning infrastructure in real-time
-                            </p>
-                        </div>
+            {/* Standard Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                        <Building2 className="w-6 h-6" />
                     </div>
-
-                    <div className="flex items-center gap-4 relative z-10">
-                        <div className="h-12 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2 hidden lg:block"></div>
-                        <button
-                            onClick={() => dispatch(setActiveTab('DASHBOARD'))}
-                            className="p-4 bg-slate-100/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl transition-all shadow-sm border border-slate-200/50 dark:border-slate-700/50 group/btn"
-                        >
-                            <LayoutDashboard className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                        </button>
-                        <button
-                            onClick={handleOpenProvisionPanel}
-                            className="relative flex items-center gap-3 px-8 py-5 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/20 hover:shadow-indigo-600/40 hover:-translate-y-1 active:translate-y-0 transition-all overflow-hidden group/provision"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/provision:animate-[shimmer_2s_infinite]"></div>
-                            <Plus className="w-5 h-5" /> Provision Tenant
-                        </button>
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider rounded">Super Admin</span>
+                        </div>
+                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                            Tenant Operation Center
+                        </h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                            Manage and monitor your fleet of ERP instances.
+                        </p>
                     </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => dispatch(setActiveTab('DASHBOARD'))}
+                        className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl transition-all border border-slate-200 dark:border-slate-700"
+                        title="Return to Dashboard"
+                    >
+                        <LayoutDashboard className="w-5 h-5" />
+                    </button>
+                    <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden lg:block"></div>
+                    <button
+                        onClick={handleOpenProvisionPanel}
+                        className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
+                    >
+                        <Plus className="w-4 h-4" /> Provision Tenant
+                    </button>
                 </div>
             </div>
 
-            {/* Premium Tab Navigation */}
-            <div className="flex bg-white/50 dark:bg-slate-900/30 backdrop-blur-md p-2.5 rounded-3xl border border-slate-200 dark:border-slate-800 w-fit mx-auto shadow-xl">
+            {/* Tab Navigation */}
+            <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
                 {[
                     { id: 'fleet', label: 'Tenant Fleet', icon: Building2 },
                     { id: 'control', label: 'Core Systems', icon: Settings }
@@ -444,12 +421,9 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTabLocal(tab.id as TabType)}
-                        className={`px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] transition-all flex items-center gap-3 group relative overflow-hidden ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-600/30' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
+                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
-                        {activeTab === tab.id && (
-                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent"></div>
-                        )}
-                        <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'animate-bounce' : 'group-hover:scale-125 transition-transform'}`} />
+                        <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-indigo-600' : ''}`} />
                         {tab.label}
                     </button>
                 ))}
@@ -458,226 +432,190 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
             {/* TAB: Tenant Fleet */}
             {activeTab === 'fleet' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                    {/* KPI Pulse Cards 2.0 */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    {/* KPI Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         {[
-                            { label: 'Total Fleet', value: metrics.total, icon: Building2, color: 'text-indigo-600', bg: 'bg-indigo-50', glow: 'group-hover:shadow-indigo-500/20', trend: 'Global Stack' },
-                            { label: 'Active Ready', value: metrics.active, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', glow: 'group-hover:shadow-emerald-500/20', trend: 'Operational' },
-                            { label: 'Attention', value: metrics.suspended, icon: AlertTriangle, color: 'text-rose-600', bg: 'bg-rose-50', glow: 'group-hover:shadow-rose-500/20', trend: 'Restricted' },
-                            { label: 'Market Flow', value: metrics.growthEnabled, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', glow: 'group-hover:shadow-violet-500/20', trend: 'Integrated' },
-                            { label: 'Fleet Health', value: `${metrics.healthScore}%`, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', glow: 'group-hover:shadow-blue-500/20', trend: 'Optimization' }
+                            { label: 'Total Tenants', value: metrics.total, icon: Building2, color: 'text-indigo-600', bg: 'bg-indigo-50', trend: 'Total Fleet' },
+                            { label: 'Active', value: metrics.active, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: 'Operational' },
+                            { label: 'Suspended', value: metrics.suspended, icon: AlertTriangle, color: 'text-rose-600', bg: 'bg-rose-50', trend: 'Restricted' },
+                            { label: 'Growth Enabled', value: metrics.growthEnabled, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', trend: 'Integrated' },
+                            { label: 'System Health', value: `${metrics.healthScore}%`, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', trend: 'Score' }
                         ].map((kpi, idx) => (
-                            <div key={idx} className={`bg-white dark:bg-slate-900 p-7 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl relative group overflow-hidden hover:-translate-y-2 transition-all duration-500 ${kpi.glow}`}>
-                                <div className={`absolute -top-10 -right-10 w-32 h-32 ${kpi.bg} dark:opacity-5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
-                                <div className={`w-14 h-14 ${kpi.bg} dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 relative z-10 group-hover:rotate-6 transition-transform`}>
-                                    <kpi.icon className={`w-7 h-7 ${kpi.color}`} />
-                                </div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 relative z-10">{kpi.label}</p>
-                                <div className="flex items-end gap-2 relative z-10">
-                                    <h3 className="text-3xl font-black tracking-tighter">{kpi.value}</h3>
-                                    <div className={`mb-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-md ${kpi.value > 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                                        <div className={`w-1 h-1 rounded-full ${kpi.value > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></div>
-                                        <span className="text-[8px] font-black uppercase">Live</span>
+                            <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={`p-3 rounded-lg ${kpi.bg} dark:bg-slate-800`}>
+                                        <kpi.icon className={`w-6 h-6 ${kpi.color}`} />
                                     </div>
-                                </div>
-                                <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/50 relative z-10">
-                                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between">
+                                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${kpi.value > 0 ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' : 'bg-slate-100 text-slate-400'}`}>
                                         {kpi.trend}
-                                        <ChevronRight className="w-3 h-3 text-slate-300" />
-                                    </p>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{kpi.value}</h3>
+                                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{kpi.label}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* Advanced Tactical Search & Filter Matrix */}
-                    <div className="space-y-6">
-                        <div className="flex flex-col xl:flex-row gap-6 p-8 bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-[2.5rem] border border-slate-200 dark:border-slate-800/50 shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                            <div className="flex-1 relative">
-                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Search by ID, Name, Domain, or Region telemetry..."
-                                    className="w-full pl-16 pr-6 py-5 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none font-bold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-medium"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-4">
-                                {/* Sector Filter */}
-                                <div className="relative group/select">
-                                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <select
-                                        value={advancedFilters.sector}
-                                        onChange={(e) => setAdvancedFilters(prev => ({ ...prev, sector: e.target.value }))}
-                                        className="appearance-none pl-12 pr-10 py-4 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-2xl font-bold text-[11px] uppercase tracking-widest outline-none focus:border-indigo-500 transition-all cursor-pointer"
-                                    >
-                                        {sectors.map(s => <option key={s} value={s}>{s}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* Region Filter */}
-                                <div className="relative group/select">
-                                    <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <select
-                                        value={advancedFilters.region}
-                                        onChange={(e) => setAdvancedFilters(prev => ({ ...prev, region: e.target.value }))}
-                                        className="appearance-none pl-12 pr-10 py-4 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-2xl font-bold text-[11px] uppercase tracking-widest outline-none focus:border-indigo-500 transition-all cursor-pointer"
-                                    >
-                                        {regions.map(r => <option key={r} value={r}>{r}</option>)}
-                                    </select>
-                                </div>
-
-                                <div className="h-10 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2 hidden xl:block"></div>
-
-                                <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
-                                    {(['ALL', 'ACTIVE', 'SUSPENDED'] as const).map(status => (
-                                        <button
-                                            key={status}
-                                            onClick={() => setStatusFilter(status)}
-                                            className={`px-8 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${statusFilter === status ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-xl border border-slate-200 dark:border-slate-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
-                                        >
-                                            {status}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                    {/* Filters & Actions */}
+                    <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <div className="relative flex-1 w-full md:w-auto">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search tenants..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
 
-                        {/* Bulk Action Proto Bar */}
-                        {selectedTenants.length > 0 && (
-                            <div className="flex items-center justify-between p-6 bg-indigo-600 text-white rounded-[2rem] shadow-2xl animate-in slide-in-from-top-4 duration-500">
-                                <div className="flex items-center gap-6">
-                                    <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center font-black">{selectedTenants.length}</div>
-                                    <div>
-                                        <h4 className="text-sm font-black uppercase tracking-[0.1em]">Batch Protocol Active</h4>
-                                        <p className="text-[10px] opacity-70 font-bold uppercase tracking-widest italic">Ready for mass configuration update</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4">
-                                    <button className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Mass Suspend</button>
-                                    <button className="px-6 py-3 bg-white text-indigo-600 hover:scale-105 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Engage Mass Update</button>
-                                    <button onClick={() => setSelectedTenants([])} className="p-3 bg-white/10 hover:bg-rose-500 rounded-xl transition-all"><X className="w-4 h-4" /></button>
-                                </div>
+                        <div className="flex overflow-x-auto gap-3 w-full md:w-auto pb-2 md:pb-0">
+                            <select
+                                value={advancedFilters.sector}
+                                onChange={(e) => setAdvancedFilters(prev => ({ ...prev, sector: e.target.value }))}
+                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                            >
+                                {sectors.map(s => <option key={s} value={s}>{s === 'ALL' ? 'All Sectors' : s}</option>)}
+                            </select>
+
+                            <select
+                                value={advancedFilters.region}
+                                onChange={(e) => setAdvancedFilters(prev => ({ ...prev, region: e.target.value }))}
+                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                            >
+                                {regions.map(r => <option key={r} value={r}>{r === 'ALL' ? 'All Regions' : r}</option>)}
+                            </select>
+
+                            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                                {(['ALL', 'ACTIVE', 'SUSPENDED'] as const).map(status => (
+                                    <button
+                                        key={status}
+                                        onClick={() => setStatusFilter(status)}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${statusFilter === status ? 'bg-white dark:bg-slate-600 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        {status}
+                                    </button>
+                                ))}
                             </div>
-                        )}
+                        </div>
                     </div>
 
-                    {/* Industrial Command Table (100-N Tenants) */}
-                    <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden relative group">
+
+
+                    {/* Tenant Table */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                         <div className="overflow-x-auto custom-scrollbar">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-100 dark:border-slate-800">
-                                        <th className="p-8 w-10">
-                                            <button onClick={toggleAllSelection} className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${selectedTenants.length === paginatedTenants.length ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700'}`}>
-                                                {selectedTenants.length === paginatedTenants.length && <CheckCircle className="w-4 h-4 text-white" />}
+                                    <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                        <th className="px-6 py-4 w-10">
+                                            <button onClick={toggleAllSelection} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.length === paginatedTenants.length ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600'}`}>
+                                                {selectedTenants.length === paginatedTenants.length && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                             </button>
                                         </th>
                                         {[
                                             { id: 'name', label: 'Business Entity' },
-                                            { id: 'sector', label: 'Industry Tier' },
-                                            { id: 'region.currency', label: 'Region Hub' },
-                                            { id: 'isActive', label: 'System Status' },
-                                            { id: 'modules', label: 'Module Ecosystem' }
+                                            { id: 'sector', label: 'Sector' },
+                                            { id: 'region.currency', label: 'Region' },
+                                            { id: 'isActive', label: 'Status' },
+                                            { id: 'modules', label: 'Modules' }
                                         ].map(col => (
-                                            <th key={col.id} className="p-8 cursor-pointer group/th" onClick={() => handleSort(col.id as any)}>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover/th:text-indigo-500 transition-colors">{col.label}</span>
-                                                    <RefreshCw className={`w-3 h-3 text-slate-300 group-hover/th:text-indigo-400 transition-all ${sortConfig?.key === col.id ? 'rotate-180 text-indigo-600' : ''}`} />
+                                            <th key={col.id} className="px-6 py-4 cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => handleSort(col.id as any)}>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{col.label}</span>
+                                                    <RefreshCw className={`w-3 h-3 text-slate-400 group-hover:text-indigo-500 transition-all ${sortConfig?.key === col.id ? 'text-indigo-600' : 'opacity-0 group-hover:opacity-100'}`} />
                                                 </div>
                                             </th>
                                         ))}
-                                        <th className="p-8 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                     {paginatedTenants.length === 0 ? (
                                         <tr>
-                                            <td colSpan={7} className="p-32 text-center text-slate-400">
-                                                <div className="flex flex-col items-center gap-6">
-                                                    <Building2 className="w-20 h-20 opacity-10 animate-pulse" />
-                                                    <h4 className="text-xl font-black uppercase tracking-widest italic">No Nodes in Search Perimeter</h4>
+                                            <td colSpan={7} className="p-20 text-center text-slate-400">
+                                                <div className="flex flex-col items-center gap-4">
+                                                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-full">
+                                                        <Search className="w-8 h-8 text-slate-300" />
+                                                    </div>
+                                                    <h4 className="text-lg font-bold text-slate-700 dark:text-slate-300">No Tenants Found</h4>
+                                                    <p className="text-sm text-slate-500">Try adjusting your search criteria or filters</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : (
                                         paginatedTenants.map(tenant => (
-                                            <tr key={tenant.id} className="group/row hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-300 border-b border-slate-50 dark:border-slate-800/30">
-                                                <td className="p-8">
-                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700 group-hover/row:border-indigo-400'}`}>
-                                                        {selectedTenants.includes(tenant.id) && <CheckCircle className="w-4 h-4 text-white" />}
+                                            <tr key={tenant.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700 group-hover:border-indigo-400'}`}>
+                                                        {selectedTenants.includes(tenant.id) && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                                     </button>
                                                 </td>
-                                                <td className="p-8">
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-xl group-hover/row:scale-110 group-hover/row:rotate-3 transition-all">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-xl shadow-sm">
                                                             {getSectorIcon(tenant.sector)}
                                                         </div>
                                                         <div>
-                                                            <div className="flex items-center gap-3">
-                                                                <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter group-hover/row:text-indigo-600 transition-colors">{tenant.name}</h4>
+                                                            <div className="flex items-center gap-2">
+                                                                <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">{tenant.name}</h4>
                                                                 {tenant.isPremium && <Crown className="w-3.5 h-3.5 text-amber-500" title="Premium Enterprise" />}
                                                             </div>
-                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{tenant.subdomain}.ERP.NEXT</p>
+                                                            <p className="text-xs text-slate-500 font-mono mt-0.5">{tenant.subdomain}.erp.next</p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="p-8">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">{tenant.sector}</span>
-                                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Core Vertical</span>
+                                                <td className="px-6 py-4">
+                                                    <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-600 dark:text-slate-300">
+                                                        {tenant.sector}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                                        <Globe className="w-3.5 h-3.5 text-slate-400" />
+                                                        {tenant.region?.currency || 'USD'}
                                                     </div>
                                                 </td>
-                                                <td className="p-8">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                                                            <Globe className="w-3.5 h-3.5 text-slate-500" />
-                                                        </div>
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">{tenant.region?.currency || 'USD'}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="p-8">
+                                                <td className="px-6 py-4">
                                                     <button
                                                         onClick={() => handleToggleStatus(tenant)}
-                                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${tenant.isActive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}
+                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${tenant.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}
                                                     >
-                                                        <div className={`w-1.5 h-1.5 rounded-full ${tenant.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
-                                                        {tenant.isActive ? 'Broadcasting' : 'Restricted'}
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${tenant.isActive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                                                        {tenant.isActive ? 'Active' : 'Suspended'}
                                                     </button>
                                                 </td>
-                                                <td className="p-8">
-                                                    <div className="flex -space-x-2">
-                                                        {tenant.modules.slice(0, 3).map((mod, i) => (
-                                                            <div key={mod} className="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border-2 border-slate-50 dark:border-slate-900 flex items-center justify-center text-[9px] font-black text-indigo-600 shadow-sm" title={mod}>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex -space-x-1.5">
+                                                        {tenant.modules.slice(0, 4).map((mod, i) => (
+                                                            <div key={mod} className="w-6 h-6 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[8px] font-bold text-slate-600 shadow-sm" title={mod}>
                                                                 {mod.charAt(0)}
                                                             </div>
                                                         ))}
-                                                        {tenant.modules.length > 3 && (
-                                                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 border-2 border-slate-50 dark:border-slate-900 flex items-center justify-center text-[8px] font-black text-slate-500">
-                                                                +{tenant.modules.length - 3}
+                                                        {tenant.modules.length > 4 && (
+                                                            <div className="w-6 h-6 rounded bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[8px] font-bold text-slate-500">
+                                                                +{tenant.modules.length - 4}
                                                             </div>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-8 text-right">
-                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => onLoginAs?.(tenant)}
-                                                            className="p-3 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 rounded-xl shadow-sm border border-slate-100 dark:border-slate-600 transition-all hover:scale-110 active:scale-95"
-                                                            title="Emulate Tenant"
+                                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                            title="Login as System Admin"
                                                         >
                                                             <LogIn className="w-4 h-4" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleOpenEditPanel(tenant)}
-                                                            className="p-3 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 rounded-xl shadow-sm border border-slate-100 dark:border-slate-600 transition-all hover:scale-110 active:scale-95"
-                                                            title="Adjust Infrastructure"
+                                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            title="Edit Configuration"
                                                         >
-                                                            <Settings2 className="w-4 h-4" />
+                                                            <Pencil className="w-4 h-4" />
                                                         </button>
                                                     </div>
                                                 </td>
@@ -688,16 +626,17 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             </table>
                         </div>
 
-                        {/* Pagination Matrix */}
-                        <div className="p-8 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Fleet Telemetry: Showing {paginatedTenants.length} of {sortedTenants.length} Nodes</span>
+
+                        {/* Pagination */}
+                        <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                            <div className="text-sm text-slate-500 dark:text-slate-400">
+                                Showing <span className="font-bold text-slate-700 dark:text-slate-300">{paginatedTenants.length}</span> of <span className="font-bold text-slate-700 dark:text-slate-300">{sortedTenants.length}</span> tenants
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                     disabled={currentPage === 1}
-                                    className="p-3 bg-white dark:bg-slate-700 text-slate-500 rounded-xl shadow-sm border border-slate-100 dark:border-slate-600 disabled:opacity-30 transition-all"
+                                    className="p-2 bg-white dark:bg-slate-800 text-slate-500 hover:text-indigo-600 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight className="w-4 h-4 rotate-180" />
                                 </button>
@@ -705,7 +644,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     <button
                                         key={i}
                                         onClick={() => setCurrentPage(i + 1)}
-                                        className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all ${currentPage === i + 1 ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white dark:bg-slate-700 text-slate-500 hover:bg-slate-100'}`}
+                                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
                                     >
                                         {i + 1}
                                     </button>
@@ -713,7 +652,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 <button
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="p-3 bg-white dark:bg-slate-700 text-slate-500 rounded-xl shadow-sm border border-slate-100 dark:border-slate-600 disabled:opacity-30 transition-all"
+                                    className="p-2 bg-white dark:bg-slate-800 text-slate-500 hover:text-indigo-600 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
@@ -723,22 +662,160 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                 </div>
             )}
 
-            {/* TAB: Core Systems (Legacy Control Placeholder) */}
+            {/* TAB: Core Systems */}
             {activeTab === 'control' && (
-                <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-slate-800 p-20 shadow-2xl animate-in slide-in-from-right-4 duration-500 text-center">
-                    <div className="max-w-md mx-auto space-y-8">
-                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-400">
-                            <Settings2 className="w-12 h-12 animate-spin-slow" />
+                <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+                    {/* Platform Health */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                            <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl">
+                                <Activity className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-500 font-medium">System Status</p>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Operational</h3>
+                            </div>
                         </div>
-                        <div>
-                            <h3 className="text-3xl font-black uppercase tracking-tighter italic mb-4">Core <span className="text-indigo-600">Infrastructure</span></h3>
-                            <p className="text-slate-500 dark:text-slate-400 font-bold text-sm leading-relaxed">Platform-wide system configuration, security protocols, and global redundancy settings are managed via the dedicated Architecture layer.</p>
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl">
+                                <Server className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-500 font-medium">Active Nodes</p>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{tenants.length} / 500</h3>
+                            </div>
                         </div>
-                        <button onClick={() => setActiveTabLocal('fleet')} className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all">Back to Fleet Intelligence</button>
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                            <div className="p-3 bg-violet-100 dark:bg-violet-900/30 text-violet-600 rounded-xl">
+                                <Zap className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-500 font-medium">API Latency</p>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">24ms</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Global Settings */}
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Globe className="w-5 h-5 text-indigo-600" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Global Settings</h3>
+                            </div>
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-bold text-slate-700 dark:text-slate-300">New Provisioning</p>
+                                        <p className="text-xs text-slate-500">Allow creation of new tenants</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setSysConfig(prev => ({ ...prev, allowProvisioning: !prev.allowProvisioning }))}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.allowProvisioning ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.allowProvisioning ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-bold text-slate-700 dark:text-slate-300">Maintenance Mode</p>
+                                        <p className="text-xs text-slate-500">Restrict access for all non-admins</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setSysConfig(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }))}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.maintenanceMode ? 'bg-rose-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.maintenanceMode ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-2">Default Region</label>
+                                    <select
+                                        value={sysConfig.defaultRegion}
+                                        onChange={(e) => setSysConfig(prev => ({ ...prev, defaultRegion: e.target.value }))}
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="US-EAST">US East (N. Virginia)</option>
+                                        <option value="EU-WEST">EU West (London)</option>
+                                        <option value="AP-SOUTH">AP South (Mumbai)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Security Policy */}
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div className="flex items-center gap-3 mb-6">
+                                <ShieldCheck className="w-5 h-5 text-indigo-600" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Security Policy</h3>
+                            </div>
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-bold text-slate-700 dark:text-slate-300">Enforce MFA</p>
+                                        <p className="text-xs text-slate-500">Require 2FA for all admin accounts</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setSysConfig(prev => ({ ...prev, enforceMFA: !prev.enforceMFA }))}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.enforceMFA ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.enforceMFA ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-2">Session Timeout (Minutes)</label>
+                                    <input
+                                        type="number"
+                                        value={sysConfig.sessionTimeout}
+                                        onChange={(e) => setSysConfig(prev => ({ ...prev, sessionTimeout: parseInt(e.target.value) }))}
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-2">Password Complexity</label>
+                                    <select
+                                        value={sysConfig.passwordComplexity}
+                                        onChange={(e) => setSysConfig(prev => ({ ...prev, passwordComplexity: e.target.value }))}
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="LOW">Low (Min 6 chars)</option>
+                                        <option value="MEDIUM">Medium (Min 8 chars, Alphanumeric)</option>
+                                        <option value="HIGH">High (Min 12 chars, Special chars)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Broadcast System */}
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6">
+                            <MessageSquare className="w-5 h-5 text-indigo-600" />
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">System Broadcast</h3>
+                        </div>
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <textarea
+                                value={announcement}
+                                onChange={(e) => setAnnouncement(e.target.value)}
+                                placeholder="Type a message to broadcast to all active tenant dashboards..."
+                                className="flex-1 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px] resize-none"
+                            />
+                            <div className="flex flex-col gap-2">
+                                <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">
+                                    Send Broadcast
+                                </button>
+                                <button
+                                    onClick={() => setAnnouncement('')}
+                                    className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </div >
     );
 };
 

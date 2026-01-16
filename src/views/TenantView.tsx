@@ -408,6 +408,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                     <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
                                 </EntitlementGuard>
                             } />
+                            <Route path="/growth/tenant-architect/:tenantId" element={
+                                <Suspense fallback={<div>Loading Tenant Architect...</div>}><LazyModules.TenantArchitect /></Suspense>
+                            } />
                             <Route path="*" element={renderContent()} />
                         </Routes>
                     </div>

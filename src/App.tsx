@@ -20,6 +20,7 @@ const TenantView = lazy(() => import('./views/TenantView'));
 // Standalone Pages
 const ResetPassword = lazy(() => import('./components/ResetPassword'));
 const TenantOnboarding = lazy(() => import('./components/onboarding/TenantOnboarding'));
+const TenantArchitect = lazy(() => import('./components/GrowPlatform/Architecture/TenantArchitect'));
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -103,6 +104,7 @@ const App: React.FC = () => {
                 <Route path="/signup" element={<TenantOnboarding />} />
                 <Route path="/onboarding" element={<TenantOnboarding />} />
                 <Route path="/register" element={<TenantOnboarding />} />
+                <Route path="/growth/tenant-architect/:tenantId" element={<TenantArchitect />} />
 
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={

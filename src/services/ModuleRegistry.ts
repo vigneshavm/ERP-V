@@ -53,6 +53,7 @@ export const Modules = {
     TenantManagement: () => import('../components/TenantManager.tsx'),
     // Tenant Growth Settings (Consolidated)
     TenantGrowthSettings: () => import('../components/GrowPlatform/Architecture/SuperAdminGrowthConsole.tsx'),
+    TenantArchitect: () => import('../components/GrowPlatform/Architecture/TenantArchitect.tsx'),
 
     // Sales Features
     SalesInvoiceRegister: () => import('../components/sales/SalesInvoiceRegister'),
@@ -167,6 +168,7 @@ export const LazyModules = {
     SuperAdminGrowthConsole: lazy(Modules.SuperAdminGrowthConsole),
     TenantManagement: lazy(Modules.TenantManagement),
     TenantGrowthSettings: lazy(Modules.TenantGrowthSettings),
+    TenantArchitect: lazy(Modules.TenantArchitect),
 
     // Sales
     SalesInvoiceRegister: lazy(Modules.SalesInvoiceRegister),

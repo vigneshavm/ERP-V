@@ -9,6 +9,7 @@ export const usePOSUIState = () => {
     const [isHeldBillsOpen, setIsHeldBillsOpen] = useState(false);
     const [isCategoryBrowserOpen, setIsCategoryBrowserOpen] = useState(false);
     const [isReturnMode, setIsReturnMode] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const posContainerRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +36,7 @@ export const usePOSUIState = () => {
         isHeldBillsOpen, setIsHeldBillsOpen,
         isCategoryBrowserOpen, setIsCategoryBrowserOpen,
         isReturnMode, setIsReturnMode,
+        isMobileMenuOpen, setIsMobileMenuOpen,
         posContainerRef,
         toggleFullScreen
     };
