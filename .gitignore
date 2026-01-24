@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 npm-debug.log*
@@ -20,6 +21,10 @@ pnpm-lock.yaml
 
 # Logs
 logs/
+=======
+# Logs
+logs
+>>>>>>> 838cc61a36e38b6be2f28f9378e1f5bc9b10a416
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -27,6 +32,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+<<<<<<< HEAD
 # Runtime data
 pids/
 *.pid
@@ -128,3 +134,23 @@ backend/invoices/
 *.tmp
 *.pdf
 bizzai-admin/
+=======
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+>>>>>>> 838cc61a36e38b6be2f28f9378e1f5bc9b10a416
