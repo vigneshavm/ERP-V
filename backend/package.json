@@ -2,7 +2,7 @@
   "name": "smarterpai-backend",
   "version": "2.0.0",
   "description": "SmartERPAI Backend - Production Ready",
-  "main": "server.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "start": "node dist/server.js",

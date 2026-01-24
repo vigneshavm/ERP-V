@@ -1,11 +1,9 @@
 import { Router } from "express";
-import { container } from "tsyringe";
-import { ExpenseController } from "../controllers/ExpenseController.js";
+import expenseController from "../controllers/ExpenseController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { requirePermission } from "../middlewares/rbacMiddleware.js";
 
 const router = Router();
-const expenseController = container.resolve(ExpenseController);
 
 router.get("/", protect, expenseController.getAllExpenses);
 router.post("/", protect, expenseController.createExpense);

@@ -190,7 +190,7 @@ const posSlice = createSlice({
         total
       };
 
-      // @ts-ignore - Dynamic property addition if type is strict, otherwise need to update POSState interface
+      //  - Dynamic property addition if type is strict, otherwise need to update POSState interface
       state.heldBills = [heldBill, ...(state.heldBills || [])];
 
       // Clear Session

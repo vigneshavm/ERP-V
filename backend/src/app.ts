@@ -19,12 +19,27 @@ import errorHandler from "./middlewares/errorHandler.js";
 // Routes
 import healthRoutes from "./routes/healthRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import supplierRoutes from "./routes/supplierRoutes.js";
 import salesRoutes from "./routes/salesRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import posRoutes from "./routes/posRoutes.js";
+import expenseCategoryRoutes from "./routes/expenseCategoryRoutes.js";
+import recurringExpenseRoutes from "./routes/recurringExpenseRoutes.js";
+import expenseReportRoutes from "./routes/expenseReportRoutes.js";
+import billRoutes from "./routes/billRoutes.js";
+import returnRoutes from "./routes/returnRoutes.js";
+import purchaseReturnRoutes from "./routes/purchaseReturnRoutes.js";
+import estimateRoutes from "./routes/estimateRoutes.js";
+import dueRoutes from "./routes/dueRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 import cashBankRoutes from "./routes/cashBankRoutes.js";
+import paymentInRoutes from "./routes/paymentInRoutes.js";
+import salesOrderRoutes from "./routes/salesOrderRoutes.js";
+import deliveryChallanRoutes from "./routes/deliveryChallanRoutes.js";
+import refreshTokenRoutes from "./routes/refreshTokenRoutes.js";
 
 dotenv.config();
 
@@ -112,12 +127,27 @@ app.get("/", (req, res) => {
 // =======================
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes); // Registered Auth Routes
+app.use("/api/auth", refreshTokenRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/inventory", inventoryRoutes); // Registered Inventory Routes
+app.use("/api/pos", posRoutes);
+app.use("/api/sales-invoice", salesRoutes); // Registered Sales Routes
 app.use("/api/customers", customerRoutes); // Registered Customer Routes
 app.use("/api/suppliers", supplierRoutes); // Registered Supplier Routes
-app.use("/api/sales-invoice", salesRoutes); // Registered Sales Routes
 app.use("/api/expenses", expenseRoutes); // Registered Expense Routes
+app.use("/api/expense-categories", expenseCategoryRoutes);
+app.use("/api/recurring-expenses", recurringExpenseRoutes);
+app.use("/api/expense-reports", expenseReportRoutes);
+app.use("/api/bills", billRoutes);
+app.use("/api/returns", returnRoutes);
+app.use("/api/purchase-returns", purchaseReturnRoutes);
+app.use("/api/estimates", estimateRoutes);
+app.use("/api/due", dueRoutes);
+app.use("/api/reports", reportRoutes);
 app.use("/api/cashbank", cashBankRoutes); // Registered Cash/Bank Routes
+app.use("/api/payment-in", paymentInRoutes);
+app.use("/api/sales-orders", salesOrderRoutes);
+app.use("/api/delivery-challan", deliveryChallanRoutes);
 // ...
 
 // =======================

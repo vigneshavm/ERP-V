@@ -1,11 +1,9 @@
 import { Router } from "express";
-import { container } from "tsyringe";
-import { SupplierController } from "../controllers/SupplierController.js";
+import supplierController from "../controllers/SupplierController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { requirePermission } from "../middlewares/rbacMiddleware.js";
 
 const router = Router();
-const supplierController = container.resolve(SupplierController);
 
 router.post("/", protect, supplierController.addSupplier);
 router.get("/", protect, supplierController.getAllSuppliers);

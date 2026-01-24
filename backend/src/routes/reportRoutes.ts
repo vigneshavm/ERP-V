@@ -1,0 +1,17 @@
+import express from "express";
+import {
+  getSalesReport,
+  getStockReport,
+  getCustomerReport,
+  getDashboardStats
+} from "../controllers/ReportController.js";
+import { protect } from "../middlewares/authMiddleware.js";
+
+const router = express.Router();
+
+router.get("/sales", protect, getSalesReport);
+router.get("/stock", protect, getStockReport);
+router.get("/customers", protect, getCustomerReport);
+router.get("/dashboard-stats", protect, getDashboardStats);
+
+export default router;

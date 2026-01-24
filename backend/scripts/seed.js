@@ -17,13 +17,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Import models
-import User from "../models/User.js";
-import Customer from "../models/Customer.js";
-import Item from "../models/Item.js";
-import Supplier from "../models/Supplier.js";
-import BankAccount from "../models/BankAccount.js";
-import Invoice from "../models/Invoice.js";
-import Counter from "../models/Counter.js";
+import User from "../src/models/User.js";
+import Customer from "../src/models/Customer.js";
+import Item from "../src/models/Item.js";
+import Supplier from "../src/models/Supplier.js";
+import BankAccount from "../src/models/BankAccount.js";
+import Invoice from "../src/models/Invoice.js";
+import Counter from "../src/models/Counter.js";
 
 // Connect to MongoDB
 const connectDB = async () => {

@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { autoInjectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 import { SalesService } from "../services/SalesService.js";
 
-@autoInjectable()
+@injectable()
 export class SalesController {
-    constructor(private salesService: SalesService) { }
+    constructor(@inject(SalesService) private salesService: SalesService) { }
 
     getSalesInvoiceSummary = async (req: Request, res: Response, next: NextFunction) => {
         try {

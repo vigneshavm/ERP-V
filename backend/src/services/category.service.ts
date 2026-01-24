@@ -186,9 +186,9 @@ export class CategoryService {
         // 2. Sorting
         if (sortBy) {
             filtered.sort((a, b) => {
-                // @ts-ignore
+                // 
                 let valA = a[sortBy];
-                // @ts-ignore
+                // 
                 let valB = b[sortBy];
 
                 if (typeof valA === 'string') valA = valA.toLowerCase();

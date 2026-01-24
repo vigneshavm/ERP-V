@@ -14,7 +14,7 @@ import { Tenant, Integrations } from '../../../types/tenant';
 
 // Helper to safely access tenant from state
 const useCurrentTenant = (): Tenant | null => {
-    // @ts-ignore
+    // 
     return useSelector((state: RootState) => {
         if (state.auth?.user?.tenantId) {
             return state.tenant?.tenants?.find(t => t.id === state.auth.user!.tenantId) || null;

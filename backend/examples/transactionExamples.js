@@ -5,10 +5,10 @@
  * Ensures atomic operations: inventory update + invoice creation + customer dues update
  */
 
-import { withTransaction } from "../utils/transaction.js";
-import Item from "../models/Item.js";
-import Invoice from "../models/Invoice.js";
-import Customer from "../models/Customer.js";
+import { withTransaction } from "../src/utils/transaction.js";
+import Item from "../src/models/Item.js";
+import Invoice from "../src/models/Invoice.js";
+import Customer from "../src/models/Customer.js";
 
 /**
  * Create POS sale with transaction (EXAMPLE - integrate into posController.js)

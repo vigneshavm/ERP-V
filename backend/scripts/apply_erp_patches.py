@@ -198,7 +198,7 @@ import { validateStockLevels, validateSalesOrderQuantities } from "../utils/inve
     new_check = """export const convertToInvoice = async (req, res) => {
     try {
         // ERP-GRADE: Idempotency check
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {"""
+        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {"""
     
     content = re.sub(old_check, new_check, content)
     

@@ -1,10 +1,10 @@
 import * as Sentry from "@sentry/node";
-// @ts-ignore
+// 
 import SentryProfiling from "@sentry/profiling-node";
 import type { Express } from "express";
 
 // Coerce the import to handle potential CJS/ESM interop issues
-// @ts-ignore
+// 
 const nodeProfilingIntegration = SentryProfiling.nodeProfilingIntegration || SentryProfiling.default?.nodeProfilingIntegration;
 
 /**

@@ -1,39 +1,33 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        /* Language and Environment */
+        "target": "ES2022", /* Set the JavaScript language version for emitted JavaScript. */
+        "module": "NodeNext", /* Specify what module code is generated. */
+        "moduleResolution": "NodeNext", /* Specify how TypeScript looks up a file from a given module specifier. */
         "lib": [
             "ES2022"
-        ],
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "strictBindCallApply": true,
-        "strictPropertyInitialization": true,
-        "noImplicitThis": true,
-        "esModuleInterop": true,
-        // "experimentalDecorators": true, // Handled automatically or implicitly
-        // "emitDecoratorMetadata": true, 
+        ], /* Specify a set of bundled library declaration files. */
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "sourceMap": true
-    },
-    "ts-node": {
-        "esm": true,
-        "experimentalSpecifierResolution": "node"
+        /* Modules */
+        "rootDir": "./src", /* Specify the root folder within your source files. */
+        "outDir": "./dist", /* Specify an output folder for all emitted files. */
+        "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. */
+        "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+        /* Type Checking */
+        "strict": true, /* Enable all strict type-checking options. */
+        "noImplicitAny": true, /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+        "strictNullChecks": true, /* When type checking, take into account 'null' and 'undefined'. */
+        "noUnusedLocals": true, /* Report an error when a local variables is declared but never used. */
+        "noUnusedParameters": true, /* Report an error when a function parameter is declared but never used. */
+        /* Completeness */
+        "skipLibCheck": true /* Skip type checking all .d.ts files. */
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
         "node_modules",
-        "**/*.test.ts"
+        "dist"
     ]
 }

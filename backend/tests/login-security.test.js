@@ -8,7 +8,7 @@
 import request from 'supertest';
 import app from '../app.js';
 import { redisClient, handleLoginAttempt, clearRateLimitKeys, clearInMemoryCounters } from '../middlewares/rateLimiter.js';
-import User from '../models/User.js';
+import User from '../src/models/User.js';
 import { connect, closeDatabase, clearDatabase } from './setup.js';
 import crypto from 'crypto';
 
