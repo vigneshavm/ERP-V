@@ -1,19 +1,39 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
-        "module": "NodeNext", // Aligning with TS 5.x + Node
+        "target": "ES2022",
+        "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "rootDir": "./src",
+        "lib": [
+            "ES2022"
+        ],
         "outDir": "./dist",
+        "rootDir": "./src",
         "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
         "esModuleInterop": true,
+        // "experimentalDecorators": true, // Handled automatically or implicitly
+        // "emitDecoratorMetadata": true, 
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true
+        "resolveJsonModule": true,
+        "sourceMap": true
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "**/*.test.ts"
     ]
 }
