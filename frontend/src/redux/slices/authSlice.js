@@ -1,0 +1,311 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../services/api';
+
+const API_URL = "/api/auth";
+
+// Get user from localStorage
+const user = JSON.parse(localStorage.getItem('user'));
+
+const initialState = {
+  user: user ? user : null,
+  isLoading: false,
+  isSuccess: false,
+  isError: false,
+  message: '',
+  deviceConflict: false,
+  conflictMessage: '',
+};
+
+// Register user
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, thunkAPI) => {
+    try {
+      const response = await api.post(`${API_URL}/register`, userData);
+      if (response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Login user
+export const login = createAsyncThunk(
+  'auth/login',
+  async (userData, thunkAPI) => {
+    try {
+      const response = await api.post(`${API_URL}/login`, userData);
+      if (response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Request password reset (forgot password)
+export const requestPasswordReset = createAsyncThunk(
+  'auth/forgotPassword',
+  async (email, thunkAPI) => {
+    try {
+      const response = await api.post(`${API_URL}/forgot-password`, { email });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Perform password reset
+export const performPasswordReset = createAsyncThunk(
+  'auth/resetPassword',
+  async (payload, thunkAPI) => {
+    try {
+      const response = await api.post(`${API_URL}/reset-password`, payload);
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Logout user
+export const logout = createAsyncThunk('auth/logout', async () => {
+  localStorage.removeItem('user');
+  // Clear Return page draft to prevent state leakage across sessions
+  localStorage.removeItem('returnDraft');
+});
+
+// Force logout from previous device
+export const forceLogout = createAsyncThunk(
+  'auth/forceLogout',
+  async (credentials, thunkAPI) => {
+    try {
+      const response = await api.post(`${API_URL}/force-logout`, credentials);
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Get user profile
+export const getProfile = createAsyncThunk(
+  'auth/profile',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await api.get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Update user profile
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (userData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const userId = thunkAPI.getState().auth.user._id;
+      const response = await api.put(
+        `/api/users/${userId}`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data && response.data.user) {
+        // Update user in localStorage
+        const updatedUser = { ...thunkAPI.getState().auth.user, ...response.data.user };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return response.data.user;
+      }
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    reset: (state) => {
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.isError = false;
+      state.message = '';
+      state.deviceConflict = false;
+      state.conflictMessage = '';
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Register
+      .addCase(register.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+      })
+      // Login
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        // Check if this is a device conflict (409 status) - axios stores status in error.response
+        const errorData = action.payload;
+        if (typeof errorData === 'string' && errorData.includes('currently active on another device')) {
+          state.deviceConflict = true;
+          state.conflictMessage = errorData;
+        } else {
+          state.isError = true;
+          state.message = action.payload;
+        }
+        state.user = null;
+      })
+      // Forgot Password
+      .addCase(requestPasswordReset.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+        state.message = '';
+      })
+      .addCase(requestPasswordReset.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload?.message || 'Reset link sent.';
+      })
+      .addCase(requestPasswordReset.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Reset Password
+      .addCase(performPasswordReset.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+        state.message = '';
+      })
+      .addCase(performPasswordReset.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload?.message || 'Password reset successful.';
+      })
+      .addCase(performPasswordReset.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Logout
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+      })
+      // Force Logout
+      .addCase(forceLogout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(forceLogout.fulfilled, (state) => {
+        state.isLoading = false;
+        state.deviceConflict = false;
+        state.conflictMessage = '';
+      })
+      .addCase(forceLogout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Get Profile
+      .addCase(getProfile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = { ...state.user, ...action.payload };
+      })
+      .addCase(getProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Update Profile
+      .addCase(updateProfile.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+        state.message = '';
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = { ...state.user, ...action.payload };
+        state.message = 'Profile updated successfully';
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      });
+  },
+});
+
+export const { reset } = authSlice.actions;
+export default authSlice.reducer;

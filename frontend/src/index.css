@@ -1,0 +1,425 @@
+@import "tailwindcss";
+
+@tailwind utilities;
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-arrow {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.5s ease-out;
+}
+
+.animate-bounce-arrow {
+  animation: bounce-arrow 1s infinite;
+}
+
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+@layer base {
+
+  /* Light Theme (Default) */
+  :root {
+    /* Backgrounds */
+    --color-bg: 249 250 251;
+    /* gray-50 */
+    --color-card: 255 255 255;
+    /* white */
+    --color-input: 255 255 255;
+    /* white */
+    --color-sidebar: 255 255 255;
+    /* white */
+    --color-table-row: 255 255 255;
+    /* white */
+    --color-table-header: 249 250 251;
+    /* gray-50 */
+
+    /* Text */
+    --color-text: 17 24 39;
+    /* gray-900 */
+    --color-text-secondary: 107 114 128;
+    /* gray-600 */
+    --color-text-muted: 156 163 175;
+    /* gray-500 */
+    --color-placeholder: 156 163 175;
+    /* gray-400 */
+
+    /* Borders */
+    --color-border: 229 231 235;
+    /* gray-200 */
+    --color-border-light: 243 244 246;
+    /* gray-100 */
+
+    /* Primary Accent (Indigo for Light) */
+    --color-primary: 79 70 229;
+    /* indigo-600 */
+    --color-primary-hover: 67 56 202;
+    /* indigo-700 */
+  }
+
+  /* Dark Theme */
+  .dark {
+    /* Backgrounds */
+    --color-bg: 11 15 20;
+    /* #0B0F14 */
+    --color-card: 17 24 39;
+    /* #111827 */
+    --color-input: 2 6 23;
+    /* #020617 */
+    --color-sidebar: 15 23 42;
+    /* #0F172A */
+    --color-table-row: 17 24 39;
+    /* #111827 */
+    --color-table-header: 2 6 23;
+    /* #020617 */
+
+    /* Text - BRIGHT and READABLE */
+    --color-text: 229 231 235;
+    /* #E5E7EB - bright primary text */
+    --color-text-secondary: 156 163 175;
+    /* #9CA3AF - secondary text */
+    --color-text-muted: 107 114 128;
+    /* #6B7280 - muted/placeholder */
+    --color-placeholder: 107 114 128;
+    /* #6B7280 */
+
+    /* Borders */
+    --color-border: 31 41 51;
+    /* #1F2933 */
+    --color-border-light: 31 41 51;
+    /* #1F2933 */
+
+    /* Primary Accent (Orange for Dark) */
+    --color-primary: 245 158 11;
+    /* #F59E0B */
+    --color-primary-hover: 217 119 6;
+    /* #D97706 */
+  }
+
+  /* Apply color scheme to html element */
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+@layer components {
+  .bg-app {
+    background-color: rgb(var(--color-bg));
+  }
+
+  .bg-card {
+    background-color: rgb(var(--color-card));
+  }
+
+  .bg-surface {
+    background-color: rgb(var(--color-table-header));
+  }
+
+  .bg-input {
+    background-color: rgb(var(--color-input));
+  }
+
+  .text-main {
+    color: rgb(var(--color-text));
+  }
+
+  .text-secondary {
+    color: rgb(var(--color-text-secondary));
+  }
+
+  .text-muted {
+    color: rgb(var(--color-text-muted));
+  }
+
+  .placeholder-muted::placeholder {
+    color: rgb(var(--color-placeholder));
+  }
+
+  .border-default {
+    border-color: rgb(var(--color-border));
+  }
+
+  .border-light {
+    border-color: rgb(var(--color-border-light));
+  }
+
+  .divide-border> :not([hidden])~ :not([hidden]) {
+    border-color: rgb(var(--color-border));
+  }
+
+  .bg-primary {
+    background-color: rgb(var(--color-primary));
+  }
+
+  .bg-primary-hover {
+    background-color: rgb(var(--color-primary-hover));
+  }
+
+  .bg-primary-soft {
+    background-color: rgb(var(--color-primary) / 0.1);
+  }
+
+  .text-primary {
+    color: rgb(var(--color-primary));
+  }
+
+  .hover\:bg-primary-hover:hover {
+    background-color: rgb(var(--color-primary-hover));
+  }
+
+  /* Dark mode select/dropdown styling */
+  .dark select {
+    background-color: rgb(var(--color-input));
+    color: rgb(var(--color-text));
+  }
+
+  .dark select option {
+    background-color: rgb(var(--color-card));
+    color: rgb(var(--color-text));
+  }
+
+  .dark select:focus {
+    outline: none;
+  }
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Print Styles - Force Light Mode for ALL Prints (Override Dark Mode Completely) */
+@media print {
+
+  /* CRITICAL: Override dark mode CSS variables with light theme values */
+  :root,
+  html,
+  html.dark,
+  .dark,
+  body,
+  body.dark {
+    --color-bg: 255 255 255 !important;
+    --color-card: 255 255 255 !important;
+    --color-input: 255 255 255 !important;
+    --color-sidebar: 255 255 255 !important;
+    --color-table-row: 255 255 255 !important;
+    --color-table-header: 249 250 251 !important;
+
+    --color-text: 0 0 0 !important;
+    --color-text-secondary: 55 65 81 !important;
+    --color-text-muted: 107 114 128 !important;
+
+    --color-border: 229 231 235 !important;
+    --color-border-light: 243 244 246 !important;
+
+    background: white !important;
+    background-color: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Force page background to white */
+  @page {
+    margin: 1cm;
+    size: auto;
+    background: white !important;
+    background-color: white !important;
+  }
+
+  /* Force white background on EVERYTHING */
+  *,
+  *::before,
+  *::after {
+    background: white !important;
+    background-color: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Force white on all utility classes */
+  .bg-app,
+  .bg-card,
+  .bg-surface,
+  .bg-input,
+  .bg-sidebar,
+  .bg-gray-50,
+  .bg-gray-100,
+  .bg-gray-900,
+  div,
+  section,
+  main,
+  article,
+  aside,
+  header,
+  footer,
+  nav {
+    background: white !important;
+    background-color: white !important;
+  }
+
+  /* Force black text on all text classes */
+  .text-main,
+  .text-secondary,
+  .text-muted,
+  p,
+  span,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  td,
+  th,
+  label,
+  div {
+    color: black !important;
+  }
+
+  /* Preserve ONLY status badge background colors */
+  .bg-green-100 {
+    background-color: #d1fae5 !important;
+  }
+
+  .bg-yellow-100 {
+    background-color: #fef3c7 !important;
+  }
+
+  .bg-red-100 {
+    background-color: #fee2e2 !important;
+  }
+
+  .bg-blue-50 {
+    background-color: #eff6ff !important;
+  }
+
+  /* Preserve ONLY status badge text colors */
+  .text-green-800,
+  .bg-green-100 * {
+    color: #166534 !important;
+  }
+
+  .text-yellow-800,
+  .bg-yellow-100 * {
+    color: #854d0e !important;
+  }
+
+  .text-red-800,
+  .bg-red-100 * {
+    color: #991b1b !important;
+  }
+
+  .text-green-600 {
+    color: #16a34a !important;
+  }
+
+  .text-red-600 {
+    color: #dc2626 !important;
+  }
+
+  .text-blue-600,
+  .text-indigo-600 {
+    color: #2563eb !important;
+  }
+
+  .text-blue-800,
+  .bg-blue-50 * {
+    color: #1e40af !important;
+  }
+
+  .text-blue-900 {
+    color: #1e3a8a !important;
+  }
+
+  /* Light gray borders only */
+  .border,
+  .border-b,
+  .border-t,
+  .border-l,
+  .border-r,
+  .border-default,
+  .border-light,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td {
+    border-color: #e5e7eb !important;
+  }
+
+  /* Ensure tables have white backgrounds */
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td {
+    background: white !important;
+    background-color: white !important;
+    color: black !important;
+  }
+
+
+
+  /* Hide UI elements */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Remove any dark backgrounds from Layout component */
+  [class*="Layout"],
+  [class*="layout"],
+  [class*="container"],
+  [class*="wrapper"] {
+    background: white !important;
+    background-color: white !important;
+  }
+}
