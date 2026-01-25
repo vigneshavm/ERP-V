@@ -130,6 +130,13 @@ const runMigration = async () => {
     }
     console.log(`✅ Seeded ${sectorCount} new sectors`);
 
+    // Step 8: Create Employee Indexes
+    console.log("\n👷 Creating Employee indexes...");
+    await db
+      .collection("employees")
+      .createIndex({ tenantId: 1, mobile: 1 }, { unique: true });
+    console.log("✅ Created compound index (tenantId, mobile) on employees");
+
     console.log("\n🎉 Migration completed successfully!");
     console.log(
       "\n⚠️  IMPORTANT: If you have duplicate phone numbers or item names,"

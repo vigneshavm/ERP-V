@@ -46,6 +46,7 @@ import businessRoutes from "./routes/businessRoutes.js";
 import whatsappRoutes from "./routes/whatsappRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js";
 import loyaltyRoutes from "./routes/loyaltyRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 
 
 dotenv.config();
@@ -164,6 +165,7 @@ app.use("/api/business", businessRoutes);
 app.use("/api/whatsapp", whatsappRoutes);
 app.use("/api/shop", shopRoutes);
 app.use("/api/loyalty", loyaltyRoutes);
+app.use("/api/employees", employeeRoutes);
 
 // ...
 

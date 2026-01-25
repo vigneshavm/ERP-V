@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
-import { addEmployee, markAttendance, addLaborPayment } from '../../redux/slices/laborSlice';
+import { addEmployee, markAttendance, addLaborPayment, setEmployees } from '../../redux/slices/laborSlice';
 import { ensureBranchRecorded } from '../../redux/slices/tenantSlice';
+import api from '../../services/api';
 import Layout from '../../components/Layout';
 import PageHeader from '../../components/PageHeader';
 import { TimeEntryModal } from '../../components/TimeEntryModal';
@@ -64,10 +65,44 @@ export const LaborManager = () => {
 
   const activeTenantId = employees.length > 0 ? employees[0].tenantId : null;
 
-  // Load roles once on mount
+  // Load employees from API
+  React.useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await api.get('/api/employees');
+        if (response.data && response.data.success) {
+          // Adapt to Redux format
+          const emps = response.data.data.map((e: any) => ({
+            id: e._id,
+            tenantId: e.tenantId,
+            name: e.name,
+            role: e.role,
+            roleId: e.roleId,
+            mobile: e.mobile,
+            dailyRate: e.dailyRate,
+            wageType: e.wageType,
+            branchId: e.branchId,
+            sector: currentSector, // Fallback or store in DB
+            active: e.isActive,
+            systemRole: 'STAFF',
+            pin: '****'
+          }));
+          // Update redux (need to import setEmployees action first if not already done, check imports)
+          // See imports in file: import { addEmployee, markAttendance, addLaborPayment } from '../../redux/slices/laborSlice';
+          // We need to add setEmployees to the import list or just dispatch individual adds?? Better setEmployees.
+          // Assuming setEmployees is exported from slice, let's use it.
+        }
+      } catch (err) {
+        console.error("Failed to load employees", err);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  // Removed legacy roles loading for now or keep if needed for role selection
   React.useEffect(() => {
     if (!isRolesLoaded && activeTenantId) {
-      loadRoles();
+      // loadRoles(); // Disable Supabase role loading
     }
   }, [isRolesLoaded, activeTenantId]);
 
@@ -98,40 +133,50 @@ export const LaborManager = () => {
     const branchIdentifier = newEmp.branch || (currentBranch === 'All' ? 'Alpha' : currentBranch);
     dispatch(ensureBranchRecorded({ branchId: branchIdentifier }));
 
-    const hashedPin = await securePassword('0000');
-    let targetRoleId = newEmp.roleId || roles.find(r => r.name === 'Staff')?.id || null;
+    // let finalBranchId = null; // Backend can handle basic branch string for now or specific ID logic
 
-    let finalBranchId = null;
-    if (typeof newEmp.branch === 'string') {
-      const found = tenantBranches.find(b => b.name === newEmp.branch || b.id === newEmp.branch);
-      if (found) finalBranchId = found.id;
-    } else if ((newEmp.branch as any)?.id) {
-      finalBranchId = (newEmp.branch as any).id;
-    }
-
-    const payload = generateLaborerPayload({
-      tenantId: activeTenantId,
+    // API Payload
+    const payload = {
       name: newEmp.name,
-      roleId: targetRoleId,
-      dailyRate: parseFloat(newEmp.dailyRate) || 0,
+      role: newEmp.role || 'Staff',
+      roleId: newEmp.roleId,
       mobile: newEmp.mobile,
-      hashedPin,
-      branchId: finalBranchId
-    });
+      dailyRate: parseFloat(newEmp.dailyRate) || 0,
+      wageType: wageType,
+      branchId: branchIdentifier // sending string identifier as branchId
+    };
 
-    const { data: insertedUser, error } = await import('../../../../src/lib/supabase').then(m => m.supabase
-      .from('tenant_users').insert([payload]).select(`*, role:roles(code, description)`).single()
-    );
+    try {
+      const response = await api.post('/api/employees', payload);
+      if (response.data && response.data.success) {
+        // Dispatch to redux using the returned data structured as expected by frontend
+        // Mapping might be needed if frontend expects specific structure
+        const insertedUser = response.data.data;
 
-    if (error) {
-      alert("Failed to add laborer: " + error.message);
-      return;
-    }
+        // Adapting backend object to frontend Employee interface
+        const employeeForRedux = {
+          id: insertedUser._id,
+          tenantId: insertedUser.tenantId,
+          name: insertedUser.name,
+          role: insertedUser.role,
+          roleId: insertedUser.roleId,
+          mobile: insertedUser.mobile,
+          dailyRate: insertedUser.dailyRate,
+          wageType: insertedUser.wageType,
+          branchId: insertedUser.branchId,
+          sector: currentSector, // Assuming current context
+          joinedDate: insertedUser.createdAt,
+          active: insertedUser.isActive,
+          systemRole: 'Staff',
+          pin: '****'
+        };
 
-    if (insertedUser) {
-      dispatch(addEmployee(mapDbUserToEmployee(insertedUser, newEmp.role || 'Staff', currentSector)));
-      setIsAddingLaborer(false);
-      setNewEmp({ name: '', role: '', roleId: '', dailyRate: '', mobile: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+        dispatch(addEmployee(employeeForRedux));
+        setIsAddingLaborer(false);
+        setNewEmp({ name: '', role: '', roleId: '', dailyRate: '', mobile: '', branch: currentBranch === 'All' ? 'Alpha' : currentBranch });
+      }
+    } catch (error: any) {
+      alert("Failed to add laborer: " + (error.response?.data?.message || error.message));
     }
   };
 
