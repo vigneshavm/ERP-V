@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 
 import User from '../models/User.js';
+import BusinessProfile from '../models/BusinessProfile.js';
+import { seedInventory } from '../services/inventorySeeder.js';
 
 /**
  * Request interface with authenticated user
@@ -46,7 +48,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
 export const updateUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const { name, email, phone, shopName, gstNumber, shopAddress } = req.body;
+        const { name, email, phone, shopName, gstNumber, shopAddress, businessCategory, businessType } = req.body;
 
         // Validate that user is updating their own profile
         if (req.user?._id.toString() !== id) {
@@ -83,6 +85,35 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response): Prom
             return;
         }
 
+        // --- Sync with BusinessProfile ---
+        // If specific business fields are present, update BusinessProfile
+        if (businessCategory !== undefined || shopName !== undefined || phone !== undefined || shopAddress !== undefined || email !== undefined || businessType !== undefined) {
+            const businessUpdate: any = {};
+            if (shopName !== undefined) businessUpdate.businessName = shopName;
+            if (businessCategory !== undefined) businessUpdate.category = businessCategory;
+            if (businessType !== undefined) businessUpdate.businessType = businessType;
+            if (phone !== undefined) businessUpdate.phone = phone;
+            if (shopAddress !== undefined) businessUpdate.address = shopAddress;
+            if (email !== undefined) businessUpdate.email = email;
+
+            // Ensure we have a BusinessProfile
+            await BusinessProfile.findOneAndUpdate(
+                { userId: user._id },
+                { $set: businessUpdate },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            );
+
+            // Trigger Inventory Seeding if category is updated
+            if (businessCategory) {
+                await seedInventory(user._id.toString(), businessCategory);
+            }
+        }
+
+        // Fetch the possibly updated or existing category to return it
+        const businessProfile = await BusinessProfile.findOne({ userId: user._id });
+        const currentCategory = businessProfile?.category || "";
+        const currentType = businessProfile?.businessType || "";
+
         res.status(200).json({
             message: 'Profile updated successfully',
             user: {
@@ -93,6 +124,8 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response): Prom
                 gstNumber: user.gstNumber,
                 shopAddress: user.shopAddress,
                 phone: user.phone,
+                businessCategory: currentCategory, // Return from BusinessProfile
+                businessType: currentType,
                 role: user.role,
             },
         });

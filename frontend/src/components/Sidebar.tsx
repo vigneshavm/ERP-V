@@ -326,8 +326,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 className="text-lg font-bold text-white tracking-tight leading-none">BizzAI</h1>
-                                    <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Enterprise</p>
+                                    <h1 className="text-lg font-bold text-white tracking-tight leading-none">{user?.shopName || 'BizzAI'}</h1>
+                                    {/* <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Enterprise</p> */}
                                 </div>
                             </div>
                             <button

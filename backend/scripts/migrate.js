@@ -85,6 +85,51 @@ const runMigration = async () => {
       .createIndex({ name: 1, addedBy: 1 }, { unique: true });
     console.log("✅ Created compound index (name, addedBy) on items");
 
+    // Step 6: Initialize businessType for BusinessProfiles
+    console.log("\n🏢 Initializing businessType for BusinessProfiles...");
+    const profileResult = await db
+      .collection("businessprofiles")
+      .updateMany(
+        { businessType: { $exists: false } },
+        { $set: { businessType: "" } }
+      );
+    console.log(`✅ Updated ${profileResult.modifiedCount} business profiles with default businessType`);
+
+    // Step 7: Seed Sectors
+    console.log("\n🌱 Seeding Sectors...");
+    const sectors = [
+      "Stationery",
+      "Grocery",
+      "Electronics",
+      "Pharmacy",
+      "Textile",
+      "Restaurant",
+      "Healthcare"
+    ];
+
+    const sectorCollection = db.collection("sectors");
+    let sectorCount = 0;
+
+    for (const sectorName of sectors) {
+      // Upsert sector
+      const result = await sectorCollection.updateOne(
+        { name: sectorName },
+        {
+          $set: {
+            name: sectorName,
+            isActive: true,
+            updatedAt: new Date()
+          },
+          $setOnInsert: {
+            createdAt: new Date()
+          }
+        },
+        { upsert: true }
+      );
+      if (result.upsertedCount > 0) sectorCount++;
+    }
+    console.log(`✅ Seeded ${sectorCount} new sectors`);
+
     console.log("\n🎉 Migration completed successfully!");
     console.log(
       "\n⚠️  IMPORTANT: If you have duplicate phone numbers or item names,"

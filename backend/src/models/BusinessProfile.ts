@@ -15,6 +15,7 @@ const businessProfileSchema = new Schema<IBusinessProfile>({
     email: { type: String, default: "" },
     website: { type: String, default: "" },
     category: { type: String, default: "" },
+    businessType: { type: String, default: "" },
     description: { type: String, default: "" },
     verified: { type: Boolean, default: false },
     hours: {

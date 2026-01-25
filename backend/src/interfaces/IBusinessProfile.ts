@@ -29,6 +29,24 @@ export interface IInsights {
     websiteClicks: number;
 }
 
+export interface IReview {
+    reviewer: string;
+    rating: number;
+    comment: string;
+    reply: string;
+    date: Date;
+    profilePhoto: string;
+}
+
+export interface IPost {
+    content: string;
+    type: 'OFFER' | 'EVENT' | 'UPDATE';
+    views: number;
+    clicks: number;
+    date: Date;
+    imageUrl: string;
+}
+
 export interface IBusinessProfile extends Document {
     userId: Types.ObjectId;
     businessName: string;
@@ -37,10 +55,13 @@ export interface IBusinessProfile extends Document {
     email: string;
     website: string;
     category: string;
+    businessType: string;
     description: string;
     verified: boolean;
     hours: IHoursState;
     photos: IPhoto[];
+    reviews: IReview[];
+    posts: IPost[];
     insights: IInsights;
     completeness: number;
     isConnected: boolean;

@@ -7,6 +7,7 @@ const API_URL = "/api/auth";
 interface User {
     _id: string;
     token: string;
+    businessType?: string;
     [key: string]: any;
 }
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import BusinessProfile from "../models/BusinessProfile.js";
+import Sector from "../models/Sector.js";
 
 
 export const getProfile = async (req: Request, res: Response) => {
@@ -143,6 +144,27 @@ export const syncGoogle = async (req: Request, res: Response) => {
             success: true,
             message: "Google Business Profile successfully synced.",
             data: profile
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const getSectors = async (req: Request, res: Response) => {
+    try {
+        const sectors = await Sector.find({ isActive: true }).sort({ name: 1 });
+
+        const formattedSectors = sectors.map(s => ({
+            id: s.name.toLowerCase(), // Maintain compatibility with existing ID format (lowercase)
+            name: s.name
+        }));
+
+        res.status(200).json({
+            success: true,
+            data: formattedSectors
         });
     } catch (error: any) {
         res.status(500).json({

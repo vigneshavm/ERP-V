@@ -40,6 +40,7 @@ import {
   PieChartIcon,
   AlertCircle
 } from "lucide-react";
+import BusinessSetupModal from "../components/business/BusinessSetupModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -50,10 +51,15 @@ const Dashboard = () => {
   const { dashboardStats } = useSelector((state) => state.reports);
   const [fadeIn, setFadeIn] = useState(false);
 
+  const [showSetupModal, setShowSetupModal] = useState(false);
+
   useEffect(() => {
     if (!user) {
       navigate("/login");
     } else {
+      if (!user.businessCategory) {
+        setShowSetupModal(true);
+      }
       dispatch(getAllExpenses());
       dispatch(getAllBills());
       dispatch(getDashboardStats());
@@ -408,6 +414,7 @@ const Dashboard = () => {
         </div>
 
       </div>
+      <BusinessSetupModal isOpen={showSetupModal} onClose={() => setShowSetupModal(false)} />
     </Layout>
   );
 };
