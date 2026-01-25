@@ -15,6 +15,8 @@ import { stream } from "./config/logger.js";
 import requestId from "./middlewares/requestId.js";
 import requestTimeout from "./middlewares/timeout.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger.js';
 
 // Routes
 import healthRoutes from "./routes/healthRoutes.js";
@@ -40,6 +42,11 @@ import paymentInRoutes from "./routes/paymentInRoutes.js";
 import salesOrderRoutes from "./routes/salesOrderRoutes.js";
 import deliveryChallanRoutes from "./routes/deliveryChallanRoutes.js";
 import refreshTokenRoutes from "./routes/refreshTokenRoutes.js";
+import businessRoutes from "./routes/businessRoutes.js";
+import whatsappRoutes from "./routes/whatsappRoutes.js";
+import shopRoutes from "./routes/shopRoutes.js";
+import loyaltyRoutes from "./routes/loyaltyRoutes.js";
+
 
 dotenv.config();
 
@@ -84,7 +91,7 @@ app.use(
 
 app.use(mongoSanitize({
     replaceWith: '_',
-    onSanitize: ({ req, key }) => {
+    onSanitize: ({ req: _req, key }) => {
         console.warn(`Sanitized key: ${key} in request`);
     },
 }));
@@ -114,12 +121,17 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // =======================
+// Swagger Documentation
+// =======================
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// =======================
 // Routes
 // =======================
 app.use("/api/health", healthRoutes);
 
 // Root Route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Backend is running (TypeScript)");
 });
 
@@ -148,6 +160,11 @@ app.use("/api/cashbank", cashBankRoutes); // Registered Cash/Bank Routes
 app.use("/api/payment-in", paymentInRoutes);
 app.use("/api/sales-orders", salesOrderRoutes);
 app.use("/api/delivery-challan", deliveryChallanRoutes);
+app.use("/api/business", businessRoutes);
+app.use("/api/whatsapp", whatsappRoutes);
+app.use("/api/shop", shopRoutes);
+app.use("/api/loyalty", loyaltyRoutes);
+
 // ...
 
 // =======================

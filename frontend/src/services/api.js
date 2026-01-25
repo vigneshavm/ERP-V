@@ -7,6 +7,23 @@ const api = axios.create({
     withCredentials: true, // CRITICAL: Send cookies with every request
 });
 
+// Request interceptor to add token to every request
+api.interceptors.request.use(
+    (config) => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            if (user && user.token) {
+                config.headers.Authorization = `Bearer ${user.token}`;
+            }
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Response interceptor to handle token expiration
 api.interceptors.response.use(
     (response) => {

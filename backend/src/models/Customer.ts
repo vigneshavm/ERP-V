@@ -47,6 +47,14 @@ const customerSchema = new Schema<ICustomer>(
             ref: "User",
             required: true,
         },
+        points: {
+            type: Number,
+            default: 0,
+        },
+        tier: {
+            type: String,
+            default: "General",
+        },
     },
     { timestamps: true }
 );

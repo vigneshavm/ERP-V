@@ -2,7 +2,7 @@ import { AppDispatch, RootState } from '../types';
 import { supabase } from '../../lib/supabase';
 import { setAuthLoading, setAuthError, setAuthSuccess } from '../authSlice';
 import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '../tenantSlice';
-import { DATA_MODE } from '../../services/dataSource';
+import { DATA_MODE } from '../../../frontend/src/services/dataSource';
 import { GoogleBusinessConfig } from '../../types/tenant';
 
 export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {

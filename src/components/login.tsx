@@ -12,7 +12,7 @@ import { supabase } from '../lib/supabase';
 import { securePassword } from '../utils/auth';
 import { getTable, DATA_MODE } from '../services/dataSource';
 import { demoDB } from '../data/demo';
-import TenantSignUp from './TenantSignUp';
+import TenantSignUp from '../../frontend/src/pages/tenants/TenantSignUp';
 
 const SECTOR_IMAGES: Record<string, string> = {
     [Sector.GENERAL]: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop',

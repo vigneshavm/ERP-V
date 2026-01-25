@@ -21,6 +21,8 @@ export interface Customer {
     totalVisits?: number;
     totalSpent?: number;
     walletBalance?: number;
+    email?: string;
+    address?: string;
 }
 
 export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';

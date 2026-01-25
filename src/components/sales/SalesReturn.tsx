@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ReturnInvoiceSelector } from './return/ReturnInvoiceSelector';
-import { ReturnItemGrid } from './return/ReturnItemGrid';
-import { ReturnSummary } from './return/ReturnSummary';
-import { ReturnedItemsList } from './return/ReturnedItemsList';
+import { ReturnInvoiceSelector } from '../../../frontend/src/pages/returns/ReturnInvoiceSelector';
+import { ReturnItemGrid } from '../../../frontend/src/pages/returns/ReturnItemGrid';
+import { ReturnSummary } from '../../../frontend/src/pages/returns/ReturnSummary';
+import { ReturnedItemsList } from '../../../frontend/src/pages/returns/ReturnedItemsList';
 import { Sale } from '../../types/sales';
 import { SalesReturn as SalesReturnType, SalesReturnItem } from '../../types/salesReturn';
 import { ArrowLeft, History } from 'lucide-react';

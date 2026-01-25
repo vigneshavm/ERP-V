@@ -72,7 +72,12 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         } else {
             throw new AppError("Not authorized, token missing", 401);
         }
-    } catch (error) {
+    } catch (error: any) {
+        warn('⚠️  [AUTH] Protection middleware failure', {
+            error: error.message,
+            stack: error.stack,
+            token: token ? 'present (truncated: ' + token.substring(0, 10) + '...)' : 'missing'
+        });
         next(new AppError("Not authorized, token failed", 401));
     }
 };

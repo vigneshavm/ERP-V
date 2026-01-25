@@ -24,8 +24,35 @@ interface AuthenticatedRequest extends Request {
 @singleton()
 export class CustomerController {
     /**
-     * @desc Add new customer
-     * @route POST /api/customers
+     * @swagger
+     * /api/customers:
+     *   post:
+     *     summary: Add a new customer
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true,
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object,
+     *             required: [name, phone]
+     *             properties:
+     *               name: { type: string }
+     *               phone: { type: string }
+     *               email: { type: string }
+     *               address: { type: string }
+     *               referredBy: { type: string }
+     *     responses:
+     *       201:
+     *         description: Customer created successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Customer'
+     *       400:
+     *         description: Validation error
      */
     public addCustomer = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
@@ -84,8 +111,34 @@ export class CustomerController {
     };
 
     /**
-     * @desc Update customer
-     * @route PUT /api/customers/:id
+     * @swagger
+     * /api/customers/{id}:
+     *   put:
+     *     summary: Update an existing customer
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true,
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true,
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Customer'
+     *     responses:
+     *       200:
+     *         description: Customer updated successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Customer'
+     *       404:
+     *         description: Customer not found
      */
     public updateCustomer = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
@@ -156,14 +209,82 @@ export class CustomerController {
     };
 
     /**
-     * @desc Get all customers (only for current owner)
-     * @route GET /api/customers
+     * @swagger
+     * /api/customers:
+     *   get:
+     *     summary: Get all customers for the authenticated user
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: List of customers retrieved successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array,
+     *               items:
+     *                 $ref: '#/components/schemas/Customer'
      */
     public getAllCustomers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const customers = await Customer.find({ owner: req.user?._id })
-                .populate('referredBy', 'name phone')
-                .sort({ name: 1 });
+            const customers = await Customer.aggregate([
+                { $match: { owner: new mongoose.Types.ObjectId(req.user?._id) } },
+                {
+                    $lookup: {
+                        from: 'transactions',
+                        localField: '_id',
+                        foreignField: 'customer',
+                        as: 'transactions'
+                    }
+                },
+                {
+                    $addFields: {
+                        purchaseCount: {
+                            $size: {
+                                $filter: {
+                                    input: '$transactions',
+                                    as: 'tx',
+                                    cond: { $eq: ['$$tx.type', 'sale'] }
+                                }
+                            }
+                        },
+                        totalPurchases: {
+                            $sum: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: '$transactions',
+                                            as: 'tx',
+                                            cond: { $eq: ['$$tx.type', 'sale'] }
+                                        }
+                                    },
+                                    as: 'tx',
+                                    in: '$$tx.amount'
+                                }
+                            }
+                        },
+                        lastPurchase: {
+                            $max: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: '$transactions',
+                                            as: 'tx',
+                                            cond: { $eq: ['$$tx.type', 'sale'] }
+                                        }
+                                    },
+                                    as: 'tx',
+                                    in: '$$tx.createdAt'
+                                }
+                            }
+                        }
+                    }
+                },
+                { $project: { transactions: 0 } },
+                { $sort: { name: 1 } }
+            ]);
+
             res.status(200).json(customers);
         } catch (err) {
             error(`Get All Customers Error: ${(err as Error).message}`);
@@ -172,8 +293,28 @@ export class CustomerController {
     };
 
     /**
-     * @desc Get single customer
-     * @route GET /api/customers/:id
+     * @swagger
+     * /api/customers/{id}:
+     *   get:
+     *     summary: Get a single customer by ID with 360 metrics
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true,
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Customer details retrieved successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Customer'
+     *       404:
+     *         description: Customer not found
      */
     public getCustomerById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
@@ -182,17 +323,79 @@ export class CustomerController {
                 return;
             }
 
-            const customer = await Customer.findOne({
-                _id: req.params.id,
-                owner: req.user?._id,
-            }).populate('referredBy', 'name phone');
+            const customerId = new mongoose.Types.ObjectId(req.params.id as string);
 
-            if (!customer) {
+            const results = await Customer.aggregate([
+                { $match: { _id: customerId, owner: new mongoose.Types.ObjectId(req.user?._id) } },
+                {
+                    $lookup: {
+                        from: 'transactions',
+                        localField: '_id',
+                        foreignField: 'customer',
+                        as: 'transactions'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'customers',
+                        localField: 'referredBy',
+                        foreignField: '_id',
+                        as: 'referredBy'
+                    }
+                },
+                {
+                    $addFields: {
+                        referredBy: { $arrayElemAt: ['$referredBy', 0] },
+                        purchaseCount: {
+                            $size: {
+                                $filter: {
+                                    input: '$transactions',
+                                    as: 'tx',
+                                    cond: { $eq: ['$$tx.type', 'sale'] }
+                                }
+                            }
+                        },
+                        totalPurchases: {
+                            $sum: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: '$transactions',
+                                            as: 'tx',
+                                            cond: { $eq: ['$$tx.type', 'sale'] }
+                                        }
+                                    },
+                                    as: 'tx',
+                                    in: '$$tx.amount'
+                                }
+                            }
+                        },
+                        lastPurchase: {
+                            $max: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: '$transactions',
+                                            as: 'tx',
+                                            cond: { $eq: ['$$tx.type', 'sale'] }
+                                        }
+                                    },
+                                    as: 'tx',
+                                    in: '$$tx.createdAt'
+                                }
+                            }
+                        }
+                    }
+                },
+                { $project: { transactions: 0 } }
+            ]);
+
+            if (!results || results.length === 0) {
                 res.status(404).json({ message: 'Customer not found or unauthorized' });
                 return;
             }
 
-            res.status(200).json(customer);
+            res.status(200).json(results[0]);
         } catch (err) {
             error(`Get Customer By Id Error: ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -200,8 +403,24 @@ export class CustomerController {
     };
 
     /**
-     * @desc Delete customer
-     * @route DELETE /api/customers/:id
+     * @swagger
+     * /api/customers/{id}:
+     *   delete:
+     *     summary: Delete a customer
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true,
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Customer deleted successfully
+     *       404:
+     *         description: Customer not found
      */
     public deleteCustomer = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
@@ -233,8 +452,29 @@ export class CustomerController {
     };
 
     /**
-     * @desc Get transaction history for a customer
-     * @route GET /api/customers/:id/transactions
+     * @swagger
+     * /api/customers/{id}/transactions:
+     *   get:
+     *     summary: Get transaction history for a customer
+     *     tags: [Customers]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true,
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Transaction history retrieved successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object,
+     *               properties:
+     *                 customer: { type: object, properties: { name: { type: string }, phone: { type: string } } }
+     *                 transactions: { type: array, items: { $ref: '#/components/schemas/Transaction' } }
      */
     public getCustomerTransactions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
