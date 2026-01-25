@@ -8,6 +8,7 @@ import reportRoutes from './reportRoutes.js';
 import settingsRoutes from './settingsRoutes.js';
 import shopRoutes from './shopRoutes.js';
 import branchRoutes from './branchRoutes.js';
+import subscriptionPlanRoutes from './subscriptionPlanRoutes.js';
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use('/reports', reportRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/shop', shopRoutes);
 router.use('/branches', branchRoutes);
+router.use('/subscription-plans', subscriptionPlanRoutes);
 
 export default router;

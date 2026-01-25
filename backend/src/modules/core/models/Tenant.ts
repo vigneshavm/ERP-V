@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ISubscriptionPlan } from "./SubscriptionPlan.js";
 
 export interface ITenant extends Document {
     name: string;
@@ -14,6 +15,13 @@ export interface ITenant extends Document {
         currency: string;
         timezone: string;
     };
+    ecommerce?: {
+        enabled: boolean;
+        domain?: string;
+        theme?: string;
+        settings?: Record<string, any>;
+    };
+    subscriptionPlan: mongoose.Types.ObjectId | ISubscriptionPlan;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -52,6 +60,17 @@ const tenantSchema = new Schema<ITenant>({
         },
         currency: { type: String, default: 'USD' },
         timezone: { type: String, default: 'UTC' }
+    },
+    ecommerce: {
+        enabled: { type: Boolean, default: false },
+        domain: { type: String },
+        theme: { type: String },
+        settings: { type: Map, of: String }
+    },
+    subscriptionPlan: {
+        type: Schema.Types.ObjectId,
+        ref: 'SubscriptionPlan',
+        required: true
     }
 }, { timestamps: true });
 

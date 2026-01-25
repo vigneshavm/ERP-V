@@ -1,10 +1,14 @@
-import express from "express";
-import { getShopSettings, updateShopSettings } from "../../inventory/controllers/ShopController.js";
-import { protect } from "../../../middlewares/authMiddleware.js";
+import { Router } from 'express';
+import { container } from 'tsyringe';
+import { ShopController } from '../controllers/ShopController.js';
+import { protect as authMiddleware } from '../../../middlewares/authMiddleware.js';
 
-const router = express.Router();
+const shopRoutes = Router();
+const shopController = container.resolve(ShopController);
 
-router.get("/settings", protect, getShopSettings);
-router.put("/settings", protect, updateShopSettings);
+shopRoutes.use(authMiddleware); // Protect all shop routes
 
-export default router;
+shopRoutes.get('/settings', shopController.getSettings);
+shopRoutes.put('/settings', shopController.updateSettings);
+
+export default shopRoutes;
