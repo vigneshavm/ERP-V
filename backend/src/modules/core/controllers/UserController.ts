@@ -12,6 +12,7 @@ interface AuthenticatedRequest extends Request {
         _id: string;
         [key: string]: any;
     };
+    tenantId?: string; // Injected by Auth Middleware
 }
 
 /**
@@ -48,7 +49,8 @@ interface UserUpdateData {
  */
 export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
     try {
-        const users = await User.find().select('-password');
+        const req = _req as AuthenticatedRequest;
+        const users = await User.find({ tenantId: req.tenantId }).select('-password');
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: (error as Error).message });
@@ -105,7 +107,11 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response): Prom
 
         // Check if new email is already taken (if email is being changed)
         if (email) {
-            const existingUser = await User.findOne({ email, _id: { $ne: id } });
+            const existingUser = await User.findOne({
+                email,
+                tenantId: req.tenantId,
+                _id: { $ne: id }
+            });
             if (existingUser) {
                 res.status(400).json({ message: 'Email already in use' });
                 return;

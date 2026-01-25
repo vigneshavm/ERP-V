@@ -25,6 +25,7 @@ interface AuthenticatedRequest extends Request {
         name?: string;
         [key: string]: any;
     };
+    tenantId?: string; // Injected by Auth Middleware
 }
 
 interface SalesOrderItem {
@@ -98,10 +99,10 @@ export const createSalesOrder = async (req: AuthenticatedRequest, res: Response)
             return;
         }
 
-        // Verify customer belongs to current user
+        // Verify customer belongs to current tenant
         const customer = await Customer.findOne({
             _id: customerId,
-            owner: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!customer) {
@@ -122,7 +123,7 @@ export const createSalesOrder = async (req: AuthenticatedRequest, res: Response)
                 return;
             }
 
-            const item = await Item.findOne({ _id: it.item, addedBy: req.user?._id });
+            const item = await Item.findOne({ _id: it.item, tenantId: req.tenantId });
             if (!item) {
                 res.status(400).json({ message: `Item not found or unauthorized: ${it.item}` });
                 return;
@@ -154,7 +155,7 @@ export const createSalesOrder = async (req: AuthenticatedRequest, res: Response)
         const totalAmount = subtotal + taxTotal - discountTotal - discount;
 
         // Generate unique order number
-        const lastOrder = await SalesOrder.findOne({ createdBy: req.user?._id })
+        const lastOrder = await SalesOrder.findOne({ tenantId: req.tenantId })
             .sort({ createdAt: -1 })
             .select('orderNumber');
 
@@ -182,6 +183,7 @@ export const createSalesOrder = async (req: AuthenticatedRequest, res: Response)
             status: 'Draft',
             notes,
             createdBy: req.user?._id,
+            tenantId: req.tenantId // Enforce Tenant Scope
         });
 
         info(`Sales Order created by ${req.user?.name}: ${orderNo}`);
@@ -239,7 +241,7 @@ export const updateSalesOrder = async (req: AuthenticatedRequest, res: Response)
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!salesOrder) {
@@ -270,7 +272,7 @@ export const updateSalesOrder = async (req: AuthenticatedRequest, res: Response)
 
             const customer = await Customer.findOne({
                 _id: customerId,
-                owner: req.user?._id,
+                tenantId: req.tenantId,
             });
 
             if (!customer) {
@@ -292,7 +294,7 @@ export const updateSalesOrder = async (req: AuthenticatedRequest, res: Response)
                     return;
                 }
 
-                const item = await Item.findOne({ _id: it.item, addedBy: req.user?._id });
+                const item = await Item.findOne({ _id: it.item, tenantId: req.tenantId });
                 if (!item) {
                     res.status(400).json({ message: `Item not found or unauthorized: ${it.item}` });
                     return;
@@ -387,7 +389,7 @@ export const confirmSalesOrder = async (req: AuthenticatedRequest, res: Response
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!salesOrder) {
@@ -488,7 +490,7 @@ export const getSalesOrderById = async (req: AuthenticatedRequest, res: Response
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         })
             .populate('customer', 'name phone email address dues')
             .populate('items.item', 'name sku unit stockQty reservedStock')
@@ -538,7 +540,7 @@ export const listSalesOrders = async (req: AuthenticatedRequest, res: Response):
     try {
         const { status, customerId, startDate, endDate, overdue } = req.query;
 
-        const filter: any = { createdBy: req.user?._id };
+        const filter: any = { tenantId: req.tenantId };
 
         if (status) {
             filter.status = status;
@@ -603,7 +605,7 @@ export const cancelSalesOrder = async (req: AuthenticatedRequest, res: Response)
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!salesOrder) {
@@ -688,7 +690,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!salesOrder) {
@@ -792,7 +794,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
         validateSalesOrderQuantities(salesOrder);
 
         // Generate unique challan number
-        const lastChallan = await DeliveryChallan.findOne({ createdBy: req.user?._id })
+        const lastChallan = await DeliveryChallan.findOne({ tenantId: req.tenantId })
             .sort({ createdAt: -1 })
             .select('challanNumber');
 
@@ -819,6 +821,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
             transportMode: transportMode || 'road',
             notes: notes || '',
             createdBy: req.user?._id,
+            tenantId: req.tenantId
         });
 
         // Link delivery challan to sales order
@@ -890,7 +893,7 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
 
         const salesOrder = await SalesOrder.findOne({
             _id: id,
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         if (!salesOrder) {
@@ -990,7 +993,7 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
         const paymentStatus = calculatePaymentStatus(totalAmount, paidAmount, 0);
 
         // Generate unique invoice number
-        const lastInvoice = await Invoice.findOne({ createdBy: req.user?._id })
+        const lastInvoice = await Invoice.findOne({ tenantId: req.tenantId })
             .sort({ createdAt: -1 })
             .select('invoiceNo');
 
@@ -1018,6 +1021,7 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
             paymentMethod,
             bankAccount: paymentMethod === 'bank_transfer' ? bankAccount : undefined,
             createdBy: req.user?._id,
+            tenantId: req.tenantId,
         });
 
         // Link invoice to sales order

@@ -30,7 +30,9 @@ export interface ISalesOrder extends Document {
     pricesLocked: boolean;
     deliveryChallans: mongoose.Types.ObjectId[];
     invoices: mongoose.Types.ObjectId[];
+    invoices: mongoose.Types.ObjectId[];
     createdBy: mongoose.Types.ObjectId;
+    tenantId: mongoose.Types.ObjectId;
     confirmedAt?: Date;
     confirmedBy?: mongoose.Types.ObjectId;
     cancelledAt?: Date;
@@ -180,6 +182,12 @@ const salesOrderSchema = new Schema<ISalesOrder>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
         confirmedAt: {
             type: Date,
         },
@@ -198,8 +206,8 @@ const salesOrderSchema = new Schema<ISalesOrder>(
     { timestamps: true }
 );
 
-// Create compound unique index: orderNumber must be unique per user
-salesOrderSchema.index({ orderNumber: 1, createdBy: 1 }, { unique: true });
+// Create compound unique index: orderNumber must be unique per tenant
+salesOrderSchema.index({ orderNumber: 1, tenantId: 1 }, { unique: true });
 
 // Index for faster queries
 salesOrderSchema.index({ customer: 1 });

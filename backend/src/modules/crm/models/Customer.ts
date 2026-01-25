@@ -47,6 +47,12 @@ const customerSchema = new Schema<ICustomer>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
         points: {
             type: Number,
             default: 0,
@@ -59,8 +65,8 @@ const customerSchema = new Schema<ICustomer>(
     { timestamps: true }
 );
 
-// Compound index to ensure phone is unique per owner
-customerSchema.index({ phone: 1, owner: 1 }, { unique: true });
+// Compound index to ensure phone is unique per tenant
+customerSchema.index({ phone: 1, tenantId: 1 }, { unique: true });
 
 const Customer = mongoose.model<ICustomer>("Customer", customerSchema);
 export default Customer;

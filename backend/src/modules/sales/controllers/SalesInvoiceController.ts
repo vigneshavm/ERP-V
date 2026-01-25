@@ -19,6 +19,7 @@ interface AuthenticatedRequest extends Request {
         name?: string;
         [key: string]: any;
     };
+    tenantId?: string; // Injected by Auth Middleware
     deletedEntity?: any;
 }
 
@@ -36,8 +37,9 @@ interface AuthenticatedRequest extends Request {
  */
 export const getSalesInvoiceSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        // Get all invoices for this user
-        const invoices = await Invoice.find({ createdBy: req.user?._id });
+        const { tenantId } = req;
+        // Get all invoices for this tenant
+        const invoices = await Invoice.find({ tenantId: tenantId });
 
         // Calculate invoice totals
         const totalInvoices = invoices.length;
@@ -46,7 +48,9 @@ export const getSalesInvoiceSummary = async (req: AuthenticatedRequest, res: Res
 
         // Get actual customer dues (source of truth)
         // Sum all positive dues (customers who owe money)
-        const customers = await Customer.find({ owner: req.user?._id });
+        // Get actual customer dues (source of truth)
+        // Sum all positive dues (customers who owe money)
+        const customers = await Customer.find({ tenantId: tenantId });
         const outstandingDues = customers.reduce((sum: number, customer: any) => {
             return sum + (customer.dues > 0 ? customer.dues : 0);
         }, 0);
@@ -84,7 +88,7 @@ export const getSalesInvoiceSummary = async (req: AuthenticatedRequest, res: Res
 export const getAllSalesInvoices = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const invoices = await Invoice.find({
-            createdBy: req.user?._id,
+            tenantId: req.tenantId,
             isDeleted: { $ne: true }
         })
             .populate('customer', 'name phone')
@@ -123,7 +127,7 @@ export const getSalesInvoiceById = async (req: AuthenticatedRequest, res: Respon
 
         const invoice = await Invoice.findOne({
             _id: req.params.id,
-            createdBy: req.user?._id
+            tenantId: req.tenantId
         })
             .populate('customer')
             .populate('items.item', 'name sku');
@@ -177,7 +181,7 @@ export const deleteSalesInvoice = async (req: AuthenticatedRequest, res: Respons
 
         const invoice = await Invoice.findOne({
             _id: req.params.id,
-            createdBy: req.user?._id
+            tenantId: req.tenantId
         });
 
         if (!invoice) {
@@ -264,7 +268,7 @@ export const markSalesInvoiceAsPaid = async (req: AuthenticatedRequest, res: Res
         // Find invoice
         const invoice = await Invoice.findOne({
             _id: id,
-            createdBy: req.user?._id
+            tenantId: req.tenantId
         });
 
         if (!invoice) {
@@ -280,7 +284,7 @@ export const markSalesInvoiceAsPaid = async (req: AuthenticatedRequest, res: Res
 
         // Validate bank payment
         if (paymentMethod === 'bank_transfer' && bankAccount) {
-            const bankAcc = await BankAccount.findOne({ _id: bankAccount, userId: req.user?._id });
+            const bankAcc = await BankAccount.findOne({ _id: bankAccount, tenantId: req.tenantId });
             if (!bankAcc) {
                 res.status(400).json({ message: 'Bank account not found' });
                 return;
@@ -338,11 +342,12 @@ export const markSalesInvoiceAsPaid = async (req: AuthenticatedRequest, res: Res
                 description: `Payment for invoice ${invoice.invoiceNo}`,
                 date: new Date(),
                 userId: req.user?._id,
+                tenantId: req.tenantId // Enable strict accounting isolation
             });
 
             // Update bank balance (add)
             await BankAccount.updateOne(
-                { _id: bankAccount, userId: req.user?._id },
+                { _id: bankAccount, tenantId: req.tenantId },
                 {
                     $inc: { currentBalance: amount },
                     $push: { transactions: cashbankTxn._id }

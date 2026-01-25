@@ -45,10 +45,16 @@ const itemSchema = new Schema<IItem>(
             default: "pcs",
         },
         addedBy: {
-            type: String, // Or Schema.Types.ObjectId, usually string works fine for TS but for Mongoose validation Schema.Types.ObjectId is safer. Keeping consistent with User ref
+            type: String,
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        }
     },
     { timestamps: true }
 );
@@ -67,8 +73,9 @@ itemSchema.virtual("overCommittedStock").get(function (this: IItem) {
 itemSchema.set("toJSON", { virtuals: true });
 itemSchema.set("toObject", { virtuals: true });
 
-// Compound index to ensure item name is unique per owner
-itemSchema.index({ name: 1, addedBy: 1 }, { unique: true });
+// Compound index to ensure item name is unique PER TENANT
+itemSchema.index({ name: 1, tenantId: 1 }, { unique: true });
+// We can keep addedBy index if needed for user-specific queries, but tenantId is primary scope.
 
 const Item = mongoose.model<IItem>("Item", itemSchema);
 export default Item;

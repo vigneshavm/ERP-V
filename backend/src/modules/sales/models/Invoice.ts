@@ -117,6 +117,12 @@ const invoiceSchema = new Schema<IInvoice>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
         isDeleted: {
             type: Boolean,
             default: false,
@@ -132,7 +138,7 @@ const invoiceSchema = new Schema<IInvoice>(
     { timestamps: true }
 );
 
-invoiceSchema.index({ invoiceNo: 1, createdBy: 1 }, { unique: true });
+invoiceSchema.index({ invoiceNo: 1, tenantId: 1 }, { unique: true });
 
 const Invoice = mongoose.model<IInvoice>("Invoice", invoiceSchema);
 export default Invoice;

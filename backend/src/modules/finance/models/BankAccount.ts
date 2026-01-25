@@ -43,6 +43,12 @@ const bankAccountSchema = new Schema<IBankAccount>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
         transactions: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "CashbankTransaction",

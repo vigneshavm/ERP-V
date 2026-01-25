@@ -2,6 +2,10 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import { IUser } from "../../../interfaces/IUser.js";
 
+// Extend the interface if needed, or assume IUser will be updated separately. 
+// For Mongoose schema, we define fields explicitly.
+
+
 const userSchema = new Schema<IUser>(
     {
         name: {
@@ -11,7 +15,7 @@ const userSchema = new Schema<IUser>(
         email: {
             type: String,
             required: [true, "Please enter email"],
-            unique: true,
+            // unique: true, // REMOVED for Multi-tenancy. Uniqueness is now scoped by { email, tenantId }
             lowercase: true,
         },
         password: {
@@ -42,9 +46,16 @@ const userSchema = new Schema<IUser>(
             type: String,
             default: "",
         },
+        // NEW: Multi-tenancy link
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tenant',
+            // required: true, // TODO: Make required after migration. For now optional to prevent breaking existing users immediately if not migrating
+            index: true
+        },
         role: {
             type: String,
-            enum: ["owner"],
+            enum: ["owner", "manager", "staff", "customer"], // Expanded roles
             default: "owner",
         },
         resetPasswordToken: {
@@ -107,6 +118,14 @@ const userSchema = new Schema<IUser>(
     },
     { timestamps: true }
 );
+
+// Compound Index: Email must be unique PER TENANT
+// This replaces the global unique index on email if we want to allow same email in different tenants.
+// However, existing `unique: true` on email (line 14) enforces global uniqueness.
+// DESIGN DECISION: To allow B2C (same email in multiple shops), we must DROP the global index and use this compound one.
+// For now, I will add this index. The global unique constraint on `email` field above needs to be removed to fully enable multi-tenancy B2C.
+// Removing `unique: true` from email field requires dropping index in DB.
+userSchema.index({ email: 1, tenantId: 1 }, { unique: true, sparse: true });
 
 // Password encryption before save
 userSchema.pre("save", async function (next) {

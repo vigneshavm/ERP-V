@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface IBankAccount extends Document {
     bankName: string;
@@ -10,7 +10,8 @@ export interface IBankAccount extends Document {
     currentBalance: number;
     status: "active" | "inactive";
     userId: string; // ObjectId
-    transactions: string[]; // ObjectId Array
+    tenantId: Types.ObjectId;
+    transactions: Types.ObjectId[];
 
     // Methods
     getDecryptedAccountNumber(): string;

@@ -34,6 +34,7 @@ export interface IInvoice extends Document {
     returnedAmount: number;
     hasReturns: boolean;
     createdBy: string | Types.ObjectId; // ObjectId
+    tenantId: string | Types.ObjectId; // ObjectId
 
     // Soft Delete
     isDeleted: boolean;

@@ -7,6 +7,7 @@ import refreshTokenRoutes from './refreshTokenRoutes.js';
 import reportRoutes from './reportRoutes.js';
 import settingsRoutes from './settingsRoutes.js';
 import shopRoutes from './shopRoutes.js';
+import branchRoutes from './branchRoutes.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use('/refresh-token', refreshTokenRoutes);
 router.use('/reports', reportRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/shop', shopRoutes);
+router.use('/branches', branchRoutes);
 
 export default router;

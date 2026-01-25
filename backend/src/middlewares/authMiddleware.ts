@@ -31,6 +31,8 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
             }
 
             (req as any).user = user;
+            // NEW: Inject Tenant ID into request for downstream use
+            (req as any).tenantId = user.tenantId;
 
             // CRITICAL: Validate deviceId from cookie matches user's active deviceId
             const deviceIdFromCookie = deviceUtils.getDeviceIdFromCookie(req);

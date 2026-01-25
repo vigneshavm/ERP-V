@@ -25,6 +25,7 @@ export interface IDeliveryChallan extends Document {
     systemGenerated: boolean;
     isDeleted: boolean;
     createdBy: mongoose.Types.ObjectId;
+    tenantId: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -128,12 +129,18 @@ const deliveryChallanSchema = new Schema<IDeliveryChallan>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
     },
     { timestamps: true }
 );
 
-// Create compound unique index: challanNumber must be unique per user
-deliveryChallanSchema.index({ challanNumber: 1, createdBy: 1 }, { unique: true });
+// Create compound unique index: challanNumber must be unique per tenant
+deliveryChallanSchema.index({ challanNumber: 1, tenantId: 1 }, { unique: true });
 
 // Index for faster queries
 deliveryChallanSchema.index({ customer: 1 });

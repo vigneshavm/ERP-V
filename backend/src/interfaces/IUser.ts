@@ -18,7 +18,9 @@ export interface IUser extends Document {
     phone?: string;
     sector?: string;
     subdomain?: string;
-    role: "owner";
+    // NEW: Multi-tenancy
+    tenantId?: Types.ObjectId;
+    role: "owner" | "manager" | "staff" | "customer";
 
     // Reset Password
     resetPasswordToken?: string | null;

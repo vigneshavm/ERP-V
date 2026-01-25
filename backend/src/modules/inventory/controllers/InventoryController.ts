@@ -16,6 +16,7 @@ interface AuthenticatedRequest extends Request {
         name?: string;
         [key: string]: any;
     };
+    tenantId?: string; // Injected by Auth Middleware
     originalEntity?: any;
     updatedEntity?: any;
     deletedEntity?: any;
@@ -80,8 +81,8 @@ export class InventoryController {
                 return;
             }
 
-            // Check if item already exists for this user
-            const existing = await Item.findOne({ name, addedBy: authReq.user?._id });
+            // Check if item already exists for this tenant
+            const existing = await Item.findOne({ name, tenantId: authReq.tenantId });
             if (existing) {
                 res.status(400).json({ message: 'Item already exists in your inventory' });
                 return;
@@ -97,6 +98,7 @@ export class InventoryController {
                 lowStockLimit,
                 unit,
                 addedBy: authReq.user?._id,
+                tenantId: authReq.tenantId // Enforce Tenant Scope
             });
 
             info(`Item added by ${authReq.user?.name}: ${item.name}`);
@@ -142,7 +144,7 @@ export class InventoryController {
 
             // Search query (optional)
             const search = (req.query.search as string) || '';
-            const query: any = { addedBy: authReq.user?._id };
+            const query: any = { tenantId: authReq.tenantId };
 
             if (search) {
                 query.$or = [
@@ -268,7 +270,7 @@ export class InventoryController {
             if (authReq.body.name && authReq.body.name !== item.name) {
                 const existingName = await Item.findOne({
                     name: authReq.body.name,
-                    addedBy: authReq.user?._id,
+                    tenantId: authReq.tenantId,
                     _id: { $ne: authReq.params.id }
                 });
 
@@ -366,7 +368,8 @@ export class InventoryController {
         const authReq = req as AuthenticatedRequest;
         try {
             // Get all items and filter by available stock (stockQty - reservedStock)
-            const allItems = await Item.find({ addedBy: authReq.user?._id });
+            // Use tenantId instead of addedBy
+            const allItems = await Item.find({ tenantId: authReq.tenantId });
 
             const lowStockItems = allItems.filter((item: any) => {
                 const availableStock = item.stockQty - (item.reservedStock || 0);
@@ -474,7 +477,7 @@ export class InventoryController {
             // For now, let's fetch matching names/SKUs.
 
             const existingItems = await Item.find({
-                addedBy: authReq.user?._id,
+                tenantId: authReq.tenantId,
                 $or: [
                     { sku: { $in: skusToFind.map(s => new RegExp(`^${s}$`, 'i')) } }, // Case insensitive match
                     { name: { $in: namesToFind.map(n => new RegExp(`^${n}$`, 'i')) } }
@@ -574,6 +577,7 @@ export class InventoryController {
                                 stockQty: qtyToAdd,
                                 unit: item.unit ? item.unit.toLowerCase().trim() : 'pcs',
                                 addedBy: authReq.user?._id,
+                                tenantId: authReq.tenantId,
                                 reservedStock: 0,
                                 lowStockLimit: 10 // Default
                             }

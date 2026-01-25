@@ -2,11 +2,13 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import { singleton } from 'tsyringe';
 import User from '../models/User.js';
+import Tenant from '../models/Tenant.js';
 import RefreshToken from '../models/RefreshToken.js';
 import { generateToken, generateRandomToken } from '../../../config/jwt.js';
 import { sendHtmlEmail, generatePasswordResetEmail } from '../../../utils/emailService.js';
 import { generateDeviceId, setDeviceIdCookie, getDeviceIdFromCookie } from '../../../utils/deviceUtils.js';
 import { info } from '../../../config/logger.js';
+import mongoose from 'mongoose';
 
 /**
  * Request interface with authenticated user
@@ -84,66 +86,105 @@ export class AuthController {
                 return;
             }
 
-            // Check if user already exists
-            const existingUser = await User.findOne({ email });
-            if (existingUser) {
-                res.status(400).json({ message: 'User already exists' });
-                return;
-            }
+            // Start Transaction for Atomicity
+            const session = await User.startSession();
+            session.startTransaction();
 
-            // Create new user
-            const user = await User.create({
-                name,
-                email,
-                password,
-                shopName,
-                phone,
-                sector,
-                subdomain
-            });
+            try {
+                // 1. Generate Slug for Tenant
+                let generatedSlug = subdomain || shopName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!generatedSlug) generatedSlug = `store${Date.now()}`;
 
-            if (user) {
-                // Generate cryptographically secure deviceId for initial session
-                const deviceId = generateDeviceId();
+                // Check if slug exists
+                const existingTenant = await Tenant.findOne({ slug: generatedSlug });
+                if (existingTenant) {
+                    await session.abortTransaction();
+                    session.endSession();
+                    res.status(400).json({ message: 'Store URL/Subdomain already taken. Please choose another.' });
+                    return;
+                }
 
-                // Store audit metadata (IP and UA for logging only)
-                const userAgent = req.headers['user-agent'] || 'unknown';
-                const ipAddress = req.ip || req.socket?.remoteAddress || 'unknown';
+                // 2. Create Tenant
+                const newTenant = await Tenant.create([{
+                    name: shopName,
+                    slug: generatedSlug,
+                    ownerId: new mongoose.Types.ObjectId(), // Placeholder, will update after user creation
+                    status: 'ACTIVE',
+                    config: {
+                        theme: {
+                            primaryColor: '#007bff',
+                            logoUrl: ''
+                        },
+                        currency: 'USD' // Default
+                    }
+                }], { session });
 
-                // Set initial device session
-                user.activeDeviceId = deviceId;
-                user.activeSessionCreatedAt = new Date();
-                user.lastLoginIp = ipAddress;
-                user.lastLoginUserAgent = userAgent;
-                await user.save();
+                const tenant = newTenant[0];
 
-                // Issue deviceId as secure HttpOnly signed cookie
-                setDeviceIdCookie(res, deviceId);
+                // 3. Create User (Owner) linked to Tenant
+                const newUser = await User.create([{
+                    name,
+                    email,
+                    password,
+                    shopName,
+                    phone,
+                    sector,
+                    role: 'owner',
+                    tenantId: tenant._id,
+                    // Subdomain field in User is deprecated in favor of Tenant.slug, but keeping for backward compat if needed
+                    subdomain: generatedSlug
+                }], { session });
 
-                // Generate tokens
-                const accessToken = generateToken(user._id.toString());
-                const refreshToken = generateRandomToken();
+                const user = newUser[0];
 
-                // Store refresh token
-                await RefreshToken.create({
-                    token: refreshToken,
-                    user: user._id,
-                    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-                    createdByIp: req.ip,
-                    userAgent: req.headers['user-agent'],
-                });
+                // 4. Update Tenant with Owner ID
+                tenant.ownerId = user._id as any;
+                await tenant.save({ session });
 
-                res.status(201).json({
-                    _id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    shopName: user.shopName,
-                    phone: user.phone,
-                    token: accessToken,
-                    refreshToken: refreshToken,
-                });
-            } else {
-                res.status(400).json({ message: 'Invalid user data' });
+                // Commit Transaction
+                await session.commitTransaction();
+                session.endSession();
+
+                // Post-creation logic (Tokens, Device ID, etc.)
+                if (user) {
+                    // Generate cryptographically secure deviceId for initial session
+                    const deviceId = generateDeviceId();
+                    const userAgent = req.headers['user-agent'] || 'unknown';
+                    const ipAddress = req.ip || req.socket?.remoteAddress || 'unknown';
+
+                    user.activeDeviceId = deviceId;
+                    user.activeSessionCreatedAt = new Date();
+                    user.lastLoginIp = ipAddress;
+                    user.lastLoginUserAgent = userAgent;
+                    await user.save();
+
+                    setDeviceIdCookie(res, deviceId);
+
+                    const accessToken = generateToken(user._id.toString());
+                    const refreshToken = generateRandomToken();
+
+                    await RefreshToken.create({
+                        token: refreshToken,
+                        user: user._id,
+                        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                        createdByIp: req.ip,
+                        userAgent: req.headers['user-agent'],
+                    });
+
+                    res.status(201).json({
+                        _id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        shopName: user.shopName,
+                        tenantSlug: tenant.slug, // Return slug to frontend
+                        token: accessToken,
+                        refreshToken: refreshToken,
+                    });
+                }
+            } catch (err) {
+                await session.abortTransaction();
+                session.endSession();
+                throw err;
             }
         } catch (error) {
             console.error('Register Error:', error);

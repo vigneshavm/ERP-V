@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface IItem extends Document {
     name: string;
@@ -11,7 +11,8 @@ export interface IItem extends Document {
     inTransitStock: number;
     lowStockLimit: number;
     unit: string;
-    addedBy: string; // ObjectId of User
+    addedBy: string; // ObjectId of User - Keep for audit
+    tenantId: Types.ObjectId | string; // ObjectId of Tenant - NEW: Scoping
 
     // Virtuals
     availableStock: number;

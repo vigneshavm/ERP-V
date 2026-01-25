@@ -9,6 +9,7 @@ export interface ICustomer extends Document {
     transactionHistory: (string | Types.ObjectId)[]; // references Transaction IDs
     referredBy?: string | Types.ObjectId | null; // references Customer ID
     owner: string | Types.ObjectId; // references User ID
+    tenantId: string | Types.ObjectId; // references Tenant ID
     points: number;
     tier: string;
 
