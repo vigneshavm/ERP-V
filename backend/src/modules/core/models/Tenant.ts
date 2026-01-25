@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITenant extends Document {
     name: string;
+    shopName: string;
     slug: string; // Unique identifier for URLs/Subdomains
     ownerId: mongoose.Types.ObjectId;
     status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
@@ -21,6 +22,10 @@ const tenantSchema = new Schema<ITenant>({
     name: {
         type: String,
         required: [true, "Please enter business name"]
+    },
+    shopName: {
+        type: String,
+        required: false
     },
     slug: {
         type: String,

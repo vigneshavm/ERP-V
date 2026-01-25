@@ -107,6 +107,7 @@ export class AuthController {
                 // 2. Create Tenant
                 const newTenant = await Tenant.create([{
                     name: shopName,
+                    shopName: shopName, // Save shopName explicitly
                     slug: generatedSlug,
                     ownerId: new mongoose.Types.ObjectId(), // Placeholder, will update after user creation
                     status: 'ACTIVE',
@@ -175,7 +176,7 @@ export class AuthController {
                         _id: user._id,
                         name: user.name,
                         email: user.email,
-                        shopName: user.shopName,
+                        shopName: tenant.shopName || tenant.name, // Return from tenant
                         tenantSlug: tenant.slug, // Return slug to frontend
                         token: accessToken,
                         refreshToken: refreshToken,
@@ -232,8 +233,8 @@ export class AuthController {
                 return;
             }
 
-            // Find user
-            const user = await User.findOne({ email });
+            // Find user and populate tenant
+            const user = await User.findOne({ email }).populate('tenantId');
             if (!user) {
                 await handleLoginAttempt(req, false);
                 res.status(404).json({ message: 'User not found' });
@@ -334,12 +335,16 @@ export class AuthController {
                 });
             }
 
+            // Get Shop Name from Tenant
+            const tenant = user.tenantId as any;
+            const shopName = tenant ? (tenant.shopName || tenant.name) : user.shopName;
+
             // Send response
             res.status(200).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                shopName: user.shopName,
+                shopName: shopName,
                 gstNumber: user.gstNumber,
                 shopAddress: user.shopAddress,
                 phone: user.phone,
