@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllSuppliers, reset } from '../redux/slices/supplierSlice';
+import { getAllSuppliers, reset, Supplier } from '../redux/slices/supplierSlice';
 import Modal from './Modal';
 import { AppDispatch, RootState } from '../redux/store';
 
-interface Supplier {
-    _id: string;
-    businessName: string;
-    contactPersonName: string;
-    contactNo: string;
-    status: string;
-}
 
 interface SupplierSelectionModalProps {
     isOpen: boolean;

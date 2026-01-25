@@ -49,7 +49,7 @@ redisClient.on('error', (err: any) => {
 });
 
 // Attempt connection (non-blocking)
-redisClient.connect().catch((err: any) => {
+redisClient.connect().catch((_err: any) => {
     // Error will be logged by the 'error' event handler
 });
 
@@ -348,7 +348,7 @@ const detectAttackSignals = async (req: Request) => {
 export const handleLoginAttempt = async (req: Request, success: boolean) => {
     if (!req.rateLimitContext) return;
 
-    const { ipKey, accountKey, deviceKey, ip, email } = req.rateLimitContext;
+    const { ipKey, accountKey, deviceKey, ip } = req.rateLimitContext;
     const correlationId = req.correlationId || 'unknown';
 
     if (success) {
@@ -432,4 +432,26 @@ export default {
     forceLogoutLimiter,
     redisClient,
     isRedisAvailable: () => isRedisAvailable,
+};
+
+export const importLimiter = async (req: Request, res: Response, next: NextFunction) => {
+    // User-based limiting for imports
+    const userId = (req as any).user?._id?.toString();
+    // If not authenticated (shouldn't happen on protected route), fall back to IP
+    const identifier = userId || req.ip || req.connection.remoteAddress || 'unknown';
+
+    const key = `rl:import:${identifier}`;
+    const windowMs = 15 * 60 * 1000; // 15 minutes
+
+    const state = await getRateLimitState(key, windowMs);
+
+    if (state.count >= 10) {
+        return res.status(429).json({
+            message: 'Too many import requests. Please try again in 15 minutes.',
+            retryAfter: Math.ceil((state.resetAt - Date.now()) / 1000),
+        });
+    }
+
+    await incrementRateLimit(key, windowMs);
+    next();
 };

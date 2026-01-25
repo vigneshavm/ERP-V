@@ -8,7 +8,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import AuditLog from '../models/AuditLog.js';
+import AuditLog from '../modules/core/models/AuditLog.js';
 import { error as logError } from '../utils/logger.js';
 
 /**
@@ -28,7 +28,7 @@ export const mandatoryAudit = (entityType: string, action: string) => {
         const originalJson = res.json.bind(res);
 
         // Override res.json to capture response
-        res.json = async function (data): Promise<Response> {
+        res.json = function (data): Response {
             // Only log on success (2xx status codes)
             if (res.statusCode >= 200 && res.statusCode < 300) {
                 try {
@@ -37,7 +37,7 @@ export const mandatoryAudit = (entityType: string, action: string) => {
                     const afterSnapshot = (req as any).updatedEntity || null;
 
                     // Create audit log (MANDATORY - cannot be skipped)
-                    await AuditLog.create({
+                    AuditLog.create({
                         userId: (req as any).user._id,
                         action,
                         entityType,
@@ -51,9 +51,16 @@ export const mandatoryAudit = (entityType: string, action: string) => {
                             method: req.method,
                             path: req.path,
                         },
+                    }).then(() => {
+                        console.log(`✅ Audit log created: ${action} by user ${(req as any).user._id}`);
+                    }).catch(err => {
+                        logError('CRITICAL: Audit logging failed', {
+                            error: err.message,
+                            action,
+                            entityType,
+                            userId: (req as any).user._id,
+                        });
                     });
-
-                    console.log(`✅ Audit log created: ${action} by user ${(req as any).user._id}`);
                 } catch (err: any) {
                     // CRITICAL: Audit logging failure should NOT block the operation
                     // but MUST be logged as critical error

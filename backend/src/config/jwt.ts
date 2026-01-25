@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { warn, error as logError } from "../config/logger.js";
-import { IRefreshToken } from "../interfaces/IRefreshToken.js";
+import { IRefreshToken as _IRefreshToken } from "../interfaces/IRefreshToken.js";
 
 interface SessionContext {
     ip?: string;

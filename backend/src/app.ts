@@ -19,34 +19,23 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 
 // Routes
-import healthRoutes from "./routes/healthRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import inventoryRoutes from "./routes/inventoryRoutes.js";
-import customerRoutes from "./routes/customerRoutes.js";
-import supplierRoutes from "./routes/supplierRoutes.js";
-import salesRoutes from "./routes/salesRoutes.js";
-import expenseRoutes from "./routes/expenseRoutes.js";
-import posRoutes from "./routes/posRoutes.js";
-import expenseCategoryRoutes from "./routes/expenseCategoryRoutes.js";
-import recurringExpenseRoutes from "./routes/recurringExpenseRoutes.js";
-import expenseReportRoutes from "./routes/expenseReportRoutes.js";
-import billRoutes from "./routes/billRoutes.js";
-import returnRoutes from "./routes/returnRoutes.js";
-import purchaseReturnRoutes from "./routes/purchaseReturnRoutes.js";
-import estimateRoutes from "./routes/estimateRoutes.js";
-import dueRoutes from "./routes/dueRoutes.js";
-import reportRoutes from "./routes/reportRoutes.js";
-import cashBankRoutes from "./routes/cashBankRoutes.js";
-import paymentInRoutes from "./routes/paymentInRoutes.js";
-import salesOrderRoutes from "./routes/salesOrderRoutes.js";
-import deliveryChallanRoutes from "./routes/deliveryChallanRoutes.js";
-import refreshTokenRoutes from "./routes/refreshTokenRoutes.js";
-import businessRoutes from "./routes/businessRoutes.js";
-import whatsappRoutes from "./routes/whatsappRoutes.js";
-import shopRoutes from "./routes/shopRoutes.js";
-import loyaltyRoutes from "./routes/loyaltyRoutes.js";
-import employeeRoutes from "./routes/employeeRoutes.js";
+// import healthRoutes from "./routes/healthRoutes.js";
+// import authRoutes from "./routes/authRoutes.js";
+// import userRoutes from "./routes/userRoutes.js";
+// import expenseRoutes from "./routes/expenseRoutes.js";
+// import posRoutes from "./routes/posRoutes.js";
+// import expenseCategoryRoutes from "./routes/expenseCategoryRoutes.js";
+// import recurringExpenseRoutes from "./routes/recurringExpenseRoutes.js";
+// import expenseReportRoutes from "./routes/expenseReportRoutes.js";
+// import returnRoutes from "./routes/returnRoutes.js";
+// import estimateRoutes from "./routes/estimateRoutes.js";
+// import reportRoutes from "./routes/reportRoutes.js";
+// import refreshTokenRoutes from "./routes/refreshTokenRoutes.js";
+// import businessRoutes from "./routes/businessRoutes.js";
+// import shopRoutes from "./routes/shopRoutes.js";
+// import loyaltyRoutes from "./routes/loyaltyRoutes.js"; // Moved to modules
+// import employeeRoutes from "./routes/employeeRoutes.js"; // Moved to modules
+// import purchaseRoutes from "./routes/purchaseRoutes.js"; // Moved to modules
 
 
 dotenv.config();
@@ -129,43 +118,64 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // =======================
 // Routes
 // =======================
-app.use("/api/health", healthRoutes);
+// app.use("/api/health", healthRoutes); // Handled by coreRoutes
 
 // Root Route
 app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Backend is running (TypeScript)");
 });
 
-// Routes
 // =======================
-app.use("/api/health", healthRoutes);
-app.use("/api/auth", authRoutes); // Registered Auth Routes
-app.use("/api/auth", refreshTokenRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/inventory", inventoryRoutes); // Registered Inventory Routes
-app.use("/api/pos", posRoutes);
-app.use("/api/sales-invoice", salesRoutes); // Registered Sales Routes
-app.use("/api/customers", customerRoutes); // Registered Customer Routes
-app.use("/api/suppliers", supplierRoutes); // Registered Supplier Routes
-app.use("/api/expenses", expenseRoutes); // Registered Expense Routes
-app.use("/api/expense-categories", expenseCategoryRoutes);
-app.use("/api/recurring-expenses", recurringExpenseRoutes);
-app.use("/api/expense-reports", expenseReportRoutes);
-app.use("/api/bills", billRoutes);
-app.use("/api/returns", returnRoutes);
-app.use("/api/purchase-returns", purchaseReturnRoutes);
-app.use("/api/estimates", estimateRoutes);
-app.use("/api/due", dueRoutes);
-app.use("/api/reports", reportRoutes);
-app.use("/api/cashbank", cashBankRoutes); // Registered Cash/Bank Routes
+// Routes Integration
+// =======================
+
+// CORE Module (Auth, User, Business, Health, etc.)
+import coreRoutes from "./modules/core/routes/core.routes.js";
+app.use("/api", coreRoutes);
+
+// INVENTORY Module
+import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
+app.use("/api/inventory", inventoryRoutes);
+
+// SALES Module
+import salesRoutes from "./modules/sales/routes/sales.routes.js";
+app.use("/api/sales-invoice", salesRoutes);
+import paymentInRoutes from "./modules/sales/routes/paymentIn.routes.js";
 app.use("/api/payment-in", paymentInRoutes);
+import salesOrderRoutes from "./modules/sales/routes/salesOrder.routes.js";
 app.use("/api/sales-orders", salesOrderRoutes);
+import deliveryChallanRoutes from "./modules/sales/routes/deliveryChallan.routes.js";
 app.use("/api/delivery-challan", deliveryChallanRoutes);
-app.use("/api/business", businessRoutes);
-app.use("/api/whatsapp", whatsappRoutes);
-app.use("/api/shop", shopRoutes);
-app.use("/api/loyalty", loyaltyRoutes);
-app.use("/api/employees", employeeRoutes);
+import posRoutes from "./modules/sales/routes/pos.routes.js";
+app.use("/api/pos", posRoutes);
+
+// PURCHASE Module
+import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
+app.use("/api/purchases", purchaseModuleRoutes);
+app.use("/api/purchase-returns", purchaseModuleRoutes);
+
+// FINANCE Module
+import financeRoutes from "./modules/finance/routes/finance.routes.js";
+app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
+
+// EXPENSE Module
+import expenseModuleRoutes from "./modules/expense/routes/expense.routes.js";
+app.use("/api", expenseModuleRoutes);
+
+// CRM Module
+import crmRoutes from "./modules/crm/routes/crm.routes.js";
+app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
+
+// HR Module
+import hrRoutes from "./modules/hr/routes/hr.routes.js";
+app.use("/api", hrRoutes); // Employees
+
+// MISC / LEGACY (To be modularized)
+import returnRoutes from "./modules/sales/routes/return.routes.js";
+app.use("/api/returns", returnRoutes);
+import estimateRoutes from "./modules/sales/routes/estimate.routes.js";
+app.use("/api/estimates", estimateRoutes);
+
 
 // ...
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../modules/core/models/User.js";
 import * as deviceUtils from "../utils/deviceUtils.js";
 import { warn } from "../config/logger.js";
 import { AppError } from "../utils/AppError.js";

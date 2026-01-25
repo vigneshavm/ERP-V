@@ -3,8 +3,8 @@ import { AppError } from "../utils/AppError.js";
 
 type Permission = "delete:item" | "delete:customer" | "delete:supplier" | "delete:expense" | "delete:invoice" | "delete:return" | "delete:salesorder" | "manage:users";
 
-export const requirePermission = (permission: Permission) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+export const requirePermission = (_permission: Permission) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
         const user = (req as any).user;
 
         // Owner has all permissions by default

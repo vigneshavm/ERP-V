@@ -10,7 +10,7 @@
  * NO BUSINESS LOGIC CHANGES - Only adds reliability guards
  */
 
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { Request, Response, NextFunction } from 'express';
 import { error as logError, warn } from './logger.js';
 

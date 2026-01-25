@@ -1,5 +1,5 @@
 import { injectable, singleton } from "tsyringe";
-import Item from "../models/Item.js";
+import Item from "../modules/inventory/models/Item.js";
 import { IItem } from "../interfaces/IItem.js";
 
 @injectable()

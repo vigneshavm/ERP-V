@@ -5,7 +5,7 @@ import type { Express } from "express";
 
 // Coerce the import to handle potential CJS/ESM interop issues
 // 
-const nodeProfilingIntegration = SentryProfiling.nodeProfilingIntegration || SentryProfiling.default?.nodeProfilingIntegration;
+const nodeProfilingIntegration = (SentryProfiling as any).ProfilingIntegration || SentryProfiling.ProfilingIntegration;
 
 /**
  * Initialize Sentry for error tracking and performance monitoring
@@ -28,14 +28,14 @@ export const initSentry = (app: Express): void => {
             // Enable Express.js middleware tracing
             new Sentry.Integrations.Express({ app }),
             // Enable profiling
-            nodeProfilingIntegration(),
+            new nodeProfilingIntegration(),
         ],
         // Performance Monitoring
         tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0, // 10% in prod, 100% in dev
         // Profiling
         profilesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
         // Filter sensitive data
-        beforeSend(event, hint) {
+        beforeSend(event, _hint) {
             // Remove sensitive headers
             if (event.request?.headers) {
                 delete event.request.headers.authorization;

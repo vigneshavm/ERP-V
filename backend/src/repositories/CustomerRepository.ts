@@ -1,5 +1,5 @@
 import { injectable, singleton } from "tsyringe";
-import Customer from "../models/Customer.js";
+import Customer from "../modules/crm/models/Customer.js";
 import { ICustomer } from "../interfaces/ICustomer.js";
 
 @injectable()

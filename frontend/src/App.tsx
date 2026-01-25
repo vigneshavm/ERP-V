@@ -50,15 +50,21 @@ import Return from './pages/sales/returns/Return';
 import ReturnedItems from './pages/sales/returns/ReturnedItems';
 
 // Purchase
-import Purchase from './pages/purchase/Purchase';
+import PurchaseEntry from './pages/purchase/PurchaseEntry';
 import Bills from './pages/purchase/Bills';
 import PaymentOut from './pages/purchase/PaymentOut';
 import Expenses from './pages/expenses/ExpensesModule';
-import PurchaseOrder from './pages/purchase/PurchaseOrder';
+import PurchaseOrder from './pages/purchase/PurchaseOrdersModule';
 import PurchaseReturn from './pages/purchase/PurchaseReturn';
+import SupplierPayments from './pages/purchase/SupplierPayments';
+import DebitNotes from './pages/purchase/DebitNotes';
+import GoodsReceived from './pages/purchase/GoodsReceived';
+import OutstandingPayables from './pages/purchase/OutstandingPayables';
 
 // Reports
 import ReportsDashboard from './pages/reports/ReportsDashboard';
+import BusinessSnapshot from './pages/reports/BusinessSnapshot';
+import ProfitPulse from './pages/reports/ProfitPulse';
 
 // Cash & Bank
 import BankAccounts from './pages/cashbank/BankAccounts';
@@ -69,6 +75,12 @@ import LoanAccounts from './pages/cashbank/LoanAccounts';
 import AccountLedger from './pages/cashbank/AccountLedger';
 import BankSummary from './pages/cashbank/BankSummary';
 import CashBankPosition from './pages/cashbank/CashBankPosition';
+import FinanceOverview from './pages/cashbank/FinanceOverview';
+import BankIntelligence from './pages/cashbank/BankIntelligence';
+import BankReconciliation from './pages/cashbank/BankReconciliation';
+import CashBankIntelligence from './pages/cashbank/CashBankIntelligence';
+import FundTransfer from './pages/cashbank/FundTransfer';
+import PettyCash from './pages/cashbank/PettyCash';
 
 // Business
 import OnlineShop from './pages/business/OnlineShop';
@@ -87,6 +99,10 @@ import ExpenseCategoriesManager from './pages/expenses/ExpenseCategoriesManager'
 import ExpenseIntelligence from './pages/expenses/ExpenseIntelligence';
 import ExpenseReportsIntelligence from './pages/expenses/ExpenseReportsIntelligence';
 import RecurringExpensesIntelligence from './pages/expenses/RecurringExpensesIntelligence';
+import DailyFinance from './pages/expenses/DailyFinance';
+import ExpenseManager from './pages/expenses/ExpenseManager';
+import InventoryManager from './pages/inventory/InventoryManager';
+import AgedStockManager from './pages/inventory/AgedStockManager';
 // Redundant imports removed
 
 // Utilities
@@ -297,14 +313,8 @@ function App() {
 
             {/* Inventory Routes */}
             <Route path="/inventory">
-              <Route
-                index
-                element={
-                  <ProtectedRoute>
-                    <Inventory />
-                  </ProtectedRoute>
-                }
-              />
+              <Route index element={<ProtectedRoute><InventoryManager /></ProtectedRoute>} />
+              <Route path="aged-stock" element={<ProtectedRoute><AgedStockManager /></ProtectedRoute>} />
               <Route
                 path="add"
                 element={
@@ -374,12 +384,16 @@ function App() {
 
             {/* Purchase Routes */}
             <Route path="/purchase">
-              <Route path="entry" element={<ProtectedRoute><Purchase /></ProtectedRoute>} />
+              <Route path="entry" element={<ProtectedRoute><PurchaseEntry /></ProtectedRoute>} />
               <Route path="bills" element={<ProtectedRoute><Bills /></ProtectedRoute>} />
-              <Route path="payment-out" element={<ProtectedRoute><PaymentOut /></ProtectedRoute>} />
+              <Route path="payment-out" element={<ProtectedRoute><SupplierPayments /></ProtectedRoute>} />
+              <Route path="payment-out/new" element={<ProtectedRoute><PaymentOut /></ProtectedRoute>} />
               <Route path="expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
               <Route path="order" element={<ProtectedRoute><PurchaseOrder /></ProtectedRoute>} />
-              <Route path="return" element={<ProtectedRoute><PurchaseReturn /></ProtectedRoute>} />
+              <Route path="return" element={<ProtectedRoute><DebitNotes /></ProtectedRoute>} />
+              <Route path="return/new" element={<ProtectedRoute><PurchaseReturn /></ProtectedRoute>} />
+              <Route path="received" element={<ProtectedRoute><GoodsReceived /></ProtectedRoute>} />
+              <Route path="payables" element={<ProtectedRoute><OutstandingPayables /></ProtectedRoute>} />
             </Route>
 
             {/* Cash & Bank Routes */}
@@ -392,6 +406,12 @@ function App() {
               <Route path="ledger/:id" element={<ProtectedRoute><AccountLedger /></ProtectedRoute>} />
               <Route path="cheques" element={<ProtectedRoute><Cheques /></ProtectedRoute>} />
               <Route path="loan-accounts" element={<ProtectedRoute><LoanAccounts /></ProtectedRoute>} />
+              <Route path="overview" element={<ProtectedRoute><FinanceOverview /></ProtectedRoute>} />
+              <Route path="bank-intelligence" element={<ProtectedRoute><BankIntelligence /></ProtectedRoute>} />
+              <Route path="reconciliation" element={<ProtectedRoute><BankReconciliation /></ProtectedRoute>} />
+              <Route path="intelligence" element={<ProtectedRoute><CashBankIntelligence /></ProtectedRoute>} />
+              <Route path="fund-transfer" element={<ProtectedRoute><FundTransfer /></ProtectedRoute>} />
+              <Route path="petty-cash" element={<ProtectedRoute><PettyCash /></ProtectedRoute>} />
             </Route>
 
             {/* Business Growth Routes */}
@@ -412,6 +432,8 @@ function App() {
             {/* Expenses Routes */}
             <Route path="/expenses">
               <Route index element={<ProtectedRoute><ExpensesModule /></ProtectedRoute>} />
+              <Route path="daily" element={<ProtectedRoute><DailyFinance /></ProtectedRoute>} />
+              <Route path="manager" element={<ProtectedRoute><ExpenseManager /></ProtectedRoute>} />
               <Route path="categories" element={<ProtectedRoute><ExpenseCategoriesManager /></ProtectedRoute>} />
               <Route path="intelligence" element={<ProtectedRoute><ExpenseIntelligence /></ProtectedRoute>} />
               <Route path="reports" element={<ProtectedRoute><ExpenseReportsIntelligence /></ProtectedRoute>} />
@@ -430,7 +452,11 @@ function App() {
             <Route path="/employees" element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
 
             {/* Reports Route */}
-            <Route path="/reports" element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
+            <Route path="/reports">
+              <Route index element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
+              <Route path="business-snapshot" element={<ProtectedRoute><BusinessSnapshot /></ProtectedRoute>} />
+              <Route path="profit-pulse" element={<ProtectedRoute><ProfitPulse /></ProtectedRoute>} />
+            </Route>
 
             {/* Settings Route */}
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

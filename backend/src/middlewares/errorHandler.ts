@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils/AppError.js";
+// import { AppError } from "../utils/AppError.js";
 
-const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
     // Prioritize statusCode (numeric) from AppError, else check status if numeric, else 500
     const statusCode = (typeof err.statusCode === 'number') ? err.statusCode : (typeof err.status === 'number' ? err.status : 500);
     const status = err.status || "error"; // For response body (fail/error)

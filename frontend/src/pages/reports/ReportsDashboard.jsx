@@ -11,6 +11,8 @@ const ReportsDashboard = () => {
             icon: '📊',
             color: 'bg-blue-50 border-blue-200',
             reports: [
+                { name: 'Business Snapshot', path: '/reports/business-snapshot', icon: '📸' },
+                { name: 'ProfitPulse AI', path: '/reports/profit-pulse', icon: '⚡' },
                 { name: 'Sales Report', path: '/reports/sales', icon: '💰' },
                 { name: 'Purchase Report', path: '/reports/purchase', icon: '🛒' },
                 { name: 'Day Book', path: '/reports/daybook', icon: '📅' },

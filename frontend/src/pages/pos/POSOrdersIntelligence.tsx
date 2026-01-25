@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../redux/store';
 import {
     ShoppingCart,
     Search,
@@ -238,7 +238,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                         <div className="w-full h-2 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full rounded-full transition-all duration-1000 ${b.stock_anomalies === 0 ? 'bg-success w-[100%]' :
-                                                        b.stock_anomalies < 3 ? 'bg-amber-500 w-[70%]' : 'bg-error w-[40%]'
+                                                    b.stock_anomalies < 3 ? 'bg-amber-500 w-[70%]' : 'bg-error w-[40%]'
                                                     }`}
                                             />
                                         </div>
@@ -296,7 +296,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                                 <td className="p-5">
                                                     <div className="flex items-center gap-2">
                                                         <span className={`w-2 h-2 rounded-full ${order.risk_level === 'LOW' ? 'bg-success' :
-                                                                order.risk_level === 'CRITICAL' ? 'bg-error animate-pulse' : 'bg-amber-500'
+                                                            order.risk_level === 'CRITICAL' ? 'bg-error animate-pulse' : 'bg-amber-500'
                                                             }`} />
                                                         <span className={`text-[10px] font-black uppercase tracking-widest ${order.risk_level === 'CRITICAL' ? 'text-error' : 'text-neutral-500'
                                                             }`}>

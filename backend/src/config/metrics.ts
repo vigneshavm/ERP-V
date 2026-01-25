@@ -12,9 +12,9 @@ import promClient from 'prom-client';
 import { Request, Response, NextFunction } from 'express';
 
 type Registry = any;
-type Histogram<T extends string> = any;
-type Counter<T extends string> = any;
-type Gauge<T extends string> = any;
+type Histogram<_T extends string> = any;
+type Counter<_T extends string> = any;
+type Gauge<_T extends string> = any;
 
 // Create a Registry
 const register: Registry = new promClient.Registry();
@@ -129,7 +129,7 @@ export const metricsMiddleware = (req: RouteRequest, res: Response, next: NextFu
  * Metrics endpoint handler
  * Usage: app.get('/metrics', metricsHandler);
  */
-export const metricsHandler = async (req: Request, res: Response): Promise<void> => {
+export const metricsHandler = async (_req: Request, res: Response): Promise<void> => {
     res.set('Content-Type', register.contentType);
     res.end(await register.metrics());
 };

@@ -1,0 +1,22 @@
+import express from 'express';
+import authRoutes from './authRoutes.js';
+import userRoutes from './userRoutes.js';
+import businessRoutes from './businessRoutes.js';
+import healthRoutes from './healthRoutes.js';
+import refreshTokenRoutes from './refreshTokenRoutes.js';
+import reportRoutes from './reportRoutes.js';
+import settingsRoutes from './settingsRoutes.js';
+import shopRoutes from './shopRoutes.js';
+
+const router = express.Router();
+
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
+router.use('/business', businessRoutes);
+router.use('/health', healthRoutes);
+router.use('/refresh-token', refreshTokenRoutes);
+router.use('/reports', reportRoutes);
+router.use('/settings', settingsRoutes);
+router.use('/shop', shopRoutes);
+
+export default router;

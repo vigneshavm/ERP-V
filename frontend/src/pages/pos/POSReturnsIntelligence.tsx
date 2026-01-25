@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../redux/store';
 import {
     RotateCcw,
     Search,
@@ -216,8 +216,8 @@ const POSReturnsIntelligence: React.FC = () => {
                                     key={level}
                                     onClick={() => setRiskFilter(level)}
                                     className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${riskFilter === level
-                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                            : 'bg-white dark:bg-neutral-800 text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50'
+                                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                        : 'bg-white dark:bg-neutral-800 text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50'
                                         }`}
                                 >
                                     {level}
@@ -229,14 +229,14 @@ const POSReturnsIntelligence: React.FC = () => {
                     <div className="space-y-4">
                         {filteredReturns.map(ret => (
                             <div key={ret.id} className={`bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/40 transition-all ${ret.risk_level === 'CRITICAL' ? 'border-l-4 border-l-error' :
-                                    ret.risk_level === 'HIGH' ? 'border-l-4 border-l-amber-500' : 'opacity-80 grayscale-[0.3]'
+                                ret.risk_level === 'HIGH' ? 'border-l-4 border-l-amber-500' : 'opacity-80 grayscale-[0.3]'
                                 }`}>
                                 <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                                     <div className="space-y-4 flex-1">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
                                                 <div className={`p-2.5 rounded-2xl ${ret.risk_level === 'CRITICAL' ? 'bg-error/10 text-error' :
-                                                        ret.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-600' : 'bg-neutral-100 text-neutral-400'
+                                                    ret.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-600' : 'bg-neutral-100 text-neutral-400'
                                                     }`}>
                                                     <RotateCcw className="w-5 h-5" />
                                                 </div>
@@ -246,7 +246,7 @@ const POSReturnsIntelligence: React.FC = () => {
                                                 </div>
                                             </div>
                                             <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${ret.risk_level === 'CRITICAL' ? 'bg-error text-white shadow-lg shadow-error/20' :
-                                                    ret.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-700' : 'bg-success/10 text-success'
+                                                ret.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-700' : 'bg-success/10 text-success'
                                                 }`}>
                                                 {ret.risk_level} Risk
                                             </span>

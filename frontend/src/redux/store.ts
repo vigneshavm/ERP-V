@@ -15,6 +15,7 @@ import laborReducer from './slices/laborSlice';
 import financeReducer from './slices/financeSlice';
 import purchaseReducer from './slices/purchaseSlice';
 import tenantReducer from './slices/tenantSlice';
+import uiReducer from './slices/uiSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     finance: financeReducer,
     purchase: purchaseReducer,
     tenant: tenantReducer,
+    ui: uiReducer,
   },
 });
 

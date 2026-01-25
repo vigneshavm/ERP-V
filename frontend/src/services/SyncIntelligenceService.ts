@@ -1,6 +1,6 @@
 import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from '../../../src/types/tenant';
 import { db } from './db';
-import { supabase } from '../../../src/lib/supabase';
+
 
 export class SyncIntelligenceService {
     private static config: SyncIntelligenceConfig = {

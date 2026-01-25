@@ -21,8 +21,8 @@ import {
 } from 'lucide-react';
 import { Sector } from '../../../../src/types/common';
 import { APP_CONFIG } from '../../../../src/config';
-import { supabase } from '../../../../src/lib/supabase';
-import { DATA_MODE } from '../services/dataSource';
+import api from '../../services/api';
+import { DATA_MODE } from '../../services/dataSource';
 import { securePassword } from '../../../../src/utils/auth';
 import { registrationUtil } from '../../../../src/utils/registrationUtil';
 
@@ -141,49 +141,17 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     branchCount: 1
                 });
             } else {
-                // Add to Supabase
-                if (!supabase) throw new Error('Database not available');
+                // Add to Backend (which handles DB)
 
-                const tenantId = generateId();
-                const ownerId = generateId();
-                const hashedPassword = securePassword(ownerPassword);
-
-                const newTenant = {
-                    id: tenantId,
-                    name: businessName,
-                    sector: sector,
-                    subdomain: subdomain,
-                    domain: `${subdomain}.app.com`,
-                    is_active: true,
-                    theme: 'light',
-                    layout: 'standard',
-                    modules: ['DASHBOARD', 'POS', 'INVENTORY', 'CUSTOMERS', 'SALES', 'GROW'],
-                    region: { currency: 'INR', currencySymbol: '₹', dateFormat: 'DD/MM/YYYY' },
-                    locations: [],
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                };
-
-                const { error: tenantError } = await supabase
-                    .from('tenants')
-                    .insert([newTenant]);
-                if (tenantError) throw tenantError;
-
-                const { error: userError } = await supabase
-                    .from('tenant_users')
-                    .insert([{
-                        id: ownerId,
-                        tenant_id: tenantId,
-                        full_name: ownerName,
-                        email: ownerEmail,
-                        mobile: ownerMobile,
-                        password: hashedPassword,
-                        role_id: 'owner',
-                        is_active: true,
-                        is_2fa_enabled: false,
-                        created_at: new Date().toISOString()
-                    }]);
-                if (userError) throw userError;
+                await api.post('/auth/register-tenant', {
+                    businessName,
+                    sector,
+                    subdomain,
+                    ownerName,
+                    ownerEmail,
+                    ownerMobile,
+                    ownerPassword
+                });
             }
 
             // Success - redirect to login

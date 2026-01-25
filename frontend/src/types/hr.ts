@@ -13,6 +13,9 @@ export interface Employee {
     tenantId?: string;
     mobile?: string;
     roleId?: string;
+    wageType?: 'DAILY' | 'MONTHLY';
+    active?: boolean;
+    joinedDate?: string;
 }
 
 export interface LaborPayment {

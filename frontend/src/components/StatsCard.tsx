@@ -6,46 +6,44 @@ interface StatsCardProps {
     icon: React.ReactNode;
     iconBgColor?: string;
     iconColor?: string;
-    trend?: string | number | null;
+    trend?: string;
     trendUp?: boolean;
-    onClick?: (() => void) | null;
+    className?: string;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
     title,
     value,
     icon,
-    iconBgColor = 'bg-blue-100',
-    iconColor = 'text-blue-600',
-    trend = null,
-    trendUp = true,
-    onClick = null
+    iconBgColor = 'bg-indigo-100',
+    iconColor = 'text-indigo-600',
+    trend,
+    trendUp,
+    className = ''
 }) => {
     return (
-        <div
-            className={`bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] p-6 ${onClick ? 'cursor-pointer hover:shadow-md dark:hover:shadow-xl transition' : ''}`}
-            onClick={onClick || undefined}
-        >
-            <div className="flex items-center justify-between">
-                <div className="flex-1">
-                    <p className="text-gray-500 dark:text-[rgb(var(--color-text-secondary))] text-sm font-medium mb-2">{title}</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-[rgb(var(--color-text))]">{value}</p>
+        <div className={`bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all ${className}`}>
+            <div className="flex items-start justify-between">
+                <div>
+                    <h3 className="text-sm font-medium text-slate-500 dark:text-neutral-400 mb-1">{title}</h3>
+                    <div className="text-2xl font-bold text-slate-900 dark:text-white">{value}</div>
+
                     {trend && (
-                        <div className={`flex items-center mt-2 text-sm ${trendUp ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d={trendUp ? "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" : "M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"}
-                                />
-                            </svg>
-                            <span>{trend}</span>
+                        <div className="mt-2 flex items-center gap-1.5">
+                            <span className={`text-xs font-bold px-1.5 py-0.5 rounded-md ${trendUp === true
+                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20'
+                                    : trendUp === false
+                                        ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20'
+                                        : 'bg-slate-100 text-slate-600 dark:bg-neutral-800'
+                                }`}>
+                                {trend}
+                            </span>
                         </div>
                     )}
                 </div>
-                <div className={`p-3 ${iconBgColor} dark:bg-opacity-20 rounded-lg`}>
-                    <div className={`w-8 h-8 ${iconColor}`}>
+
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconBgColor} ${iconColor}`}>
+                    <div className="w-6 h-6">
                         {icon}
                     </div>
                 </div>

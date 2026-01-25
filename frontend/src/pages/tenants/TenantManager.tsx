@@ -52,7 +52,6 @@ import { RootState } from '../../redux/store';
 import { toggleTenantStatus } from '../../redux/slices/tenantSlice';
 import { Tenant } from '../../types/tenant';
 import { APP_CONFIG } from '../../../../src/config';
-import { supabase } from '../../../../src/lib/supabase';
 import { useTenantForm } from '../../../../src/hooks/useTenantForm';
 import { BusinessTab } from '../../../../src/components/tenant-manager/BusinessTab';
 import { CompanyTab } from '../../../../src/components/tenant-manager/CompanyTab';
@@ -193,22 +192,9 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     }, [tenants]);
 
     const handleToggleStatus = async (tenant: Tenant) => {
-        const newStatus = !tenant.isActive;
-        if (APP_CONFIG.USE_SUPABASE && supabase) {
-            try {
-                const { error } = await supabase
-                    .from('tenants')
-                    .update({ is_active: newStatus })
-                    .eq('id', tenant.id);
-                if (error) throw error;
-                dispatch(toggleTenantStatus(tenant.id));
-            } catch (err: any) {
-                console.error('Error toggling status:', err);
-                alert(`Failed to update status: ${err.message}`);
-            }
-        } else {
-            dispatch(toggleTenantStatus(tenant.id));
-        }
+        // const newStatus = !tenant.isActive;
+        // TODO: Integrate with Backend API
+        dispatch(toggleTenantStatus(tenant.id));
     };
 
     // State for full-page view toggle

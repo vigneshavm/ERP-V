@@ -8,16 +8,39 @@ export interface ScanItem {
     productType?: string;
 }
 
+// Re-export specific status types if needed, or define them inline
+export type PurchaseOrderStatus = 'Draft' | 'Pending' | 'Approved' | 'Converted' | 'Cancelled';
+
+export interface PurchaseOrderItem {
+    product_id?: string;
+    product_name: string;
+    sku?: string;
+    quantity: number;
+    rate: number;
+    tax_percent: number;
+    discount_amount: number;
+    line_total: number;
+}
+
 export interface PurchaseOrder {
     id: string;
-    vendor: string;
-    vendorId?: string;
-    date: string;
-    items: ScanItem[];
-    total: number;
-    status: 'PENDING' | 'APPROVED';
-    sector: Sector;
-    branchId: BranchId;
+    po_number: string;
+    vendor_name: string;
+    vendor_id?: string;
+    po_date: string;
+    expected_delivery?: string;
+    items: PurchaseOrderItem[];
+    total_amount: number;
+    status: PurchaseOrderStatus;
+    notes?: string;
+    created_at: string;
+
+    // Legacy fields for backward compatibility if needed, or cleanup
+    // vendor: string; // -> vendor_name
+    // date: string; // -> po_date
+    // total: number; // -> total_amount
+    // sector: Sector; // Optional depending on usage
+    branch_id?: string; // Optional depending on usage
 }
 
 export interface InvoiceItem {

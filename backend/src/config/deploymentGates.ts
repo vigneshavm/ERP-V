@@ -54,7 +54,6 @@ interface ShutdownResult {
 type ValidateDatabaseSafetyFn = () => Promise<void>;
 type ValidateAuthorizationCoverageFn = (app: Application) => { valid: boolean; unprotected: string[] };
 type ValidateAuditLoggingEnabledFn = () => boolean;
-type ValidateAuditCoverageFn = () => boolean;
 type ValidateLoggingConfigurationFn = () => boolean;
 
 /**
@@ -115,7 +114,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
 
     // 3. Authorization coverage
     try {
-        const { validateAuthorizationCoverage } = await import('./authorizationEnforcement.js') as { validateAuthorizationCoverage: ValidateAuthorizationCoverageFn };
+        const { validateAuthorizationCoverage } = await import('../middlewares/authorizationEnforcement.js') as { validateAuthorizationCoverage: ValidateAuthorizationCoverageFn };
         const authResults = validateAuthorizationCoverage(app);
 
         if (!authResults.valid) {
@@ -136,7 +135,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
 
     // 4. Audit logging
     try {
-        const { validateAuditLoggingEnabled } = await import('./auditEnforcement.js') as { validateAuditLoggingEnabled: ValidateAuditLoggingEnabledFn };
+        const { validateAuditLoggingEnabled } = await import('../middlewares/auditEnforcement.js') as { validateAuditLoggingEnabled: ValidateAuditLoggingEnabledFn };
         const auditEnabled = validateAuditLoggingEnabled();
 
         if (!auditEnabled && process.env.NODE_ENV === 'production') {
@@ -157,7 +156,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
     // 5. Logging configuration
     try {
         //  - module may not exist yet
-        const { validateLoggingConfiguration } = await import('./observabilityEnforcement.js') as { validateLoggingConfiguration: ValidateLoggingConfigurationFn };
+        const { validateLoggingConfiguration } = await import('../middlewares/observabilityEnforcement.js') as { validateLoggingConfiguration: ValidateLoggingConfigurationFn };
         const loggingValid = validateLoggingConfiguration();
 
         if (!loggingValid && process.env.NODE_ENV === 'production') {
@@ -277,7 +276,7 @@ export const validateGracefulShutdown = (server: Server): Promise<ShutdownResult
         let requestsInFlight = 0;
 
         // Track in-flight requests
-        server.on('request', (req, res) => {
+        server.on('request', (_req, res) => {
             requestsInFlight++;
             res.on('finish', () => {
                 requestsInFlight--;

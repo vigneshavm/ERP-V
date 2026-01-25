@@ -1,7 +1,6 @@
 import { injectable, singleton } from "tsyringe";
-import User from "../models/User.js";
+import User from "../modules/core/models/User.js";
 import { IUser } from "../interfaces/IUser.js";
-import { AppError } from "../utils/AppError.js";
 
 @injectable()
 @singleton()

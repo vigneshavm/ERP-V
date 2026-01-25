@@ -1,5 +1,5 @@
 import { injectable, singleton } from "tsyringe";
-import RefreshToken from "../models/RefreshToken.js";
+import RefreshToken from "../modules/core/models/RefreshToken.js";
 import { IRefreshToken } from "../interfaces/IRefreshToken.js";
 
 @injectable()

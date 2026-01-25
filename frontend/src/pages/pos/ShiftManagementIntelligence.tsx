@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../redux/store';
 import {
     Clock,
     Search,
@@ -227,8 +227,8 @@ const ShiftManagementIntelligence: React.FC = () => {
                                     key={status}
                                     onClick={() => setStatusFilter(status)}
                                     className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all ${statusFilter === status
-                                            ? 'bg-primary text-white ring-4 ring-primary/10'
-                                            : 'bg-white dark:bg-neutral-800 text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50'
+                                        ? 'bg-primary text-white ring-4 ring-primary/10'
+                                        : 'bg-white dark:bg-neutral-800 text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50'
                                         }`}
                                 >
                                     {status}
@@ -246,7 +246,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <div className={`p-3 rounded-2xl ${shift.difference < 0 ? 'bg-error/10 text-error' :
-                                                        shift.status === 'OPEN' ? 'bg-primary/10 text-primary' : 'bg-success/10 text-success'
+                                                    shift.status === 'OPEN' ? 'bg-primary/10 text-primary' : 'bg-success/10 text-success'
                                                     }`}>
                                                     <Clock className="w-5 h-5" />
                                                 </div>

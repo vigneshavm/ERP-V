@@ -15,6 +15,7 @@ const initialState = {
   item: null,
   lowStockItems: [],
   alerts: [],
+  pagination: null,
   isLoading: false,
   isSuccess: false,
   isError: false,
@@ -156,7 +157,8 @@ export const inventorySlice = createSlice({
       .addCase(getAllItems.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items = action.payload;
+        state.items = action.payload.items || (Array.isArray(action.payload) ? action.payload : []);
+        state.pagination = action.payload.pagination || null;
       })
       .addCase(getAllItems.rejected, (state, action) => {
         state.isLoading = false;
@@ -184,6 +186,7 @@ export const inventorySlice = createSlice({
       .addCase(addItem.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        if (!Array.isArray(state.items)) state.items = [];
         state.items.push(action.payload.item);
         state.alerts = action.payload.alerts || [];
       })
@@ -199,6 +202,7 @@ export const inventorySlice = createSlice({
       .addCase(updateItem.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        if (!Array.isArray(state.items)) state.items = [];
         state.items = state.items.map((item) =>
           item._id === action.payload.updated._id ? action.payload.updated : item
         );
@@ -217,6 +221,7 @@ export const inventorySlice = createSlice({
       .addCase(deleteItem.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        if (!Array.isArray(state.items)) state.items = [];
         state.items = state.items.filter((item) => item._id !== action.payload);
       })
       .addCase(deleteItem.rejected, (state, action) => {

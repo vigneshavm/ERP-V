@@ -143,12 +143,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </svg>
             ),
             submenu: [
-                { name: 'Purchase', path: '/purchase/entry' },
-                { name: 'Bills', path: '/purchase/bills' },
-                { name: 'Payment Out', path: '/purchase/payment-out' },
+                { name: 'Purchase Entry', path: '/purchase/entry' },
+                { name: 'Purchase Orders', path: '/purchase/order' },
+                { name: 'Goods Received', path: '/purchase/received' },
+                { name: 'Bills / Invoices', path: '/purchase/bills' },
+                { name: 'Outstanding Payables', path: '/purchase/payables' },
+                { name: 'Payments Made', path: '/purchase/payment-out' },
+                { name: 'Debit Notes / Returns', path: '/purchase/return' },
                 { name: 'Expenses', path: '/purchase/expenses' },
-                { name: 'Purchase Order', path: '/purchase/order' },
-                { name: 'Purchase Return', path: '/purchase/return' }
             ]
         },
         {
@@ -177,12 +179,16 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
         {
             name: 'Inventory',
-            path: '/inventory',
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
             ),
+            submenu: [
+                { name: 'Stock Authority', path: '/inventory' },
+                { name: 'Aged Stock Pulse', path: '/inventory/aged-stock' },
+                { name: 'Add New Item', path: '/inventory/add' },
+            ]
         },
         {
             name: 'Cash & Bank',
@@ -192,13 +198,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </svg>
             ),
             submenu: [
+                { name: 'Finance Overview', path: '/cashbank/overview' },
                 { name: 'Bank Accounts', path: '/cashbank/bank-accounts' },
                 { name: 'Bank Summary', path: '/cashbank/bank-summary' },
                 { name: 'Cash/Bank Position', path: '/cashbank/position' },
                 { name: 'Transfers', path: '/cashbank/transfers' },
                 { name: 'Cash in Hand', path: '/cashbank/cash-in-hand' },
                 { name: 'Cheques', path: '/cashbank/cheques' },
-                { name: 'Loan Accounts', path: '/cashbank/loan-accounts' }
+                { name: 'Loan Accounts', path: '/cashbank/loan-accounts' },
+                { name: 'Bank Intelligence', path: '/cashbank/bank-intelligence' },
+                { name: 'Reconciliation', path: '/cashbank/reconciliation' },
+                { name: 'Petty Cash', path: '/cashbank/petty-cash' }
             ]
         },
         {
@@ -218,6 +228,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
             ),
+            submenu: [
+                { name: 'Reports Home', path: '/reports' },
+                { name: 'Business Snapshot', path: '/reports/business-snapshot' },
+                { name: 'ProfitPulse AI', path: '/reports/profit-pulse' }
+            ]
         },
         {
             name: 'Employees',
@@ -263,10 +278,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </svg>
             ),
             submenu: [
-                { name: 'Daily Expenses', path: '/expenses' },
-                { name: 'Expense Tracker', path: '/expenses/tracker' },
-                { name: 'Expense Dashboard', path: '/expenses/dashboard' },
-                { name: 'Expense List', path: '/expenses/list' },
+                { name: 'Daily Finance', path: '/expenses/daily' },
+                { name: 'Expense Manager', path: '/expenses/manager' },
+                { name: 'Expense Home', path: '/expenses' },
                 { name: 'Categories Manager', path: '/expenses/categories' },
                 { name: 'Expense Intelligence', path: '/expenses/intelligence' },
                 { name: 'Expense Reports', path: '/expenses/reports' },

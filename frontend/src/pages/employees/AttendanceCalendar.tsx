@@ -1,14 +1,14 @@
 import React from 'react';
 import { Calendar as CalendarIcon, CheckSquare, ListChecks, X, CheckCircle2, Clock, PieChart, XCircle } from 'lucide-react';
-import { Card } from '../../../../src/components/Card';
-import { DailyLog } from '../../../../src/types/hr';
-import { AttendanceStatus } from '../../../../src/types/common';
-import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../../../../src/utils/helpers';
+import { Card } from '../../components/Card';
+import { Attendance } from '../../types/hr';
+import { AttendanceStatus } from '../../types/common';
+import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from '../../utils/helpers';
 
 interface AttendanceCalendarProps {
     currentYear: number;
     currentMonth: number;
-    attendance: DailyLog[];
+    attendance: Attendance[];
     selectedLaborerId: string | null;
     isSelectionMode: boolean;
     onToggleSelectionMode: () => void;

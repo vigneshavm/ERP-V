@@ -1,5 +1,5 @@
 import { demoDB } from '../../../src/data/demo';
-import { supabase } from '../../../src/lib/supabase';
+
 
 export type DataMode = 'DEMO' | 'DB';
 
@@ -106,18 +106,39 @@ async function getDemoData(tableName: string, options: DataSourceOptions): Promi
 /**
  * Internal logic for fetching from real Supabase DB
  */
+import api from './api';
+
+// ... (existing imports, but remove supabase)
+
+const TABLE_TO_ENDPOINT: Record<string, string> = {
+    'products': '/inventory',
+    'vendors': '/suppliers',
+    'tenants': '/tenants', // Might need specific endpoint if valid
+    'customers': '/customers',
+    'sales_invoices': '/sales-invoice',
+    'sales': '/sales-invoice',
+    'purchase_orders': '/orders', // or /purchases
+    'purchases': '/purchases',
+    'expenses': '/expenses',
+    'payments': '/payment-in',
+    'transactions': '/cashbank',
+    'daily_finance': '/daily-finance' // Placeholder
+};
+
 async function getDbData(tableName: string, options: DataSourceOptions): Promise<any[]> {
-    if (!supabase) return [];
-
-    let query = supabase.from(tableName).select(options.select || '*');
-
-    if (options.filters) {
-        Object.entries(options.filters).forEach(([key, value]) => {
-            query = query.eq(key, value);
-        });
+    const endpoint = TABLE_TO_ENDPOINT[tableName];
+    if (!endpoint) {
+        console.warn(`No endpoint mapped for table ${tableName}`);
+        return [];
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
-    return data || [];
+    try {
+        const { data } = await api.get(endpoint, {
+            params: options.filters
+        });
+        return data || [];
+    } catch (error) {
+        console.error(`Error fetching data for ${tableName}`, error);
+        throw error;
+    }
 }

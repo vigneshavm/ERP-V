@@ -10,7 +10,7 @@ import { TimeEntryModal } from '../../components/TimeEntryModal';
 import { Users } from 'lucide-react';
 import { getDaysInMonth, formatDateISO } from '../../utils/helpers';
 import { securePassword } from '../../utils/auth';
-import { AttendanceStatus, Sector } from '../../types/common';
+import { AttendanceStatus, Sector, SystemRole } from '../../types/common';
 import { DailyLog } from '../../types/hr';
 import { calculateLaborStats, convertMonthlyToDailyWage, generateLaborerPayload, mapDbUserToEmployee } from '../../utils/laborUtils';
 
@@ -110,7 +110,9 @@ export const LaborManager = () => {
     const tId = activeTenantId;
     if (!tId) return;
 
-    const { data } = await import('../../../../src/lib/supabase').then(m => m.supabase.from('roles').select('*').eq('tenant_id', tId));
+    // TODO: Load roles from API
+    // const { data } = await api.get('/roles', { params: { tenant_id: tId } });
+    const data = [];
     if (data) {
       setRoles(data);
       setIsRolesLoaded(true);
@@ -164,10 +166,10 @@ export const LaborManager = () => {
           dailyRate: insertedUser.dailyRate,
           wageType: insertedUser.wageType,
           branchId: insertedUser.branchId,
-          sector: currentSector, // Assuming current context
+          sector: currentSector as Sector, // Assuming current context
           joinedDate: insertedUser.createdAt,
           active: insertedUser.isActive,
-          systemRole: 'Staff',
+          systemRole: 'Staff' as SystemRole,
           pin: '****'
         };
 

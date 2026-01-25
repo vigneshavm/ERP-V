@@ -143,13 +143,15 @@ const POS = () => {
   }, [holdOrders]);
 
   const activeTab = tabs.find(tab => tab.id === activeTabId);
+  const itemsList = Array.isArray(items) ? items : (items?.items || []);
+  const customersList = Array.isArray(customers) ? customers : (customers?.customers || []);
 
-  const filteredItems = items.filter((item) =>
+  const filteredItems = itemsList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (item.sku && item.sku.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const filteredCustomers = customers.filter((customer) =>
+  const filteredCustomers = customersList.filter((customer) =>
     customer.name.toLowerCase().includes(customerSearchTerm.toLowerCase()) ||
     customer.phone.includes(customerSearchTerm)
   );
@@ -157,7 +159,7 @@ const POS = () => {
   // Barcode scanner handler
   const handleBarcodeInput = (e) => {
     if (e.key === 'Enter' && barcodeInput.trim()) {
-      const item = items.find(i => i.sku === barcodeInput.trim());
+      const item = itemsList.find(i => i.sku === barcodeInput.trim());
       if (item) {
         addToCart(item);
         setBarcodeInput('');

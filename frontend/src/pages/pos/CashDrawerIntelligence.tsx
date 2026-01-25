@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../redux/store';
 import {
     Wallet,
     Search,
@@ -238,8 +238,8 @@ const CashDrawerIntelligence: React.FC = () => {
                                 <div className="flex justify-between items-start mb-8">
                                     <div className="flex items-center gap-4">
                                         <div className={`p-4 rounded-2xl ${drawer.status === 'SHORTAGE' ? 'bg-error/10 text-error' :
-                                                drawer.status === 'EXCESS' ? 'bg-amber-100 text-amber-600' :
-                                                    drawer.status === 'RISK' ? 'bg-error/10 text-error animate-pulse' : 'bg-success/10 text-success'
+                                            drawer.status === 'EXCESS' ? 'bg-amber-100 text-amber-600' :
+                                                drawer.status === 'RISK' ? 'bg-error/10 text-error animate-pulse' : 'bg-success/10 text-success'
                                             }`}>
                                             <Wallet className="w-6 h-6" />
                                         </div>
@@ -250,7 +250,7 @@ const CashDrawerIntelligence: React.FC = () => {
                                     </div>
                                     <div className="flex flex-col items-end gap-2">
                                         <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${drawer.risk_level === 'CRITICAL' ? 'bg-error text-white shadow-lg shadow-error/20' :
-                                                drawer.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-700' : 'bg-success/10 text-success'
+                                            drawer.risk_level === 'HIGH' ? 'bg-amber-100 text-amber-700' : 'bg-success/10 text-success'
                                             }`}>
                                             {drawer.status}
                                         </span>

@@ -1,4 +1,4 @@
-import Item from "../models/Item.js";
+import Item from "../modules/inventory/models/Item.js";
 import { IItem } from "../interfaces/IItem.js";
 import { logStockMovement } from "./stockMovementLogger.js";
 import { validateStockLevels } from "./inventoryValidator.js";

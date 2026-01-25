@@ -10,9 +10,10 @@
 
 //  - bull types may not be installed
 import Bull from 'bull';
+import fs from 'fs';
 
 // Type definitions for bull (when @types/bull is not available)
-type Queue<T = any> = any;
+type Queue<_T = any> = any;
 type Job<T = any> = Bull.Job<T> | any;
 type JobOptions = any;
 
@@ -75,7 +76,7 @@ emailQueue.process(async (job: Job<EmailJobData>): Promise<EmailJobResult> => {
     // Import email service dynamically to avoid circular dependencies
     //  - module may not exist in src
     const { sendHtmlEmail } = await import('../utils/emailService.js') as {
-        sendHtmlEmail: (to: string, subject: string, html: string, text?: string) => Promise<void>;
+        sendHtmlEmail: (to: string, subject: string, html: string, text?: string | null) => Promise<boolean>;
     };
 
     try {
@@ -92,17 +93,19 @@ pdfQueue.process(async (job: Job<PdfJobData>): Promise<PdfJobResult> => {
 
     // Import PDF generator dynamically
     //  - module may not exist yet
-    const { generateInvoicePDF } = await import('../utils/pdfGenerator.js') as {
-        generateInvoicePDF: (data: any) => Promise<Buffer>;
+    const { generateInvoicePDF } = await import('../utils/invoiceGenerator.js') as {
+        generateInvoicePDF: (data: any) => Promise<string>;
     };
 
     try {
         let pdfBuffer: Buffer;
 
         switch (type) {
-            case 'invoice':
-                pdfBuffer = await generateInvoicePDF(data);
+            case 'invoice': {
+                const filePath = await generateInvoicePDF(data);
+                pdfBuffer = fs.readFileSync(filePath);
                 break;
+            }
             // Add more PDF types as needed
             default:
                 throw new Error(`Unknown PDF type: ${type}`);

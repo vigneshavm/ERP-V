@@ -96,7 +96,7 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
             // Run database safety checks
             try {
                 //  - module may not exist yet
-                const { validateDatabaseSafety, validateIndexes } = await import('./utils/transaction.js') as {
+                const { validateDatabaseSafety, validateIndexes } = await import('../utils/transaction.js') as {
                     validateDatabaseSafety: ValidateDatabaseSafetyFn;
                     validateIndexes: ValidateIndexesFn;
                 };

@@ -1,6 +1,6 @@
 import { injectable, singleton } from "tsyringe";
-import BankAccount from "../models/BankAccount.js";
-import CashbankTransaction from "../models/CashbankTransaction.js";
+import BankAccount from "../modules/finance/models/BankAccount.js";
+import CashbankTransaction from "../modules/finance/models/CashbankTransaction.js";
 import { IBankAccount } from "../interfaces/IBankAccount.js";
 import { ICashbankTransaction } from "../interfaces/ICashbankTransaction.js";
 import mongoose from "mongoose";
@@ -24,7 +24,7 @@ export class CashBankRepository {
         // Given current encryption is randomized (IV), direct search is impossible without fetching all.
         // Optimization: Fetch all for user and filter in memory (assuming low count of accounts).
         const accounts = await BankAccount.find({ userId });
-        const match = accounts.find(acc => acc.getDecryptedAccountNumber() === accountNumber);
+        const match = accounts.find((acc: any) => acc.getDecryptedAccountNumber() === accountNumber);
         return match || null;
     }
 

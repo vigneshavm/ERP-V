@@ -1,5 +1,5 @@
 import { injectable, singleton } from "tsyringe";
-import Transaction from "../models/Transaction.js";
+import Transaction from "../modules/sales/models/Transaction.js";
 import { ITransaction } from "../interfaces/ITransaction.js";
 
 @injectable()

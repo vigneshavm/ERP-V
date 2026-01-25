@@ -1,8 +1,8 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Card } from '../../../../src/components/Card';
-import { formatCurrency } from '../../../../src/utils/helpers';
-import { Employee } from '../../../../src/types/hr';
+import { Card } from '../../components/Card';
+import { formatCurrency } from '../../utils/helpers';
+import { Employee } from '../../types/hr';
 
 interface LaborStatsProps {
     selectedLaborer: Employee;

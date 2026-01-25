@@ -16,6 +16,8 @@ export interface IUser extends Document {
     gstNumber?: string;
     shopAddress?: string;
     phone?: string;
+    sector?: string;
+    subdomain?: string;
     role: "owner";
 
     // Reset Password

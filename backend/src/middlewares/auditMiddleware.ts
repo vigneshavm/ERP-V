@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import AuditLog from "../models/AuditLog.js";
+import AuditLog from "../modules/core/models/AuditLog.js";
 import { error as logError } from "../utils/logger.js";
 
 /**
@@ -61,10 +61,10 @@ export const auditDelete = (entityType: string, action: string) => {
                     userId: (req as any).user._id,
                     action,
                     entityType,
-                    entityId: req.params.id,
+                    entityId: String(req.params.id),
                     beforeSnapshot: (req as any).deletedEntity || null, // Controller should attach this
                     ipAddress: req.ip || req.connection.remoteAddress,
-                    userAgent: req.headers["user-agent"],
+                    userAgent: req.headers["user-agent"] as string,
                     metadata: { method: req.method, path: req.path },
                 }).catch((err) => logError("Audit logging failed:", err));
             }
@@ -90,11 +90,11 @@ export const auditUpdate = (entityType: string, action: string) => {
                     userId: (req as any).user._id,
                     action,
                     entityType,
-                    entityId: req.params.id,
+                    entityId: String(req.params.id),
                     beforeSnapshot: (req as any).originalEntity || null, // Controller should attach this
                     afterSnapshot: (req as any).updatedEntity || data, // Use response data if not attached
                     ipAddress: req.ip || req.connection.remoteAddress,
-                    userAgent: req.headers["user-agent"],
+                    userAgent: req.headers["user-agent"] as string,
                     metadata: { method: req.method, path: req.path },
                 }).catch((err) => logError("Audit logging failed:", err));
             }

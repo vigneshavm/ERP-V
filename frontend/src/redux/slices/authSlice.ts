@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { RootState } from '../store';
+import { Sector } from '../../types/common';
 
 const API_URL = "/api/auth";
 
@@ -19,7 +20,7 @@ interface AuthState {
     message: string;
     deviceConflict: boolean;
     conflictMessage: string;
-    currentSector?: string;
+    currentSector?: Sector;
     currentBranch?: string;
     role?: string;
     theme?: 'light' | 'dark' | 'system';

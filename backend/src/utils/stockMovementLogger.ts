@@ -1,4 +1,4 @@
-import StockMovement from "../models/StockMovement.js";
+import StockMovement from "../modules/core/models/StockMovement.js";
 import { info, error } from "./logger.js";
 import { IItem } from "../interfaces/IItem.js";
 import mongoose from "mongoose";

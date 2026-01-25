@@ -8,7 +8,7 @@
  */
 
 import { correlationMiddleware, getCorrelationId } from './correlationMiddleware.js';
-import { warn, error as logError } from '../utils/logger.js';
+import { warn } from '../utils/logger.js';
 
 /**
  * Global correlation ID enforcement
