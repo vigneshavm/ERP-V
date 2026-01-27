@@ -7,6 +7,19 @@ export interface ITenant extends Document {
     slug: string; // Unique identifier for URLs/Subdomains
     ownerId: mongoose.Types.ObjectId;
     status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
+    businessType?: string;
+    address?: {
+        street?: string;
+        city?: string;
+        state?: string;
+        zipCode?: string;
+        country?: string;
+    };
+    contact?: {
+        phone?: string;
+        email?: string; // Support/Public Email
+        website?: string;
+    };
     config: {
         theme: {
             primaryColor: string;
@@ -22,6 +35,8 @@ export interface ITenant extends Document {
         settings?: Record<string, any>;
     };
     subscriptionPlan: mongoose.Types.ObjectId | ISubscriptionPlan;
+    subscriptionStartDate?: Date;
+    subscriptionEndDate?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -53,6 +68,22 @@ const tenantSchema = new Schema<ITenant>({
         enum: ['ACTIVE', 'SUSPENDED', 'INACTIVE'],
         default: 'ACTIVE'
     },
+    businessType: {
+        type: String,
+        required: false
+    },
+    address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zipCode: { type: String }, // Mapped to pincode
+        country: { type: String, default: 'India' }
+    },
+    contact: {
+        phone: { type: String },
+        email: { type: String },
+        website: { type: String }
+    },
     config: {
         theme: {
             primaryColor: { type: String, default: '#007bff' },
@@ -71,6 +102,12 @@ const tenantSchema = new Schema<ITenant>({
         type: Schema.Types.ObjectId,
         ref: 'SubscriptionPlan',
         required: true
+    },
+    subscriptionStartDate: {
+        type: Date
+    },
+    subscriptionEndDate: {
+        type: Date
     }
 }, { timestamps: true });
 

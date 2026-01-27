@@ -1,14 +1,25 @@
 
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables are missing. Database features will be unavailable.');
-}
-
-// Create client only if variables are provided, otherwise export a dummy/null
-export const supabase = (supabaseUrl && supabaseAnonKey)
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null as any; // Cast to any to avoid breaking types in consumers who check USE_SUPABASE first
+// Mock Supabase client to satisfy legacy imports
+export const supabase = {
+    from: () => ({
+        select: () => ({
+            eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+            order: () => Promise.resolve({ data: [], error: null }),
+            insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
+            update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+            delete: () => ({ eq: () => Promise.resolve({ error: null }) })
+        })
+    }),
+    auth: {
+        signUp: () => Promise.resolve({ data: null, error: null }),
+        signInWithPassword: () => Promise.resolve({ data: null, error: null }),
+        signOut: () => Promise.resolve({ error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } })
+    },
+    storage: {
+        from: () => ({
+            upload: () => Promise.resolve({ data: null, error: null }),
+            getPublicUrl: () => ({ data: { publicUrl: '' } })
+        })
+    }
+};

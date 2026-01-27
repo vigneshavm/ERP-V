@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../redux/store';
 import { SystemRole } from '../types/common';
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { APP_CONFIG } from '../config';
+import api from '../services/api';
+import { DATA_MODE } from '../services/dataSource';
 
 import { securePassword } from '../utils/auth';
 import { TenantUser, DbRoleCode } from '../types/tenant';
@@ -42,31 +43,28 @@ const StaffManager: React.FC = () => {
     const fetchTenantEmployees = async (tenantId: string) => {
         setIsLoadingEmployees(true);
         try {
-            if (APP_CONFIG?.USE_SUPABASE && supabase) {
-                const { data, error } = await supabase
-                    .from('tenant_users') // Updated table
-                    .select(`
-    *,
-    role: roles(id, code, description)
-                    `)
-                    .eq('tenant_id', tenantId);
+            if (DATA_MODE === 'DEMO') {
+                // Demo logic could go here if needed, but existing code seems to expect 
+                // data to be populated via getTable elsewhere or is incomplete for demo
+            } else {
+                const response = await api.get('/users');
+                const data = response.data;
 
-                const { data: rolesData } = await supabase
-                    .from('roles')
-                    .select('*')
-                    .eq('tenant_id', tenantId); // Note: V3 roles are shared if system roles, but this query is fine if RLS allows
+                // For now, roles might still need an endpoint
+                try {
+                    const rolesResponse = await api.get('/roles');
+                    setRoles(rolesResponse.data || []);
+                } catch (e) {
+                    console.warn("Failed to fetch roles via API, using defaults.");
+                }
 
-                if (rolesData) setRoles(rolesData);
-
-                if (error) throw error;
-                // Map tenant_users to expected UI format if needed, or use directly
                 setTenantEmployees(data?.map((u: any) => {
-                    const roleCode = u.role?.code?.toLowerCase() || DbRoleCode.STAFF;
+                    const roleCode = u.role?.code?.toLowerCase() || u.role || 'staff';
                     return {
                         ...u,
-                        name: u.full_name,
+                        name: u.name || u.full_name,
                         role: u.role?.description || roleCode,
-                        system_role: (roleCode === DbRoleCode.OWNER || roleCode === DbRoleCode.ADMIN) ? 'Owner' : 'Staff'
+                        system_role: (roleCode === 'owner' || roleCode === 'admin') ? 'Owner' : 'Staff'
                     };
                 }) || []);
             }
@@ -88,7 +86,7 @@ const StaffManager: React.FC = () => {
         }
 
         try {
-            if (APP_CONFIG.USE_SUPABASE && supabase) {
+            if (DATA_MODE !== 'DEMO') {
                 let pinToSave = '';
 
                 // Secure PIN if provided
@@ -97,41 +95,32 @@ const StaffManager: React.FC = () => {
                 }
 
                 const empData: any = {
-                    full_name: newEmp.name, // Map name to full_name
-                    role_id: newEmp.roleId, // Use role_id
-                    // system_role removed, derived from role_id in DB relation
-                    daily_rate: parseFloat(newEmp.dailyRate) || 0,
-                    assigned_branch_id: newEmp.branchId, // Map branchId to assigned_branch_id
-                    tenant_id: activeTenant.id,
-                    // sector: activeTenant.sector, // Not in tenant_users
-                    mobile: newEmp.mobile,
-                    assigned_counter_id: newEmp.assignedCounterId ? newEmp.assignedCounterId : null, // Ensure null if empty
-                    is_2fa_enabled: newEmp.is2faEnabled,
-                    // Only include PIN if we have a new one (encrypted)
-                    ...(pinToSave && pinToSave.length > 0 ? { pin_hash: pinToSave } : {}), // Map pin to pin_hash
+                    name: newEmp.name,
+                    role: newEmp.roleId,
+                    dailyRate: parseFloat(newEmp.dailyRate) || 0,
+                    branchId: newEmp.branchId,
+                    phone: newEmp.mobile,
+                    assignedCounterId: newEmp.assignedCounterId ? newEmp.assignedCounterId : null,
+                    is2faEnabled: newEmp.is2faEnabled,
+                    ...(pinToSave && pinToSave.length > 0 ? { pinHash: pinToSave } : {}),
                 };
 
                 if (editingEmpId) {
-                    const { data, error } = await supabase
-                        .from('tenant_users') // Updated table
-                        .update(empData)
-                        .eq('id', editingEmpId)
-                        .select()
-                        .single();
+                    const response = await api.put(`/users/${editingEmpId}`, empData);
+                    const data = response.data?.user || response.data;
 
-                    if (error) throw error;
                     if (data) {
-                        setTenantEmployees(prev => prev.map(e => e.id === editingEmpId ? data : e));
+                        setTenantEmployees(prev => prev.map(e => e.id === editingEmpId || e._id === editingEmpId ? data : e));
                         handleCancelEditEmp();
                     }
                 } else {
-                    const { data, error } = await supabase
-                        .from('tenant_users') // Updated table
-                        .insert([empData])
-                        .select()
-                        .single();
+                    const response = await api.post('/auth/register', {
+                        ...empData,
+                        email: `${newEmp.name.toLowerCase().replace(/\s/g, '')}@system.local`, // Placeholder email
+                        password: newEmp.pin // or some default
+                    });
+                    const data = response.data;
 
-                    if (error) throw error;
                     if (data) {
                         setTenantEmployees(prev => [...prev, data]);
                         handleCancelEditEmp();
@@ -168,14 +157,9 @@ const StaffManager: React.FC = () => {
         if (!window.confirm('Are you sure you want to remove this employee?')) return;
 
         try {
-            if (APP_CONFIG.USE_SUPABASE && supabase) {
-                const { error } = await supabase
-                    .from('tenant_users')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-                setTenantEmployees(prev => prev.filter(e => e.id !== id));
+            if (DATA_MODE !== 'DEMO') {
+                await api.delete(`/users/${id}`);
+                setTenantEmployees(prev => prev.filter(e => e.id !== id && e._id !== id));
             }
         } catch (err: any) {
             console.error('Error deleting employee:', err);

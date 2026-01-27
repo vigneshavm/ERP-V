@@ -1,6 +1,38 @@
 import { Product } from './product';
 import { Sector, TaxMode, PaymentMethod } from './common';
 
+export interface EstimateItem {
+    itemId?: string; // Product ID
+    name: string;
+    quantity: number;
+    price: number;
+    total: number;
+    sku?: string; // Frontend helper
+}
+
+export interface Estimate {
+    id: string;
+    _id?: string;
+    estimateNo: string;
+    customer?: string | null; // ObjectId or null (Walk-in)
+    items: EstimateItem[];
+    subtotal: number;
+    discount: number;
+    totalAmount: number;
+    notes?: string;
+    status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired';
+    validUntil?: string;
+    createdAt: string;
+    updatedAt?: string;
+
+    // Frontend helpers
+    tenantId?: string;
+    customerName?: string; // Helper
+    customerPhone?: string; // Helper
+    customerEmail?: string; // Helper
+    sector?: Sector;
+}
+
 export interface CartItem extends Product {
     qty: number;
     cutLength?: number;
@@ -9,25 +41,70 @@ export interface CartItem extends Product {
 
 export interface Customer {
     id: string;
+    _id?: string;
     name: string;
     phone: string;
-    points: number;
-    tier?: 'Silver' | 'Gold' | 'Platinum' | 'General';
-    creditBias?: number; // Just in case, but sticking to knowns
-    creditBalance?: number;
-    creditLimit?: number;
-    riskScore?: number;
+    email?: string;
+    address?: string;
+    dues: number; // Backend uses 'dues' instead of outstanding_balance
+    points: number; // Backend uses 'points'
+    tier?: string; // 'Silver', 'Gold', etc.
+    referredBy?: string;
+    owner?: string;
+    tenantId: string;
+    creditBias?: number; // Legacy/Frontend
+    creditBalance?: number; // Backend? Not in model, maybe calculated
+    creditLimit?: number; // Backend? Not in model
+    riskScore?: number; // Legacy/Frontend
     lastPaymentDate?: string;
-    tenantId?: string;
     totalVisits?: number;
     totalSpent?: number;
     walletBalance?: number;
-    email?: string;
-    address?: string;
 }
 
 export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';
 export type PaymentStatus = 'PAID' | 'PENDING' | 'PARTIAL';
+
+export interface InvoiceItem {
+    item: string; // Product ID
+    name?: string; // Frontend helper
+    sku?: string; // Frontend helper
+    quantity: number;
+    price: number;
+    tax: number;
+    discount: number;
+    total: number;
+}
+
+export interface Invoice {
+    id: string; // _id
+    _id?: string;
+    invoiceNo: string;
+    tenantId: string;
+    customer?: string; // ObjectId
+
+    items: InvoiceItem[];
+    subtotal: number;
+    tax: number;
+    discount: number;
+    totalAmount: number;
+
+    paidAmount: number;
+    creditApplied: number;
+    previousDueAmount: number;
+
+    paymentStatus: 'paid' | 'unpaid' | 'partial';
+    paymentMethod: string;
+
+    createdAt: string;
+    updatedAt?: string;
+
+    // Frontend helpers
+    customerName?: string;
+    customerPhone?: string;
+    status?: string; // Legacy/Frontend helper
+    sector?: string;
+}
 
 export interface Sale {
     id: string;

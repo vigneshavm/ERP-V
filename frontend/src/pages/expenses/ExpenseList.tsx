@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, Trash2, Edit2, CheckCircle, Clock } from 'lucide-react';
-import { Expense } from '../../../../src/hooks/useExpenses';
+import { Expense } from '../../hooks/useExpenses';
 
 interface ExpenseListProps {
     expenses: Expense[];

@@ -9,6 +9,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { MENU_ITEMS, MenuItem } from '../../config/menu.config';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
+import { ThemeToggle } from '../common/ThemeToggle';
 import ChangePasswordModal from '../ChangePasswordModal';
 
 interface SidebarProps {
@@ -258,6 +259,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     </div>
                 )}
             </div>
+            {/* Theme Toggle - Desktop Footer */}
+            {!desktopCollapsed && (
+                <div className="pt-2 px-4 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
+                    <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Appearance</span>
+                    <ThemeToggle />
+                </div>
+            )}
+            {desktopCollapsed && (
+                <div className="pt-2 px-2 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-center">
+                    <ThemeToggle />
+                </div>
+            )}
+
             <ChangePasswordModal
                 isOpen={isChangePasswordOpen}
                 onClose={() => setIsChangePasswordOpen(false)}

@@ -1,68 +1,129 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FinanceState, Transaction, Cheque } from '../../types/finance';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { FinanceState, Transaction, Cheque, DayEndSummary } from '../../types/finance';
 import { TransactionType } from '../../types/common';
+import api from '../../services/api';
+import { RootState } from '../store';
 
-// Local loadState mock
-const loadState = (key: string, initialState: any) => {
-    const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : initialState;
-};
+const API_URL = '/cashbank';
+const DAY_END_API_URL = '/day-end';
+
+const getConfig = (token: string) => ({
+    headers: { Authorization: `Bearer ${token}` }
+});
+
+export const fetchCheques = createAsyncThunk(
+    'finance/fetchCheques',
+    async (sector: string | undefined, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const query = sector ? `?sector=${sector}` : '';
+            const response = await api.get(`${API_URL}/cheques${query}`, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch cheques');
+        }
+    }
+);
+
+export const registerCheque = createAsyncThunk(
+    'finance/registerCheque',
+    async (chequeData: Partial<Cheque>, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const response = await api.post(`${API_URL}/cheques`, chequeData, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || { message: 'Failed to register cheque' });
+        }
+    }
+);
+
+export const updateChequeStatusBackend = createAsyncThunk(
+    'finance/updateChequeStatus',
+    async ({ id, status }: { id: string, status: 'CLEARED' | 'BOUNCED' | 'PENDING' }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const response = await api.put(`${API_URL}/cheques/${id}/status`, { status }, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to update cheque');
+        }
+    }
+);
+
+export const fetchEffectiveBalance = createAsyncThunk(
+    'finance/fetchEffectiveBalance',
+    async ({ accountId, date }: { accountId: string, date?: string }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const query = date ? `?date=${date}` : '';
+            const response = await api.get(`${API_URL}/accounts/${accountId}/effective-balance${query}`, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch effective balance');
+        }
+    }
+);
+
+export const fetchDayEndSummary = createAsyncThunk(
+    'finance/fetchDayEndSummary',
+    async (date: string | undefined, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const query = date ? `?date=${date}` : '';
+            const response = await api.get(`${DAY_END_API_URL}/summary${query}`, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch day end summary');
+        }
+    }
+);
+
+export const saveDayEndReconciliation = createAsyncThunk(
+    'finance/saveDayEndReconciliation',
+    async (data: any, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const response = await api.post(`${DAY_END_API_URL}/save`, data, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to save day end reconciliation');
+        }
+    }
+);
 
 const initialFinanceState: FinanceState = {
     transactions: [],
     cheques: [],
     dailyFinanceRecords: [],
-    bankBalance: 250000,
+    bankBalance: 0,
+    effectiveBalance: 0,
+    loading: false,
+    error: null,
+    pdcAlerts: null,
+    dayEndSummary: null
 };
 
 const financeSlice = createSlice({
     name: 'finance',
-    initialState: loadState('finance', initialFinanceState),
+    initialState: initialFinanceState,
     reducers: {
         addTransaction: (state, action: PayloadAction<Transaction>) => {
             state.transactions.unshift(action.payload);
-            if (action.payload.type === 'INCOME') {
-                state.bankBalance += action.payload.amount;
-            } else {
-                state.bankBalance -= action.payload.amount;
-            }
         },
         addCheque: (state, action: PayloadAction<Cheque>) => {
             state.cheques.push(action.payload);
         },
         updateChequeStatus: (state, action: PayloadAction<{ id: string, status: 'CLEARED' | 'BOUNCED' }>) => {
-            const cheque = state.cheques.find(c => c.id === action.payload.id);
-            if (cheque && cheque.status === 'PENDING') {
+            const cheque = state.cheques.find(c => (c._id || c.id) === action.payload.id);
+            if (cheque) {
                 cheque.status = action.payload.status;
-
-                // If cleared, adjust balance
-                if (action.payload.status === 'CLEARED') {
-                    if (cheque.type === 'RECEIVED') {
-                        state.bankBalance += cheque.amount;
-                        state.transactions.unshift({
-                            id: Math.random().toString(36).substr(2, 9),
-                            type: TransactionType.INCOME,
-                            category: 'Cheque Cleared',
-                            amount: cheque.amount,
-                            date: new Date().toISOString(),
-                            description: `Cheque Received: ${cheque.number}`,
-                            sector: cheque.sector,
-                            branchId: 'Alpha' // Default
-                        });
-                    } else {
-                        state.bankBalance -= cheque.amount;
-                        state.transactions.unshift({
-                            id: Math.random().toString(36).substr(2, 9),
-                            type: TransactionType.EXPENSE,
-                            category: 'Cheque Cleared',
-                            amount: cheque.amount,
-                            date: new Date().toISOString(),
-                            description: `Cheque Issued: ${cheque.number}`,
-                            sector: cheque.sector,
-                            branchId: 'Alpha' // Default
-                        });
-                    }
-                }
             }
         },
         setTransactions: (state, action: PayloadAction<Transaction[]>) => {
@@ -93,6 +154,61 @@ const financeSlice = createSlice({
             }
         }
     },
+    extraReducers: (builder) => {
+        builder
+            // Fetch Cheques
+            .addCase(fetchCheques.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchCheques.fulfilled, (state, action) => {
+                state.loading = false;
+                state.cheques = action.payload;
+            })
+            .addCase(fetchCheques.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            // Register Cheque
+            .addCase(registerCheque.fulfilled, (state, action) => {
+                state.cheques.push(action.payload);
+            })
+            // Update Cheque Status
+            .addCase(updateChequeStatusBackend.fulfilled, (state, action) => {
+                const index = state.cheques.findIndex(c => c._id === action.payload._id);
+                if (index !== -1) {
+                    state.cheques[index] = action.payload;
+                }
+            })
+            // Effective Balance
+            .addCase(fetchEffectiveBalance.fulfilled, (state, action) => {
+                state.bankBalance = action.payload.currentBalance;
+                state.effectiveBalance = action.payload.effectiveBalance;
+                state.pdcAlerts = action.payload.sameDayAlerts;
+            })
+            // Day End Summary
+            .addCase(fetchDayEndSummary.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchDayEndSummary.fulfilled, (state, action) => {
+                state.loading = false;
+                state.dayEndSummary = action.payload;
+            })
+            .addCase(fetchDayEndSummary.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            // Save Day End
+            .addCase(saveDayEndReconciliation.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(saveDayEndReconciliation.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(saveDayEndReconciliation.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+    }
 });
 
 export const {

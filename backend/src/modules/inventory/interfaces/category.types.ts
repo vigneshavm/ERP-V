@@ -54,6 +54,7 @@ export interface IPaginatedResponse<T> {
 export interface ProductType {
     id: string;
     name: string;
+    shortCode?: string;
     nameTamil: string;
     gstRate: number;
     hsnCode: string;

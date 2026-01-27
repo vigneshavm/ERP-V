@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder } from '../../types/purchase';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { PurchaseState, PurchaseOrder, PurchasePayment } from '../../types/purchase';
+import api from '../../services/api';
+import { RootState } from '../store';
 
 const loadState = (key: string, initialState: any) => {
     const saved = localStorage.getItem(key);
@@ -8,9 +10,37 @@ const loadState = (key: string, initialState: any) => {
 
 const initialPurchaseState: PurchaseState = {
     orders: [],
+    payments: [],
     pendingInvoice: null,
     isProcessing: false,
 };
+
+// Async Thunks
+export const fetchPurchaseOrders = createAsyncThunk(
+    'purchase/fetchOrders',
+    async (_, thunkAPI) => {
+        try {
+            const response = await api.get('/api/purchases');
+            return response.data;
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+export const fetchPurchasePayments = createAsyncThunk(
+    'purchase/fetchPayments',
+    async (_, thunkAPI) => {
+        try {
+            const response = await api.get('/api/purchase-payments');
+            return response.data;
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
 
 const purchaseSlice = createSlice({
     name: 'purchase',
@@ -40,7 +70,31 @@ const purchaseSlice = createSlice({
             state.orders = action.payload;
         }
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPurchaseOrders.pending, (state) => {
+                state.isProcessing = true;
+            })
+            .addCase(fetchPurchaseOrders.fulfilled, (state, action) => {
+                state.isProcessing = false;
+                state.orders = action.payload;
+            })
+            .addCase(fetchPurchaseOrders.rejected, (state) => {
+                state.isProcessing = false;
+            })
+            .addCase(fetchPurchasePayments.pending, (state) => {
+                state.isProcessing = true;
+            })
+            .addCase(fetchPurchasePayments.fulfilled, (state, action) => {
+                state.isProcessing = false;
+                state.payments = action.payload;
+            })
+            .addCase(fetchPurchasePayments.rejected, (state) => {
+                state.isProcessing = false;
+            });
+    },
 });
 
 export const { addOrder, approveOrder, updateOrder, deleteOrder, convertOrder, setOrders } = purchaseSlice.actions;
+export { fetchPurchaseOrders as getAllPurchases };
 export default purchaseSlice.reducer;

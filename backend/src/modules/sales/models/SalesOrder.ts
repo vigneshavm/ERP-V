@@ -30,7 +30,6 @@ export interface ISalesOrder extends Document {
     pricesLocked: boolean;
     deliveryChallans: mongoose.Types.ObjectId[];
     invoices: mongoose.Types.ObjectId[];
-    invoices: mongoose.Types.ObjectId[];
     createdBy: mongoose.Types.ObjectId;
     tenantId: mongoose.Types.ObjectId;
     confirmedAt?: Date;

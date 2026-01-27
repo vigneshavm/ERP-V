@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../../src/store';
+import { RootState } from '../../redux/store';
 import { Search, RotateCcw } from 'lucide-react';
-import { Sale } from '../../../../src/types/sales';
+import { Sale } from '../../types/sales';
 
 interface ReturnInvoiceSelectorProps {
     onSelectInvoice: (sale: Sale) => void;

@@ -1,49 +1,74 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Check, X, Zap, Shield, Crown, Building, Loader2, CreditCard, ChevronRight, Activity } from 'lucide-react';
-
-const updateTenantDetails = (data) => ({ type: 'MOCK_UPDATE_TENANT', payload: data });
-const updateSubscription = async (plan) => {
-    await new Promise(r => setTimeout(r, 1000));
-    return { success: true };
-};
+import api from '../../services/api';
+import { toast } from 'react-toastify';
 
 const SubscriptionTab = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { tenants } = useSelector((state) => state.tenant || { tenants: [] });
-    const currentTenant = (tenants || []).find(t => t.id === user?.tenantId);
+    // Normalize tenant id/id usage
+    const currentTenant = (tenants || []).find(t => (t.id || t._id) === user?.tenantId);
 
-    const currentPlanCode = currentTenant?.plan || 'BASIC';
+    const handleSwitchPlan = async (planCode) => {
+        try {
+            const response = await api.put('/api/shop/settings', {
+                plan: planCode,
+            });
+            if (response.data.success) {
+                // Update local tenant details in Redux if needed
+                dispatch({
+                    type: 'tenant/updateTenantDetails',
+                    payload: { id: user?.tenantId, updates: response.data.data }
+                });
+                toast.success(`Switched to ${planCode} plan successfully!`);
+            }
+        } catch (error) {
+            console.error('Error switching plan:', error);
+            toast.error(error.response?.data?.message || 'Failed to switch plan');
+        }
+    };
+
+    const currentPlanCode = currentTenant?.planCode || 'FREE';
 
     const PLANS = [
         {
-            code: 'BASIC',
-            name: 'Essential ERP',
-            price: '$29',
-            desc: 'Fundamental tools for growing businesses.',
+            code: 'FREE',
+            name: 'Free',
+            price: '₹0',
+            desc: 'Basic features for small shops',
             icon: Building,
             color: 'slate',
-            features: ['Up to 5 Users', 'Single Branch', 'Inventory Control', 'Basic Reporting', 'WhatsApp Basic']
+            features: ['Up to 50 items', 'Basic reporting', 'Single user']
+        },
+        {
+            code: 'STARTER',
+            name: 'Starter Plan',
+            price: '₹29',
+            desc: 'Perfect for growing businesses',
+            icon: Building,
+            color: 'slate',
+            features: ['Up to 500 items', 'Standard reporting', 'Multi-user', 'E-commerce enabled']
         },
         {
             code: 'PRO',
-            name: 'Business Growth',
-            price: '$79',
-            desc: 'Professional grade suite for scaling teams.',
+            name: 'Professional',
+            price: '₹99',
+            desc: 'Advanced features for established shops',
             icon: Crown,
             color: 'indigo',
             popular: true,
-            features: ['Unlimited Users', 'Up to 5 Branches', 'Profit Pulse AI', 'Advanced POS', 'WhatsApp Cloud API', 'Priority Support']
+            features: ['Unlimited items', 'Advanced analytics', 'Custom domain', 'Priority support']
         },
         {
-            code: 'ULTIMATE',
-            name: 'Enterprise Ultra',
-            price: '$199',
-            desc: 'The complete ecosystem for major operations.',
+            code: 'ENTERPRISE',
+            name: 'Enterprise',
+            price: '₹499',
+            desc: 'Custom solutions for large scale operations',
             icon: Zap,
             color: 'amber',
-            features: ['Unlimited Branches', 'Dedicated DB Instance', 'White-labeling', 'API Webhooks', 'Custom Integration', 'Account Manager']
+            features: ['Dedicated account manager', 'Custom integrations', 'SLA guaranteed', 'On-premise option']
         }
     ];
 
@@ -68,7 +93,12 @@ const SubscriptionTab = () => {
                         {PLANS.find(p => p.code === currentPlanCode)?.name || 'Standard Plan'}
                     </h3>
                     <p className="text-slate-400 text-sm font-medium leading-relaxed max-w-lg">
-                        Your enterprise session is active and verified. The next billing cycle starts on <span className="text-white font-black">Feb 24, 2026</span>.
+                        Your enterprise session is active and verified.
+                        {currentTenant?.subscriptionEndDate ? (
+                            <> The next billing cycle starts on <span className="text-white font-black">{new Date(currentTenant.subscriptionEndDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>.</>
+                        ) : (
+                            <> Standard billing cycle active.</>
+                        )}
                     </p>
                 </div>
 
@@ -95,8 +125,8 @@ const SubscriptionTab = () => {
                         const isCurrent = currentPlanCode === plan.code;
                         return (
                             <div key={plan.code} className={`group relative p-8 rounded-[3rem] border transition-all duration-500 flex flex-col ${plan.popular
-                                    ? 'bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-500 shadow-2xl scale-105 z-10'
-                                    : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
+                                ? 'bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-500 shadow-2xl scale-105 z-10'
+                                : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                                 }`}>
                                 {plan.popular && (
                                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-2 bg-indigo-600 text-white rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg">
@@ -132,11 +162,12 @@ const SubscriptionTab = () => {
                                 </div>
 
                                 <button
+                                    onClick={() => !isCurrent && handleSwitchPlan(plan.code)}
                                     className={`w-full py-4 rounded-2xl text-[11px] font-black tracking-widest transition-all ${isCurrent
-                                            ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200 dark:shadow-none'
-                                            : plan.popular
-                                                ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-slate-900'
-                                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white'
+                                        ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200 dark:shadow-none'
+                                        : plan.popular
+                                            ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-slate-900'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white'
                                         }`}
                                 >
                                     {isCurrent ? 'CURRENTLY ACTIVE' : `SWITCH TO ${plan.code}`}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
-import { comparePassword, securePassword } from '../utils/auth';
-import { supabase } from '../lib/supabase';
-import { logout } from '../store';
-import { clearSession } from '../utils/session'; // Assuming this utility exists based on App.tsx usage
+import { RootState, AppDispatch } from '../redux/store';
+import { securePassword } from '../utils/auth';
+import api from '../services/api';
+import { logout } from '../redux/slices/authSlice';
+import { clearSession } from '../utils/session';
 
 interface ChangePasswordModalProps {
     isOpen: boolean;
@@ -14,7 +14,7 @@ interface ChangePasswordModalProps {
 }
 
 const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose, onSuccess }) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
 
     const [currentPassword, setCurrentPassword] = useState('');
@@ -62,36 +62,19 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
         setIsLoading(true);
 
         try {
-            // 2. Verify Current Password
-            // We need to fetch the LATEST hash from DB to be sure, or use what's in Redux/Session if available.
-            // Redux user might have an old hash if it changed elsewhere ( unlikely for single session).
-            // Let's verify against the DB record to be ultra-safe.
-
-            const { data: dbUser, error: fetchError } = await supabase
-                .from('tenant_users')
-                .select('password_hash')
-                .eq('id', user.id)
-                .single();
-
-            if (fetchError || !dbUser) {
-                throw new Error('Failed to retrieve user record.');
-            }
-
-            const isValid = await comparePassword(currentPassword, dbUser.password_hash);
-            if (!isValid) {
-                throw new Error('Incorrect current password.');
-            }
-
-            // 3. Secure New Password
+            // 2. Verify Current Password via API
+            // Secure New Password
             const securedPin = await securePassword(newPassword);
 
-            // 4. Update Database
-            const { error: updateError } = await supabase
-                .from('tenant_users')
-                .update({ password_hash: securedPin })
-                .eq('id', user.id);
+            // Instead of client-side comparison, we ideally let the backend handle this
+            const response = await api.put('/auth/update-password', {
+                currentPassword,
+                newPassword: securedPin
+            });
 
-            if (updateError) throw updateError;
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Failed to update password.');
+            }
 
             // 5. Success Flow
             setSuccess(true);
@@ -103,10 +86,10 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
             setTimeout(() => {
                 // Perform logout
                 clearSession();
-                localStorage.removeItem('erp_current_tenant'); // Consistency with App.tsx logout logic
+                localStorage.removeItem('erp_current_tenant');
                 dispatch(logout());
                 if (onSuccess) onSuccess();
-                window.location.reload(); // Force reload to clear all states
+                window.location.reload();
             }, 2000);
 
         } catch (err: any) {

@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, reset } from '../redux/slices/authSlice';
 import { useTheme } from '../contexts/ThemeContext';
+import { ThemeToggle } from './common/ThemeToggle';
 import { AppDispatch, RootState } from '../redux/store';
 
 interface SubMenuItem {
@@ -188,6 +189,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 { name: 'Stock Authority', path: '/inventory' },
                 { name: 'Aged Stock Pulse', path: '/inventory/aged-stock' },
                 { name: 'Add New Item', path: '/inventory/add' },
+                { name: 'Batch Price Update', path: '/inventory/batch-price-update' },
+                { name: 'Reprint Queue', path: '/inventory/reprint-queue' },
             ]
         },
         {
@@ -208,7 +211,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 { name: 'Loan Accounts', path: '/cashbank/loan-accounts' },
                 { name: 'Bank Intelligence', path: '/cashbank/bank-intelligence' },
                 { name: 'Reconciliation', path: '/cashbank/reconciliation' },
-                { name: 'Petty Cash', path: '/cashbank/petty-cash' }
+                { name: 'Petty Cash', path: '/cashbank/petty-cash' },
+                { name: 'Day End Recon', path: '/cashbank/day-end-reconciliation' }
             ]
         },
         {
@@ -304,13 +308,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
         {
             name: 'Settings',
-            path: '/settings',
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             ),
+            submenu: [
+                { name: 'General', path: '/settings/general' },
+                { name: 'Branches', path: '/settings/branches' },
+                { name: 'Branding', path: '/settings/branding' },
+                { name: 'Finance', path: '/settings/finance' },
+                { name: 'Modules', path: '/settings/modules' },
+                { name: 'MIS Controls', path: '/settings/mis' },
+                { name: 'Integrations', path: '/settings/integrations' },
+                { name: 'Security', path: '/settings/security' },
+                { name: 'Personalization', path: '/settings/personalization' },
+                { name: 'Subscription', path: '/settings/subscription' }
+            ]
         }
     ];
 
@@ -325,29 +340,34 @@ const Sidebar: React.FC<SidebarProps> = ({
             <aside
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`print:hidden fixed inset-y-0 left-0 z-50 bg-slate-900 text-slate-300 shadow-xl border-r border-slate-800 transition-all duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`print:hidden fixed inset-y-0 left-0 z-50 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 shadow-xl border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
                     } lg:translate-x-0 lg:shadow-none ${isEffectivelyExpanded ? 'w-64' : 'w-20'
                     }`}
             >
                 {/* Logo/Brand */}
-                <div className="h-16 flex items-center px-4 border-b border-slate-800 bg-slate-900 shrink-0">
+                <div className="h-20 flex items-center px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 relative overflow-hidden">
+                    {/* Ambient Glow */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600"></div>
+
                     {isEffectivelyExpanded ? (
                         <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/30">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            <div className="flex items-center space-x-3.5">
+                                <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/30 ring-1 ring-white/10">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 className="text-lg font-bold text-white tracking-tight leading-none">{user?.shopName || 'BizzAI'}</h1>
-                                    {/* <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Enterprise</p> */}
+                                    <h1 className="text-xl font-black text-white tracking-tight leading-none font-sans">
+                                        {user?.shopName || 'Oripio'} <span className="text-emerald-500">ERP</span>
+                                    </h1>
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Enterprise</p>
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="lg:hidden text-slate-400 hover:text-white transition-colors"
+                                className="lg:hidden text-slate-400 hover:text-white transition-colors p-1"
                                 aria-label="Close navigation"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,10 +376,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                             </button>
                         </div>
                     ) : (
-                        <div className="flex justify-center w-full">
-                            <div className="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/30">
-                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        <div className="flex justify-center w-full group">
+                            <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </div>
                         </div>
@@ -367,13 +387,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
 
                 {/* Desktop Toggle Button */}
-                <div className="hidden lg:flex justify-end p-2 shrink-0">
+                <div className="hidden lg:flex justify-end p-4 shrink-0">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="p-1 rounded bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors border border-slate-700"
+                        className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-all border border-slate-700 hover:border-emerald-500/50"
                         title={isCollapsed ? "Expand" : "Collapse"}
                     >
-                        <svg className={`w-4 h-4 transition-transform duration-200 ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
@@ -387,7 +407,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         scrollPositionRef.current = scrollTop;
                         localStorage.setItem('sidebarScrollPosition', scrollTop.toString());
                     }}
-                    className="flex-1 px-3 py-4 space-y-1 overflow-y-auto overflow-x-hidden custom-scrollbar"
+                    className="flex-1 px-4 py-2 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar"
                 >
                     {menuItems.map((item) => (
                         <div key={item.name} className="relative group">
@@ -395,21 +415,21 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 <div>
                                     <button
                                         onClick={() => toggleSubmenu(item.name)}
-                                        className={`flex items-center w-full rounded-md transition-all duration-200 ${isEffectivelyExpanded
-                                            ? 'justify-between px-3 py-2.5 hover:bg-slate-800 hover:text-white'
-                                            : 'justify-center px-2 py-2.5 hover:bg-slate-800 hover:text-white'
-                                            } ${expandedMenus[item.name] ? 'text-white bg-slate-800/50' : 'text-slate-400'}`}
+                                        className={`flex items-center w-full rounded-2xl transition-all duration-300 group ${isEffectivelyExpanded
+                                            ? 'justify-between px-4 py-3 hover:bg-slate-800'
+                                            : 'justify-center px-2 py-3 hover:bg-slate-800'
+                                            } ${expandedMenus[item.name] ? 'bg-slate-800/80' : ''}`}
                                         title={!isEffectivelyExpanded ? item.name : ''}
                                     >
-                                        <div className={`flex items-center ${isEffectivelyExpanded ? 'gap-3' : 'justify-center'}`}>
-                                            <div className={`transition-colors duration-200 ${expandedMenus[item.name] ? 'text-indigo-400' : 'group-hover:text-indigo-400'}`}>
+                                        <div className={`flex items-center ${isEffectivelyExpanded ? 'gap-4' : 'justify-center'}`}>
+                                            <div className={`transition-all duration-300 ${expandedMenus[item.name] ? 'text-emerald-400 scale-110 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'text-slate-400 group-hover:text-emerald-400'}`}>
                                                 {item.icon}
                                             </div>
-                                            {isEffectivelyExpanded && <span className="text-sm font-medium">{item.name}</span>}
+                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide transition-colors ${expandedMenus[item.name] ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}>{item.name}</span>}
                                         </div>
                                         {isEffectivelyExpanded && (
                                             <svg
-                                                className={`w-4 h-4 transition-transform duration-200 text-slate-500 ${expandedMenus[item.name] ? 'rotate-180 text-slate-300' : ''}`}
+                                                className={`w-4 h-4 transition-transform duration-300 text-slate-600 ${expandedMenus[item.name] ? 'rotate-180 text-emerald-400' : 'group-hover:text-slate-400'}`}
                                                 fill="none"
                                                 stroke="currentColor"
                                                 viewBox="0 0 24 24"
@@ -420,20 +440,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     </button>
 
                                     {/* Submenu Dropdown */}
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedMenus[item.name] && isEffectivelyExpanded ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
-                                        <div className="bg-slate-900 pl-4 pr-1 space-y-1">
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedMenus[item.name] && isEffectivelyExpanded ? 'max-h-[800px] opacity-100 mt-2 mb-2' : 'max-h-0 opacity-0'}`}>
+                                        <div className="bg-slate-900/50 rounded-2xl p-1 space-y-0.5 mx-2 border border-slate-800/50">
                                             {item.submenu.map((subItem) => (
                                                 <NavLink
                                                     key={subItem.path}
                                                     to={subItem.path}
                                                     className={({ isActive }) =>
-                                                        `block px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 border-l-2 pl-3 ${isActive
-                                                            ? 'border-indigo-500 text-white bg-slate-800/50'
-                                                            : 'border-transparent text-slate-500 hover:text-slate-200 hover:bg-slate-800/30'
+                                                        `block px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                                                            ? 'bg-emerald-500/10 text-emerald-400 shadow-sm'
+                                                            : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/50'
                                                         }`
                                                     }
                                                 >
-                                                    {subItem.name}
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-1.5 h-1.5 rounded-full transition-colors ${location.pathname === subItem.path ? 'bg-emerald-400' : 'bg-slate-700'}`}></div>
+                                                        {subItem.name}
+                                                    </div>
                                                 </NavLink>
                                             ))}
                                         </div>
@@ -444,47 +467,62 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     to={item.path || '#'}
                                     onClick={onClose}
                                     className={({ isActive }) =>
-                                        `flex items-center rounded-md transition-all duration-200 ${isEffectivelyExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center px-2 py-2.5'
+                                        `flex items-center rounded-2xl transition-all duration-300 ease-out group ${isEffectivelyExpanded ? 'gap-4 px-4 py-3' : 'justify-center px-2 py-3'
                                         } ${isActive
-                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20'
-                                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                                            ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                                            : 'text-slate-400 hover:bg-slate-800'
                                         }`
                                     }
                                     title={!isEffectivelyExpanded ? item.name : ''}
                                 >
                                     {({ isActive }) => (
                                         <>
-                                            <div className={isActive ? 'text-white' : 'group-hover:text-indigo-400 transition-colors'}>
+                                            <div className={`${isActive ? 'text-white scale-110' : 'group-hover:text-emerald-400 group-hover:scale-110'} transition-transform duration-300`}>
                                                 {item.icon}
                                             </div>
 
-                                            {isEffectivelyExpanded && <span className="text-sm font-medium">{item.name}</span>}
+                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'} transition-colors`}>{item.name}</span>}
                                         </>
                                     )}
                                 </NavLink>
                             )}
                         </div>
                     ))}
+
+                    {/* System Upgrade CTA - Only show when expanded */}
+                    {isEffectivelyExpanded && (
+                        <div className="mt-6 mx-2 p-5 rounded-2xl bg-gradient-to-br from-emerald-900/50 to-slate-900 border border-emerald-500/20 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-emerald-500/20 transition-all"></div>
+                            <h4 className="text-white font-bold text-sm relative z-10">Upgrade System</h4>
+                            <p className="text-emerald-200/60 text-xs mt-1 relative z-10 mb-3">Unlock advanced AI features.</p>
+                            <button className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-lg shadow-emerald-900/20 relative z-10">
+                                Upgrade Now
+                            </button>
+                        </div>
+                    )}
                 </nav>
 
-                {/* User Profile */}
-                <div className="p-4 border-t border-slate-800 bg-slate-900/50 shrink-0">
+                {/* User Profile & Theme Toggle */}
+                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 shrink-0">
+                    <div className="mb-4 flex justify-center">
+                        <ThemeToggle />
+                    </div>
                     {isEffectivelyExpanded ? (
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border-2 border-slate-600 shadow-sm">
-                                <span className="font-bold text-white text-sm">{user?.name?.charAt(0).toUpperCase()}</span>
+                            <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border-2 border-slate-300 dark:border-slate-600 shadow-sm">
+                                <span className="font-bold text-slate-700 dark:text-white text-sm">{user?.name?.charAt(0).toUpperCase()}</span>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
-                                <button onClick={onLogout} className="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 transition-colors mt-0.5">
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.name}</p>
+                                <button onClick={onLogout} className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 flex items-center gap-1 transition-colors mt-0.5">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                     Sign Out
                                 </button>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex justify-center">
-                            <button onClick={onLogout} className="w-10 h-10 rounded-full bg-slate-800 hover:bg-red-900/30 hover:text-red-500 text-slate-400 flex items-center justify-center transition-all border border-slate-700" title="Sign Out">
+                        <div className="flex justify-center flex-col gap-3 items-center">
+                            <button onClick={onLogout} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 text-slate-400 flex items-center justify-center transition-all border border-slate-200 dark:border-slate-700" title="Sign Out">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                             </button>
                         </div>

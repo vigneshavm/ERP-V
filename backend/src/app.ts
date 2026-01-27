@@ -151,7 +151,9 @@ app.use("/api/pos", posRoutes);
 
 // PURCHASE Module
 import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
+import purchasePaymentRoutes from "./modules/purchase/routes/purchasePaymentRoutes.js";
 app.use("/api/purchases", purchaseModuleRoutes);
+app.use("/api/purchase-payments", purchasePaymentRoutes);
 app.use("/api/purchase-returns", purchaseModuleRoutes);
 
 // FINANCE Module
@@ -169,6 +171,11 @@ app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
 // HR Module
 import hrRoutes from "./modules/hr/routes/hr.routes.js";
 app.use("/api", hrRoutes); // Employees
+
+// MARKETING Module
+import metaRoutes from "./modules/marketing/routes/meta.routes.js";
+app.use("/api/marketing/meta", metaRoutes);
+
 
 // MISC / LEGACY (To be modularized)
 import returnRoutes from "./modules/sales/routes/return.routes.js";

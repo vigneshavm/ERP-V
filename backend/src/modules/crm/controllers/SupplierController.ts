@@ -37,31 +37,35 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
     try {
         const { businessName, contactPersonName, contactNo, email, physicalAddress, gstNo, supplierType, openingBalance, balanceType, creditPeriod, status } = req.body;
 
-        if (!businessName || !contactPersonName || !contactNo || !email || !physicalAddress || !gstNo || !supplierType || !status) {
-            res.status(400).json({ message: 'All required fields must be provided' });
+        if (!businessName) {
+            res.status(400).json({ message: 'Legal Business Name must be provided' });
             return;
         }
 
-        // Check for duplicate contactNo
-        const existingContact = await Supplier.findOne({
-            contactNo,
-            owner: req.user?._id
-        });
+        // Check for duplicate contactNo if provided
+        if (contactNo) {
+            const existingContact = await Supplier.findOne({
+                contactNo,
+                owner: req.user?._id
+            });
 
-        if (existingContact) {
-            res.status(400).json({ message: 'Contact number already exists in your supplier list' });
-            return;
+            if (existingContact) {
+                res.status(400).json({ message: 'Contact number already exists in your supplier list' });
+                return;
+            }
         }
 
-        // Check for duplicate email
-        const existingEmail = await Supplier.findOne({
-            email,
-            owner: req.user?._id
-        });
+        // Check for duplicate email if provided
+        if (email) {
+            const existingEmail = await Supplier.findOne({
+                email,
+                owner: req.user?._id
+            });
 
-        if (existingEmail) {
-            res.status(400).json({ message: 'Email already exists in your supplier list' });
-            return;
+            if (existingEmail) {
+                res.status(400).json({ message: 'Email already exists in your supplier list' });
+                return;
+            }
         }
 
         // Auto-generate supplierId
@@ -82,11 +86,12 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
             email,
             physicalAddress,
             gstNo,
-            supplierType,
+            supplierType: supplierType || 'manufacturer',
             openingBalance: openingBalance || 0,
             balanceType: balanceType || 'payable',
             creditPeriod: creditPeriod || 0,
-            status,
+            status: status || 'active',
+            tenantId: req.user?.tenantId,
             owner: req.user?._id
         });
 

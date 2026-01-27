@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { getAgingReport } from '../../redux/slices/inventorySlice';
 import Layout from '../../components/Layout';
 import {
     Clock,
@@ -47,80 +48,24 @@ interface AgedProduct {
 }
 
 const AgedStockManager: React.FC = () => {
-    const { items } = useSelector((state: RootState) => state.inventory);
+    const { agingReport, isLoading } = useSelector((state: RootState) => state.inventory);
     const { user } = useSelector((state: RootState) => state.auth);
     const tenant_id = user?.tenantId || 'TEN001';
+    const dispatch = useDispatch();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [ageFilter, setAgeFilter] = useState<AgeBucket | 'ALL'>('ALL');
 
+    useEffect(() => {
+        dispatch(getAgingReport() as any);
+    }, [dispatch]);
+
     // --- Intelligence Engine ---
 
     const agedStock: AgedProduct[] = useMemo(() => {
-        const today = new Date();
+        return Array.isArray(agingReport) ? agingReport : [];
 
-        return items.map((item: any) => {
-            // Simulation logic for aged data if lastRestocked is missing or to provide varied data
-            // In real app, we use item.lastRestocked
-            const restockDate = item.lastRestocked
-                ? new Date(item.lastRestocked)
-                : new Date(today.getTime() - (Math.random() * 150) * 24 * 60 * 60 * 1000);
-
-            const diffTime = today.getTime() - restockDate.getTime();
-            const daysAged = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            let bucket: AgeBucket = 'FRESH';
-            if (daysAged >= 120) bucket = 'CRITICAL_120';
-            else if (daysAged >= 90) bucket = 'AGED_90';
-            else if (daysAged >= 60) bucket = 'AGED_60';
-
-            // Expiry simulation
-            const expiryDate = item.expiryDate;
-            let daysToExpiry: number | undefined;
-            if (expiryDate) {
-                const eDate = new Date(expiryDate);
-                daysToExpiry = Math.ceil((eDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-            }
-
-            // Recommendation Logic
-            let rec: RecommendationType = 'KEEP';
-            let discount = 0;
-            let logic = 'Performance is stable. Maintain current pricing.';
-
-            if (daysAged >= 120) {
-                rec = 'LIQUIDATE';
-                discount = 40;
-                logic = 'Stock is dead. Apply clearance pricing to recover core capital.';
-            } else if (daysAged >= 90) {
-                rec = 'BREAK_EVEN';
-                discount = 20;
-                logic = 'Velocity is low. Push to break-even to free up storage.';
-            } else if (daysToExpiry !== undefined && daysToExpiry < 15) {
-                rec = 'BUNDLE';
-                discount = 25;
-                logic = 'High expiry risk. Bundle with high-velocity items immediately.';
-            } else if (daysAged >= 60) {
-                rec = 'REPRICE';
-                discount = 10;
-                logic = 'Starting to age. Minor discount to stimulate demand.';
-            }
-
-            return {
-                id: item._id,
-                sku: item.sku || 'N/A',
-                name: item.name,
-                stock: item.stockQty,
-                cost: item.costPrice,
-                value: item.stockQty * item.costPrice,
-                last_restocked: restockDate.toISOString().split('T')[0],
-                days_aged: daysAged,
-                age_bucket: bucket,
-                expiry_date: expiryDate,
-                days_to_expiry: daysToExpiry,
-                recommendation: { type: rec, discount_pct: discount, logic }
-            };
-        });
-    }, [items]);
+    }, [agingReport]);
 
     const filteredStock = useMemo(() => {
         return agedStock.filter(a => {
@@ -168,7 +113,7 @@ const AgedStockManager: React.FC = () => {
                 </div>
 
                 {/* KPI Pulse */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                < div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" >
                     <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Trapped Capital</p>
                         <h3 className="text-3xl font-black text-error italic">₹{(metrics.trappedCapital / 100000).toFixed(2)}L</h3>
@@ -199,10 +144,10 @@ const AgedStockManager: React.FC = () => {
                         <p className="text-xs font-bold leading-relaxed pr-8">Liquidate <span className="text-primary italic">120+ day stock</span> to free up cash floor space.</p>
                         <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-primary group-hover:translate-x-1 transition" />
                     </div>
-                </div>
+                </div >
 
                 {/* Filters */}
-                <div className="flex flex-col md:flex-row gap-4">
+                < div className="flex flex-col md:flex-row gap-4" >
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                         <input
@@ -226,12 +171,12 @@ const AgedStockManager: React.FC = () => {
                             <option value="FRESH">Fresh (&lt; 60 Days)</option>
                         </select>
                     </div>
-                </div>
+                </div >
 
                 {/* Main Content Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                < div className="grid grid-cols-1 lg:grid-cols-3 gap-8" >
                     {/* Stock Table */}
-                    <div className="lg:col-span-2 space-y-4">
+                    < div className="lg:col-span-2 space-y-4" >
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] pl-2 mb-4">Stock Age Topology</h4>
 
                         <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm shadow-black/5">
@@ -251,8 +196,8 @@ const AgedStockManager: React.FC = () => {
                                                 <td className="p-6">
                                                     <div className="flex items-start gap-4">
                                                         <div className={`mt-1 p-2 rounded-xl h-fit ${a.days_aged >= 120 ? 'bg-error/10 text-error' :
-                                                                a.days_aged >= 90 ? 'bg-warning/10 text-warning' :
-                                                                    'bg-neutral-100 dark:bg-neutral-900 text-neutral-400'
+                                                            a.days_aged >= 90 ? 'bg-warning/10 text-warning' :
+                                                                'bg-neutral-100 dark:bg-neutral-900 text-neutral-400'
                                                             }`}>
                                                             <Package className="w-5 h-5" />
                                                         </div>
@@ -268,8 +213,8 @@ const AgedStockManager: React.FC = () => {
                                                 </td>
                                                 <td className="p-6 text-center">
                                                     <div className={`inline-block px-3 py-1 rounded-full text-xs font-black italic ${a.days_aged >= 120 ? 'bg-error text-white' :
-                                                            a.days_aged >= 90 ? 'bg-warning text-neutral-900' :
-                                                                'bg-neutral-100 dark:bg-neutral-900'
+                                                        a.days_aged >= 90 ? 'bg-warning text-neutral-900' :
+                                                            'bg-neutral-100 dark:bg-neutral-900'
                                                         }`}>
                                                         {a.days_aged}d
                                                     </div>
@@ -281,8 +226,8 @@ const AgedStockManager: React.FC = () => {
                                                 <td className="p-6 text-right">
                                                     <div className="flex flex-col items-end gap-2">
                                                         <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${a.recommendation.type === 'LIQUIDATE' ? 'bg-error text-white' :
-                                                                a.recommendation.type === 'BREAK_EVEN' ? 'bg-warning text-neutral-900 shadow-sm' :
-                                                                    'bg-primary/10 text-primary'
+                                                            a.recommendation.type === 'BREAK_EVEN' ? 'bg-warning text-neutral-900 shadow-sm' :
+                                                                'bg-primary/10 text-primary'
                                                             }`}>
                                                             {a.recommendation.type.replace('_', ' ')}
                                                         </span>
@@ -301,10 +246,10 @@ const AgedStockManager: React.FC = () => {
                                 Expand Deep Analysis Topology
                             </button>
                         </div>
-                    </div>
+                    </div >
 
                     {/* Right Panel: Agent Recommendations */}
-                    <div className="space-y-6">
+                    < div className="space-y-6" >
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] pl-2 mb-4">Intelligence Feed</h4>
 
                         <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 p-8 shadow-sm relative overflow-hidden group">
@@ -373,10 +318,10 @@ const AgedStockManager: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </Layout>
+                    </div >
+                </div >
+            </div >
+        </Layout >
     );
 };
 

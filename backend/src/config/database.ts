@@ -64,6 +64,10 @@ const connectDB = async (retryCount = 0): Promise<void> => {
             retryCount,
         });
 
+        if (err.message && err.message.includes('SSL routines') && err.message.includes('internal error')) {
+            logError("💡 TIP: This SSL error often indicates that your IP address is not whitelisted in MongoDB Atlas or a firewall is blocking the connection. Please check your Network Access settings in Atlas.");
+        }
+
         // Retry logic with exponential backoff
         if (retryCount < MAX_RETRIES) {
             const delay = RETRY_DELAY * Math.pow(2, retryCount);

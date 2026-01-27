@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { RootState } from '../store';
 
-const API_URL = "/api/suppliers";
+const API_URL = "/api/purchases/suppliers";
 
 export interface Supplier {
     _id: string;
@@ -57,7 +57,7 @@ export const getAllSuppliers = createAsyncThunk<Supplier[], void, { state: RootS
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.get(API_URL, getConfig(token));
-            return response.data;
+            return response.data.data || response.data; // Handle wrapped response
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -77,7 +77,7 @@ export const getSupplierById = createAsyncThunk<Supplier, string, { state: RootS
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.get(`${API_URL}/${id}`, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -97,7 +97,7 @@ export const addSupplier = createAsyncThunk<Supplier, Partial<Supplier>, { state
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.post(API_URL, supplierData, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -121,7 +121,7 @@ export const updateSupplier = createAsyncThunk<Supplier, { id: string, supplierD
                 supplierData,
                 getConfig(token)
             );
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -164,6 +164,9 @@ export const supplierSlice = createSlice({
         },
         clearSupplier: (state) => {
             state.supplier = null;
+        },
+        setSelectedSupplier: (state, action: PayloadAction<Supplier | null>) => {
+            state.supplier = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -246,5 +249,5 @@ export const supplierSlice = createSlice({
     },
 });
 
-export const { reset, clearSupplier } = supplierSlice.actions;
+export const { reset, clearSupplier, setSelectedSupplier } = supplierSlice.actions;
 export default supplierSlice.reducer;

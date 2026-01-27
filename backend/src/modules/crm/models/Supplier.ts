@@ -3,6 +3,12 @@ import { ISupplier } from "../../../interfaces/ISupplier.js";
 
 const supplierSchema = new Schema<ISupplier>(
     {
+        tenantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true,
+        },
         supplierId: {
             type: String,
             unique: true,
@@ -13,15 +19,15 @@ const supplierSchema = new Schema<ISupplier>(
         },
         contactPersonName: {
             type: String,
-            required: true,
+            required: false,
         },
         contactNo: {
             type: String,
-            required: true,
+            required: false,
         },
         email: {
             type: String,
-            required: true,
+            required: false,
             lowercase: true,
             trim: true,
             match: [
@@ -31,16 +37,16 @@ const supplierSchema = new Schema<ISupplier>(
         },
         physicalAddress: {
             type: String,
-            required: true,
+            required: false,
         },
         gstNo: {
             type: String,
-            required: true,
+            required: false,
         },
         supplierType: {
             type: String,
             enum: ["manufacturer", "wholesaler", "distributor"],
-            required: true,
+            required: false,
         },
         openingBalance: {
             type: Number,
@@ -67,16 +73,16 @@ const supplierSchema = new Schema<ISupplier>(
             },
         ],
         owner: {
-            type: mongoose.Schema.Types.ObjectId, // Or String
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: false,
         },
     },
     { timestamps: true }
 );
 
-// Compound index to ensure contactNo is unique per owner
-supplierSchema.index({ contactNo: 1, owner: 1 }, { unique: true });
+// Compound index to ensure contactNo is unique per tenant
+supplierSchema.index({ contactNo: 1, tenantId: 1 }, { unique: true });
 
-const Supplier = mongoose.model<ISupplier>("Supplier", supplierSchema);
+const Supplier = mongoose.models.Supplier || mongoose.model<ISupplier>("Supplier", supplierSchema);
 export default Supplier;

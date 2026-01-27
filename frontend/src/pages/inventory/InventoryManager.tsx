@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../redux/store';
+import { getAgingReport, applyAgingAction } from '../../redux/slices/inventorySlice';
 import Layout from '../../components/Layout';
 import {
     Box,
@@ -24,12 +25,38 @@ import {
     MoreVertical,
     CheckSquare,
     Square,
+    X,
+    AlertOctagon,
+    Percent,
 } from 'lucide-react';
 
 const InventoryManager: React.FC = () => {
-    const { items, isLoading } = useSelector((state: RootState) => state.inventory);
+    const dispatch = useDispatch<AppDispatch>();
+    const { items, isLoading, agingReport } = useSelector((state: RootState) => state.inventory);
     const { user } = useSelector((state: RootState) => state.auth);
     const tenant_id = user?.tenantId || 'TEN001';
+
+    const [showAgingModal, setShowAgingModal] = useState(false);
+
+    const handleOpenAgingReport = () => {
+        dispatch(getAgingReport());
+        setShowAgingModal(true);
+    };
+
+    const handleAgingAction = async (itemId: string, action: 'CLEARANCE' | 'REDUCE_MARGIN', currentPrice: number) => {
+        let value = 0;
+        if (action === 'REDUCE_MARGIN') {
+            const p = window.prompt("Enter new selling price:", (currentPrice * 0.8).toFixed(2)); // Suggest 20% off
+            if (!p) return;
+            value = parseFloat(p);
+            if (isNaN(value) || value <= 0) {
+                alert("Invalid price");
+                return;
+            }
+        }
+        await dispatch(applyAgingAction({ itemId, action, value }) as any);
+        dispatch(getAgingReport());
+    };
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -90,6 +117,9 @@ const InventoryManager: React.FC = () => {
                     <div className="flex gap-2">
                         <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
                             <Download className="w-4 h-4" /> Export CSV
+                        </button>
+                        <button onClick={handleOpenAgingReport} className="px-4 py-2 bg-error/10 text-error border border-error/20 rounded-xl text-sm font-black flex items-center gap-2 hover:bg-error/20 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                            <AlertOctagon className="w-4 h-4" /> Stock Aging
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest">
                             <Plus className="w-4 h-4" /> Register SKU
@@ -254,39 +284,125 @@ const InventoryManager: React.FC = () => {
                                 )}
                             </tbody>
                         </table>
-                    </div>
 
-                    {/* Pagination */}
-                    <div className="p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Showing {filteredItems.length} of {items.length} Registered Products</div>
-                        <div className="flex items-center gap-3">
-                            <button className="p-2 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-xl text-neutral-400 hover:text-primary transition shadow-sm"><ChevronLeft className="w-4 h-4" /></button>
-                            <span className="text-[10px] font-black uppercase tracking-widest">Page 01</span>
-                            <button className="p-2 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-xl text-neutral-400 hover:text-primary transition shadow-sm"><ChevronRight className="w-4 h-4" /></button>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Intelligent Advice Panel */}
-                <div className="bg-neutral-950 text-white p-8 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden group">
-                    <TrendingUp className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-6 transition duration-1000" />
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
-                        <div className="flex-1">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-4">
-                                <Zap className="w-3.5 h-3.5 fill-current" /> Automation Pipeline Active
+                        {/* Pagination */}
+                        <div className="p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Showing {filteredItems.length} of {items.length} Registered Products</div>
+                            <div className="flex items-center gap-3">
+                                <button className="p-2 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-xl text-neutral-400 hover:text-primary transition shadow-sm"><ChevronLeft className="w-4 h-4" /></button>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Page 01</span>
+                                <button className="p-2 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-xl text-neutral-400 hover:text-primary transition shadow-sm"><ChevronRight className="w-4 h-4" /></button>
                             </div>
-                            <h4 className="text-2xl font-black mb-2 italic tracking-tight">Streamline your <span className="text-primary underline">Stock Authority.</span></h4>
-                            <p className="text-xs text-neutral-400 font-bold leading-relaxed italic max-w-2xl">
-                                Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
-                            </p>
                         </div>
-                        <button className="px-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                            Enable Auto-Restock
-                        </button>
+                    </div>
+
+                    {/* Intelligent Advice Panel */}
+                    <div className="bg-neutral-950 text-white p-8 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                        <TrendingUp className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-6 transition duration-1000" />
+                        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+                            <div className="flex-1">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-4">
+                                    <Zap className="w-3.5 h-3.5 fill-current" /> Automation Pipeline Active
+                                </div>
+                                <h4 className="text-2xl font-black mb-2 italic tracking-tight">Streamline your <span className="text-primary underline">Stock Authority.</span></h4>
+                                <p className="text-xs text-neutral-400 font-bold leading-relaxed italic max-w-2xl">
+                                    Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
+                                </p>
+                            </div>
+                            <button className="px-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                                Enable Auto-Restock
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Layout>
+
+            {/* Stock Aging Modal */}
+            {
+                showAgingModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+                        <div className="bg-white dark:bg-neutral-900 w-full max-w-5xl rounded-[2.5rem] border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+                            <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
+                                <div>
+                                    <h3 className="text-2xl font-black italic flex items-center gap-3 text-neutral-900 dark:text-white">
+                                        <AlertOctagon className="w-8 h-8 text-error" /> Dead Stock Analysis
+                                    </h3>
+                                    <p className="text-sm font-bold text-neutral-400 mt-1 uppercase tracking-wider">Identified items with stock age {'>'} 180 days</p>
+                                </div>
+                                <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition"><X className="w-6 h-6" /></button>
+                            </div>
+                            <div className="p-0 overflow-y-auto flex-1">
+                                {isLoading ? (
+                                    <div className="p-20 text-center flex flex-col items-center">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                                        <p className="font-bold text-neutral-400 uppercase tracking-widest">Running aging algorithm...</p>
+                                    </div>
+                                ) : (!agingReport || agingReport.length === 0) ? (
+                                    <div className="p-20 text-center flex flex-col items-center">
+                                        <CheckSquare className="w-16 h-16 text-success mb-4 opacity-50" />
+                                        <h4 className="text-xl font-black text-neutral-900 dark:text-white mb-2">Inventory Healthy</h4>
+                                        <p className="font-medium text-neutral-400">No dead stock detected ({'>'} 180 days). Outstanding job!</p>
+                                    </div>
+                                ) : (
+                                    <table className="w-full text-left text-sm tabular-nums">
+                                        <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-[0.2em] text-[10px] sticky top-0 z-10">
+                                            <tr>
+                                                <th className="p-6">Product</th>
+                                                <th className="p-6">Stock Age</th>
+                                                <th className="p-6 text-right">Valuation</th>
+                                                <th className="p-6 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                            {agingReport.map((item: any) => (
+                                                <tr key={item._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                                                    <td className="p-6">
+                                                        <div className="font-black text-neutral-900 dark:text-white">{item.name}</div>
+                                                        <div className="text-[10px] text-neutral-400 font-bold uppercase mt-1">SKU: {item.sku}</div>
+                                                    </td>
+                                                    <td className="p-6">
+                                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-error/10 text-error rounded-full text-xs font-black">
+                                                            <AlertTriangle className="w-3 h-3 fill-current" /> {item.ageInDays} Days
+                                                        </div>
+                                                        <div className="text-[10px] text-neutral-400 font-bold mt-1 uppercase">Since {new Date(item.oldestStockDate).toLocaleDateString()}</div>
+                                                    </td>
+                                                    <td className="p-6 text-right">
+                                                        <div className="font-black text-neutral-900 dark:text-white text-base">₹{item.valuation.toLocaleString()}</div>
+                                                        <div className="text-[10px] text-neutral-400 font-bold uppercase mt-1">Qty: {item.stockQty}</div>
+                                                    </td>
+                                                    <td className="p-6 text-right">
+                                                        <div className="flex justify-end gap-2">
+                                                            <button
+                                                                onClick={() => handleAgingAction(item._id, 'CLEARANCE', item.sellingPrice)}
+                                                                className="px-3 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg text-xs font-black uppercase tracking-wider transition border border-neutral-200 dark:border-neutral-700 flex items-center gap-1"
+                                                            >
+                                                                <Tag className="w-3 h-3" /> To Clearance
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleAgingAction(item._id, 'REDUCE_MARGIN', item.sellingPrice)}
+                                                                className="px-3 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg text-xs font-black uppercase tracking-wider transition border border-primary/20 flex items-center gap-1"
+                                                            >
+                                                                <Percent className="w-3 h-3" /> Reduce Price
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
+                            <div className="p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 flex justify-end">
+                                <button onClick={() => setShowAgingModal(false)} className="px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-transform shadow-lg">
+                                    Close Panel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </Layout >
     );
 };
 

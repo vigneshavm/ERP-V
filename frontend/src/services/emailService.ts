@@ -1,4 +1,4 @@
-import { EmailConfig, EmailCampaign, EmailEngagementThread, EmailMessage } from "../../../src/types/tenant";
+import { EmailConfig, EmailCampaign, EmailEngagementThread, EmailMessage } from "../types/tenant";
 
 export const EmailService = {
     /**

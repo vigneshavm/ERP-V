@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Sale, CartItem } from '../../../../src/types/sales';
-import { SalesReturnItem } from '../../../../src/types/salesReturn';
+import { Sale, CartItem } from '../../types/sales';
+import { SalesReturnItem } from '../../types/salesReturn';
 import { Trash2, AlertCircle } from 'lucide-react';
 
 interface ReturnItemGridProps {
@@ -25,7 +25,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
             variantId: item.variantId,
             quantity: 0, // Default to 0 return
             maxQuantity: item.qty, // Store max returnable
-            unitPrice: item.price,
+            unitPrice: item.sellingPrice,
             taxAmount: 0, // Need to calc
             lineTotal: 0,
             condition: 'resellable' as const,
@@ -45,7 +45,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
         item.quantity = qty;
         item.lineTotal = qty * (item.unitPrice || 0);
         // Recalc tax if needed? For now simple proportional.
-        const originalTotal = ((item as any).originalItem.price * (item as any).originalItem.qty);
+        const originalTotal = ((item as any).originalItem.sellingPrice * (item as any).originalItem.qty);
         // This is tricky if tax was inclusive/exclusive. Assuming simple linear ratio.
 
         setReturnItems(newItems);

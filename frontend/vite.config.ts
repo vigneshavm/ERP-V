@@ -19,7 +19,6 @@ export default defineConfig(({ mode }) => {
         'react/jsx-dev-runtime',
         '@reduxjs/toolkit',
         'react-redux',
-        '@supabase/supabase-js',
         'bcryptjs',
         'crypto-js',
         'lucide-react',
@@ -82,7 +81,7 @@ export default defineConfig(({ mode }) => {
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
             'vendor-viz': ['recharts', 'framer-motion'],
             'vendor-ui': ['lucide-react'],
-            'vendor-data': ['@supabase/supabase-js', '@reduxjs/toolkit', 'react-redux'],
+            'vendor-data': ['@reduxjs/toolkit', 'react-redux'],
           }
         }
       }

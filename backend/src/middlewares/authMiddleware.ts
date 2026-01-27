@@ -5,6 +5,11 @@ import * as deviceUtils from "../utils/deviceUtils.js";
 import { warn } from "../config/logger.js";
 import { AppError } from "../utils/AppError.js";
 
+export interface AuthenticatedRequest extends Request {
+    user?: any;
+    tenantId?: string;
+}
+
 /**
  * Middleware to protect routes
  * Validates both JWT token AND deviceId cookie

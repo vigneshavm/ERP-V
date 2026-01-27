@@ -1,5 +1,5 @@
 import React from 'react';
-import { SalesReturn } from '../../../../src/types/salesReturn';
+import { SalesReturn } from '../../types/salesReturn';
 import { Wallet, CreditCard, RefreshCw, Banknote } from 'lucide-react';
 
 interface ReturnSummaryProps {

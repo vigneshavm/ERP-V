@@ -62,7 +62,7 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
     onSetRedeemedPoints
 }) => {
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-800 shadow-xl z-20">
+        <div className="flex flex-col h-full bg-white dark:bg-neutral-800 shadow-xl z-20 transition-colors">
             {/* Customer Panel */}
             <div className="shrink-0 p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50">
                 <POSCustomerPanel

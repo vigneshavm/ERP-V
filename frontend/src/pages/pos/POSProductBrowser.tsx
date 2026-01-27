@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Product } from '../../types/product';
 import { Sector } from '../../types/common';
-import { Search, Package, Check } from 'lucide-react';
+import { Search, Package, Check, Keyboard } from 'lucide-react';
+
 import { useFuzzySearch } from '../../hooks/useFuzzySearch';
 
 interface ProductCardProps {
@@ -65,6 +66,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const [selectedSubcategory, setSelectedSubcategory] = useState<string>('All');
     const [pageSize, setPageSize] = useState(20);
+    const [isManualMode, setIsManualMode] = useState(false);
     const searchInputRef = React.useRef<HTMLInputElement>(null);
 
     // Debounce search
@@ -117,6 +119,11 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
             const query = e.currentTarget.value.trim(); // Use currentTarget value for immediate access
             if (!query) return;
 
+            // In Manual Mode or if no exact match is found, we don't auto-add unless it's an exact match
+            // But standard scanner behavior expects auto-add on Enter.
+            // If Manual Mode is ON, maybe we want to select the first result instead?
+            // For now, let's keep exact match behavior but if fails and manual mode is on, maybe highlight first result?
+
             // Search in full product list for exact match, scoped to sector/branch
             const match = products.find(p => p.sku === query || p.barcode === query);
 
@@ -125,6 +132,15 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                 if (match.stock > 0) {
                     onAddToCart({ ...match, qty: 1 } as any);
                     setSearchQuery(''); // Clear field for next scan
+                }
+            } else if (isManualMode && filteredProducts.length > 0) {
+                // In manual mode, pressing enter with results could add the first item
+                // This is a common POS pattern for "Search -> Enter -> Add"
+                e.preventDefault();
+                const firstMatch = filteredProducts[0];
+                if (firstMatch.stock > 0) {
+                    onAddToCart({ ...firstMatch, qty: 1 } as any);
+                    setSearchQuery('');
                 }
             }
         }
@@ -138,8 +154,15 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 setSearchQuery('');
+                setIsManualMode(false);
+            }
+            if (e.key === 'F2') {
+                e.preventDefault();
+                setIsManualMode(prev => !prev);
+                setTimeout(() => searchInputRef.current?.focus(), 50);
             }
         };
+
 
         window.addEventListener('pos-focus-search', handleFocus);
         window.addEventListener('keydown', handleKeyDown);
@@ -155,20 +178,38 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
             {/* Search & Filter Header */}
             <div className="p-4 space-y-4 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
                 {/* Search Bar */}
-                <div className="relative">
-                    <Search className="absolute left-3 top-2.5 w-5 h-5 text-neutral-400" />
-                    <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search Name, SKU, Barcode... (Ctrl+F)"
-                        className="w-full pl-10 pr-14 py-2 bg-neutral-100 dark:bg-neutral-700 border-none rounded-lg text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 focus:ring-2 focus:ring-primary transition-all font-medium"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={handleScanKeyDown}
-                        autoFocus
-                    />
-                    <kbd className="absolute right-2 top-2 text-[9px] bg-neutral-200 dark:bg-neutral-600 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-500 font-mono">Ctrl+F</kbd>
+                <div className="relative flex gap-2">
+                    <div className="relative flex-1">
+                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-primary' : 'text-neutral-400'}`} />
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder={isManualMode ? "Manual Mode: Type Name or Pattern..." : "Scan Barcode (or Ctrl+F)"}
+                            className={`w-full pl-10 pr-14 py-2 bg-neutral-100 dark:bg-neutral-700 border rounded-lg text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 focus:ring-2 focus:ring-primary transition-all font-medium ${isManualMode ? 'border-primary/50 bg-primary/5' : 'border-none'}`}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleScanKeyDown}
+                            autoFocus
+                        />
+                        <kbd className="absolute right-2 top-2 text-[9px] bg-neutral-200 dark:bg-neutral-600 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-500 font-mono">Ctrl+F</kbd>
+                    </div>
+                    <button
+                        onClick={() => {
+                            setIsManualMode(!isManualMode);
+                            if (!isManualMode) {
+                                setTimeout(() => searchInputRef.current?.focus(), 100);
+                            }
+                        }}
+                        className={`p-2 rounded-lg border transition-all ${isManualMode
+                            ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
+                            : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                            }`}
+                        title="Manual Lookup Mode (F2)"
+                    >
+                        <Keyboard className="w-5 h-5" />
+                    </button>
                 </div>
+
 
                 {/* Categories */}
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">

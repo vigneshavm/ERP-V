@@ -1,4 +1,4 @@
-import { demoDB } from '../../../src/data/demo';
+import { demoDB } from '../data/demo';
 
 
 export type DataMode = 'DEMO' | 'DB';
@@ -78,7 +78,7 @@ async function getDemoData(tableName: string, options: DataSourceOptions): Promi
 
     // Load dynamic data from localStorage (registrations)
     try {
-        const { registrationUtil } = await import('../../../src/utils/registrationUtil');
+        const { registrationUtil } = await import('../utils/registrationUtil');
         const dynamicData = registrationUtil.loadDynamicData() as any;
         const extraData = dynamicData[dbKey] || [];
         baseData = [...baseData, ...extraData];

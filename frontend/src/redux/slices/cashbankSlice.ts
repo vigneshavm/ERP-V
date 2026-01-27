@@ -272,6 +272,25 @@ export const getBankSummary = createAsyncThunk(
     }
 );
 
+// Validate a list of payments (Dynamic Balance Checking)
+export const validatePayments = createAsyncThunk(
+    'cashbank/validatePayments',
+    async ({ accountId, payments }: { accountId: string; payments: any[] }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user.token;
+            const response = await api.post(`${API_URL}/validate-payments`, { accountId, payments }, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 export const cashbankSlice = createSlice({
     name: 'cashbank',
     initialState,

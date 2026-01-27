@@ -71,11 +71,23 @@ export interface ScannedInvoice {
     items: ScannedInvoiceItem[];
 }
 
+export interface PurchasePayment {
+    _id: string;
+    paymentNo: string;
+    paymentDate: string;
+    supplierId: string;
+    paymentMethod: string;
+    amount: number;
+    notes?: string;
+    createdAt?: string;
+}
+
 // Redux State Interface
 export interface PurchaseState {
     pendingInvoice: InvoiceData | null;
     isProcessing: boolean;
     orders: PurchaseOrder[];
+    payments: PurchasePayment[];
 }
 
 export interface FinalizedPurchaseItem {

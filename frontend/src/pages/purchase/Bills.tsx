@@ -285,7 +285,7 @@ const Bills: React.FC = () => {
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-20">
                             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600 mb-4"></div>
-                            <p className="text-neutral-500 font-medium">Loading bills...</p>
+                            <p className="text-muted font-medium">Loading bills...</p>
                         </div>
                     ) : filteredBills.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-neutral-500">
@@ -297,9 +297,9 @@ const Bills: React.FC = () => {
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-slate-50 dark:bg-neutral-900/50 border-b dark:border-neutral-700">
                                     <tr>
-                                        <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider">Bill No</th>
-                                        <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider">Supplier</th>
+                                        <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Bill No</th>
+                                        <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Supplier</th>
                                         <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-right">Amount</th>
                                         <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
                                         <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-right">Paid</th>
@@ -313,7 +313,7 @@ const Bills: React.FC = () => {
                                             <td className="px-6 py-4 font-semibold text-indigo-600 dark:text-indigo-400">
                                                 {bill.billNo}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-600 dark:text-neutral-400">
+                                            <td className="px-6 py-4 text-secondary">
                                                 {new Date(bill.date).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
@@ -334,7 +334,7 @@ const Bills: React.FC = () => {
                                                     <span className="text-slate-400 italic">₹0</span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-600 dark:text-neutral-400">
+                                            <td className="px-6 py-4 text-secondary">
                                                 {bill.dueDate ? new Date(bill.dueDate).toLocaleDateString() : '—'}
                                             </td>
                                             <td className="px-6 py-4">

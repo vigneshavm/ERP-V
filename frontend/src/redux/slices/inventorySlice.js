@@ -14,6 +14,7 @@ const initialState = {
   items: [],
   item: null,
   lowStockItems: [],
+  agingReport: [],
   alerts: [],
   pagination: null,
   isLoading: false,
@@ -134,6 +135,43 @@ export const getLowStockItems = createAsyncThunk(
   }
 );
 
+
+// Get aging report
+export const getAgingReport = createAsyncThunk(
+  'inventory/getAgingReport',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await api.get(`${API_URL}/aging-report`, getConfig(token));
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Apply aging action
+export const applyAgingAction = createAsyncThunk(
+  'inventory/applyAgingAction',
+  async ({ itemId, action, value }, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await api.post(`${API_URL}/aging-action`, { itemId, action, value }, getConfig(token));
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
@@ -239,6 +277,42 @@ export const inventorySlice = createSlice({
         state.lowStockItems = action.payload;
       })
       .addCase(getLowStockItems.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Get aging report
+      .addCase(getAgingReport.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAgingReport.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.agingReport = action.payload;
+      })
+      .addCase(getAgingReport.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Apply aging action
+      .addCase(applyAgingAction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(applyAgingAction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // Optionally update the item in the report
+        // action.payload.result is the updated item
+        if (state.agingReport) {
+          // Remove from report if resolved? Or update status?
+          // Since "Clearance" action moves category, it technically might still be in report as dead stock until sold, 
+          // but user sees it in Clearance.
+          // If price reduced, remains in report.
+          // Let's just re-fetch or let user manually refresh.
+        }
+      })
+      .addCase(applyAgingAction.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

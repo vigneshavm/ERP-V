@@ -19,12 +19,12 @@ import {
     EyeOff,
     AlertCircle
 } from 'lucide-react';
-import { Sector } from '../../../../src/types/common';
-import { APP_CONFIG } from '../../../../src/config';
+import { Sector } from '../../types/common';
+import { APP_CONFIG } from '../../config';
 import api from '../../services/api';
 import { DATA_MODE } from '../../services/dataSource';
-import { securePassword } from '../../../../src/utils/auth';
-import { registrationUtil } from '../../../../src/utils/registrationUtil';
+import { securePassword } from '../../utils/auth';
+import { registrationUtil } from '../../utils/registrationUtil';
 
 // Use native crypto.randomUUID() for generating UUIDs
 const generateId = () => crypto.randomUUID();

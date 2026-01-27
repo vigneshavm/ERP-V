@@ -54,8 +54,8 @@ export interface IBusinessProfile extends Document {
     phone: string;
     email: string;
     website: string;
-    category: string;
-    businessType: string;
+    category: Types.ObjectId | string;
+    businessType: Types.ObjectId | string;
     description: string;
     verified: boolean;
     hours: IHoursState;

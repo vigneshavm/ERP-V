@@ -3,18 +3,21 @@ import { Sector, BranchId, SystemRole, AttendanceStatus } from './common';
 export interface Employee {
     id: string;
     name: string;
-    role: string; // Job Title (e.g. Cashier)
-    systemRole: SystemRole; // App Permission Level
-    pin: string;
+    role: string;
+    systemRole: SystemRole;
+    mobile: string; // Backend uses mobile
     dailyRate: number;
-    sector: Sector;
+    wageType: 'DAILY' | 'MONTHLY';
+    tenantId: string;
     branchId: BranchId;
+    isActive: boolean;
+    createdAt?: string;
+
+    // Frontend/Legacy fields - checking if we need them
+    pin?: string;
+    sector?: Sector;
     assignedCounterId?: string;
-    tenantId?: string;
-    mobile?: string;
     roleId?: string;
-    wageType?: 'DAILY' | 'MONTHLY';
-    active?: boolean;
     joinedDate?: string;
 }
 

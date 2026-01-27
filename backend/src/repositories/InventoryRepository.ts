@@ -26,6 +26,10 @@ export class InventoryRepository {
         return Item.find({ addedBy: userId }).sort({ createdAt: -1 });
     }
 
+    async findAllByTenant(tenantId: string): Promise<IItem[]> {
+        return Item.find({ tenantId }).sort({ createdAt: -1 });
+    }
+
     async findAllLean(userId: string): Promise<any[]> {
         return Item.find({ addedBy: userId }).select('name sku stockQty category unit costPrice sellingPrice').lean();
     }

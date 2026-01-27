@@ -3,39 +3,44 @@ import { ProductUnit, TaxMode } from './enums';
 
 export interface BaseProduct {
     id: string;
-    sku: string; // Stock Keeping Unit (Unique)
+    _id?: string;
     name: string;
-    nameTamil?: string;
+    sku: string; // Stock Keeping Unit (Unique)
     category: string; // High-level category
     subCategory?: string; // Granular category
+    productType?: string; // Generic type e.g. Shirt, Mobile
 
-    // Pricing & Cost
-    price: number; // Selling Price (MRP or Selling Price)
-    mrp?: number; // Maximum Retail Price
-    cost: number; // Purchase Price / Cost Price
-    discount?: number; // Discount percentage or amount
+    // Pricing
+    costPrice: number; // Backend: costPrice
+    sellingPrice: number; // Backend: sellingPrice
+    mrp?: number;
+    discount?: number;
     taxMode?: TaxMode;
-    gstPercentage?: number; // Tax Rate
-    hsnCode?: string; // Harmonized System Nomenclature
+    gstPercentage?: number;
+    hsnCode?: string;
 
     // Inventory
-    stock: number;
-    unit?: string | ProductUnit;
-    lastRestocked?: string; // ISO Date
-    expiryDate?: string; // ISO Date
-    location?: string; // Shelf / Bin Location
-    branchId?: string;
-    tenantId?: string;
-    productType?: string; // Generic type field if needed
+    stockQty: number; // Backend: stockQty
+    reservedStock?: number;
+    inTransitStock?: number;
+    lowStockLimit?: number;
+    unit: string | ProductUnit;
 
     // Metadata
-    sector: Sector;
+    tenantId: string;
+    branchId?: string;
+    addedBy?: string;
+
+    // Frontend Specific / Legacy
+    nameTamil?: string;
+    sector?: Sector;
     image?: string;
     description?: string;
     barcode?: string;
     brand?: string;
     isActive?: boolean;
-
-    // Extensibility
     variantData?: Record<string, string | number | boolean>;
+
+    // Virtuals (Frontend helper)
+    availableStock?: number;
 }

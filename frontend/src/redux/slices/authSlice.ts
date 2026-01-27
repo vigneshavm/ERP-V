@@ -218,6 +218,16 @@ export const authSlice = createSlice({
             state.deviceConflict = false;
             state.conflictMessage = '';
         },
+        setUser: (state, action: PayloadAction<User | null>) => {
+            state.user = action.payload;
+        },
+        setAuthError: (state, action: PayloadAction<string | null>) => {
+            state.isError = !!action.payload;
+            state.message = action.payload || '';
+        },
+        setAuthSuccess: (state, action: PayloadAction<boolean>) => {
+            state.isSuccess = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -347,5 +357,5 @@ export const authSlice = createSlice({
     },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, setUser, setAuthError, setAuthSuccess } = authSlice.actions;
 export default authSlice.reducer;

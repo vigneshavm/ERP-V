@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '../../services/api';
 import Modal from '../Modal';
-import { updateProfile } from '../../redux/slices/authSlice';
+// import { updateProfile } from '../../redux/slices/authSlice'; // Removed, using direct API
 import { RootState, AppDispatch } from '../../redux/store';
 import { toast } from 'react-toastify';
 
@@ -13,41 +13,62 @@ interface BusinessSetupModalProps {
 
 const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user, isLoading } = useSelector((state: RootState) => state.auth);
+    const { user } = useSelector((state: RootState) => state.auth);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState({
-        businessCategory: '',
-        businessType: '',
-        shopName: '',
+        category: '', // ID
+        businessType: '', // ID
+        businessName: '',
         phone: '',
     });
 
     const [sectors, setSectors] = useState<{ id: string, name: string }[]>([]);
+    const [businessTypes, setBusinessTypes] = useState<{ id: string, name: string }[]>([]);
 
     useEffect(() => {
-        const fetchSectors = async () => {
-            try {
-                const response = await api.get('/api/business/sectors');
-                if (response.data && response.data.success) {
-                    setSectors(response.data.data);
+        const fetchAllData = async () => {
+            if (isOpen) {
+                setIsLoading(true);
+                try {
+                    // 1. Fetch Setup Status first
+                    const setupResponse = await api.get('/api/business/setup');
+                    if (setupResponse.data && setupResponse.data.success) {
+                        const setup = setupResponse.data.data;
+                        setFormData({
+                            category: setup.category || '',
+                            businessType: setup.businessType || '',
+                            businessName: setup.businessName || user?.shopName || '',
+                            phone: setup.phone || user?.phone || '',
+                        });
+
+                        // 2. Fetch Master Data (Sectors and Types) after setup check
+                        const [sectorsRes, typesRes] = await Promise.all([
+                            api.get('/api/business/sectors'),
+                            api.get('/api/business/types')
+                        ]);
+
+                        if (sectorsRes.data?.success) setSectors(sectorsRes.data.data);
+                        if (typesRes.data?.success) setBusinessTypes(typesRes.data.data);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch setup or master data", error);
+                    // Fallback to basic user data
+                    if (user) {
+                        setFormData(prev => ({
+                            ...prev,
+                            businessName: user.shopName || '',
+                            phone: user.phone || ''
+                        }));
+                    }
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (error) {
-                console.error("Failed to fetch sectors", error);
             }
         };
-        fetchSectors();
-    }, []);
 
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                businessCategory: user.businessCategory || '',
-                businessType: user.businessType || '',
-                shopName: user.shopName || '',
-                phone: user.phone || '',
-            });
-        }
-    }, [user]);
+        fetchAllData();
+    }, [isOpen, user]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -56,7 +77,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.businessCategory) {
+        if (!formData.category) {
             toast.error('Please select a business category');
             return;
         }
@@ -65,13 +86,20 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
             return;
         }
 
+        setIsLoading(true);
         try {
-            await dispatch(updateProfile(formData)).unwrap();
-            toast.success('Business details updated successfully!');
-            onClose();
+            const response = await api.post('/api/business/setup', formData);
+            if (response.data && response.data.success) {
+                toast.success('Business setup completed!');
+                onClose();
+            } else {
+                toast.error('Failed to complete business setup');
+            }
         } catch (error) {
-            toast.error('Failed to update business details');
+            toast.error('Failed to complete business setup');
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -80,7 +108,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
             isOpen={isOpen}
             onClose={onClose}
             title="Complete Your Business Profile"
-            showCloseButton={false} // Force user to complete or use a dedicated skip button if needed
+            showCloseButton={false} // Force user to complete
             size="md"
         >
             <div className="space-y-4">
@@ -90,14 +118,14 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="shopName" className="block text-sm font-medium text-secondary mb-1">
+                        <label htmlFor="businessName" className="block text-sm font-medium text-secondary mb-1">
                             Business Name
                         </label>
                         <input
                             type="text"
-                            id="shopName"
-                            name="shopName"
-                            value={formData.shopName}
+                            id="businessName"
+                            name="businessName"
+                            value={formData.businessName}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                             placeholder="Enter your business name"
@@ -118,19 +146,22 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
                             required
                         >
                             <option value="">Select a type</option>
-                            <option value="retail">Retail</option>
-                            <option value="wholesale">Wholesale</option>
+                            {businessTypes.map((type) => (
+                                <option key={type.id} value={type.id}>
+                                    {type.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
                     <div>
-                        <label htmlFor="businessCategory" className="block text-sm font-medium text-secondary mb-1">
+                        <label htmlFor="category" className="block text-sm font-medium text-secondary mb-1">
                             Business Category (Sector)
                         </label>
                         <select
-                            id="businessCategory"
-                            name="businessCategory"
-                            value={formData.businessCategory}
+                            id="category"
+                            name="category"
+                            value={formData.category}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                             required

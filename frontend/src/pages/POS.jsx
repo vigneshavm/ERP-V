@@ -233,6 +233,16 @@ const POS = () => {
   };
 
   // Cart management
+  // Helper to recalculate discount for Gold Members
+  const getNewDiscount = (newCart) => {
+    if (activeTab.customer?.tier === 'Gold Member') {
+      const sub = newCart.reduce((sum, item) => sum + item.total, 0);
+      return Math.round(sub * 0.05);
+    }
+    return activeTab.discount;
+  };
+
+  // Cart management
   const addToCart = (item) => {
     const existingItem = activeTab.cart.find((cartItem) => cartItem.item === item._id);
 
@@ -242,12 +252,15 @@ const POS = () => {
         return;
       }
 
+      const newCart = activeTab.cart.map((cartItem) =>
+        cartItem.item === item._id
+          ? { ...cartItem, quantity: cartItem.quantity + 1, total: (cartItem.quantity + 1) * cartItem.price }
+          : cartItem
+      );
+
       updateTabData({
-        cart: activeTab.cart.map((cartItem) =>
-          cartItem.item === item._id
-            ? { ...cartItem, quantity: cartItem.quantity + 1, total: (cartItem.quantity + 1) * cartItem.price }
-            : cartItem
-        )
+        cart: newCart,
+        discount: getNewDiscount(newCart)
       });
     } else {
       if (item.stockQty === 0) {
@@ -255,15 +268,18 @@ const POS = () => {
         return;
       }
 
+      const newCart = [...activeTab.cart, {
+        item: item._id,
+        name: item.name,
+        quantity: 1,
+        price: item.sellingPrice,
+        total: item.sellingPrice,
+        availableStock: item.stockQty,
+      }];
+
       updateTabData({
-        cart: [...activeTab.cart, {
-          item: item._id,
-          name: item.name,
-          quantity: 1,
-          price: item.sellingPrice,
-          total: item.sellingPrice,
-          availableStock: item.stockQty,
-        }]
+        cart: newCart,
+        discount: getNewDiscount(newCart)
       });
     }
   };
@@ -280,18 +296,23 @@ const POS = () => {
       return;
     }
 
+    const newCart = activeTab.cart.map((cartItem) =>
+      cartItem.item === itemId
+        ? { ...cartItem, quantity: newQuantity, total: newQuantity * cartItem.price }
+        : cartItem
+    );
+
     updateTabData({
-      cart: activeTab.cart.map((cartItem) =>
-        cartItem.item === itemId
-          ? { ...cartItem, quantity: newQuantity, total: newQuantity * cartItem.price }
-          : cartItem
-      )
+      cart: newCart,
+      discount: getNewDiscount(newCart)
     });
   };
 
   const removeFromCart = (itemId) => {
+    const newCart = activeTab.cart.filter((cartItem) => cartItem.item !== itemId);
     updateTabData({
-      cart: activeTab.cart.filter((cartItem) => cartItem.item !== itemId)
+      cart: newCart,
+      discount: getNewDiscount(newCart)
     });
   };
 
@@ -342,8 +363,18 @@ const POS = () => {
   };
 
   const selectCustomer = (customer) => {
+    let discount = activeTab.discount;
+    if (customer.tier === 'Gold Member') {
+      const subtotal = calculateSubtotal();
+      if (subtotal > 0) {
+        discount = Math.round(subtotal * 0.05);
+        toast.success('Gold Member Discount (5%) applied!');
+      }
+    }
+
     updateTabData({
       customer,
+      discount,
       applyCreditEnabled: false, // Reset credit checkbox when selecting new customer
       previousDueApplied: 0,
     });
@@ -457,6 +488,27 @@ const POS = () => {
     setShowSplitPayment(false);
   };
 
+  // Round Off Logic
+  const handleRoundOff = () => {
+    const subtotal = calculateSubtotal();
+    const currentDiscount = parseFloat(activeTab.discount) || 0;
+    const prevDue = parseFloat(activeTab.previousDueApplied) || 0;
+
+    // Calculate current payable before credit
+    const currentPayable = subtotal - currentDiscount + prevDue;
+
+    // Round down to nearest 10
+    const roundedPayable = Math.floor(currentPayable / 10) * 10;
+    const diff = currentPayable - roundedPayable;
+
+    if (diff > 0) {
+      updateTabData({ discount: currentDiscount + diff });
+      toast.success(`Rounded off by ₹${diff.toFixed(2)}`);
+    } else {
+      toast.info('Amount is already rounded!');
+    }
+  };
+
   // Print Receipt
   const printReceipt = () => {
     if (activeTab.cart.length === 0) {
@@ -503,6 +555,7 @@ const POS = () => {
             <td class="right">₹${subtotal.toFixed(2)}</td>
           </tr>
           <tr>
+            <td>Discount:</td>
             <td>Discount:</td>
             <td class="right">-₹${activeTab.discount.toFixed(2)}</td>
           </tr>
@@ -988,9 +1041,18 @@ const POS = () => {
                   <span className="text-secondary">Subtotal:</span>
                   <span className="font-medium">₹{subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-sm items-center">
                   <span className="text-secondary">Discount:</span>
-                  <span className="font-medium">-₹{activeTab.discount.toFixed(2)}</span>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={handleRoundOff}
+                      className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-secondary border border-gray-300 dark:border-gray-600"
+                      title="Round off the total amount"
+                    >
+                      Round Off
+                    </button>
+                    <span className="font-medium">-₹{activeTab.discount.toFixed(2)}</span>
+                  </div>
                 </div>
 
                 {/* Previous Due Handling */}

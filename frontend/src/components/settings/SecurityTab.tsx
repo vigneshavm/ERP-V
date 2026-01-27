@@ -1,118 +1,103 @@
 import React, { useMemo, useState } from 'react';
-import { Shield, Lock, CheckCircle, Loader2 } from 'lucide-react';
+import { Shield, Lock } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { isSecuredIdeally, securePassword } from '../../utils/auth';
-import { supabase } from '../../lib/supabase';
-import { Role } from '../../types/tenant';
-import { AppView } from '../../types/common';
+import { RootState } from '../../redux/store';
+import { isSecuredIdeally } from '../../utils/auth';
+import ChangePasswordModal from '../ChangePasswordModal';
 
-interface SecurityTabProps {
-    roles: Role[];
-    permissions: { [key: string]: AppView[] };
-    handlePermissionToggle: (roleCode: string, view: AppView) => void;
-}
+const SecurityTab: React.FC = () => {
+    const { user } = useSelector((state: RootState) => state.auth);
+    const { employees } = useSelector((state: RootState) => state.labor); // In backend system, staff are in labor state
 
-const PERMISSION_VIEWS: { id: AppView, label: string }[] = [
-    { id: 'DASHBOARD', label: 'Dashboard' },
-    { id: 'PROFIT_PULSE', label: 'Profit Pulse AI' },
-    { id: 'POS', label: 'Point of Sale' },
-    { id: 'INVENTORY', label: 'Inventory' },
-    { id: 'PURCHASE', label: 'Purchases' },
-    { id: 'FINANCE', label: 'Finance & P&L' },
-    { id: 'SALES', label: 'Sales History' },
-    { id: 'DAILY', label: 'Daily Tracker' },
-    { id: 'LABOR', label: 'Labor Mgmt' },
-    { id: 'STOREFRONT', label: 'Storefront' },
-    { id: 'SETTINGS', label: 'Settings' },
-    { id: 'VENDORS', label: 'Suppliers' },
-    { id: 'VENDOR_FORM', label: 'Add/Edit Supplier' },
-    { id: 'VENDOR_DETAILS', label: 'Supplier Details' },
-];
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-const SecurityTab: React.FC<SecurityTabProps> = ({ roles, permissions, handlePermissionToggle }) => {
-    const { employees } = useSelector((state: RootState) => state.labor);
-    const [isMigrating, setIsMigrating] = useState(false);
-    const [progress, setProgress] = useState({ total: 0, done: 0 });
+    const securityScore = useMemo(() => {
+        if (!user) return 0;
+        let score = 0;
+        // User might not have a password field directly in the session object, 
+        // but for scoring we assume 30 if they are logged in.
+        score += 30;
+        if (user.is2faEnabled) score += 40;
+        // simplified score for now
+        return score;
+    }, [user]);
 
-    const insecureUsers = useMemo(() => {
-        return employees.filter(e => e.pin && !isSecuredIdeally(e.pin));
+    const staffStatus = useMemo(() => {
+        const total = employees?.length || 0;
+        const secured = employees?.filter(e => e.is2faEnabled).length || 0;
+        return { total, secured, percent: total > 0 ? Math.round((secured / total) * 100) : 100 };
     }, [employees]);
 
-    const handleMigrateAll = async () => {
-        if (!confirm(`Are you sure you want to secure ${insecureUsers.length} passwords? This operation cannot be undone.`)) return;
-        setIsMigrating(true);
-        setProgress({ total: insecureUsers.length, done: 0 });
-        let successCount = 0;
-        for (const user of insecureUsers) {
-            try {
-                const secured = await securePassword(user.pin);
-                const { error } = await supabase.from('tenant_users').update({ pin_hash: secured, password_hash: secured }).eq('id', user.id);
-                if (!error) successCount++;
-            } catch (err) { console.error(err); }
-            setProgress(prev => ({ ...prev, done: prev.done + 1 }));
-        }
-        alert(`Migration Complete.\nSecured: ${successCount}\nSkipped: ${insecureUsers.length - successCount}`);
-        setIsMigrating(false);
-    };
-
     return (
-        <div className="p-6 md:p-8 space-y-8">
-            <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-indigo-500" /> Password Security
-                </h3>
-                {insecureUsers.length === 0 ? (
-                    <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-xl flex items-center gap-3">
-                        <CheckCircle className="w-6 h-6 shrink-0" />
-                        <div>
-                            <p className="font-bold text-sm">System Secure</p>
-                            <p className="text-xs opacity-80">All user passwords are hashed and secured.</p>
+        <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Header / Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                            <Shield className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                         </div>
+                        <span className={`text-xs font-black px-2 py-1 rounded-lg ${securityScore > 70 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                            {securityScore}% SECURE
+                        </span>
                     </div>
-                ) : (
-                    <div className="p-4 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 rounded-xl border border-amber-100 dark:border-amber-800">
-                        <div className="flex items-start gap-3">
-                            <Shield className="w-6 h-6 shrink-0 mt-0.5" />
-                            <div>
-                                <p className="font-bold text-sm">Security Action Required</p>
-                                <p className="text-xs mt-1 mb-3 opacity-90">Found {insecureUsers.length} users with legacy insecure passwords.</p>
-                                <button onClick={handleMigrateAll} disabled={isMigrating} className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 disabled:opacity-50">
-                                    {isMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
-                                    {isMigrating ? `Securing ${progress.done}/${progress.total}...` : 'Secure All Passwords Now'}
-                                </button>
-                            </div>
-                        </div>
+                    <h3 className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Your Security Level</h3>
+                    <div className="text-2xl font-black text-slate-800 dark:text-white">
+                        {securityScore > 70 ? 'Industry Standard' : 'Enhancement Recommended'}
                     </div>
-                )}
-            </div>
+                </div>
 
-            <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-indigo-500" /> Role Permissions
-                </h3>
-                <div className="space-y-6">
-                    {roles.filter(r => r.code !== 'owner').map(role => (
-                        <div key={role.id} className="space-y-3">
-                            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">{role.description || role.code}</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {PERMISSION_VIEWS.map(view => {
-                                    const isAllowed = (permissions[role.code] || []).includes(view.id);
-                                    return (
-                                        <button
-                                            key={view.id}
-                                            onClick={() => handlePermissionToggle(role.code, view.id)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${isAllowed ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-indigo-300'}`}
-                                        >
-                                            {view.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                            <Lock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
-                    ))}
+                        <span className="text-xs font-black px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg uppercase">
+                            {staffStatus.percent}% Protected
+                        </span>
+                    </div>
+                    <h3 className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Staff Access Security</h3>
+                    <div className="text-2xl font-black text-slate-800 dark:text-white">
+                        {staffStatus.secured} / {staffStatus.total} Enrolled in 2FA
+                    </div>
                 </div>
             </div>
+
+            {/* Core Controls */}
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm">
+                <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 flex justify-between items-center">
+                    <div>
+                        <h3 className="text-lg font-black text-slate-800 dark:text-white">Account Safeguards</h3>
+                        <p className="text-xs text-slate-500 font-medium">Manage your personal security credentials</p>
+                    </div>
+                </div>
+
+                <div className="p-6 space-y-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
+                        <div className="flex gap-4">
+                            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm flex items-center justify-center shrink-0">
+                                <Lock className="w-5 h-5 text-slate-400" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-black text-slate-800 dark:text-white">Access Key (Password/PIN)</h4>
+                                <p className="text-xs text-slate-500 mt-0.5">Last changed over 30 days ago. Strengthening recommended.</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setIsPasswordModalOpen(true)}
+                            className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all active:scale-95"
+                        >
+                            Change Access Key
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Change Password Modal */}
+            <ChangePasswordModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+            />
         </div>
     );
 };

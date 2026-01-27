@@ -39,11 +39,13 @@ export class ShopController {
 
             // Construct response matching frontend expectations
             const data = {
-                plan: (tenant.subscriptionPlan as any)?.name || 'Free', // Map to name or default
-                planCode: (tenant.subscriptionPlan as any)?.code,
+                plan: (tenant.subscriptionPlan as any)?.name || 'Free',
+                planCode: (tenant.subscriptionPlan as any)?.code || 'FREE',
                 shopEnabled: tenant.ecommerce?.enabled || false,
                 domain: tenant.ecommerce?.domain,
-                theme: tenant.ecommerce?.theme
+                theme: tenant.ecommerce?.theme,
+                subscriptionStartDate: tenant.subscriptionStartDate,
+                subscriptionEndDate: tenant.subscriptionEndDate
             };
 
             res.status(200).json({ success: true, data });
@@ -97,6 +99,56 @@ export class ShopController {
                 });
 
                 if (targetPlan) {
+                    const currentPlan = tenant.subscriptionPlan as any;
+                    const now = new Date();
+                    const isActive = tenant.subscriptionEndDate && tenant.subscriptionEndDate > now;
+
+                    if (isActive && currentPlan) {
+                        // Downgrade Check
+                        if (targetPlan.price < currentPlan.price) {
+                            res.status(400).json({
+                                success: false,
+                                message: 'Downgrades are not allowed during an active subscription duration.'
+                            });
+                            return;
+                        }
+
+                        // Upgrade Check
+                        if (targetPlan.price > currentPlan.price) {
+                            const remainingDays = Math.ceil((tenant.subscriptionEndDate!.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                            const cycleDays = currentPlan.billingCycle === 'yearly' ? 365 : 30;
+                            const dailyRateDiff = (targetPlan.price - currentPlan.price) / cycleDays;
+                            const upgradeAmount = Math.max(0, dailyRateDiff * remainingDays);
+
+                            // In a real app, you'd process payment here.
+                            // For now, we update and log the "balance due".
+                            console.log(`Upgrade from ${currentPlan.code} to ${targetPlan.code}. Balance to pay: ${upgradeAmount.toFixed(2)}`);
+
+                            // Extend the subscription from now based on new plan cycle
+                            tenant.subscriptionStartDate = now;
+                            const newEnd = new Date(now);
+                            if (targetPlan.billingCycle === 'yearly') {
+                                newEnd.setFullYear(newEnd.getFullYear() + 1);
+                            } else if (targetPlan.billingCycle === 'monthly') {
+                                newEnd.setMonth(newEnd.getMonth() + 1);
+                            } else {
+                                // Lifetime or other
+                                newEnd.setFullYear(newEnd.getFullYear() + 100);
+                            }
+                            tenant.subscriptionEndDate = newEnd;
+                        }
+                    } else {
+                        // No active subscription or first time setting
+                        tenant.subscriptionStartDate = now;
+                        const newEnd = new Date(now);
+                        if (targetPlan.billingCycle === 'yearly') {
+                            newEnd.setFullYear(newEnd.getFullYear() + 1);
+                        } else {
+                            newEnd.setMonth(newEnd.getMonth() + 1);
+                        }
+                        tenant.subscriptionEndDate = newEnd;
+                    }
+
                     tenant.subscriptionPlan = targetPlan._id as any;
                     updated = true;
                 } else {
@@ -121,11 +173,13 @@ export class ShopController {
             // Return updated data
             const updatedTenant = await Tenant.findById(tenantId).populate('subscriptionPlan');
             const data = {
-                plan: (updatedTenant?.subscriptionPlan as any)?.name,
-                planCode: (updatedTenant?.subscriptionPlan as any)?.code,
+                plan: (updatedTenant?.subscriptionPlan as any)?.name || 'Free',
+                planCode: (updatedTenant?.subscriptionPlan as any)?.code || 'FREE',
                 shopEnabled: updatedTenant?.ecommerce?.enabled || false,
                 domain: updatedTenant?.ecommerce?.domain,
-                theme: updatedTenant?.ecommerce?.theme
+                theme: updatedTenant?.ecommerce?.theme,
+                subscriptionStartDate: updatedTenant?.subscriptionStartDate,
+                subscriptionEndDate: updatedTenant?.subscriptionEndDate
             };
 
             res.status(200).json({ success: true, message: 'Settings updated successfully', data });

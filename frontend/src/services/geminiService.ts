@@ -1,85 +1,28 @@
-
+import api from "./api";
+import { ScannedInvoice } from "../types/purchase";
+import { Product } from "../types/product";
 import { GoogleGenAI, Type } from "@google/genai";
-import { ScannedInvoice } from "../../../src/types/purchase";
-import { Product } from "../../../src/types/product";
 
 export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice> => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) throw new Error("API Key not found");
+  const formData = new FormData();
+  formData.append('invoice', file);
 
-  const ai = new GoogleGenAI({ apiKey });
+  try {
+    const response = await api.post('/api/purchases/extraction/purchase-invoice', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
-  // Convert file to base64
-  const base64Data = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      // Remove data URL prefix (e.g. "data:image/jpeg;base64,")
-      const base64 = result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
-  const model = "gemini-3-flash-preview";
-
-  const response = await ai.models.generateContent({
-    model,
-    contents: {
-      parts: [
-        {
-          inlineData: {
-            mimeType: file.type,
-            data: base64Data
-          }
-        },
-        {
-          text: `Extract the following details from this invoice: Vendor Name, Date, and a list of items (Name, Quantity, Unit Cost, Product Type). 
-          IMPORTANT: 
-          1. If items have different sizes, colors, or variants listed as separate lines or entries, extract them as SEPARATE items. Do not merge them.
-          2. Example: "Shirt Size 40" and "Shirt Size 42" must be two different items in the list.
-          3. 'Product Type' should be generic like 'Shirt', 'Mobile', 'Rice', 'Oil'.
-          4. Return a valid JSON object strictly matching this schema.`
-        }
-      ]
-    },
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          vendor: { type: Type.STRING },
-          date: { type: Type.STRING },
-          items: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                name: { type: Type.STRING },
-                qty: { type: Type.NUMBER },
-                cost: { type: Type.NUMBER },
-                sku: { type: Type.STRING, description: "Optional SKU if visible" },
-                productType: { type: Type.STRING, description: "Generic type e.g. Shirt, Mobile" }
-              }
-            }
-          },
-          total: { type: Type.NUMBER }
-        }
-      }
+    if (response.data.success) {
+      return response.data.data as ScannedInvoice;
+    } else {
+      throw new Error(response.data.message || "Failed to parse invoice data.");
     }
-  });
-
-  if (response.text) {
-    try {
-      return JSON.parse(response.text) as ScannedInvoice;
-    } catch (e) {
-      console.error("Failed to parse Gemini response", e);
-      throw new Error("Failed to parse invoice data.");
-    }
+  } catch (error: any) {
+    console.error("Failed to parse Gemini response via backend", error);
+    throw new Error(error.response?.data?.message || "Failed to parse invoice data.");
   }
-
-  throw new Error("No response from Gemini.");
 };
 
 export const getProductRecommendations = async (query: string, products: Product[]): Promise<{ recommendationText: string, recommendedIds: string[] }> => {
@@ -90,7 +33,7 @@ export const getProductRecommendations = async (query: string, products: Product
 
   // Simplify product context for the model
   const inventoryList = products.map(p =>
-    `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Price: ${p.price} | Stock: ${p.stock}`
+    `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Price: ${p.sellingPrice} | Stock: ${p.stockQty}`
   ).join('\n');
 
   const prompt = `
@@ -110,7 +53,7 @@ export const getProductRecommendations = async (query: string, products: Product
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
+    model: 'gemini-1.5-flash',
     contents: prompt,
     config: {
       thinkingConfig: { thinkingBudget: 32768 },
@@ -162,9 +105,9 @@ export const searchProductsByImage = async (imageFile: File, products: Product[]
     `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Color/Desc: ${p.name}`
   ).join('\n');
 
-  // Use Gemini 3 Flash for fast multimodal reasoning
+  // Use Gemini 1.5 Flash for fast multimodal reasoning
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-1.5-flash',
     contents: {
       parts: [
         { inlineData: { mimeType: imageFile.type, data: base64Data } },

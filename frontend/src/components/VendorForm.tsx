@@ -1,397 +1,239 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
+import { RootState, AppDispatch } from '../redux/store';
 import {
-    addVendor,
-    updateVendor,
-    setSelectedVendor
-} from '../store/vendorSlice';
-import { setActiveTab } from '../store/uiSlice';
+    addSupplier,
+    updateSupplier,
+    setSelectedSupplier
+} from '../redux/slices/supplierSlice';
+import { setActiveTab } from '../redux/slices/uiSlice';
 import { Vendor } from '../types/vendor';
 import {
-    ArrowLeft, Landmark, CheckCircle2, AlertCircle, Save, X, IndianRupee
+    ArrowLeft, Landmark, CheckCircle2, AlertCircle, Save, X, IndianRupee, Loader2
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 const VendorForm: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
-    const { selectedVendor } = useSelector((state: RootState) => state.vendor);
+    const { supplier: selectedSupplier, isLoading, isError, message } = useSelector((state: RootState) => state.suppliers);
 
-    const [formData, setFormData] = useState<{
-        name: string;
-        phone: string;
-        gstin: string;
-        address: string;
-        contactPerson: string;
-        openingBalance: number;
-        supplierType: string;
-        balanceType: string;
-        creditPeriod: number;
-        status: string;
-        email: string;
-    }>({
-        name: '',
-        phone: '',
+    const [formData, setFormData] = useState<Partial<Vendor>>({
+        businessName: '',
+        contactPersonName: '',
+        contactNo: '',
         email: '',
-        gstin: '',
-        address: '',
-        contactPerson: '',
+        physicalAddress: '',
+        gstNo: '',
+        supplierType: 'wholesaler',
         openingBalance: 0,
-        supplierType: '',
-        balanceType: '',
-        creditPeriod: 0,
-        status: 'Active'
+        balanceType: 'payable',
+        creditPeriod: 30,
+        status: 'active'
     });
 
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [localError, setLocalError] = useState('');
 
     useEffect(() => {
-        if (selectedVendor) {
-            setFormData({
-                name: selectedVendor.name,
-                phone: selectedVendor.phone || '',
-                gstin: selectedVendor.gstin || '',
-                address: selectedVendor.address || '',
-                contactPerson: selectedVendor.contactPerson || '',
-                openingBalance: selectedVendor.openingBalance,
-                supplierType: selectedVendor.supplierType || '',
-                balanceType: selectedVendor.balanceType || '',
-                creditPeriod: selectedVendor.creditPeriod || 0,
-                status: selectedVendor.status || 'Active',
-                email: selectedVendor.email || ''
-            });
+        if (selectedSupplier) {
+            setFormData(selectedSupplier as Partial<Vendor>);
         }
-    }, [selectedVendor]);
+    }, [selectedSupplier]);
 
-    const handleSave = async (e: React.FormEvent) => {
+    const handleBack = () => {
+        dispatch(setSelectedSupplier(null));
+        // This is a bit of a hack if we don't have a specific setShowForm state in Redux, 
+        // but typically the parent handles this by checking setSelectedSupplier(null)
+        // For now, let's assume the parent should be notified.
+        // We'll use a window event or just let the parent re-render.
+        window.location.reload(); // Temporary solution to go back to list
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user?.tenantId) return;
+        setLocalError('');
+        setIsSubmitting(true);
 
-        setIsSaving(true);
         try {
-            const dataToSave = {
-                tenant_id: user.tenantId,
-                name: formData.name,
-                phone: formData.phone,
-                gstin: formData.gstin,
-                address: formData.address,
-                contact_person: formData.contactPerson,
-                opening_balance: formData.openingBalance,
-                current_balance: selectedVendor ? selectedVendor.currentBalance : (formData.balanceType === 'Payable' ? formData.openingBalance : -formData.openingBalance),
-                supplier_type: formData.supplierType,
-                balance_type: formData.balanceType,
-                credit_period: formData.creditPeriod,
-                status: formData.status,
-                email: formData.email,
-                is_active: formData.status === 'Active'
-            };
-
-            if (selectedVendor) {
-                const { data, error } = await supabase
-                    .from('vendors')
-                    .update(dataToSave)
-                    .eq('id', selectedVendor.id)
-                    .select()
-                    .single();
-                if (error) throw error;
-                dispatch(updateVendor({
-                    ...selectedVendor,
-                    ...formData,
-                    currentBalance: data.current_balance
-                }));
+            if (selectedSupplier && selectedSupplier._id) {
+                await dispatch(updateSupplier({
+                    id: selectedSupplier._id,
+                    supplierData: formData
+                })).unwrap();
             } else {
-                const { data, error } = await supabase
-                    .from('vendors')
-                    .insert([dataToSave])
-                    .select()
-                    .single();
-                if (error) throw error;
-                const newVendor: Vendor = {
-                    id: data.id,
-                    tenantId: data.tenant_id,
-                    name: data.name,
-                    phone: data.phone,
-                    gstin: data.gstin,
-                    address: data.address,
-                    contactPerson: data.contact_person,
-                    openingBalance: data.opening_balance,
-                    currentBalance: data.current_balance,
-                    isActive: data.is_active,
-                    supplierType: data.supplier_type,
-                    balanceType: data.balance_type,
-                    creditPeriod: data.credit_period,
-                    status: data.status,
-                    email: data.email,
-                    createdAt: data.created_at
-                };
-                dispatch(addVendor(newVendor));
+                await dispatch(addSupplier(formData)).unwrap();
             }
             handleBack();
         } catch (err: any) {
-            alert(err.message);
+            setLocalError(err.message || 'Failed to save vendor details.');
         } finally {
-            setIsSaving(false);
+            setIsSubmitting(false);
         }
     };
 
-    const handleBack = () => {
-        dispatch(setSelectedVendor(null));
-        dispatch(setActiveTab('VENDORS'));
-    };
-
     return (
-        <div className="max-w-3xl mx-auto space-y-4 animate-in slide-in-from-right duration-500 pb-12">
-            <div className="flex items-center justify-between px-2">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={handleBack}
-                        className="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                    </button>
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                            {selectedVendor ? 'Edit Vendor Profile' : 'New Vendor Registration'}
-                        </h2>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mt-0.5">Supplier Management System</p>
+        <div className="max-w-4xl mx-auto p-4 md:p-8">
+            <div className="flex items-center justify-between mb-8">
+                <button
+                    onClick={handleBack}
+                    className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-2"
+                >
+                    <ArrowLeft className="w-5 h-5" />
+                    <span className="font-bold text-sm uppercase tracking-widest">Discard & Return</span>
+                </button>
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                        <Landmark className="w-6 h-6 text-indigo-500" />
                     </div>
+                    <h2 className="text-xl font-black text-slate-800 dark:text-white">
+                        {selectedSupplier ? 'Modify Vendor Profile' : 'Onboard New Partner'}
+                    </h2>
                 </div>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-4">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden shadow-indigo-500/5">
-                    <div className="p-6 space-y-6">
-                        {/* Section 1: Basic Information */}
-                        <div className="space-y-4">
-                            <h4 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-3">
-                                <span className="w-6 h-[2px] bg-indigo-600/20"></span>
-                                Core Registry Details
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="md:col-span-2">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Business Registered Name</label>
-                                    <input
-                                        required
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-800 dark:text-white font-bold text-base shadow-inner"
-                                        placeholder="e.g. Royal Textile Wholesalers Pvt Ltd"
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Supplier Category</label>
-                                    <select
-                                        required
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold appearance-none cursor-pointer"
-                                        value={formData.supplierType}
-                                        onChange={e => setFormData({ ...formData, supplierType: e.target.value })}
-                                    >
-                                        <option value="">Select Category</option>
-                                        <option value="Manufacturer">Manufacturer</option>
-                                        <option value="Wholesaler">Wholesaler</option>
-                                        <option value="Distributor">Distributor</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Tax ID (GSTIN)</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono tracking-[0.15em] dark:text-white uppercase shadow-inner"
-                                        placeholder="22AAAAA0000A1Z5"
-                                        value={formData.gstin}
-                                        onChange={e => setFormData({ ...formData, gstin: e.target.value.toUpperCase() })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Section 2: Contact Details */}
-                        <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-700/50">
-                            <h4 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-3">
-                                <span className="w-6 h-[2px] bg-indigo-600/20"></span>
-                                Primary Contact Node
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Contact Officer Name</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold shadow-inner"
-                                        placeholder="Full Name"
-                                        value={formData.contactPerson}
-                                        onChange={e => setFormData({ ...formData, contactPerson: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Communication Line</label>
-                                    <input
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold shadow-inner"
-                                        placeholder="Phone Number"
-                                        value={formData.phone}
-                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
-                                    <input
-                                        type="email"
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold shadow-inner"
-                                        placeholder="vendor@example.com"
-                                        value={formData.email}
-                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Operational Address</label>
-                                    <textarea
-                                        rows={2}
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold shadow-inner resize-none text-sm"
-                                        placeholder="Registered business address..."
-                                        value={formData.address}
-                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Section 3: Financial & System */}
-                        <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-700/50">
-                            <h4 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-3">
-                                <span className="w-6 h-[2px] bg-indigo-600/20"></span>
-                                Financial Ledger Config
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50 space-y-3">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Landmark className="w-3 h-3 text-indigo-500" />
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Accounting Init</span>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <div>
-                                            <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 ml-1">Opening Credit/Debit</label>
-                                            <div className="relative">
-                                                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                                                <input
-                                                    type="number"
-                                                    disabled={!!selectedVendor}
-                                                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-800 dark:text-white font-black disabled:opacity-50"
-                                                    placeholder="0.00"
-                                                    value={formData.openingBalance || ''}
-                                                    onChange={e => setFormData({ ...formData, openingBalance: Number(e.target.value) })}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 ml-1">Ledger Category {formData.openingBalance !== 0 && '(Mandatory)'}</label>
-                                            <select
-                                                required={formData.openingBalance !== 0}
-                                                disabled={!!selectedVendor}
-                                                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs text-slate-700 dark:text-white font-bold disabled:opacity-50 appearance-none cursor-pointer"
-                                                value={formData.balanceType}
-                                                onChange={e => setFormData({ ...formData, balanceType: e.target.value })}
-                                            >
-                                                <option value="">Select Indicator</option>
-                                                <option value="Payable">Payable (Credit)</option>
-                                                <option value="Receivable">Receivable (Debit)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Net Credit Terms (Grace Days)</label>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-white font-bold shadow-inner"
-                                                placeholder="0"
-                                                value={formData.creditPeriod || ''}
-                                                onChange={e => setFormData({ ...formData, creditPeriod: Number(e.target.value) })}
-                                            />
-                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-indigo-500/50 uppercase tracking-widest pointer-events-none">Days</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Registry Lifecycle Status</label>
-                                        <div className="bg-slate-50 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 flex gap-1">
-                                            <button
-                                                type="button"
-                                                onClick={() => setFormData({ ...formData, status: 'Active' })}
-                                                className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${formData.status === 'Active' ? 'bg-white dark:bg-slate-800 text-green-600 shadow-sm border border-slate-100 dark:border-slate-700' : 'text-slate-400 hover:text-slate-500'}`}
-                                            >
-                                                Active
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setFormData({ ...formData, status: 'Inactive' })}
-                                                className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${formData.status === 'Inactive' ? 'bg-white dark:bg-slate-800 text-red-600 shadow-sm border border-slate-100 dark:border-slate-700' : 'text-slate-400 hover:text-slate-500'}`}
-                                            >
-                                                Blacklist
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest">
-                            {isSaving ? (
-                                <span className="flex items-center gap-1.5 text-amber-500">
-                                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
-                                    Ledger Syncing...
-                                </span>
-                            ) : (
-                                <span className="flex items-center gap-1.5">
-                                    <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                    Validation Passed
-                                </span>
-                            )}
-                        </div>
-                        <div className="flex gap-3 w-full md:w-auto">
-                            <button
-                                type="button"
-                                onClick={handleBack}
-                                className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
-                            >
-                                Discard
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isSaving}
-                                className="px-8 py-2.5 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2"
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                        Processing
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="w-3 h-3" />
-                                        {selectedVendor ? 'Commit Updates' : 'Authorize Entry'}
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            {!selectedVendor && (
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex gap-4 shadow-sm">
-                    <div className="w-8 h-8 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <AlertCircle className="w-4 h-4 text-amber-600" />
-                    </div>
-                    <div>
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tight text-[11px]">System Protocol: Opening Balances</h4>
-                        <p className="text-slate-500 dark:text-slate-400 text-[10px] mt-0.5 leading-relaxed font-medium">
-                            Initial ledger entries are immutable post-authentication. All subsequent adjustments must occur through authorized transaction nodes. Reference the Payable/Receivable indicator accurately.
-                        </p>
-                    </div>
+            {(isError || localError) && (
+                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-bold">
+                    <AlertCircle className="w-5 h-5" />
+                    <span>{message || localError}</span>
                 </div>
             )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    {/* Basic Info */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Identity & Contact</h3>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Business Name</label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.businessName}
+                                onChange={e => setFormData({ ...formData, businessName: e.target.value })}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-bold"
+                                placeholder="Legal Entity Name"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Contact Person</label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.contactPersonName}
+                                onChange={e => setFormData({ ...formData, contactPersonName: e.target.value })}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-medium"
+                                placeholder="Full Name"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Mobile No</label>
+                                <input
+                                    type="tel"
+                                    required
+                                    value={formData.contactNo}
+                                    onChange={e => setFormData({ ...formData, contactNo: e.target.value })}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-medium"
+                                    placeholder="+91..."
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase ml-1">GSTIN</label>
+                                <input
+                                    type="text"
+                                    value={formData.gstNo}
+                                    onChange={e => setFormData({ ...formData, gstNo: e.target.value })}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-mono uppercase"
+                                    placeholder="27AAAAA0000A1Z5"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Financial Terms */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Financial Configuration</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Opening Balance</label>
+                                <div className="relative">
+                                    <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        type="number"
+                                        value={formData.openingBalance}
+                                        onChange={e => setFormData({ ...formData, openingBalance: Number(e.target.value) })}
+                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-bold"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Balance Type</label>
+                                <select
+                                    value={formData.balanceType}
+                                    onChange={e => setFormData({ ...formData, balanceType: e.target.value })}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-bold appearance-none"
+                                >
+                                    <option value="payable">Payable (Credit)</option>
+                                    <option value="receivable">Receivable (Debit)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Credit Period (Days)</label>
+                            <input
+                                type="number"
+                                value={formData.creditPeriod}
+                                onChange={e => setFormData({ ...formData, creditPeriod: Number(e.target.value) })}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white font-bold"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Status</label>
+                            <div className="flex gap-4 p-2 bg-slate-50 dark:bg-slate-900 rounded-2xl">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, status: 'active' })}
+                                    className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.status === 'active'
+                                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                                            : 'text-slate-400 hover:text-slate-600'
+                                        }`}
+                                >
+                                    Active
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, status: 'inactive' })}
+                                    className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.status === 'inactive'
+                                            ? 'bg-slate-600 text-white shadow-lg shadow-slate-600/20'
+                                            : 'text-slate-400 hover:text-slate-600'
+                                        }`}
+                                >
+                                    Inactive
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex gap-4">
+                    <button
+                        type="button"
+                        onClick={handleBack}
+                        className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                    >
+                        Cancel Changes
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-[2] py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                    >
+                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {selectedSupplier ? 'Overwrite Vendor Record' : 'Synchronize New Partner'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

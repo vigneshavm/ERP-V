@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { singleton } from 'tsyringe';
+import { singleton, container } from 'tsyringe';
 
 import Item from '../models/Item.js';
+import ReprintQueue from '../models/ReprintQueue.js';
+import { StockAgingService } from '../services/StockAgingService.js';
 
 import { checkStockAlerts } from '../../../utils/stockAlert.js';
 import { info, error } from '../../../config/logger.js';
@@ -460,22 +462,12 @@ export class InventoryController {
                         importNames.get(nameLower)!.push(rowNum);
                     } else {
                         importNames.set(nameLower, [rowNum]);
-                        namesToFind.push(nameLower); // Should we find by nameLower? MongoDB is case sensitive? 
-                        // Note: Original code used existingItemsMap with .toLowerCase() keys.
-                        // We will need case-insensitive regex search or assume names are stored/searched consistently.
-                        // For better performance with indexes, we should rely on exact match or simplified regex.
-                        // Let's stick to exact match or regex for now. Optimization: exact match if possible, but user might care about case.
-                        // In original code: existingItemsMap.set(item.name.toLowerCase(), item);
+                        namesToFind.push(nameLower);
                     }
                 }
             });
 
             // 2. Fetch efficiently only potentially colliding items
-            // We use regex for case-insensitive matching to match original logic behavior
-            // Warning: Huge lists of regex might be slow, but better than loading all.
-            // A better approach is to rely on Normalization if the app enforced it.
-            // For now, let's fetch matching names/SKUs.
-
             const existingItems = await Item.find({
                 tenantId: authReq.tenantId,
                 $or: [
@@ -519,12 +511,6 @@ export class InventoryController {
                     const skuLower = item.sku.toLowerCase().trim();
                     const dups = importSKUs.get(skuLower);
                     if (dups && dups.length > 1 && dups[0] !== rowNum) {
-                        // Mark as error only once per group? No, every row that is a duplicate except the first one?
-                        // Original logic: "Each SKU must be unique within the import".
-                        // If I have row 1 and 2 with same SKU, both are duplicates? or just 2?
-                        // Simple logic: if count > 1, abort this row? Or allow first one?
-                        // Let's assume user wants to merge or clean data. 
-                        // Existing logic: "SKU ... is duplicated... (rows: ...)"
                         rowErrors.push(`SKU "${item.sku}" is duplicated in rows: ${dups.join(', ')}`);
                     }
                 }
@@ -557,8 +543,6 @@ export class InventoryController {
                                     unit: item.unit ? item.unit.toLowerCase().trim() : match.unit,
                                     costPrice: parseFloat(String(item.costPrice)),
                                     sellingPrice: parseFloat(String(item.sellingPrice)),
-                                    // Optional: Update name/sku if they differ in case but matched?
-                                    // Let's keep existing name/sku to avoid confusion or accidental renames
                                 }
                             }
                         }
@@ -604,8 +588,194 @@ export class InventoryController {
         } catch (err) {
             console.error('Bulk Import Error:', err);
             error(`Bulk Import Error: ${(err as Error).message}`);
-            // If bulk write failed, some might have succeeded. 
             res.status(500).json({ message: 'Server Error during import', error: (err as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/aging-report:
+     *   get:
+     *     summary: Get stock aging analysis report (Dead Stock)
+     *     tags: [Inventory]
+     *     responses:
+     *       200:
+     *         description: List of items with age analysis
+     */
+    public getStockAgingReport = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            const stockAgingService = container.resolve(StockAgingService);
+            const report = await stockAgingService.getAgingAnalysis(authReq.tenantId as string);
+            res.status(200).json(report);
+        } catch (err) {
+            error(`Stock Aging Report Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/aging-action:
+     *   post:
+     *     summary: Perform action on dead stock (Clearance/Reduce Margin)
+     *     tags: [Inventory]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [itemId, action]
+     *             properties:
+     *               itemId: { type: string }
+     *               action: { type: string, enum: [CLEARANCE, REDUCE_MARGIN] }
+     *               value: { type: number }
+     *     responses:
+     *       200:
+     *         description: Action applied successfully
+     */
+    public performAgingAction = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            const { itemId, action, value } = req.body;
+
+            if (!itemId || !action) {
+                res.status(400).json({ message: "Item ID and Action are required" });
+                return;
+            }
+
+            const stockAgingService = container.resolve(StockAgingService);
+            const result = await stockAgingService.applyAction(itemId, authReq.user?._id as string || authReq.tenantId as string, action, value);
+
+            res.status(200).json({ message: "Action applied successfully", result });
+        } catch (err) {
+            error(`Aging Action Error: ${(err as Error).message}`);
+            res.status(500).json({ message: (err as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/batch-price-update:
+     *   post:
+     *     summary: Update price and queue for reprint
+     *     tags: [Inventory]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               sku: { type: string }
+     *               newPrice: { type: number }
+     *     responses:
+     *       200:
+     *         description: Price updated and queued for reprint
+     */
+    public batchPriceUpdate = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            const { sku, newPrice } = req.body;
+
+            if (!sku || !newPrice) {
+                res.status(400).json({ message: 'SKU and New Price are required' });
+                return;
+            }
+
+            const item = await Item.findOne({
+                sku: sku,
+                tenantId: authReq.tenantId
+            });
+
+            if (!item) {
+                res.status(404).json({ message: 'Item not found' });
+                return;
+            }
+
+            const oldPrice = item.sellingPrice;
+            item.sellingPrice = newPrice;
+            await item.save();
+
+            // Add to Reprint Queue
+            // Find existing queue doc for tenant or create new
+            let queue = await ReprintQueue.findOne({ tenantId: authReq.tenantId });
+            if (!queue) {
+                queue = new ReprintQueue({ tenantId: authReq.tenantId, items: [] });
+            }
+
+            // Check if item already in queue, update it
+            const existingIndex = queue.items.findIndex(i => i.itemId.toString() === item._id.toString());
+            if (existingIndex > -1) {
+                // Update existing entry
+                queue.items[existingIndex].newPrice = newPrice;
+                queue.items[existingIndex].quantity = item.stockQty || 0; // Update qty to current stock
+                queue.items[existingIndex].updatedAt = new Date(); // If I monitored timestamps on subdocs
+            } else {
+                queue.items.push({
+                    itemId: item._id as mongoose.Types.ObjectId,
+                    itemName: item.name,
+                    sku: item.sku as string,
+                    oldPrice,
+                    newPrice,
+                    quantity: item.stockQty || 0,
+                    reason: 'Price Hike Batch Update'
+                });
+            }
+
+            await queue.save();
+
+            info(`Batch Price Update by ${authReq.user?.name}: ${item.sku} to ${newPrice}`);
+            res.status(200).json({ message: 'Price updated and queued for reprint', item, queue });
+        } catch (err) {
+            error(`Batch Price Update Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/reprint-queue:
+     *   get:
+     *     summary: Get reprint queue
+     *     tags: [Inventory]
+     *     responses:
+     *       200:
+     *         description: Reprint queue retrieved
+     */
+    public getReprintQueue = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            const queue = await ReprintQueue.findOne({ tenantId: authReq.tenantId });
+            res.status(200).json(queue ? queue.items : []);
+        } catch (err) {
+            error(`Get Reprint Queue Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/reprint-queue:
+     *   delete:
+     *     summary: Clear reprint queue (after printing)
+     *     tags: [Inventory]
+     *     responses:
+     *       200:
+     *         description: Queue cleared
+     */
+    public clearReprintQueue = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            await ReprintQueue.findOneAndUpdate(
+                { tenantId: authReq.tenantId },
+                { $set: { items: [] } }
+            );
+            res.status(200).json({ message: 'Reprint queue cleared' });
+        } catch (err) {
+            error(`Clear Reprint Queue Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };
 }

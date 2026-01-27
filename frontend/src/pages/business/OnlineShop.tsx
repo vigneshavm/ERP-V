@@ -105,8 +105,11 @@ const OnlineShop: React.FC = () => {
         }
     };
 
+    const [updatingPlan, setUpdatingPlan] = useState<string | null>(null);
+
     const handleUpdatePlan = async (planName: string) => {
         try {
+            setUpdatingPlan(planName);
             const response = await api.put('/api/shop/settings', {
                 plan: planName,
                 shopEnabled: true // Enable shop when a plan is selected
@@ -114,9 +117,12 @@ const OnlineShop: React.FC = () => {
             if (response.data.success) {
                 setSettings(response.data.data);
                 toast.success(`${planName} plan activated successfully!`);
+                // Optional: delay slightly to show success state
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Failed to update plan');
+        } finally {
+            setUpdatingPlan(null);
         }
     };
 
@@ -141,7 +147,7 @@ const OnlineShop: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
+            {/* <PageHeader
                 title="Online Store"
                 description="Launch and manage your e-commerce business"
                 breadcrumbs={[
@@ -150,8 +156,8 @@ const OnlineShop: React.FC = () => {
                     { label: 'Growth Tools', link: '/business/online-shop' },
                     { label: 'Online Store' }
                 ]}
-            />
-            <BusinessSubNav />
+            /> */}
+            {/* <BusinessSubNav /> */}
 
             {/* Hero Section - Refined with Glassmorphism */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white mb-12 shadow-2xl border border-white/10">
@@ -171,8 +177,11 @@ const OnlineShop: React.FC = () => {
                             Everything you need to build, manage, and scale your brand globally. Start your digital journey in minutes, not months.
                         </p>
                         <div className="flex flex-wrap justify-center lg:justify-start gap-5">
-                            <button className="px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 text-lg">
-                                Start Free Trial
+                            <button
+                                onClick={() => handleUpdatePlan('Free')}
+                                className="px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 text-lg cursor-pointer"
+                            >
+                                {updatingPlan === 'Free' ? 'Processing...' : 'Start Free Trial'}
                             </button>
                             <button className="px-8 py-4 bg-indigo-800/40 backdrop-blur-md text-white border border-indigo-400/30 rounded-2xl font-bold hover:bg-indigo-700/50 transition-all hover:border-indigo-300">
                                 View Demo Store
@@ -249,10 +258,10 @@ const OnlineShop: React.FC = () => {
                             <div
                                 key={idx}
                                 className={`relative flex flex-col p-8 rounded-[2.5rem] border-2 transition-all duration-500 h-full ${isCurrent
-                                        ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl scale-[1.03] z-20 bg-indigo-50/30'
-                                        : plan.popular
-                                            ? 'border-indigo-400 shadow-xl scale-[1.02] z-10 bg-white'
-                                            : 'border-gray-100 bg-white hover:border-indigo-200 hover:shadow-2xl hover:-translate-y-2'
+                                    ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl scale-[1.03] z-20 bg-indigo-50/30'
+                                    : plan.popular
+                                        ? 'border-indigo-400 shadow-xl scale-[1.02] z-10 bg-white'
+                                        : 'border-gray-100 bg-white hover:border-indigo-200 hover:shadow-2xl hover:-translate-y-2'
                                     }`}
                             >
                                 {isCurrent && (
@@ -263,6 +272,21 @@ const OnlineShop: React.FC = () => {
                                             </svg>
                                             Active Plan
                                         </span>
+                                    </div>
+                                )}
+
+                                {isCurrent && settings?.subscriptionEndDate && (
+                                    <div className="mt-8 mb-2 p-3 bg-indigo-50/50 rounded-2xl border border-indigo-100/50">
+                                        <div className="flex items-center justify-between text-[10px] font-black tracking-widest uppercase">
+                                            <span className="text-indigo-400">Next Billing Cycle</span>
+                                            <span className="text-indigo-600">
+                                                {new Date(settings.subscriptionEndDate).toLocaleDateString(undefined, {
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    year: 'numeric'
+                                                })}
+                                            </span>
+                                        </div>
                                     </div>
                                 )}
 
@@ -312,15 +336,15 @@ const OnlineShop: React.FC = () => {
 
                                 <button
                                     onClick={() => !isCurrent && handleUpdatePlan(plan.name)}
-                                    disabled={isCurrent}
+                                    disabled={isCurrent || updatingPlan === plan.name}
                                     className={`w-full py-5 rounded-[1.5rem] font-black uppercase tracking-[0.15em] transition-all duration-300 text-sm active:scale-95 ${isCurrent
-                                            ? 'bg-indigo-100/50 text-indigo-400 cursor-default border-2 border-indigo-100/50'
-                                            : plan.popular
-                                                ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-2xl shadow-indigo-200 border-2 border-indigo-600'
-                                                : 'bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-xl shadow-gray-100'
+                                        ? 'bg-indigo-100/50 text-indigo-400 cursor-default border-2 border-indigo-100/50'
+                                        : plan.popular
+                                            ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-2xl shadow-indigo-200 border-2 border-indigo-600'
+                                            : 'bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-xl shadow-gray-100'
                                         }`}
                                 >
-                                    {isCurrent ? 'Current Selection' : 'Upgrade Plan'}
+                                    {isCurrent ? 'Current Selection' : (updatingPlan === plan.name ? 'Processing...' : 'Upgrade Plan')}
                                 </button>
                             </div>
                         );

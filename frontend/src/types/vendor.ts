@@ -1,25 +1,27 @@
 
-export type SupplierType = 'Manufacturer' | 'Wholesaler' | 'Distributor';
-export type BalanceType = 'Payable' | 'Receivable';
-export type VendorStatus = 'Active' | 'Inactive';
+export type SupplierType = 'manufacturer' | 'wholesaler' | 'distributor';
+export type BalanceType = 'payable' | 'receivable';
+export type VendorStatus = 'active' | 'inactive';
 
 export interface Vendor {
-    id: string;
+    id: string; // _id
+    _id?: string;
     tenantId: string;
-    name: string;
-    phone?: string;
-    gstin?: string;
-    address?: string;
-    contactPerson?: string;
-    openingBalance: number; // Positive = Credit (Payable), Negative = Debit
-    currentBalance: number;
-    isActive: boolean; // Legacy field, will keep for compatibility
-    supplierType?: SupplierType;
-    balanceType?: BalanceType;
+    businessName: string;
+    contactPersonName: string;
+    contactNo: string;
+    email: string;
+    physicalAddress: string;
+    gstNo: string;
+    supplierType: SupplierType;
+    openingBalance: number;
+    balanceType: BalanceType;
     creditPeriod: number;
     status: VendorStatus;
-    email?: string;
+    isActive?: boolean; // Legacy/Frontend helper
     createdAt?: string;
+    updatedAt?: string;
+    currentBalance?: number; // Frontend derived
 }
 
 export type VendorTransactionType = 'PURCHASE' | 'PAYMENT' | 'RETURN' | 'ADJUSTMENT';

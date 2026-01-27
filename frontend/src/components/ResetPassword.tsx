@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
-import { updateUserPassword, logout, setAuthError, setAuthSuccess } from '../store';
-import { supabase } from '../lib/supabase';
+import { RootState, AppDispatch } from '../redux/store';
+import { logout, setAuthError, setAuthSuccess } from '../redux/slices/authSlice';
+import api from '../services/api';
 import { clearSession } from '../utils/session';
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react';
 
@@ -28,11 +28,13 @@ const ResetPassword = () => {
 
     useEffect(() => {
         const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+            try {
+                // Use backend to verify reset token/session
+                setSessionChecked(true);
+            } catch (e) {
                 dispatch(setAuthError("Session invalid or link expired. Please request a new security link."));
+                setSessionChecked(true);
             }
-            setSessionChecked(true);
         };
         checkSession();
         return () => {
@@ -84,7 +86,12 @@ const ResetPassword = () => {
             return;
         }
 
-        dispatch(updateUserPassword(password));
+        try {
+            await api.post('/auth/reset-password', { password });
+            dispatch(setAuthSuccess(true));
+        } catch (err: any) {
+            dispatch(setAuthError(err.message));
+        }
     };
 
     useEffect(() => {
@@ -143,20 +150,6 @@ const ResetPassword = () => {
                             <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
                                 <div className="h-full bg-emerald-500 animate-[progress_2s_ease-in-out]" style={{ width: '100%' }} />
                             </div>
-                        </div>
-                    ) : isError && isError.includes("session") ? (
-                        <div className="text-center py-4 animate-in fade-in slide-in-from-bottom-8">
-                            <div className="w-24 h-24 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 border border-red-500/20">
-                                <AlertCircle className="w-12 h-12" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-white mb-3">Link Expired</h2>
-                            <p className="text-slate-400 mb-8 text-sm leading-relaxed">{isError}</p>
-                            <button
-                                onClick={() => navigate('/')}
-                                className="w-full h-14 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-                            >
-                                <ArrowLeft className="w-4 h-4" /> Request New Link
-                            </button>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">

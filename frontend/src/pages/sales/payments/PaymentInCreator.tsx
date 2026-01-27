@@ -5,7 +5,7 @@ import {
     Calendar, User, CreditCard, Banknote, Smartphone, Building2,
     CheckCircle, AlertCircle, ChevronDown, Save, RefreshCw, Wallet
 } from 'lucide-react';
-import { RootState } from '../../../../../src/store';
+import { RootState } from '../../../redux/store';
 
 // Types
 interface Customer {

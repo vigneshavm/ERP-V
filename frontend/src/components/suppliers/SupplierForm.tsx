@@ -11,6 +11,7 @@ import {
     Save
 } from 'lucide-react';
 import { FormSection, InputField, TextareaField, SelectField } from './SupplierFormComponents';
+import SupplierInvoiceUpload from './SupplierInvoiceUpload';
 
 export interface SupplierFormData {
     businessName: string;
@@ -74,7 +75,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
 
     const [shouldNavigate, setShouldNavigate] = useState(false);
 
-    const color = mode === 'add' ? 'indigo' : 'violet';
+    const color = 'emerald';
 
     useEffect(() => {
         if (initialData) {
@@ -93,6 +94,13 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         setFormData((prevState) => ({
             ...prevState,
             [e.target.name]: e.target.value,
+        }));
+    };
+
+    const handleDataExtracted = (data: any) => {
+        setFormData(prev => ({
+            ...prev,
+            ...data
         }));
     };
 
@@ -119,6 +127,8 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
 
     return (
         <div className="max-w-5xl">
+            {mode === 'add' && <SupplierInvoiceUpload onDataExtracted={handleDataExtracted} />}
+
             <form onSubmit={onSubmit} className="space-y-6">
                 {/* Identity & Contact */}
                 <FormSection title={mode === 'add' ? 'Enterprise Identity' : 'Modified Identity'} icon={Building2} color={color}>
@@ -138,7 +148,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                         name="contactPersonName"
                         value={formData.contactPersonName}
                         onChange={onChange}
-                        required
                         placeholder={mode === 'add' ? 'Full name of representative' : 'Primary point of contact'}
                         color={color}
                     />
@@ -149,10 +158,9 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                         type="tel"
                         value={formData.contactNo}
                         onChange={onChange}
-                        required
-                        maxLength={10}
-                        pattern="[0-9]{10}"
-                        placeholder={mode === 'add' ? '10-digit mobile number' : 'Updated contact number'}
+                        maxLength={15}
+                        pattern="[0-9\-]{10,15}"
+                        placeholder={mode === 'add' ? '10-digit mobile or landline (e.g. 0462-2322406)' : 'Updated contact number'}
                         color={color}
                     />
                     <InputField
@@ -162,7 +170,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                         type="email"
                         value={formData.email}
                         onChange={onChange}
-                        required
                         placeholder={mode === 'add' ? 'billing@partner.com' : 'New email endpoint'}
                         color={color}
                     />
@@ -172,7 +179,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                         name="physicalAddress"
                         value={formData.physicalAddress}
                         onChange={onChange}
-                        required
                         placeholder={mode === 'add' ? 'Complete registered office address...' : 'Update facility location details...'}
                         color={color}
                     />
@@ -186,7 +192,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                         name="gstNo"
                         value={formData.gstNo}
                         onChange={onChange}
-                        required
                         pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
                         maxLength={15}
                         placeholder={mode === 'add' ? '15-digit GSTIN' : '15-character GST registration'}
@@ -246,43 +251,43 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 </FormSection>
 
                 {/* System Advisor */}
-                <div className={`p-6 ${color === 'indigo' ? 'bg-indigo-50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-800' : 'bg-violet-50 dark:bg-violet-900/10 border-violet-100 dark:border-violet-800'} border rounded-[2rem] flex items-start gap-4 animate-in fade-in ${mode === 'add' ? 'slide-in-from-left-4' : 'slide-in-from-right-4'} duration-700`}>
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
-                        <Zap className={`w-5 h-5 ${color === 'indigo' ? 'text-indigo-600' : 'text-violet-600'}`} />
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800 border rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
+                        <Zap className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div>
-                        <p className={`text-xs font-black ${color === 'indigo' ? 'text-indigo-800 dark:text-indigo-200' : 'text-violet-800 dark:text-violet-200'} uppercase tracking-wider`}>
+                        <p className="text-[10px] font-black text-emerald-800 dark:text-emerald-200 uppercase tracking-widest">
                             {advisoryConfig[mode].title}
                         </p>
-                        <p className={`text-[11px] ${color === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' : 'text-violet-600 dark:text-violet-400'} font-medium mt-1 leading-relaxed`}>
+                        <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5 leading-relaxed">
                             {advisoryConfig[mode].text}
                         </p>
                     </div>
                 </div>
 
                 {/* Form Controls */}
-                <div className="flex items-center justify-end gap-4 pt-4">
+                <div className="flex items-center justify-end gap-3 pt-2">
                     <button
                         type="button"
                         onClick={() => navigate('/suppliers')}
-                        className="px-8 py-4 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-all shadow-sm"
+                        className="px-6 py-3 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-bold uppercase tracking-widest border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-all"
                     >
-                        {mode === 'add' ? 'Abort Onboarding' : 'Discard Changes'}
+                        {mode === 'add' ? 'Cancel' : 'Discard'}
                     </button>
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className={`px-10 py-4 ${color === 'indigo' ? 'bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700' : 'bg-violet-600 shadow-violet-200 hover:bg-violet-700'} text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl dark:shadow-none transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3`}
+                        className="px-8 py-3 bg-emerald-600 shadow-emerald-200 hover:bg-emerald-700 dark:hover:bg-emerald-500 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg dark:shadow-none transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {isLoading ? (
                             <>
                                 <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                                {mode === 'add' ? 'Processing...' : 'Synchronizing...'}
+                                {mode === 'add' ? 'Onboarding...' : 'Syncing...'}
                             </>
                         ) : (
                             <>
                                 {mode === 'add' ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                                {mode === 'add' ? 'Finalize Partner Record' : 'Commit Profile Updates'}
+                                {mode === 'add' ? 'Complete Onboarding' : 'Save Changes'}
                             </>
                         )}
                     </button>

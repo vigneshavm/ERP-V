@@ -7,7 +7,7 @@ import api from '../../services/api';
 import Layout from '../../components/Layout';
 import PageHeader from '../../components/PageHeader';
 import { TimeEntryModal } from '../../components/TimeEntryModal';
-import { Users } from 'lucide-react';
+import { Users, Calendar, CreditCard, UserPlus } from 'lucide-react';
 import { getDaysInMonth, formatDateISO } from '../../utils/helpers';
 import { securePassword } from '../../utils/auth';
 import { AttendanceStatus, Sector, SystemRole } from '../../types/common';
@@ -83,13 +83,11 @@ export const LaborManager = () => {
             wageType: e.wageType,
             branchId: e.branchId,
             sector: currentSector, // Fallback or store in DB
-            active: e.isActive,
+            isActive: e.isActive,
             systemRole: 'STAFF',
             pin: '****'
           }));
-          // Update redux (need to import setEmployees action first if not already done, check imports)
-          // See imports in file: import { addEmployee, markAttendance, addLaborPayment } from '../../redux/slices/laborSlice';
-          // We need to add setEmployees to the import list or just dispatch individual adds?? Better setEmployees.
+          // Update redux
           // Assuming setEmployees is exported from slice, let's use it.
         }
       } catch (err) {
@@ -135,8 +133,6 @@ export const LaborManager = () => {
     const branchIdentifier = newEmp.branch || (currentBranch === 'All' ? 'Alpha' : currentBranch);
     dispatch(ensureBranchRecorded({ branchId: branchIdentifier }));
 
-    // let finalBranchId = null; // Backend can handle basic branch string for now or specific ID logic
-
     // API Payload
     const payload = {
       name: newEmp.name,
@@ -145,14 +141,13 @@ export const LaborManager = () => {
       mobile: newEmp.mobile,
       dailyRate: parseFloat(newEmp.dailyRate) || 0,
       wageType: wageType,
-      branchId: branchIdentifier // sending string identifier as branchId
+      branchId: branchIdentifier, // sending string identifier as branchId
+      sector: currentSector
     };
 
     try {
       const response = await api.post('/api/employees', payload);
       if (response.data && response.data.success) {
-        // Dispatch to redux using the returned data structured as expected by frontend
-        // Mapping might be needed if frontend expects specific structure
         const insertedUser = response.data.data;
 
         // Adapting backend object to frontend Employee interface
@@ -168,7 +163,7 @@ export const LaborManager = () => {
           branchId: insertedUser.branchId,
           sector: currentSector as Sector, // Assuming current context
           joinedDate: insertedUser.createdAt,
-          active: insertedUser.isActive,
+          isActive: insertedUser.isActive,
           systemRole: 'Staff' as SystemRole,
           pin: '****'
         };
@@ -221,92 +216,117 @@ export const LaborManager = () => {
 
   return (
     <Layout>
-      <PageHeader
-        title="Staff & Labor Management"
-        description="Monitor attendance, process payroll, and manage laborers across your branches."
-        breadcrumbs={[
-          { label: 'Home', link: '/dashboard' },
-          { label: 'Employees' }
-        ]}
-      />
-      <div className="flex flex-col lg:flex-row h-full lg:h-[calc(100vh-17rem)] gap-4 animate-in fade-in relative">
-        {editingDate && (
-          <TimeEntryModal
-            key={`${editingDate}-${selectedLaborerId}`}
-            isOpen={!!editingDate} date={editingDate} onClose={() => setEditingDate(null)} onSave={handleSaveAttendance}
-            initialData={attendance.find(a => a.employeeId === selectedLaborerId && a.date === editingDate)}
-          />
-        )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full flex flex-col">
+        <PageHeader
+          title="Staff & Labor Management"
+          description="Monitor attendance, process payroll, and manage laborers across your branches."
+          breadcrumbs={[
+            { label: 'Home', link: '/dashboard' },
+            { label: 'Employees' }
+          ]}
+        />
 
-        <div className="w-full lg:w-72 flex flex-col gap-3 shrink-0">
-          <LaborSidebar
-            employees={sectorEmps}
-            selectedLaborerId={selectedLaborerId}
-            onSelectLaborer={setSelectedLaborerId}
-            onToggleAddForm={() => setIsAddingLaborer(!isAddingLaborer)}
-            isAddingLaborer={isAddingLaborer}
-          />
-
-          {isAddingLaborer && (
-            <AddLaborerForm
-              newEmp={newEmp} setNewEmp={setNewEmp} wageType={wageType} setWageType={setWageType}
-              monthlyInput={monthlyInput} onMonthlyChange={handleMonthlyChange}
-              roles={roles} onSubmit={handleAddLaborer} onCancel={() => setIsAddingLaborer(false)}
+        <div className="flex flex-col lg:flex-row h-full lg:h-[calc(100vh-14rem)] gap-6 animate-in fade-in relative mt-6">
+          {editingDate && (
+            <TimeEntryModal
+              key={`${editingDate}-${selectedLaborerId}`}
+              isOpen={!!editingDate} date={editingDate} onClose={() => setEditingDate(null)} onSave={handleSaveAttendance}
+              initialData={attendance.find(a => a.employeeId === selectedLaborerId && a.date === editingDate)}
             />
           )}
-        </div>
 
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
-          {selectedLaborer ? (
-            <>
-              <LaborStats
-                selectedLaborer={selectedLaborer}
-                currentMonthName={currentMonthName}
-                onMonthChange={(delta) => setCurrentDate(new Date(currentYear, currentMonth + delta, 1))}
-                stats={stats}
+          <div className="w-full lg:w-80 flex flex-col gap-4 shrink-0">
+            <LaborSidebar
+              employees={sectorEmps}
+              selectedLaborerId={selectedLaborerId}
+              onSelectLaborer={setSelectedLaborerId}
+              onToggleAddForm={() => setIsAddingLaborer(!isAddingLaborer)}
+              isAddingLaborer={isAddingLaborer}
+            />
+
+            {isAddingLaborer && (
+              <AddLaborerForm
+                newEmp={newEmp} setNewEmp={setNewEmp} wageType={wageType} setWageType={setWageType}
+                monthlyInput={monthlyInput} onMonthlyChange={handleMonthlyChange}
+                roles={roles} onSubmit={handleAddLaborer} onCancel={() => setIsAddingLaborer(false)}
               />
+            )}
+          </div>
 
-              <div className="flex gap-2">
+          <div className="flex-1 min-w-0 flex flex-col gap-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6 overflow-hidden">
+            {selectedLaborer ? (
+              <div className="flex flex-col h-full gap-6">
+                <LaborStats
+                  selectedLaborer={selectedLaborer}
+                  currentMonthName={currentMonthName}
+                  onMonthChange={(delta) => setCurrentDate(new Date(currentYear, currentMonth + delta, 1))}
+                  stats={stats}
+                />
+
+                <div className="flex flex-col flex-1 min-h-0">
+                  <div className="flex border-b border-gray-200 mb-4">
+                    <button
+                      onClick={() => setActiveTab('ATTENDANCE')}
+                      className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }`}
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Attendance Calendar
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('PAYMENTS')}
+                      className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }`}
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      Payments & Payroll
+                    </button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto custom-scrollbar">
+                    {activeTab === 'ATTENDANCE' && (
+                      <AttendanceCalendar
+                        currentMonth={currentMonth} currentYear={currentYear} attendance={attendance}
+                        selectedLaborerId={selectedLaborerId} isSelectionMode={isSelectionMode}
+                        onToggleSelectionMode={() => { setIsSelectionMode(!isSelectionMode); setSelectedDates(new Set()); }}
+                        selectedDates={selectedDates} onDateClick={(day) => isSelectionMode ? setSelectedDates(prev => { const next = new Set(prev); if (next.has(formatDateISO(currentYear, currentMonth, day))) next.delete(formatDateISO(currentYear, currentMonth, day)); else next.add(formatDateISO(currentYear, currentMonth, day)); return next; }) : setEditingDate(formatDateISO(currentYear, currentMonth, day))}
+                        onBulkAction={handleBulkAction}
+                      />
+                    )}
+
+                    {activeTab === 'PAYMENTS' && (
+                      <PaymentHistory
+                        payments={payments} selectedLaborerId={selectedLaborerId!}
+                        paymentAmount={paymentAmount} setPaymentAmount={setPaymentAmount}
+                        paymentType={paymentType} setPaymentType={setPaymentType}
+                        paymentNote={paymentNote} setPaymentNote={setPaymentNote}
+                        onAddPayment={handleAddPayment}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <Users className="text-gray-300" size={32} />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900">No Staff Selected</h3>
+                <p className="text-sm mt-1 max-w-sm text-center">Select an employee from the sidebar to view their attendance records, manage payments, and track performance.</p>
                 <button
-                  onClick={() => setActiveTab('ATTENDANCE')}
-                  className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'ATTENDANCE' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+                  onClick={() => setIsAddingLaborer(true)}
+                  className="mt-6 flex items-center gap-2 text-indigo-600 font-medium hover:text-indigo-700"
                 >
-                  Attendance Calendar
-                </button>
-                <button
-                  onClick={() => setActiveTab('PAYMENTS')}
-                  className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'PAYMENTS' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
-                >
-                  Payments & Payroll
+                  <UserPlus size={18} />
+                  Add New Staff Member
                 </button>
               </div>
-
-              {activeTab === 'ATTENDANCE' && (
-                <AttendanceCalendar
-                  currentMonth={currentMonth} currentYear={currentYear} attendance={attendance}
-                  selectedLaborerId={selectedLaborerId} isSelectionMode={isSelectionMode}
-                  onToggleSelectionMode={() => { setIsSelectionMode(!isSelectionMode); setSelectedDates(new Set()); }}
-                  selectedDates={selectedDates} onDateClick={(day) => isSelectionMode ? setSelectedDates(prev => { const next = new Set(prev); if (next.has(formatDateISO(currentYear, currentMonth, day))) next.delete(formatDateISO(currentYear, currentMonth, day)); else next.add(formatDateISO(currentYear, currentMonth, day)); return next; }) : setEditingDate(formatDateISO(currentYear, currentMonth, day))}
-                  onBulkAction={handleBulkAction}
-                />
-              )}
-
-              {activeTab === 'PAYMENTS' && (
-                <PaymentHistory
-                  payments={payments} selectedLaborerId={selectedLaborerId!}
-                  paymentAmount={paymentAmount} setPaymentAmount={setPaymentAmount}
-                  paymentType={paymentType} setPaymentType={setPaymentType}
-                  paymentNote={paymentNote} setPaymentNote={setPaymentNote}
-                  onAddPayment={handleAddPayment}
-                />
-              )}
-            </>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-              <Users size={40} className="mb-3 text-slate-200 dark:text-slate-700" />
-              <p className="text-sm">Select a staff member to manage details</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </Layout>

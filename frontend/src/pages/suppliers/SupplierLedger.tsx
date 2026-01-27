@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../redux/store';
+import { getAllSuppliers } from '../../redux/slices/supplierSlice';
+import { fetchPurchaseOrders, fetchPurchasePayments } from '../../redux/slices/purchaseSlice';
 import {
     Search,
     Book,
@@ -42,73 +44,107 @@ interface SupplierLedgerData {
 }
 
 const SupplierLedger: React.FC = () => {
-    const { orders } = useSelector((state: RootState) => (state as any).purchase || { orders: [] });
-    const { vendors } = useSelector((state: RootState) => (state as any).vendor || { vendors: [] });
-    const { currentSector } = useSelector((state: RootState) => (state as any).auth || {});
+    const dispatch = useDispatch<AppDispatch>();
+    const { suppliers } = useSelector((state: RootState) => state.suppliers);
+    const { orders, payments } = useSelector((state: RootState) => state.purchase);
+    // const { currentSector } = useSelector((state: RootState) => (state as any).auth || {}); // Optional: Filter by sector if needed
 
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [expandedVendors, setExpandedVendors] = useState<Set<string>>(new Set());
 
+    useEffect(() => {
+        dispatch(getAllSuppliers());
+        dispatch(fetchPurchaseOrders());
+        dispatch(fetchPurchasePayments());
+    }, [dispatch]);
+
     // Build ledger for each vendor
     const vendorLedgers: SupplierLedgerData[] = useMemo(() => {
-        return (vendors || []).map(vendor => {
+        return suppliers.map(supplier => {
             const entries: LedgerEntry[] = [];
-            let runningBalance = 0;
+            let runningBalance = supplier.openingBalance || 0;
             let totalDebit = 0;
             let totalCredit = 0;
 
-            // Get purchases for this vendor
-            const vendorOrders = (orders || [])
-                .filter(o => o.vendorId === (vendor as any).id && o.sector === currentSector && o.status === 'APPROVED')
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            // 1. Get Purchase Orders (Credit - Payable)
+            // Filter by supplier and status (assuming 'Approved', 'Converted', 'Received' or similar are valid for ledger)
+            // Adjust status check as per your workflow
+            const supplierOrders = orders.filter(o =>
+                (o.vendor_id === supplier._id) &&
+                ['Approved', 'Converted', 'Received'].includes(o.status)
+            );
 
-            vendorOrders.forEach((order, idx) => {
-                // Purchase entry (credit - we owe them)
-                runningBalance += order.total;
-                totalCredit += order.total;
+            supplierOrders.forEach(order => {
                 entries.push({
-                    id: `purchase-${order.id}`,
-                    date: order.date,
+                    id: `po-${order.id}`,
+                    date: order.po_date || order.created_at,
                     type: 'PURCHASE',
-                    reference: `PO-${order.id.substring(0, 8)}`,
-                    description: `Purchase Order - ${order.items.length} items`,
+                    reference: order.po_number,
+                    description: `Purchase Order`,
                     debit: 0,
-                    credit: order.total,
-                    balance: runningBalance
+                    credit: order.total_amount,
+                    balance: 0 // Calculated later
                 });
+            });
 
-                // Payment entry (debit - we paid them) - simulate some payments
-                if (idx % 2 === 0) {
-                    const paymentAmount = order.total;
-                    runningBalance -= paymentAmount;
-                    totalDebit += paymentAmount;
-                    entries.push({
-                        id: `pay-${order.id}`,
-                        date: order.date,
-                        type: 'PAYMENT',
-                        reference: `PAY-${order.id.substring(0, 6)}`,
-                        description: `Payment made`,
-                        debit: paymentAmount,
-                        credit: 0,
-                        balance: runningBalance
-                    });
+            // 2. Get Payments (Debit - Paid)
+            const supplierPayments = payments.filter(p => p.supplierId === supplier._id);
+
+            supplierPayments.forEach(payment => {
+                entries.push({
+                    id: `pay-${payment._id}`,
+                    date: payment.paymentDate,
+                    type: 'PAYMENT',
+                    reference: payment.paymentNo,
+                    description: `Payment (${payment.paymentMethod}) ${payment.notes ? '- ' + payment.notes : ''}`,
+                    debit: payment.amount,
+                    credit: 0,
+                    balance: 0 // Calculated later
+                });
+            });
+
+            // 3. Sort entries safely handling missing dates
+            entries.sort((a, b) => {
+                const dateA = new Date(a.date).getTime();
+                const dateB = new Date(b.date).getTime();
+                if (isNaN(dateA)) return -1;
+                if (isNaN(dateB)) return 1;
+                return dateA - dateB;
+            });
+
+            // 4. Calculate Running Balance
+            entries.forEach(entry => {
+                if (entry.type === 'PURCHASE' || entry.type === 'DEBIT_NOTE') { // Debit Note logic might be different depending on accounting perspective, usually reduces payable? 
+                    // Verify DEBIT_NOTE logic if added later. For now PURCHASE increases payable (credit in supplier ledger term? Actually AP is Liability (Credit).
+                    // Increasing AP (Liability) -> Credit. 
+                    // Decreasing AP (Payment) -> Debit.
+                    // runningBalance is "Amount Payable".
+
+                    if (entry.type === 'PURCHASE') {
+                        runningBalance += entry.credit;
+                        totalCredit += entry.credit;
+                    }
+                } else if (entry.type === 'PAYMENT' || entry.type === 'RETURN') {
+                    runningBalance -= entry.debit;
+                    totalDebit += entry.debit;
                 }
+                entry.balance = runningBalance;
             });
 
             return {
-                vendorId: vendor.id,
-                vendorName: vendor.name,
-                phone: (vendor as any).phone,
-                openingBalance: 0,
+                vendorId: supplier._id,
+                vendorName: supplier.businessName,
+                phone: supplier.contactNo,
+                openingBalance: supplier.openingBalance || 0,
                 closingBalance: runningBalance,
                 totalDebit,
                 totalCredit,
                 entries
             };
         });
-    }, [vendors, orders, currentSector]);
+    }, [suppliers, orders, payments]);
 
     // Filter vendors
     const filteredLedgers = useMemo(() => {

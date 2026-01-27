@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calculator, CalendarDays, Wallet, AlertCircle } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { formatCurrency } from '../../utils/helpers';
 import { Employee } from '../../types/hr';
@@ -23,51 +23,91 @@ interface LaborStatsProps {
 
 const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthName, onMonthChange, stats }) => {
     return (
-        <Card className="p-4 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/50 flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div className="grid grid-cols-1 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-4">
                 <div>
-                    <h1 className="text-xl font-bold text-slate-800 dark:text-white">{selectedLaborer.name}</h1>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Daily Wage: {formatCurrency(selectedLaborer.dailyRate)}</span>
+                    <h1 className="text-2xl font-bold text-gray-900">{selectedLaborer.name}</h1>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded uppercase tracking-wide">
+                            {selectedLaborer.role}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                            Daily Wage: <span className="font-medium text-gray-700">{formatCurrency(selectedLaborer.dailyRate)}</span>
+                        </span>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-md border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
-                    <button onClick={() => onMonthChange(-1)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400"><ChevronLeft size={16} /></button>
-                    <span className="min-w-[120px] text-center text-sm font-bold text-slate-700 dark:text-slate-200 select-none">{currentMonthName}</span>
-                    <button onClick={() => onMonthChange(1)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400"><ChevronRight size={16} /></button>
+                <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border border-gray-200">
+                    <button onClick={() => onMonthChange(-1)} className="p-1.5 hover:bg-white hover:text-indigo-600 hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronLeft size={18} /></button>
+                    <span className="min-w-[140px] text-center text-sm font-semibold text-gray-800 select-none">{currentMonthName}</span>
+                    <button onClick={() => onMonthChange(1)} className="p-1.5 hover:bg-white hover:text-indigo-600 hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronRight size={18} /></button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
-                <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/50 flex flex-col justify-center min-h-[60px]">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-[9px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider leading-none mb-0.5">Work Stats</p>
-                            <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{stats.days} Days</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {/* Work Stats Card */}
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-100 hover:shadow-sm transition-all group">
+                    <div className="flex justify-between items-start mb-2">
+                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:scale-110 transition-transform">
+                            <CalendarDays size={18} />
                         </div>
+                        <span className="text-2xl font-bold text-gray-900">{stats.days}</span>
                     </div>
-                    <div className="grid grid-cols-4 gap-0.5 mt-1.5 w-full">
-                        <span title="Full" className="text-center py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded text-[7px] font-bold leading-none">F:{stats.full}</span>
-                        <span title="Half" className="text-center py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded text-[7px] font-bold leading-none">H:{stats.half}</span>
-                        <span title="Qtr" className="text-center py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded text-[7px] font-bold leading-none">Q:{stats.quarter}</span>
-                        <span title="Abs" className="text-center py-0.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 rounded text-[7px] font-bold leading-none">A:{stats.absent}</span>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Work Days</p>
+                    <div className="flex gap-1">
+                        {stats.full > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded font-bold">F:{stats.full}</span>}
+                        {stats.half > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-bold">H:{stats.half}</span>}
+                        {stats.absent > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-rose-100 text-rose-700 rounded font-bold">A:{stats.absent}</span>}
                     </div>
                 </div>
-                <div className="p-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/50 flex flex-col justify-center min-h-[60px]">
-                    <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider leading-none mb-0.5">Month Earnings</p>
-                    <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{formatCurrency(stats.earned)}</p>
+
+                {/* Month Earnings */}
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-100 hover:shadow-sm transition-all group">
+                    <div className="flex justify-between items-start mb-2">
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg group-hover:scale-110 transition-transform">
+                            <Calculator size={18} />
+                        </div>
+                        <span className="text-2xl font-bold text-gray-900">{formatCurrency(stats.earned)}</span>
+                    </div>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Month Earnings</p>
+                    <p className="text-[10px] text-gray-400 mt-1">Based on attendance</p>
                 </div>
-                <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-900/50 flex flex-col justify-center min-h-[60px]">
-                    <p className="text-[9px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider leading-none mb-0.5">Total Paid (All Time)</p>
-                    <p className="text-base font-bold text-slate-800 dark:text-slate-100 leading-none">{formatCurrency(stats.totalPaid)}</p>
+
+                {/* Total Paid */}
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-amber-100 hover:shadow-sm transition-all group">
+                    <div className="flex justify-between items-start mb-2">
+                        <div className="p-2 bg-amber-50 text-amber-600 rounded-lg group-hover:scale-110 transition-transform">
+                            <Wallet size={18} />
+                        </div>
+                        <span className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalPaid)}</span>
+                    </div>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Paid</p>
+                    <p className="text-[10px] text-gray-400 mt-1">Lifecycle payments</p>
                 </div>
-                <div className={`p-1.5 rounded-lg border flex flex-col justify-center min-h-[60px] ${stats.balance < 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/50' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
-                    <p className={`text-[9px] font-bold uppercase tracking-wider leading-none mb-0.5 ${stats.balance < 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-400'}`}>Net Payable (Due)</p>
-                    <p className={`text-base font-bold leading-none ${stats.balance < 0 ? 'text-red-700 dark:text-red-300' : 'text-slate-800 dark:text-slate-100'}`}>
-                        {formatCurrency(stats.balance)}
+
+                {/* Net Payable */}
+                <div className={`p-4 rounded-xl border transition-all group relative overflow-hidden ${stats.balance < 0
+                        ? 'bg-rose-50/50 border-rose-100'
+                        : 'bg-indigo-50/50 border-indigo-100'
+                    }`}>
+                    <div className="flex justify-between items-start mb-2 relative z-10">
+                        <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-indigo-600'
+                            }`}>
+                            <AlertCircle size={18} />
+                        </div>
+                        <span className={`text-2xl font-bold ${stats.balance < 0 ? 'text-rose-700' : 'text-indigo-700'
+                            }`}>
+                            {formatCurrency(Math.abs(stats.balance))}
+                        </span>
+                    </div>
+                    <p className={`text-xs font-bold uppercase tracking-wide relative z-10 ${stats.balance < 0 ? 'text-rose-600' : 'text-indigo-600'
+                        }`}>
+                        {stats.balance < 0 ? 'Due Payment' : 'Credit Balance'}
                     </p>
+                    <p className="text-[10px] text-gray-500 mt-1 relative z-10">Net Payable</p>
                 </div>
             </div>
-        </Card>
+        </div>
     );
 };
 

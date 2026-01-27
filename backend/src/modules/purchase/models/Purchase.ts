@@ -10,6 +10,11 @@ export interface IPurchaseItem {
     taxAmount?: number;
     discountAmount?: number;
     amount: number;
+    margin?: number;
+    sellingPrice?: number;
+    color?: string;
+    size?: string;
+    categoryCode?: string;
 }
 
 export interface IPurchase extends Document {
@@ -42,7 +47,12 @@ const purchaseItemSchema = new Schema({
     taxPercent: { type: Number, default: 0 },
     taxAmount: { type: Number, default: 0 },
     discountAmount: { type: Number, default: 0 },
-    amount: { type: Number, required: true }
+    amount: { type: Number, required: true },
+    margin: { type: Number, default: 0 },
+    sellingPrice: { type: Number, default: 0 },
+    color: { type: String },
+    size: { type: String },
+    categoryCode: { type: String }
 }, { _id: false });
 
 const purchaseSchema = new Schema({

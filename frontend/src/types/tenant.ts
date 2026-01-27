@@ -638,6 +638,8 @@ export interface Tenant {
     googleBusinessConfig?: GoogleBusinessConfig;
     smsConfig?: SMSConfig;
     growthConfig?: TenantGrowthConfig;
+    subscriptionStartDate?: string;
+    subscriptionEndDate?: string;
 }
 
 // --- Growth Platform Configuration (Super Admin & Tenant Isolation) ---

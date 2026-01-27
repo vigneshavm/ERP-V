@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../redux/store';
+import { getSupplierGroups } from '../../redux/slices/supplierGroupSlice';
 import {
     Search,
     Truck,
@@ -19,43 +20,34 @@ import {
     CreditCard
 } from 'lucide-react';
 
-interface SupplierGroup {
-    id: string;
-    name: string;
-    description: string;
-    color: string;
-    paymentTerms: number;
-    creditLimit: number;
-    discountPercent: number;
-    memberCount: number;
-    icon: string;
-}
 
-const DEFAULT_GROUPS: SupplierGroup[] = [
-    { id: 'regular', name: 'Regular', description: 'Standard suppliers', color: '#3b82f6', paymentTerms: 30, creditLimit: 50000, discountPercent: 0, memberCount: 0, icon: 'truck' },
-    { id: 'strategic', name: 'Strategic', description: 'Key strategic partners', color: '#8b5cf6', paymentTerms: 45, creditLimit: 200000, discountPercent: 5, memberCount: 0, icon: 'crown' },
-    { id: 'local', name: 'Local', description: 'Local/nearby suppliers', color: '#10b981', paymentTerms: 15, creditLimit: 25000, discountPercent: 0, memberCount: 0, icon: 'building' },
-    { id: 'premium', name: 'Premium', description: 'High-quality premium suppliers', color: '#f59e0b', paymentTerms: 60, creditLimit: 500000, discountPercent: 10, memberCount: 0, icon: 'star' }
-];
 
 import Layout from '../../components/Layout';
 import PageHeader from '../../components/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
+import SupplierGroupModal from '../../components/suppliers/SupplierGroupModal';
 
 const SupplierGroups: React.FC = () => {
-    const { vendors } = useSelector((state: RootState) => (state as any).vendor || { vendors: [] });
+    const dispatch = useDispatch<AppDispatch>();
+    const { suppliers } = useSelector((state: RootState) => state.suppliers);
+    const { groups, isLoading } = useSelector((state: RootState) => state.supplierGroups);
 
-    const [groups, setGroups] = useState<SupplierGroup[]>(DEFAULT_GROUPS);
+    // const [groups, setGroups] = useState<SupplierGroup[]>(DEFAULT_GROUPS); // Replaced by Redux
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    useEffect(() => {
+        dispatch(getSupplierGroups());
+    }, [dispatch]);
 
     // Calculate member counts
     const groupsWithCounts = useMemo(() => {
         return groups.map(group => ({
             ...group,
-            memberCount: (vendors || []).filter(v => (v as any).groupId === group.id).length
+            memberCount: (suppliers || []).filter(s => (s as any).groupId === group._id).length // Assuming supplier has groupId
         }));
-    }, [groups, vendors]);
+    }, [groups, suppliers]);
 
     const filteredGroups = groupsWithCounts.filter(g =>
         g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,8 +63,8 @@ const SupplierGroups: React.FC = () => {
         }
     };
 
-    const totalSuppliers = (vendors || []).length;
-    const assignedSuppliers = groupsWithCounts.reduce((acc, g) => acc + g.memberCount, 0);
+    const totalSuppliers = (suppliers || []).length;
+    const assignedSuppliers = groupsWithCounts.reduce((acc, g) => acc + (g.memberCount || 0), 0);
 
     return (
         <Layout>
@@ -82,6 +74,7 @@ const SupplierGroups: React.FC = () => {
                 breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Groups' }]}
                 actions={
                     <button
+                        onClick={() => setIsCreateModalOpen(true)}
                         className="px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
                     >
                         <FolderPlus className="w-4 h-4" /> Create Group
@@ -135,11 +128,11 @@ const SupplierGroups: React.FC = () => {
                         </div>
                     ) : (
                         filteredGroups.map(group => (
-                            <div key={group.id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                            <div key={group._id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                                 {/* Group Header */}
                                 <div
                                     className="p-4 flex justify-between items-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
-                                    onClick={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
+                                    onClick={() => setExpandedGroup(expandedGroup === group._id ? null : group._id)}
                                 >
                                     <div className="flex items-center gap-4">
                                         <div
@@ -166,7 +159,7 @@ const SupplierGroups: React.FC = () => {
                                             <p className="text-xs text-neutral-500">Credit Limit</p>
                                             <p className="font-bold text-neutral-700 dark:text-neutral-300">₹{group.creditLimit.toLocaleString()}</p>
                                         </div>
-                                        {expandedGroup === group.id ? (
+                                        {expandedGroup === group._id ? (
                                             <ChevronUp className="w-5 h-5 text-neutral-400" />
                                         ) : (
                                             <ChevronDown className="w-5 h-5 text-neutral-400" />
@@ -175,7 +168,7 @@ const SupplierGroups: React.FC = () => {
                                 </div>
 
                                 {/* Expanded Details */}
-                                {expandedGroup === group.id && (
+                                {expandedGroup === group._id && (
                                     <div className="border-t border-neutral-100 dark:border-neutral-700 p-4 bg-neutral-50 dark:bg-neutral-900">
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                             <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
@@ -237,6 +230,11 @@ const SupplierGroups: React.FC = () => {
                     </ul>
                 </div>
             </div>
+
+            <SupplierGroupModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+            />
         </Layout>
     );
 };

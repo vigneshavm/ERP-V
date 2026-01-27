@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getAllBills } from '../../redux/slices/billSlice';
 import { getAllSuppliers, deleteSupplier, reset, Supplier } from '../../redux/slices/supplierSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import Layout from '../../components/Layout';
@@ -22,29 +23,60 @@ import {
 } from 'lucide-react';
 
 import SupplierSubNav from './SupplierSubNav';
+import * as XLSX from 'xlsx';
 
 const Suppliers: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
+  // Suppliers State
   const { suppliers, isLoading } = useSelector(
     (state: RootState) => state.suppliers
   );
+
+  // Bills State for Stats
+  const { bills } = useSelector((state: RootState) => state.bill);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(getAllSuppliers() as any);
+    dispatch(getAllSuppliers());
+    dispatch(getAllBills());
+
     return () => {
-      if (window.location.pathname === "/suppliers")
-        dispatch(reset() as any);
+      // Optional: Reset logic if needed, but often better to keep data in Redux
+      // if (window.location.pathname === "/suppliers") dispatch(reset());
     };
   }, [dispatch]);
 
   const handleDelete = async (id: string) => {
-    await dispatch(deleteSupplier(id) as any);
+    await dispatch(deleteSupplier(id));
     setDeleteConfirm(null);
-    dispatch(getAllSuppliers() as any);
+    dispatch(getAllSuppliers());
+  };
+
+  const handleExportCSV = () => {
+    const dataToExport = suppliers.map(s => ({
+      'Business Name': s.businessName,
+      'Contact Person': s.contactPersonName,
+      'Supplier ID': s.supplierId,
+      'Phone': s.contactNo,
+      'Email': s.email || 'N/A',
+      'Type': s.supplierType,
+      'Status': s.status,
+      'GST No': s.gstNo || 'N/A'
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    XLSX.utils.book_append_sheet(wb, ws, "Suppliers");
+    XLSX.writeFile(wb, `Suppliers_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const handleRefresh = () => {
+    dispatch(getAllSuppliers());
+    dispatch(getAllBills());
   };
 
   const filteredSuppliers = suppliers.filter(
@@ -55,10 +87,15 @@ const Suppliers: React.FC = () => {
       (supplier.email && supplier.email.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+  // Calculate Pending Dues
+  const pendingDues = bills
+    .filter(bill => bill.status === 'unpaid' || bill.status === 'partial')
+    .reduce((sum, bill) => sum + (bill.amount - (bill.paidAmount || 0)), 0);
+
   const stats = [
-    { label: 'Total Suppliers', value: suppliers.length, icon: Users, color: 'indigo', trend: '+12%' },
-    { label: 'Active Partners', value: suppliers.filter(s => s.status === 'active').length, icon: ShieldCheck, color: 'emerald', trend: '98%' },
-    { label: 'Pending Dues', value: '₹4.2L', icon: TrendingUp, color: 'amber', trend: 'High' }
+    { label: 'Total Suppliers', value: suppliers.length, icon: Users, color: 'indigo', trend: `+${suppliers.filter(s => new Date(s.createdAt!).getMonth() === new Date().getMonth()).length} this month` },
+    { label: 'Active Partners', value: suppliers.filter(s => s.status === 'active').length, icon: ShieldCheck, color: 'emerald', trend: `${Math.round((suppliers.filter(s => s.status === 'active').length / (suppliers.length || 1)) * 100)}%` },
+    { label: 'Pending Dues', value: `₹${(pendingDues / 100000).toFixed(2)}L`, icon: TrendingUp, color: 'amber', trend: 'High' }
   ];
 
   return (
@@ -69,7 +106,9 @@ const Suppliers: React.FC = () => {
         breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Directory' }]}
         actions={
           <>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-all">
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-all">
               <Download className="w-4 h-4" /> Export CSV
             </button>
             <button
@@ -124,7 +163,9 @@ const Suppliers: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-3 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+              <button
+                onClick={handleRefresh}
+                className="p-3 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
                 <RefreshCcw className="w-4 h-4" />
               </button>
               <button className="p-3 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">

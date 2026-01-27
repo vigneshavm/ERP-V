@@ -1,4 +1,4 @@
-import app from "./app.js";
+﻿import app from "./app.js";
 import http from "http";
 import mongoose from "mongoose";
 import connectDB from "./config/database.js";
@@ -112,3 +112,6 @@ process.on("uncaughtException", (err: Error) => {
     logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`, { error: err.message, stack: err.stack });
     process.exit(1);
 });
+
+// Trigger restart
+

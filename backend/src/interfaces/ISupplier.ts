@@ -1,6 +1,7 @@
 import { Document, Types } from "mongoose";
 
 export interface ISupplier extends Document {
+    tenantId: string | Types.ObjectId;
     supplierId: string;
     businessName: string;
     contactPersonName: string;
@@ -14,7 +15,7 @@ export interface ISupplier extends Document {
     creditPeriod: number;
     status: "active" | "inactive";
     itemsSupplied: (string | Types.ObjectId)[]; // references Item IDs
-    owner: string | Types.ObjectId; // references User ID
+    owner?: string | Types.ObjectId; // references User ID (optional, tracks creator)
 
     createdAt: Date;
     updatedAt: Date;

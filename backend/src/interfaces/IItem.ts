@@ -11,6 +11,10 @@ export interface IItem extends Document {
     inTransitStock: number;
     lowStockLimit: number;
     unit: string;
+    color?: string;
+    size?: string;
+    washingInstructions?: string;
+    categoryCode?: string;
     addedBy: string; // ObjectId of User - Keep for audit
     tenantId: Types.ObjectId | string; // ObjectId of Tenant - NEW: Scoping
 

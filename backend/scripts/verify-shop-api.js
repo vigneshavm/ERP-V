@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'http://127.0.0.1:5000/api';
 // Use the credentials we know works from previous steps
 const EMAIL = 'avmvignesh0207@gmail.com';
 const PASSWORD = 'Qw@1234567890';

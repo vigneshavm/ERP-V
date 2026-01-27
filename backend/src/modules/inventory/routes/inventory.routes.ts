@@ -1,32 +1,25 @@
 import { Router } from "express";
 import { container } from "tsyringe";
 import { InventoryController } from "../controllers/InventoryController.js";
+import { CategoryController } from "../controllers/CategoryController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
-
-// Note: Audit and RBAC middlewares will be ported in separate steps if needed. 
-// For now, we replicate function logic. Audit middleware might need porting or import from JS if valid.
-// But we want to avoid mixing JS imports.
-// Let's create dummy/placeholder or port strict needed middlewares for this module.
-// Route: requirePermission("delete:item"), auditDelete("Item", "DELETE_ITEM")
-// I should port 'rbacMiddleware.ts' and 'auditMiddleware.ts' or stub them to fix errors.
-// Since these are simple utilities, I will create them in this step briefly or simpler versions.
-
-// Let's assume we import the JS ones? No, user wants TS.
-// I will create simple TS versions of RBAC and Audit middlewares in src/middlewares now.
-
 import { requirePermission } from "../../../middlewares/rbacMiddleware.js";
-// import { auditDelete, auditUpdate } from "../middlewares/auditMiddleware"; 
-// I'll implementation minimal versions if they don't exist, but let's assume I create them next.
-
 import { importLimiter } from "../../../middlewares/rateLimiter.js";
 
 const router = Router();
 const inventoryController = container.resolve(InventoryController);
+const categoryController = new CategoryController();
 
+router.get("/categories", protect, categoryController.getAllCategories);
 router.post("/", protect, inventoryController.addItem);
 router.post("/import", protect, importLimiter, inventoryController.importItems);
 router.get("/", protect, inventoryController.getAllItems);
 router.get("/low-stock", protect, inventoryController.getLowStockItems);
+router.get("/aging-report", protect, inventoryController.getStockAgingReport);
+router.post("/aging-action", protect, inventoryController.performAgingAction);
+router.post("/batch-price-update", protect, inventoryController.batchPriceUpdate);
+router.get("/reprint-queue", protect, inventoryController.getReprintQueue);
+router.delete("/reprint-queue", protect, inventoryController.clearReprintQueue);
 router.get("/:id", protect, inventoryController.getSingleItem);
 router.put(
     "/:id",

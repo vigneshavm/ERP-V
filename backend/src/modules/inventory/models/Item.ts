@@ -44,6 +44,18 @@ const itemSchema = new Schema<IItem>(
             type: String,
             default: "pcs",
         },
+        color: {
+            type: String,
+        },
+        size: {
+            type: String,
+        },
+        washingInstructions: {
+            type: String,
+        },
+        categoryCode: {
+            type: String,
+        },
         addedBy: {
             type: String,
             ref: "User",

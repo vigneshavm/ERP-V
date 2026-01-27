@@ -51,17 +51,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { toggleTenantStatus } from '../../redux/slices/tenantSlice';
 import { Tenant } from '../../types/tenant';
-import { APP_CONFIG } from '../../../../src/config';
-import { useTenantForm } from '../../../../src/hooks/useTenantForm';
-import { BusinessTab } from '../../../../src/components/tenant-manager/BusinessTab';
-import { CompanyTab } from '../../../../src/components/tenant-manager/CompanyTab';
-import { TaxTab } from '../../../../src/components/tenant-manager/TaxTab';
-import { BankingTab } from '../../../../src/components/tenant-manager/BankingTab';
-import { SystemTab } from '../../../../src/components/tenant-manager/SystemTab';
-import { GeographyTab } from '../../../../src/components/tenant-manager/GeographyTab';
-import { UserTab } from '../../../../src/components/tenant-manager/UserTab';
-import { BrandingTab } from '../../../../src/components/tenant-manager/BrandingTab';
-import { IntegrationsTab } from '../../../../src/components/tenant-manager/IntegrationsTab';
+import { APP_CONFIG } from '../../config';
+import { useTenantForm } from '../../hooks/useTenantForm';
+import { BusinessTab } from '../../components/tenant-manager/BusinessTab';
+import { CompanyTab } from '../../components/tenant-manager/CompanyTab';
+import { TaxTab } from '../../components/tenant-manager/TaxTab';
+import { BankingTab } from '../../components/tenant-manager/BankingTab';
+import { SystemTab } from '../../components/tenant-manager/SystemTab';
+import { GeographyTab } from '../../components/tenant-manager/GeographyTab';
+import { UserTab } from '../../components/tenant-manager/UserTab';
+import { BrandingTab } from '../../components/tenant-manager/BrandingTab';
+import { IntegrationsTab } from '../../components/tenant-manager/IntegrationsTab';
 
 interface TenantManagementProps {
     onLoginAs?: (tenant: Tenant) => void;

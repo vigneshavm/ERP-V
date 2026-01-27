@@ -8,7 +8,8 @@ export interface IEmployee extends Document {
     mobile: string;
     dailyRate: number;
     wageType: 'DAILY' | 'MONTHLY';
-    branchId?: string; // Storing as string or ObjectId depending on system design, keeping simple string for now if not referencing a specific model strictly yet, or stringified ID.
+    branchId?: string;
+    sector?: string; // Scope by industry sector if needed
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -17,7 +18,7 @@ export interface IEmployee extends Document {
 const employeeSchema = new Schema<IEmployee>({
     tenantId: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Tenant',
         required: true
     },
     name: {
@@ -30,7 +31,7 @@ const employeeSchema = new Schema<IEmployee>({
         required: true
     },
     roleId: {
-        type: String, // Optional reference to a role definition
+        type: String,
         default: null
     },
     mobile: {
@@ -48,7 +49,11 @@ const employeeSchema = new Schema<IEmployee>({
         default: 'DAILY'
     },
     branchId: {
-        type: String, // Can be ObjectId if needed, but keeping flexible based on valid branch naming in frontend
+        type: String,
+        default: null
+    },
+    sector: {
+        type: String,
         default: null
     },
     isActive: {

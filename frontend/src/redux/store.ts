@@ -16,6 +16,7 @@ import financeReducer from './slices/financeSlice';
 import purchaseReducer from './slices/purchaseSlice';
 import tenantReducer from './slices/tenantSlice';
 import uiReducer from './slices/uiSlice';
+import supplierGroupReducer from './slices/supplierGroupSlice';
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     purchase: purchaseReducer,
     tenant: tenantReducer,
     ui: uiReducer,
+    supplierGroups: supplierGroupReducer,
   },
 });
 

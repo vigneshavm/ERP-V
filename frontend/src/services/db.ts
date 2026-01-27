@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
-import { Product } from '../../../src/types/product';
-import { Customer, Sale } from '../../../src/types/sales';
+import { Product } from '../types/product';
+import { Customer, Sale } from '../types/sales';
 
 export interface OfflineSale extends Sale {
     localId?: number;
