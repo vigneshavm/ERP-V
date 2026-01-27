@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, secondarySubtitle, description }) => {
     return (
-        <div className="min-h-screen flex bg-slate-50">
+        <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
             {/* LEFT SIDE - BRAND PANEL */}
             <div className="hidden lg:flex w-5/12 bg-slate-900 relative overflow-hidden flex-col justify-between p-12">
                 {/* Background Pattern */}
@@ -50,12 +50,12 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
             </div>
 
             {/* RIGHT SIDE - FORM PANEL */}
-            <div className="w-full lg:w-7/12 flex items-center justify-center p-6 lg:p-12 overflow-y-auto">
+            <div className="w-full lg:w-7/12 flex items-center justify-center p-6 lg:p-12 overflow-y-auto dark:bg-slate-900/50">
                 <div className="w-full max-w-md space-y-8">
-                    <div className="text-center lg:text-left">
-                        <h2 className="text-3xl font-bold tracking-tight text-slate-900">{subtitle}</h2>
+                    <div className="text-center lg:text-left transition-all">
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{subtitle}</h2>
                         {secondarySubtitle && (
-                            <p className="mt-2 text-sm text-slate-600">
+                            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                                 {secondarySubtitle}
                             </p>
                         )}

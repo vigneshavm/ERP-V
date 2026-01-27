@@ -10,6 +10,8 @@ import { usePurchaseItems } from '../../hooks/usePurchaseItems';
 import api from '../../services/api';
 import { printBarcodeLabels } from '../../utils/labelPrinter';
 import Layout from '../../components/Layout';
+import { toast } from 'react-toastify';
+import { Loader2 } from 'lucide-react';
 
 interface PurchaseItem {
     id: string; // temp id
@@ -125,7 +127,7 @@ const PurchaseEntry: React.FC = () => {
 
     // Expand Design Set
     const expandDesignSet = () => {
-        if (!designSet.name || !designSet.category) return alert('Name and Category are required');
+        if (!designSet.name || !designSet.category) return toast.error('Name and Category are required');
 
         const newExpandedItems: any[] = [];
         designSet.colors.filter(c => c.trim()).forEach(color => {
@@ -304,7 +306,7 @@ const PurchaseEntry: React.FC = () => {
 
             const { data } = await api.post('/purchases', payload);
 
-            alert(`Purchase ${status === 'DRAFT' ? 'Saved as Draft' : 'Completed Successfully'}! #${data.purchase_number}`);
+            toast.success(`Purchase ${status === 'DRAFT' ? 'Saved as Draft' : 'Completed Successfully'}! #${data.purchase_number}`);
             navigate('/tenant/purchase'); // Go back to list
         } catch (err: any) {
             console.error(err);
@@ -313,17 +315,12 @@ const PurchaseEntry: React.FC = () => {
                 const reason = err.response?.data?.message || 'Supplier Limit Reached';
                 const promiseDate = prompt(`⚠️ SUPPLIER CREDIT LOCKOUT\n\n${reason}\n\nMANAGER ACTION: Enter Payment Promise Date (YYYY-MM-DD) to bypass:`);
                 if (promiseDate) {
-                    // Recursive call with override
-                    // We must unset isProcessing here because the recursive call sets it again? 
-                    // Actually recursive call sets it true, but we are currently true.
-                    // We should await it.
-                    setIsProcessing(false); // Reset to allow re-entry or just let it handle. 
-                    // Better to reset flag before calling to avoid lock if implementation changes.
+                    setIsProcessing(false);
                     await handleSave(status, { paymentPromiseDate: promiseDate });
                     return;
                 }
             }
-            alert('Error saving purchase: ' + (err.response?.data?.message || err.message));
+            toast.error('Error saving purchase: ' + (err.response?.data?.message || err.message));
         } finally {
             setIsProcessing(false);
         }
@@ -335,11 +332,11 @@ const PurchaseEntry: React.FC = () => {
 
                 {/* Design Set Modal */}
                 {showDesignSetModal && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
                         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-scale-in" onClick={e => e.stopPropagation()}>
-                            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-purple-50 dark:bg-purple-900/20">
-                                <h2 className="text-lg font-bold text-purple-800 dark:text-purple-300">Add Design Set</h2>
-                                <button onClick={() => setShowDesignSetModal(false)} className="text-neutral-500 hover:text-neutral-700">&times;</button>
+                            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-purple-50 dark:bg-purple-900/30">
+                                <h2 className="text-lg font-bold text-purple-800 dark:text-purple-200">Add Design Set</h2>
+                                <button onClick={() => setShowDesignSetModal(false)} className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 text-xl">&times;</button>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
@@ -448,10 +445,10 @@ const PurchaseEntry: React.FC = () => {
                                 </div>
                             </div>
                             <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 flex justify-end gap-3">
-                                <button onClick={() => setShowDesignSetModal(false)} className="btn btn-secondary">Cancel</button>
+                                <button onClick={() => setShowDesignSetModal(false)} className="btn btn-secondary btn-interactive">Cancel</button>
                                 <button
                                     onClick={expandDesignSet}
-                                    className="btn btn-primary bg-purple-600 hover:bg-purple-700 text-white px-6"
+                                    className="btn btn-primary bg-purple-600 hover:bg-purple-700 text-white px-6 btn-interactive"
                                 >
                                     Generate Variants ({designSet.colors.filter(c => c.trim()).length * designSet.sizes.filter(s => s.trim()).length} rows)
                                 </button>
@@ -491,37 +488,46 @@ const PurchaseEntry: React.FC = () => {
                                             washingInstructions: i.washingInstructions || i.washing_instructions
                                         };
                                     });
-                                if (labelItems.length === 0) return alert('No items to print');
+                                if (labelItems.length === 0) return toast.info('No items to print');
                                 printBarcodeLabels(labelItems);
                             }}
-                            className="btn btn-secondary flex items-center gap-2"
+                            className="btn btn-secondary flex items-center gap-2 btn-interactive"
                         >
                             <Printer className="w-4 h-4" /> Print Labels
                         </button>
                         <button
                             onClick={() => handleSave('DRAFT')}
                             disabled={isProcessing}
-                            className="btn btn-secondary flex items-center gap-2"
+                            className="btn btn-secondary flex items-center gap-2 btn-interactive"
                         >
                             <FileText className="w-4 h-4" /> Save Draft
                         </button>
                         <button
                             onClick={() => handleSave('COMPLETED')}
                             disabled={isProcessing}
-                            className="btn btn-primary flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white"
+                            className="btn btn-primary flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white btn-interactive shadow-lg shadow-brand-500/20"
                         >
                             <Save className="w-4 h-4" /> Save Purchase
                         </button>
                     </div>
                 </div>
 
+                {isProcessing && (
+                    <div className="fixed inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[2px] z-[200] flex flex-col items-center justify-center animate-fade-in">
+                        <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-3">
+                            <Loader2 className="w-10 h-10 text-brand-600 animate-spin" />
+                            <p className="font-bold text-neutral-800 dark:text-neutral-200">Processing Purchase...</p>
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex-1 overflow-auto p-6">
                     <div className="max-w-6xl mx-auto space-y-6">
                         {/* Top Panel: Supplier & Meta */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 grid grid-cols-1 md:grid-cols-3 gap-6 border border-neutral-200 dark:border-neutral-700/50">
                             {/* Supplier Search */}
                             <div className="relative">
-                                <label className="text-xs font-bold text-secondary uppercase mb-1 block">Supplier</label>
+                                <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1.5 block tracking-wider">Supplier</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                     <input
@@ -559,7 +565,7 @@ const PurchaseEntry: React.FC = () => {
 
                             {/* Invoice No */}
                             <div>
-                                <label className="text-xs font-bold text-secondary uppercase mb-1 block">Supplier Invoice No</label>
+                                <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1.5 block tracking-wider">Supplier Invoice No</label>
                                 <input
                                     type="text"
                                     value={invoiceNo}
@@ -571,7 +577,7 @@ const PurchaseEntry: React.FC = () => {
 
                             {/* Date */}
                             <div>
-                                <label className="text-xs font-bold text-secondary uppercase mb-1 block">Purchase Date</label>
+                                <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1.5 block tracking-wider">Purchase Date</label>
                                 <input
                                     type="date"
                                     value={purchaseDate}
@@ -582,9 +588,9 @@ const PurchaseEntry: React.FC = () => {
                         </div>
 
                         {/* Items Grid */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm overflow-hidden">
+                        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm overflow-hidden border border-neutral-200 dark:border-neutral-700/50">
                             <table className="w-full text-sm">
-                                <thead className="bg-neutral-100 dark:bg-neutral-900 text-secondary">
+                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-700">
                                     <tr>
                                         <th className="px-4 py-3 text-left w-12">#</th>
                                         <th className="px-4 py-3 text-left">Item Details</th>
@@ -724,8 +730,8 @@ const PurchaseEntry: React.FC = () => {
                         {/* Footer / Calculations */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Notes */}
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6">
-                                <label className="text-xs font-bold text-neutral-500 uppercase mb-2 block">Notes / Remarks</label>
+                            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 border border-neutral-200 dark:border-neutral-700/50">
+                                <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-2.5 block tracking-wider">Notes / Remarks</label>
                                 <textarea
                                     rows={4}
                                     value={notes}
@@ -736,7 +742,7 @@ const PurchaseEntry: React.FC = () => {
                             </div>
 
                             {/* Totals */}
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 space-y-3">
+                            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 space-y-3 border border-neutral-200 dark:border-neutral-700/50">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-secondary">Subtotal</span>
                                     <span className="font-medium">₹{subtotal.toFixed(2)}</span>

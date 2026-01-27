@@ -358,16 +358,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-black text-white tracking-tight leading-none font-sans">
+                                    <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none font-sans">
                                         {user?.shopName || 'Oripio'} <span className="text-emerald-500">ERP</span>
                                     </h1>
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Enterprise</p>
+                                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest mt-0.5">Enterprise</p>
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="lg:hidden text-slate-400 hover:text-white transition-colors p-1"
+                                className="lg:hidden text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1"
                                 aria-label="Close navigation"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -390,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="hidden lg:flex justify-end p-4 shrink-0">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-all border border-slate-700 hover:border-emerald-500/50"
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all border border-slate-200 dark:border-slate-700 hover:border-emerald-500/50"
                         title={isCollapsed ? "Expand" : "Collapse"}
                     >
                         <svg className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -416,20 +416,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     <button
                                         onClick={() => toggleSubmenu(item.name)}
                                         className={`flex items-center w-full rounded-2xl transition-all duration-300 group ${isEffectivelyExpanded
-                                            ? 'justify-between px-4 py-3 hover:bg-slate-800'
-                                            : 'justify-center px-2 py-3 hover:bg-slate-800'
-                                            } ${expandedMenus[item.name] ? 'bg-slate-800/80' : ''}`}
+                                            ? 'justify-between px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                            : 'justify-center px-2 py-3 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                            } ${expandedMenus[item.name] ? 'bg-slate-100 dark:bg-slate-800/80' : ''}`}
                                         title={!isEffectivelyExpanded ? item.name : ''}
                                     >
                                         <div className={`flex items-center ${isEffectivelyExpanded ? 'gap-4' : 'justify-center'}`}>
-                                            <div className={`transition-all duration-300 ${expandedMenus[item.name] ? 'text-emerald-400 scale-110 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'text-slate-400 group-hover:text-emerald-400'}`}>
+                                            <div className={`transition-all duration-300 ${expandedMenus[item.name] ? 'text-emerald-500 dark:text-emerald-400 scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)] dark:drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'text-slate-500 dark:text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400'}`}>
                                                 {item.icon}
                                             </div>
-                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide transition-colors ${expandedMenus[item.name] ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}>{item.name}</span>}
+                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide transition-colors ${expandedMenus[item.name] ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white'}`}>{item.name}</span>}
                                         </div>
                                         {isEffectivelyExpanded && (
                                             <svg
-                                                className={`w-4 h-4 transition-transform duration-300 text-slate-600 ${expandedMenus[item.name] ? 'rotate-180 text-emerald-400' : 'group-hover:text-slate-400'}`}
+                                                className={`w-4 h-4 transition-transform duration-300 text-slate-400 ${expandedMenus[item.name] ? 'rotate-180 text-emerald-500 dark:text-emerald-400' : 'group-hover:text-slate-600 dark:group-hover:text-slate-300'}`}
                                                 fill="none"
                                                 stroke="currentColor"
                                                 viewBox="0 0 24 24"
@@ -441,20 +441,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                                     {/* Submenu Dropdown */}
                                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedMenus[item.name] && isEffectivelyExpanded ? 'max-h-[800px] opacity-100 mt-2 mb-2' : 'max-h-0 opacity-0'}`}>
-                                        <div className="bg-slate-900/50 rounded-2xl p-1 space-y-0.5 mx-2 border border-slate-800/50">
+                                        <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-1 space-y-0.5 mx-2 border border-slate-200 dark:border-slate-800/50">
                                             {item.submenu.map((subItem) => (
                                                 <NavLink
                                                     key={subItem.path}
                                                     to={subItem.path}
                                                     className={({ isActive }) =>
                                                         `block px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
-                                                            ? 'bg-emerald-500/10 text-emerald-400 shadow-sm'
-                                                            : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/50'
+                                                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                                                            : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                                                         }`
                                                     }
                                                 >
                                                     <div className="flex items-center gap-2">
-                                                        <div className={`w-1.5 h-1.5 rounded-full transition-colors ${location.pathname === subItem.path ? 'bg-emerald-400' : 'bg-slate-700'}`}></div>
+                                                        <div className={`w-1.5 h-1.5 rounded-full transition-colors ${location.pathname === subItem.path ? 'bg-emerald-400' : 'bg-slate-300 dark:bg-slate-700'}`}></div>
                                                         {subItem.name}
                                                     </div>
                                                 </NavLink>
@@ -470,18 +470,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                                         `flex items-center rounded-2xl transition-all duration-300 ease-out group ${isEffectivelyExpanded ? 'gap-4 px-4 py-3' : 'justify-center px-2 py-3'
                                         } ${isActive
                                             ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                                            : 'text-slate-400 hover:bg-slate-800'
+                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                                         }`
                                     }
                                     title={!isEffectivelyExpanded ? item.name : ''}
                                 >
                                     {({ isActive }) => (
                                         <>
-                                            <div className={`${isActive ? 'text-white scale-110' : 'group-hover:text-emerald-400 group-hover:scale-110'} transition-transform duration-300`}>
+                                            <div className={`${isActive ? 'text-white scale-110' : 'group-hover:text-emerald-500 dark:group-hover:text-emerald-400 group-hover:scale-110'} transition-transform duration-300`}>
                                                 {item.icon}
                                             </div>
 
-                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'} transition-colors`}>{item.name}</span>}
+                                            {isEffectivelyExpanded && <span className={`text-sm font-bold tracking-wide ${isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white'} transition-colors`}>{item.name}</span>}
                                         </>
                                     )}
                                 </NavLink>
@@ -491,11 +491,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                     {/* System Upgrade CTA - Only show when expanded */}
                     {isEffectivelyExpanded && (
-                        <div className="mt-6 mx-2 p-5 rounded-2xl bg-gradient-to-br from-emerald-900/50 to-slate-900 border border-emerald-500/20 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-emerald-500/20 transition-all"></div>
-                            <h4 className="text-white font-bold text-sm relative z-10">Upgrade System</h4>
-                            <p className="text-emerald-200/60 text-xs mt-1 relative z-10 mb-3">Unlock advanced AI features.</p>
-                            <button className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-lg shadow-emerald-900/20 relative z-10">
+                        <div className="mt-6 mx-2 p-5 rounded-2xl bg-gradient-to-br from-slate-100 to-white dark:from-emerald-900/50 dark:to-slate-900 border border-slate-200 dark:border-emerald-500/20 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20 transition-all"></div>
+                            <h4 className="text-slate-900 dark:text-white font-bold text-sm relative z-10">Upgrade System</h4>
+                            <p className="text-slate-500 dark:text-emerald-200/60 text-xs mt-1 relative z-10 mb-3">Unlock advanced AI features.</p>
+                            <button className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-lg shadow-emerald-500/20 dark:shadow-emerald-900/20 relative z-10">
                                 Upgrade Now
                             </button>
                         </div>
@@ -503,18 +503,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </nav>
 
                 {/* User Profile & Theme Toggle */}
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 shrink-0">
+                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shrink-0">
                     <div className="mb-4 flex justify-center">
                         <ThemeToggle />
                     </div>
                     {isEffectivelyExpanded ? (
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border-2 border-slate-300 dark:border-slate-600 shadow-sm">
-                                <span className="font-bold text-slate-700 dark:text-white text-sm">{user?.name?.charAt(0).toUpperCase()}</span>
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <span className="font-bold text-slate-900 dark:text-white text-sm">{user?.name?.charAt(0).toUpperCase()}</span>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.name}</p>
-                                <button onClick={onLogout} className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 flex items-center gap-1 transition-colors mt-0.5">
+                                <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{user?.name}</p>
+                                <button onClick={onLogout} className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-1 transition-colors mt-0.5">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                     Sign Out
                                 </button>
@@ -534,15 +534,25 @@ const Sidebar: React.FC<SidebarProps> = ({
           width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1e293b;
+          background: transparent;
           border-radius: 4px;
         }
+        .dark .custom-scrollbar::-webkit-scrollbar-track {
+          background: #1e293b;
+        }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #475569;
+          background: #cbd5e1;
           border-radius: 4px;
+          border: 2px solid transparent;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #475569;
           border: 2px solid #1e293b;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #64748b;
         }
       `}</style>

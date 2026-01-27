@@ -74,7 +74,7 @@ const Login: React.FC = () => {
             <form className="mt-8 space-y-6" onSubmit={onSubmit}>
                 <div className="space-y-5">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                        <label htmlFor="email" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                             Email Address
                         </label>
                         <div className="mt-1">
@@ -86,14 +86,14 @@ const Login: React.FC = () => {
                                 required
                                 value={email}
                                 onChange={onChange}
-                                className="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border"
+                                className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
                                 placeholder="you@company.com"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
+                        <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                             Password
                         </label>
                         <div className="mt-1">
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
                                 showPassword={showPassword}
                                 onToggleVisibility={() => setShowPassword(!showPassword)}
                                 placeholder="Enter your password"
-                                className="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border"
+                                className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
                             />
                         </div>
                     </div>
@@ -118,15 +118,15 @@ const Login: React.FC = () => {
                             id="remember-me"
                             name="remember-me"
                             type="checkbox"
-                            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800"
                         />
-                        <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900">
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900 dark:text-slate-300">
                             Remember me
                         </label>
                     </div>
 
                     <div className="text-sm">
-                        <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <Link to="/forgot-password" university-anchor="forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
                             Forgot your password?
                         </Link>
                     </div>
@@ -154,9 +154,9 @@ const Login: React.FC = () => {
             </form>
 
             <div className="mt-6 text-center text-sm">
-                <p className="text-slate-600">
+                <p className="text-slate-600 dark:text-slate-400 transition-colors">
                     Don't have an account?{' '}
-                    <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
                         Start your 14-day free trial
                     </Link>
                 </p>
