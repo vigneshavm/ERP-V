@@ -59,7 +59,7 @@ export const useExpenseCategories = () => {
         }
     }, [user]);
 
-    const upsertCategory = async (category: ExpenseCategory) => {
+    const upsertCategory = async (category: Partial<ExpenseCategory>) => {
         try {
             const token = localStorage.getItem('token');
             if (category.id) {
