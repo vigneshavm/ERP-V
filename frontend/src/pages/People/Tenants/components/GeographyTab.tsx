@@ -12,6 +12,10 @@ export const GeographyTab: React.FC<{
     tempCity, setTempCity, addCity, removeCity,
     tempBranch, setTempBranch, addBranch, removeBranch
 }) => {
+        // Defensive fallbacks
+        const initialBranch = newTenant.initialBranch ?? { code: 'HO', name: 'Head Office', address: '', warehouse: '' };
+        const locations = newTenant.locations ?? [];
+
         return (
             <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
                 <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
@@ -24,7 +28,7 @@ export const GeographyTab: React.FC<{
                             <label className="block text-xs font-medium text-slate-700 mb-1">Branch Code</label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                value={newTenant.initialBranch.code}
+                                value={initialBranch.code}
                                 onChange={e => setNewTenant({ ...newTenant, initialBranch: { ...newTenant.initialBranch, code: e.target.value } })}
                                 placeholder="HO"
                             />
@@ -33,7 +37,7 @@ export const GeographyTab: React.FC<{
                             <label className="block text-xs font-medium text-slate-700 mb-1">Branch Name</label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                value={newTenant.initialBranch.name}
+                                value={initialBranch.name}
                                 onChange={e => setNewTenant({ ...newTenant, initialBranch: { ...newTenant.initialBranch, name: e.target.value } })}
                                 placeholder="Head Office"
                             />
@@ -42,7 +46,7 @@ export const GeographyTab: React.FC<{
                             <label className="block text-xs font-medium text-slate-700 mb-1">Address</label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                value={newTenant.initialBranch.address}
+                                value={initialBranch.address}
                                 onChange={e => setNewTenant({ ...newTenant, initialBranch: { ...newTenant.initialBranch, address: e.target.value } })}
                                 placeholder="Primary Location Address"
                             />
@@ -51,7 +55,7 @@ export const GeographyTab: React.FC<{
                             <label className="block text-xs font-medium text-slate-700 mb-1">Default Warehouse</label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                value={newTenant.initialBranch.warehouse}
+                                value={initialBranch.warehouse}
                                 onChange={e => setNewTenant({ ...newTenant, initialBranch: { ...newTenant.initialBranch, warehouse: e.target.value } })}
                                 placeholder="Main Warehouse"
                             />
@@ -79,7 +83,7 @@ export const GeographyTab: React.FC<{
                     </div>
 
                     <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-                        {newTenant.locations.length === 0 && (
+                        {locations.length === 0 && (
                             <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-lg">
                                 <Globe className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                                 <p className="text-xs text-slate-400">Head Office location will be created automatically.</p>
@@ -87,7 +91,7 @@ export const GeographyTab: React.FC<{
                             </div>
                         )}
 
-                        {newTenant.locations.map((loc: any, cityIdx: number) => (
+                        {locations.map((loc: any, cityIdx: number) => (
                             <div key={cityIdx} className="border border-slate-200 rounded-lg overflow-hidden bg-white">
                                 <div className="bg-slate-50 px-3 py-2 flex justify-between items-center border-b border-slate-100">
                                     <span className="font-bold text-slate-700 text-sm">{loc.city}</span>

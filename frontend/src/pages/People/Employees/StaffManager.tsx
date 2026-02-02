@@ -47,7 +47,7 @@ const StaffManager: React.FC = () => {
                 // Demo logic could go here if needed, but existing code seems to expect 
                 // data to be populated via getTable elsewhere or is incomplete for demo
             } else {
-                const response = await api.get('/users');
+                const response = await api.get('/api/users');
                 const data = response.data;
 
                 // For now, roles might still need an endpoint
@@ -106,7 +106,7 @@ const StaffManager: React.FC = () => {
                 };
 
                 if (editingEmpId) {
-                    const response = await api.put(`/users/${editingEmpId}`, empData);
+                    const response = await api.put(`/api/users/${editingEmpId}`, empData);
                     const data = response.data?.user || response.data;
 
                     if (data) {
@@ -158,7 +158,7 @@ const StaffManager: React.FC = () => {
 
         try {
             if (DATA_MODE !== 'DEMO') {
-                await api.delete(`/users/${id}`);
+                await api.delete(`/api/users/${id}`);
                 setTenantEmployees(prev => prev.filter(e => e.id !== id && e._id !== id));
             }
         } catch (err: any) {

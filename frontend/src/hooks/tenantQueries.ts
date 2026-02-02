@@ -42,7 +42,7 @@ export const fetchBranchesRaw = async (tenantId: string | null) => {
     }
     try {
         // Assuming backend has /api/branches endpoint
-        const { data } = await api.get('/branches');
+        const { data } = await api.get('/api/branches');
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }
@@ -60,7 +60,7 @@ export const fetchEmployeesRaw = async (tenantId: string | null) => {
     }
     try {
         // Assuming backend has /api/users endpoint
-        const { data } = await api.get('/users');
+        const { data } = await api.get('/api/users');
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }

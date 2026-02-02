@@ -88,3 +88,27 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         next(new AppError("Not authorized, token failed", 401));
     }
 };
+
+/**
+ * Middleware for role-based authorization
+ * Must be used after protect middleware
+ * @param roles - Array of allowed roles (e.g., ['admin', 'super_admin'])
+ */
+export const authorize = (...roles: string[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const user = (req as any).user;
+
+        if (!user) {
+            return next(new AppError("Not authorized, user not found", 401));
+        }
+
+        // Check if user's role is in the allowed roles
+        const userRole = user.systemRole?.toLowerCase() || user.role?.toLowerCase() || '';
+
+        if (!roles.includes(userRole)) {
+            return next(new AppError(`Role '${userRole}' is not authorized to access this resource`, 403));
+        }
+
+        next();
+    };
+};

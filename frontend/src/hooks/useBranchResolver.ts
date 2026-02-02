@@ -30,7 +30,7 @@ export const useBranchResolver = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await api.get('/branches', {
+            const response = await api.get('/api/branches', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const branchList: Branch[] = response.data?.branches || response.data || [];

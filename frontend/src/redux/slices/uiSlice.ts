@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppView } from '../../types/common';
 
 interface UiState {
-    activeTab: string;
+    activeTab: AppView;
     sidebarOpen: boolean;
     desktopCollapsed: boolean;
     isSyncing: boolean;
@@ -18,7 +19,7 @@ const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
-        setActiveTab: (state, action: PayloadAction<string>) => {
+        setActiveTab: (state, action: PayloadAction<AppView>) => {
             state.activeTab = action.payload;
         },
         setSidebarOpen: (state, action: PayloadAction<boolean>) => {

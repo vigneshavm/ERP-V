@@ -5,6 +5,12 @@ import { ModuleType } from "../../../../types/common";
 const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'REPORTS', 'GROW'];
 
 export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModuleToggle: (mod: ModuleType) => void }> = ({ newTenant, setNewTenant, handleModuleToggle }) => {
+    // Defensive fallback for systemConfig
+    const systemConfig = newTenant.systemConfig ?? {
+        isPosEnabled: true, isInventoryEnabled: true, isLoyaltyEnabled: false,
+        isMultiBranch: false, isEcommerceEnabled: false, pricingMode: 'EXCLUSIVE'
+    };
+
     return (
         <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
@@ -21,35 +27,35 @@ export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModu
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-sm text-slate-700">POS (Point of Sale)</span>
                                 <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={newTenant.systemConfig.isPosEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isPosEnabled: e.target.checked } })} />
+                                    <input type="checkbox" className="sr-only peer" checked={systemConfig.isPosEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isPosEnabled: e.target.checked } })} />
                                     <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </label>
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-sm text-slate-700">Inventory Management</span>
                                 <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={newTenant.systemConfig.isInventoryEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isInventoryEnabled: e.target.checked } })} />
+                                    <input type="checkbox" className="sr-only peer" checked={systemConfig.isInventoryEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isInventoryEnabled: e.target.checked } })} />
                                     <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </label>
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-sm text-slate-700">Loyalty Program</span>
                                 <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={newTenant.systemConfig.isLoyaltyEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isLoyaltyEnabled: e.target.checked } })} />
+                                    <input type="checkbox" className="sr-only peer" checked={systemConfig.isLoyaltyEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isLoyaltyEnabled: e.target.checked } })} />
                                     <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </label>
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-sm text-slate-700">Multi-Branch Support</span>
                                 <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={newTenant.systemConfig.isMultiBranch} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isMultiBranch: e.target.checked } })} />
+                                    <input type="checkbox" className="sr-only peer" checked={systemConfig.isMultiBranch} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isMultiBranch: e.target.checked } })} />
                                     <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </label>
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-sm text-slate-700">E-Commerce Integration</span>
                                 <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={newTenant.systemConfig.isEcommerceEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isEcommerceEnabled: e.target.checked } })} />
+                                    <input type="checkbox" className="sr-only peer" checked={systemConfig.isEcommerceEnabled} onChange={e => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, isEcommerceEnabled: e.target.checked } })} />
                                     <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </label>
@@ -64,7 +70,7 @@ export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModu
                                     type="radio"
                                     name="pricingMode"
                                     id="exclusive"
-                                    checked={newTenant.systemConfig.pricingMode === 'EXCLUSIVE'}
+                                    checked={systemConfig.pricingMode === 'EXCLUSIVE'}
                                     onChange={() => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, pricingMode: 'EXCLUSIVE' } })}
                                     className="w-4 h-4 text-blue-600"
                                 />
@@ -78,7 +84,7 @@ export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModu
                                     type="radio"
                                     name="pricingMode"
                                     id="inclusive"
-                                    checked={newTenant.systemConfig.pricingMode === 'INCLUSIVE'}
+                                    checked={systemConfig.pricingMode === 'INCLUSIVE'}
                                     onChange={() => setNewTenant({ ...newTenant, systemConfig: { ...newTenant.systemConfig, pricingMode: 'INCLUSIVE' } })}
                                     className="w-4 h-4 text-blue-600"
                                 />

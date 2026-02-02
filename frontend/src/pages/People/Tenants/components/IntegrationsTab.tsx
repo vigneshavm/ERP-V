@@ -2,6 +2,11 @@ import React from 'react';
 import { Globe } from 'lucide-react';
 
 export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
+    // Defensive fallback for integrations
+    const integrations = newTenant.integrations ?? {
+        paymentGatewayKey: '', smsProviderKey: '', emailProviderKey: '', webhookUrl: ''
+    };
+
     return (
         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
@@ -19,7 +24,7 @@ export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = 
                         <input
                             type="password"
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.integrations.paymentGatewayKey}
+                            value={integrations.paymentGatewayKey}
                             onChange={e => setNewTenant({ ...newTenant, integrations: { ...newTenant.integrations, paymentGatewayKey: e.target.value } })}
                             placeholder="Enter API Key"
                         />
@@ -29,7 +34,7 @@ export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = 
                         <input
                             type="password"
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.integrations.smsProviderKey}
+                            value={integrations.smsProviderKey}
                             onChange={e => setNewTenant({ ...newTenant, integrations: { ...newTenant.integrations, smsProviderKey: e.target.value } })}
                             placeholder="Enter Provider Key"
                         />
@@ -39,7 +44,7 @@ export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = 
                         <input
                             type="password"
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.integrations.emailProviderKey}
+                            value={integrations.emailProviderKey}
                             onChange={e => setNewTenant({ ...newTenant, integrations: { ...newTenant.integrations, emailProviderKey: e.target.value } })}
                             placeholder="Enter Provider Key"
                         />
@@ -48,7 +53,7 @@ export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = 
                         <label className="block text-xs font-medium text-slate-700 mb-1">Webhook URL</label>
                         <input
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.integrations.webhookUrl}
+                            value={integrations.webhookUrl}
                             onChange={e => setNewTenant({ ...newTenant, integrations: { ...newTenant.integrations, webhookUrl: e.target.value } })}
                             placeholder="https://api.external.com/webhook"
                         />

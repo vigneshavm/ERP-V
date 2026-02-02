@@ -44,7 +44,7 @@ export const Modules = {
     Data: () => import("../pages/System/Data/index"),
     GrowReports: () => import("../pages/Analytics/Reports/index"),
     Architecture: () => import("../pages/System/Architecture/ArchitectureIntelligence"),
-    Login: () => import("../pages/Auth/Login"),
+    Login: () => import("../pages/auth/Login"),
     SMSMarketing: () => import("../pages/Analytics/Marketing/SMSMarketing"),
     WhatsAppEngagement: () => import("../pages/Analytics/Marketing/WhatsAppEngagement"),
     LoyaltyEngagement: () => import("../pages/Analytics/Marketing/LoyaltyEngagement"),
@@ -66,7 +66,7 @@ export const Modules = {
     ReturnedItemsManager: () => import("../pages/Commercial/Sales/returns/ReturnedItems"),
     CustomerCredits: () => import("../pages/Commercial/Sales/payments/PaymentIn"), // Map to PaymentIn for now if missing
     OutstandingDues: () => import("../pages/Commercial/Sales/payments/PaymentInList"),
-    SalesModulePlaceholder: () => import("@/components/Sales/SalesModulePlaceholder"),
+    SalesModulePlaceholder: () => import("@/components/sales/SalesModulePlaceholder"),
 
     // Purchase Features
     PurchaseOrdersModule: () => import("../pages/Commercial/Purchase/PurchaseOrdersModule"),

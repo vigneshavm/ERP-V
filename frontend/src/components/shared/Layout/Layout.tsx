@@ -4,7 +4,7 @@ import { RootState } from "../../../redux/store";
 import { setSidebarOpen } from "../../../redux/slices/uiSlice";
 import Sidebar from './Sidebar';
 import { useTheme } from "../../../contexts/ThemeContext";
-import { ThemeToggle } from '../core/Display/ThemeToggle';
+import { ThemeToggle } from '../../core/Display/ThemeToggle';
 
 interface LayoutProps {
     children: React.ReactNode;

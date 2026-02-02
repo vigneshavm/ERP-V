@@ -2,6 +2,9 @@ import React from 'react';
 import { UserCog } from 'lucide-react';
 
 export const UserTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
+    // Defensive fallback for adminUser
+    const adminUser = newTenant.adminUser ?? { name: '', mobile: '', password: '' };
+
     return (
         <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
@@ -18,7 +21,7 @@ export const UserTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTe
                         <label className="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
                         <input
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.adminUser.name}
+                            value={adminUser.name}
                             onChange={e => setNewTenant({ ...newTenant, adminUser: { ...newTenant.adminUser, name: e.target.value } })}
                             placeholder="e.g. John Doe"
                         />
@@ -27,7 +30,7 @@ export const UserTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTe
                         <label className="block text-xs font-medium text-slate-700 mb-1">Mobile Number (Login ID)</label>
                         <input
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.adminUser.mobile}
+                            value={adminUser.mobile}
                             onChange={e => setNewTenant({ ...newTenant, adminUser: { ...newTenant.adminUser, mobile: e.target.value } })}
                             placeholder="e.g. 9876543210"
                             maxLength={10}
@@ -38,7 +41,7 @@ export const UserTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTe
                         <input
                             type="password"
                             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={newTenant.adminUser.password}
+                            value={adminUser.password}
                             onChange={e => setNewTenant({ ...newTenant, adminUser: { ...newTenant.adminUser, password: e.target.value } })}
                             placeholder="Create a strong password"
                         />

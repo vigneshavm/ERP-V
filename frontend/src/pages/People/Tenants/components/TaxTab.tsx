@@ -2,6 +2,11 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 
 export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
+    // Defensive fallback for taxDetails
+    const taxDetails = newTenant.taxDetails ?? {
+        taxSystem: 'GST', gstin: '', pan: '', isGstEnabled: true, isEInvoiceEnabled: false, isEWayBillEnabled: false
+    };
+
     return (
         <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
@@ -12,7 +17,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                             <label key={sys} className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="radio" name="taxSystem" value={sys}
-                                    checked={newTenant.taxDetails.taxSystem === sys}
+                                    checked={taxDetails.taxSystem === sys}
                                     onChange={() => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, taxSystem: sys as any } })}
                                     className="text-blue-600 focus:ring-blue-500"
                                 />
@@ -22,17 +27,17 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                     </div>
                 </div>
 
-                {newTenant.taxDetails.taxSystem !== 'NONE' && (
+                {taxDetails.taxSystem !== 'NONE' && (
                     <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">
-                                {newTenant.taxDetails.taxSystem === 'GST' ? 'GSTIN Number' : 'VAT Number'}
+                                {taxDetails.taxSystem === 'GST' ? 'GSTIN Number' : 'VAT Number'}
                             </label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
-                                value={newTenant.taxDetails.gstin}
+                                value={taxDetails.gstin}
                                 onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, gstin: e.target.value.toUpperCase() } })}
-                                placeholder={newTenant.taxDetails.taxSystem === 'GST' ? '22AAAAA0000A1Z5' : 'VAT123456'}
+                                placeholder={taxDetails.taxSystem === 'GST' ? '22AAAAA0000A1Z5' : 'VAT123456'}
                                 maxLength={15}
                             />
                         </div>
@@ -40,7 +45,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                             <label className="block text-sm font-medium text-slate-700 mb-1">PAN Number</label>
                             <input
                                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
-                                value={newTenant.taxDetails.pan}
+                                value={taxDetails.pan}
                                 onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, pan: e.target.value.toUpperCase() } })}
                                 placeholder="ABCDE1234F"
                                 maxLength={10}
@@ -50,7 +55,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={newTenant.taxDetails.isEInvoiceEnabled}
+                                    checked={taxDetails.isEInvoiceEnabled}
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEInvoiceEnabled: e.target.checked } })}
                                     className="rounded text-blue-600 focus:ring-blue-500"
                                 />
@@ -59,7 +64,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={newTenant.taxDetails.isEWayBillEnabled}
+                                    checked={taxDetails.isEWayBillEnabled}
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEWayBillEnabled: e.target.checked } })}
                                     className="rounded text-blue-600 focus:ring-blue-500"
                                 />
