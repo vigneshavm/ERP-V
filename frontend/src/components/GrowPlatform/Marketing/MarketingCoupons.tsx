@@ -22,7 +22,7 @@ import {
     CheckCircle2
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const MarketingCoupons: React.FC = () => {
     const dispatch = useDispatch();
@@ -287,3 +287,4 @@ const MarketingCoupons: React.FC = () => {
 };
 
 export default MarketingCoupons;
+

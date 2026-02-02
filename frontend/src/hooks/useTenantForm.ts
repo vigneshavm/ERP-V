@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
-import { Tenant } from '../types/tenant';
+import { Tenant } from "../types/tenant";
 // Mock logic for form handling
 export const useTenantForm = () => {
     const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
     const [newTenant, setNewTenant] = useState<Partial<Tenant>>({
         modules: []
     });
-    const [activeTab, setActiveTab] = useState('business');
+    const [activeTab, setFormTab] = useState('business');
     const [isSaving, setIsSaving] = useState(false);
 
     // Geography helpers
@@ -46,17 +46,43 @@ export const useTenantForm = () => {
         });
     };
 
-    const addCity = (city: string) => {
-        // Mock implementation
+    const addCity = () => {
+        if (!tempCity) return;
+        setNewTenant(prev => ({
+            ...prev,
+            locations: [...(prev.locations || []), { city: tempCity, branches: [] }]
+        }));
+        setTempCity('');
     };
-    const removeCity = (city: string) => {
-        // Mock implementation
+
+    const removeCity = (idx: number) => {
+        setNewTenant(prev => ({
+            ...prev,
+            locations: (prev.locations || []).filter((_, i) => i !== idx)
+        }));
     };
-    const addBranch = () => {
-        // Mock implementation
+    const addBranch = (cityIdx: number) => {
+        if (!tempBranch.name) return;
+        setNewTenant(prev => {
+            const locations = [...(prev.locations || [])];
+            locations[cityIdx] = {
+                ...locations[cityIdx],
+                branches: [...locations[cityIdx].branches, { ...tempBranch, id: Math.random().toString(36).substr(2, 9) }]
+            };
+            return { ...prev, locations };
+        });
+        setTempBranch({ name: '', address: '' });
     };
-    const removeBranch = (id: string) => {
-        // Mock implementation
+
+    const removeBranch = (cityIdx: number, brIdx: number) => {
+        setNewTenant(prev => {
+            const locations = [...(prev.locations || [])];
+            locations[cityIdx] = {
+                ...locations[cityIdx],
+                branches: locations[cityIdx].branches.filter((_, i) => i !== brIdx)
+            };
+            return { ...prev, locations };
+        });
     };
 
     return {
@@ -64,7 +90,7 @@ export const useTenantForm = () => {
         newTenant,
         setNewTenant,
         activeTab,
-        setActiveTab,
+        setFormTab,
         isSaving,
         handleStartEdit,
         handleCancelEdit,

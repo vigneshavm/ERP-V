@@ -1,19 +1,21 @@
 
 import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, addToCart, AppDispatch, activateEcommerce } from '../../../store';
+import { RootState, AppDispatch } from '../../../redux/store';
+import { addToCart } from '../../../redux/slices/posSlice';
+import { activateEcommerce } from '../../../redux/thunks/tenantThunks';
 import {
     Search, Filter, Star, Heart, ShoppingCart,
     Sparkles, Send, X, Bot, RotateCcw, Image as ImageIcon,
     Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
     Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
 } from 'lucide-react';
-import { Product } from '../../../types/product';
-import { getProductRecommendations, searchProductsByImage } from '../../../services/geminiService';
-import GrowHero from './components/GrowHero';
-import FeatureMatrix from "./components/FeatureMatrix";
-import PricingTiers from "./components/PricingTiers";
-import { EcommercePlan } from '../../../types/tenant';
+import { Product } from "../../../types/product";
+import { getProductRecommendations, searchProductsByImage } from "../../../services/GeminiService";
+import GrowHero from '../../../pages/Commercial/OnlineStore/components/GrowHero';
+import FeatureMatrix from "../../../pages/Commercial/OnlineStore/components/FeatureMatrix";
+import PricingTiers from "../../../pages/Commercial/OnlineStore/components/PricingTiers";
+import { EcommercePlan } from "../../../types/tenant";
 
 // --- Hero / Setup Component Inline (Refactor of GrowHero) ---
 const OnlineStoreSetup: React.FC<{
@@ -65,8 +67,8 @@ const OnlineStoreSetup: React.FC<{
             </header>
 
             <div className="max-w-7xl mx-auto px-6">
-                <FeatureMatrix isEnabled={false} currentPlan={currentPlan} />
-                <PricingTiers isEnabled={false} isLoading={isLoading} currentPlan={currentPlan} onUpgrade={() => { }} />
+                <FeatureMatrix />
+                <PricingTiers currentPlan={currentPlan} onUpgrade={() => { }} />
             </div>
         </div>
     );
@@ -77,7 +79,7 @@ const OnlineStore: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { products } = useSelector((state: RootState) => state.inventory);
+    const { items: products } = useSelector((state: RootState) => state.inventory);
     const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);
@@ -119,7 +121,7 @@ const OnlineStore: React.FC = () => {
     }, [products, currentSector, currentBranch]);
 
     const availableCategories = useMemo(() => {
-        return Array.from(new Set(baseProducts.map(p => p.category))) as string[];
+        return Array.from(new Set(baseProducts.map((p: Product) => p.category))) as string[];
     }, [baseProducts]);
 
     const handleAiSearch = async () => {
@@ -172,7 +174,7 @@ const OnlineStore: React.FC = () => {
     };
 
     const filteredProducts = useMemo(() => {
-        return baseProducts.filter(p => {
+        return baseProducts.filter((p: Product) => {
             if (aiResult && aiResult.ids.length > 0) {
                 if (!aiResult.ids.includes(p.id)) return false;
             }
@@ -184,14 +186,14 @@ const OnlineStore: React.FC = () => {
             }
             const min = parseFloat(priceRange.min);
             const max = parseFloat(priceRange.max);
-            if (!isNaN(min) && p.price < min) return false;
-            if (!isNaN(max) && p.price > max) return false;
-            if (inStockOnly && p.stock <= 0) return false;
+            if (!isNaN(min) && p.sellingPrice < min) return false;
+            if (!isNaN(max) && p.sellingPrice > max) return false;
+            if (inStockOnly && p.stockQty <= 0) return false;
             return true;
-        }).sort((a, b) => {
+        }).sort((a: Product, b: Product) => {
             switch (sortBy) {
-                case 'price-asc': return a.price - b.price;
-                case 'price-desc': return b.price - a.price;
+                case 'price-asc': return a.sellingPrice - b.sellingPrice;
+                case 'price-desc': return b.sellingPrice - a.sellingPrice;
                 case 'name': return a.name.localeCompare(b.name);
                 default: return 0;
             }
@@ -296,7 +298,7 @@ const OnlineStore: React.FC = () => {
 
                     {/* Product Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {filteredProducts.map(product => (
+                        {filteredProducts.map((product: Product) => (
                             <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
                                 <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
                                     <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -307,8 +309,8 @@ const OnlineStore: React.FC = () => {
                                 <div className="p-6 flex flex-col flex-1">
                                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
                                     <div className="mt-auto flex items-center justify-between">
-                                        <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.price.toLocaleString()}</span>
-                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1 }))} disabled={product.stock <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
+                                        <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
+                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
                                             <ShoppingCart className="w-5 h-5" />
                                         </button>
                                     </div>

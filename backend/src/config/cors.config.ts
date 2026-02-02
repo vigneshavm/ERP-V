@@ -25,7 +25,7 @@ if (process.env.ALLOWED_ORIGINS) {
 /**
  * Check if origin is allowed
  */
-const isAllowedOrigin = (origin: string | undefined): boolean => {
+const isAllowedOrigin = async (origin: string | undefined): Promise<boolean> => {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return true;
 
@@ -38,7 +38,6 @@ const isAllowedOrigin = (origin: string | undefined): boolean => {
     }
 
     // Allow Vercel preview deployments if prefix is configured
-    // Pattern matches: https://{prefix}-{branch}-{id}.vercel.app
     const vercelPrefix = process.env.VERCEL_PREVIEW_PREFIX;
     if (vercelPrefix) {
         const vercelPattern = new RegExp(`^https:\\/\\/${vercelPrefix}[\\w-]*\\.vercel\\.app$`);
@@ -47,20 +46,48 @@ const isAllowedOrigin = (origin: string | undefined): boolean => {
         }
     }
 
-    // Check against whitelist
-    return allowedOrigins.includes(origin);
+    // Check against static whitelist
+    if (allowedOrigins.includes(origin)) {
+        return true;
+    }
+
+    // NEW: Check dynamic tenant domains
+    try {
+        const domain = origin.replace(/^https?:\/\//, "").split(":")[0];
+
+        // Use the Tenant model directly for lookups
+        // Note: In high traffic, consider adding a cache layer here
+        const { default: Tenant } = await import("../modules/core/models/Tenant.js");
+        const tenant = await Tenant.findOne({
+            $or: [
+                { 'ecommerce.domain': domain },
+                { slug: domain.split('.')[0] } // Support slugs
+            ],
+            status: 'ACTIVE'
+        }).lean();
+
+        return !!tenant;
+    } catch (error) {
+        console.error('Error checking dynamic CORS origin:', error);
+        return false;
+    }
 };
 
 /**
  * CORS options with enhanced security
  */
 export const corsOptions: CorsOptions = {
-    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-        if (isAllowedOrigin(origin)) {
-            callback(null, true);
-        } else {
-            console.warn(`CORS blocked request from origin: ${origin}`);
-            callback(new Error(`CORS not allowed from origin: ${origin}`));
+    origin: async function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+        try {
+            const allowed = await isAllowedOrigin(origin);
+            if (allowed) {
+                callback(null, true);
+            } else {
+                console.warn(`CORS blocked request from origin: ${origin}`);
+                callback(new Error(`CORS not allowed from origin: ${origin}`));
+            }
+        } catch (error: any) {
+            callback(error);
         }
     },
     credentials: true,

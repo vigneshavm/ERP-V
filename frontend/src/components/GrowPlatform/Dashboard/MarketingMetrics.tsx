@@ -20,7 +20,7 @@ import {
     MapPin
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '../../../redux/slices/uiSlice';
 
 const MarketingMetrics: React.FC = () => {
     const dispatch = useDispatch();

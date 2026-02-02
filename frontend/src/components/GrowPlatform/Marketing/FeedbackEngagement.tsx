@@ -32,7 +32,7 @@ import {
     Image as ImageIcon
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const FeedbackEngagement: React.FC = () => {
     const dispatch = useDispatch();
@@ -261,3 +261,4 @@ const FeedbackEngagement: React.FC = () => {
 };
 
 export default FeedbackEngagement;
+

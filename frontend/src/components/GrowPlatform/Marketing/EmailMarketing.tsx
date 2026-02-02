@@ -24,7 +24,7 @@ import {
     LayoutDashboard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 import Campaigns from './Campaigns';
 
 const EmailMarketing: React.FC = () => {

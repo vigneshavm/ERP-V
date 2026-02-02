@@ -7,6 +7,8 @@ export const Sector = {
     TEXTILE: 'Textile',
     MOBILE_SHOP: 'Mobile Shop',
     SERVICES: 'Services',
+    RETAIL: 'Retail',
+    RESTAURANT: 'Restaurant',
     FMCG: 'FMCG'
 } as const;
 

@@ -18,7 +18,7 @@ import {
     BarChart3
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 import Campaigns from './Campaigns';
 
 const MarketingCampaigns: React.FC = () => {
@@ -255,3 +255,4 @@ const MarketingCampaigns: React.FC = () => {
 };
 
 export default MarketingCampaigns;
+

@@ -1,12 +1,13 @@
 import { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, addToCart } from '../../store';
-import { Product } from '../../types/product';
-import { getProductRecommendations, searchProductsByImage } from '../../services/geminiService';
+import { RootState } from '@/redux/store';
+import { addToCart } from '@/redux/slices/posSlice';
+import { Product } from "../../types/product";
+import { getProductRecommendations, searchProductsByImage } from "../../services/GeminiService";
 
 export const useStorefrontLogic = () => {
     const dispatch = useDispatch();
-    const { products } = useSelector((state: RootState) => state.inventory);
+    const { items: products } = useSelector((state: RootState) => state.inventory);
     const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
 
     // --- View State ---
@@ -33,13 +34,13 @@ export const useStorefrontLogic = () => {
 
     // --- Data Preparation ---
     const baseProducts = useMemo(() => {
-        return products.filter(p =>
+        return products.filter((p: Product) =>
             p.sector === currentSector && (currentBranch === 'All' || p.branchId === currentBranch)
         );
     }, [products, currentSector, currentBranch]);
 
     const availableCategories = useMemo(() => {
-        return Array.from(new Set(baseProducts.map(p => p.category))) as string[];
+        return Array.from(new Set(baseProducts.map((p: Product) => p.category))) as string[];
     }, [baseProducts]);
 
     // --- Actions ---
@@ -103,7 +104,7 @@ export const useStorefrontLogic = () => {
     };
 
     const filteredProducts = useMemo(() => {
-        return baseProducts.filter(p => {
+        return baseProducts.filter((p: Product) => {
             if (aiResult && aiResult.ids.length > 0) {
                 if (!aiResult.ids.includes(p.id)) return false;
             }
@@ -115,14 +116,14 @@ export const useStorefrontLogic = () => {
             }
             const min = parseFloat(priceRange.min);
             const max = parseFloat(priceRange.max);
-            if (!isNaN(min) && p.price < min) return false;
-            if (!isNaN(max) && p.price > max) return false;
-            if (inStockOnly && p.stock <= 0) return false;
+            if (!isNaN(min) && p.sellingPrice < min) return false;
+            if (!isNaN(max) && p.sellingPrice > max) return false;
+            if (inStockOnly && p.stockQty <= 0) return false;
             return true;
-        }).sort((a, b) => {
+        }).sort((a: Product, b: Product) => {
             switch (sortBy) {
-                case 'price-asc': return a.price - b.price;
-                case 'price-desc': return b.price - a.price;
+                case 'price-asc': return a.sellingPrice - b.sellingPrice;
+                case 'price-desc': return b.sellingPrice - a.sellingPrice;
                 case 'name': return a.name.localeCompare(b.name);
                 default: return 0;
             }
@@ -130,7 +131,7 @@ export const useStorefrontLogic = () => {
     }, [baseProducts, aiResult, searchTerm, selectedCategories, priceRange, inStockOnly, sortBy]);
 
     const addToCartHandler = (product: Product) => {
-        dispatch(addToCart({ ...product, qty: 1 }));
+        dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }));
     };
 
     return {

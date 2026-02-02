@@ -1,4 +1,4 @@
-import { DailyFinanceRecord } from '../../types/finance';
+import { DailyFinanceRecord } from "../../types/finance";
 
 export const daily_finance: DailyFinanceRecord[] = [
     {

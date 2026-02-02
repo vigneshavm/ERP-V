@@ -8,6 +8,7 @@ export interface IReprintQueueItem {
     newPrice: number;
     quantity: number;
     reason?: string;
+    updatedAt?: Date;
 }
 
 export interface IReprintQueue extends Document {
@@ -24,7 +25,8 @@ const reprintQueueItemSchema = new Schema({
     oldPrice: { type: Number },
     newPrice: { type: Number, required: true },
     quantity: { type: Number, required: true },
-    reason: { type: String }
+    reason: { type: String },
+    updatedAt: { type: Date, default: Date.now }
 }, { _id: false });
 
 const reprintQueueSchema = new Schema({

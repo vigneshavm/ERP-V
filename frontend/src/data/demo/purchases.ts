@@ -1,4 +1,4 @@
-import { Purchase } from '../../types/purchase';
+import { Purchase } from "../../types/purchase";
 
 export const purchases: Purchase[] = [
     {

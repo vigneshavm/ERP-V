@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../redux/store';
+import { RootState, AppDispatch } from "../redux/store";
 import {
     addOrder as addOrderAction,
     approveOrder as approveOrderAction,
@@ -8,9 +8,9 @@ import {
     deleteOrder as deleteOrderAction,
     updateOrder as updateOrderAction,
     setOrders
-} from '../redux/slices/purchaseSlice';
-import { PurchaseOrder, PurchaseOrderItem, PurchaseOrderStatus } from '../types/purchase';
-import api from '../services/api';
+} from "../redux/slices/purchaseSlice";
+import { PurchaseOrder, PurchaseOrderItem, PurchaseOrderStatus } from "../types/purchase";
+import api from "../services/api.js";
 
 // Re-export types for convenience
 export type { PurchaseOrder, PurchaseOrderItem, PurchaseOrderStatus };

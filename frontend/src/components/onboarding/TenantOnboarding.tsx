@@ -13,9 +13,9 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../store';
-import { registrationUtil } from '../../utils/registrationUtil';
-import { setSession } from '../../utils/session';
+import { setUser } from '@/redux/slices/authSlice';
+import { registrationUtil } from "../../utils/registrationUtil";
+import { setSession } from "../../utils/session";
 import {
     Building2, Users, Package, Zap, CreditCard, CheckCircle, ChevronRight,
     ChevronLeft, Sparkles, ArrowRight, Globe, Shield, Crown, Info,
@@ -23,7 +23,7 @@ import {
     Edit3, Plus, Minus, Calculator
 } from 'lucide-react';
 import { SECTORS, BUSINESS_TYPES, MODULES, PLANS, FEATURE_MATRIX, Plan } from '../../data/plans';
-import { recommendPlan, BusinessProfile, getRecommendedModules, calculateCustomPricing } from '../../utils/planRecommendationEngine';
+import { recommendPlan, BusinessProfile, getRecommendedModules, calculateCustomPricing } from "../../utils/planRecommendationEngine";
 
 // Step definitions
 const STEPS = [
@@ -575,7 +575,7 @@ const TenantOnboarding: React.FC = () => {
     };
 
     // Complete setup and navigate
-    const handleCompleteSetup = () => {
+    const handleCompleteSetup = async () => {
         // Collect all final modules (base + custom)
         const finalModules = [...new Set([
             ...(selectedPlan?.modules || recommendation?.recommendedPlan.modules || []),
@@ -584,7 +584,7 @@ const TenantOnboarding: React.FC = () => {
         ])];
 
         // Register the tenant and admin in mock DB
-        const { admin } = registrationUtil.registerTenant({
+        const response = await registrationUtil.registerTenant({
             businessName,
             businessType,
             sector,
@@ -599,6 +599,9 @@ const TenantOnboarding: React.FC = () => {
             employeeCount,
             branchCount
         });
+
+        const { admin } = response as any; // Cast to any if type is incomplete
+
 
         // Auto-login the user
         dispatch(setUser(admin));

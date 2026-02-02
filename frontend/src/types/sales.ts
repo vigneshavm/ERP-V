@@ -2,7 +2,8 @@ import { Product } from './product';
 import { Sector, TaxMode, PaymentMethod } from './common';
 
 export interface EstimateItem {
-    itemId?: string; // Product ID
+    item?: string | any; // Product ID or populated Product
+    itemId?: string; // Legacy/Frontend inconsistency
     name: string;
     quantity: number;
     price: number;
@@ -14,7 +15,7 @@ export interface Estimate {
     id: string;
     _id?: string;
     estimateNo: string;
-    customer?: string | null; // ObjectId or null (Walk-in)
+    customer?: Customer | string | null; // ObjectId or populated Customer or null
     items: EstimateItem[];
     subtotal: number;
     discount: number;
@@ -35,6 +36,7 @@ export interface Estimate {
 
 export interface CartItem extends Product {
     qty: number;
+    price: number;
     cutLength?: number;
     variantId?: string; // Track product variant if applicable
 }
@@ -49,7 +51,7 @@ export interface Customer {
     dues: number; // Backend uses 'dues' instead of outstanding_balance
     points: number; // Backend uses 'points'
     tier?: string; // 'Silver', 'Gold', etc.
-    referredBy?: string;
+    referrer?: string | Customer;
     owner?: string;
     tenantId: string;
     creditBias?: number; // Legacy/Frontend
@@ -60,6 +62,8 @@ export interface Customer {
     totalVisits?: number;
     totalSpent?: number;
     walletBalance?: number;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type SaleStatus = 'COMPLETED' | 'PREORDER' | 'FULFILLED' | 'CANCELLED';
@@ -81,7 +85,7 @@ export interface Invoice {
     _id?: string;
     invoiceNo: string;
     tenantId: string;
-    customer?: string; // ObjectId
+    customer?: string | Customer; // ObjectId or populated Customer
 
     items: InvoiceItem[];
     subtotal: number;
@@ -95,6 +99,14 @@ export interface Invoice {
 
     paymentStatus: 'paid' | 'unpaid' | 'partial';
     paymentMethod: string;
+    paidViaMethod?: string; // found in InvoiceDetail
+    splitPaymentDetails?: Array<{ method: string; amount: number }>; // found in InvoiceDetail
+
+    createdBy?: {
+        shopName?: string;
+        gstNumber?: string;
+        shopAddress?: string;
+    };
 
     createdAt: string;
     updatedAt?: string;
@@ -106,20 +118,28 @@ export interface Invoice {
     sector?: string;
 }
 
+export interface PopulatedInvoice extends Omit<Invoice, 'customer'> {
+    customer: Customer;
+}
+
 export interface Sale {
     id: string;
+    _id?: string; // Compatibility with Invoice
     date: string;
-    items: CartItem[];
+    createdAt?: string; // Compatibility with Invoice
+    items: any[]; // Relaxed for compatibility
     total: number;
+    totalAmount?: number; // Compatibility with Invoice
     customerName?: string;
     customerId?: string;
-    sector: Sector;
+    customer?: string | Customer; // Compatibility with Invoice
+    sector: Sector | string;
     branchId?: string;
     taxMode?: TaxMode;
-    paymentMethod?: PaymentMethod;
-    status: SaleStatus;
-    paymentStatus: PaymentStatus;
-    userId?: string; // For role-based filtering (Staff view their own)
+    paymentMethod?: PaymentMethod | string;
+    status: SaleStatus | string;
+    paymentStatus: PaymentStatus | string;
+    userId?: string;
     counterId?: string;
     counterName?: string;
     loyaltyPointsEarned?: number;
@@ -156,4 +176,40 @@ export interface POSState {
     salesHistory: Sale[];
     activeCounterId?: string;
     heldBills?: any[]; // Temporary loose type to avoid circular dependency, or better yet, define HeldBill here or keep it generic
+}
+
+export interface SalesOrderItem {
+    item: string | any; // Product ID or populated Product object
+    name?: string;
+    quantity: number;
+    rate: number;
+    tax: number;
+    discount: number;
+    amount?: number; // Calculated
+    availableStock?: number; // Frontend helper
+    deliveredQty?: number;
+    reservedQty?: number;
+    total?: number;
+}
+
+export interface SalesOrder {
+    _id: string;
+    orderNumber: string;
+    customer: Customer | any; // Using any for nested usage (address object vs string)
+    items: SalesOrderItem[];
+    orderDate: string;
+    expectedDeliveryDate: string;
+    status: 'Draft' | 'Confirmed' | 'Partially Delivered' | 'Delivered' | 'Partially Invoiced' | 'Invoiced' | 'Cancelled';
+    totalAmount: number;
+    subtotal?: number;
+    taxTotal?: number;
+    discountTotal?: number;
+    discount: number;
+    notes?: string;
+    createdBy?: { name: string; _id: string };
+    deliveryChallans?: any[];
+    invoices?: any[];
+    isOverdue?: boolean; // Frontend/Backend helper
+    createdAt: string;
+    updatedAt: string;
 }

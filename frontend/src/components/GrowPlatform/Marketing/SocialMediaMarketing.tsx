@@ -24,7 +24,7 @@ import {
     Hash
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const SocialMediaMarketing: React.FC = () => {
     const dispatch = useDispatch();
@@ -316,3 +316,4 @@ const SocialMediaMarketing: React.FC = () => {
 };
 
 export default SocialMediaMarketing;
+

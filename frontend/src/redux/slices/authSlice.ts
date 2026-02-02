@@ -1,18 +1,20 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from '../../services/api';
+import api from "../../services/api.js";
 import { RootState } from '../store';
-import { Sector } from '../../types/common';
+import { Sector } from "../../types/common";
 
 const API_URL = "/api/auth";
 
-interface User {
+export interface User {
     _id: string;
     token: string;
     businessType?: string;
+    shopName?: string;
+    phone?: string;
     [key: string]: any;
 }
 
-interface AuthState {
+export interface AuthState {
     user: User | null;
     isLoading: boolean;
     isSuccess: boolean;
@@ -24,6 +26,7 @@ interface AuthState {
     currentBranch?: string;
     role?: string;
     theme?: 'light' | 'dark' | 'system';
+    userPreferences?: any;
 }
 
 // Get user from localStorage
@@ -210,13 +213,16 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        reset: (state) => {
+        resetAuthState: (state) => {
             state.isLoading = false;
             state.isSuccess = false;
             state.isError = false;
             state.message = '';
             state.deviceConflict = false;
             state.conflictMessage = '';
+        },
+        setAuthLoading: (state, action: PayloadAction<boolean>) => {
+            state.isLoading = action.payload;
         },
         setUser: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload;
@@ -227,6 +233,20 @@ export const authSlice = createSlice({
         },
         setAuthSuccess: (state, action: PayloadAction<boolean>) => {
             state.isSuccess = action.payload;
+        },
+        setBranch: (state, action: PayloadAction<string>) => {
+            state.currentBranch = action.payload;
+        },
+        setSector: (state, action: PayloadAction<Sector>) => {
+            state.currentSector = action.payload;
+        },
+        setTheme: (state, action: PayloadAction<'light' | 'dark' | 'system'>) => {
+            state.theme = action.payload;
+        },
+        setUserPreferences: (state, action: PayloadAction<any>) => {
+            if (state.user) {
+                state.user = { ...state.user, ...action.payload };
+            }
         }
     },
     extraReducers: (builder) => {
@@ -357,5 +377,5 @@ export const authSlice = createSlice({
     },
 });
 
-export const { reset, setUser, setAuthError, setAuthSuccess } = authSlice.actions;
+export const { resetAuthState, setAuthLoading, setUser, setAuthError, setAuthSuccess, setBranch, setSector, setTheme, setUserPreferences } = authSlice.actions;
 export default authSlice.reducer;

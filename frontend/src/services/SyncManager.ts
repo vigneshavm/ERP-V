@@ -1,7 +1,7 @@
 import { db, OfflineSale } from './db';
 import api from './api';
-import { store } from '../redux/store';
-import { setDailyRecordSynced } from '../redux/slices/financeSlice';
+import { store } from "../redux/store";
+import { setDailyRecordSynced } from "../redux/slices/financeSlice";
 import { DATA_MODE } from './dataSource';
 import { SyncIntelligenceService } from './SyncIntelligenceService';
 

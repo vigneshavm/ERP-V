@@ -16,10 +16,12 @@ import financeReducer from './slices/financeSlice';
 import purchaseReducer from './slices/purchaseSlice';
 import tenantReducer from './slices/tenantSlice';
 import uiReducer from './slices/uiSlice';
+import { settingsReducer } from './slices/settingsSlice';
 import supplierGroupReducer from './slices/supplierGroupSlice';
 
 export const store = configureStore({
   reducer: {
+    settings: settingsReducer,
     auth: authReducer,
     customers: customerReducer,
     inventory: inventoryReducer,

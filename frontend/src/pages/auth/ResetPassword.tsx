@@ -1,12 +1,12 @@
 import React, { useEffect, useState, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { performPasswordReset, reset } from '../../redux/slices/authSlice';
-import { AppDispatch, RootState } from '../../redux/store';
-import SecurePasswordInput from '../../components/SecurePasswordInput';
-import AuthLayout from '../../components/auth/AuthLayout';
-import AuthAlert from '../../components/auth/AuthAlert';
-import { isStrongPassword } from '../../utils/authUtils';
+import { performPasswordReset, resetAuthState } from "../../redux/slices/authSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import SecurePasswordInput from './SecurePasswordInput';
+import AuthLayout from '../Views/AuthLayout';
+import AuthAlert from '../Views/AuthAlert';
+import { isStrongPassword } from "../../utils/authUtils";
 
 const ResetPassword: React.FC = () => {
     const location = useLocation();
@@ -26,7 +26,7 @@ const ResetPassword: React.FC = () => {
     useEffect(() => {
         if (user) navigate('/dashboard');
         return () => {
-            dispatch(reset());
+            dispatch(resetAuthState());
         };
     }, [user, navigate, dispatch]);
 

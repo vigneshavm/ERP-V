@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { FinanceState, Transaction, Cheque, DayEndSummary } from '../../types/finance';
-import { TransactionType } from '../../types/common';
-import api from '../../services/api';
+import { FinanceState, Transaction, Cheque, DayEndSummary } from "../../types/finance";
+import { TransactionType } from "../../types/common";
+import api from "../../services/api.js";
 import { RootState } from '../store';
 
 const API_URL = '/cashbank';
@@ -16,7 +16,8 @@ export const fetchCheques = createAsyncThunk(
     async (sector: string | undefined, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const query = sector ? `?sector=${sector}` : '';
             const response = await api.get(`${API_URL}/cheques${query}`, getConfig(token));
             return response.data;
@@ -31,7 +32,8 @@ export const registerCheque = createAsyncThunk(
     async (chequeData: Partial<Cheque>, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/cheques`, chequeData, getConfig(token));
             return response.data;
         } catch (error: any) {
@@ -45,7 +47,8 @@ export const updateChequeStatusBackend = createAsyncThunk(
     async ({ id, status }: { id: string, status: 'CLEARED' | 'BOUNCED' | 'PENDING' }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/cheques/${id}/status`, { status }, getConfig(token));
             return response.data;
         } catch (error: any) {
@@ -59,7 +62,8 @@ export const fetchEffectiveBalance = createAsyncThunk(
     async ({ accountId, date }: { accountId: string, date?: string }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const query = date ? `?date=${date}` : '';
             const response = await api.get(`${API_URL}/accounts/${accountId}/effective-balance${query}`, getConfig(token));
             return response.data;
@@ -74,7 +78,8 @@ export const fetchDayEndSummary = createAsyncThunk(
     async (date: string | undefined, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const query = date ? `?date=${date}` : '';
             const response = await api.get(`${DAY_END_API_URL}/summary${query}`, getConfig(token));
             return response.data;
@@ -89,7 +94,8 @@ export const saveDayEndReconciliation = createAsyncThunk(
     async (data: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user.token;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${DAY_END_API_URL}/save`, data, getConfig(token));
             return response.data;
         } catch (error: any) {

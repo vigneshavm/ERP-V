@@ -1,94 +1,76 @@
 import React from 'react';
-import { Clock, CheckCircle2, XCircle, ArrowDownLeft, ArrowUpRight, Search } from 'lucide-react';
-import { formatCurrency } from '../../utils/helpers';
+import { Clock } from 'lucide-react';
+import { formatCurrency } from "@/utils/helpers";
 
 interface ChequeLedgerProps {
     sectorCheques: any[];
     onUpdateStatus: (id: string, status: 'CLEARED' | 'BOUNCED') => void;
 }
 
-const ChequeLedger: React.FC<ChequeLedgerProps> = ({
-    sectorCheques,
-    onUpdateStatus
-}) => {
+const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStatus }) => {
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center px-2">
-                <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Instrument Tracking Ledger</h4>
-                <div className="flex gap-2 text-[10px] font-black uppercase italic">
-                    <span className="text-warning">{sectorCheques.filter(c => c.status === 'PENDING').length} Pending</span>
-                    <span className="text-success">{sectorCheques.filter(c => c.status === 'CLEARED').length} Cleared</span>
-                </div>
-            </div>
-
-            {sectorCheques.length === 0 ? (
-                <div className="py-24 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-dashed border-neutral-200 dark:border-neutral-800">
-                    <Clock className="w-12 h-12 text-neutral-200 dark:text-neutral-800 mx-auto mb-4" />
-                    <h5 className="text-xs font-black text-neutral-400 uppercase tracking-widest italic">No instruments located in this node</h5>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {sectorCheques.map((cheque) => (
-                        <div
-                            key={cheque.id}
-                            className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-100 dark:border-neutral-700 p-8 shadow-sm hover:shadow-2xl transition-all group"
-                        >
-                            <div className="flex justify-between items-start mb-6">
-                                <div className={`p-3 rounded-2xl ${cheque.type === 'RECEIVED' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
-                                    {cheque.type === 'RECEIVED' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
-                                </div>
-                                <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic ${cheque.status === 'CLEARED' ? 'bg-success text-white' :
-                                    cheque.status === 'BOUNCED' ? 'bg-error text-white' :
-                                        'bg-warning/20 text-warning'
-                                    }`}>
-                                    {cheque.status}
-                                </span>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Instrument Value</p>
-                                    <h4 className="text-2xl font-black italic tracking-tighter">₹{formatCurrency(cheque.amount)}</h4>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Payee/Entity</p>
-                                        <p className="text-xs font-bold uppercase truncate">{cheque.payee}</p>
+        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-100 dark:border-neutral-700 shadow-sm">
+            <div className="overflow-x-auto">
+                <table className="w-full">
+                    <thead>
+                        <tr className="text-left text-[10px] font-black uppercase tracking-widest text-neutral-400 border-b border-neutral-100 dark:border-neutral-700">
+                            <th className="pb-4 pl-4">Date</th>
+                            <th className="pb-4">Cheque No</th>
+                            <th className="pb-4">Details</th>
+                            <th className="pb-4">Amount</th>
+                            <th className="pb-4">Status</th>
+                            <th className="pb-4 pr-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody className="text-sm font-medium">
+                        {sectorCheques.map((cheque: any) => (
+                            <tr key={cheque.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                                <td className="py-4 pl-4 text-neutral-500 w-32">{new Date(cheque.date).toLocaleDateString()}</td>
+                                <td className="py-4 font-mono text-xs">{cheque.number}</td>
+                                <td className="py-4">
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-neutral-800 dark:text-neutral-200">{cheque.payee}</span>
+                                        <span className="text-[10px] text-neutral-400 uppercase tracking-wider">{cheque.bankName}</span>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Clearing Date</p>
-                                        <p className="text-xs font-bold uppercase italic">{new Date(cheque.date).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-
-                                <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800 flex gap-3">
-                                    {cheque.status === 'PENDING' ? (
-                                        <>
+                                </td>
+                                <td className="py-4 font-black">₹{formatCurrency(cheque.amount)}</td>
+                                <td className="py-4">
+                                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${cheque.status === 'CLEARED' ? 'bg-success/10 text-success' :
+                                        cheque.status === 'BOUNCED' ? 'bg-error/10 text-error' :
+                                            'bg-warning/10 text-warning'
+                                        }`}>
+                                        {cheque.status}
+                                    </span>
+                                </td>
+                                <td className="py-4 pr-4 text-right">
+                                    {cheque.status === 'PENDING' && (
+                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
-                                                onClick={() => onUpdateStatus(cheque.id, 'CLEARED')}
-                                                className="flex-1 py-3 bg-success text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-success/10 hover:scale-105 transition"
+                                                onClick={() => onUpdateStatus(cheque.id || cheque._id, 'CLEARED')}
+                                                className="px-3 py-1 bg-success text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
                                             >
-                                                Commit
+                                                Clear
                                             </button>
                                             <button
-                                                onClick={() => onUpdateStatus(cheque.id, 'BOUNCED')}
-                                                className="flex-1 py-3 bg-error text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-error/10 hover:scale-105 transition"
+                                                onClick={() => onUpdateStatus(cheque.id || cheque._id, 'BOUNCED')}
+                                                className="px-3 py-1 bg-error text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
                                             >
-                                                Log Reject
+                                                Bounce
                                             </button>
-                                        </>
-                                    ) : (
-                                        <div className="w-full py-3 bg-neutral-50 dark:bg-neutral-900 rounded-xl text-[9px] font-black uppercase tracking-widest text-neutral-400 text-center italic">
-                                            Archived Instrument
                                         </div>
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {sectorCheques.length === 0 && (
+                    <div className="p-12 text-center opacity-50">
+                        <Clock className="w-12 h-12 mx-auto mb-4 text-neutral-300" />
+                        <p className="text-xs font-black uppercase tracking-widest text-neutral-400">No Cheques Recorded</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

@@ -19,7 +19,7 @@ import {
     LayoutDashboard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const MarketingTemplates: React.FC = () => {
     const dispatch = useDispatch();
@@ -246,3 +246,4 @@ const MarketingTemplates: React.FC = () => {
 };
 
 export default MarketingTemplates;
+

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/react";
+import { Event, EventHint } from "@sentry/react";
 
 /**
  * Initialize Sentry for React error tracking
@@ -28,7 +29,7 @@ export const initSentry = (): void => {
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
         // Filter sensitive data
-        beforeSend(event, hint) {
+        beforeSend(event: Event, hint: EventHint) {
             // Remove sensitive data from breadcrumbs
             if (event.breadcrumbs) {
                 event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => {

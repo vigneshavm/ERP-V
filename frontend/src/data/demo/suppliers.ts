@@ -1,4 +1,4 @@
-import { Vendor } from '../../types/vendor';
+import { Vendor } from "../../types/vendor";
 
 export const suppliers: Vendor[] = [
     {

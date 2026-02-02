@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder, PurchasePayment } from '../../types/purchase';
-import api from '../../services/api';
+import { PurchaseState, PurchaseOrder, PurchasePayment } from "../../types/purchase";
+import api from "../../services/api";
 import { RootState } from '../store';
 
-const loadState = (key: string, initialState: any) => {
+const getConfig = (token: string) => ({
+    headers: {
+        Authorization: `Bearer ${token}`,
+    },
+});
+
+const loadState = <T>(key: string, initialState: T): T => {
     const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : initialState;
 };
@@ -20,7 +26,10 @@ export const fetchPurchaseOrders = createAsyncThunk(
     'purchase/fetchOrders',
     async (_, thunkAPI) => {
         try {
-            const response = await api.get('/api/purchases');
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.get('/api/purchases', getConfig(token));
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -33,7 +42,10 @@ export const fetchPurchasePayments = createAsyncThunk(
     'purchase/fetchPayments',
     async (_, thunkAPI) => {
         try {
-            const response = await api.get('/api/purchase-payments');
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.get('/api/purchase-payments', getConfig(token));
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -50,20 +62,20 @@ const purchaseSlice = createSlice({
             state.orders.unshift(action.payload);
         },
         approveOrder: (state, action: PayloadAction<string>) => {
-            const order = state.orders.find(o => o.id === action.payload);
+            const order = state.orders.find((o: PurchaseOrder) => o.id === action.payload);
             if (order) order.status = 'Approved';
         },
         updateOrder: (state, action: PayloadAction<{ id: string; updates: Partial<PurchaseOrder> }>) => {
-            const index = state.orders.findIndex(o => o.id === action.payload.id);
+            const index = state.orders.findIndex((o: PurchaseOrder) => o.id === action.payload.id);
             if (index !== -1) {
                 state.orders[index] = { ...state.orders[index], ...action.payload.updates };
             }
         },
         deleteOrder: (state, action: PayloadAction<string>) => {
-            state.orders = state.orders.filter(o => o.id !== action.payload);
+            state.orders = state.orders.filter((o: PurchaseOrder) => o.id !== action.payload);
         },
         convertOrder: (state, action: PayloadAction<{ order: PurchaseOrder; items: any[] }>) => {
-            const order = state.orders.find(o => o.id === action.payload.order.id);
+            const order = state.orders.find((o: PurchaseOrder) => o.id === action.payload.order.id);
             if (order) order.status = 'Converted';
         },
         setOrders: (state, action: PayloadAction<PurchaseOrder[]>) => {

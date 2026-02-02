@@ -95,7 +95,16 @@
     --color-primary: 79 70 229;
     /* indigo-600 */
     --color-primary-hover: 67 56 202;
+    --color-primary-hover: 67 56 202;
     /* indigo-700 */
+
+    /* Semantic Colors (Light) */
+    --color-error: 239 68 68;
+    /* red-500 */
+    --color-success: 22 163 74;
+    /* green-600 */
+    --color-warning: 202 138 4;
+    /* yellow-600 */
   }
 
   /* Dark Theme */
@@ -134,7 +143,16 @@
     --color-primary: 245 158 11;
     /* #F59E0B */
     --color-primary-hover: 217 119 6;
+    --color-primary-hover: 217 119 6;
     /* #D97706 */
+
+    /* Semantic Colors (Dark) */
+    --color-error: 248 113 113;
+    /* red-400 */
+    --color-success: 74 222 128;
+    /* green-400 */
+    --color-warning: 250 204 21;
+    /* yellow-400 */
   }
 
   /* Apply color scheme to html element */
@@ -188,7 +206,8 @@
     border-color: rgb(var(--color-border-light));
   }
 
-  .divide-border> :not([hidden])~ :not([hidden]) {
+  .divide-border,
+  .divide-default> :not([hidden])~ :not([hidden]) {
     border-color: rgb(var(--color-border));
   }
 
@@ -210,6 +229,39 @@
 
   .hover\:bg-primary-hover:hover {
     background-color: rgb(var(--color-primary-hover));
+  }
+
+  /* Semantic Utilities */
+  .text-error {
+    color: rgb(var(--color-error));
+  }
+
+  .bg-error {
+    background-color: rgb(var(--color-error));
+  }
+
+  .bg-error-soft {
+    background-color: rgb(var(--color-error) / 0.1);
+  }
+
+  .border-error-soft {
+    border-color: rgb(var(--color-error) / 0.2);
+  }
+
+  .text-success {
+    color: rgb(var(--color-success));
+  }
+
+  .bg-success-soft {
+    background-color: rgb(var(--color-success) / 0.1);
+  }
+
+  .text-warning {
+    color: rgb(var(--color-warning));
+  }
+
+  .bg-warning-soft {
+    background-color: rgb(var(--color-warning) / 0.1);
   }
 
   /* Dark mode select/dropdown styling */

@@ -30,7 +30,7 @@ import {
     Download
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const LoyaltyEngagement: React.FC = () => {
     const dispatch = useDispatch();
@@ -285,3 +285,4 @@ const LoyaltyEngagement: React.FC = () => {
 };
 
 export default LoyaltyEngagement;
+

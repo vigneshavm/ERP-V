@@ -2,7 +2,7 @@
 import React from 'react';
 import { Rocket, Globe, Zap, Database, ArrowRight, BarChart, LayoutDashboard } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '../../../redux/slices/uiSlice';
 
 const GrowthHub: React.FC = () => {
     const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-import { CustomerFeedback, FeedbackConfig } from "../../../src/types/tenant";
+import { CustomerFeedback, FeedbackConfig } from "../types/tenant";
 
 export const FeedbackService = {
     /**
@@ -47,7 +47,7 @@ export const FeedbackService = {
 
         // Trigger on dangerous keywords
         const comment = feedback.comment?.toLowerCase() || '';
-        if (config.autoEscalation.keywords.some(k => comment.includes(k.toLowerCase()))) return true;
+        if (config.autoEscalation.keywords.some((k: string) => comment.includes(k.toLowerCase()))) return true;
 
         // Trigger on negative sentiment
         if (feedback.sentiment.label === 'NEGATIVE' && feedback.sentiment.score < -0.5) return true;

@@ -1,9 +1,9 @@
-import { GlobalGrowthConfig, TenantGrowthConfig, GrowthProvider, GrowthChannelType } from '../../../src/types/tenant';
-import { WhatsAppService } from './whatsappService';
-import { EmailService } from './emailService';
-import { SMSService } from './smsService';
-import { SocialService } from './socialService';
-import { StoreService } from './storeService';
+import { GlobalGrowthConfig, TenantGrowthConfig, GrowthProvider, GrowthChannelType } from "../types/tenant";
+import { WhatsAppService } from './WhatsAppService';
+import { EmailService } from './EmailService';
+import { SMSService } from './SmsService';
+import { SocialService } from './SocialService';
+import { StoreService } from './StoreService';
 
 // Mock Provider Registry
 const GROWTH_PROVIDERS: GrowthProvider[] = [

@@ -1,4 +1,4 @@
-import { Employee } from '../../types/hr';
+import { Employee } from "../../types/hr";
 
 export const employees: Employee[] = [
     {
@@ -6,7 +6,7 @@ export const employees: Employee[] = [
         tenantId: "TEN001",
         name: "Suresh Kumar",
         role: "Store Manager",
-        systemRole: "manager",
+        systemRole: "Manager",
         mobile: "9988776655",
         dailyRate: 800,
         wageType: "MONTHLY",
@@ -19,7 +19,7 @@ export const employees: Employee[] = [
         tenantId: "TEN001",
         name: "Anita Raj",
         role: "Sales Executive",
-        systemRole: "staff",
+        systemRole: "Staff",
         mobile: "9988776644",
         dailyRate: 500,
         wageType: "DAILY",

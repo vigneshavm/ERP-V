@@ -1,5 +1,5 @@
 import { TenantUser } from './tenant';
-import { Sector } from './common';
+import { Sector, SystemRole, TaxMode, AppView } from './common';
 
 export interface UserVisualIdentity {
     theme?: 'light' | 'dark' | 'system';
@@ -20,8 +20,6 @@ export interface AuthState {
     isError: string | null;
 }
 
-import { AppView, SystemRole } from './common';
-
 export interface SettingsState {
     appName: string;
     logoUrl: string;
@@ -35,10 +33,10 @@ export interface SettingsState {
         sales: boolean;
         daily: boolean;
         storefront: boolean;
-        [key: string]: boolean;
+        [key: string]: boolean | undefined;
     };
     rolePermissions: Record<string, AppView[]>;
-    defaultTaxMode: string;
+    defaultTaxMode: TaxMode;
     expiryRules: {
         criticalDays: number;
         criticalDiscount: number;
@@ -46,5 +44,8 @@ export interface SettingsState {
         highDiscount: number;
         mediumDays: number;
         mediumDiscount: number;
+    };
+    sales?: {
+        defaultDiscount?: number;
     };
 }

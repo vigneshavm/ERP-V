@@ -1,93 +1,17 @@
 import React from 'react';
-import { FileText, ShoppingCart, Receipt, RotateCcw, ClipboardList, DollarSign, Truck } from 'lucide-react';
 
-interface SalesModulePlaceholderProps {
-    view: string;
-}
-
-/**
- * Placeholder component for Sales module subviews.
- * These will be replaced with actual implementations.
- */
-const SalesModulePlaceholder: React.FC<SalesModulePlaceholderProps> = ({ view }) => {
-    const viewConfig: Record<string, { title: string; description: string; icon: React.ReactNode }> = {
-        SALES_INVOICE: {
-            title: 'Sales Invoice',
-            description: 'Create and manage sales invoices',
-            icon: <FileText className="w-12 h-12" />
-        },
-        SALES_ORDER: {
-            title: 'Sales Order',
-            description: 'Manage sales orders and commitments',
-            icon: <ShoppingCart className="w-12 h-12" />
-        },
-        ESTIMATE: {
-            title: 'Estimate / Proforma',
-            description: 'Create estimates and proforma invoices',
-            icon: <Receipt className="w-12 h-12" />
-        },
-        DELIVERY_CHALLAN: {
-            title: 'Delivery Challan',
-            description: 'Manage delivery challans for goods dispatch',
-            icon: <Truck className="w-12 h-12" />
-        },
-        CHALLAN_LIST: {
-            title: 'Delivery Challan List',
-            description: 'View all delivery challans',
-            icon: <ClipboardList className="w-12 h-12" />
-        },
-        PAYMENT_IN: {
-            title: 'Payment In',
-            description: 'Record payments received from customers',
-            icon: <DollarSign className="w-12 h-12" />
-        },
-        PAYMENT_IN_LIST: {
-            title: 'Payment In List',
-            description: 'View all incoming payments',
-            icon: <ClipboardList className="w-12 h-12" />
-        },
-        SALES_RETURN: {
-            title: 'Sales Return',
-            description: 'Process sales returns and credit notes',
-            icon: <RotateCcw className="w-12 h-12" />
-        },
-        RETURNED_ITEMS: {
-            title: 'Returned Items',
-            description: 'View and manage returned items inventory',
-            icon: <ClipboardList className="w-12 h-12" />
-        },
-        INVOICE_REGISTER: {
-            title: 'Invoice Register',
-            description: 'Complete register of all sales invoices',
-            icon: <ClipboardList className="w-12 h-12" />
-        },
-        ORDER_REGISTER: {
-            title: 'Order Register',
-            description: 'Complete register of all sales orders',
-            icon: <ClipboardList className="w-12 h-12" />
-        }
-    };
-
-    const config = viewConfig[view] || {
-        title: view,
-        description: 'Coming soon',
-        icon: <FileText className="w-12 h-12" />
-    };
-
+const SalesModulePlaceholder: React.FC<{ view?: string }> = ({ view }) => {
     return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-neutral-400">
-            <div className="w-24 h-24 bg-neutral-100 dark:bg-neutral-800 rounded-2xl flex items-center justify-center mb-6 text-neutral-300 dark:text-neutral-600">
-                {config.icon}
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 text-slate-400">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                </svg>
             </div>
-            <h2 className="text-2xl font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-                {config.title}
-            </h2>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                {config.description}
+            <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Sales Module: {view || 'Overview'}</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-md">
+                This component is under development. The full feature set for {view || 'this view'} will be available in the next update.
             </p>
-            <span className="px-4 py-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-full border border-amber-200 dark:border-amber-800">
-                Coming Soon
-            </span>
         </div>
     );
 };

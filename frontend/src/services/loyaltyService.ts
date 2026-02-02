@@ -1,4 +1,4 @@
-import { LoyaltyConfig, LoyaltyRule, LoyaltyTier, LoyaltyTransaction, LoyaltyWallet } from "../../../src/types/tenant";
+import { LoyaltyConfig, LoyaltyRule, LoyaltyTier, LoyaltyTransaction, LoyaltyWallet } from "../types/tenant";
 
 export const LoyaltyService = {
     /**

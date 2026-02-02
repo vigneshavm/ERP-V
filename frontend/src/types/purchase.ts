@@ -43,7 +43,7 @@ export interface PurchaseOrder {
     branch_id?: string; // Optional depending on usage
 }
 
-export interface InvoiceItem {
+export interface PurchaseInvoiceItem {
     sku: string; // inferred or generated
     name: string;
     quantity: number;
@@ -53,7 +53,7 @@ export interface InvoiceItem {
 export interface InvoiceData {
     vendor: string;
     date: string;
-    items: InvoiceItem[];
+    items: PurchaseInvoiceItem[];
     totalCost: number;
 }
 

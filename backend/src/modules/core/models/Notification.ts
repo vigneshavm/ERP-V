@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface INotification extends Document {
     type: "stock" | "due" | "payment" | "system";
     message: string;
-    read: boolean;
+    readAt?: Date | null;
     relatedItem?: mongoose.Types.ObjectId;
     relatedCustomer?: mongoose.Types.ObjectId;
     createdAt: Date;
@@ -21,9 +21,9 @@ const notificationSchema = new Schema<INotification>(
             type: String,
             required: true,
         },
-        read: {
-            type: Boolean,
-            default: false,
+        readAt: {
+            type: Date,
+            default: null,
         },
         relatedItem: {
             type: Schema.Types.ObjectId,

@@ -1,4 +1,4 @@
-import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from '../types/tenant';
+import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from "../types/tenant";
 import { db } from './db';
 
 

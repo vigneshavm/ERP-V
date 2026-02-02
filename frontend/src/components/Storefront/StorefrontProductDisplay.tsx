@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown, Grid3X3, List as ListIcon, Star, Heart, ShoppingCart } from 'lucide-react';
-import { Product } from '../../types/product';
+import { Product } from "../../types/product";
 
 interface StorefrontProductDisplayProps {
     filteredProducts: Product[];
@@ -76,9 +76,9 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
                                 <div className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-red-500 transition-colors">
                                     <Heart className="w-4 h-4 text-slate-400 hover:text-red-500" />
                                 </div>
-                                {product.stock < 10 && (
+                                {product.stockQty < 10 && (
                                     <div className="absolute bottom-3 left-3 px-2 py-1 bg-red-500 text-white text-[10px] font-bold uppercase tracking-wider rounded">
-                                        Only {product.stock} left
+                                        Only {product.stockQty} left
                                     </div>
                                 )}
                             </div>
@@ -96,10 +96,10 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{product.productType}</p>
 
                                 <div className="mt-auto flex items-center justify-between">
-                                    <span className="block text-xl font-bold text-slate-900 dark:text-white">₹{product.price.toLocaleString()}</span>
+                                    <span className="block text-xl font-bold text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
                                     <button
                                         onClick={() => onAddToCart(product)}
-                                        disabled={product.stock <= 0}
+                                        disabled={product.stockQty <= 0}
                                         className="p-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl hover:bg-indigo-600 dark:hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
                                     >
                                         <ShoppingCart className="w-5 h-5" />
@@ -123,16 +123,16 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded">{product.category}</span>
-                                    {product.stock < 10 && <span className="text-[10px] font-bold text-red-500 uppercase">Low Stock</span>}
+                                    {product.stockQty < 10 && <span className="text-[10px] font-bold text-red-500 uppercase">Low Stock</span>}
                                 </div>
                                 <h3 className="font-bold text-slate-900 dark:text-white text-lg truncate">{product.name}</h3>
                                 <p className="text-sm text-slate-500 dark:text-slate-400">{product.productType} &bull; {product.branchId}</p>
                             </div>
                             <div className="text-right">
-                                <span className="block text-2xl font-bold text-slate-900 dark:text-white mb-2">₹{product.price.toLocaleString()}</span>
+                                <span className="block text-2xl font-bold text-slate-900 dark:text-white mb-2">₹{product.sellingPrice.toLocaleString()}</span>
                                 <button
                                     onClick={() => onAddToCart(product)}
-                                    disabled={product.stock <= 0}
+                                    disabled={product.stockQty <= 0}
                                     className="px-4 py-2 bg-slate-900 dark:bg-indigo-600 text-white rounded-lg hover:bg-indigo-600 dark:hover:bg-indigo-500 disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 text-sm font-bold transition-colors"
                                 >
                                     Add to Cart

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import BusinessProfile from "../models/BusinessProfile.js";
 import Sector from "../models/Sector.js";
 import BusinessType from "../models/BusinessType.js";
-import mongoose from "mongoose";
+
 
 
 /**

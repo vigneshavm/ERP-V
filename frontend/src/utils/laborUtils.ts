@@ -1,4 +1,4 @@
-import { Attendance, LaborPayment } from '../types/hr';
+import { Attendance, LaborPayment } from "../types/hr";
 
 export interface LaborStats {
     days: number;

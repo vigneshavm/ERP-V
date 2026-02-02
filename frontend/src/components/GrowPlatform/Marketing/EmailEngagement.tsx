@@ -28,7 +28,7 @@ import {
     BadgeAlert
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '../../../redux/slices/uiSlice';
 
 const EmailEngagement: React.FC = () => {
     const dispatch = useDispatch();

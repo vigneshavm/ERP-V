@@ -8,16 +8,17 @@ import {
     Tag, MousePointer2, Percent, Globe
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveTab, RootState } from '../../../store';
-import { WhatsAppService } from '../../../services/whatsappService';
-import { Tenant, Integrations } from '../../../types/tenant';
+import { RootState } from '../../../redux/store';
+import { setActiveTab } from '../../../redux/slices/uiSlice';
+import { WhatsAppService } from "../../../services/WhatsAppService";
+import { Tenant, Integrations } from "../../../types/tenant";
 
 // Helper to safely access tenant from state
 const useCurrentTenant = (): Tenant | null => {
     // 
     return useSelector((state: RootState) => {
         if (state.auth?.user?.tenantId) {
-            return state.tenant?.tenants?.find(t => t.id === state.auth.user!.tenantId) || null;
+            return state.tenant?.tenants?.find((t: Tenant) => t.id === state.auth.user!.tenantId) || null;
         }
         return null;
     });
@@ -35,7 +36,7 @@ const WhatsAppMarketing: React.FC = () => {
     const [isConnected, setIsConnected] = useState(false);
 
     // Mock Data
-    const mockCampaigns = [
+    const mockCampaigns: { id: string; name: string; status: string; date: string; recipients: number; revenue: string; conversion: string }[] = [
         { id: 'c1', name: 'Summer Blast 2026', status: 'COMPLETED', date: '2026-05-12', recipients: 4200, revenue: '₹4.2L', conversion: '4.2%' },
         { id: 'c2', name: 'Loyalty Tier Upgrade', status: 'COMPLETED', date: '2026-05-10', recipients: 1205, revenue: '₹1.8L', conversion: '8.1%' },
         { id: 'c3', name: 'Weekend Flash Sale', status: 'SCHEDULED', date: '2026-05-15', recipients: 10000, revenue: '---', conversion: '---' },

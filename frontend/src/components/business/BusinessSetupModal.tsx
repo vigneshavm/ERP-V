@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import api from '../../services/api';
-import Modal from '../Modal';
-// import { updateProfile } from '../../redux/slices/authSlice'; // Removed, using direct API
-import { RootState, AppDispatch } from '../../redux/store';
+import api from "../../services/api";
+import Modal from '../shared/Overlay/Modal';
+import { RootState, AppDispatch } from "../../redux/store";
 import { toast } from 'react-toastify';
 
 interface BusinessSetupModalProps {
@@ -11,20 +10,50 @@ interface BusinessSetupModalProps {
     onClose: () => void;
 }
 
+interface Sector {
+    id: string;
+    name: string;
+}
+
+interface BusinessType {
+    id: string;
+    name: string;
+}
+
+interface BusinessSetupData {
+    category: string;
+    businessType: string;
+    businessName: string;
+    phone: string;
+}
+
+interface ApiResponse<T> {
+    success: boolean;
+    data: T;
+    message?: string;
+}
+
+interface FormData {
+    category: string;
+    businessType: string;
+    businessName: string;
+    phone: string;
+}
+
 const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         category: '', // ID
         businessType: '', // ID
         businessName: '',
         phone: '',
     });
 
-    const [sectors, setSectors] = useState<{ id: string, name: string }[]>([]);
-    const [businessTypes, setBusinessTypes] = useState<{ id: string, name: string }[]>([]);
+    const [sectors, setSectors] = useState<Sector[]>([]);
+    const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -32,7 +61,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
                 setIsLoading(true);
                 try {
                     // 1. Fetch Setup Status first
-                    const setupResponse = await api.get('/api/business/setup');
+                    const setupResponse = await api.get<ApiResponse<BusinessSetupData>>('/api/business/setup');
                     if (setupResponse.data && setupResponse.data.success) {
                         const setup = setupResponse.data.data;
                         setFormData({
@@ -44,8 +73,8 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
                         // 2. Fetch Master Data (Sectors and Types) after setup check
                         const [sectorsRes, typesRes] = await Promise.all([
-                            api.get('/api/business/sectors'),
-                            api.get('/api/business/types')
+                            api.get<ApiResponse<Sector[]>>('/api/business/sectors'),
+                            api.get<ApiResponse<BusinessType[]>>('/api/business/types')
                         ]);
 
                         if (sectorsRes.data?.success) setSectors(sectorsRes.data.data);
@@ -88,7 +117,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
         setIsLoading(true);
         try {
-            const response = await api.post('/api/business/setup', formData);
+            const response = await api.post<ApiResponse<any>>('/api/business/setup', formData);
             if (response.data && response.data.success) {
                 toast.success('Business setup completed!');
                 onClose();

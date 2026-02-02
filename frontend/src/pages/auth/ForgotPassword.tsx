@@ -1,10 +1,10 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { requestPasswordReset, reset } from '../../redux/slices/authSlice';
-import { RootState, AppDispatch } from '../../redux/store';
-import AuthLayout from '../../components/auth/AuthLayout';
-import AuthAlert from '../../components/auth/AuthAlert';
+import { requestPasswordReset, resetAuthState } from "../../redux/slices/authSlice";
+import { RootState, AppDispatch } from "../../redux/store";
+import AuthLayout from '../Views/AuthLayout';
+import AuthAlert from '../Views/AuthAlert';
 
 const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -18,7 +18,7 @@ const ForgotPassword: React.FC = () => {
         if (user) navigate('/dashboard');
 
         return () => {
-            dispatch(reset());
+            dispatch(resetAuthState());
         };
     }, [user, navigate, dispatch]);
 

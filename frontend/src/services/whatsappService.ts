@@ -1,4 +1,4 @@
-import { Integrations } from "../../../src/types/tenant";
+import { Integrations } from "../types/tenant";
 
 const GRAPH_API_VERSION = 'v21.0'; // Use the latest stable version
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`;

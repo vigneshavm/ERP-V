@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import api from '../services/api';
-import { RootState } from '../redux/store';
+import api from "../services/api.js";
+import { RootState } from "../redux/store";
 
 export interface RecurringExpense {
     id: string;

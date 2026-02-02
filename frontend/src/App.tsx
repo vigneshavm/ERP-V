@@ -1,148 +1,145 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-import LoadingScreen from './components/layout/LoadingScreen';
+import React, { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LoadingScreen from './components/shared/Layout/LoadingScreen';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
 import { ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from './contexts/ThemeContext';
+
 // Auth
-const Login = lazy(() => import('./pages/auth/Login'));
-const Register = lazy(() => import('./pages/auth/Register'));
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+import LandingPage from './pages/Views/LandingPage';
+import { useDBDataSync } from './hooks/useDBDataSync';
+const Login = lazy(() => import('./pages/Auth/Login'));
+const Register = lazy(() => import('./pages/Auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'));
 
 // Dashboard & Profile
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
+const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
+const ProfileSettings = lazy(() => import('./pages/System/Settings/ProfileSettings'));
 
 // Customers
-const Customers = lazy(() => import('./pages/customers/Customers'));
-const AddCustomer = lazy(() => import('./pages/customers/AddCustomer'));
-const EditCustomer = lazy(() => import('./pages/customers/EditCustomer'));
-const CustomerDetail = lazy(() => import('./pages/customers/CustomerDetail'));
-const DueAdjustment = lazy(() => import('./pages/DueAdjustment'));
-const CustomersWithDues = lazy(() => import('./pages/customers/CustomersWithDues'));
+const Customers = lazy(() => import('./pages/People/Customers/Customers'));
+const AddCustomer = lazy(() => import('./pages/People/Customers/AddCustomer'));
+const EditCustomer = lazy(() => import('./pages/People/Customers/EditCustomer'));
+const CustomerDetail = lazy(() => import('./pages/People/Customers/CustomerDetail'));
+const DueAdjustment = lazy(() => import('./pages/Financial/DueAdjustment'));
+const CustomersWithDues = lazy(() => import('./pages/People/Customers/CustomersWithDues'));
 
 // Suppliers
-const Suppliers = lazy(() => import('./pages/suppliers/Suppliers'));
-const AddSupplier = lazy(() => import('./pages/suppliers/AddSupplier'));
-const EditSupplier = lazy(() => import('./pages/suppliers/EditSupplier'));
-const SupplierDetail = lazy(() => import('./pages/suppliers/SupplierDetail'));
-const SupplierGroups = lazy(() => import('./pages/suppliers/SupplierGroups'));
-const SupplierLedger = lazy(() => import('./pages/suppliers/SupplierLedger'));
-const SupplierStatements = lazy(() => import('./pages/suppliers/SupplierStatements'));
+const Suppliers = React.lazy(() => import('./pages/People/Suppliers/Suppliers'));
+const AddSupplier = lazy(() => import('./pages/People/Suppliers/AddSupplier'));
+const EditSupplier = lazy(() => import('./pages/People/Suppliers/EditSupplier'));
+const SupplierDetail = lazy(() => import('./pages/People/Suppliers/SupplierDetail'));
+const SupplierGroups = React.lazy(() => import('./pages/People/Suppliers/SupplierGroups'));
+const SupplierLedger = React.lazy(() => import('./pages/People/Suppliers/SupplierLedger'));
+const SupplierStatements = React.lazy(() => import('./pages/People/Suppliers/SupplierStatements'));
 
 // Inventory
-const AddItem = lazy(() => import('./pages/items/AddItem'));
-const EditItem = lazy(() => import('./pages/items/EditItem'));
-const BatchPriceUpdate = lazy(() => import('./pages/inventory/BatchPriceUpdate'));
-const ReprintQueue = lazy(() => import('./pages/inventory/ReprintQueue'));
+const AddItem = lazy(() => import('./pages/Commercial/Items/AddItem'));
+const EditItem = lazy(() => import('./pages/Commercial/Items/EditItem'));
+const BatchPriceUpdate = lazy(() => import('./pages/Commercial/Inventory/BatchPriceUpdate'));
+const ReprintQueue = lazy(() => import('./pages/Commercial/Inventory/ReprintQueue'));
+const InventoryManager = React.lazy(() => import('./pages/Commercial/Inventory/InventoryManager'));
+const AgedStockManager = React.lazy(() => import('./pages/Commercial/Inventory/AgedStockManager'));
 
 // POS & Invoices
-const POS = lazy(() => import('./pages/POS'));
-const Invoices = lazy(() => import('./pages/invoices/Invoice'));
-const InvoiceDetail = lazy(() => import('./pages/invoices/InvoiceDetail'));
-
-// Reports
-const Reports = lazy(() => import('./pages/Reports'));
-
-// Settings
-const Settings = lazy(() => import('./pages/settings/Settings'));
+const POS = lazy(() => import('./pages/Commercial/Pos/POSModule'));
+const Invoices = lazy(() => import('./pages/Financial/Invoices/Invoice'));
+const InvoiceDetail = lazy(() => import('./pages/Financial/Invoices/InvoiceDetail'));
+const POSOrdersIntelligence = lazy(() => import('./pages/Commercial/Pos/POSOrdersIntelligence'));
+const POSReturnsIntelligence = lazy(() => import('./pages/Commercial/Pos/POSReturnsIntelligence'));
+const ShiftManagementIntelligence = lazy(() => import('./pages/Commercial/Pos/ShiftManagementIntelligence'));
 
 // Sales
-const SalesInvoice = lazy(() => import('./pages/sales/salesInvoices/SalesInvoice'));
-const SalesInvoiceDetail = lazy(() => import('./pages/sales/salesInvoices/SalesInvoiceDetail'));
-const Estimate = lazy(() => import('./pages/sales/estimates/Estimate'));
-const EstimateList = lazy(() => import('./pages/sales/estimates/EstimateList'));
-const EstimateDetail = lazy(() => import('./pages/sales/estimates/EstimateDetail'));
-const PaymentIn = lazy(() => import('./pages/sales/payments/PaymentIn'));
-const PaymentInList = lazy(() => import('./pages/sales/payments/PaymentInList'));
-const PaymentReceiptDetail = lazy(() => import('./pages/sales/payments/PaymentReceiptDetail'));
-const SalesOrder = lazy(() => import('./pages/sales/salesOrders/SalesOrder'));
-const SalesOrderList = lazy(() => import('./pages/sales/salesOrders/SalesOrderList'));
-const SalesOrderDetail = lazy(() => import('./pages/sales/salesOrders/SalesOrderDetail'));
-const DeliveryChallan = lazy(() => import('./pages/sales/deliveryChallans/DeliveryChallan'));
-const DeliveryChallanList = lazy(() => import('./pages/sales/deliveryChallans/DeliveryChallanList'));
-const DeliveryChallanDetail = lazy(() => import('./pages/sales/deliveryChallans/DeliveryChallanDetail'));
-const Return = lazy(() => import('./pages/sales/returns/Return'));
-const ReturnedItems = lazy(() => import('./pages/sales/returns/ReturnedItems'));
+const SalesInvoice = React.lazy(() => import('./pages/Commercial/Sales/salesInvoices/SalesInvoice'));
+const SalesInvoiceDetail = lazy(() => import('./pages/Commercial/Sales/salesInvoices/SalesInvoiceDetail'));
+const Estimate = lazy(() => import('./pages/Commercial/Sales/estimates/Estimate'));
+const EstimateList = lazy(() => import('./pages/Commercial/Sales/estimates/EstimateList'));
+const EstimateDetail = lazy(() => import('./pages/Commercial/Sales/estimates/EstimateDetail'));
+const PaymentIn = lazy(() => import('./pages/Commercial/Sales/payments/PaymentIn'));
+const PaymentInList = React.lazy(() => import('./pages/Commercial/Sales/payments/PaymentInList'));
+const PaymentReceiptDetail = lazy(() => import('./pages/Commercial/Sales/payments/PaymentReceiptDetail'));
+const SalesOrder = lazy(() => import('./pages/Commercial/Sales/salesOrders/SalesOrder'));
+const SalesOrderList = lazy(() => import('./pages/Commercial/Sales/salesOrders/SalesOrderList'));
+const SalesOrderDetail = lazy(() => import('./pages/Commercial/Sales/salesOrders/SalesOrderDetail'));
+const DeliveryChallan = lazy(() => import('./pages/Commercial/Sales/deliveryChallans/DeliveryChallan'));
+const DeliveryChallanList = lazy(() => import('./pages/Commercial/Sales/deliveryChallans/DeliveryChallanList'));
+const DeliveryChallanDetail = lazy(() => import('./pages/Commercial/Sales/deliveryChallans/DeliveryChallanDetail'));
+const Return = lazy(() => import('./pages/Commercial/Sales/returns/Return'));
+const ReturnedItems = lazy(() => import('./pages/Commercial/Sales/returns/ReturnedItems'));
 
 // Purchase
-const PurchaseEntry = lazy(() => import('./pages/purchase/PurchaseEntry'));
-const Bills = lazy(() => import('./pages/purchase/Bills'));
-const PaymentOut = lazy(() => import('./pages/purchase/PaymentOut'));
-const Expenses = lazy(() => import('./pages/expenses/ExpensesModule'));
-const PurchaseOrder = lazy(() => import('./pages/purchase/PurchaseOrdersModule'));
-const PurchaseReturn = lazy(() => import('./pages/purchase/PurchaseReturn'));
-const SupplierPayments = lazy(() => import('./pages/purchase/SupplierPayments'));
-const DebitNotes = lazy(() => import('./pages/purchase/DebitNotes'));
-const GoodsReceived = lazy(() => import('./pages/purchase/GoodsReceived'));
-const OutstandingPayables = lazy(() => import('./pages/purchase/OutstandingPayables'));
+const PurchaseEntry = React.lazy(() => import('./pages/Commercial/Purchase/PurchaseEntry'));
+const Bills = lazy(() => import('./pages/Commercial/Purchase/Bills'));
+const PaymentOut = lazy(() => import('./pages/Commercial/Purchase/PaymentOut'));
+const Expenses = lazy(() => import('./pages/Financial/Expenses/ExpensesModule')); // Note: Expenses page reused
+const PurchaseOrder = lazy(() => import('./pages/Commercial/Purchase/PurchaseOrdersModule'));
+const PurchaseReturn = lazy(() => import('./pages/Commercial/Purchase/PurchaseReturn'));
+const SupplierPayments = React.lazy(() => import('./pages/Commercial/Purchase/SupplierPayments'));
+const DebitNotes = React.lazy(() => import('./pages/Commercial/Purchase/DebitNotes'));
+const GoodsReceived = React.lazy(() => import('./pages/Commercial/Purchase/GoodsReceived'));
+const OutstandingPayables = React.lazy(() => import('./pages/Commercial/Purchase/OutstandingPayables'));
 
-// Purchase Reports
-const ReportsDashboard = lazy(() => import('./pages/reports/ReportsDashboard'));
-const BusinessSnapshot = lazy(() => import('./pages/reports/BusinessSnapshot'));
-const ProfitPulse = lazy(() => import('./pages/reports/ProfitPulse'));
+// Reports
+const ReportsDashboard = lazy(() => import('./pages/Analytics/Reports/ReportsDashboard'));
+const BusinessSnapshot = lazy(() => import('./pages/Analytics/Reports/BusinessSnapshot'));
+const ProfitPulse = lazy(() => import('./pages/Analytics/Reports/ProfitPulse'));
+
+// Settings
+const Settings = lazy(() => import('./pages/System/Settings/Settings'));
 
 // Cash & Bank
-const BankAccounts = lazy(() => import('./pages/cashbank/BankAccounts'));
-const CashInHand = lazy(() => import('./pages/cashbank/CashInHand'));
-const Transfers = lazy(() => import('./pages/cashbank/Transfers'));
-const Cheques = lazy(() => import('./pages/cashbank/Cheques'));
-const LoanAccounts = lazy(() => import('./pages/cashbank/LoanAccounts'));
-const AccountLedger = lazy(() => import('./pages/cashbank/AccountLedger'));
-const BankSummary = lazy(() => import('./pages/cashbank/BankSummary'));
-const CashBankPosition = lazy(() => import('./pages/cashbank/CashBankPosition'));
-const FinanceOverview = lazy(() => import('./pages/cashbank/FinanceOverview'));
-const BankIntelligence = lazy(() => import('./pages/cashbank/BankIntelligence'));
-const BankReconciliation = lazy(() => import('./pages/cashbank/BankReconciliation'));
-const CashBankIntelligence = lazy(() => import('./pages/cashbank/CashBankIntelligence'));
-const FundTransfer = lazy(() => import('./pages/cashbank/FundTransfer'));
-const PettyCash = lazy(() => import('./pages/cashbank/PettyCash'));
-const DayEndReconciliation = lazy(() => import('./pages/cashbank/DayEndReconciliation'));
+const BankAccounts = lazy(() => import('./pages/Financial/Cashbank/BankAccounts'));
+const CashInHand = lazy(() => import('./pages/Financial/Cashbank/CashInHand'));
+const Transfers = lazy(() => import('./pages/Financial/Cashbank/Transfers'));
+const Cheques = lazy(() => import('./pages/Financial/Cashbank/Cheques'));
+const LoanAccounts = lazy(() => import('./pages/Financial/Cashbank/LoanAccounts'));
+const AccountLedger = lazy(() => import('./pages/Financial/Cashbank/AccountLedger'));
+const BankSummary = lazy(() => import('./pages/Financial/Cashbank/BankSummary'));
+const CashBankPosition = lazy(() => import('./pages/Financial/Cashbank/CashBankPosition'));
+const FinanceOverview = React.lazy(() => import('./pages/Financial/Cashbank/FinanceOverview'));
+const BankIntelligence = React.lazy(() => import('./pages/Financial/Cashbank/BankIntelligence'));
+const BankReconciliation = React.lazy(() => import('./pages/Financial/Cashbank/BankReconciliation'));
+const CashBankIntelligence = React.lazy(() => import('./pages/Financial/Cashbank/CashBankIntelligence'));
+const FundTransfer = lazy(() => import('./pages/Financial/Cashbank/FundTransfer'));
+const PettyCash = lazy(() => import('./pages/Financial/Cashbank/PettyCash'));
+const DayEndReconciliation = lazy(() => import('./pages/Financial/Cashbank/DayEndReconciliation'));
 
 // Business
-const OnlineShop = lazy(() => import('./pages/business/OnlineShop'));
-const GoogleProfile = lazy(() => import('./pages/business/GoogleProfile'));
-const MarketingTools = lazy(() => import('./pages/business/MarketingTools'));
-const MetaCallback = lazy(() => import('./pages/business/MetaCallback'));
-const WhatsAppMarketing = lazy(() => import('./pages/business/WhatsAppMarketing'));
+const OnlineShop = React.lazy(() => import('./pages/Analytics/Business/OnlineShop'));
+const GoogleProfile = lazy(() => import('./pages/Analytics/Business/GoogleProfile'));
+const MarketingTools = lazy(() => import('./pages/Analytics/Business/MarketingTools'));
+const MetaCallback = lazy(() => import('./pages/Analytics/Business/MetaCallback'));
+const WhatsAppMarketing = lazy(() => import('./pages/Analytics/Business/WhatsAppMarketing'));
 
 // Sync
-const SyncShare = lazy(() => import('./pages/sync/SyncShare'));
-const Backup = lazy(() => import('./pages/sync/Backup'));
-const Restore = lazy(() => import('./pages/sync/Restore'));
+const SyncShare = lazy(() => import('./pages/System/Sync/SyncShare'));
+const Backup = lazy(() => import('./pages/System/Sync/Backup'));
+const Restore = lazy(() => import('./pages/System/Sync/Restore'));
 
 // Expenses
-const ExpensesModule = Expenses;
-
-const ExpenseCategoriesManager = lazy(() => import('./pages/expenses/ExpenseCategoriesManager'));
-// const ExpenseIntelligence = lazy(() => import('./pages/expenses/ExpenseIntelligence')); // Duplicate import in original code? 101 and 142?
-// wait, line 101: import ExpenseIntelligence...
-// line 442 usage.
-// looking at original imports:
-// 101: import ExpenseIntelligence from './pages/expenses/ExpenseIntelligence';
-// 102: import ExpenseReportsIntelligence from './pages/expenses/ExpenseReportsIntelligence';
-// 103: import RecurringExpensesIntelligence from './pages/expenses/RecurringExpensesIntelligence';
-// 104: import DailyFinance from './pages/expenses/DailyFinance';
-// 105: import ExpenseManager from './pages/expenses/ExpenseManager';
-// 106: import InventoryManager from './pages/inventory/InventoryManager';
-// 107: import AgedStockManager from './pages/inventory/AgedStockManager';
-
-const ExpenseIntelligence = lazy(() => import('./pages/expenses/ExpenseIntelligence'));
-const ExpenseReportsIntelligence = lazy(() => import('./pages/expenses/ExpenseReportsIntelligence'));
-const RecurringExpensesIntelligence = lazy(() => import('./pages/expenses/RecurringExpensesIntelligence'));
-const DailyFinance = lazy(() => import('./pages/expenses/DailyFinance'));
-const ExpenseManager = lazy(() => import('./pages/expenses/ExpenseManager'));
-const InventoryManager = lazy(() => import('./pages/inventory/InventoryManager'));
-const AgedStockManager = lazy(() => import('./pages/inventory/AgedStockManager'));
+const ExpensesModule = React.lazy(() => import('./pages/Financial/Expenses/ExpensesModule'));
+const ExpenseCategoriesManager = React.lazy(() => import('./pages/Financial/Expenses/ExpenseCategoriesManager'));
+const ExpenseIntelligence = React.lazy(() => import('./pages/Financial/Expenses/ExpenseIntelligence'));
+const ExpenseReportsIntelligence = React.lazy(() => import('./pages/Financial/Expenses/ExpenseReportsIntelligence'));
+const RecurringExpensesIntelligence = React.lazy(() => import('./pages/Financial/Expenses/RecurringExpensesIntelligence'));
+const DailyFinance = React.lazy(() => import('./pages/Financial/Expenses/DailyFinance'));
+const ExpenseManager = lazy(() => import('./pages/Financial/Expenses/ExpenseManager'));
 
 // Utilities
-const BarcodeGenerator = lazy(() => import('./pages/utilities/BarcodeGenerator'));
-const ImportItems = lazy(() => import('./pages/utilities/ImportItems'));
-const BusinessSetup = lazy(() => import('./pages/utilities/BusinessSetup'));
-const DataExport = lazy(() => import('./pages/utilities/DataExport'));
-const LaborManager = lazy(() => import('./pages/employees/LaborManager'));
+const BarcodeGenerator = lazy(() => import('./pages/System/Utilities/BarcodeGenerator'));
+const ImportItems = lazy(() => import('./pages/System/Utilities/ImportItems'));
+const BusinessSetup = lazy(() => import('./pages/System/Utilities/BusinessSetup'));
+const DataExport = lazy(() => import('./pages/System/Utilities/DataExport'));
+
+// Employees
+const LaborManager = React.lazy(() => import('./pages/People/Employees/LaborManager'));
+
+// Tenants
+const TenantManager = lazy(() => import('./pages/People/Tenants/TenantManager'));
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -167,344 +164,225 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
-  console.log((import.meta as any).env.VITE_BACKEND_URL);
+  useDBDataSync(); // Initialize MongoDB Data Sync
+
+  const [resolvedTenant, setResolvedTenant] = React.useState<string | null>(() => {
+    return (import.meta as any).env.VITE_TENANT_ID || localStorage.getItem('selected_tenant_id') || null;
+  });
+
+  const handleTenantSelect = (tenant: any) => {
+    if (tenant) {
+      localStorage.setItem('selected_tenant_id', tenant.id);
+      setResolvedTenant(tenant.id);
+    }
+  };
+
+  const handleAdminSelect = () => {
+    // Navigate to admin login by setting a temp state or just letting the router handle it 
+    // if we add a direct link. But since we are conditional, we need to bypass LandingPage.
+    setResolvedTenant('ADMIN_CONSOLE');
+  };
+
+  // If we are strictly "Tenant Resolution", and no tenant is found:
+  if (!resolvedTenant) {
+    return <LandingPage onSelectAdmin={handleAdminSelect} onSelectTenant={handleTenantSelect} />;
+  }
+
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-app text-main transition-colors duration-300">
         <ToastContainer />
-        <Router>
-          <Suspense fallback={<LoadingScreen />}>
-            <Routes>
-              {/* Default Route */}
-              <Route path="/" element={<Navigate to="/login" replace />} />
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            {/* Default Route - Redirect to Login if unknown, or Dashboard if authenticated (handled by PublicRoute/ProtectedRoute) */}
+            <Route path="/" element={resolvedTenant === 'ADMIN_CONSOLE' ? <Navigate to="/admin/login" replace /> : <Navigate to="/login" replace />} />
 
-              {/* Public Routes */}
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <Login />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/register"
-                element={
-                  <PublicRoute>
-                    <Register />
-                  </PublicRoute>
-                }
-              />
+            {/* Public Routes */}
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/admin/login" element={<PublicRoute><Login isAdmin={true} /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><Register /></PublicRoute>} />
+            <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+            <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
 
-              <Route
-                path="/forgot-password"
-                element={
-                  <PublicRoute>
-                    <ForgotPassword />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/reset-password"
-                element={
-                  <PublicRoute>
-                    <ResetPassword />
-                  </PublicRoute>
-                }
-              />
+            {/* DASHBOARD (MANDATORY) */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
-              {/* Protected Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile-settings"
-                element={
-                  <ProtectedRoute>
-                    <ProfileSettings />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Customer Routes - Use nested routes for better organization */}
-              <Route path="/customers">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <Customers />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="add"
-                  element={
-                    <ProtectedRoute>
-                      <AddCustomer />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="edit/:id"
-                  element={
-                    <ProtectedRoute>
-                      <EditCustomer />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="adjust-due/:id"
-                  element={
-                    <ProtectedRoute>
-                      <DueAdjustment />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="with-dues"
-                  element={
-                    <ProtectedRoute>
-                      <CustomersWithDues />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path=":id"
-                  element={
-                    <ProtectedRoute>
-                      <CustomerDetail />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-
-              {/* Supplier Routes */}
-              <Route path="/suppliers">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <Suppliers />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="add"
-                  element={
-                    <ProtectedRoute>
-                      <AddSupplier />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path=":id/edit"
-                  element={
-                    <ProtectedRoute>
-                      <EditSupplier />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path=":id"
-                  element={
-                    <ProtectedRoute>
-                      <SupplierDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="groups"
-                  element={
-                    <ProtectedRoute>
-                      <SupplierGroups />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="ledger"
-                  element={
-                    <ProtectedRoute>
-                      <SupplierLedger />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="statements"
-                  element={
-                    <ProtectedRoute>
-                      <SupplierStatements />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-
-              {/* Inventory Routes */}
-              <Route path="/inventory">
+            {/* COMMERCIAL MODULE (MANDATORY) */}
+            <Route path="/item">
+              {/* Inventory */}
+              <Route path="inventory">
                 <Route index element={<ProtectedRoute><InventoryManager /></ProtectedRoute>} />
                 <Route path="aged-stock" element={<ProtectedRoute><AgedStockManager /></ProtectedRoute>} />
-                <Route
-                  path="add"
-                  element={
-                    <ProtectedRoute>
-                      <AddItem />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="edit/:id"
-                  element={
-                    <ProtectedRoute>
-                      <EditItem />
-                    </ProtectedRoute>
-                  }
-                />
                 <Route path="batch-price-update" element={<ProtectedRoute><BatchPriceUpdate /></ProtectedRoute>} />
                 <Route path="reprint-queue" element={<ProtectedRoute><ReprintQueue /></ProtectedRoute>} />
+                <Route path="add" element={<ProtectedRoute><AddItem /></ProtectedRoute>} />
+                <Route path="edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
               </Route>
 
-              {/* POS Routes */}
-              <Route path="/pos">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <POS />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="invoices"
-                  element={
-                    <ProtectedRoute>
-                      <Invoices />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="invoice/:id"
-                  element={
-                    <ProtectedRoute>
-                      <InvoiceDetail />
-                    </ProtectedRoute>
-                  }
-                />
+              {/* Point of Sale (POS) */}
+              <Route path="pos">
+                <Route path="billing" element={<ProtectedRoute><POS /></ProtectedRoute>} />
+                <Route path="orders" element={<ProtectedRoute><POSOrdersIntelligence /></ProtectedRoute>} />
+                <Route path="returns" element={<ProtectedRoute><POSReturnsIntelligence /></ProtectedRoute>} />
+                <Route path="shifts" element={<ProtectedRoute><ShiftManagementIntelligence /></ProtectedRoute>} />
+                <Route path="held-bills" element={<Navigate to="/item/pos/billing" replace />} />
               </Route>
 
-              {/* Sales Routes */}
-              <Route path="/sales">
-                <Route path="invoice" element={<ProtectedRoute><SalesInvoice /></ProtectedRoute>} />
-                <Route path="invoice/:id" element={<ProtectedRoute><SalesInvoiceDetail /></ProtectedRoute>} />
-                <Route path="estimate" element={<ProtectedRoute><Estimate /></ProtectedRoute>} />
-                <Route path="estimates" element={<ProtectedRoute><EstimateList /></ProtectedRoute>} />
-                <Route path="estimate/:id" element={<ProtectedRoute><EstimateDetail /></ProtectedRoute>} />
-                <Route path="payment-in" element={<ProtectedRoute><PaymentIn /></ProtectedRoute>} />
-                <Route path="payment-in-list" element={<ProtectedRoute><PaymentInList /></ProtectedRoute>} />
-                <Route path="payment-in/:id" element={<ProtectedRoute><PaymentReceiptDetail /></ProtectedRoute>} />
-                <Route path="sales-order" element={<ProtectedRoute><SalesOrder /></ProtectedRoute>} />
-                <Route path="sales-order-list" element={<ProtectedRoute><SalesOrderList /></ProtectedRoute>} />
-                <Route path="sales-order/:id" element={<ProtectedRoute><SalesOrderDetail /></ProtectedRoute>} />
+              {/* Sales */}
+              <Route path="sales">
+                <Route path="orders" element={<ProtectedRoute><SalesOrderList /></ProtectedRoute>} />
                 <Route path="order" element={<ProtectedRoute><SalesOrder /></ProtectedRoute>} />
+                <Route path="order/:id" element={<ProtectedRoute><SalesOrderDetail /></ProtectedRoute>} />
+                <Route path="invoices" element={<ProtectedRoute><SalesInvoice /></ProtectedRoute>} />
+                <Route path="invoice/:id" element={<ProtectedRoute><SalesInvoiceDetail /></ProtectedRoute>} />
+                <Route path="delivery-challans" element={<ProtectedRoute><DeliveryChallanList /></ProtectedRoute>} />
                 <Route path="delivery-challan" element={<ProtectedRoute><DeliveryChallan /></ProtectedRoute>} />
-                <Route path="delivery-challan-list" element={<ProtectedRoute><DeliveryChallanList /></ProtectedRoute>} />
                 <Route path="delivery-challan/:id" element={<ProtectedRoute><DeliveryChallanDetail /></ProtectedRoute>} />
+                <Route path="estimates" element={<ProtectedRoute><EstimateList /></ProtectedRoute>} />
+                <Route path="estimate" element={<ProtectedRoute><Estimate /></ProtectedRoute>} />
+                <Route path="estimate/:id" element={<ProtectedRoute><EstimateDetail /></ProtectedRoute>} />
+                <Route path="payments" element={<ProtectedRoute><PaymentInList /></ProtectedRoute>} />
+                <Route path="payment-in" element={<ProtectedRoute><PaymentIn /></ProtectedRoute>} />
+                <Route path="payment-in/:id" element={<ProtectedRoute><PaymentReceiptDetail /></ProtectedRoute>} />
+                <Route path="returns" element={<ProtectedRoute><ReturnedItems /></ProtectedRoute>} />
                 <Route path="return" element={<ProtectedRoute><Return /></ProtectedRoute>} />
-                <Route path="returned-items" element={<ProtectedRoute><ReturnedItems /></ProtectedRoute>} />
               </Route>
 
-              {/* Purchase Routes */}
-              <Route path="/purchase">
+              {/* Purchase */}
+              <Route path="purchase">
+                <Route path="orders" element={<ProtectedRoute><PurchaseOrder /></ProtectedRoute>} />
+                <Route path="invoices" element={<ProtectedRoute><Bills /></ProtectedRoute>} />
+                <Route path="returns" element={<ProtectedRoute><DebitNotes /></ProtectedRoute>} />
+                <Route path="return/new" element={<ProtectedRoute><PurchaseReturn /></ProtectedRoute>} />
                 <Route path="entry" element={<ProtectedRoute><PurchaseEntry /></ProtectedRoute>} />
-                <Route path="bills" element={<ProtectedRoute><Bills /></ProtectedRoute>} />
                 <Route path="payment-out" element={<ProtectedRoute><SupplierPayments /></ProtectedRoute>} />
                 <Route path="payment-out/new" element={<ProtectedRoute><PaymentOut /></ProtectedRoute>} />
-                <Route path="expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
-                <Route path="order" element={<ProtectedRoute><PurchaseOrder /></ProtectedRoute>} />
-                <Route path="return" element={<ProtectedRoute><DebitNotes /></ProtectedRoute>} />
-                <Route path="return/new" element={<ProtectedRoute><PurchaseReturn /></ProtectedRoute>} />
                 <Route path="received" element={<ProtectedRoute><GoodsReceived /></ProtectedRoute>} />
                 <Route path="payables" element={<ProtectedRoute><OutstandingPayables /></ProtectedRoute>} />
               </Route>
+            </Route>
 
-              {/* Cash & Bank Routes */}
-              <Route path="/cashbank">
-                <Route path="position" element={<ProtectedRoute><CashBankPosition /></ProtectedRoute>} />
+            {/* FINANCIAL MODULE (MANDATORY) */}
+            <Route path="/financial">
+              {/* Expenses */}
+              <Route path="expenses">
+                <Route index element={<ProtectedRoute><ExpenseManager /></ProtectedRoute>} />
+                <Route path="recurring" element={<ProtectedRoute><RecurringExpensesIntelligence /></ProtectedRoute>} />
+                <Route path="categories" element={<ProtectedRoute><ExpenseCategoriesManager /></ProtectedRoute>} />
+                <Route path="reports" element={<ProtectedRoute><ExpenseReportsIntelligence /></ProtectedRoute>} />
+                <Route path="insights" element={<ProtectedRoute><ExpenseIntelligence /></ProtectedRoute>} />
+                <Route path="daily" element={<ProtectedRoute><DailyFinance /></ProtectedRoute>} />
+              </Route>
+
+              {/* Cash & Bank */}
+              <Route path="cashbank">
+                <Route path="transactions" element={<ProtectedRoute><CashBankPosition /></ProtectedRoute>} />
+                <Route path="reconciliation" element={<ProtectedRoute><BankReconciliation /></ProtectedRoute>} />
                 <Route path="bank-accounts" element={<ProtectedRoute><BankAccounts /></ProtectedRoute>} />
+                <Route path="overview" element={<ProtectedRoute><FinanceOverview /></ProtectedRoute>} />
                 <Route path="bank-summary" element={<ProtectedRoute><BankSummary /></ProtectedRoute>} />
                 <Route path="cash-in-hand" element={<ProtectedRoute><CashInHand /></ProtectedRoute>} />
                 <Route path="transfers" element={<ProtectedRoute><Transfers /></ProtectedRoute>} />
-                <Route path="ledger/:id" element={<ProtectedRoute><AccountLedger /></ProtectedRoute>} />
                 <Route path="cheques" element={<ProtectedRoute><Cheques /></ProtectedRoute>} />
                 <Route path="loan-accounts" element={<ProtectedRoute><LoanAccounts /></ProtectedRoute>} />
-                <Route path="overview" element={<ProtectedRoute><FinanceOverview /></ProtectedRoute>} />
+                <Route path="ledger/:id" element={<ProtectedRoute><AccountLedger /></ProtectedRoute>} />
                 <Route path="bank-intelligence" element={<ProtectedRoute><BankIntelligence /></ProtectedRoute>} />
-                <Route path="reconciliation" element={<ProtectedRoute><BankReconciliation /></ProtectedRoute>} />
                 <Route path="intelligence" element={<ProtectedRoute><CashBankIntelligence /></ProtectedRoute>} />
                 <Route path="fund-transfer" element={<ProtectedRoute><FundTransfer /></ProtectedRoute>} />
                 <Route path="petty-cash" element={<ProtectedRoute><PettyCash /></ProtectedRoute>} />
                 <Route path="day-end-reconciliation" element={<ProtectedRoute><DayEndReconciliation /></ProtectedRoute>} />
               </Route>
 
-              {/* Business Growth Routes */}
-              <Route path="/business">
-                <Route path="online-shop" element={<ProtectedRoute><OnlineShop /></ProtectedRoute>} />
-                <Route path="google-profile" element={<ProtectedRoute><GoogleProfile /></ProtectedRoute>} />
-                <Route path="marketing-tools" element={<ProtectedRoute><MarketingTools /></ProtectedRoute>} />
-                <Route path="marketing/meta/callback" element={<ProtectedRoute><MetaCallback /></ProtectedRoute>} />
-                <Route path="whatsapp-marketing" element={<ProtectedRoute><WhatsAppMarketing /></ProtectedRoute>} />
+              {/* Other Financials */}
+              <Route path="invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
+              <Route path="invoice/:id" element={<ProtectedRoute><InvoiceDetail /></ProtectedRoute>} />
+              <Route path="due-adjustments" element={<ProtectedRoute><DueAdjustment /></ProtectedRoute>} />
+            </Route>
+
+            {/* PEOPLE MODULE (MANDATORY) */}
+            <Route path="/people">
+              {/* Employees */}
+              <Route path="employees">
+                <Route index element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
+                <Route path="attendance" element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
+                <Route path="payments" element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
+                <Route path="stats" element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
               </Route>
 
-              {/* Sync & Backup Routes */}
-              <Route path="/sync">
+              {/* External Stakeholders */}
+              <Route path="customers">
+                <Route index element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+                <Route path="add" element={<ProtectedRoute><AddCustomer /></ProtectedRoute>} />
+                <Route path="edit/:id" element={<ProtectedRoute><EditCustomer /></ProtectedRoute>} />
+                <Route path=":id" element={<ProtectedRoute><CustomerDetail /></ProtectedRoute>} />
+                <Route path="with-dues" element={<ProtectedRoute><CustomersWithDues /></ProtectedRoute>} />
+                <Route path="adjust-due/:id" element={<ProtectedRoute><DueAdjustment /></ProtectedRoute>} />
+              </Route>
+              <Route path="suppliers">
+                <Route index element={<ProtectedRoute><Suppliers /></ProtectedRoute>} />
+                <Route path="add" element={<ProtectedRoute><AddSupplier /></ProtectedRoute>} />
+                <Route path=":id/edit" element={<ProtectedRoute><EditSupplier /></ProtectedRoute>} />
+                <Route path=":id" element={<ProtectedRoute><SupplierDetail /></ProtectedRoute>} />
+                <Route path="groups" element={<ProtectedRoute><SupplierGroups /></ProtectedRoute>} />
+                <Route path="ledger" element={<ProtectedRoute><SupplierLedger /></ProtectedRoute>} />
+                <Route path="statements" element={<ProtectedRoute><SupplierStatements /></ProtectedRoute>} />
+              </Route>
+              <Route path="vendors" element={<ProtectedRoute><Suppliers /></ProtectedRoute>} />
+              <Route path="tenants" element={<ProtectedRoute><TenantManager /></ProtectedRoute>} />
+            </Route>
+
+            {/* ANALYTICS MODULE (MANDATORY) */}
+            <Route path="/analytics">
+              <Route path="reports">
+                <Route path="snapshot" element={<ProtectedRoute><BusinessSnapshot /></ProtectedRoute>} />
+                <Route path="sales" element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
+                <Route path="hourly" element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
+                <Route path="profit" element={<ProtectedRoute><ProfitPulse /></ProtectedRoute>} />
+                <Route index element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
+              </Route>
+              <Route path="marketing">
+                <Route path="google-business" element={<ProtectedRoute><GoogleProfile /></ProtectedRoute>} />
+                <Route path="online-shop" element={<ProtectedRoute><OnlineShop /></ProtectedRoute>} />
+                <Route path="tools" element={<ProtectedRoute><MarketingTools /></ProtectedRoute>} />
+                <Route path="meta/callback" element={<ProtectedRoute><MetaCallback /></ProtectedRoute>} />
+                <Route path="whatsapp" element={<ProtectedRoute><WhatsAppMarketing /></ProtectedRoute>} />
+              </Route>
+            </Route>
+
+            {/* SYSTEM MODULE (MANDATORY) */}
+            <Route path="/system">
+              {/* Settings */}
+              <Route path="settings" element={<Navigate to="/system/settings/general" replace />} />
+              <Route path="settings/:tab" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+              {/* Sync & Data */}
+              <Route path="sync">
+                <Route index element={<ProtectedRoute><SyncShare /></ProtectedRoute>} />
                 <Route path="share" element={<ProtectedRoute><SyncShare /></ProtectedRoute>} />
                 <Route path="backup" element={<ProtectedRoute><Backup /></ProtectedRoute>} />
                 <Route path="restore" element={<ProtectedRoute><Restore /></ProtectedRoute>} />
               </Route>
+              <Route path="data" element={<ProtectedRoute><DataExport /></ProtectedRoute>} />
 
-              {/* Expenses Routes */}
-              <Route path="/expenses">
-                <Route index element={<ProtectedRoute><ExpensesModule /></ProtectedRoute>} />
-                <Route path="daily" element={<ProtectedRoute><DailyFinance /></ProtectedRoute>} />
-                <Route path="manager" element={<ProtectedRoute><ExpenseManager /></ProtectedRoute>} />
-                <Route path="categories" element={<ProtectedRoute><ExpenseCategoriesManager /></ProtectedRoute>} />
-                <Route path="intelligence" element={<ProtectedRoute><ExpenseIntelligence /></ProtectedRoute>} />
-                <Route path="reports" element={<ProtectedRoute><ExpenseReportsIntelligence /></ProtectedRoute>} />
-                <Route path="recurring" element={<ProtectedRoute><RecurringExpensesIntelligence /></ProtectedRoute>} />
-              </Route>
-
-              {/* Utilities Routes */}
-              <Route path="/utilities">
+              <Route path="utilities">
                 <Route path="barcode" element={<ProtectedRoute><BarcodeGenerator /></ProtectedRoute>} />
                 <Route path="import-items" element={<ProtectedRoute><ImportItems /></ProtectedRoute>} />
                 <Route path="business-setup" element={<ProtectedRoute><BusinessSetup /></ProtectedRoute>} />
                 <Route path="export" element={<ProtectedRoute><DataExport /></ProtectedRoute>} />
               </Route>
+            </Route>
 
-              {/* Employee Routes */}
-              <Route path="/employees" element={<ProtectedRoute><LaborManager /></ProtectedRoute>} />
+            {/* ACCOUNT (MANDATORY) */}
+            <Route path="/account">
+              <Route path="profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+            </Route>
 
-              {/* Reports Route */}
-              <Route path="/reports">
-                <Route index element={<ProtectedRoute><ReportsDashboard /></ProtectedRoute>} />
-                <Route path="business-snapshot" element={<ProtectedRoute><BusinessSnapshot /></ProtectedRoute>} />
-                <Route path="profit-pulse" element={<ProtectedRoute><ProfitPulse /></ProtectedRoute>} />
-              </Route>
+            <Route path="/logout" element={<Navigate to="/login" replace />} />
 
-              {/* Settings Route */}
-              {/* Settings Route */}
-              <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
-              <Route path="/settings/:tab" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-
-              {/* 404 Route */}
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </Suspense>
-        </Router>
+            {/* 404 Route */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
       </div>
     </ThemeProvider>
   );

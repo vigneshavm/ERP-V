@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import api from '../services/api';
-import { RootState } from '../redux/store';
+import api from "../services/api.js";
+import { RootState } from "../redux/store";
 
 export interface Branch {
     id: string;
@@ -66,7 +66,8 @@ export const useBranchResolver = () => {
         return branches.find(b => b.id === branchId) || null;
     };
 
-    const getBranchName = (branchId: string): string => {
+    const getBranchName = (branchId: string | undefined | null): string => {
+        if (!branchId) return 'Main Branch';
         const branch = resolveBranch(branchId);
         return branch?.name || branchId || 'Unknown Branch';
     };

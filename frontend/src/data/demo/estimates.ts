@@ -1,4 +1,4 @@
-import { Estimate } from '../../types/sales';
+import { Estimate } from "../../types/sales";
 
 export const estimates: Estimate[] = [
     {

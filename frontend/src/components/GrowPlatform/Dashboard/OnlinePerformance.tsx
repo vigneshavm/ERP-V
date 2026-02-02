@@ -16,7 +16,7 @@ import {
     LayoutDashboard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../../store';
+import { setActiveTab } from '../../../redux/slices/uiSlice';
 
 const OnlinePerformance: React.FC = () => {
     const dispatch = useDispatch();

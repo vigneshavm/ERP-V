@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../store';
+import { RootState } from '@/redux/store';
 import {
     MessageSquare, Send, Calendar, Users, BarChart3,
     Shield, Zap, CheckCircle, AlertCircle, Plus,
@@ -8,7 +8,7 @@ import {
     ChevronRight, ArrowUpRight, Copy, Trash2, Edit3,
     Smartphone, Mail, Bell, Target, Sparkles, Star
 } from 'lucide-react';
-import { SMSCampaign, SMSConfig } from '../../../types/tenant';
+import { SMSCampaign, SMSConfig } from "../../../types/tenant";
 
 const SMSMarketing: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);

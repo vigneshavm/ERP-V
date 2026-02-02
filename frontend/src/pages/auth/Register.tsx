@@ -1,12 +1,12 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { register, reset } from "../../redux/slices/authSlice";
+import { register, resetAuthState } from "../../redux/slices/authSlice";
 import { AppDispatch, RootState } from "../../redux/store";
-import SecurePasswordInput from '../../components/SecurePasswordInput';
-import AuthLayout from '../../components/auth/AuthLayout';
-import AuthAlert from '../../components/auth/AuthAlert';
-import { isStrongPassword, isValidPhone, formatPhoneInput } from '../../utils/authUtils';
+import SecurePasswordInput from './SecurePasswordInput';
+import AuthLayout from '../Views/AuthLayout';
+import AuthAlert from '../Views/AuthAlert';
+import { isStrongPassword, isValidPhone, formatPhoneInput } from "../../utils/authUtils";
 
 const Register: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -34,12 +34,12 @@ const Register: React.FC = () => {
     useEffect(() => {
         if (isSuccess || user) {
             navigate("/dashboard");
-            dispatch(reset());
+            dispatch(resetAuthState());
         }
 
         // Keep error visible; reset only on unmount
         return () => {
-            dispatch(reset());
+            dispatch(resetAuthState());
         };
     }, [user, isSuccess, navigate, dispatch]);
 
@@ -97,10 +97,10 @@ const Register: React.FC = () => {
 
     return (
         <AuthLayout
-            title="Manage your entire business in one place."
-            subtitle="Create your account"
-            secondarySubtitle="Get started with your 14-day free trial. No credit card required."
-            description="Streamline your billing, inventory, and accounting with our comprehensive enterprise solution. Join thousands of growing businesses today."
+            title="Start your 14-day Free Trial"
+            subtitle="Set up your business profile"
+            secondarySubtitle="No credit card required. Cancel anytime."
+            description="Join thousands of retailers using our platform to grow their business. Instant setup."
         >
             {/* Error Alert */}
             {(isError || validationError) && (
@@ -152,7 +152,7 @@ const Register: React.FC = () => {
                     {/* Business Name & Phone Group */}
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <div>
-                            <label htmlFor="shopName" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Business Name</label>
+                            <label htmlFor="shopName" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Business / Store Name</label>
                             <div className="mt-1">
                                 <input
                                     id="shopName"
@@ -261,7 +261,7 @@ const Register: React.FC = () => {
                                 Creating Account...
                             </span>
                         ) : (
-                            "Create My Account"
+                            "Launch My Store"
                         )}
                     </button>
                 </div>

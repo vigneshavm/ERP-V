@@ -1,4 +1,4 @@
-import { SMSConfig } from "../../../src/types/tenant";
+import { SMSConfig } from "../types/tenant";
 
 export const SMSService = {
     /**

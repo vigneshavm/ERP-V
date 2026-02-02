@@ -2,6 +2,7 @@ import { Sector, BranchId, SystemRole, AttendanceStatus } from './common';
 
 export interface Employee {
     id: string;
+    _id?: string;
     name: string;
     role: string;
     systemRole: SystemRole;
@@ -15,6 +16,8 @@ export interface Employee {
 
     // Frontend/Legacy fields - checking if we need them
     pin?: string;
+    pin_hash?: string;
+    password_hash?: string;
     sector?: Sector;
     assignedCounterId?: string;
     roleId?: string;

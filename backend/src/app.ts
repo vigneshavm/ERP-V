@@ -15,6 +15,7 @@ import { stream } from "./config/logger.js";
 import requestId from "./middlewares/requestId.js";
 import requestTimeout from "./middlewares/timeout.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import tenantResolver from "./middlewares/tenantResolver.js";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 
@@ -111,6 +112,11 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // =======================
+// Tenant Resolution
+// =======================
+app.use(tenantResolver);
+
+// =======================
 // Swagger Documentation
 // =======================
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -132,6 +138,18 @@ app.get("/", (_req, res) => {
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "./modules/core/routes/core.routes.js";
 app.use("/api", coreRoutes);
+
+import syncRoutes from "./modules/core/routes/syncRoutes.js";
+app.use("/api/sync", syncRoutes);
+
+import feedbackRoutes from "./modules/core/routes/feedbackRoutes.js";
+app.use("/api/feedback", feedbackRoutes);
+
+import notificationRoutes from "./modules/core/routes/notificationRoutes.js";
+app.use("/api/notifications", notificationRoutes);
+
+import auditLogRoutes from "./modules/core/routes/auditLogRoutes.js";
+app.use("/api/audit-logs", auditLogRoutes);
 
 // INVENTORY Module
 import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";

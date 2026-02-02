@@ -1,14 +1,18 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { login, reset } from '../../redux/slices/authSlice';
-import { AppDispatch, RootState } from '../../redux/store';
-import DeviceConflictModal from '../../components/DeviceConflictModal';
-import SecurePasswordInput from '../../components/SecurePasswordInput';
-import AuthLayout from '../../components/auth/AuthLayout';
-import AuthAlert from '../../components/auth/AuthAlert';
+import { login, resetAuthState } from "../../redux/slices/authSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import DeviceConflictModal from '../System/Sync/Sync/DeviceConflictModal';
+import SecurePasswordInput from './SecurePasswordInput';
+import AuthLayout from '../Views/AuthLayout';
+import AuthAlert from '../Views/AuthAlert';
 
-const Login: React.FC = () => {
+interface LoginProps {
+    isAdmin?: boolean;
+}
+
+const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -33,7 +37,7 @@ const Login: React.FC = () => {
 
         // Cleanup: reset only on unmount
         return () => {
-            dispatch(reset());
+            dispatch(resetAuthState());
         };
     }, [user, isSuccess, navigate, dispatch]);
 
@@ -57,10 +61,10 @@ const Login: React.FC = () => {
 
     return (
         <AuthLayout
-            title="Welcome back, Partner."
-            subtitle="Sign in to your account"
-            secondarySubtitle="Enter your credentials to continue."
-            description="Securely access your dashboard to manage sales, inventory, and financial reports. Your business data is just a click away."
+            title={isAdmin ? "Super Admin Console" : "Welcome back, Partner."}
+            subtitle={isAdmin ? "Restricted System Access" : "Sign in to your account"}
+            secondarySubtitle={isAdmin ? "authorized personnel only" : "Enter your credentials to continue."}
+            description={isAdmin ? "Secure access for system administration. All actions are logged." : "Securely access your dashboard to manage sales, inventory, and financial reports. Your business data is just a click away."}
         >
             {/* Error Alert */}
             {isError && (
@@ -154,12 +158,19 @@ const Login: React.FC = () => {
             </form>
 
             <div className="mt-6 text-center text-sm">
-                <p className="text-slate-600 dark:text-slate-400 transition-colors">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
-                        Start your 14-day free trial
+                {!isAdmin && (
+                    <p className="text-slate-600 dark:text-slate-400 transition-colors">
+                        Don't have an account?{' '}
+                        <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
+                            Start your 14-day free trial
+                        </Link>
+                    </p>
+                )}
+                {isAdmin && (
+                    <Link to="/" className="text-slate-500 hover:text-slate-700 dark:text-slate-400 transition-colors">
+                        ← Back to Tenant Login
                     </Link>
-                </p>
+                )}
             </div>
 
             {/* Device Conflict Modal */}
