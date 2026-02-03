@@ -49,29 +49,29 @@ export const useInventoryForm = (currentBranch: string) => {
     };
 
     const handleEdit = (product: Product) => {
-        setEditingId(product.id);
+        const p = product as any;
         setBulkFormData([{
-            id: product.id,
-            name: product.name,
-            sku: product.sku,
-            price: product.price.toString(),
-            cost: product.cost.toString(),
-            stock: product.stock.toString(),
-            category: product.category,
-            subCategory: product.subCategory || '',
-            size: product.size || '',
-            color: product.color || '',
-            material: product.material || '',
-            location: product.location || '',
-            discount: product.discount?.toString() || '',
-            productType: product.productType || '',
-            branch: product.branchId || '',
-            brand: product.brand || '',
-            unit: product.unit || 'Piece',
-            image: product.image,
-            expiryDate: product.expiryDate || '',
-            gstPercentage: product.gstPercentage?.toString() || '18',
-            warrantyPeriod: (product as any).warrantyPeriod || ''
+            id: p.id,
+            name: p.name,
+            sku: p.sku,
+            price: p.price.toString(),
+            cost: p.cost.toString(),
+            stock: p.stock.toString(),
+            category: p.category,
+            subCategory: p.subCategory || '',
+            size: p.size || '',
+            color: p.color || '',
+            material: p.material || '',
+            location: p.location || '',
+            discount: p.discount?.toString() || '',
+            productType: p.productType || '',
+            branch: p.branchId || '',
+            brand: p.brand || '',
+            unit: p.unit || 'Piece',
+            image: p.image,
+            expiryDate: p.expiryDate || '',
+            gstPercentage: p.gstPercentage?.toString() || '18',
+            warrantyPeriod: p.warrantyPeriod || ''
         }]);
         setImagePreview(product.image || null);
         setIsFormOpen(true);

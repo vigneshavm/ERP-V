@@ -56,6 +56,9 @@ api.interceptors.response.use(
                 draggable: true,
             });
 
+            // Dispatch custom event to trigger immediate Redux state cleanup in App.tsx
+            window.dispatchEvent(new Event('auth:unauthorized'));
+
             // Redirect to login page after a brief delay
             setTimeout(() => {
                 window.location.href = '/login';

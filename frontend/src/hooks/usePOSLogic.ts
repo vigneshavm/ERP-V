@@ -124,8 +124,8 @@ export const usePOSLogic = () => {
     });
 
     const { handleCheckout } = usePOSCheckout({
-        cart, isProcessing, setIsProcessing, activeSession, activeCounterId,
-        currentBranch, currentSector, user, branches, tenants, getBranchName,
+        cart, isProcessing, setIsProcessing, activeSession, activeCounterId: activeCounterId || null,
+        currentBranch: currentBranch || '', currentSector: currentSector || '', user: user as any, branches, tenants, getBranchName,
         isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, defaultTaxMode,
         onCheckoutSuccess: (sale) => {
             handleCheckoutSuccess(sale);

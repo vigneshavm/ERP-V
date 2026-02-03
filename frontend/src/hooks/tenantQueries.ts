@@ -8,7 +8,7 @@ export const fetchTenantsRaw = async () => {
     }
     // Fetch from Node.js API
     try {
-        const { data } = await api.get('/business/profile');
+        const { data } = await api.get('/api/business/profile');
         if (data && data.success && data.data) {
             // Map BusinessProfile to Tenant structure
             // The frontend expects an array of tenants

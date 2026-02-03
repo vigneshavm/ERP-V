@@ -21,7 +21,7 @@ import {
     Loader2,
     Trash2
 } from 'lucide-react';
-import { debitNoteService, DebitNote, DebitNoteItem } from "../../../services/DebitNoteService";
+import { debitNoteService, DebitNote, DebitNoteItem } from "../../../services/debitNoteService";
 import { toast } from 'react-toastify';
 
 

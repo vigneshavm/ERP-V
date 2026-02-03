@@ -8,11 +8,11 @@ import {
 } from 'lucide-react';
 import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "../../../types/tenant";
 import { GrowthIntelligenceService } from "../../../services/GrowthIntelligenceService";
-import { WhatsAppService } from "../../../services/WhatsAppService";
-import { EmailService } from "../../../services/EmailService";
-import { SMSService } from "../../../services/SmsService";
-import { SocialService } from "../../../services/SocialService";
-import { StoreService } from "../../../services/StoreService";
+import { WhatsAppService } from "../../../services/whatsappService";
+import { EmailService } from "../../../services/emailService";
+import { SMSService } from "../../../services/smsService";
+import { SocialService } from "../../../services/socialService";
+import { StoreService } from "../../../services/storeService";
 
 const SuperAdminGrowthConsole: React.FC = () => {
     const navigate = useNavigate();

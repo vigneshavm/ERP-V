@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle, Link as LinkIcon, Globe, MessageSquare, ExternalLink } from 'lucide-react';
 
-import { WhatsAppService } from "../../../services/WhatsAppService";
+import { WhatsAppService } from "../../../services/whatsappService";
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);

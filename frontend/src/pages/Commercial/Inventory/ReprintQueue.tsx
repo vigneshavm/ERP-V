@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Printer, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useConfig } from "@/contexts/ConfigContext";
-import { LabelPrintModal } from "../../../components/Inventory/LabelPrintModal";
+import { LabelPrintModal } from "../../Inventory/LabelPrintModal";
 
 interface QueueItem {
     itemId: string;

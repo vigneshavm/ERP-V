@@ -1,10 +1,10 @@
 import React from 'react';
 import { Search, Bot } from 'lucide-react';
-import { useStorefrontLogic } from "../../components/Storefront/useStorefrontLogic";
-import { StorefrontHeader } from "../../components/Storefront/StorefrontHeader";
-import { StorefrontFilters } from "../../components/Storefront/StorefrontFilters";
-import { StorefrontAiPanel } from "../../components/Storefront/StorefrontAiPanel";
-import { StorefrontProductDisplay } from "../../components/Storefront/StorefrontProductDisplay";
+import { useStorefrontLogic } from "./useStorefrontLogic";
+import { StorefrontHeader } from "./StorefrontHeader";
+import { StorefrontFilters } from "./StorefrontFilters";
+import { StorefrontAiPanel } from "./StorefrontAiPanel";
+import { StorefrontProductDisplay } from "./StorefrontProductDisplay";
 
 const Storefront: React.FC = () => {
     const {

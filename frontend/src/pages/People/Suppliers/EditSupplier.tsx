@@ -5,7 +5,7 @@ import { getSupplierById, reset } from "../../../redux/slices/supplierSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import SupplierForm from "../../../components/Suppliers/SupplierForm";
+import SupplierForm from "../../../components/suppliers/SupplierForm";
 
 const EditSupplier: React.FC = () => {
     const navigate = useNavigate();

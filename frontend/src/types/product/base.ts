@@ -13,6 +13,8 @@ export interface BaseProduct {
     // Pricing
     costPrice: number; // Backend: costPrice
     sellingPrice: number; // Backend: sellingPrice
+    price?: number; // Frontend/Legacy: price
+    cost?: number; // Frontend/Legacy: cost
     mrp?: number;
     discount?: number;
     taxMode?: TaxMode;
@@ -21,6 +23,7 @@ export interface BaseProduct {
 
     // Inventory
     stockQty: number; // Backend: stockQty
+    stock?: number; // Frontend/Legacy: stock
     reservedStock?: number;
     inTransitStock?: number;
     lowStockLimit?: number;

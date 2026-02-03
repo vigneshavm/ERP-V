@@ -30,7 +30,8 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
             onClose();
         } catch (err: any) {
             // Error will be handled by authSlice state
-            setError(err.message || 'Failed to resolve device conflict');
+            const errorMessage = typeof err === 'string' ? err : (err?.message || 'Failed to resolve device conflict');
+            setError(errorMessage);
             setIsProcessing(false);
         }
     };

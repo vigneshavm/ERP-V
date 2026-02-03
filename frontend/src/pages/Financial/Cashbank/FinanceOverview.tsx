@@ -28,10 +28,10 @@ import { TransactionType, Sector } from "@/types/common";
 import { formatCurrency } from "@/utils/helpers";
 
 // Sub-components (Upgraded UI versions)
-import FinanceOverviewCard from "@/components/Finance/FinanceOverview";
-import ExpenseManager from "@/components/Finance/ExpenseManager";
-import ChequeLedger from "@/components/Finance/ChequeLedger";
-import FinanceModals from "@/components/Finance/FinanceModals";
+import FinanceOverviewCard from "@/pages/Financial/FinanceOverview";
+import ExpenseManager from "@/pages/Financial/ExpenseManager";
+import ChequeLedger from "@/pages/Financial/ChequeLedger";
+import FinanceModals from "@/pages/Financial/FinanceModals";
 
 const FinanceOverviewPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

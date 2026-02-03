@@ -42,6 +42,7 @@ export interface PurchaseOrder {
     // sector: Sector; // Optional depending on usage
     branch_id?: string; // Optional depending on usage
 }
+export type Purchase = PurchaseOrder;
 
 export interface PurchaseInvoiceItem {
     sku: string; // inferred or generated

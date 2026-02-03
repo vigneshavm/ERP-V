@@ -4,7 +4,7 @@ import PageHeader from "../../../components/shared/Layout/PageHeader";
 import FormInput from "../../../components/core/Form/Input";
 import StatsCard from "../../../components/shared/Display/StatsCard";
 import BusinessSubNav from './BusinessSubNav';
-import { googleBusinessService, GoogleBusinessProfileData, GoogleReview, GooglePost } from "../../../services/GoogleBusinessService";
+import { googleBusinessService, GoogleBusinessProfileData, GoogleReview, GooglePost } from "../../../services/googleBusinessService";
 import { toast } from 'react-toastify';
 
 type ProfileData = GoogleBusinessProfileData;

@@ -28,7 +28,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
         (state: RootState) => state.auth
     );
 
-    const [showConflictModal, setShowConflictModal] = useState(false);
+
 
     useEffect(() => {
         if (isSuccess || user) {
@@ -41,11 +41,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
         };
     }, [user, isSuccess, navigate, dispatch]);
 
-    useEffect(() => {
-        if (deviceConflict) {
-            setShowConflictModal(true);
-        }
-    }, [deviceConflict]);
+
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData((prevState) => ({
@@ -174,11 +170,11 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
             </div>
 
             {/* Device Conflict Modal */}
-            {showConflictModal && (
+            {deviceConflict && (
                 <DeviceConflictModal
                     email={email}
                     password={password}
-                    onClose={() => setShowConflictModal(false)}
+                    onClose={() => dispatch(resetAuthState())}
                 />
             )}
         </AuthLayout>

@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { setActiveTab } from '../../../redux';
-import { WhatsAppService } from "../../../services/WhatsAppService";
+import { WhatsAppService } from "../../../services/whatsappService";
 import { Tenant, Integrations } from "../../../types/tenant";
 
 // Helper to safely access tenant from state

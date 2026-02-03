@@ -6,7 +6,7 @@ import { getAllCustomers } from "../../../../redux/slices/customerSlice";
 import Layout from "../../../../components/shared/Layout/Layout";
 import api from "../../../../services/api";
 import { toast } from "react-toastify";
-import EstimateTemplate from "../../../../components/Sales/EstimateTemplate";
+import EstimateTemplate from "../../../../components/sales/EstimateTemplate";
 import { RootState } from "../../../../redux/store";
 import {
   Calculator,

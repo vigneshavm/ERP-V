@@ -76,7 +76,7 @@ export const register = createAsyncThunk<User, any, { rejectValue: string }>(
 );
 
 // Login user
-export const login = createAsyncThunk<User, any, { rejectValue: string }>(
+export const login = createAsyncThunk<User, any, { rejectValue: any }>(
     'auth/login',
     async (userData, thunkAPI) => {
         try {
@@ -86,11 +86,12 @@ export const login = createAsyncThunk<User, any, { rejectValue: string }>(
             }
             return response.data;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
-            return thunkAPI.rejectWithValue(message);
+            // Return full error data if available to handle flags like deviceConflict
+            if (error.response && error.response.data) {
+                return thunkAPI.rejectWithValue(error.response.data);
+            }
+            const message = error.message || error.toString();
+            return thunkAPI.rejectWithValue({ message });
         }
     }
 );
@@ -277,13 +278,26 @@ export const authSlice = createSlice({
             })
             .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
-                const errorData = action.payload as string;
-                if (typeof errorData === 'string' && errorData.includes('currently active on another device')) {
+                const errorPayload = action.payload as any;
+
+                // Check if payload is an object with deviceConflict flag
+                if (errorPayload && (errorPayload.deviceConflict === true || errorPayload.deviceConflict === 'true')) {
                     state.deviceConflict = true;
-                    state.conflictMessage = errorData;
-                } else {
+                    state.conflictMessage = errorPayload.message || 'Device conflict detected';
+                }
+                // Fallback for string matching (legacy or plain string error)
+                else if (typeof errorPayload === 'string' && errorPayload.toLowerCase().includes('active on another device')) {
+                    state.deviceConflict = true;
+                    state.conflictMessage = errorPayload;
+                }
+                // Fallback for object message matching (structured error without flag)
+                else if (errorPayload && errorPayload.message && typeof errorPayload.message === 'string' && errorPayload.message.toLowerCase().includes('active on another device')) {
+                    state.deviceConflict = true;
+                    state.conflictMessage = errorPayload.message;
+                }
+                else {
                     state.isError = true;
-                    state.message = errorData;
+                    state.message = errorPayload?.message || (typeof errorPayload === 'string' ? errorPayload : 'Login failed');
                 }
                 state.user = null;
             })

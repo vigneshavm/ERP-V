@@ -16,7 +16,8 @@ export const useTenantData = (user: any) => {
 
     const isDemo = DATA_MODE === 'DEMO';
     // const isSupabase = APP_CONFIG.USE_SUPABASE || isDemo; // Usage removed
-    const shouldFetch = true; // Always fetch if user exists
+    // const isSupabase = APP_CONFIG.USE_SUPABASE || isDemo; // Usage removed
+    const shouldFetch = !!user; // Only fetch if user is logged in
 
     // 1. Fetch Tenants
     const { data: rawTenants } = useQuery({

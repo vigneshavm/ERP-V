@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../../../../components/shared/Layout/Layout";
 import api from "../../../../services/api";
 import { toast } from "react-toastify";
-import EstimateTemplate from "@/components/Sales/EstimateTemplate";
+import EstimateTemplate from "@/components/sales/EstimateTemplate";
 import { ArrowLeft, Printer, FileText } from 'lucide-react';
 
 const EstimateDetail = () => {

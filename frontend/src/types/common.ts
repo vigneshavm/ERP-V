@@ -68,7 +68,7 @@ export type AppView =
     | 'INVENTORY' | 'AGED_STOCK' // Legacy
 
     // Cash & Bank
-    | 'CASH_ACCOUNTS' | 'BANK_ACCOUNTS' | 'PETTY_CASH' | 'FUND_TRANSFERS' | 'BANK_RECONCILIATION' | 'FINANCE' // Legacy
+    | 'CASH_ACCOUNTS' | 'BANK_ACCOUNTS' | 'PETTY_CASH' | 'FUND_TRANSFERS' | 'BANK_RECONCILIATION' | 'BANK_SUMMARY' | 'TRANSACTIONS' | 'FINANCE' // Legacy
 
     // POS
     | 'POS' | 'POS_ORDERS' | 'POS_RETURNS' | 'SHIFT_MANAGEMENT' | 'CASH_DRAWER'
@@ -92,7 +92,7 @@ export type AppView =
     | 'BACKUP_RESTORE' | 'THEMES_BRANDING' | 'STOREFRONT' // Legacy
 
     // HR (Legacy/Additional)
-    | 'HR' | 'LABOR'
+    | 'HR' | 'LABOR' | 'STAFF_MANAGER' | 'DUE_ADJUSTMENT' | 'PAYROLL' | 'ATTENDANCE'
 
     // --- GROW PLATFORM ---
     // Dashboard
@@ -127,5 +127,9 @@ export type AppView =
     // Growth Reports
     | 'GROW_REPORTS' | 'GROW_REPORT_SALES' | 'GROW_REPORT_ROI'
     | 'GROW_REPORT_CUSTOMER' | 'GROW_REPORT_TRAFFIC' | 'GROW_REPORT_CONVERSION'
-    | 'GROW_SUPER_ADMIN_CONSOLE' | 'GROW_TENANT_CONFIG' | 'TENANT_MANAGEMENT';
+    | 'GROW_SUPER_ADMIN_CONSOLE' | 'GROW_TENANT_CONFIG' | 'TENANT_MANAGEMENT'
+
+    // Platform Admins
+    | 'PLATFORM_ADMIN' | 'SUPER_ADMIN_CONSOLE' | 'TENANT_ARCHITECT';
+
 export type SystemRole = 'SuperAdmin' | 'Owner' | 'Admin' | 'Manager' | 'Staff';

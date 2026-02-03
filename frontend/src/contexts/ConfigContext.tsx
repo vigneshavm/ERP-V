@@ -6,7 +6,7 @@ export interface ConfigContextType {
     currencySymbol: string;
     dateFormat: string;
     tenantId?: string;
-    theme?: 'light' | 'dark';
+    theme?: 'light' | 'dark' | 'system';
     primaryColor?: string;
     logoUrl?: string;
 }

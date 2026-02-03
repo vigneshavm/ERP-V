@@ -1,18 +1,27 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { X, ChevronRight, ChevronLeft, Lock, Key } from 'lucide-react';
+import {
+    X, ChevronRight, ChevronLeft, Lock, Key, RefreshCcw,
+    LayoutDashboard, Zap, DollarSign, FileText, ShoppingCart, List, Users, CreditCard,
+    ArrowRight, ArrowDownCircle, Archive, Package, Landmark, Receipt, BarChart, Settings,
+    Wrench, Printer, Upload, Download, FileSpreadsheet, Rocket, Store, Megaphone, Globe,
+    MessageCircle, RefreshCw, Database, PieChart, UserCheck, Truck, Box, AlertTriangle,
+    Layers, Calendar, Briefcase, Building, Save, Palette, LayoutGrid, Shield
+} from 'lucide-react';
 import { RootState } from "../../../redux/store";
 import { setSidebarOpen, setDesktopCollapsed, setSyncing } from "../../../redux/slices/uiSlice";
 import { setBranch } from "../../../redux/slices/authSlice";
-import { RefreshCcw } from 'lucide-react';
 import { useConfig } from "../../../contexts/ConfigProvider";
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 import { usePermissions } from "../../../hooks/usePermissions";
-import { MENU_ITEMS, MenuItem } from '@/config/menu.config';
+import { AppView, ModuleType } from "../../../types/common";
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
 import { ThemeToggle } from '../../core/Display/ThemeToggle';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
+import { MENU_ITEMS, MenuItem } from '../../../config/menu.config';
+
+
 
 interface SidebarProps {
     onLogout: () => void;
@@ -34,13 +43,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     // Helper to check if any child is active to open the group by default
     const isGroupActive = (item: MenuItem): boolean => {
         if (!item.children) return false;
-        return item.children.some(child =>
+        return item.children.some((child: MenuItem) =>
             child.id === activeTab || (child.children && isGroupActive(child))
         );
     };
 
     const renderMenuItem = (item: MenuItem) => {
-        if (!checkAccess(item.id) && !checkModuleAccess(item.module)) return null;
+        // Manual Bypass in Render
+        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
+
+        if (!isBypassUser && !checkAccess(item.id) && !checkModuleAccess(item.module)) return null;
 
         // Special handling for Grow Platform separator/header if needed
         // For now, we just render. We could add a header if item.isGrow is true.
@@ -53,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     label={item.label}
                     defaultOpen={isGroupActive(item) || item.isGrow}
                 >
-                    {item.children.map(child => renderMenuItem(child))}
+                    {item.children.map((child: MenuItem) => renderMenuItem(child))}
                 </NavGroup>
             );
         }
@@ -65,27 +77,25 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 icon={item.icon}
                 label={item.label}
                 path={item.path}
-                isSubItem={false} // NavGroup handles indentation for children usually, or we pass isSubItem logic?
-            // Note: NavGroup's children are rendered directly. NavGroup usually wraps them in a div.
-            // NavItem checks "isSubItem" for styling. We need to pass it if it's nested.
-            // But simplified logic: If we are in renderMenuItem of a child loop, we are essentially at a sub level.
-            // However, `renderMenuItem` is recursive.
-            // Let's rely on NavGroup's structure or adding context? 
-            // The existing NavItem takes `isSubItem`.
-            // Let's assume for top level it's false.
+                isSubItem={false}
             />
         );
     };
 
     // Recursive render with depth tracking
     const renderRecursive = (item: MenuItem, isSub: boolean = false) => {
+        // Manual Bypass in Render
+        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
+
         // High-level rule: Access requires User Permission AND Tenant Module
-        if (!checkAccess(item.id)) return null;
-        if (!checkModuleAccess(item.module)) return null;
+        if (!isBypassUser) {
+            if (!checkAccess(item.id)) return null;
+            if (!checkModuleAccess(item.module)) return null;
+        }
 
         if (item.children) {
             // Filter children that the user has access to (both role and plan)
-            const visibleChildren = item.children.filter((child: MenuItem) =>
+            const visibleChildren = isBypassUser ? item.children : item.children.filter((child: MenuItem) =>
                 checkAccess(child.id) && checkModuleAccess(child.module)
             );
 
@@ -170,17 +180,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     // Filtered items (only visible ones)
     const visibleErpItems = useMemo(() => erpItems.filter((item: MenuItem) => {
+        // Manual Bypass in Component for reliability
+        if (user?.email === 'avmvignesh0207@gmail.com') return true;
+
         const hasAccess = checkAccess(item.id) && checkModuleAccess(item.module);
         if (hasAccess) return true;
         // Also show if it has visible children
         return item.children?.some((child: MenuItem) => checkAccess(child.id) && checkModuleAccess(child.module));
-    }), [erpItems, checkAccess, checkModuleAccess]);
+    }), [erpItems, checkAccess, checkModuleAccess, user]);
 
     const visibleGrowItems = useMemo(() => growItems.filter((item: MenuItem) => {
+        // Manual Bypass in Component for reliability
+        if (user?.email === 'avmvignesh0207@gmail.com') return true;
+
         const hasAccess = checkAccess(item.id) && checkModuleAccess(item.module);
         if (hasAccess) return true;
         return item.children?.some((child: MenuItem) => checkAccess(child.id) && checkModuleAccess(child.module));
-    }), [growItems, checkAccess, checkModuleAccess]);
+    }), [growItems, checkAccess, checkModuleAccess, user]);
 
     return (
         <aside className={`
@@ -238,7 +254,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Growth Platform</h3>
                     </div>
                 )}
-                {visibleGrowItems.map((item) => renderRecursive(item, false))}
+                {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
             </nav>
 
             {/* Footer / User Controls */}
