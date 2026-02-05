@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
 
 import CreateBillModal from './Modals/CreateBillModal';
+import ReceiveGoodsModal from './Modals/ReceiveGoodsModal';
 import { useParams, useNavigate } from 'react-router-dom'; // Ensure useParams is imported
 import { AppDispatch } from '../../redux/store';
 import { fetchPurchaseById, resetSelectedOrder, updateOrder } from '../../redux/slices/purchaseSlice';
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propItems, onBack, onApprove, onConvert, onUpdateStatus }) => {
+    console.log("PurchaseOrderDetails loaded - Version with ReceiveGoodsModal fix");
     const { role } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();

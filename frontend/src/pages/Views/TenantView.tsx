@@ -210,7 +210,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'OUTSTANDING_PAYABLES': return <LazyModules.OutstandingPayables />;
                         case 'PURCHASE_BILLS': return <LazyModules.Bills />;
                         case 'BILL_FORM': return <LazyModules.BillForm />;
-                        case 'PURCHASE_PAYMENT_OUT': return <LazyModules.PaymentOut />;
+                        // case 'PURCHASE_PAYMENT_OUT': return <LazyModules.PaymentOut />; // Duplicate removed
                         case 'PURCHASE_HISTORY': return <LazyModules.PurchaseHistory />;
                         case 'PURCHASE_ORDER_DETAILS': return <LazyModules.PurchaseOrderDetails />;
                         case 'PURCHASE_ORDER_FORM': return <LazyModules.PurchaseOrdersModule />;

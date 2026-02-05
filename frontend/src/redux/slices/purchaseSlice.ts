@@ -18,6 +18,7 @@ const initialPurchaseState: PurchaseState = {
     orders: [],
     payments: [],
     grns: [],
+    bills: [],
     pendingInvoice: null,
     isProcessing: false,
     selectedOrder: null,
@@ -48,6 +49,22 @@ export const fetchPurchasePayments = createAsyncThunk(
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get('/api/purchase-payments', getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+export const fetchPurchaseById = createAsyncThunk(
+    'purchase/fetchById',
+    async (id: string, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.get(`/api/purchases/${id}`, getConfig(token));
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -168,5 +185,5 @@ export const {
     deleteGRN,
     resetSelectedOrder
 } = purchaseSlice.actions;
-export { fetchPurchaseOrders as getAllPurchases, fetchPurchaseById };
+export { fetchPurchaseOrders as getAllPurchases };
 export default purchaseSlice.reducer;

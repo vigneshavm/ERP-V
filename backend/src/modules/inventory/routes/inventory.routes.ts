@@ -28,10 +28,15 @@ router.put(
     inventoryController.updateItem
 );
 router.delete(
+    "/batch",
+    protect,
+    requirePermission("delete:item"),
+    inventoryController.deleteItemsBatch
+);
+router.delete(
     "/:id",
     protect,
     requirePermission("delete:item"),
-    //   auditDelete("Item", "DELETE_ITEM"),
     inventoryController.deleteItem
 );
 

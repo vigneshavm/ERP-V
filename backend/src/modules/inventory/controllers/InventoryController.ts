@@ -778,4 +778,49 @@ export class InventoryController {
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };
+
+    /**
+     * @swagger
+     * /api/inventory/batch:
+     *   delete:
+     *     summary: Batch delete items
+     *     tags: [Inventory]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [ids]
+     *             properties:
+     *               ids: { type: array, items: { type: string } }
+     *     responses:
+     *       200:
+     *         description: Items deleted successfully
+     */
+    public deleteItemsBatch = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+        try {
+            const { ids } = authReq.body;
+
+            if (!ids || !Array.isArray(ids) || ids.length === 0) {
+                res.status(400).json({ message: 'No IDs provided for deletion' });
+                return;
+            }
+
+            // Ensure all items belong to the tenant
+            const result = await Item.deleteMany({
+                _id: { $in: ids },
+                tenantId: authReq.tenantId
+            });
+
+            info(`Batch delete by ${authReq.user?.name}: ${result.deletedCount} items removed`);
+            res.status(200).json({ message: `${result.deletedCount} items deleted successfully`, deletedCount: result.deletedCount });
+        } catch (err) {
+            error(`Batch Delete Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+    };
 }

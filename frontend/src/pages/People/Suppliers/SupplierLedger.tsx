@@ -90,16 +90,16 @@ const SupplierLedger: React.FC = () => {
             });
 
             // 2. Get Payments (Debit - Paid)
-            const supplierPayments = payments.filter(p => p.supplierId === supplier._id);
+            const supplierPayments = payments.filter(p => p.vendor_id === supplier._id);
 
             supplierPayments.forEach(payment => {
                 entries.push({
-                    id: `pay-${payment._id}`,
-                    date: payment.paymentDate,
+                    id: `pay-${payment.id}`,
+                    date: payment.payment_date,
                     type: 'PAYMENT',
-                    reference: payment.paymentNo,
-                    description: `Payment (${payment.paymentMethod}) ${payment.notes ? '- ' + payment.notes : ''}`,
-                    debit: payment.amount,
+                    reference: payment.payment_number,
+                    description: `Payment (${payment.method}) ${payment.notes ? '- ' + payment.notes : ''}`,
+                    debit: payment.total_amount,
                     credit: 0,
                     balance: 0 // Calculated later
                 });

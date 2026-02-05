@@ -164,6 +164,29 @@ export const deleteItem = createAsyncThunk(
   }
 );
 
+// Delete items batch
+export const deleteItemsBatch = createAsyncThunk(
+  'inventory/deleteBatch',
+  async (ids: string[], thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as any;
+      const token = state.auth.user?.token;
+      if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+      await api.delete(`${API_URL}/batch`, {
+        ...getConfig(token),
+        data: { ids }
+      });
+      return ids;
+    } catch (error: any) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Get low stock items
 export const getLowStockItems = createAsyncThunk(
   'inventory/getLowStock',
@@ -363,6 +386,25 @@ export const inventorySlice = createSlice({
         state.items = state.items.filter((item) => item._id !== action.payload);
       })
       .addCase(deleteItem.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Delete items batch
+      .addCase(deleteItemsBatch.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteItemsBatch.fulfilled, (state, action: PayloadAction<string[]>) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        if (!Array.isArray(state.items)) state.items = [];
+        state.items = state.items.filter((item) => !action.payload.includes(item._id as string));
+        state.pagination = state.pagination ? {
+          ...state.pagination,
+          totalItems: state.pagination.totalItems - action.payload.length
+        } : null;
+      })
+      .addCase(deleteItemsBatch.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

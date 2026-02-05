@@ -9,7 +9,7 @@ import {
     Calculator, Info, Download, Send, Percent
 } from 'lucide-react';
 import api from "../../services/api";
-import { PurchasePayment, PaymentMethod, PaymentBillAllocation, PurchaseBill } from "../../types/purchase";
+import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "../../types/purchase";
 import { toast } from 'react-toastify';
 
 const PaymentOut: React.FC = () => {
@@ -64,13 +64,13 @@ const PaymentOut: React.FC = () => {
                     id: 'b1', bill_number: 'BILL-1001', bill_date: '2024-03-01',
                     total_amount: 50000, status: 'Approved', due_date: '2024-03-31',
                     vendor_id: vId, vendor_name: 'Mock Vendor', amount: 50000, tax_breakdown: {} as any,
-                    payment_terms: 'Net 30', created_at: '', attachments: []
+                    payment_terms: 'Net 30', created_at: '', attachments: [], items: []
                 },
                 {
                     id: 'b2', bill_number: 'BILL-1005', bill_date: '2024-03-10',
                     total_amount: 25000, status: 'Approved', due_date: '2024-04-10',
                     vendor_id: vId, vendor_name: 'Mock Vendor', amount: 25000, tax_breakdown: {} as any,
-                    payment_terms: 'Net 30', created_at: '', attachments: []
+                    payment_terms: 'Net 30', created_at: '', attachments: [], items: []
                 }
             ]);
         } catch (err) {

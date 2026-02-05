@@ -1,4 +1,3 @@
-```typescript
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "../../services/api.js";
 import { RootState } from '../store';
@@ -13,6 +12,8 @@ export interface Bill extends PurchaseBill {
     date: string;
     amount: number;
     status: BillStatus;
+    _id?: string;
+    paidAmount?: number;
 }
 
 interface BillState {
@@ -34,11 +35,13 @@ const initialState: BillState = {
 };
 
 // Get token from state
-const getConfig = (token: string) => ({
-    headers: {
-        Authorization: `Bearer ${ token } `,
-    },
-});
+const getConfig = (token: string) => {
+    return {
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+    };
+};
 
 // Get all bills
 export const getAllBills = createAsyncThunk<Bill[], void, { state: RootState, rejectValue: string }>(
@@ -88,15 +91,15 @@ export const getBillById = createAsyncThunk<Bill, string, { state: RootState, re
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
-            const response = await api.get(`${ API_URL }/${id}`, getConfig(token));
-return response.data;
+            const response = await api.get(API_URL + '/' + id, getConfig(token));
+            return response.data;
         } catch (error: any) {
-    const message =
-        (error.response && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-    return thunkAPI.rejectWithValue(message);
-}
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
     }
 );
 
@@ -108,7 +111,7 @@ export const updateBill = createAsyncThunk<Bill, { id: string, billData: any }, 
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
-            const response = await api.put(`${API_URL}/${id}`, billData, getConfig(token));
+            const response = await api.put(API_URL + '/' + id, billData, getConfig(token));
             return response.data;
         } catch (error: any) {
             const message =
@@ -128,7 +131,7 @@ export const deleteBill = createAsyncThunk<string, string, { state: RootState, r
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
-            await api.delete(`${API_URL}/${id}`, getConfig(token));
+            await api.delete(API_URL + '/' + id, getConfig(token));
             return id;
         } catch (error: any) {
             const message =

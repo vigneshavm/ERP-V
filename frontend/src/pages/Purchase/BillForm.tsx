@@ -1,10 +1,14 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Trash2, Plus, Search, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban } from 'lucide-react';
-import { PurchaseBill, PurchaseBillItem, TaxBreakdown, BillStatus, GRN, PurchaseOrder } from "../../types/purchase";
+import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban } from 'lucide-react';
+import { PurchaseBill, PurchaseBillItem, BillStatus } from "../../types/purchase";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
+import BillBasicInfo from './Components/BillBasicInfo';
+import BillItemsTable from './Components/BillItemsTable';
+import BillFinancialSummary from './Components/BillFinancialSummary';
+import { useBillData } from './hooks/useBillData';
 
 interface Props {
     onBack?: () => void;
@@ -16,160 +20,26 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
     const { id, grnId } = useParams<{ id?: string, grnId?: string }>();
     const navigate = useNavigate();
 
+    const {
+        bill,
+        setBill,
+        vendors,
+        grns,
+        attachments,
+        setAttachments,
+        isLoading,
+        setIsLoading,
+        handleVendorChange,
+        handleGRNChange,
+        updateItem,
+        updateBillField,
+        addAttachment,
+        removeAttachment
+    } = useBillData(id, grnId, initialData);
+
     const handleBack = () => {
         if (onBack) onBack();
         else navigate('/purchase/bills');
-    };
-    const [bill, setBill] = useState<Partial<PurchaseBill>>({
-        bill_date: new Date().toISOString().split('T')[0],
-        status: 'Received',
-        amount: 0,
-        total_amount: 0,
-        tax_breakdown: { cgst: 0, sgst: 0, igst: 0, vat: 0, other: 0 },
-        payment_terms: 'Net 30',
-        due_date: '',
-        attachments: [],
-        items: [] as any
-    });
-
-    const [vendors, setVendors] = useState<any[]>([]);
-    const [pos, setPos] = useState<PurchaseOrder[]>([]);
-    const [grns, setGrns] = useState<GRN[]>([]);
-    const [attachments, setAttachments] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    // Fetch Bill if ID exists
-    useEffect(() => {
-        if (id) {
-            const fetchBill = async () => {
-                try {
-                    const { data } = await api.get(`/api/bills/${id}`);
-                    setBill(data);
-                    setAttachments(data.attachments || []);
-                } catch (err) {
-                    console.error("Failed to fetch bill", err);
-                    toast.error("Failed to load bill details");
-                }
-            };
-            fetchBill();
-        }
-    }, [id]);
-
-    // Fetch Vendors
-    useEffect(() => {
-        const fetchVendors = async () => {
-            try {
-                const { data } = await api.get('/suppliers');
-                setVendors(data || []);
-            } catch (err) {
-                console.error("Failed to fetch suppliers", err);
-            }
-        };
-        fetchVendors();
-    }, []);
-
-    // Fetch POs and GRNs when vendor is selected
-    useEffect(() => {
-        if (!bill.vendor_id) return;
-        const fetchData = async () => {
-            try {
-                const [poRes, grnRes] = await Promise.all([
-                    api.get(`/api/purchases?vendorId=${bill.vendor_id}`),
-                    api.get(`/api/grns?vendorId=${bill.vendor_id}`)
-                ]);
-                setPos(poRes.data || []);
-                const fetchedGrns = grnRes.data || [];
-                setGrns(fetchedGrns);
-
-                // If grnId was provided in URL, auto-select it once grns are loaded
-                if (grnId && !bill.grn_id) {
-                    const targetGrn = fetchedGrns.find((g: any) => g.id === grnId || g._id === grnId);
-                    if (targetGrn) {
-                        handleGRNChange(grnId, fetchedGrns, poRes.data || []);
-                    }
-                }
-            } catch (err) {
-                console.error("Failed to fetch POs/GRNs", err);
-            }
-        };
-        fetchData();
-    }, [bill.vendor_id, grnId]);
-
-    useEffect(() => {
-        if (initialData) {
-            setBill(initialData);
-            setAttachments(initialData.attachments || []);
-        }
-    }, [initialData]);
-
-    const handleVendorChange = (vendorId: string) => {
-        const vendor = vendors.find(v => v.id === vendorId || v._id === vendorId);
-        setBill(prev => ({
-            ...prev,
-            vendor_id: vendorId,
-            vendor_name: vendor?.businessName || vendor?.name || '',
-            po_id: undefined,
-            grn_id: undefined,
-            items: []
-        }));
-    };
-
-    const handleGRNChange = (selectedGrnId: string, availableGrns = grns, availablePos = pos) => {
-        const grn = availableGrns.find(g => g.id === selectedGrnId || (g as any)._id === selectedGrnId);
-        if (grn) {
-            // Map GRN items to Bill items
-            const billItems: PurchaseBillItem[] = grn.items.map(item => ({
-                id: Math.random().toString(36).substr(2, 9),
-                product_id: item.productId,
-                product_name: item.productName,
-                sku: item.sku,
-                grn_quantity: item.acceptedQty,
-                bill_quantity: item.acceptedQty,
-                grn_rate: 0, // Need to fetch from PO if possible
-                bill_rate: 0,
-                tax_percent: 0,
-                discount_amount: 0,
-                line_total: 0,
-                variance_flag: false
-            }));
-
-            // Sync with PO if available
-            const linkedPO = pos.find(p => p.id === grn.poId || p.po_number === grn.poNumber);
-            if (linkedPO) {
-                billItems.forEach(bi => {
-                    const poItem = linkedPO.items.find(pi => pi.product_id === bi.product_id || pi.sku === bi.sku);
-                    if (poItem) {
-                        bi.grn_rate = poItem.rate;
-                        bi.bill_rate = poItem.rate;
-                        bi.tax_percent = poItem.tax_percent;
-                        bi.line_total = bi.bill_quantity * bi.bill_rate;
-                    }
-                });
-            }
-
-            setBill(prev => ({
-                ...prev,
-                grn_id: selectedGrnId,
-                grn_number: grn.grnNumber,
-                po_id: grn.poId,
-                po_number: grn.poNumber,
-                items: billItems as any
-            }));
-        }
-    };
-
-    const updateItem = (index: number, field: keyof PurchaseBillItem, value: any) => {
-        const newItems = [...(bill.items || [])] as PurchaseBillItem[];
-        const item = { ...newItems[index], [field]: value };
-
-        // Calculate totals and variance
-        if (field === 'bill_quantity' || field === 'bill_rate') {
-            item.line_total = item.bill_quantity * item.bill_rate;
-            item.variance_flag = item.bill_rate !== item.grn_rate || item.bill_quantity !== item.grn_quantity;
-        }
-
-        newItems[index] = item;
-        setBill(prev => ({ ...prev, items: newItems as any }));
     };
 
     // Totals Calculation
@@ -198,21 +68,18 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setAttachments(prev => [...prev, file.name]);
+        addAttachment(file.name);
 
         // Mock OCR Logic
         toast.info("Processing document with OCR...", { autoClose: 2000 });
 
         setTimeout(() => {
             // Simulate extracting amount and perhaps bill number
-            const mockAmount = Math.floor(Math.random() * 50000) + 1000;
             const mockBillNo = `OCR-${Math.floor(Math.random() * 9000) + 1000}`;
 
             setBill(prev => ({
                 ...prev,
                 bill_number: prev.bill_number || mockBillNo,
-                // We don't override the total_amount directly as it's computed, 
-                // but in a real scenario we might flag a mismatch if the OCR total differs from the item sum.
             }));
 
             toast.success("OCR: Extracted Bill Details");
@@ -265,7 +132,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                 bill_number: 'INV-' + Math.floor(Math.random() * 1000000),
                 bill_date: new Date().toISOString().split('T')[0],
             }));
-            setAttachments(prev => [...prev, 'scanned_invoice.pdf']);
+            addAttachment('scanned_invoice.pdf');
             setIsLoading(false);
             toast.success("Data extracted successfully!");
         }, 2000);
@@ -335,52 +202,12 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                     {/* Main Bill Details */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="space-y-6 md:col-span-2">
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-6">
-                                <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                                    <FileText className="w-4 h-4" /> Basic Information
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-xs font-bold text-neutral-500 mb-2">Vendor / Supplier</label>
-                                        <select
-                                            value={bill.vendor_id || ''}
-                                            onChange={(e) => handleVendorChange(e.target.value)}
-                                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                        >
-                                            <option value="">Select Vendor</option>
-                                            {vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-neutral-500 mb-2">Bill Number</label>
-                                        <input
-                                            type="text"
-                                            value={bill.bill_number || ''}
-                                            onChange={(e) => setBill({ ...bill, bill_number: e.target.value })}
-                                            placeholder="INV-2024-001"
-                                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-neutral-500 mb-2">Bill Date</label>
-                                        <input
-                                            type="date"
-                                            value={bill.bill_date}
-                                            onChange={(e) => setBill({ ...bill, bill_date: e.target.value })}
-                                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-neutral-500 mb-2">Due Date</label>
-                                        <input
-                                            type="date"
-                                            value={bill.due_date || ''}
-                                            onChange={(e) => setBill({ ...bill, due_date: e.target.value })}
-                                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <BillBasicInfo
+                                bill={bill}
+                                vendors={vendors}
+                                onVendorChange={handleVendorChange}
+                                onBillChange={updateBillField}
+                            />
                         </div>
 
                         {/* Linkage Panel */}
@@ -418,87 +245,10 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                     </div>
 
                     {/* Items Table */}
-                    <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                            <h3 className="font-bold flex items-center gap-2">
-                                Invoice Items
-                                <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-[10px] rounded-lg text-neutral-500">{(bill.items || []).length} items</span>
-                            </h3>
-                            <button className="text-brand-600 text-xs font-bold hover:underline flex items-center gap-1">
-                                <Plus className="w-3.5 h-3.5" /> Force Add Item
-                            </button>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
-                                    <tr>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Product / Description</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] w-28 text-center">GRN Qty</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] w-32 text-center">Bill Qty</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] w-32 text-right">PO Rate</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] w-32 text-right">Bill Rate</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] w-32 text-right">Line Total</th>
-                                        <th className="px-6 py-4 w-10"></th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/50 font-medium">
-                                    {(bill.items || []).map((item: any, idx: number) => (
-                                        <tr key={idx} className={`group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors ${item.variance_flag ? 'bg-amber-50/30 dark:bg-amber-900/10' : ''}`}>
-                                            <td className="px-6 py-4">
-                                                <div className="text-neutral-900 dark:text-white font-bold">{item.product_name}</div>
-                                                <div className="text-[10px] text-neutral-500 font-mono">{item.sku || 'NO-SKU'}</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-center text-neutral-500">
-                                                {item.grn_quantity}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <input
-                                                    type="number"
-                                                    value={item.bill_quantity}
-                                                    onChange={(e) => updateItem(idx, 'bill_quantity', parseFloat(e.target.value) || 0)}
-                                                    className={`w-full text-center py-1.5 bg-transparent border-b ${item.bill_quantity !== item.grn_quantity ? 'border-amber-500 text-amber-600' : 'border-neutral-200 dark:border-neutral-700'}`}
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4 text-right text-neutral-500">
-                                                ₹{item.grn_rate?.toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <span className="text-neutral-400 text-xs">₹</span>
-                                                    <input
-                                                        type="number"
-                                                        value={item.bill_rate}
-                                                        onChange={(e) => updateItem(idx, 'bill_rate', parseFloat(e.target.value) || 0)}
-                                                        className={`w-24 text-right py-1.5 bg-transparent border-b ${item.bill_rate !== item.grn_rate ? 'border-amber-500 text-amber-600' : 'border-neutral-200 dark:border-neutral-700'}`}
-                                                    />
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-white">
-                                                ₹{item.line_total?.toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                {item.variance_flag && (
-                                                    <div className="relative group/tool">
-                                                        <AlertCircle className="w-4 h-4 text-amber-500" />
-                                                        <div className="absolute bottom-full right-0 mb-2 p-2 bg-neutral-900 text-white text-[10px] rounded opacity-0 group-hover/tool:opacity-100 pointer-events-none whitespace-nowrap z-30">
-                                                            Variance Flagged: Rate/Qty mismatch
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!bill.items || bill.items.length === 0) && (
-                                        <tr>
-                                            <td colSpan={7} className="px-6 py-12 text-center text-neutral-400 italic">
-                                                Linked GRN to populate item details and perform variance analysis
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <BillItemsTable
+                        items={bill.items || []}
+                        onUpdateItem={updateItem}
+                    />
 
                     {/* Bottom Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
@@ -529,7 +279,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 <div className="flex flex-wrap gap-2">
                                     {attachments.map((at, i) => (
                                         <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700">
-                                            <FileText className="w-3.5 h-3.5" /> {at} <X className="w-3 h-3 cursor-pointer" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} />
+                                            <FileText className="w-3.5 h-3.5" /> {at} <X className="w-3 h-3 cursor-pointer" onClick={() => removeAttachment(i)} />
                                         </div>
                                     ))}
                                 </div>
@@ -540,7 +290,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 </h3>
                                 <textarea
                                     value={bill.notes || ''}
-                                    onChange={(e) => setBill({ ...bill, notes: e.target.value })}
+                                    onChange={(e) => updateBillField('notes', e.target.value)}
                                     rows={4}
                                     className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                                     placeholder="Any internal notes or dispute details..."
@@ -549,58 +299,11 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                         </div>
 
                         {/* Totals & Tax Summary */}
-                        <div className="bg-neutral-900 dark:bg-black rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                            <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-[0.2em] mb-8">Financial Summary</h3>
-
-                            <div className="space-y-4">
-                                <div className="flex justify-between text-sm font-medium">
-                                    <span className="text-neutral-400">Subtotal</span>
-                                    <span>₹{totals.subtotal.toFixed(2)}</span>
-                                </div>
-                                <div className="h-px bg-neutral-800 w-full my-4"></div>
-                                <div className="space-y-3">
-                                    <div className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest">Tax Breakdown</div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="flex justify-between text-xs font-medium">
-                                            <span className="text-neutral-400">CGST</span>
-                                            <span className="text-brand-400">₹{totals.tax_breakdown.cgst.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs font-medium">
-                                            <span className="text-neutral-400">SGST</span>
-                                            <span className="text-brand-400">₹{totals.tax_breakdown.sgst.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs font-medium">
-                                            <span className="text-neutral-400">IGST</span>
-                                            <span className="text-brand-400">₹{totals.tax_breakdown.igst.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs font-medium">
-                                            <span className="text-neutral-400">Other</span>
-                                            <span className="text-brand-400">₹{totals.tax_breakdown.other.toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="h-px bg-neutral-800 w-full my-6"></div>
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <span className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Total Payable</span>
-                                        <span className="text-3xl font-black text-brand-500">₹{totals.total.toFixed(2)}</span>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Status</span>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${bill.status === 'Paid' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-brand-500/20 text-brand-500'}`}>
-                                            {bill.status}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="mt-8 pt-6 border-t border-neutral-800">
-                                    <div className="flex items-center gap-3 text-brand-400">
-                                        <Clock className="w-4 h-4" />
-                                        <span className="text-xs font-bold">Expect Payment: {bill.payment_terms}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <BillFinancialSummary
+                            totals={totals}
+                            status={bill.status}
+                            paymentTerms={bill.payment_terms}
+                        />
                     </div>
                 </div>
             </div>

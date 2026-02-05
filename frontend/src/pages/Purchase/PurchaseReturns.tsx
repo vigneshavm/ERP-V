@@ -93,9 +93,9 @@ const PurchaseReturns: React.FC = () => {
     const filteredReturns = useMemo(() => {
         return returns.filter(r => {
             const matchesSearch =
-                r.return_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                r.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                r.grn_number.toLowerCase().includes(searchTerm.toLowerCase());
+                r.return_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                r.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                r.grn_number?.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
             return matchesSearch && matchesStatus;
         });

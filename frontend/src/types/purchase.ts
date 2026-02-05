@@ -120,8 +120,8 @@ export interface ScannedInvoice {
     items: ScannedInvoiceItem[];
 }
 
-export type PaymentMethod = 'Bank Transfer' | 'Cash' | 'Cheque' | 'Credit Card' | 'Other';
-export type PaymentStatus = 'Pending' | 'Cleared' | 'Failed' | 'Reversed';
+export type PurchasePaymentMethod = 'Bank Transfer' | 'Cash' | 'Cheque' | 'Credit Card' | 'Other';
+export type PurchasePaymentStatus = 'Pending' | 'Cleared' | 'Failed' | 'Reversed';
 
 export interface PaymentBillAllocation {
     bill_id: string;
@@ -136,8 +136,8 @@ export interface PurchasePayment {
     payment_date: string;
     vendor_id: string;
     vendor_name: string;
-    method: PaymentMethod;
-    status: PaymentStatus;
+    method: PurchasePaymentMethod;
+    status: PurchasePaymentStatus;
     total_amount: number;
     currency: string;
     exchange_rate: number;
@@ -248,6 +248,7 @@ export interface PurchaseBill {
     po_number?: string;
     grn_id?: string;
     grn_number?: string;
+    items: PurchaseBillItem[];
     amount: number;
     tax_breakdown: TaxBreakdown & { other: number };
     total_amount: number;

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import api from '../../services/api';
 
 interface Category {
     id: string;
@@ -42,13 +43,13 @@ interface Stats {
     totalCategories: number;
     totalItems: number;
     totalStockValue: number;
-    avgItemsPerCategory: number; // Changed from avgItems to match backend
+    avgItemsPerCategory: number;
 }
 
 interface ApiResponse<T> {
     success: boolean;
     data: T;
-    stats?: Stats; // Stats are now part of the envelope
+    stats?: Stats;
     meta?: {
         page: number;
         limit: number;
@@ -63,7 +64,7 @@ interface CategoriesResponse extends ApiResponse<Category[]> { }
 const CategoryManager: React.FC = () => {
     // Data State
     const [categories, setCategories] = useState<Category[]>([]);
-    const [stats, setStats] = useState<{ totalCategories: number; totalItems: number; totalStockValue: number; avgItemsPerCategory: number } | null>(null);
+    const [stats, setStats] = useState<Stats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +75,7 @@ const CategoryManager: React.FC = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [sortBy, setSortBy] = useState<keyof Category>('stockValue');
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-    const [selectedItems, setSelectedItems] = useState<string[]>([]); // Current page selection only
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
     // Sector Context
     const { tenants } = useSelector((state: RootState) => state.tenant);
@@ -86,7 +87,7 @@ const CategoryManager: React.FC = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
-            setPage(1); // Reset to page 1 on new search
+            setPage(1);
         }, 300);
         return () => clearTimeout(timer);
     }, [search]);
@@ -96,9 +97,18 @@ const CategoryManager: React.FC = () => {
         setIsLoading(true);
         setError(null);
         try {
-            // Fetch Categories (V1 API includes stats)
-            const catRes = await fetch(`http://localhost:5000/api/v1/categories?page=${page}&limit=25&search=${debouncedSearch}&sortBy=${sortBy}&order=${order}&sector=${sector}`);
-            const catData: CategoriesResponse = await catRes.json();
+            const response = await api.get<CategoriesResponse>('/api/v1/categories', {
+                params: {
+                    page,
+                    limit: 25,
+                    search: debouncedSearch,
+                    sortBy,
+                    order,
+                    sector
+                }
+            });
+
+            const catData = response.data;
 
             if (catData.success) {
                 setCategories(catData.data);
@@ -114,7 +124,8 @@ const CategoryManager: React.FC = () => {
 
         } catch (err: any) {
             console.error(err);
-            setError(err.message || 'Network Error - Ensure Backend is Running');
+            const message = err.response?.data?.message || err.message || 'Network Error';
+            setError(message);
         } finally {
             setIsLoading(false);
         }
@@ -130,7 +141,7 @@ const CategoryManager: React.FC = () => {
             setOrder(prev => prev === 'asc' ? 'desc' : 'asc');
         } else {
             setSortBy(field);
-            setOrder('desc'); // Default to desc for new fields usually better for numbers
+            setOrder('desc');
         }
     };
 
@@ -167,7 +178,7 @@ const CategoryManager: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Connection Failed</h3>
                 <p className="text-slate-500 mb-6 text-center max-w-md">
-                    Unable to retrieve category data. Please ensure the backend server is running on port 5000.
+                    Unable to retrieve category data. Please ensure the backend server is running and accessible.
                 </p>
                 <div className="flex gap-3">
                     <button
@@ -291,7 +302,6 @@ const CategoryManager: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {isLoading ? (
-                                // Skeleton Loading State
                                 [...Array(5)].map((_, i) => (
                                     <tr key={i} className="animate-pulse">
                                         <td className="px-6 py-4"><div className="h-4 w-4 bg-slate-200 rounded" /></td>
@@ -342,8 +352,7 @@ const CategoryManager: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right font-mono text-slate-600 font-bold">
-                                            ₹
-                                            {cat.stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                            ₹{cat.stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold border border-slate-200">

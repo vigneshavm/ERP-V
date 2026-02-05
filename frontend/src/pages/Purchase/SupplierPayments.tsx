@@ -10,7 +10,7 @@ import {
     Search as SearchIcon, Calendar, ArrowUpRight, ArrowDownLeft
 } from 'lucide-react';
 import api from "../../services/api";
-import { PurchasePayment, PaymentStatus } from "../../types/purchase";
+import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "../../types/purchase";
 import { toast } from 'react-toastify';
 
 const SupplierPayments: React.FC = () => {

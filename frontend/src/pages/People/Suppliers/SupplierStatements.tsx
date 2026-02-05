@@ -88,31 +88,29 @@ const SupplierStatements: React.FC = () => {
         toDate.setHours(23, 59, 59, 999); // Include the entire end date
 
         // 1. Organize Bills (Credits - Increases Balance/Liability)
-        const vendorBills = bills.filter(b =>
-            (typeof b.supplier === 'object' ? b.supplier._id === selectedVendorId : b.supplier === selectedVendorId)
-        );
+        const vendorBills = bills.filter(b => b.vendor_id === selectedVendorId);
 
         // 2. Organize Payments (Debits - Decreases Balance/Liability)
-        const vendorPayments = payments.filter(p => p.supplierId === selectedVendorId);
+        const vendorPayments = payments.filter(p => p.vendor_id === selectedVendorId);
 
         // 3. Calculate Opening Balance
         // Sum of all bills before periodFrom - Sum of all payments before periodFrom
-        const previousBills = vendorBills.filter(b => new Date(b.date) < fromDate);
-        const previousPayments = vendorPayments.filter(p => new Date(p.paymentDate) < fromDate);
+        const previousBills = vendorBills.filter(b => new Date(b.bill_date) < fromDate);
+        const previousPayments = vendorPayments.filter(p => new Date(p.payment_date) < fromDate);
 
         const totalPreviousCredits = previousBills.reduce((sum, b) => sum + b.amount, 0);
-        const totalPreviousDebits = previousPayments.reduce((sum, p) => sum + p.amount, 0);
+        const totalPreviousDebits = previousPayments.reduce((sum, p) => sum + p.total_amount, 0);
 
         let runningBalance = totalPreviousCredits - totalPreviousDebits;
         const openingBalance = runningBalance;
 
         // 4. Process Transactions within Period
         const activeBills = vendorBills.filter(b => {
-            const d = new Date(b.date);
+            const d = new Date(b.bill_date);
             return d >= fromDate && d <= toDate;
         }).map(b => ({
-            date: b.date,
-            reference: b.billNo,
+            date: b.bill_date,
+            reference: b.bill_number,
             description: `Bill Invoice`,
             debit: 0,
             credit: b.amount,
@@ -121,13 +119,13 @@ const SupplierStatements: React.FC = () => {
         }));
 
         const activePayments = vendorPayments.filter(p => {
-            const d = new Date(p.paymentDate);
+            const d = new Date(p.payment_date);
             return d >= fromDate && d <= toDate;
         }).map(p => ({
-            date: p.paymentDate,
-            reference: p.paymentNo,
-            description: `Payment (${p.paymentMethod})`,
-            debit: p.amount,
+            date: p.payment_date,
+            reference: p.payment_number,
+            description: `Payment (${p.method})`,
+            debit: p.total_amount,
             credit: 0,
             originalObj: p,
             type: 'PAYMENT'
