@@ -95,7 +95,7 @@ const SupplierDetail: React.FC = () => {
             </div>
             <div className="flex items-start gap-6">
               <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-3xl shadow-xl shadow-indigo-200 dark:shadow-none">
-                {supplier.businessName.charAt(0).toUpperCase()}
+                {(supplier.businessName || '?').charAt(0).toUpperCase()}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
@@ -112,9 +112,15 @@ const SupplierDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand Affiliation</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                      <Briefcase className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierGroup || 'Independent'}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Enterprise Type</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
-                      <Briefcase className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierType}
+                      <Building2 className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierType}
                     </div>
                   </div>
                   <div className="space-y-1">

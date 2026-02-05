@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/redux/store";
 import {
     Layout, Image as ImageIcon, Type, Palette, Download,
     ChevronLeft, Check, Plus
 } from 'lucide-react';
-import { MarketingTemplate, MarketingCreative } from "../../types/tenant";
+import { MarketingTemplate, MarketingCreative } from "@/types/tenant";
 
 const Campaigns: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);

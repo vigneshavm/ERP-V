@@ -1,14 +1,28 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Users, Tag, Book, FileText } from 'lucide-react';
+import { NavLink, useParams, useLocation } from 'react-router-dom';
+import { Users, Tag, Book, FileText, User, Edit3, ArrowLeft } from 'lucide-react';
 
 const SupplierSubNav: React.FC = () => {
-    const links = [
-        { name: 'Directory', path: '/suppliers', icon: Users },
+    const { id } = useParams<{ id: string }>();
+    const location = useLocation();
+
+    // Global Module Links
+    const globalLinks = [
+        { name: 'Directory', path: '/suppliers', icon: Users, end: true },
         { name: 'Groups', path: '/suppliers/groups', icon: Tag },
         { name: 'Ledger', path: '/suppliers/ledger', icon: Book },
         { name: 'Statements', path: '/suppliers/statements', icon: FileText },
     ];
+
+    // Contextual Links (when viewing a specific supplier)
+    const contextLinks = [
+        { name: 'Directory', path: '/suppliers', icon: ArrowLeft, end: true }, // Back to list
+        { name: 'Profile', path: `/suppliers/${id}`, icon: User, end: true },
+        { name: 'Edit', path: `/suppliers/${id}/edit`, icon: Edit3 },
+        { name: 'Ledger', path: `/suppliers/${id}/ledger`, icon: Book }, // Specific ledger
+    ];
+
+    const links = id ? contextLinks : globalLinks;
 
     return (
         <div className="flex flex-wrap items-center gap-2 mb-6 p-1 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl w-fit">
@@ -16,7 +30,7 @@ const SupplierSubNav: React.FC = () => {
                 <NavLink
                     key={link.path}
                     to={link.path}
-                    end={link.path === '/suppliers'}
+                    end={link.end}
                     className={({ isActive }) =>
                         `flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${isActive
                             ? 'bg-white dark:bg-slate-900 text-indigo-600 shadow-sm border border-slate-200 dark:border-slate-700'

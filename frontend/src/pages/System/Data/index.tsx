@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { setActiveTab } from '../../../redux/slices/uiSlice';
+import { RootState } from '@/redux/store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 import { Download, Upload, QrCode, Hash, Loader2 } from 'lucide-react';
 
 // Lazy load heavy components

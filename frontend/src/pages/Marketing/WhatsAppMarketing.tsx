@@ -8,10 +8,10 @@ import {
     Tag, MousePointer2, Percent, Globe
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { setActiveTab } from '../../redux/slices/uiSlice';
-import { WhatsAppService } from "../../services/whatsappService";
-import { Tenant, Integrations } from "../../types/tenant";
+import { RootState } from "@/redux/store";
+import { setActiveTab } from "@/redux/slices/uiSlice";
+import { WhatsAppService } from "@/services/whatsappService";
+import { Tenant, Integrations } from "@/types/tenant";
 
 // Helper to safely access tenant from state
 const useCurrentTenant = (): Tenant | null => {

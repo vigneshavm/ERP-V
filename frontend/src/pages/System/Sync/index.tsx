@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from "../../../redux/store";
-import { setActiveTab } from "../../../redux/slices/uiSlice";
+import { RootState } from '@/redux/store';
+import { setActiveTab } from '@/redux/slices/uiSlice';
 import { useDispatch } from 'react-redux';
 import {
     Smartphone, Monitor, Laptop, Tablet, RefreshCw, CheckCircle, AlertCircle, Clock,
     Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Archive, Cloud, XCircle,
     Cpu, Zap, Activity
 } from 'lucide-react';
-import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from "../../../types/tenant";
+import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
 
 // Components
 import DevicesSection from './DevicesSection';

@@ -1,0 +1,1437 @@
+﻿[
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\all_files.json",
+        "Name":  "all_files.json",
+        "Length":  0
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\BusinessSubNav.tsx",
+        "Name":  "BusinessSubNav.tsx",
+        "Length":  3069
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\GoogleProfile.tsx",
+        "Name":  "GoogleProfile.tsx",
+        "Length":  65383
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\MarketingTools.tsx",
+        "Name":  "MarketingTools.tsx",
+        "Length":  36962
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\MetaCallback.tsx",
+        "Name":  "MetaCallback.tsx",
+        "Length":  4625
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\OnlineShop.tsx",
+        "Name":  "OnlineShop.tsx",
+        "Length":  22173
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\WhatsAppMarketing.tsx",
+        "Name":  "WhatsAppMarketing.tsx",
+        "Length":  37028
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\GoogleBusiness\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  43302
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\Campaigns.tsx",
+        "Name":  "Campaigns.tsx",
+        "Length":  12905
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\EmailMarketing.tsx",
+        "Name":  "EmailMarketing.tsx",
+        "Length":  21379
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  2905
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\MarketingCampaigns.tsx",
+        "Name":  "MarketingCampaigns.tsx",
+        "Length":  15803
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\MarketingCoupons.tsx",
+        "Name":  "MarketingCoupons.tsx",
+        "Length":  18753
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\MarketingOffers.tsx",
+        "Name":  "MarketingOffers.tsx",
+        "Length":  17970
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\MarketingTemplates.tsx",
+        "Name":  "MarketingTemplates.tsx",
+        "Length":  14083
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\SMSMarketing.tsx",
+        "Name":  "SMSMarketing.tsx",
+        "Length":  21735
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\SocialMediaMarketing.tsx",
+        "Name":  "SocialMediaMarketing.tsx",
+        "Length":  21611
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Marketing\\WhatsAppMarketing.tsx",
+        "Name":  "WhatsAppMarketing.tsx",
+        "Length":  15293
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\BrandWiseSalesReport.tsx",
+        "Name":  "BrandWiseSalesReport.tsx",
+        "Length":  12838
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\BusinessReportsHub.tsx",
+        "Name":  "BusinessReportsHub.tsx",
+        "Length":  55638
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\CategoryWiseSalesReport.tsx",
+        "Name":  "CategoryWiseSalesReport.tsx",
+        "Length":  11297
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\CounterWiseSalesReport.tsx",
+        "Name":  "CounterWiseSalesReport.tsx",
+        "Length":  14954
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\HourlyBillingReport.tsx",
+        "Name":  "HourlyBillingReport.tsx",
+        "Length":  13017
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  18031
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\ReportData.ts",
+        "Name":  "ReportData.ts",
+        "Length":  4744
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\ReportsDashboard.tsx",
+        "Name":  "ReportsDashboard.tsx",
+        "Length":  5338
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Architecture\\ArchitectureIntelligence.tsx",
+        "Name":  "ArchitectureIntelligence.tsx",
+        "Length":  13096
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Architecture\\SuperAdminGrowthConsole.tsx",
+        "Name":  "SuperAdminGrowthConsole.tsx",
+        "Length":  11727
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Architecture\\TenantArchitect.tsx",
+        "Name":  "TenantArchitect.tsx",
+        "Length":  22412
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ForgotPassword.tsx",
+        "Name":  "ForgotPassword.tsx",
+        "Length":  4431
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Login.test.tsx",
+        "Name":  "Login.test.tsx",
+        "Length":  1355
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Login.tsx",
+        "Name":  "Login.tsx",
+        "Length":  8522
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Register.tsx",
+        "Name":  "Register.tsx",
+        "Length":  14565
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ResetPassword.tsx",
+        "Name":  "ResetPassword.tsx",
+        "Length":  7344
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ResetPasswordDetailed.tsx",
+        "Name":  "ResetPasswordDetailed.tsx",
+        "Length":  15820
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\SecurePasswordInput.tsx",
+        "Name":  "SecurePasswordInput.tsx",
+        "Length":  9238
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\TenantLogin.tsx",
+        "Name":  "TenantLogin.tsx",
+        "Length":  16381
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Business\\BusinessSetupModal.tsx",
+        "Name":  "BusinessSetupModal.tsx",
+        "Length":  9479
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\AgedStockManager.tsx",
+        "Name":  "AgedStockManager.tsx",
+        "Length":  23573
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\BatchPriceUpdate.tsx",
+        "Name":  "BatchPriceUpdate.tsx",
+        "Length":  11035
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\CategoryManager.tsx",
+        "Name":  "CategoryManager.tsx",
+        "Length":  23955
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\InventoryManager.tsx",
+        "Name":  "InventoryManager.tsx",
+        "Length":  32272
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\ReprintQueue.tsx",
+        "Name":  "ReprintQueue.tsx",
+        "Length":  9576
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Items\\AddItem.tsx",
+        "Name":  "AddItem.tsx",
+        "Length":  13414
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Items\\EditItem.tsx",
+        "Name":  "EditItem.tsx",
+        "Length":  14453
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\OnlineStore.tsx",
+        "Name":  "OnlineStore.tsx",
+        "Length":  19552
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\FeatureMatrix.tsx",
+        "Name":  "FeatureMatrix.tsx",
+        "Length":  5069
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\GrowHero.tsx",
+        "Name":  "GrowHero.tsx",
+        "Length":  4264
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\PricingTiers.tsx",
+        "Name":  "PricingTiers.tsx",
+        "Length":  5395
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\components\\FeatureMatrix.tsx",
+        "Name":  "FeatureMatrix.tsx",
+        "Length":  5069
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\components\\GrowHero.tsx",
+        "Name":  "GrowHero.tsx",
+        "Length":  4258
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\components\\PricingTiers.tsx",
+        "Name":  "PricingTiers.tsx",
+        "Length":  5395
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\CashDrawerIntelligence.tsx",
+        "Name":  "CashDrawerIntelligence.tsx",
+        "Length":  22914
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCartGrid.tsx",
+        "Name":  "POSCartGrid.tsx",
+        "Length":  38996
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCategoryBrowserModal.tsx",
+        "Name":  "POSCategoryBrowserModal.tsx",
+        "Length":  11318
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCustomerDisplay.tsx",
+        "Name":  "POSCustomerDisplay.tsx",
+        "Length":  6100
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCustomerPanel.tsx",
+        "Name":  "POSCustomerPanel.tsx",
+        "Length":  18515
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSFooter.tsx",
+        "Name":  "POSFooter.tsx",
+        "Length":  10683
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSHeader.tsx",
+        "Name":  "POSHeader.tsx",
+        "Length":  7031
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSHeldBillsModal.tsx",
+        "Name":  "POSHeldBillsModal.tsx",
+        "Length":  6278
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSMobileMenu.tsx",
+        "Name":  "POSMobileMenu.tsx",
+        "Length":  12200
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSModule.tsx",
+        "Name":  "POSModule.tsx",
+        "Length":  326
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSOrdersIntelligence.tsx",
+        "Name":  "POSOrdersIntelligence.tsx",
+        "Length":  31240
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSProductBrowser.tsx",
+        "Name":  "POSProductBrowser.tsx",
+        "Length":  14574
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSReturnsIntelligence.tsx",
+        "Name":  "POSReturnsIntelligence.tsx",
+        "Length":  446
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSSidebar.tsx",
+        "Name":  "POSSidebar.tsx",
+        "Length":  7409
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSTemplateRegistry.tsx",
+        "Name":  "POSTemplateRegistry.tsx",
+        "Length":  1350
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSTerminalInfo.tsx",
+        "Name":  "POSTerminalInfo.tsx",
+        "Length":  1524
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSVariantSelectionModal.tsx",
+        "Name":  "POSVariantSelectionModal.tsx",
+        "Length":  10999
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\ShiftManagementIntelligence.tsx",
+        "Name":  "ShiftManagementIntelligence.tsx",
+        "Length":  26484
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\templates\\StandardPOSTemplate.tsx",
+        "Name":  "StandardPOSTemplate.tsx",
+        "Length":  21778
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\templates\\TextilePOSTemplate.tsx",
+        "Name":  "TextilePOSTemplate.tsx",
+        "Length":  15015
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\Bills.tsx",
+        "Name":  "Bills.tsx",
+        "Length":  27760
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\DebitNotes.tsx",
+        "Name":  "DebitNotes.tsx",
+        "Length":  33562
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\GoodsReceived.tsx",
+        "Name":  "GoodsReceived.tsx",
+        "Length":  21754
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\OutstandingPayables.tsx",
+        "Name":  "OutstandingPayables.tsx",
+        "Length":  20635
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PaymentOut.tsx",
+        "Name":  "PaymentOut.tsx",
+        "Length":  21504
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseEntry.tsx",
+        "Name":  "PurchaseEntry.tsx",
+        "Length":  59177
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseHistory.tsx",
+        "Name":  "PurchaseHistory.tsx",
+        "Length":  5196
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderDetails.tsx",
+        "Name":  "PurchaseOrderDetails.tsx",
+        "Length":  7813
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderForm.tsx",
+        "Name":  "PurchaseOrderForm.tsx",
+        "Length":  17944
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderList.tsx",
+        "Name":  "PurchaseOrderList.tsx",
+        "Length":  7712
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrdersModule.tsx",
+        "Name":  "PurchaseOrdersModule.tsx",
+        "Length":  7390
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseRegister.tsx",
+        "Name":  "PurchaseRegister.tsx",
+        "Length":  20273
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseReturn.tsx",
+        "Name":  "PurchaseReturn.tsx",
+        "Length":  33179
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseUpload.tsx",
+        "Name":  "PurchaseUpload.tsx",
+        "Length":  7672
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\SupplierPayments.tsx",
+        "Name":  "SupplierPayments.tsx",
+        "Length":  22775
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnedItemsList.tsx",
+        "Name":  "ReturnedItemsList.tsx",
+        "Length":  4460
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnInvoiceSelector.tsx",
+        "Name":  "ReturnInvoiceSelector.tsx",
+        "Length":  6071
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnItemGrid.tsx",
+        "Name":  "ReturnItemGrid.tsx",
+        "Length":  8962
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnSummary.tsx",
+        "Name":  "ReturnSummary.tsx",
+        "Length":  4229
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallan.tsx",
+        "Name":  "DeliveryChallan.tsx",
+        "Length":  32052
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallanDetail.tsx",
+        "Name":  "DeliveryChallanDetail.tsx",
+        "Length":  18562
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallanList.tsx",
+        "Name":  "DeliveryChallanList.tsx",
+        "Length":  20532
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\Estimate.tsx",
+        "Name":  "Estimate.tsx",
+        "Length":  26914
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\EstimateDetail.tsx",
+        "Name":  "EstimateDetail.tsx",
+        "Length":  3741
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\EstimateList.tsx",
+        "Name":  "EstimateList.tsx",
+        "Length":  16692
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentIn.tsx",
+        "Name":  "PaymentIn.tsx",
+        "Length":  37210
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentInCreator.tsx",
+        "Name":  "PaymentInCreator.tsx",
+        "Length":  27120
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentInList.tsx",
+        "Name":  "PaymentInList.tsx",
+        "Length":  22283
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentReceiptDetail.tsx",
+        "Name":  "PaymentReceiptDetail.tsx",
+        "Length":  31574
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\returns\\Return.tsx",
+        "Name":  "Return.tsx",
+        "Length":  36741
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\returns\\ReturnedItems.tsx",
+        "Name":  "ReturnedItems.tsx",
+        "Length":  31042
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesInvoices\\SalesInvoice.tsx",
+        "Name":  "SalesInvoice.tsx",
+        "Length":  28542
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesInvoices\\SalesInvoiceDetail.tsx",
+        "Name":  "SalesInvoiceDetail.tsx",
+        "Length":  22834
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrder.tsx",
+        "Name":  "SalesOrder.tsx",
+        "Length":  36743
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrderDetail.tsx",
+        "Name":  "SalesOrderDetail.tsx",
+        "Length":  25984
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrderList.tsx",
+        "Name":  "SalesOrderList.tsx",
+        "Length":  26035
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\EmailEngagement.tsx",
+        "Name":  "EmailEngagement.tsx",
+        "Length":  24868
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\FeedbackEngagement.tsx",
+        "Name":  "FeedbackEngagement.tsx",
+        "Length":  19958
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  2765
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\LoyaltyEngagement.tsx",
+        "Name":  "LoyaltyEngagement.tsx",
+        "Length":  21446
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\WhatsAppEngagement.tsx",
+        "Name":  "WhatsAppEngagement.tsx",
+        "Length":  20898
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\BusinessSnapshot.tsx",
+        "Name":  "BusinessSnapshot.tsx",
+        "Length":  14116
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\Dashboard.tsx",
+        "Name":  "Dashboard.tsx",
+        "Length":  14236
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\GrowDashboard.tsx",
+        "Name":  "GrowDashboard.tsx",
+        "Length":  14414
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\GrowthHub.tsx",
+        "Name":  "GrowthHub.tsx",
+        "Length":  4640
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\MarketingMetrics.tsx",
+        "Name":  "MarketingMetrics.tsx",
+        "Length":  14006
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\OnlinePerformance.tsx",
+        "Name":  "OnlinePerformance.tsx",
+        "Length":  9992
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\ProfitPulse.tsx",
+        "Name":  "ProfitPulse.tsx",
+        "Length":  21407
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\RevenueChart.tsx",
+        "Name":  "RevenueChart.tsx",
+        "Length":  3335
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Data\\BarcodeGenerator.tsx",
+        "Name":  "BarcodeGenerator.tsx",
+        "Length":  22248
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Data\\BulkImport.tsx",
+        "Name":  "BulkImport.tsx",
+        "Length":  20755
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Data\\DataExport.tsx",
+        "Name":  "DataExport.tsx",
+        "Length":  15856
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Data\\SequenceControl.tsx",
+        "Name":  "SequenceControl.tsx",
+        "Length":  9281
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\ChequeLedger.tsx",
+        "Name":  "ChequeLedger.tsx",
+        "Length":  4899
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\DueAdjustment.tsx",
+        "Name":  "DueAdjustment.tsx",
+        "Length":  16269
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\ExpenseManager.tsx",
+        "Name":  "ExpenseManager.tsx",
+        "Length":  3975
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\FinanceModals.tsx",
+        "Name":  "FinanceModals.tsx",
+        "Length":  11309
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\FinanceOverview.tsx",
+        "Name":  "FinanceOverview.tsx",
+        "Length":  2832
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\AccountLedger.tsx",
+        "Name":  "AccountLedger.tsx",
+        "Length":  18758
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankAccounts.tsx",
+        "Name":  "BankAccounts.tsx",
+        "Length":  18503
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankIntelligence.tsx",
+        "Name":  "BankIntelligence.tsx",
+        "Length":  27242
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankReconciliation.tsx",
+        "Name":  "BankReconciliation.tsx",
+        "Length":  26122
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankSummary.tsx",
+        "Name":  "BankSummary.tsx",
+        "Length":  15224
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashBankIntelligence.tsx",
+        "Name":  "CashBankIntelligence.tsx",
+        "Length":  23570
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashBankPosition.tsx",
+        "Name":  "CashBankPosition.tsx",
+        "Length":  14210
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashInHand.tsx",
+        "Name":  "CashInHand.tsx",
+        "Length":  23427
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\Cheques.tsx",
+        "Name":  "Cheques.tsx",
+        "Length":  50616
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\DayEndModal.tsx",
+        "Name":  "DayEndModal.tsx",
+        "Length":  10399
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\DayEndReconciliation.tsx",
+        "Name":  "DayEndReconciliation.tsx",
+        "Length":  16912
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\FinanceOverview.tsx",
+        "Name":  "FinanceOverview.tsx",
+        "Length":  21288
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\FundTransfer.tsx",
+        "Name":  "FundTransfer.tsx",
+        "Length":  33378
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\LoanAccounts.tsx",
+        "Name":  "LoanAccounts.tsx",
+        "Length":  39074
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\PettyCash.tsx",
+        "Name":  "PettyCash.tsx",
+        "Length":  35877
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\TransferModal.tsx",
+        "Name":  "TransferModal.tsx",
+        "Length":  7833
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\Transfers.tsx",
+        "Name":  "Transfers.tsx",
+        "Length":  17590
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\types.ts",
+        "Name":  "types.ts",
+        "Length":  2232
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankFormSection.tsx",
+        "Name":  "CashBankFormSection.tsx",
+        "Length":  771
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankHero.tsx",
+        "Name":  "CashBankHero.tsx",
+        "Length":  1794
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankInput.tsx",
+        "Name":  "CashBankInput.tsx",
+        "Length":  715
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankModal.tsx",
+        "Name":  "CashBankModal.tsx",
+        "Length":  2442
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankStatsCard.tsx",
+        "Name":  "CashBankStatsCard.tsx",
+        "Length":  1945
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\DailyFinance.tsx",
+        "Name":  "DailyFinance.tsx",
+        "Length":  47835
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseCategoriesManager.tsx",
+        "Name":  "ExpenseCategoriesManager.tsx",
+        "Length":  19971
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseDashboard.tsx",
+        "Name":  "ExpenseDashboard.tsx",
+        "Length":  5195
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseDashboardPage.jsx",
+        "Name":  "ExpenseDashboardPage.jsx",
+        "Length":  12714
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseForm.tsx",
+        "Name":  "ExpenseForm.tsx",
+        "Length":  9356
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseIntelligence.tsx",
+        "Name":  "ExpenseIntelligence.tsx",
+        "Length":  37298
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseList.tsx",
+        "Name":  "ExpenseList.tsx",
+        "Length":  9012
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseListPage.jsx",
+        "Name":  "ExpenseListPage.jsx",
+        "Length":  14850
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseManager.tsx",
+        "Name":  "ExpenseManager.tsx",
+        "Length":  18168
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseReportsIntelligence.tsx",
+        "Name":  "ExpenseReportsIntelligence.tsx",
+        "Length":  16786
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\Expenses.jsx",
+        "Name":  "Expenses.jsx",
+        "Length":  27828
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpensesModule.tsx",
+        "Name":  "ExpensesModule.tsx",
+        "Length":  12811
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\RecurringExpensesIntelligence.tsx",
+        "Name":  "RecurringExpensesIntelligence.tsx",
+        "Length":  17581
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Invoices\\Invoice.tsx",
+        "Name":  "Invoice.tsx",
+        "Length":  29225
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Invoices\\InvoiceDetail.tsx",
+        "Name":  "InvoiceDetail.tsx",
+        "Length":  26502
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\GoogleBusiness\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  43308
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Inventory\\LabelPrintModal.tsx",
+        "Name":  "LabelPrintModal.tsx",
+        "Length":  3901
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\Campaigns.tsx",
+        "Name":  "Campaigns.tsx",
+        "Length":  12888
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\EmailEngagement.tsx",
+        "Name":  "EmailEngagement.tsx",
+        "Length":  24828
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\EmailMarketing.tsx",
+        "Name":  "EmailMarketing.tsx",
+        "Length":  21387
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\FeedbackEngagement.tsx",
+        "Name":  "FeedbackEngagement.tsx",
+        "Length":  19916
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  3269
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\LoyaltyEngagement.tsx",
+        "Name":  "LoyaltyEngagement.tsx",
+        "Length":  21404
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingCampaigns.tsx",
+        "Name":  "MarketingCampaigns.tsx",
+        "Length":  15769
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingCoupons.tsx",
+        "Name":  "MarketingCoupons.tsx",
+        "Length":  18711
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingOffers.tsx",
+        "Name":  "MarketingOffers.tsx",
+        "Length":  17928
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingTemplates.tsx",
+        "Name":  "MarketingTemplates.tsx",
+        "Length":  14085
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\SMSMarketing.tsx",
+        "Name":  "SMSMarketing.tsx",
+        "Length":  21730
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\SocialMediaMarketing.tsx",
+        "Name":  "SocialMediaMarketing.tsx",
+        "Length":  21621
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\WhatsAppEngagement.tsx",
+        "Name":  "WhatsAppEngagement.tsx",
+        "Length":  20898
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\WhatsAppMarketing.tsx",
+        "Name":  "WhatsAppMarketing.tsx",
+        "Length":  15425
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Onboarding\\TenantOnboarding.tsx",
+        "Name":  "TenantOnboarding.tsx",
+        "Length":  68030
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  19706
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\Storefront.tsx",
+        "Name":  "Storefront.tsx",
+        "Length":  5719
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontAiPanel.tsx",
+        "Name":  "StorefrontAiPanel.tsx",
+        "Length":  6340
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontFilters.tsx",
+        "Name":  "StorefrontFilters.tsx",
+        "Length":  5059
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontHeader.tsx",
+        "Name":  "StorefrontHeader.tsx",
+        "Length":  3120
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontProductDisplay.tsx",
+        "Name":  "StorefrontProductDisplay.tsx",
+        "Length":  9707
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\useStorefrontLogic.ts",
+        "Name":  "useStorefrontLogic.ts",
+        "Length":  6368
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\AddCustomer.tsx",
+        "Name":  "AddCustomer.tsx",
+        "Length":  4164
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\Customer360Modal.tsx",
+        "Name":  "Customer360Modal.tsx",
+        "Length":  10772
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerDetail.tsx",
+        "Name":  "CustomerDetail.tsx",
+        "Length":  14121
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerGroups.tsx",
+        "Name":  "CustomerGroups.tsx",
+        "Length":  14296
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerLedger.tsx",
+        "Name":  "CustomerLedger.tsx",
+        "Length":  19846
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerList.tsx",
+        "Name":  "CustomerList.tsx",
+        "Length":  21093
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\Customers.tsx",
+        "Name":  "Customers.tsx",
+        "Length":  20304
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerStatements.tsx",
+        "Name":  "CustomerStatements.tsx",
+        "Length":  20994
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomersWithDues.tsx",
+        "Name":  "CustomersWithDues.tsx",
+        "Length":  15497
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\EditCustomer.tsx",
+        "Name":  "EditCustomer.tsx",
+        "Length":  5116
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\LoyaltyPoints.tsx",
+        "Name":  "LoyaltyPoints.tsx",
+        "Length":  19958
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\types.ts",
+        "Name":  "types.ts",
+        "Length":  1378
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\components\\CustomerForm.tsx",
+        "Name":  "CustomerForm.tsx",
+        "Length":  13087
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\components\\CustomerUI.tsx",
+        "Name":  "CustomerUI.tsx",
+        "Length":  3466
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\AddLaborerForm.tsx",
+        "Name":  "AddLaborerForm.tsx",
+        "Length":  6994
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\AttendanceCalendar.tsx",
+        "Name":  "AttendanceCalendar.tsx",
+        "Length":  8943
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborManager.tsx",
+        "Name":  "LaborManager.tsx",
+        "Length":  17315
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborSidebar.tsx",
+        "Name":  "LaborSidebar.tsx",
+        "Length":  4645
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborStats.tsx",
+        "Name":  "LaborStats.tsx",
+        "Length":  6937
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\PaymentHistory.tsx",
+        "Name":  "PaymentHistory.tsx",
+        "Length":  5776
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\StaffManager.tsx",
+        "Name":  "StaffManager.tsx",
+        "Length":  24162
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\components\\TimeEntryModal.tsx",
+        "Name":  "TimeEntryModal.tsx",
+        "Length":  7902
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\AddSupplier.tsx",
+        "Name":  "AddSupplier.tsx",
+        "Length":  1229
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\EditSupplier.tsx",
+        "Name":  "EditSupplier.tsx",
+        "Length":  2839
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierDetail.tsx",
+        "Name":  "SupplierDetail.tsx",
+        "Length":  15564
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierGroups.tsx",
+        "Name":  "SupplierGroups.tsx",
+        "Length":  14820
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierLedger.tsx",
+        "Name":  "SupplierLedger.tsx",
+        "Length":  21128
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\Suppliers.tsx",
+        "Name":  "Suppliers.tsx",
+        "Length":  29904
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierStatements.test.ts",
+        "Name":  "SupplierStatements.test.ts",
+        "Length":  4549
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierStatements.tsx",
+        "Name":  "SupplierStatements.tsx",
+        "Length":  24883
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierSubNav.tsx",
+        "Name":  "SupplierSubNav.tsx",
+        "Length":  2157
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\TenantManager.tsx",
+        "Name":  "TenantManager.tsx",
+        "Length":  53704
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\TenantSignUp.tsx",
+        "Name":  "TenantSignUp.tsx",
+        "Length":  24811
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BankingTab.tsx",
+        "Name":  "BankingTab.tsx",
+        "Length":  5318
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BrandingTab.tsx",
+        "Name":  "BrandingTab.tsx",
+        "Length":  9761
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BusinessTab.tsx",
+        "Name":  "BusinessTab.tsx",
+        "Length":  5879
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\CompanyTab.tsx",
+        "Name":  "CompanyTab.tsx",
+        "Length":  7768
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\GeographyTab.tsx",
+        "Name":  "GeographyTab.tsx",
+        "Length":  11627
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\IntegrationsTab.tsx",
+        "Name":  "IntegrationsTab.tsx",
+        "Length":  3884
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\SystemTab.tsx",
+        "Name":  "SystemTab.tsx",
+        "Length":  10671
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\TaxTab.tsx",
+        "Name":  "TaxTab.tsx",
+        "Length":  5549
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\UserTab.tsx",
+        "Name":  "UserTab.tsx",
+        "Length":  3696
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorKPIs.tsx",
+        "Name":  "VendorKPIs.tsx",
+        "Length":  1596
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorModals.tsx",
+        "Name":  "VendorModals.tsx",
+        "Length":  14475
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorSearch.tsx",
+        "Name":  "VendorSearch.tsx",
+        "Length":  1037
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorTable.tsx",
+        "Name":  "VendorTable.tsx",
+        "Length":  9414
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\ArchitectureIntelligence.tsx",
+        "Name":  "ArchitectureIntelligence.tsx",
+        "Length":  13103
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\SuperAdminGrowthConsole.tsx",
+        "Name":  "SuperAdminGrowthConsole.tsx",
+        "Length":  11759
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\TenantArchitect.tsx",
+        "Name":  "TenantArchitect.tsx",
+        "Length":  22419
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  4666
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\BarcodeGenerator.tsx",
+        "Name":  "BarcodeGenerator.tsx",
+        "Length":  22248
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\BulkImport.tsx",
+        "Name":  "BulkImport.tsx",
+        "Length":  20755
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\DataExport.tsx",
+        "Name":  "DataExport.tsx",
+        "Length":  15806
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\SequenceControl.tsx",
+        "Name":  "SequenceControl.tsx",
+        "Length":  9281
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\BranchSettingsTab.tsx",
+        "Name":  "BranchSettingsTab.tsx",
+        "Length":  11566
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\BrandingTab.tsx",
+        "Name":  "BrandingTab.tsx",
+        "Length":  10617
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\FinanceTab.tsx",
+        "Name":  "FinanceTab.tsx",
+        "Length":  11591
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\GeneralTab.tsx",
+        "Name":  "GeneralTab.tsx",
+        "Length":  12530
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\IntegrationsTab.tsx",
+        "Name":  "IntegrationsTab.tsx",
+        "Length":  17735
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\MISControlsTab.tsx",
+        "Name":  "MISControlsTab.tsx",
+        "Length":  9669
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\ModulesTab.tsx",
+        "Name":  "ModulesTab.tsx",
+        "Length":  8816
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\PersonalizationTab.tsx",
+        "Name":  "PersonalizationTab.tsx",
+        "Length":  9412
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\ProfileSettings.tsx",
+        "Name":  "ProfileSettings.tsx",
+        "Length":  19133
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\SecurityTab.tsx",
+        "Name":  "SecurityTab.tsx",
+        "Length":  17336
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\Settings.tsx",
+        "Name":  "Settings.tsx",
+        "Length":  15815
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\SubscriptionTab.tsx",
+        "Name":  "SubscriptionTab.tsx",
+        "Length":  12526
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\types.ts",
+        "Name":  "types.ts",
+        "Length":  3448
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Backup.jsx",
+        "Name":  "Backup.jsx",
+        "Length":  20149
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\BackupSection.tsx",
+        "Name":  "BackupSection.tsx",
+        "Length":  13467
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\ConflictsSection.tsx",
+        "Name":  "ConflictsSection.tsx",
+        "Length":  4183
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\DeviceIntelligence.tsx",
+        "Name":  "DeviceIntelligence.tsx",
+        "Length":  28235
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\DevicesSection.tsx",
+        "Name":  "DevicesSection.tsx",
+        "Length":  5797
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  20746
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Restore.jsx",
+        "Name":  "Restore.jsx",
+        "Length":  13105
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\RestoreSection.tsx",
+        "Name":  "RestoreSection.tsx",
+        "Length":  24063
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\SyncSettingsSection.tsx",
+        "Name":  "SyncSettingsSection.tsx",
+        "Length":  6255
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\SyncShare.jsx",
+        "Name":  "SyncShare.jsx",
+        "Length":  20146
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\BackupSection.tsx",
+        "Name":  "BackupSection.tsx",
+        "Length":  13470
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\ConflictsSection.tsx",
+        "Name":  "ConflictsSection.tsx",
+        "Length":  4186
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\DeviceConflictModal.tsx",
+        "Name":  "DeviceConflictModal.tsx",
+        "Length":  6508
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\DeviceIntelligence.tsx",
+        "Name":  "DeviceIntelligence.tsx",
+        "Length":  28241
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\DevicesSection.tsx",
+        "Name":  "DevicesSection.tsx",
+        "Length":  5800
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\index.tsx",
+        "Name":  "index.tsx",
+        "Length":  20737
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\RestoreSection.tsx",
+        "Name":  "RestoreSection.tsx",
+        "Length":  24066
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Sync\\SyncSettingsSection.tsx",
+        "Name":  "SyncSettingsSection.tsx",
+        "Length":  6258
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Utilities\\BarcodeGenerator.tsx",
+        "Name":  "BarcodeGenerator.tsx",
+        "Length":  48861
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Utilities\\BusinessSetup.tsx",
+        "Name":  "BusinessSetup.tsx",
+        "Length":  26870
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Utilities\\DataExport.tsx",
+        "Name":  "DataExport.tsx",
+        "Length":  19395
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Utilities\\ImportItems.tsx",
+        "Name":  "ImportItems.tsx",
+        "Length":  37259
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AdminView.tsx",
+        "Name":  "AdminView.tsx",
+        "Length":  3723
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AuthAlert.tsx",
+        "Name":  "AuthAlert.tsx",
+        "Length":  2279
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AuthLayout.tsx",
+        "Name":  "AuthLayout.tsx",
+        "Length":  3472
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\ChangePasswordModal.tsx",
+        "Name":  "ChangePasswordModal.tsx",
+        "Length":  12979
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\LandingPage.tsx",
+        "Name":  "LandingPage.tsx",
+        "Length":  9086
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\TenantView.tsx",
+        "Name":  "TenantView.tsx",
+        "Length":  25145
+    }
+]

@@ -5,10 +5,19 @@ import {
     getSuppliers,
     getSupplierById,
     updateSupplier,
-    deleteSupplier
+    deleteSupplier,
+    getSupplierAnalytics
 } from '../controllers/SupplierController.js';
+import { getGroups } from '../controllers/SupplierGroupController.js';
 
 const router = express.Router();
+
+router.get('/analytics', protect, getSupplierAnalytics);
+router.get('/groups', protect, getGroups); // Fix for 500 error on /suppliers/groups
+router.get('/statements', protect, (req, res) => {
+    // Placeholder to prevent collision with /:id
+    res.status(200).json({ success: true, message: "Statements endpoint ready" });
+});
 
 router.route('/')
     .post(protect, createSupplier)

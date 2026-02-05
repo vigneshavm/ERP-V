@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ISupplier extends Document {
     tenantId: string;
+    supplierId: string;
     businessName: string;
     shortCode?: string;
     contactPersonName: string;
@@ -14,12 +15,14 @@ export interface ISupplier extends Document {
     balanceType: 'payable' | 'receivable';
     creditPeriod: number;
     status: 'active' | 'inactive';
+    supplierGroup?: string; // Brand/Parent Group
     createdAt: Date;
     updatedAt: Date;
 }
 
 const SupplierSchema: Schema = new Schema({
     tenantId: { type: String, required: true, index: true },
+    supplierId: { type: String, required: true, unique: true },
     businessName: { type: String, required: true },
     shortCode: { type: String },
     contactPersonName: { type: String, required: false },
@@ -45,6 +48,7 @@ const SupplierSchema: Schema = new Schema({
         enum: ['active', 'inactive'],
         default: 'active'
     },
+    supplierGroup: { type: String, trim: true, index: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User' }
 }, {
     timestamps: true

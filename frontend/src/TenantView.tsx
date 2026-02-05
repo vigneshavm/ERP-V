@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard, ShoppingCart, Archive, Settings, Menu, X,
     Ban, Shield, Store, LogOut, ArrowRight, DollarSign, List, ShoppingBag,
@@ -19,6 +19,19 @@ import { ConfigProvider } from './contexts/ConfigProvider';
 import { useConfig } from './contexts/ConfigContext';
 import { useBranchResolver } from './hooks/useBranchResolver';
 import { getSession, clearSession } from './utils/session';
+import { MENU_ITEMS, MenuItem } from './config/menu.config';
+
+// Helper to flatten menu items for easy lookup
+const FLATTENED_MENU_ITEMS: MenuItem[] = [];
+const flattenItems = (items: MenuItem[]) => {
+    items.forEach(item => {
+        FLATTENED_MENU_ITEMS.push(item);
+        if (item.children) {
+            flattenItems(item.children);
+        }
+    });
+};
+flattenItems(MENU_ITEMS);
 
 // --- TYPES ---
 import { AppView } from './types/common';
@@ -31,9 +44,16 @@ import ChangePasswordModal from './components/shared/Auth/ChangePasswordModal';
 import Login from './pages/Auth/Login';
 
 // --- DASHBOARD ---
-import Dashboard from './pages/Dashboard/Dashboard';
 import BusinessSnapshot from './pages/Dashboard/BusinessSnapshot';
+import Dashboard from './pages/Dashboard/Dashboard';
+import GrowDashboard from './pages/Dashboard/GrowDashboard';
+import GrowthHub from './pages/Dashboard/GrowthHub';
+import MarketingMetrics from './pages/Dashboard/MarketingMetrics';
+import OnlinePerformance from './pages/Dashboard/OnlinePerformance';
 import ProfitPulse from './pages/Dashboard/ProfitPulse';
+import RevenueChart from './pages/Dashboard/RevenueChart';
+
+//-- Expenses -- 
 import DailyFinanceTracker from './pages/Financial/Expenses/DailyFinance';
 
 // --- COMMERCIAL: SALES ---
@@ -71,6 +91,7 @@ import StaffManager from './pages/People/Employees/StaffManager';
 import LaborManager from './pages/People/Employees/LaborManager';
 import TenantManager from './pages/People/Tenants/TenantManager';
 import VendorForm from './pages/People/Suppliers/AddSupplier';
+import EditSupplier from './pages/People/Suppliers/EditSupplier';
 import VendorDetails from './pages/People/Suppliers/SupplierDetail';
 
 // --- FINANCIAL: CASH & BANK ---
@@ -105,8 +126,13 @@ import ReportsModule from './pages/Analytics/Reports';
 import GrowBusiness from './pages/Dashboard/GrowDashboard';
 import GoogleBusinessPage from './pages/GoogleBusiness';
 import Marketing from './pages/Marketing';
-import CustomerEngagement from './pages/CustomerEngagement';
 
+// --- CUSTOMER ENGAGEMENT ---
+import CustomerEngagement from './pages/CustomerEngagement';
+import EmailEngagement from './pages/CustomerEngagement/EmailEngagement';
+import FeedbackEngagement from './pages/CustomerEngagement/FeedbackEngagement';
+import LoyaltyEngagement from './pages/CustomerEngagement/LoyaltyEngagement';
+import WhatsAppEngagement from './pages/CustomerEngagement/WhatsAppEngagement';
 
 import POSReturnsIntelligence from './pages/Commercial/Pos/POSReturnsIntelligence';
 
@@ -141,6 +167,35 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     // Hooks
     const { getBranchName } = useBranchResolver();
+    const location = useLocation();
+
+    // --- URL Sync Logic ---
+    React.useEffect(() => {
+        const currentPath = location.pathname;
+
+        // Find matching item by path
+        // We match exact path or simple prefix if needed
+        // Reverse sort by path length to match specific paths before generic ones
+        const match = FLATTENED_MENU_ITEMS
+            .filter(item => item.path)
+            .sort((a, b) => (b.path?.length || 0) - (a.path?.length || 0))
+            .find(item => {
+                if (!item.path) return false;
+                // Exact match
+                if (item.path === currentPath) return true;
+                // Match sub-routes (e.g. /suppliers/add should match /suppliers or specific)
+                // But careful with / and /pos
+                if (currentPath.startsWith(item.path) && item.path !== '/') return true;
+                return false;
+            });
+
+        if (match && match.id !== activeTab) {
+            // Only update if effective tab logic warrants it.
+            // If we are at /suppliers/add, match might be 'SUPPLIER_LIST' (path: /suppliers) or similar
+            // We want to set the tab that controls the view.
+            dispatch(setActiveTab(match.id));
+        }
+    }, [location.pathname, dispatch, activeTab]);
 
     // Derive effective tenant from user session or prop
     const effectiveTenant = React.useMemo(() => {
@@ -319,9 +374,12 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
             case 'SUPER_ADMIN_CONSOLE': return <SuperAdminGrowthConsole />;
 
             // --- GROW ---
-            case 'GROW': return <GrowBusiness />;
-            case 'GROW_DASHBOARD': return <GrowBusiness />;
-            case 'GROW_OVERVIEW': return <GrowBusiness />;
+            case 'GROW': return <GrowthHub />;
+            case 'GROW_HUB': return <GrowthHub />;
+            case 'GROW_DASHBOARD': return <GrowDashboard />;
+            case 'GROW_OVERVIEW': return <GrowDashboard />;
+            case 'GROW_PERFORMANCE': return <OnlinePerformance />;
+            case 'GROW_REVENUE': return <RevenueChart data={[]} theme="light" />;
 
             case 'GROW_MARKETING':
             case 'GROW_MARKETING_CAMPAIGNS':
@@ -333,13 +391,12 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
             case 'GROW_MARKETING_OFFERS':
                 return <Marketing />;
 
-            case 'GROW_ENGAGEMENT':
-            case 'GROW_ENGAGEMENT_SMS':
-            case 'GROW_ENGAGEMENT_WHATSAPP':
-            case 'GROW_ENGAGEMENT_EMAIL':
-            case 'GROW_ENGAGEMENT_LOYALTY':
-            case 'GROW_ENGAGEMENT_FEEDBACK':
-                return <CustomerEngagement />;
+            case 'GROW_ENGAGEMENT': return <CustomerEngagement />;
+            case 'GROW_ENGAGEMENT_SMS': return <CustomerEngagement />;
+            case 'GROW_ENGAGEMENT_WHATSAPP': return <WhatsAppEngagement />;
+            case 'GROW_ENGAGEMENT_EMAIL': return <EmailEngagement />;
+            case 'GROW_ENGAGEMENT_LOYALTY': return <LoyaltyEngagement />;
+            case 'GROW_ENGAGEMENT_FEEDBACK': return <FeedbackEngagement />;
 
             case 'GROW_GOOGLE': return <GoogleBusinessPage />;
             case 'GROW_GOOGLE_PROFILE': return <GoogleBusinessPage />;
@@ -353,6 +410,12 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
             default: return <Dashboard />;
         }
     };
+
+    // Ensure we scroll to top on tab change
+    React.useEffect(() => {
+        const viewport = document.querySelector('main > div');
+        if (viewport) viewport.scrollTop = 0;
+    }, [activeTab]);
 
     return (
         <ConfigProvider tenant={effectiveTenant}>
@@ -406,8 +469,10 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/" element={renderContent()} />
                             <Route path="/reports" element={<ReportsModule />} />
                             <Route path="/reports/:category/:slug" element={<ReportsModule />} />
+                            <Route path="/suppliers/add" element={<VendorForm />} />
                             <Route path="/suppliers/:id" element={<VendorDetails />} />
-                            <Route path="/suppliers/:id/edit" element={<VendorForm />} />
+                            <Route path="/suppliers/:id/edit" element={<EditSupplier />} />
+                            <Route path="/purchase/new" element={<PurchaseEntry />} />
                             <Route path="/grow" element={<GrowBusiness />} />
                             <Route path="*" element={renderContent()} />
                         </Routes>

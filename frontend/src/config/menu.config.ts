@@ -61,11 +61,12 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Dashboard',
         icon: LayoutDashboard,
         module: 'DASHBOARD',
+        path: '/',
         children: [
-            { id: 'DASHBOARD_OVERVIEW', label: 'Overview', icon: LayoutDashboard, module: 'DASHBOARD' },
-            { id: 'DASHBOARD_SNAPSHOT', label: 'Business Snapshot', icon: PieChart, module: 'DASHBOARD' },
-            { id: 'DASHBOARD_SUMMARY', label: 'Today\'s Summary', icon: ClipboardList, module: 'DASHBOARD' },
-            { id: 'PROFIT_PULSE', label: 'Profit Pulse', icon: BarChart, module: 'DASHBOARD' },
+            { id: 'DASHBOARD_OVERVIEW', label: 'Overview', icon: LayoutDashboard, module: 'DASHBOARD', path: '/' },
+            { id: 'DASHBOARD_SNAPSHOT', label: 'Business Snapshot', icon: PieChart, module: 'DASHBOARD', path: '/dashboard/snapshot' },
+            { id: 'DASHBOARD_SUMMARY', label: 'Today\'s Summary', icon: ClipboardList, module: 'DASHBOARD', path: '/dashboard/summary' },
+            { id: 'PROFIT_PULSE', label: 'Profit Pulse', icon: BarChart, module: 'DASHBOARD', path: '/dashboard/profit-pulse' },
         ]
     },
     {
@@ -73,28 +74,30 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'POS',
         icon: ShoppingCart,
         module: 'POS',
+        path: '/pos',
         children: [
-            { id: 'POS', label: 'Billing Terminal', icon: Printer, module: 'POS' },
-            { id: 'POS_ORDERS', label: 'Order History', icon: List, module: 'POS' },
-            { id: 'POS_RETURNS', label: 'Returns', icon: RotateCcw, module: 'POS' }, // Using RotateCcw if imported, or ArrowDownCircle/similar
-            { id: 'SHIFT_MANAGEMENT', label: 'Shift Management', icon: Clock, module: 'POS' }, // Clock if imported
+            { id: 'POS', label: 'Billing Terminal', icon: Printer, module: 'POS', path: '/pos' },
+            { id: 'POS_ORDERS', label: 'Order History', icon: List, module: 'POS', path: '/pos/orders' },
+            { id: 'POS_RETURNS', label: 'Returns', icon: RotateCcw, module: 'POS', path: '/pos/returns' },
+            { id: 'SHIFT_MANAGEMENT', label: 'Shift Management', icon: Clock, module: 'POS', path: '/pos/shifts' },
         ]
     },
     {
         id: 'SALES',
         label: 'Sales',
         icon: ShoppingBag,
-        module: 'POS', // Or SALES if defined
+        module: 'POS',
+        path: '/sales',
         children: [
-            { id: 'SALES_REGISTER', label: 'Sales Register', icon: FileText, module: 'POS' },
-            { id: 'SALES_INVOICE', label: 'Create Invoice', icon: Plus, module: 'POS' }, // Plus if imported
-            { id: 'ESTIMATE', label: 'Estimates / Quotes', icon: FileText, module: 'POS' },
-            { id: 'SALES_ORDER', label: 'Sales Orders', icon: ClipboardList, module: 'POS' },
-            { id: 'DELIVERY_CHALLAN', label: 'Delivery Challans', icon: Truck, module: 'POS' },
-            { id: 'SALES_RETURN', label: 'Sales Returns', icon: ArrowDownCircle, module: 'POS' },
-            { id: 'PAYMENT_IN', label: 'Payments In', icon: ArrowRight, module: 'POS' },
-            { id: 'CUSTOMER_CREDITS', label: 'Customer Credits', icon: CreditCard, module: 'POS' },
-            { id: 'OUTSTANDING_DUES', label: 'Outstanding Dues', icon: AlertTriangle, module: 'POS' }, // AlertTriangle
+            { id: 'SALES_REGISTER', label: 'Sales Register', icon: FileText, module: 'POS', path: '/sales/register' },
+            { id: 'SALES_INVOICE', label: 'Create Invoice', icon: Plus, module: 'POS', path: '/sales/new' },
+            { id: 'ESTIMATE', label: 'Estimates / Quotes', icon: FileText, module: 'POS', path: '/sales/estimates' },
+            { id: 'SALES_ORDER', label: 'Sales Orders', icon: ClipboardList, module: 'POS', path: '/sales/orders' },
+            { id: 'DELIVERY_CHALLAN', label: 'Delivery Challans', icon: Truck, module: 'POS', path: '/sales/challans' },
+            { id: 'SALES_RETURN', label: 'Sales Returns', icon: ArrowDownCircle, module: 'POS', path: '/sales/returns' },
+            { id: 'PAYMENT_IN', label: 'Payments In', icon: ArrowRight, module: 'POS', path: '/sales/payments' },
+            { id: 'CUSTOMER_CREDITS', label: 'Customer Credits', icon: CreditCard, module: 'POS', path: '/sales/credits' },
+            { id: 'OUTSTANDING_DUES', label: 'Outstanding Dues', icon: AlertTriangle, module: 'POS', path: '/sales/dues' },
         ]
     },
     {
@@ -102,14 +105,15 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Purchase',
         icon: Truck,
         module: 'PURCHASE',
+        path: '/purchase',
         children: [
-            { id: 'PURCHASE_REGISTER', label: 'Purchase Register', icon: FileText, module: 'PURCHASE' },
-            { id: 'PURCHASE_ENTRY', label: 'New Purchase', icon: Plus, module: 'PURCHASE' },
-            { id: 'PURCHASE_ORDER', label: 'Purchase Orders', icon: ClipboardList, module: 'PURCHASE' },
-            { id: 'GOODS_RECEIVED', label: 'Goods Received (GRN)', icon: Package, module: 'PURCHASE' },
-            { id: 'DEBIT_NOTES', label: 'Debit Notes', icon: FileText, module: 'PURCHASE' },
-            { id: 'SUPPLIER_PAYMENTS', label: 'Supplier Payments', icon: ArrowRight, module: 'PURCHASE' },
-            { id: 'OUTSTANDING_PAYABLES', label: 'Outstanding Payables', icon: AlertTriangle, module: 'PURCHASE' },
+            { id: 'PURCHASE_REGISTER', label: 'Purchase Register', icon: FileText, module: 'PURCHASE', path: '/purchase/register' },
+            { id: 'PURCHASE_ENTRY', label: 'New Purchase', icon: Plus, module: 'PURCHASE', path: '/purchase/new' },
+            { id: 'PURCHASE_ORDER', label: 'Purchase Orders', icon: ClipboardList, module: 'PURCHASE', path: '/purchase/orders' },
+            { id: 'GOODS_RECEIVED', label: 'Goods Received (GRN)', icon: Package, module: 'PURCHASE', path: '/purchase/grn' },
+            { id: 'DEBIT_NOTES', label: 'Debit Notes', icon: FileText, module: 'PURCHASE', path: '/purchase/debit-notes' },
+            { id: 'SUPPLIER_PAYMENTS', label: 'Supplier Payments', icon: ArrowRight, module: 'PURCHASE', path: '/purchase/payments' },
+            { id: 'OUTSTANDING_PAYABLES', label: 'Outstanding Payables', icon: AlertTriangle, module: 'PURCHASE', path: '/purchase/payables' },
         ]
     },
     {
@@ -117,13 +121,14 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Inventory',
         icon: Archive,
         module: 'INVENTORY',
+        path: '/inventory',
         children: [
-            { id: 'INVENTORY_ITEMS', label: 'Item Manager', icon: Package, module: 'INVENTORY' },
-            { id: 'ITEM_CATEGORIES', label: 'Categories', icon: Layers, module: 'INVENTORY' },
-            { id: 'BATCH_EXPIRY', label: 'Batch & Expiry', icon: Calendar, module: 'INVENTORY' },
-            { id: 'BARCODE_GENERATOR', label: 'Barcode Creator', icon: Barcode, module: 'INVENTORY' }, // Barcode
-            { id: 'BULK_IMPORT', label: 'Bulk Import', icon: Upload, module: 'INVENTORY' },
-            { id: 'DATA_EXPORT', label: 'Data Export', icon: Download, module: 'INVENTORY' },
+            { id: 'INVENTORY_ITEMS', label: 'Item Manager', icon: Package, module: 'INVENTORY', path: '/inventory/items' },
+            { id: 'ITEM_CATEGORIES', label: 'Categories', icon: Layers, module: 'INVENTORY', path: '/inventory/categories' },
+            { id: 'BATCH_EXPIRY', label: 'Batch & Expiry', icon: Calendar, module: 'INVENTORY', path: '/inventory/batch-expiry' },
+            { id: 'BARCODE_GENERATOR', label: 'Barcode Creator', icon: Barcode, module: 'INVENTORY', path: '/inventory/barcodes' },
+            { id: 'BULK_IMPORT', label: 'Bulk Import', icon: Upload, module: 'INVENTORY', path: '/inventory/import' },
+            { id: 'DATA_EXPORT', label: 'Data Export', icon: Download, module: 'INVENTORY', path: '/inventory/export' },
         ]
     },
     {
@@ -131,13 +136,14 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Financials',
         icon: Landmark,
         module: 'FINANCE',
+        path: '/finance',
         children: [
-            { id: 'CASH_ACCOUNTS', label: 'Cash In Hand', icon: DollarSign, module: 'FINANCE' },
-            { id: 'BANK_ACCOUNTS', label: 'Bank Accounts', icon: Landmark, module: 'FINANCE' },
-            { id: 'PETTY_CASH', label: 'Petty Cash', icon: List, module: 'FINANCE' },
-            { id: 'FUND_TRANSFERS', label: 'Fund Transfers', icon: ArrowRight, module: 'FINANCE' },
-            { id: 'BANK_RECONCILIATION', label: 'Reconciliation', icon: RefreshCw, module: 'FINANCE' },
-            { id: 'BANK_SUMMARY', label: 'Bank Summary', icon: FileText, module: 'FINANCE' },
+            { id: 'CASH_ACCOUNTS', label: 'Cash In Hand', icon: DollarSign, module: 'FINANCE', path: '/finance/cash' },
+            { id: 'BANK_ACCOUNTS', label: 'Bank Accounts', icon: Landmark, module: 'FINANCE', path: '/finance/bank' },
+            { id: 'PETTY_CASH', label: 'Petty Cash', icon: List, module: 'FINANCE', path: '/finance/petty-cash' },
+            { id: 'FUND_TRANSFERS', label: 'Fund Transfers', icon: ArrowRight, module: 'FINANCE', path: '/finance/transfers' },
+            { id: 'BANK_RECONCILIATION', label: 'Reconciliation', icon: RefreshCw, module: 'FINANCE', path: '/finance/reconciliation' },
+            { id: 'BANK_SUMMARY', label: 'Bank Summary', icon: FileText, module: 'FINANCE', path: '/finance/summary' },
         ]
     },
     {
@@ -145,11 +151,12 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Expenses',
         icon: Receipt,
         module: 'EXPENSES',
+        path: '/expenses',
         children: [
-            { id: 'EXPENSES', label: 'Expense Tracker', icon: Receipt, module: 'EXPENSES' },
-            { id: 'EXPENSE_CATEGORIES', label: 'Categories', icon: Layers, module: 'EXPENSES' },
-            { id: 'RECURRING_EXPENSES', label: 'Recurring', icon: Repeat, module: 'EXPENSES' },
-            { id: 'EXPENSE_REPORTS', label: 'Expense Reports', icon: PieChart, module: 'EXPENSES' },
+            { id: 'EXPENSES', label: 'Expense Tracker', icon: Receipt, module: 'EXPENSES', path: '/expenses/tracker' },
+            { id: 'EXPENSE_CATEGORIES', label: 'Categories', icon: Layers, module: 'EXPENSES', path: '/expenses/categories' },
+            { id: 'RECURRING_EXPENSES', label: 'Recurring', icon: Repeat, module: 'EXPENSES', path: '/expenses/recurring' },
+            { id: 'EXPENSE_REPORTS', label: 'Expense Reports', icon: PieChart, module: 'EXPENSES', path: '/expenses/reports' },
         ]
     },
     {
@@ -157,9 +164,10 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'People: Customers',
         icon: Users,
         module: 'CUSTOMERS',
+        path: '/customers',
         children: [
-            { id: 'CUSTOMER_LIST', label: 'Customer List', icon: Users, module: 'CUSTOMERS' },
-            { id: 'CUSTOMER_LEDGER', label: 'Customer Ledger', icon: FileText, module: 'CUSTOMERS' },
+            { id: 'CUSTOMER_LIST', label: 'Customer List', icon: Users, module: 'CUSTOMERS', path: '/customers' },
+            { id: 'CUSTOMER_LEDGER', label: 'Customer Ledger', icon: FileText, module: 'CUSTOMERS', path: '/customers/ledger' },
         ]
     },
     {
@@ -167,9 +175,10 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'People: Suppliers',
         icon: Truck,
         module: 'SUPPLIERS',
+        path: '/suppliers',
         children: [
-            { id: 'SUPPLIER_LIST', label: 'Supplier List', icon: Truck, module: 'SUPPLIERS' },
-            { id: 'SUPPLIER_LEDGER', label: 'Supplier Ledger', icon: FileText, module: 'SUPPLIERS' },
+            { id: 'SUPPLIER_LIST', label: 'Supplier List', icon: Truck, module: 'SUPPLIERS', path: '/suppliers' },
+            { id: 'SUPPLIER_LEDGER', label: 'Supplier Ledger', icon: FileText, module: 'SUPPLIERS', path: '/suppliers/ledger' },
         ]
     },
     {
@@ -177,11 +186,12 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'People: Staff',
         icon: Briefcase,
         module: 'HR',
+        path: '/staff',
         children: [
-            { id: 'STAFF_MANAGER', label: 'Staff Directory', icon: Users, module: 'HR' },
-            { id: 'LABOR', label: 'Labor Management', icon: Wrench, module: 'HR' },
-            { id: 'PAYROLL', label: 'Payroll', icon: DollarSign, module: 'HR' },
-            { id: 'ATTENDANCE', label: 'Attendance', icon: Clock, module: 'HR' },
+            { id: 'STAFF_MANAGER', label: 'Staff Directory', icon: Users, module: 'HR', path: '/staff/directory' },
+            { id: 'LABOR', label: 'Labor Management', icon: Wrench, module: 'HR', path: '/staff/labor' },
+            { id: 'PAYROLL', label: 'Payroll', icon: DollarSign, module: 'HR', path: '/staff/payroll' },
+            { id: 'ATTENDANCE', label: 'Attendance', icon: Clock, module: 'HR', path: '/staff/attendance' },
         ]
     },
     {
@@ -207,14 +217,15 @@ export const MENU_ITEMS: MenuItem[] = [
         id: 'SETTINGS',
         label: 'System',
         icon: Settings,
-        module: 'MULTI_BRANCH', // Or Global
+        module: 'MULTI_BRANCH',
+        path: '/settings',
         children: [
-            { id: 'SETTINGS', label: 'General Settings', icon: Settings, module: 'MULTI_BRANCH' },
-            { id: 'SYNC_SHARE', label: 'Sync & Share', icon: RefreshCw, module: 'MULTI_BRANCH' },
-            { id: 'RESTORE', label: 'Restore Data', icon: Upload, module: 'MULTI_BRANCH' },
-            { id: 'TENANT_MANAGEMENT', label: 'Tenant Management', icon: Building, module: 'MULTI_BRANCH' },
-            { id: 'TENANT_ARCHITECT', label: 'Tenant Architect', icon: Wrench, module: 'MULTI_BRANCH' },
-            { id: 'SUPER_ADMIN_CONSOLE', label: 'Super Admin Console', icon: Shield, module: 'MULTI_BRANCH' },
+            { id: 'SETTINGS', label: 'General Settings', icon: Settings, module: 'MULTI_BRANCH', path: '/settings' },
+            { id: 'SYNC_SHARE', label: 'Sync & Share', icon: RefreshCw, module: 'MULTI_BRANCH', path: '/settings/sync' },
+            { id: 'RESTORE', label: 'Restore Data', icon: Upload, module: 'MULTI_BRANCH', path: '/settings/restore' },
+            { id: 'TENANT_MANAGEMENT', label: 'Tenant Management', icon: Building, module: 'MULTI_BRANCH', path: '/settings/tenants' },
+            { id: 'TENANT_ARCHITECT', label: 'Tenant Architect', icon: Wrench, module: 'MULTI_BRANCH', path: '/settings/architect' },
+            { id: 'SUPER_ADMIN_CONSOLE', label: 'Super Admin Console', icon: Shield, module: 'MULTI_BRANCH', path: '/settings/super-admin' },
         ]
     },
 

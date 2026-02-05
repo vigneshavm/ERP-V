@@ -1,8 +1,8 @@
 import React from 'react';
 import { Palette, MessageSquare, Ticket, Mail, LayoutTemplate, Percent } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from "../../redux/store";
-import { setActiveTab } from "../../redux/slices/uiSlice";
+import { RootState } from "@/redux/store";
+import { setActiveTab } from "@/redux/slices/uiSlice";
 import Campaigns from './Campaigns';
 import WhatsAppMarketing from './WhatsAppMarketing';
 import SocialMediaMarketing from './SocialMediaMarketing';

@@ -6,13 +6,13 @@ import {
     Layers, Cpu, Lock, Save, RefreshCw,
     Users
 } from 'lucide-react';
-import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "../../../types/tenant";
-import { GrowthIntelligenceService } from "../../../services/GrowthIntelligenceService";
-import { WhatsAppService } from "../../../services/whatsappService";
-import { EmailService } from "../../../services/emailService";
-import { SMSService } from "../../../services/smsService";
-import { SocialService } from "../../../services/socialService";
-import { StoreService } from "../../../services/storeService";
+import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";
+import { GrowthIntelligenceService } from "@/services/GrowthIntelligenceService";
+import { WhatsAppService } from "@/services/whatsappService";
+import { EmailService } from "@/services/emailService";
+import { SMSService } from "@/services/smsService";
+import { SocialService } from "@/services/socialService";
+import { StoreService } from "@/services/storeService";
 
 const SuperAdminGrowthConsole: React.FC = () => {
     const navigate = useNavigate();
@@ -43,7 +43,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
     const handleToggleChannel = (channel: GrowthChannelType) => {
         if (!config) return;
         const newChannels = config.allowedChannels.includes(channel)
-            ? config.allowedChannels.filter(c => c !== channel)
+            ? config.allowedChannels.filter((c: any) => c !== channel)
             : [...config.allowedChannels, channel];
         setConfig({ ...config, allowedChannels: newChannels });
     };
@@ -52,7 +52,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
         if (!config) return;
         const currentProviders = config.allowedProviders[channel] || [];
         const newProviders = currentProviders.includes(providerId)
-            ? currentProviders.filter(id => id !== providerId)
+            ? currentProviders.filter((id: string) => id !== providerId)
             : [...currentProviders, providerId];
 
         setConfig({

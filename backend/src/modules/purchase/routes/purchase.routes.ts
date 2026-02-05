@@ -8,11 +8,11 @@ import debitNoteRoutes from './debitNoteRoutes.js';
 
 const router = express.Router();
 
-router.use('/', purchaseRoutes);
 router.use('/returns', purchaseReturnRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/supplier-groups', supplierGroupRoutes);
 router.use('/extraction', extractionRoutes);
 router.use('/debit-notes', debitNoteRoutes);
+router.use('/', purchaseRoutes);
 
 export default router;

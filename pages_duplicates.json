@@ -1,0 +1,128 @@
+﻿[
+    {
+        "Name":  "WhatsAppMarketing.tsx",
+        "Size":  37028,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\WhatsAppMarketing.tsx",
+        "Hash":  "50134BF8D817A2A9CB66BD6D57910EB3"
+    },
+    {
+        "Name":  "WhatsAppMarketing.tsx",
+        "Size":  15409,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\WhatsAppMarketing.tsx",
+        "Hash":  "EC505AED8A5D53DDA6FDB99914FEA80F"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  43302,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\GoogleBusiness\\index.tsx",
+        "Hash":  "9AA1A5B4759DD7408485A06AEBCAF36A"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  18031,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\index.tsx",
+        "Hash":  "21D9979314BD8D7F8A755DE1B51597BB"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  2765,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\index.tsx",
+        "Hash":  "B47CB954EEC546A1C7836C13E1E00265"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  43308,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\GoogleBusiness\\index.tsx",
+        "Hash":  "54D1C52166B2F082A715DB3BA2D76ED1"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  3261,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\index.tsx",
+        "Hash":  "0C712F54354A75579D2EBE28085756ED"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  19706,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\index.tsx",
+        "Hash":  "438822701925E736D47E5C9B4B6B13DB"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  4652,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\index.tsx",
+        "Hash":  "ABC88BCD278D6C5B392C54C7C6EBC504"
+    },
+    {
+        "Name":  "index.tsx",
+        "Size":  20725,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\index.tsx",
+        "Hash":  "B4DAB61F10E3C52240A7C1418F48E9B2"
+    },
+    {
+        "Name":  "ExpenseManager.tsx",
+        "Size":  3975,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\ExpenseManager.tsx",
+        "Hash":  "BFFFF208340B2C707FAC9053EDA8A4EA"
+    },
+    {
+        "Name":  "ExpenseManager.tsx",
+        "Size":  18168,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseManager.tsx",
+        "Hash":  "08ED5F7EC4529D4F4F94B80B9E01C10E"
+    },
+    {
+        "Name":  "FinanceOverview.tsx",
+        "Size":  2832,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\FinanceOverview.tsx",
+        "Hash":  "4FC7EEA6DCA5243C2532FE9D4B4741B1"
+    },
+    {
+        "Name":  "FinanceOverview.tsx",
+        "Size":  21288,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\FinanceOverview.tsx",
+        "Hash":  "81A6F8FE7F9245578E438107649E597B"
+    },
+    {
+        "Name":  "types.ts",
+        "Size":  2232,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\types.ts",
+        "Hash":  "7D218A41E4209806616973C197F8D25B"
+    },
+    {
+        "Name":  "types.ts",
+        "Size":  1378,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\types.ts",
+        "Hash":  "8C5A73A25A8A70AFF03C28A6B8C091D6"
+    },
+    {
+        "Name":  "types.ts",
+        "Size":  3448,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\types.ts",
+        "Hash":  "E37BF1C348D435E8C9472CFD81C67124"
+    },
+    {
+        "Name":  "BrandingTab.tsx",
+        "Size":  9761,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BrandingTab.tsx",
+        "Hash":  "054890E4D94F0CF702B9C6D86623B2A9"
+    },
+    {
+        "Name":  "BrandingTab.tsx",
+        "Size":  10617,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\BrandingTab.tsx",
+        "Hash":  "BAA6F55FCF30BF9F21F06C767890F279"
+    },
+    {
+        "Name":  "IntegrationsTab.tsx",
+        "Size":  3884,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\IntegrationsTab.tsx",
+        "Hash":  "FB7FCB42067647ED42A396DE48AC93D3"
+    },
+    {
+        "Name":  "IntegrationsTab.tsx",
+        "Size":  17735,
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\IntegrationsTab.tsx",
+        "Hash":  "8D510010C0B90813E643E0B10732B172"
+    }
+]

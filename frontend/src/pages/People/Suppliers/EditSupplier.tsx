@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import SupplierForm from "../../../components/suppliers/SupplierForm";
+import SupplierSubNav from "./SupplierSubNav";
 
 const EditSupplier: React.FC = () => {
     const navigate = useNavigate();
@@ -47,6 +48,7 @@ const EditSupplier: React.FC = () => {
         balanceType: supplier.balanceType || 'payable',
         creditPeriod: supplier.creditPeriod || 0,
         status: supplier.status || 'active',
+        supplierGroup: supplier.supplierGroup || '',
     } : undefined;
 
     return (
@@ -56,6 +58,7 @@ const EditSupplier: React.FC = () => {
                 description={`Modifying registration profile for ${supplier?.businessName || 'Strategic Partner'}`}
                 breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Directory', link: '/suppliers' }, { label: 'Edit Profile' }]}
             />
+            <SupplierSubNav />
             <SupplierForm mode="edit" supplierId={id} initialData={initialData} />
         </Layout>
     );

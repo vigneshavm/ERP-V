@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { forceLogout, login, resetAuthState } from "../../../../redux/slices/authSlice";
-import { AppDispatch, RootState } from "../../../../redux/store";
+import { forceLogout, login, resetAuthState } from "../../../redux/slices/authSlice";
+import { AppDispatch, RootState } from "../../../redux/store";
 
 interface DeviceConflictModalProps {
     email: string;

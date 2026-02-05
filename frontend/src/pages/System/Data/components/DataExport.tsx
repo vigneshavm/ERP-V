@@ -1,234 +1,252 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store';
-import {
-    Download,
-    FileSpreadsheet,
-    FileText,
-    File,
-    Calendar,
-    CheckCircle,
-    XCircle,
-    Loader2,
-    Trash2,
-    Check,
-    Square,
-    Package,
-    Users,
-    ShoppingCart,
-    ArrowRight,
-    DollarSign,
-    BookOpen,
-    Receipt,
-    CreditCard,
-    AlertTriangle,
-    Clock,
-    Zap,
-    ShieldCheck,
-    Briefcase,
-    Globe
-} from 'lucide-react';
+import { useState } from 'react';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import PageHeader from "@/components/shared/Layout/PageHeader";
+import api from "@/services/api";
+import { toast } from 'react-toastify';
 
-type ExportFormat = 'XLSX' | 'CSV' | 'PDF' | 'TALLY_XML' | 'GSTN_JSON';
-type ExportStatus = 'PROCESSING' | 'READY' | 'FAILED';
+const DataExport = () => {
+    const [selectedModule, setSelectedModule] = useState('inventory');
+    const [exportFormat, setExportFormat] = useState('xlsx');
+    const [dateRange, setDateRange] = useState({
+        start: '',
+        end: ''
+    });
+    const [exporting, setExporting] = useState(false);
+    const [includeHeaders, setIncludeHeaders] = useState(true);
+    const [compressFile, setCompressFile] = useState(false);
+    const [splitMonthly, setSplitMonthly] = useState(false);
 
-interface ExportModule {
-    id: string;
-    label: string;
-    icon: React.ElementType;
-    hasDateFilter: boolean;
-    description: string;
-}
+    const modules = [
+        { id: 'inventory', name: 'Inventory Master', icon: '📦', description: 'HSN, Price lists, and Stock levels' },
+        { id: 'sales', name: 'Sales Vouchers', icon: '🛒', description: 'B2B/B2C Invoices for GST filing' },
+        { id: 'purchase', name: 'Purchase Entry', icon: '📥', description: 'Inward supplies and ITC tracking' },
+        { id: 'customers', name: 'Customer Database', icon: '👥', description: 'Profiles, Contact info and Ledger' },
+        { id: 'suppliers', name: 'Supplier Database', icon: '🏢', description: 'Vendor info and Purchase history' },
+        { id: 'ledger', name: 'General Ledger', icon: '📖', description: 'Complete accounting audit trail' }
+    ];
 
-const EXPORT_MODULES: ExportModule[] = [
-    { id: 'items', label: 'Inventory Master', icon: Package, hasDateFilter: false, description: 'HSN, Price lists, and Stock levels' },
-    { id: 'parties', label: 'Party Ledgers', icon: Users, hasDateFilter: false, description: 'Customer & Vendor profiles with GSTIN' },
-    { id: 'sales', label: 'Sales Vouchers', icon: ShoppingCart, hasDateFilter: true, description: 'B2B/B2C Invoices for GST filing' },
-    { id: 'purchase', label: 'Purchase Entry', icon: ArrowRight, hasDateFilter: true, description: 'Inward supplies and ITC tracking' },
-    { id: 'ledger', label: 'General Ledger', icon: BookOpen, hasDateFilter: true, description: 'Complete accounting audit trail' },
-    { id: 'gst_reports', label: 'Statutory Reports', icon: Receipt, hasDateFilter: true, description: 'GSTR-1, 2, 3B ready datasets' },
-];
+    const handleExport = async () => {
+        try {
+            setExporting(true);
+            toast.info(`Preparing ${selectedModule} export...`);
 
-const DataExport: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
-    const { tenants } = useSelector((state: RootState) => state.tenant);
-    const activeTenant = tenants.find(t => t.id === user?.tenantId);
+            // Fetch data based on module
+            let endpoint = '';
+            switch (selectedModule) {
+                case 'inventory': endpoint = '/api/inventory'; break;
+                case 'sales': endpoint = '/api/sales'; break;
+                case 'purchase': endpoint = '/api/purchase'; break;
+                case 'customers': endpoint = '/api/customers'; break;
+                case 'suppliers': endpoint = '/api/suppliers'; break;
+                case 'ledger': endpoint = '/api/accounting/ledger'; break;
+                default: endpoint = '/api/inventory';
+            }
 
-    const [selectedModules, setSelectedModules] = useState<string[]>([]);
-    const [format, setFormat] = useState<ExportFormat>('XLSX');
-    const [branchMode, setBranchMode] = useState<'SINGLE' | 'CONSOLIDATED'>('SINGLE');
+            // In a real app, we'd add date filters to the query
+            const response = await api.get(endpoint);
+            const data = response.data;
 
-    const toggleModule = (id: string) => {
-        setSelectedModules(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
+            if (!data || (Array.isArray(data) && data.length === 0)) {
+                toast.error('No data found for the selected module and range');
+                return;
+            }
+
+            if (exportFormat === 'xlsx' || exportFormat === 'csv') {
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, selectedModule.toUpperCase());
+
+                if (exportFormat === 'xlsx') {
+                    XLSX.writeFile(workbook, `${selectedModule}_export_${new Date().getTime()}.xlsx`);
+                } else {
+                    XLSX.writeFile(workbook, `${selectedModule}_export_${new Date().getTime()}.csv`, { bookType: 'csv' });
+                }
+            } else if (exportFormat === 'pdf') {
+                const doc = new jsPDF();
+                doc.text(`${selectedModule.toUpperCase()} REPORT`, 14, 15);
+                doc.setFontSize(10);
+                doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+
+                // autoTable handles nested data better if we flatten it, but for demo:
+                const headers = Object.keys(data[0]);
+                const body = data.map((row: any) => headers.map(h => String(row[h] || '')));
+
+                autoTable(doc, {
+                    head: [headers],
+                    body: body,
+                    startY: 30,
+                    styles: { fontSize: 8 }
+                });
+
+                doc.save(`${selectedModule}_report_${new Date().getTime()}.pdf`);
+            }
+
+            toast.success('Data exported successfully');
+        } catch (error) {
+            console.error('Export error:', error);
+            toast.error('Failed to export data. Please try again later.');
+        } finally {
+            setExporting(false);
+        }
     };
 
+    const recentExports = [
+        { id: 1, name: 'Inventory_Jan24.xlsx', date: '2024-01-28', size: '1.2 MB', status: 'completed' },
+        { id: 2, name: 'Sales_Q4.zip', date: '2024-01-15', size: '4.5 MB', status: 'completed' },
+        { id: 3, name: 'Tax_Returns_2023.pdf', date: '2024-01-05', size: '850 KB', status: 'completed' }
+    ];
+
     return (
-        <div className="space-y-6 animate-fade-in text-slate-900 dark:text-white">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                <div>
-                    <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
-                        <Download className="w-5 h-5 text-indigo-500" />
-                        Statutory Data Export Engine
-                    </h2>
-                    <p className="text-xs text-slate-500 font-medium select-none italic">Generating audit-ready datasets for Tally, GSTN, and CA review.</p>
-                </div>
-                <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl gap-1">
-                    <button
-                        onClick={() => setBranchMode('SINGLE')}
-                        className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${branchMode === 'SINGLE' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        Current Branch
-                    </button>
-                    <button
-                        onClick={() => setBranchMode('CONSOLIDATED')}
-                        className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${branchMode === 'CONSOLIDATED' ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        Consolidated
-                    </button>
-                </div>
-            </div>
+        <div className="space-y-6">
+            <PageHeader
+                title="Data Export"
+                description="Securely export your business data in multiple formats"
+            />
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div className="lg:col-span-3 space-y-6">
-                    {/* Module Grid */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Export Scope</h3>
-                            <button onClick={() => setSelectedModules(EXPORT_MODULES.map(m => m.id))} className="text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:underline">Select All Universe</button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {EXPORT_MODULES.map((mod) => {
-                                const isSelected = selectedModules.includes(mod.id);
-                                return (
-                                    <button
-                                        key={mod.id}
-                                        onClick={() => toggleModule(mod.id)}
-                                        className={`p-6 rounded-[2rem] border-2 transition-all text-left relative overflow-hidden group ${isSelected ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-slate-200'}`}>
-                                            <mod.icon className="w-6 h-6" />
-                                        </div>
-                                        <p className={`text-sm font-black mb-1 ${isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-900 dark:text-white'}`}>{mod.label}</p>
-                                        <p className="text-[10px] font-medium text-slate-500 leading-tight">{mod.description}</p>
-                                        {isSelected && <div className="absolute top-4 right-4"><CheckCircle className="w-5 h-5 text-indigo-500" /></div>}
-                                    </button>
-                                );
-                            })}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-tight">Select Module</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {modules.map((mod) => (
+                                <button
+                                    key={mod.id}
+                                    onClick={() => setSelectedModule(mod.id)}
+                                    className={`p-4 rounded-xl border-2 transition-all text-left ${selectedModule === mod.id
+                                            ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
+                                            : 'border-slate-100 dark:border-slate-800 hover:border-indigo-300'
+                                        }`}
+                                >
+                                    <div className="text-2xl mb-2">{mod.icon}</div>
+                                    <p className="font-black text-xs uppercase tracking-widest text-slate-900 dark:text-white">{mod.name}</p>
+                                    <p className="text-[10px] text-slate-500 font-bold mt-1 line-clamp-2">{mod.description}</p>
+                                </button>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Format & Logic */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Output Format</h3>
-                            <div className="grid grid-cols-2 gap-3">
-                                {[
-                                    { id: 'XLSX', label: 'MS Excel', ext: '.xlsx' },
-                                    { id: 'PDF', label: 'Audit PDF', ext: '.pdf' },
-                                    { id: 'TALLY_XML', label: 'Tally Prime', ext: '.xml' },
-                                    { id: 'GSTN_JSON', label: 'GSTN Offline', ext: '.json' }
-                                ].map((f) => (
-                                    <button
-                                        key={f.id}
-                                        onClick={() => setFormat(f.id as ExportFormat)}
-                                        className={`p-4 rounded-2xl border transition-all text-center ${format === f.id ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-sm' : 'border-slate-100 dark:border-slate-800'}`}
-                                    >
-                                        <p className={`text-[11px] font-black uppercase ${format === f.id ? 'text-indigo-600' : 'text-slate-400'}`}>{f.label}</p>
-                                        <p className="text-[9px] font-bold text-slate-400 mt-1">{f.ext}</p>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col justify-center">
-                            <div className="absolute top-0 right-0 p-8 opacity-10"><Globe className="w-32 h-32" /></div>
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-6 italic underline decoration-indigo-500 underline-offset-4">Legal Shield</h4>
+                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-tight">Export Settings</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-4">
-                                <label className="flex items-center gap-3 cursor-pointer group">
-                                    <div className="w-5 h-5 rounded border border-white/20 flex items-center justify-center p-1 group-hover:border-indigo-500 transition-colors">
-                                        <div className="w-full h-full bg-indigo-500 rounded-sm" />
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Export Format</label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {['xlsx', 'csv', 'pdf'].map((fmt) => (
+                                            <button
+                                                key={fmt}
+                                                onClick={() => setExportFormat(fmt)}
+                                                className={`py-2 px-3 rounded-lg border-2 font-black text-[10px] uppercase transition-all ${exportFormat === fmt
+                                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
+                                                        : 'border-slate-100 dark:border-slate-800 text-slate-400'
+                                                    }`}
+                                            >
+                                                {fmt}
+                                            </button>
+                                        ))}
                                     </div>
-                                    <span className="text-[10px] font-black uppercase text-slate-300">Mask Sensitive PII</span>
-                                </label>
-                                <label className="flex items-center gap-3 cursor-pointer group">
-                                    <div className="w-5 h-5 rounded border border-white/20 flex items-center justify-center p-1 group-hover:border-indigo-500 transition-colors">
-                                        <div className="w-full h-full bg-indigo-500 rounded-sm" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Start Date</label>
+                                        <input
+                                            type="date"
+                                            value={dateRange.start}
+                                            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold"
+                                        />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase text-slate-300">Apply Digital Stamp</span>
-                                </label>
-                                <label className="flex items-center gap-3 cursor-pointer group">
-                                    <div className="w-5 h-5 rounded border border-white/20 flex items-center justify-center p-1 group-hover:border-indigo-500 transition-colors">
-                                        <div className="w-full h-full bg-indigo-500 rounded-sm" />
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">End Date</label>
+                                        <input
+                                            type="date"
+                                            value={dateRange.end}
+                                            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold"
+                                        />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase text-slate-300">Log to Audit Trail</span>
-                                </label>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Configurations</label>
+                                <div className="space-y-3">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={includeHeaders}
+                                            onChange={(e) => setIncludeHeaders(e.target.checked)}
+                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Include column headers</span>
+                                    </label>
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={compressFile}
+                                            onChange={(e) => setCompressFile(e.target.checked)}
+                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Compress as .zip</span>
+                                    </label>
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={splitMonthly}
+                                            onChange={(e) => setSplitMonthly(e.target.checked)}
+                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Split data by month</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Pre-Export Audit</h4>
-                        <div className="space-y-6">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-500 shrink-0">
-                                    <ShieldCheck className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-black uppercase mb-1">Unallocated Recs</p>
-                                    <p className="text-[10px] font-bold text-emerald-500">ZERO DISCREPANCY</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-500 shrink-0">
-                                    <Zap className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-black uppercase mb-1">Ledger Balance</p>
-                                    <p className="text-[10px] font-bold text-indigo-400">TALLY READY (A+)</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-500 shrink-0">
-                                    <AlertTriangle className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-black uppercase mb-1">GSTIN Missing</p>
-                                    <p className="text-[10px] font-bold text-amber-500">4 ENTITIES (FLAGGED)</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-4">
-                            <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
-                                <div className="flex items-center gap-3">
-                                    <Briefcase className="w-4 h-4 text-slate-400" />
-                                    <span className="text-[10px] font-black uppercase text-slate-500">Entity Storage</span>
-                                </div>
-                                <span className="text-[10px] font-black">12.4 MB</span>
-                            </div>
-                            <button className="w-full py-4 bg-indigo-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
-                                Initialize Export
+                        <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+                            <button
+                                onClick={handleExport}
+                                disabled={exporting}
+                                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-95 transition-all disabled:bg-slate-300"
+                            >
+                                {exporting ? 'Processing Export...' : 'Generate and Download Export'}
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-800">
-                        <div className="flex items-center justify-between mb-4">
-                            <h5 className="text-[10px] font-black uppercase tracking-widest">Active Jobs</h5>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="bg-indigo-600 rounded-xl p-6 text-white shadow-xl shadow-indigo-600/20">
+                        <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-4">Storage Usage</h3>
+                        <div className="flex items-end gap-2 mb-2">
+                            <span className="text-4xl font-black">2.4</span>
+                            <span className="text-xl font-bold opacity-70 mb-1">GB</span>
                         </div>
-                        <div className="space-y-3">
-                            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-[9px] font-black uppercase truncate pr-4">GSTR1_JAN2025.xml</span>
-                                    <span className="text-[9px] font-black text-indigo-500">88%</span>
+                        <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden mb-2">
+                            <div className="w-[48%] h-full bg-white rounded-full"></div>
+                        </div>
+                        <p className="text-[10px] font-black opacity-70 uppercase tracking-widest">48% of 5GB Tier Used</p>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Exports</h3>
+                            <button className="text-[10px] font-black text-indigo-600 uppercase">View All</button>
+                        </div>
+                        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {recentExports.map((item) => (
+                                <div key={item.id} className="p-4 hover:bg-slate-50 transition-colors group">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <p className="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 transition-colors uppercase truncate pr-4">{item.name}</p>
+                                        <span className="text-[10px] font-black text-indigo-500">{item.size}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase">{item.date}</p>
+                                        <span className="text-[8px] font-black px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded uppercase tracking-tighter">SUCCESS</span>
+                                    </div>
                                 </div>
-                                <div className="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                    <div className="w-[88%] h-full bg-indigo-500" />
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -308,6 +308,49 @@ export const updatePurchase = async (req: AuthenticatedRequest, res: Response): 
     }
 };
 
+// ... existing exports ...
+
+export const getSupplierTotals = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const totals = await Purchase.aggregate([
+            {
+                $match: {
+                    tenantId: req.user?.tenantId,
+                    status: 'COMPLETED'
+                }
+            },
+            {
+                $group: {
+                    _id: "$vendorId",
+                    totalAmount: { $sum: "$totalAmount" },
+                    billCount: { $sum: 1 }
+                }
+            },
+            {
+                $lookup: {
+                    from: "suppliers",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "supplier"
+                }
+            },
+            { $unwind: "$supplier" },
+            {
+                $project: {
+                    _id: 1,
+                    supplierName: "$supplier.businessName",
+                    totalAmount: 1,
+                    billCount: 1
+                }
+            },
+            { $sort: { totalAmount: -1 } }
+        ]);
+        res.json(totals);
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 export const deletePurchase = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         await Purchase.findByIdAndDelete(req.params.id);
@@ -322,5 +365,6 @@ export default {
     getAllPurchases,
     getPurchaseById,
     updatePurchase,
-    deletePurchase
+    deletePurchase,
+    getSupplierTotals
 };

@@ -18,8 +18,14 @@ export interface Supplier {
     balanceType?: 'payable' | 'receivable' | string;
     creditPeriod?: number;
     status: 'active' | 'inactive' | string;
+    supplierGroup?: string;
     itemsSupplied?: string[];
     updatedAt?: string;
+    // Analytics
+    totalAmount?: number;
+    pendingAmount?: number;
+    billCount?: number;
+    paymentStatus?: 'Good' | 'Overdue' | 'Due Soon';
     [key: string]: any;
 }
 
@@ -30,6 +36,7 @@ interface SupplierState {
     isSuccess: boolean;
     isError: boolean;
     message: string;
+    stats: { _id: string, supplierName: string, totalAmount: number, billCount: number }[];
 }
 
 // Get token from state
@@ -46,6 +53,7 @@ const initialState: SupplierState = {
     isSuccess: false,
     isError: false,
     message: '',
+    stats: [],
 };
 
 // Get all suppliers
@@ -152,6 +160,40 @@ export const deleteSupplier = createAsyncThunk<string, string, { state: RootStat
     }
 );
 
+// Get Supplier Analytics (Replaces getAllSuppliers and getStats for dashboard)
+export const getSupplierAnalytics = createAsyncThunk<Supplier[], void, { state: RootState, rejectValue: string }>(
+    'suppliers/getAnalytics',
+    async (_, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue('Token not found');
+            const response = await api.get(`${API_URL}/analytics`, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            const message = (error.response?.data?.message) || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Get Supplier Stats
+export const getSupplierStats = createAsyncThunk<{ _id: string, supplierName: string, totalAmount: number, billCount: number }[], void, { state: RootState, rejectValue: string }>(
+    'suppliers/getStats',
+    async (_, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue('Token not found');
+            const response = await api.get('/api/purchase/stats/supplier-totals', getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            const message = (error.response?.data?.message) || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 export const supplierSlice = createSlice({
     name: 'suppliers',
     initialState,
@@ -242,6 +284,24 @@ export const supplierSlice = createSlice({
                 );
             })
             .addCase(deleteSupplier.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload as string;
+            })
+            // Get Stats
+            .addCase(getSupplierStats.fulfilled, (state, action) => {
+                state.stats = action.payload;
+            })
+            // Get Analytics
+            .addCase(getSupplierAnalytics.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getSupplierAnalytics.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.suppliers = action.payload; // Populates suppliers with enriched data
+            })
+            .addCase(getSupplierAnalytics.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload as string;

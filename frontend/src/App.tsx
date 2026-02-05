@@ -43,14 +43,44 @@ const App: React.FC = () => {
   // Initialize MongoDB Data Sync
   useDBDataSync();
 
-  const [viewMode, setViewMode] = useState<ViewMode>('LANDING');
+  // Determine initial view mode based on session
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    return getSession() ? 'TENANT' : 'LANDING';
+  });
+
   const { tenants } = useSelector((state: RootState) => state.tenant);
-  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
+
+  // Initialize currentTenant from localStorage if available, or null
+  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(() => {
+    const storedTenantId = localStorage.getItem('erp_current_tenant');
+    // If we have tenants loaded in Redux (unlikely on first render, but possible if persisted), try to find it
+    // Otherwise, we might need to rely on the side-effect below to set it once tenants load
+    // For now, we mainly need the ID to be recognized. 
+    // Ideally, we should reconstruct a partial tenant or wait for tenants to load.
+    // simpler approach: if we have a stored ID, we assume we are in TENANT mode.
+    return null;
+  });
+
   const [isResolving, setIsResolving] = useState(APP_CONFIG?.REQUIRE_TENANT_ID ?? true);
 
-  // --- Single Tenant Auto-Selection ---
+  // --- Single Tenant Auto-Selection & Restoration ---
   React.useEffect(() => {
+    // 1. Restore from LocalStorage if tenants are loaded
+    const storedTenantId = localStorage.getItem('erp_current_tenant');
+
     if (tenants.length > 0) {
+      // Priority 1: Restore previous session tenant
+      if (storedTenantId) {
+        const restoredTenant = tenants.find(t => t.id === storedTenantId);
+        if (restoredTenant) {
+          setCurrentTenant(restoredTenant);
+          setViewMode('TENANT');
+          setIsResolving(false);
+          return;
+        }
+      }
+
+      // Priority 2: Config-based Single Tenant (Deploy Mode)
       if (APP_CONFIG?.REQUIRE_TENANT_ID && APP_CONFIG?.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
         const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
         if (tenant) {
@@ -59,6 +89,14 @@ const App: React.FC = () => {
         }
       }
       setIsResolving(false);
+    } else {
+      // If no tenants loaded yet, but we have a session, stop resolving after a timeout or let it ride?
+      // Actually, if we are logged in, we might check if we can restore tenant ID even without full tenant list?
+      // For now, let's just ensure isResolving turns false so we don't get stuck.
+      // But giving it a small delay or dependency check is better.
+      if (!APP_CONFIG?.REQUIRE_TENANT_ID) {
+        setIsResolving(false);
+      }
     }
   }, [tenants, viewMode]);
 

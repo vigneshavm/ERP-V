@@ -8,8 +8,8 @@ import {
     BarChart2, X, Info, Phone, Key, Globe2, HelpCircle, XCircle, CheckCircle2,
     ArrowLeft
 } from 'lucide-react';
-import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "../../../types/tenant";
-import { GrowthIntelligenceService } from "../../../services/GrowthIntelligenceService";
+import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";
+import { GrowthIntelligenceService } from "@/services/GrowthIntelligenceService";
 
 const TenantArchitect: React.FC = () => {
     const { tenantId } = useParams<{ tenantId: string }>();
@@ -187,7 +187,7 @@ const TenantArchitect: React.FC = () => {
         if (!channel) return null;
 
         const isEnabled = selectedTenant.enabledChannels.includes(channelId);
-        const activeConnection = tenantConfig?.connections.find(c => c.channel === channelId);
+        const activeConnection = tenantConfig?.connections.find((c: any) => c.channel === channelId);
 
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">

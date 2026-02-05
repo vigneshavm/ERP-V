@@ -6,6 +6,7 @@ const router = Router();
 
 router.post('/', protect, purchaseController.createPurchase);
 router.get('/', protect, purchaseController.getAllPurchases);
+router.get('/stats/supplier-totals', protect, purchaseController.getSupplierTotals); // New Route
 router.get('/:id', protect, purchaseController.getPurchaseById);
 router.put('/:id', protect, purchaseController.updatePurchase);
 router.delete('/:id', protect, purchaseController.deletePurchase);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Upload, Loader2, CheckCircle, HardDrive, AlertTriangle, Download, Archive, Trash2, RotateCw, Eye } from 'lucide-react';
-import { BackupConfig, BackupStatus, BackupDestination } from "../../../types/tenant";
+import { BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
 
 interface BackupSectionProps {
     backupConfig: BackupConfig;
