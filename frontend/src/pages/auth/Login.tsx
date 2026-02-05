@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { login, resetAuthState } from "../../redux/slices/authSlice";
 import { AppDispatch, RootState } from "../../redux/store";
-import DeviceConflictModal from '../System/Sync/Sync/DeviceConflictModal';
+import DeviceConflictModal from '../System/Sync/DeviceConflictModal';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';

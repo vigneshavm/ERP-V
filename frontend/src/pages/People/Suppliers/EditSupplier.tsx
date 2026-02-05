@@ -49,6 +49,7 @@ const EditSupplier: React.FC = () => {
         creditPeriod: supplier.creditPeriod || 0,
         status: supplier.status || 'active',
         supplierGroup: supplier.supplierGroup || '',
+        groupId: (supplier.groupId as any)?._id || supplier.groupId || '',
     } : undefined;
 
     return (

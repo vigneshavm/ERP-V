@@ -1,21 +1,18 @@
+```typescript
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "../../services/api.js";
 import { RootState } from '../store';
 import { Supplier } from './supplierSlice';
+import { PurchaseBill, BillStatus, TaxBreakdown } from '../../types/purchase';
 
 const API_URL = "/api/bills";
 
-export interface Bill {
-    _id: string;
-    billNo: string;
+export interface Bill extends PurchaseBill {
+    // Extending PurchaseBill for full compatibility
+    // Legacy mapping if needed
     date: string;
-    supplier: Supplier;
     amount: number;
-    dueDate?: string;
-    status: 'paid' | 'partial' | 'unpaid' | string;
-    paymentStatus?: string;
-    paidAmount?: number;
-    description?: string;
+    status: BillStatus;
 }
 
 interface BillState {
@@ -39,7 +36,7 @@ const initialState: BillState = {
 // Get token from state
 const getConfig = (token: string) => ({
     headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${ token } `,
     },
 });
 
@@ -91,15 +88,15 @@ export const getBillById = createAsyncThunk<Bill, string, { state: RootState, re
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
-            const response = await api.get(`${API_URL}/${id}`, getConfig(token));
-            return response.data;
+            const response = await api.get(`${ API_URL }/${id}`, getConfig(token));
+return response.data;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
-            return thunkAPI.rejectWithValue(message);
-        }
+    const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+    return thunkAPI.rejectWithValue(message);
+}
     }
 );
 

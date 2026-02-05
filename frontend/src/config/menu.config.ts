@@ -108,12 +108,20 @@ export const MENU_ITEMS: MenuItem[] = [
         path: '/purchase',
         children: [
             { id: 'PURCHASE_REGISTER', label: 'Purchase Register', icon: FileText, module: 'PURCHASE', path: '/purchase/register' },
+            { id: 'VENDORS', label: 'Vendors', icon: Users, module: 'PURCHASE', path: '/suppliers' },
             { id: 'PURCHASE_ENTRY', label: 'New Purchase', icon: Plus, module: 'PURCHASE', path: '/purchase/new' },
             { id: 'PURCHASE_ORDER', label: 'Purchase Orders', icon: ClipboardList, module: 'PURCHASE', path: '/purchase/orders' },
+            { id: 'PURCHASE_ORDER_LIST', label: 'Order List', icon: List, module: 'PURCHASE', path: '/purchase/orders/list' },
+            { id: 'PURCHASE_ORDER_FORM', label: 'Create Order', icon: Plus, module: 'PURCHASE', path: '/purchase/orders/new' },
             { id: 'GOODS_RECEIVED', label: 'Goods Received (GRN)', icon: Package, module: 'PURCHASE', path: '/purchase/grn' },
+            { id: 'PURCHASE_BILLS', label: 'Bills', icon: Receipt, module: 'PURCHASE', path: '/purchase/bills' },
+            { id: 'PURCHASE_HISTORY', label: 'Purchase History', icon: Clock, module: 'PURCHASE', path: '/purchase/history' },
+            { id: 'PURCHASE_RETURN', label: 'Purchase Returns', icon: RotateCcw, module: 'PURCHASE', path: '/purchase/returns' },
             { id: 'DEBIT_NOTES', label: 'Debit Notes', icon: FileText, module: 'PURCHASE', path: '/purchase/debit-notes' },
             { id: 'SUPPLIER_PAYMENTS', label: 'Supplier Payments', icon: ArrowRight, module: 'PURCHASE', path: '/purchase/payments' },
+            { id: 'PURCHASE_PAYMENT_OUT', label: 'Payment Out', icon: ArrowRight, module: 'PURCHASE', path: '/purchase/payment-out' },
             { id: 'OUTSTANDING_PAYABLES', label: 'Outstanding Payables', icon: AlertTriangle, module: 'PURCHASE', path: '/purchase/payables' },
+            { id: 'PURCHASE_UPLOAD', label: 'Upload Purchase', icon: Upload, module: 'PURCHASE', path: '/purchase/upload' },
         ]
     },
     {

@@ -14,7 +14,11 @@ export type ReportType =
     | 'DAY_BOOK'
     | 'TRIAL_BALANCE'
     | 'PROFIT_LOSS'
-    | 'BALANCE_SHEET';
+    | 'BALANCE_SHEET'
+    | 'REPORT_BRAND_WISE'
+    | 'REPORT_CATEGORY_WISE'
+    | 'REPORT_COUNTER_WISE'
+    | 'REPORT_HOURLY_BILLING';
 
 export interface BusinessReportData {
     sales?: {

@@ -1,0 +1,1226 @@
+﻿[
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Architecture",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Business",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\GoogleBusiness",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Inventory",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Onboarding",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Reports",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\all_files.json",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\all_files_utf8.json",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\GoogleBusiness",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\BusinessSubNav.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\GoogleProfile.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\MarketingTools.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\MetaCallback.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\OnlineShop.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Business\\WhatsAppMarketing.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\GoogleBusiness\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\BrandWiseSalesReport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\BusinessReportsHub.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\CategoryWiseSalesReport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\CounterWiseSalesReport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\HourlyBillingReport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\ReportData.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Analytics\\Reports\\ReportsDashboard.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ForgotPassword.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Login.test.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Login.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\Register.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ResetPassword.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\ResetPasswordDetailed.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\SecurePasswordInput.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Auth\\TenantLogin.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Business\\BusinessSetupModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Items",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\AgedStockManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\BatchPriceUpdate.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\CategoryManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\InventoryManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Inventory\\ReprintQueue.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Items\\AddItem.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Items\\EditItem.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\OnlineStore.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\FeatureMatrix.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\GrowHero.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\OnlineStore\\components\\PricingTiers.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\templates",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\CashDrawerIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCartGrid.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCategoryBrowserModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCustomerDisplay.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSCustomerPanel.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSFooter.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSHeader.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSHeldBillsModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSMobileMenu.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSModule.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSOrdersIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSProductBrowser.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSReturnsIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSSidebar.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSTemplateRegistry.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSTerminalInfo.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\POSVariantSelectionModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\ShiftManagementIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\templates\\StandardPOSTemplate.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Pos\\templates\\TextilePOSTemplate.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\Bills.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\DebitNotes.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\GoodsReceived.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\OutstandingPayables.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PaymentOut.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseEntry.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseHistory.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderDetails.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderForm.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrderList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseOrdersModule.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseRegister.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseReturn.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\PurchaseUpload.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Purchase\\SupplierPayments.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnedItemsList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnInvoiceSelector.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnItemGrid.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Returns\\ReturnSummary.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\returns",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesInvoices",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallan.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallanDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\deliveryChallans\\DeliveryChallanList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\Estimate.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\EstimateDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\estimates\\EstimateList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentIn.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentInCreator.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentInList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\payments\\PaymentReceiptDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\returns\\Return.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\returns\\ReturnedItems.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesInvoices\\SalesInvoice.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesInvoices\\SalesInvoiceDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrder.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrderDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Commercial\\Sales\\salesOrders\\SalesOrderList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\EmailEngagement.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\FeedbackEngagement.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\LoyaltyEngagement.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\CustomerEngagement\\WhatsAppEngagement.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\BusinessSnapshot.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\Dashboard.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\GrowDashboard.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\GrowthHub.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\MarketingMetrics.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\OnlinePerformance.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\ProfitPulse.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Dashboard\\RevenueChart.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Invoices",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\ChequeLedger.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\DueAdjustment.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\ExpenseManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\FinanceModals.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\FinanceOverview.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\AccountLedger.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankAccounts.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankReconciliation.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\BankSummary.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashBankIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashBankPosition.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\CashInHand.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\Cheques.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\DayEndModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\DayEndReconciliation.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\FinanceOverview.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\FundTransfer.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\LoanAccounts.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\PettyCash.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\TransferModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\Transfers.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\types.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankFormSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankHero.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankInput.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Cashbank\\components\\CashBankStatsCard.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\DailyFinance.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseCategoriesManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseDashboard.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseDashboardPage.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseForm.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseListPage.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpenseReportsIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\Expenses.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\ExpensesModule.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Expenses\\RecurringExpensesIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Invoices\\Invoice.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Financial\\Invoices\\InvoiceDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\GoogleBusiness\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Inventory\\LabelPrintModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\Campaigns.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\EmailMarketing.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingCampaigns.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingCoupons.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingOffers.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\MarketingTemplates.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\SMSMarketing.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\SocialMediaMarketing.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Marketing\\WhatsAppMarketing.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Onboarding\\TenantOnboarding.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\Storefront.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontAiPanel.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontFilters.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontHeader.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\StorefrontProductDisplay.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\OnlineStore\\useStorefrontLogic.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\AddCustomer.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\Customer360Modal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerGroups.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerLedger.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerList.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\Customers.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomerStatements.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\CustomersWithDues.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\EditCustomer.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\LoyaltyPoints.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\types.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\components\\CustomerForm.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Customers\\components\\CustomerUI.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\AddLaborerForm.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\AttendanceCalendar.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborSidebar.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\LaborStats.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\PaymentHistory.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\StaffManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Employees\\components\\TimeEntryModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\__tests__",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\AddSupplier.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\EditSupplier.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierDetail.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierGroups.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierLedger.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\Suppliers.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierStatements.test.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierStatements.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Suppliers\\SupplierSubNav.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\TenantManager.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\TenantSignUp.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BankingTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BrandingTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\BusinessTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\CompanyTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\GeographyTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\IntegrationsTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\SystemTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\TaxTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Tenants\\components\\UserTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorKPIs.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorModals.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorSearch.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\People\\Vendor\\VendorTable.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\ArchitectureIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\SuperAdminGrowthConsole.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Architecture\\TenantArchitect.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components",
+        "Attributes":  16
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\BarcodeGenerator.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\BulkImport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\DataExport.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Data\\components\\SequenceControl.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\BranchSettingsTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\BrandingTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\FinanceTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\GeneralTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\IntegrationsTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\MISControlsTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\ModulesTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\PersonalizationTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\ProfileSettings.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\SecurityTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\Settings.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\SubscriptionTab.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Settings\\types.ts",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Backup.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\BackupSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\ConflictsSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\DeviceConflictModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\DeviceIntelligence.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\DevicesSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\index.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\Restore.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\RestoreSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\SyncSettingsSection.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\System\\Sync\\SyncShare.jsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AdminView.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AuthAlert.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\AuthLayout.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\ChangePasswordModal.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\LandingPage.tsx",
+        "Attributes":  32
+    },
+    {
+        "FullName":  "D:\\BizzAI-main\\BizzAI-main\\frontend\\src\\pages\\Views\\TenantView.tsx",
+        "Attributes":  32
+    }
+]

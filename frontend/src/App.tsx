@@ -13,7 +13,7 @@ import ResetPassword from './pages/Auth/ResetPassword';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import Register from './pages/Auth/Register';
 import TenantManager from './pages/People/Tenants/TenantManager';
-import { POSCustomerDisplay } from './pages/Commercial/Pos/POSCustomerDisplay';
+import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
 
 // Config
 import { ConfigProvider } from './contexts/ConfigProvider';
@@ -24,7 +24,7 @@ import { Tenant } from './types/tenant';
 import { Routes, Route } from 'react-router-dom';
 
 // NEW: Imported TenantView
-import TenantView from './TenantView';
+import TenantView from './pages/Views/TenantView';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -315,6 +315,7 @@ const App: React.FC = () => {
                   clearSession();
                   setIsLoggedIn(false);
                 }}
+                onLogin={() => setIsLoggedIn(true)}
               />
             ) :
               <LandingPage />

@@ -27,12 +27,12 @@ const SupplierSchema: Schema = new Schema({
     shortCode: { type: String },
     contactPersonName: { type: String, required: false },
     contactNo: { type: String, required: false },
-    email: { type: String, required: false },
+    email: { type: String, required: false, lowercase: true, trim: true },
     physicalAddress: { type: String, required: false },
     gstNo: { type: String, required: false },
     supplierType: {
         type: String,
-        enum: ['manufacturer', 'wholesaler', 'distributor'],
+        enum: ['manufacturer', 'wholesaler', 'distributor', 'retailer'],
         default: 'manufacturer'
     },
     openingBalance: { type: Number, default: 0 },
@@ -49,13 +49,17 @@ const SupplierSchema: Schema = new Schema({
         default: 'active'
     },
     supplierGroup: { type: String, trim: true, index: true },
-    owner: { type: Schema.Types.ObjectId, ref: 'User' }
+    groupId: { type: Schema.Types.ObjectId, ref: 'SupplierGroup' },
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    itemsSupplied: [{ type: Schema.Types.ObjectId, ref: 'Item' }]
 }, {
     timestamps: true
 });
 
-// Compound index for unique business name per tenant
+// Compound indexes
 SupplierSchema.index({ tenantId: 1, businessName: 1 }, { unique: true });
+SupplierSchema.index({ tenantId: 1, contactNo: 1 }, { unique: true, sparse: true });
+SupplierSchema.index({ tenantId: 1, email: 1 }, { unique: true, sparse: true });
 
 const Supplier = mongoose.models.Supplier || mongoose.model<ISupplier>('Supplier', SupplierSchema);
 export default Supplier;

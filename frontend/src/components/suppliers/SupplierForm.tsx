@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
 import { addSupplier, updateSupplier, getSupplierById } from '../../redux/slices/supplierSlice';
-import { Save, X, Building2, User, Phone, Wallet } from 'lucide-react';
+import { getSupplierGroups } from '../../redux/slices/supplierGroupSlice';
+import { Save, X, Building2, User, Phone, Wallet, Tag } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 interface SupplierFormData {
     businessName: string;
@@ -18,6 +20,7 @@ interface SupplierFormData {
     balanceType: string;
     creditPeriod: number;
     status: string;
+    groupId?: string;
     [key: string]: any;
 }
 
@@ -44,8 +47,11 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         openingBalance: 0,
         balanceType: 'payable',
         creditPeriod: 30,
-        status: 'active'
+        status: 'active',
+        groupId: ''
     });
+
+    const { groups } = useSelector((state: RootState) => state.supplierGroups);
 
     useEffect(() => {
         // Only fetch if we are editing, have an ID, AND don't have the supplier loaded or initialData
@@ -53,6 +59,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         if (mode === 'edit' && supplierId && !supplier && !initialData) {
             dispatch(getSupplierById(supplierId));
         }
+        dispatch(getSupplierGroups());
     }, [mode, supplierId, dispatch, supplier, initialData]);
 
     useEffect(() => {
@@ -70,7 +77,8 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 openingBalance: supplier.openingBalance || 0,
                 balanceType: (supplier.balanceType as any) || 'payable',
                 creditPeriod: supplier.creditPeriod || 30,
-                status: supplier.status || 'active'
+                status: supplier.status || 'active',
+                groupId: (supplier.groupId as any)?._id || supplier.groupId || ''
             });
         }
     }, [supplier, mode]);
@@ -88,13 +96,15 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         try {
             if (mode === 'add') {
                 await dispatch(addSupplier(formData)).unwrap();
+                toast.success('Supplier onboarded successfully');
             } else if (mode === 'edit' && supplierId) {
                 await dispatch(updateSupplier({ id: supplierId, supplierData: formData })).unwrap();
+                toast.success('Supplier record updated');
             }
             navigate('/suppliers');
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to save supplier:', error);
-            // Ideally show toast here
+            toast.error(error || 'Failed to save supplier record');
         }
     };
 
@@ -125,16 +135,37 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Brand / Parent Group</label>
+                            <label className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Strategic Group</label>
+                            <select
+                                name="groupId"
+                                value={formData.groupId}
+                                onChange={(e) => {
+                                    const selectedGroup = groups.find(g => g._id === e.target.value);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        groupId: e.target.value,
+                                        supplierGroup: selectedGroup ? selectedGroup.name : prev.supplierGroup
+                                    }));
+                                }}
+                                className="w-full px-4 py-3 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-300"
+                            >
+                                <option value="">Select Predefined Group...</option>
+                                {groups.map(g => (
+                                    <option key={g._id} value={g._id}>{g.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Custom Label / Brand</label>
                             <input
                                 type="text"
                                 name="supplierGroup"
                                 value={formData.supplierGroup}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-300"
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-700 dark:text-white"
                                 placeholder="e.g. Tata Group"
                             />
-                            <p className="text-[10px] text-slate-400 font-medium ml-1">Used for grouping analytics (e.g. Trends, Raymonds under one group)</p>
+                            <p className="text-[10px] text-slate-400 font-medium ml-1">Optional override for analytics grouping</p>
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Classification</label>

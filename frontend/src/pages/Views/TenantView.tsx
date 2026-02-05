@@ -202,9 +202,23 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'VENDOR_DETAILS': return <LazyModules.VendorDetails />;
                         case 'VENDOR_FORM': return <LazyModules.VendorForm />;
                         case 'GOODS_RECEIVED': return <LazyModules.GoodsReceived />;
+                        case 'GRN_FORM': return <LazyModules.GRNForm />;
                         case 'DEBIT_NOTES': return <LazyModules.DebitNotes />;
                         case 'SUPPLIER_PAYMENTS': return <LazyModules.SupplierPayments />;
+                        case 'PAYMENT_OUT':
+                        case 'PURCHASE_PAYMENT_OUT': return <LazyModules.PaymentOut />;
                         case 'OUTSTANDING_PAYABLES': return <LazyModules.OutstandingPayables />;
+                        case 'PURCHASE_BILLS': return <LazyModules.Bills />;
+                        case 'BILL_FORM': return <LazyModules.BillForm />;
+                        case 'PURCHASE_PAYMENT_OUT': return <LazyModules.PaymentOut />;
+                        case 'PURCHASE_HISTORY': return <LazyModules.PurchaseHistory />;
+                        case 'PURCHASE_ORDER_DETAILS': return <LazyModules.PurchaseOrderDetails />;
+                        case 'PURCHASE_ORDER_FORM': return <LazyModules.PurchaseOrdersModule />;
+                        case 'PURCHASE_ORDER_LIST': return <LazyModules.PurchaseOrdersModule />;
+                        case 'PURCHASE_RETURN': return <LazyModules.PurchaseReturnModule />;
+                        case 'PURCHASE_RETURNS': return <LazyModules.PurchaseReturns />;
+                        case 'PURCHASE_RETURN_FORM': return <LazyModules.PurchaseReturnForm />;
+                        case 'PURCHASE_UPLOAD': return <LazyModules.PurchaseUpload />;
 
                         // Customers
                         case 'CUSTOMER_LIST': return <LazyModules.CustomerList />;
@@ -212,6 +226,11 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'CUSTOMER_STATEMENTS': return <LazyModules.CustomerStatements />;
                         case 'CUSTOMER_GROUPS': return <LazyModules.CustomerGroups />;
                         case 'LOYALTY_POINTS': return <LazyModules.LoyaltyPoints />;
+                        case 'ADD_CUSTOMER': return <LazyModules.AddCustomer />;
+                        case 'CUSTOMER_DETAIL': return <LazyModules.CustomerDetail />;
+                        case 'CUSTOMERS_PORTFOLIO': return <LazyModules.CustomersPortfolio />;
+                        case 'CUSTOMERS_WITH_DUES': return <LazyModules.CustomersWithDues />;
+                        case 'EDIT_CUSTOMER': return <LazyModules.EditCustomer />;
 
                         // Suppliers
                         case 'SUPPLIER_LEDGER': return <LazyModules.SupplierLedger />;
@@ -247,6 +266,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                         // Expenses
                         case 'EXPENSES': return <LazyModules.ExpensesModuleFeature />;
+                        case 'EXPENSE_ANALYTICS': return <LazyModules.ExpenseIntelligence />;
                         case 'EXPENSE_CATEGORIES': return <LazyModules.ExpenseCategoriesManager />;
                         case 'RECURRING_EXPENSES': return <LazyModules.RecurringExpensesIntelligence />;
                         case 'EXPENSE_REPORTS': return <LazyModules.ExpenseReportsIntelligence />;
@@ -259,12 +279,13 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'REPORT_CUSTOMER': return <LazyModules.Reports />;
                         case 'REPORT_SUPPLIER': return <LazyModules.Reports />;
                         case 'REPORT_TAX': return <LazyModules.Reports />;
-                        case 'REPORT_FINANCIAL':
-                        case 'CASH_FLOW': return <LazyModules.Reports />;
+                        case 'REPORT_FINANCIAL': return <LazyModules.Reports />;
                         case 'DAY_BOOK': return <LazyModules.Reports />;
                         case 'TRIAL_BALANCE': return <LazyModules.Reports />;
                         case 'PROFIT_LOSS': return <LazyModules.Reports />;
                         case 'BALANCE_SHEET': return <LazyModules.Reports />;
+                        case 'CASH_FLOW': return <LazyModules.Reports />;
+
 
                         // Utilities
                         case 'BARCODE_GENERATOR':
@@ -291,9 +312,22 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'DAILY': return <LazyModules.DailyFinanceTracker />;
                         case 'STOREFRONT': return <LazyModules.Storefront />;
 
+                        // Architecture & Admin
+                        case 'ARCHITECTURE': return <LazyModules.Architecture />;
+                        case 'TENANT_MANAGEMENT': return <LazyModules.TenantManagement />;
+                        case 'SUPER_ADMIN': return <LazyModules.SuperAdminGrowthConsole />;
+
                         // Grow Platform
                         case 'GROW_DASHBOARD':
                         case 'GROW_OVERVIEW': return <LazyModules.GrowDashboard />;
+
+
+                        case 'GROW_GOOGLE':
+                        case 'GROW_GOOGLE_PROFILE':
+                        case 'GROW_GOOGLE_REVIEWS':
+                        case 'GROW_GOOGLE_POSTS':
+                        case 'GROW_GOOGLE_INSIGHTS':
+                        case 'GROW_GOOGLE_PHOTOS': return <LazyModules.GoogleBusiness />;
                         case 'GROW_MARKETING_METRICS': return <LazyModules.MarketingMetrics />;
                         case 'GROW_PERFORMANCE': return <LazyModules.OnlinePerformance />;
                         case 'GROW_HUB': return <LazyModules.GrowthHub />;
@@ -312,25 +346,17 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'GROW_MARKETING_CAMPAIGNS': return <LazyModules.MarketingCampaigns />;
                         case 'GROW_MARKETING_TEMPLATES': return <LazyModules.MarketingTemplates />;
                         case 'GROW_MARKETING_EMAIL': return <LazyModules.EmailMarketing />;
-                        case 'GROW_ENGAGEMENT_EMAIL': return <LazyModules.EmailEngagement />;
                         case 'GROW_MARKETING_WHATSAPP': return <LazyModules.WhatsAppMarketing />;
-                        case 'GROW_ENGAGEMENT_WHATSAPP': return <LazyModules.WhatsAppEngagement />;
-
                         case 'GROW_MARKETING_SOCIAL': return <LazyModules.SocialMediaMarketing />;
+                        case 'GROW_MARKETING_TOOLS': return <LazyModules.MarketingTools />;
                         case 'GROW_MARKETING_COUPONS': return <LazyModules.MarketingCoupons />;
                         case 'GROW_MARKETING_OFFERS': return <LazyModules.MarketingOffers />;
-
-                        case 'GROW_GOOGLE':
-                        case 'GROW_GOOGLE_PROFILE':
-                        case 'GROW_GOOGLE_REVIEWS':
-                        case 'GROW_GOOGLE_POSTS':
-                        case 'GROW_GOOGLE_INSIGHTS':
-                        case 'GROW_GOOGLE_PHOTOS': return <LazyModules.GoogleBusiness />;
-
-                        case 'GROW_ENGAGEMENT':
-                        case 'GROW_ENGAGEMENT_SMS':
-                        case 'GROW_ENGAGEMENT_FEEDBACK': return <LazyModules.FeedbackEngagement />;
+                        case 'GROW_ENGAGEMENT': return <LazyModules.WhatsAppEngagement />; // Default to WhatsApp for now
+                        case 'GROW_ENGAGEMENT_SMS': return <LazyModules.SMSMarketing />;
+                        case 'GROW_ENGAGEMENT_WHATSAPP': return <LazyModules.WhatsAppEngagement />;
+                        case 'GROW_ENGAGEMENT_EMAIL': return <LazyModules.EmailEngagement />;
                         case 'GROW_ENGAGEMENT_LOYALTY': return <LazyModules.LoyaltyEngagement />;
+                        case 'GROW_ENGAGEMENT_FEEDBACK': return <LazyModules.FeedbackEngagement />;
 
                         case 'GROW_SYNC_DEVICE': return <LazyModules.DeviceIntelligence />;
                         case 'GROW_SYNC':
@@ -407,6 +433,48 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                 <EntitlementGuard module="SUPPLIERS">
                                     <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
                                 </EntitlementGuard>
+                            } />
+                            <Route path="/purchase/grn/new" element={
+                                <Suspense fallback={<div>Loading GRN Form...</div>}><LazyModules.GRNForm /></Suspense>
+                            } />
+                            <Route path="/purchase/grn/new/:poId" element={
+                                <Suspense fallback={<div>Loading GRN Form...</div>}><LazyModules.GRNForm /></Suspense>
+                            } />
+                            <Route path="/purchase/grn/view/:id" element={
+                                <Suspense fallback={<div>Loading GRN Details...</div>}><LazyModules.GRNForm /></Suspense>
+                            } />
+                            <Route path="/purchase/orders/:id" element={
+                                <Suspense fallback={<div>Loading Order Details...</div>}><LazyModules.PurchaseOrderDetails /></Suspense>
+                            } />
+                            <Route path="/purchase/bills/new" element={
+                                <Suspense fallback={<div>Loading Bill Form...</div>}><LazyModules.BillForm /></Suspense>
+                            } />
+                            <Route path="/purchase/bills/new/:grnId" element={
+                                <Suspense fallback={<div>Loading Bill Form...</div>}><LazyModules.BillForm /></Suspense>
+                            } />
+                            <Route path="/purchase/bills/view/:id" element={
+                                <Suspense fallback={<div>Loading Bill Details...</div>}><LazyModules.BillForm /></Suspense>
+                            } />
+                            <Route path="/purchase/returns" element={
+                                <Suspense fallback={<div>Loading Returns...</div>}><LazyModules.PurchaseReturns /></Suspense>
+                            } />
+                            <Route path="/purchase/returns/new" element={
+                                <Suspense fallback={<div>Loading Return Form...</div>}><LazyModules.PurchaseReturnForm /></Suspense>
+                            } />
+                            <Route path="/purchase/returns/new/:grnId" element={
+                                <Suspense fallback={<div>Loading Return Form...</div>}><LazyModules.PurchaseReturnForm /></Suspense>
+                            } />
+                            <Route path="/purchase/returns/view/:id" element={
+                                <Suspense fallback={<div>Loading Return Details...</div>}><LazyModules.PurchaseReturnForm /></Suspense>
+                            } />
+                            <Route path="/purchase/payments" element={
+                                <Suspense fallback={<div>Loading Payments...</div>}><LazyModules.SupplierPayments /></Suspense>
+                            } />
+                            <Route path="/purchase/payment-out" element={
+                                <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
+                            } />
+                            <Route path="/purchase/payment-out/:vendorId" element={
+                                <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
                             } />
                             <Route path="/growth/tenant-architect/:tenantId" element={
                                 <Suspense fallback={<div>Loading Tenant Architect...</div>}><LazyModules.TenantArchitect /></Suspense>

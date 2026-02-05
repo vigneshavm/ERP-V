@@ -4,6 +4,8 @@ export interface DebitNoteItem {
     name: string;
     qty: number;
     amount: number;
+    taxRate?: number;
+    taxAmount?: number;
 }
 
 export interface DebitNote {
@@ -12,13 +14,24 @@ export interface DebitNote {
     date: string;
     vendorId: string;
     vendorName: string;
-    poReference?: string;
-    reason: 'RETURN' | 'PRICE_DIFF' | 'QUALITY' | 'SHORTAGE' | 'OTHER';
+    originalBillId?: string;
+    originalBillNumber?: string;
+    originalGrnId?: string;
+    originalGrnNumber?: string;
+    reason: 'SHORT_DELIVERY' | 'QUALITY_ISSUE' | 'RETURN_SHIPPING' | 'SERVICE_CHARGE' | 'PRICE_DIFFERENCE' | 'OTHER';
     items: DebitNoteItem[];
+    subTotal: number;
+    taxAmount: number;
     totalAmount: number;
-    status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+    status: 'DRAFT' | 'SENT' | 'ACKNOWLEDGED' | 'SETTLED';
     branchId: string;
     notes?: string;
+    attachments?: string[];
+    communicationTracking?: {
+        date: string;
+        type: 'EMAIL' | 'CALL' | 'MESSAGE';
+        notes: string;
+    }[];
 }
 
 export const debitNoteService = {

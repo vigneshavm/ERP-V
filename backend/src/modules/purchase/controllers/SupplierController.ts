@@ -46,6 +46,8 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     supplierType: 1,
                     status: 1,
                     supplierGroup: 1,
+                    groupId: 1,
+                    createdAt: 1,
                     // Metrics
                     billCount: { $size: "$purchases" },
                     totalAmount: { $sum: "$purchases.totalAmount" },
@@ -111,7 +113,7 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
     try {
         const {
             businessName, contactPersonName, contactNo, email, physicalAddress,
-            gstNo, supplierType, openingBalance, balanceType, creditPeriod, status, supplierGroup
+            gstNo, supplierType, openingBalance, balanceType, creditPeriod, status, supplierGroup, groupId
         } = req.body;
 
         const tenantId = req.user?.tenantId?.toString();
@@ -125,8 +127,18 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
             return res.status(400).json({ success: false, message: 'Supplier with this name already exists' });
         }
 
+        // Auto-generate supplierId
+        const lastSupplier = await Supplier.findOne({ tenantId }).sort({ supplierId: -1 });
+        let nextId = 1;
+        if (lastSupplier && lastSupplier.supplierId && lastSupplier.supplierId.includes('-')) {
+            const lastNum = parseInt(lastSupplier.supplierId.split('-')[1]);
+            if (!isNaN(lastNum)) nextId = lastNum + 1;
+        }
+        const supplierId = `SUP-${nextId.toString().padStart(5, '0')}`;
+
         const supplier = await Supplier.create({
             tenantId,
+            supplierId,
             businessName,
             contactPersonName,
             contactNo,
@@ -138,7 +150,9 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
             balanceType: balanceType || 'payable',
             creditPeriod: creditPeriod || 0,
             status: status || 'active',
-            supplierGroup: supplierGroup || undefined
+            supplierGroup: supplierGroup || undefined,
+            groupId: groupId || undefined,
+            owner: req.user?._id
         });
 
         res.status(201).json({ success: true, data: supplier });
@@ -158,7 +172,9 @@ export const getSuppliers = async (req: AuthenticatedRequest, res: Response) => 
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        const suppliers = await Supplier.find({ tenantId }).sort({ createdAt: -1 });
+        const suppliers = await Supplier.find({ tenantId })
+            .populate('groupId')
+            .sort({ createdAt: -1 });
 
         res.status(200).json({ success: true, data: suppliers });
     } catch (error: any) {
@@ -172,7 +188,7 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
         const { id } = req.params;
         const tenantId = req.user?.tenantId?.toString();
 
-        const supplier = await Supplier.findOne({ _id: id, tenantId });
+        const supplier = await Supplier.findOne({ _id: id, tenantId }).populate('groupId');
 
         if (!supplier) {
             return res.status(404).json({ success: false, message: 'Supplier not found' });

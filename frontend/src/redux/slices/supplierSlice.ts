@@ -19,7 +19,9 @@ export interface Supplier {
     creditPeriod?: number;
     status: 'active' | 'inactive' | string;
     supplierGroup?: string;
+    groupId?: any;
     itemsSupplied?: string[];
+    createdAt?: string;
     updatedAt?: string;
     // Analytics
     totalAmount?: number;

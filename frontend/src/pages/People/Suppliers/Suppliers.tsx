@@ -23,6 +23,7 @@ import {
 
 import SupplierSubNav from './SupplierSubNav';
 import * as XLSX from 'xlsx';
+import { toast } from 'react-toastify';
 
 const Suppliers: React.FC = () => {
   const navigate = useNavigate();
@@ -50,10 +51,15 @@ const Suppliers: React.FC = () => {
 
   const handleDelete = async (id: string | null) => {
     if (!id) return;
-    await dispatch(deleteSupplier(id));
-    setDeleteConfirm(null);
-    dispatch(getAllSuppliers()); // Refresh list
-    dispatch(getSupplierAnalytics()); // Refresh analytics
+    try {
+      await dispatch(deleteSupplier(id)).unwrap();
+      setDeleteConfirm(null);
+      toast.success('Supplier record terminated successfully');
+      dispatch(getSupplierAnalytics()); // Refresh analytics & list
+    } catch (err: any) {
+      toast.error(err || 'Failed to delete supplier');
+      setDeleteConfirm(null);
+    }
   };
 
   const handleExportCSV = () => {

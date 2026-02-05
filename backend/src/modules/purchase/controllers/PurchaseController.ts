@@ -254,8 +254,16 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
  */
 export const getAllPurchases = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const purchases = await Purchase.find({ createdBy: req.user?._id })
+        const query: any = {};
+        if (req.user?.tenantId) {
+            query.tenantId = req.user.tenantId;
+        } else {
+            query.createdBy = req.user?._id;
+        }
+
+        const purchases = await Purchase.find(query)
             .populate('vendorId', 'name businessName')
+            .populate('createdBy', 'name')
             .sort({ date: -1 });
         res.json(purchases);
     }

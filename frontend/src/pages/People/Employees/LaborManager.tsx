@@ -7,7 +7,7 @@ import { ensureBranchRecorded } from "../../../redux/slices/tenantSlice";
 import api from "../../../services/api.js";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { TimeEntryModal } from "./components/TimeEntryModal";
+import { TimeEntryModal } from "./TimeEntryModal.js";
 import { Users, Calendar, CreditCard, UserPlus } from 'lucide-react';
 import { getDaysInMonth, formatDateISO } from "../../../utils/helpers";
 import { securePassword } from "../../../utils/auth";
