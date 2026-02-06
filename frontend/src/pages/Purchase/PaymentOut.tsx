@@ -22,7 +22,7 @@ const PaymentOut: React.FC = () => {
     // Form State
     const [paymentData, setPaymentData] = useState<Partial<PurchasePayment>>({
         payment_date: new Date().toISOString().split('T')[0],
-        method: 'Bank Transfer',
+        method: 'bank_transfer',
         status: 'Pending',
         currency: 'INR',
         exchange_rate: 1,
@@ -183,13 +183,13 @@ const PaymentOut: React.FC = () => {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Vendor</label>
+                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Supplier</label>
                                     <select
                                         value={paymentData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
                                         className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
-                                        <option value="">Select Vendor</option>
+                                        <option value="">Select Supplier</option>
                                         {vendors.map(v => (
                                             <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>
                                         ))}
@@ -211,11 +211,11 @@ const PaymentOut: React.FC = () => {
                                         onChange={(e) => setPaymentData(prev => ({ ...prev, method: e.target.value as PaymentMethod }))}
                                         className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
-                                        <option value="Bank Transfer">Bank Transfer</option>
-                                        <option value="Cheque">Cheque</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                        <option value="Other">Other</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="cheque">Cheque</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="credit_card">Credit Card</option>
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">

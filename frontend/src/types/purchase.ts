@@ -120,7 +120,7 @@ export interface ScannedInvoice {
     items: ScannedInvoiceItem[];
 }
 
-export type PurchasePaymentMethod = 'Bank Transfer' | 'Cash' | 'Cheque' | 'Credit Card' | 'Other';
+export type PurchasePaymentMethod = 'bank_transfer' | 'cash' | 'cheque' | 'credit_card' | 'other';
 export type PurchasePaymentStatus = 'Pending' | 'Cleared' | 'Failed' | 'Reversed';
 
 export interface PaymentBillAllocation {
