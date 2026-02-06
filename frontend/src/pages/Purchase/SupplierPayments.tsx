@@ -36,7 +36,7 @@ const SupplierPayments: React.FC = () => {
                         payment_date: '2024-03-24',
                         vendor_name: 'Tech Supplies Corp',
                         vendor_id: 'v1',
-                        method: 'Bank Transfer',
+                        method: 'bank_transfer',
                         status: 'Cleared',
                         total_amount: 45000,
                         currency: 'INR',
@@ -52,7 +52,7 @@ const SupplierPayments: React.FC = () => {
                         payment_date: '2024-03-22',
                         vendor_name: 'Office Mart',
                         vendor_id: 'v2',
-                        method: 'Cheque',
+                        method: 'cheque',
                         status: 'Pending',
                         total_amount: 12500,
                         currency: 'INR',
@@ -68,7 +68,7 @@ const SupplierPayments: React.FC = () => {
                         payment_date: '2024-03-21',
                         vendor_name: 'Global Logics',
                         vendor_id: 'v3',
-                        method: 'Cash',
+                        method: 'cash',
                         status: 'Cleared',
                         total_amount: 5000,
                         currency: 'INR',
@@ -97,6 +97,23 @@ const SupplierPayments: React.FC = () => {
                 return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-500 border border-neutral-200 uppercase tracking-wider">Reversed</span>;
             default:
                 return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-50 text-neutral-400 uppercase tracking-wider">{status}</span>;
+        }
+    };
+
+    const formatPaymentMethod = (method: PurchasePayment['method']) => {
+        switch (method) {
+            case 'bank_transfer':
+                return 'Bank Transfer';
+            case 'credit_card':
+                return 'Credit Card';
+            case 'cheque':
+                return 'Cheque';
+            case 'cash':
+                return 'Cash';
+            case 'other':
+                return 'Other';
+            default:
+                return method;
         }
     };
 
@@ -239,7 +256,7 @@ const SupplierPayments: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-0.5">
-                                                <span className="font-bold text-neutral-600 dark:text-neutral-400">{p.method}</span>
+                                                <span className="font-bold text-neutral-600 dark:text-neutral-400">{formatPaymentMethod(p.method)}</span>
                                                 {p.reference_id && <span className="text-[9px] font-mono text-brand-600 uppercase tracking-tighter">Ref: {p.reference_id}</span>}
                                             </div>
                                         </td>
