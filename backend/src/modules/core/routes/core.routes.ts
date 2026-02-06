@@ -9,6 +9,7 @@ import settingsRoutes from './settingsRoutes.js';
 import shopRoutes from './shopRoutes.js';
 import branchRoutes from './branchRoutes.js';
 import subscriptionPlanRoutes from './subscriptionPlanRoutes.js';
+import auditLogRoutes from './auditLogRoutes.js';
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use('/settings', settingsRoutes);
 router.use('/shop', shopRoutes);
 router.use('/branches', branchRoutes);
 router.use('/subscription-plans', subscriptionPlanRoutes);
+router.use('/audit-logs', auditLogRoutes);
 
 export default router;

@@ -7,9 +7,16 @@ export interface IEmployee extends Document {
     roleId?: string;
     mobile: string;
     dailyRate: number;
-    wageType: 'DAILY' | 'MONTHLY';
+    hourlyRate: number;
+    wageType: 'DAILY' | 'MONTHLY' | 'HOURLY' | 'COMMISSION' | 'HYBRID';
     branchId?: string;
     sector?: string; // Scope by industry sector if needed
+    email?: string;
+    bankDetails?: {
+        accountNumber: string;
+        ifsc: string;
+        bankName: string;
+    };
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -43,9 +50,13 @@ const employeeSchema = new Schema<IEmployee>({
         type: Number,
         default: 0
     },
+    hourlyRate: {
+        type: Number,
+        default: 0
+    },
     wageType: {
         type: String,
-        enum: ['DAILY', 'MONTHLY'],
+        enum: ['DAILY', 'MONTHLY', 'HOURLY', 'COMMISSION', 'HYBRID'],
         default: 'DAILY'
     },
     branchId: {
@@ -55,6 +66,16 @@ const employeeSchema = new Schema<IEmployee>({
     sector: {
         type: String,
         default: null
+    },
+    email: {
+        type: String,
+        trim: true,
+        lowercase: true
+    },
+    bankDetails: {
+        accountNumber: String,
+        ifsc: String,
+        bankName: String
     },
     isActive: {
         type: Boolean,

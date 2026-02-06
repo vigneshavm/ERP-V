@@ -35,11 +35,11 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             Bill.aggregate([
                 {
                     $match: {
-                        supplier: new mongoose.Types.ObjectId(id),
+                        supplier: new mongoose.Types.ObjectId(id as string),
                         tenantId: tenantId, // Bill schema has tenantId? Let's check. If not, filter by other means.
                         // Checked Bill.ts earlier, it usually has tenantId or createdBy. 
                         // Standardizing on tenantId for robustness.
-                        billDate: { $lt: start }
+                        date: { $lt: start }
                     }
                 },
                 { $group: { _id: null, total: { $sum: "$amount" } } } // Using amount (Total Bill Value)
@@ -47,18 +47,18 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             PaymentOut.aggregate([
                 {
                     $match: {
-                        supplierId: new mongoose.Types.ObjectId(id),
+                        supplierId: new mongoose.Types.ObjectId(id as string),
                         tenantId: tenantId,
                         paymentDate: { $lt: start },
-                        status: 'cleared' // Only cleared payments count? Or all? Usually cleared/issued. 
-                                      // Ledger usually strictly financial, so cleared. 
-                                      // However, issued cheques block funds. Let's stick to 'cleared' for true ledger, 
-                                      // or maybe 'cleared' + 'pending' if we want to show committed. 
-                                      // Standard accounting: Checks issued are credits.
-                                      // Let's include 'cleared' and 'pending' (issued but not cleared) as credits to bank / debits to supplier?
-                                      // Actually PaymentOut status: 'pending' (Cheque issued). 
-                                      // Ideally, when cheque is issued, we debit Supplier. So 'cleared' and 'pending'.
-                    status: { $in: ['cleared', 'pending'] }
+                        // Only cleared payments count? Or all? Usually cleared/issued. 
+                        // Ledger usually strictly financial, so cleared.
+                        // However, issued cheques block funds. Let's stick to 'cleared' for true ledger,
+                        // or maybe 'cleared' + 'pending' if we want to show committed.
+                        // Standard accounting: Checks issued are credits.
+                        // Let's include 'cleared' and 'pending' (issued but not cleared) as credits to bank / debits to supplier?
+                        // Actually PaymentOut status: 'pending' (Cheque issued).
+                        // Ideally, when cheque is issued, we debit Supplier. So 'cleared' and 'pending'.
+                        status: { $in: ['cleared', 'pending'] }
                     }
                 },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
@@ -66,7 +66,7 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             DebitNote.aggregate([
                 {
                     $match: {
-                        vendorId: new mongoose.Types.ObjectId(id),
+                        vendorId: new mongoose.Types.ObjectId(id as string),
                         // tenantId? DebitNote has vendorId. CreatedBy has tenant context. 
                         // For safety, we can filter by vendorId which is unique to tenant+supplier usually, 
                         // but safer to filter by date only if we trust ID.
@@ -79,9 +79,9 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             PurchaseReturn.aggregate([
                 {
                     $match: {
-                        supplier: new mongoose.Types.ObjectId(id),
+                        supplier: new mongoose.Types.ObjectId(id as string),
                         returnDate: { $lt: start },
-                        refundMethod: 'assist_next_bill' // Only if it affects ledger directly? 
+                        refundMethod: 'adjust_next_bill' // Only if it affects ledger directly? 
                         // Actually Purchase Return usually creates a Debit Note or is a direct adjustment.
                         // If PurchaseReturn creates a DebitNote, we shouldn't double count.
                         // Checking implementation: PurchaseReturn model exists. 
@@ -106,7 +106,7 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             Bill.find({
                 supplier: id,
                 tenantId,
-                billDate: { $gte: start, $lte: end }
+                date: { $gte: start, $lte: end }
             }).lean(),
             PaymentOut.find({
                 supplierId: id,
@@ -125,7 +125,7 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
         let transactions: any[] = [];
 
         bills.forEach(b => transactions.push({
-            date: b.billDate,
+            date: b.date,
             type: 'BILL',
             refNo: b.billNo,
             description: `Bill #${b.billNo}`,

@@ -4,8 +4,8 @@ import { TransactionType } from "../../types/common";
 import api from "../../services/api.js";
 import { RootState } from '../store';
 
-const API_URL = '/cashbank';
-const DAY_END_API_URL = '/day-end';
+const API_URL = '/api/cashbank';
+const DAY_END_API_URL = '/api/day-end';
 
 const getConfig = (token: string) => ({
     headers: { Authorization: `Bearer ${token}` }

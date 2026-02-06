@@ -502,7 +502,40 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/growth/tenant-architect/:tenantId" element={
                                 <Suspense fallback={<div>Loading Tenant Architect...</div>}><LazyModules.TenantArchitect /></Suspense>
                             } />
+                            <Route path="/cashbank/accounts" element={
+                                <Suspense fallback={<div>Loading Bank Accounts...</div>}><LazyModules.BankAccounts /></Suspense>
+                            } />
+                            <Route path="/finance/journal" element={
+                                <Suspense fallback={<div>Loading Journal Entries...</div>}><LazyModules.JournalEntries /></Suspense>
+                            } />
+                            <Route path="/finance/journal/new" element={
+                                <Suspense fallback={<div>Loading Journal Form...</div>}><LazyModules.JournalEntryForm /></Suspense>
+                            } />
                             <Route path="*" element={renderContent()} />
+                            <Route path="/people/employees" element={
+                                <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.StaffManager /></Suspense>
+                            } />
+                            <Route path="/people/payroll" element={
+                                <Suspense fallback={<div>Loading Payroll...</div>}><LazyModules.PayrollDashboard /></Suspense>
+                            } />
+                            <Route path="/people/payroll/structure" element={
+                                <Suspense fallback={<div>Loading Structure...</div>}><LazyModules.SalaryStructureManager /></Suspense>
+                            } />
+                            <Route path="/people/payroll/attendance" element={
+                                <Suspense fallback={<div>Loading Attendance...</div>}><LazyModules.AttendanceSummaryManager /></Suspense>
+                            } />
+                            <Route path="/people/payroll/run" element={
+                                <Suspense fallback={<div>Loading Runs...</div>}><LazyModules.PayrollRuns /></Suspense>
+                            } />
+                            <Route path="/people/payroll/run/:id" element={
+                                <Suspense fallback={<div>Loading Runs...</div>}><LazyModules.PayrollRuns /></Suspense>
+                            } />
+                            <Route path="/people/payroll/payslip/:id" element={
+                                <Suspense fallback={<div>Loading Payslip...</div>}><LazyModules.PayslipView /></Suspense>
+                            } />
+                            <Route path="/finance/gst" element={<Suspense fallback={<div>Loading GST...</div>}><LazyModules.GSTReconciliation /></Suspense>} />
+                            <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
+                            <Route path="/settings/audit" element={<Suspense fallback={<div>Loading Audit Logs...</div>}><LazyModules.AuditLogs /></Suspense>} />
                         </Routes>
                     </div>
                 </main>

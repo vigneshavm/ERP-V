@@ -14,7 +14,7 @@ const bankAccountSchema = new Schema<IBankAccount>(
         },
         accountType: {
             type: String,
-            enum: ["Savings", "Current", "Overdraft", "Loan"],
+            enum: ["Savings", "Current", "Overdraft", "Loan", "Cash"],
             default: "Savings",
         },
         branch: {

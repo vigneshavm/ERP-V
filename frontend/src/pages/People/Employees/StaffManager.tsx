@@ -44,29 +44,20 @@ const StaffManager: React.FC = () => {
         setIsLoadingEmployees(true);
         try {
             if (DATA_MODE === 'DEMO') {
-                // Demo logic could go here if needed, but existing code seems to expect 
-                // data to be populated via getTable elsewhere or is incomplete for demo
+                // Demo logic could go here if needed
             } else {
-                const response = await api.get('/api/users');
-                const data = response.data;
+                const response = await api.get('/api/hr/employees');
+                const data = response.data.data;
 
                 // For now, roles might still need an endpoint
                 try {
-                    const rolesResponse = await api.get('/roles');
+                    const rolesResponse = await api.get('/roles'); // Verify if this exists, or remove
                     setRoles(rolesResponse.data || []);
                 } catch (e) {
                     console.warn("Failed to fetch roles via API, using defaults.");
                 }
 
-                setTenantEmployees(data?.map((u: any) => {
-                    const roleCode = u.role?.code?.toLowerCase() || u.role || 'staff';
-                    return {
-                        ...u,
-                        name: u.name || u.full_name,
-                        role: u.role?.description || roleCode,
-                        system_role: (roleCode === 'owner' || roleCode === 'admin') ? 'Owner' : 'Staff'
-                    };
-                }) || []);
+                setTenantEmployees(data || []);
             }
         } catch (err) {
             console.error('Error fetching employees:', err);
@@ -79,57 +70,39 @@ const StaffManager: React.FC = () => {
         e.preventDefault();
         if (!activeTenant || !newEmp.name) return;
 
-        // Validation for new user
-        if (!editingEmpId && (!newEmp.pin || newEmp.pin.length === 0)) {
-            alert("PIN is required for new users.");
-            return;
-        }
-
         try {
             if (DATA_MODE !== 'DEMO') {
-                let pinToSave = '';
-
-                // Secure PIN if provided
-                if (newEmp.pin && newEmp.pin.length > 0) {
-                    pinToSave = await securePassword(newEmp.pin);
-                }
-
                 const empData: any = {
                     name: newEmp.name,
-                    role: newEmp.roleId,
+                    role: newEmp.roleId, // Assuming UI sends role name or ID. Backend expects string
+                    mobile: newEmp.mobile,
                     dailyRate: parseFloat(newEmp.dailyRate) || 0,
                     branchId: newEmp.branchId,
-                    phone: newEmp.mobile,
-                    assignedCounterId: newEmp.assignedCounterId ? newEmp.assignedCounterId : null,
-                    is2faEnabled: newEmp.is2faEnabled,
-                    ...(pinToSave && pinToSave.length > 0 ? { pinHash: pinToSave } : {}),
+                    wageType: 'DAILY', // Default or add UI selector
+                    sector: 'Retail' // Default
                 };
 
                 if (editingEmpId) {
-                    const response = await api.put(`/api/users/${editingEmpId}`, empData);
-                    const data = response.data?.user || response.data;
+                    const response = await api.put(`/api/hr/employees/${editingEmpId}`, empData);
+                    const data = response.data.data;
 
                     if (data) {
-                        setTenantEmployees(prev => prev.map(e => e.id === editingEmpId || e._id === editingEmpId ? data : e));
+                        setTenantEmployees(prev => prev.map(e => e._id === editingEmpId ? data : e));
                         handleCancelEditEmp();
                     }
                 } else {
-                    const response = await api.post('/auth/register', {
-                        ...empData,
-                        email: `${newEmp.name.toLowerCase().replace(/\s/g, '')}@system.local`, // Placeholder email
-                        password: newEmp.pin // or some default
-                    });
-                    const data = response.data;
+                    const response = await api.post('/api/hr/employees', empData);
+                    const data = response.data.data;
 
                     if (data) {
-                        setTenantEmployees(prev => [...prev, data]);
+                        setTenantEmployees(prev => [data, ...prev]);
                         handleCancelEditEmp();
                     }
                 }
             }
         } catch (err: any) {
             console.error('Error saving employee:', err);
-            alert(`Error: ${err.message} `);
+            alert(`Error: ${err.message || 'Failed to save'} `);
         }
     };
 
@@ -158,8 +131,8 @@ const StaffManager: React.FC = () => {
 
         try {
             if (DATA_MODE !== 'DEMO') {
-                await api.delete(`/api/users/${id}`);
-                setTenantEmployees(prev => prev.filter(e => e.id !== id && e._id !== id));
+                await api.delete(`/api/hr/employees/${id}`);
+                setTenantEmployees(prev => prev.filter(e => e._id !== id));
             }
         } catch (err: any) {
             console.error('Error deleting employee:', err);

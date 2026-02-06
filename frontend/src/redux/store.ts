@@ -19,6 +19,8 @@ import uiReducer from './slices/uiSlice';
 import { settingsReducer } from './slices/settingsSlice';
 import supplierGroupReducer from './slices/supplierGroupSlice';
 import paymentOutReducer from './slices/paymentOutSlice';
+import journalEntryReducer from './slices/journalEntrySlice';
+import payrollReducer from './slices/payrollSlice';
 
 export const store = configureStore({
   reducer: {
@@ -42,6 +44,8 @@ export const store = configureStore({
     ui: uiReducer,
     supplierGroups: supplierGroupReducer,
     paymentOut: paymentOutReducer,
+    journalEntry: journalEntryReducer,
+    payroll: payrollReducer,
   },
 });
 

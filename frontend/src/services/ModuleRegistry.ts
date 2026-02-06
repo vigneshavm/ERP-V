@@ -52,9 +52,12 @@ export const Modules = {
     FeedbackEngagement: () => import("../pages/CustomerEngagement/FeedbackEngagement"),
     SuperAdminGrowthConsole: () => import("../pages/System/Architecture/SuperAdminGrowthConsole"),
     TenantManagement: () => import("../pages/People/Tenants/TenantManager"),
+    GSTReconciliation: () => import("../pages/Finance/GST/GSTReconciliation"),
+    ReprintQueue: () => import("../pages/Inventory/ReprintQueue"),
     // Tenant Growth Settings (Consolidated)
     TenantGrowthSettings: () => import("../pages/System/Architecture/SuperAdminGrowthConsole"),
     TenantArchitect: () => import("../pages/System/Architecture/TenantArchitect"),
+    AuditLogs: () => import("../pages/System/Audit/AuditLogViewer"),
 
     // Sales Features
     SalesInvoiceRegister: () => import("../pages/Sales/salesInvoices/SalesInvoice"),
@@ -124,6 +127,9 @@ export const Modules = {
     BankIntelligence: () => import("../pages/Financial/Cashbank/BankIntelligence"),
     BankReconciliationIntelligence: () => import("../pages/Financial/Cashbank/BankReconciliation"),
     FundTransferIntelligence: () => import("../pages/Financial/Cashbank/FundTransfer"),
+    BankAccounts: () => import("../pages/Financial/Cashbank/BankAccounts"),
+    JournalEntries: () => import("../pages/Financial/Journal/JournalEntries"),
+    JournalEntryForm: () => import("../pages/Financial/Journal/JournalEntryForm"),
 
     // Expense Features
     ExpenseIntelligence: () => import("../pages/Expenses/ExpenseIntelligence"),
@@ -140,6 +146,12 @@ export const Modules = {
 
     // HR
     LaborManager: () => import("../pages/People/Employees/LaborManager"),
+    StaffManager: () => import("../pages/People/Employees/StaffManager"),
+    PayrollDashboard: () => import("../pages/People/Payroll/PayrollDashboard"),
+    SalaryStructureManager: () => import("../pages/People/Payroll/SalaryStructureManager"),
+    PayrollRuns: () => import("../pages/People/Payroll/PayrollRuns"),
+    AttendanceSummaryManager: () => import("../pages/People/Payroll/AttendanceSummaryManager"),
+    PayslipView: () => import("../pages/People/Payroll/PayslipView"),
 };
 
 export const LazyModules = {
@@ -187,7 +199,10 @@ export const LazyModules = {
     SuperAdminGrowthConsole: lazy(Modules.SuperAdminGrowthConsole),
     TenantManagement: lazy(Modules.TenantManagement),
     TenantGrowthSettings: lazy(Modules.TenantGrowthSettings),
+    GSTReconciliation: lazy(Modules.GSTReconciliation),
+    ReprintQueue: lazy(Modules.ReprintQueue),
     TenantArchitect: lazy(Modules.TenantArchitect),
+    AuditLogs: lazy(Modules.AuditLogs),
 
     // Sales
     SalesInvoiceRegister: lazy(Modules.SalesInvoiceRegister),
@@ -257,6 +272,9 @@ export const LazyModules = {
     BankIntelligence: lazy(Modules.BankIntelligence),
     BankReconciliationIntelligence: lazy(Modules.BankReconciliationIntelligence),
     FundTransferIntelligence: lazy(Modules.FundTransferIntelligence),
+    BankAccounts: lazy(Modules.BankAccounts),
+    JournalEntries: lazy(Modules.JournalEntries),
+    JournalEntryForm: lazy(Modules.JournalEntryForm),
 
     // Expenses
     ExpenseIntelligence: lazy(Modules.ExpenseIntelligence),
@@ -273,7 +291,14 @@ export const LazyModules = {
 
     // HR
     LaborManager: lazy(Modules.LaborManager),
+    StaffManager: lazy(Modules.StaffManager),
+    PayrollDashboard: lazy(Modules.PayrollDashboard),
+    SalaryStructureManager: lazy(Modules.SalaryStructureManager),
+    PayrollRuns: lazy(Modules.PayrollRuns),
+    AttendanceSummaryManager: lazy(Modules.AttendanceSummaryManager),
+    PayslipView: lazy(Modules.PayslipView),
 };
+
 
 /**
  * Proactively triggers the network load for a module chunk.

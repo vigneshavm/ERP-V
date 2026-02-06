@@ -139,6 +139,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'BATCH_EXPIRY', label: 'Batch & Expiry', icon: Calendar, module: 'INVENTORY', path: '/inventory/batch-expiry' },
             { id: 'BARCODE_GENERATOR', label: 'Barcode Creator', icon: Barcode, module: 'INVENTORY', path: '/inventory/barcodes' },
             { id: 'BULK_IMPORT', label: 'Bulk Import', icon: Upload, module: 'INVENTORY', path: '/inventory/import' },
+            { id: 'REPRINT_QUEUE', label: 'Reprint Queue', icon: Printer, module: 'INVENTORY', path: '/inventory/reprint' },
             { id: 'DATA_EXPORT', label: 'Data Export', icon: Download, module: 'INVENTORY', path: '/inventory/export' },
         ]
     },
@@ -150,11 +151,13 @@ export const MENU_ITEMS: MenuItem[] = [
         path: '/finance',
         children: [
             { id: 'CASH_ACCOUNTS', label: 'Cash In Hand', icon: DollarSign, module: 'FINANCE', path: '/finance/cash' },
-            { id: 'BANK_ACCOUNTS', label: 'Bank Accounts', icon: Landmark, module: 'FINANCE', path: '/finance/bank' },
+            { id: 'BANK_ACCOUNTS', label: 'Bank Accounts', icon: Landmark, module: 'FINANCE', path: '/cashbank/accounts' },
             { id: 'PETTY_CASH', label: 'Petty Cash', icon: List, module: 'FINANCE', path: '/finance/petty-cash' },
             { id: 'FUND_TRANSFERS', label: 'Fund Transfers', icon: ArrowRight, module: 'FINANCE', path: '/finance/transfers' },
             { id: 'BANK_RECONCILIATION', label: 'Reconciliation', icon: RefreshCw, module: 'FINANCE', path: '/finance/reconciliation' },
             { id: 'BANK_SUMMARY', label: 'Bank Summary', icon: FileText, module: 'FINANCE', path: '/finance/summary' },
+            { id: 'GST_RECONCILIATION', label: 'GST Reconciliation', icon: FileText, module: 'FINANCE', path: '/finance/gst' },
+            { id: 'JOURNAL_ENTRIES', label: 'Journal Entries', icon: FileText, module: 'FINANCE', path: '/finance/journal' },
         ]
     },
     {
@@ -199,10 +202,10 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'HR',
         path: '/staff',
         children: [
-            { id: 'STAFF_MANAGER', label: 'Staff Directory', icon: Users, module: 'HR', path: '/staff/directory' },
-            { id: 'LABOR', label: 'Labor Management', icon: Wrench, module: 'HR', path: '/staff/labor' },
-            { id: 'PAYROLL', label: 'Payroll', icon: DollarSign, module: 'HR', path: '/staff/payroll' },
-            { id: 'ATTENDANCE', label: 'Attendance', icon: Clock, module: 'HR', path: '/staff/attendance' },
+            { id: 'STAFF_MANAGER', label: 'Staff Directory', icon: Users, module: 'HR', path: '/people/employees' },
+            { id: 'LABOR', label: 'Labor Management', icon: Wrench, module: 'HR', path: '/people/employees/labor' },
+            { id: 'PAYROLL', label: 'Payroll', icon: DollarSign, module: 'HR', path: '/people/payroll' },
+            { id: 'ATTENDANCE_SUMMARY', label: 'Attendance', icon: Clock, module: 'HR', path: '/people/payroll/attendance' },
         ]
     },
     {
@@ -236,6 +239,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'RESTORE', label: 'Restore Data', icon: Upload, module: 'MULTI_BRANCH', path: '/settings/restore' },
             { id: 'TENANT_MANAGEMENT', label: 'Tenant Management', icon: Building, module: 'MULTI_BRANCH', path: '/settings/tenants' },
             { id: 'TENANT_ARCHITECT', label: 'Tenant Architect', icon: Wrench, module: 'MULTI_BRANCH', path: '/settings/architect' },
+            { id: 'AUDIT_LOGS', label: 'Audit Logs', icon: Shield, module: 'MULTI_BRANCH', path: '/settings/audit' },
             { id: 'SUPER_ADMIN_CONSOLE', label: 'Super Admin Console', icon: Shield, module: 'MULTI_BRANCH', path: '/settings/super-admin' },
         ]
     },
