@@ -41,6 +41,7 @@ export interface BaseProduct {
     description?: string;
     barcode?: string;
     brand?: string;
+    location?: string;
     isActive?: boolean;
     variantData?: Record<string, string | number | boolean>;
 

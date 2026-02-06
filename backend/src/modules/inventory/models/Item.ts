@@ -56,6 +56,11 @@ const itemSchema = new Schema<IItem>(
         categoryCode: {
             type: String,
         },
+        isActive: {
+            type: Boolean,
+            default: true,
+            index: true
+        },
         addedBy: {
             type: String,
             ref: "User",

@@ -61,6 +61,7 @@ export class CategoryController {
      *         description: Internal Server Error
      */
     public getAllCategories = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
         try {
             // 1. Input Sanitization & Parsing
             const page = Math.max(1, parseInt(req.query.page as string) || 1);
@@ -79,8 +80,9 @@ export class CategoryController {
             const filters: IQueryFilters = { page, limit, search, sortBy, sortOrder, sector };
 
             // 2. Call Service Layer
-            const { data, total } = categoryService.findAll(filters); // In a real DB app this would be awaited
-            const stats = categoryService.getStats();
+            const tenantId = authReq.tenantId as string;
+            const { data, total } = await categoryService.findAll(tenantId, filters);
+            const stats = await categoryService.getStats(tenantId);
 
             // 3. Construct Response Envelope
             const totalPages = Math.ceil(total / limit);

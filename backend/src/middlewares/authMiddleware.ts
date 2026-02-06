@@ -95,7 +95,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
  * @param roles - Array of allowed roles (e.g., ['admin', 'super_admin'])
  */
 export const authorize = (...roles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
         const user = (req as any).user;
 
         if (!user) {

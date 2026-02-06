@@ -97,7 +97,7 @@ const CategoryManager: React.FC = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get<CategoriesResponse>('/api/v1/categories', {
+            const response = await api.get<CategoriesResponse>('/api/inventory/categories', {
                 params: {
                     page,
                     limit: 25,

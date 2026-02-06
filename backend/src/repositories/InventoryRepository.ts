@@ -9,40 +9,63 @@ export class InventoryRepository {
         return Item.create(itemData);
     }
 
-    async findById(id: string, userId: string): Promise<IItem | null> {
-        return Item.findOne({ _id: id, addedBy: userId });
+    async findById(id: string, tenantId: string): Promise<IItem | null> {
+        return Item.findOne({ _id: id, tenantId });
     }
 
-    async findByName(name: string, userId: string): Promise<IItem | null> {
-        return Item.findOne({ name, addedBy: userId });
+    async findByName(name: string, tenantId: string): Promise<IItem | null> {
+        return Item.findOne({ name, tenantId });
     }
 
-    // For update check excluding current ID
-    async findByNameExcludingId(name: string, userId: string, excludeId: string): Promise<IItem | null> {
-        return Item.findOne({ name, addedBy: userId, _id: { $ne: excludeId } });
+    async findByNameExcludingId(name: string, tenantId: string, excludeId: string): Promise<IItem | null> {
+        return Item.findOne({ name, tenantId, _id: { $ne: excludeId } });
     }
 
-    async findAll(userId: string): Promise<IItem[]> {
-        return Item.find({ addedBy: userId }).sort({ createdAt: -1 });
+    async findAll(tenantId: string, query: any = {}): Promise<IItem[]> {
+        return Item.find({ ...query, tenantId }).sort({ createdAt: -1 });
     }
 
-    async findAllByTenant(tenantId: string): Promise<IItem[]> {
-        return Item.find({ tenantId }).sort({ createdAt: -1 });
+    async findWithPagination(tenantId: string, query: any, skip: number, limit: number): Promise<[IItem[], number]> {
+        const [items, total] = await Promise.all([
+            Item.find({ ...query, tenantId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean() as unknown as IItem[],
+            Item.countDocuments({ ...query, tenantId })
+        ]);
+        return [items, total];
     }
 
-    async findAllLean(userId: string): Promise<any[]> {
-        return Item.find({ addedBy: userId }).select('name sku stockQty category unit costPrice sellingPrice').lean();
+    async findAllLean(tenantId: string): Promise<any[]> {
+        return Item.find({ tenantId }).select('name sku stockQty category unit costPrice sellingPrice').lean();
     }
 
-    async update(id: string, userId: string, updateData: Partial<IItem>): Promise<IItem | null> {
+    async getLowStockItems(tenantId: string): Promise<IItem[]> {
+        return Item.find({
+            tenantId,
+            $expr: {
+                $lte: [
+                    { $subtract: ["$stockQty", { $ifNull: ["$reservedStock", 0] }] },
+                    "$lowStockLimit"
+                ]
+            }
+        });
+    }
+
+    async update(id: string, tenantId: string, updateData: Partial<IItem>): Promise<IItem | null> {
         return Item.findOneAndUpdate(
-            { _id: id, addedBy: userId },
+            { _id: id, tenantId },
             updateData,
             { new: true }
         );
     }
 
-    async delete(id: string, userId: string): Promise<IItem | null> {
-        return Item.findOneAndDelete({ _id: id, addedBy: userId });
+    async delete(id: string, tenantId: string): Promise<IItem | null> {
+        return Item.findOneAndDelete({ _id: id, tenantId });
+    }
+
+    async findByQuery(query: any): Promise<IItem[]> {
+        return Item.find(query);
     }
 }

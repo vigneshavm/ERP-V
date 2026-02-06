@@ -3,6 +3,7 @@ import { InventoryRepository } from "../../../repositories/InventoryRepository.j
 import Purchase from "../../purchase/models/Purchase.js";
 import { info, error } from "../../../config/logger.js";
 import { AppError } from "../../../utils/AppError.js";
+import { IItem } from "../../../interfaces/IItem.js";
 
 @injectable()
 export class StockAgingService {
@@ -15,9 +16,9 @@ export class StockAgingService {
      * Returns items that have stock older than the specified threshold (default 180 days).
      */
     async getAgingAnalysis(tenantId: string, thresholdDays: number = 180): Promise<any[]> {
-        const items = await this.inventoryRepository.findAllByTenant(tenantId);
+        const items = await this.inventoryRepository.findAll(tenantId);
         // Filter only items with positive stock
-        const inStockItems = items.filter(item => item.stockQty > 0);
+        const inStockItems = items.filter((item: IItem) => item.stockQty > 0);
 
         const deadStock = [];
         const now = new Date();
@@ -90,37 +91,27 @@ export class StockAgingService {
         return deadStock.sort((a, b) => b.ageInDays - a.ageInDays);
     }
 
-    async applyAction(itemId: string, userId: string, actionType: 'CLEARANCE' | 'REDUCE_MARGIN', value?: number): Promise<any> {
-        const item = await this.inventoryRepository.findById(itemId, userId);
+    async applyAction(itemId: string, tenantId: string, actionType: 'CLEARANCE' | 'REDUCE_MARGIN', value?: number): Promise<any> {
+        const item = await this.inventoryRepository.findById(itemId, tenantId);
         if (!item) {
             throw new AppError("Item not found", 404);
         }
 
         if (actionType === 'CLEARANCE') {
-            // Move to Clearance Category
-            // We append "Clearance" to category or set it directly? 
-            // Better to change category to "Clearance".
-            const updated = await this.inventoryRepository.update(itemId, userId, {
+            const updated = await this.inventoryRepository.update(itemId, tenantId, {
                 category: "Clearance Sale"
             });
-            info(`Item ${item.name} moved to Clearance by user ${userId}`);
+            info(`Item ${item.name} moved to Clearance by user in tenant ${tenantId}`);
             return updated;
         } else if (actionType === 'REDUCE_MARGIN') {
-            // Reduce selling price
-            // value is expected to be percentage reduction or flat amount? 
-            // Let's assume percentage for now, or new price. 
-            // Requirement says "prompt the owner to reduce the margin". Owner likely provides a new price.
-            // Let's assume 'value' is the NEW Selling Price.
-
             if (!value || value <= 0) {
                 throw new AppError("Valid new selling price is required", 400);
             }
 
-            // Check if below cost (Allow it, but maybe warn? For now just allow)
-            const updated = await this.inventoryRepository.update(itemId, userId, {
+            const updated = await this.inventoryRepository.update(itemId, tenantId, {
                 sellingPrice: value
             });
-            info(`Item ${item.name} price reduced to ${value} by user ${userId}`);
+            info(`Item ${item.name} price reduced to ${value} by user in tenant ${tenantId}`);
             return updated;
         }
 

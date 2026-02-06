@@ -14,12 +14,15 @@ router.get("/categories", protect, categoryController.getAllCategories);
 router.post("/", protect, inventoryController.addItem);
 router.post("/import", protect, importLimiter, inventoryController.importItems);
 router.get("/", protect, inventoryController.getAllItems);
+router.get("/inventory-stats", protect, inventoryController.getInventoryStats);
 router.get("/low-stock", protect, inventoryController.getLowStockItems);
 router.get("/aging-report", protect, inventoryController.getStockAgingReport);
 router.post("/aging-action", protect, inventoryController.performAgingAction);
 router.post("/batch-price-update", protect, inventoryController.batchPriceUpdate);
 router.get("/reprint-queue", protect, inventoryController.getReprintQueue);
 router.delete("/reprint-queue", protect, inventoryController.clearReprintQueue);
+router.put("/bulk/category", protect, inventoryController.bulkUpdateCategory);
+router.put("/bulk/stock", protect, inventoryController.bulkAdjustStock);
 router.get("/:id", protect, inventoryController.getSingleItem);
 router.put(
     "/:id",
@@ -39,5 +42,9 @@ router.delete(
     requirePermission("delete:item"),
     inventoryController.deleteItem
 );
+
+router.post("/:id/duplicate", protect, inventoryController.duplicateItem);
+router.patch("/:id/toggle-status", protect, inventoryController.toggleItemStatus);
+router.get("/:id/history", protect, inventoryController.getItemStockHistory);
 
 export default router;

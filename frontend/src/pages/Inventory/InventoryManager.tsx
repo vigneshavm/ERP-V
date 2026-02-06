@@ -8,9 +8,17 @@ import {
     deleteItem as deleteSingleItem,
     deleteItemsBatch,
     addItem,
-    updateItem
+    updateItem,
+    bulkUpdateCategory,
+    bulkAdjustStock,
+    duplicateItem,
+    toggleItemStatus,
+    getStockHistory,
+    getInventoryStats
 } from "../../redux/slices/inventorySlice";
 import ProductModal from "./ProductModal";
+import { BulkCategoryModal, BulkAdjustmentModal } from "./BulkActionModals";
+import { StockHistoryDrawer } from "./StockHistoryPanel";
 import { Product } from "../../types/product";
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
@@ -35,6 +43,12 @@ import {
     X,
     AlertOctagon,
     Percent,
+    Eye,
+    EyeOff,
+    History,
+    MoreHorizontal,
+    Copy,
+    Trash2,
 } from 'lucide-react';
 
 const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) => (
@@ -59,17 +73,43 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) =>
 
 const InventoryManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { items, isLoading, agingReport } = useSelector((state: RootState) => state.inventory);
+    const { items, isLoading, agingReport, pagination, stockHistory, inventoryStats } = useSelector((state: RootState) => state.inventory);
     const { user } = useSelector((state: RootState) => state.auth);
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [showAgingModal, setShowAgingModal] = useState(false);
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState('ALL');
+    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [page, setPage] = useState(1);
+
+    // Bulk Action States
+    const [showMoreActions, setShowMoreActions] = useState(false);
+    const [showCategoryMoveModal, setShowCategoryMoveModal] = useState(false);
+    const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
+
+    // Row Action States
+    const [rowActionDropdown, setRowActionDropdown] = useState<string | null>(null);
+    const [showStockHistory, setShowStockHistory] = useState(false);
+    const [historyItem, setHistoryItem] = useState<{ id: string; name: string } | null>(null);
 
     useEffect(() => {
-        dispatch(getAllItems());
-    }, [dispatch]);
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+        dispatch(getInventoryStats());
+    }, [dispatch, page, debouncedSearch, selectedCategory]);
 
     const handleOpenAgingReport = () => {
         dispatch(getAgingReport());
@@ -91,24 +131,11 @@ const InventoryManager: React.FC = () => {
         dispatch(getAgingReport());
     };
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('ALL');
-    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-    const categories = useMemo(() => {
+    const categoryList = useMemo(() => {
         const cats = new Set(items.map((i: any) => i.category).filter(Boolean));
         return ['ALL', ...Array.from(cats)];
     }, [items]);
-
-    const filteredItems = useMemo(() => {
-        return items.filter((item: any) => {
-            const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (item.sku && item.sku.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (item.barcode && item.barcode.toLowerCase().includes(searchTerm.toLowerCase()));
-            const matchesCategory = selectedCategory === 'ALL' || item.category === selectedCategory;
-            return matchesSearch && matchesCategory;
-        });
-    }, [items, searchTerm, selectedCategory]);
 
     const toggleSelect = (id: string) => {
         const newSet = new Set(selectedItems);
@@ -118,10 +145,10 @@ const InventoryManager: React.FC = () => {
     };
 
     const toggleSelectAll = () => {
-        if (selectedItems.size === filteredItems.length && filteredItems.length > 0) {
+        if (selectedItems.size === items.length && items.length > 0) {
             setSelectedItems(new Set());
         } else {
-            setSelectedItems(new Set(filteredItems.map((i: any) => i._id)));
+            setSelectedItems(new Set(items.map((i: any) => i._id)));
         }
     };
 
@@ -163,12 +190,53 @@ const InventoryManager: React.FC = () => {
         }
     };
 
+    const handleImportSKUsOpen = () => {
+        setShowImportModal(true);
+    };
+
+    const onBulkCategoryConfirm = async (category: string) => {
+        await dispatch(bulkUpdateCategory({ ids: Array.from(selectedItems), category }));
+        setSelectedItems(new Set());
+        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+    };
+
+    const onBulkAdjustmentConfirm = async (adjustment: number, type: 'ADD' | 'SUBTRACT' | 'SET') => {
+        await dispatch(bulkAdjustStock({ ids: Array.from(selectedItems), adjustment, type }));
+        setSelectedItems(new Set());
+        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+    };
+
+    const handleDuplicateItem = async (id: string) => {
+        await dispatch(duplicateItem(id));
+        setRowActionDropdown(null);
+    };
+
+    const handleToggleStatus = async (id: string) => {
+        await dispatch(toggleItemStatus(id));
+        setRowActionDropdown(null);
+    };
+
+    const handleViewHistory = async (id: string, name: string) => {
+        setHistoryItem({ id, name });
+        await dispatch(getStockHistory(id));
+        setShowStockHistory(true);
+        setRowActionDropdown(null);
+    };
+
     const inventoryMetrics = useMemo(() => {
+        if (inventoryStats) {
+            return {
+                totalItems: inventoryStats.totalItems,
+                lowStock: inventoryStats.lowStockCount,
+                totalValuation: inventoryStats.totalValuation
+            };
+        }
+        // Fallback to page-level if stats not yet loaded
         const totalItems = items.length;
         const lowStock = items.filter((i: any) => i.stockQty <= i.lowStockLimit).length;
         const totalValuation = items.reduce((acc, i) => acc + (i.stockQty * (i.costPrice || 0)), 0);
         return { totalItems, lowStock, totalValuation };
-    }, [items]);
+    }, [items, inventoryStats]);
 
     return (
         <Layout>
@@ -251,7 +319,7 @@ const InventoryManager: React.FC = () => {
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
                         >
-                            {categories.map(cat => (
+                            {categoryList.map(cat => (
                                 <option key={cat} value={cat}>{cat.replace(/_/g, ' ')}</option>
                             ))}
                         </select>
@@ -266,9 +334,50 @@ const InventoryManager: React.FC = () => {
                                 Trash ({selectedItems.size})
                             </button>
                         )}
-                        <button className="px-6 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-main rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm">
-                            More Actions
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowMoreActions(!showMoreActions)}
+                                className="px-6 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-main rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm flex items-center gap-2"
+                            >
+                                More Actions <MoreVertical className="w-4 h-4" />
+                            </button>
+
+                            {showMoreActions && (
+                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-700 mb-1">
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Bulk Operations</p>
+                                    </div>
+                                    <button
+                                        disabled={selectedItems.size === 0}
+                                        onClick={() => { setShowMoreActions(false); /* handlePrintLabels(); */ }}
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Barcode className="w-4 h-4" /> Print Labels ({selectedItems.size})
+                                    </button>
+                                    <button
+                                        disabled={selectedItems.size === 0}
+                                        onClick={() => { setShowMoreActions(false); setShowCategoryMoveModal(true); }}
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Tag className="w-4 h-4" /> Change Category
+                                    </button>
+                                    <button
+                                        disabled={selectedItems.size === 0}
+                                        onClick={() => { setShowMoreActions(false); setShowAdjustmentModal(true); }}
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <CheckSquare className="w-4 h-4" /> Stock Adjustment
+                                    </button>
+                                    <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
+                                    <button
+                                        onClick={() => { setShowMoreActions(false); setShowImportModal(true); }}
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-emerald-500/5 hover:text-emerald-500 transition-all flex items-center gap-3"
+                                    >
+                                        <Download className="w-4 h-4" /> Import Excel/CSV
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -280,7 +389,7 @@ const InventoryManager: React.FC = () => {
                                 <tr>
                                     <th className="px-6 py-5 w-10">
                                         <button onClick={toggleSelectAll} className="text-neutral-400 hover:text-primary transition-all">
-                                            {selectedItems.size === filteredItems.length && filteredItems.length > 0 ?
+                                            {selectedItems.size === items.length && items.length > 0 ?
                                                 <CheckSquare className="w-5 h-5 text-primary" /> :
                                                 <Square className="w-5 h-5" />
                                             }
@@ -302,14 +411,14 @@ const InventoryManager: React.FC = () => {
                                             <p className="mt-4 text-xs font-black uppercase tracking-widest text-neutral-400">Indexing Stock...</p>
                                         </td>
                                     </tr>
-                                ) : filteredItems.length === 0 ? (
+                                ) : items.length === 0 ? (
                                     <tr>
                                         <td colSpan={7} className="p-24 text-center text-neutral-400 font-black uppercase tracking-[0.3em] text-xs italic opacity-50">
                                             No SKUs found in this node
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredItems.map((item: any) => {
+                                    items.map((item: any) => {
                                         const isLowStock = item.stockQty <= item.lowStockLimit;
                                         const isSelected = selectedItems.has(item._id);
                                         return (
@@ -328,7 +437,12 @@ const InventoryManager: React.FC = () => {
                                                             {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-neutral-400" />}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <div className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight truncate max-w-[200px] group-hover:text-primary transition-colors">{item.name}</div>
+                                                            <div
+                                                                className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight truncate max-w-[200px] group-hover:text-primary transition-colors cursor-pointer"
+                                                                onClick={() => handleEditProduct(item)}
+                                                            >
+                                                                {item.name}
+                                                            </div>
                                                             <div className="flex items-center gap-2 mt-1">
                                                                 <span className="text-[10px] text-neutral-500 font-bold">SKU: {item.sku || 'N/A'}</span>
                                                                 {item.barcode && <div className="flex items-center gap-1"><Barcode className="w-3 h-3 text-neutral-400" /><span className="text-[10px] text-neutral-500 font-bold">{item.barcode}</span></div>}
@@ -362,22 +476,52 @@ const InventoryManager: React.FC = () => {
                                                         {isLowStock ? 'Critical Low' : 'In Stock'}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-5 text-right">
-                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                <td className="px-6 py-5 text-right relative">
+                                                    <div className="flex items-center justify-end gap-2">
                                                         <button
-                                                            className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"
-                                                            title="Edit SKU"
+                                                            onClick={() => setRowActionDropdown(rowActionDropdown === item._id ? null : item._id)}
+                                                            className={`p-2.5 rounded-xl transition-all shadow-sm ${rowActionDropdown === item._id ? 'bg-primary text-white' : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-400 hover:text-primary'}`}
+                                                            title="More Actions"
                                                         >
-                                                            <Edit3 className="w-4 h-4" />
+                                                            <MoreVertical className="w-5 h-5" />
                                                         </button>
-                                                        <button
-                                                            onClick={() => handleDeleteSingle(item._id, item.name)}
-                                                            className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
-                                                            title="Delete SKU"
-                                                        >
-                                                            <X className="w-4 h-4" />
-                                                        </button>
-                                                        <button className="p-2.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-500 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-600 hover:text-neutral-900 dark:hover:text-white transition-all shadow-sm"><MoreVertical className="w-4 h-4" /></button>
+
+                                                        {rowActionDropdown === item._id && (
+                                                            <div className="absolute right-6 top-16 w-56 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200 text-left">
+                                                                <button
+                                                                    onClick={() => { handleEditProduct(item); setRowActionDropdown(null); }}
+                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3"
+                                                                >
+                                                                    <Edit3 className="w-4 h-4" /> Edit Specifications
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleViewHistory(item._id, item.name)}
+                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3"
+                                                                >
+                                                                    <History className="w-4 h-4" /> Stock History
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDuplicateItem(item._id)}
+                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3"
+                                                                >
+                                                                    <Copy className="w-4 h-4" /> Duplicate SKU
+                                                                </button>
+                                                                <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
+                                                                <button
+                                                                    onClick={() => handleToggleStatus(item._id)}
+                                                                    className={`w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${item.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}
+                                                                >
+                                                                    {item.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                                    {item.isActive ? 'Deactivate Record' : 'Activate Record'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => { handleDeleteSingle(item._id, item.name); setRowActionDropdown(null); }}
+                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 transition-all flex items-center gap-3"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" /> Archive Product
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -389,11 +533,25 @@ const InventoryManager: React.FC = () => {
 
                         {/* Pagination */}
                         <div className="px-8 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/30 dark:bg-neutral-800/30 flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Showing {filteredItems.length} of {items.length} Registered Products</div>
+                            <div className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Showing {items.length} of {pagination?.total || items.length} Registered Products</div>
                             <div className="flex items-center gap-4">
-                                <button className="p-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-400 hover:text-primary hover:border-primary transition-all shadow-sm rounded-xl"><ChevronLeft className="w-5 h-5" /></button>
-                                <span className="text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-inner text-main">Page 01</span>
-                                <button className="p-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-400 hover:text-primary hover:border-primary transition-all shadow-sm rounded-xl"><ChevronRight className="w-5 h-5" /></button>
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="p-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-400 hover:text-primary hover:border-primary transition-all shadow-sm rounded-xl disabled:opacity-50"
+                                >
+                                    <ChevronLeft className="w-5 h-5" />
+                                </button>
+                                <span className="text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-inner text-main">
+                                    Page {page.toString().padStart(2, '0')}
+                                </span>
+                                <button
+                                    onClick={() => setPage(p => p + 1)}
+                                    disabled={pagination ? page >= pagination.pages : items.length < 20}
+                                    className="p-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-400 hover:text-primary hover:border-primary transition-all shadow-sm rounded-xl disabled:opacity-50"
+                                >
+                                    <ChevronRight className="w-5 h-5" />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -418,6 +576,37 @@ const InventoryManager: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            <ProductModal
+                isOpen={isProductModalOpen}
+                onClose={() => setIsProductModalOpen(false)}
+                onSave={handleSaveProduct}
+                product={editingProduct}
+                isLoading={isLoading}
+            />
+
+            <BulkCategoryModal
+                isOpen={showCategoryMoveModal}
+                onClose={() => setShowCategoryMoveModal(false)}
+                onConfirm={onBulkCategoryConfirm}
+                selectedCount={selectedItems.size}
+                categories={categoryList}
+            />
+
+            <BulkAdjustmentModal
+                isOpen={showAdjustmentModal}
+                onClose={() => setShowAdjustmentModal(false)}
+                onConfirm={onBulkAdjustmentConfirm}
+                selectedCount={selectedItems.size}
+            />
+
+            <StockHistoryDrawer
+                isOpen={showStockHistory}
+                onClose={() => setShowStockHistory(false)}
+                itemName={historyItem?.name || ''}
+                history={stockHistory}
+                isLoading={isLoading}
+            />
 
             {/* Stock Aging Modal */}
             {showAgingModal && (

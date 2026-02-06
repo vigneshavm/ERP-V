@@ -58,7 +58,7 @@ export const getDevices = asyncHandler(async (req: Request, res: Response) => {
     res.json({ success: true, data: devices });
 });
 
-export const addDevice = asyncHandler(async (req: Request, res: Response) => {
+export const addDevice = asyncHandler(async (_req: Request, res: Response) => {
     // Generate QR or similar
     res.json({
         success: true,
@@ -89,11 +89,11 @@ export const getBackups = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-export const triggerBackup = asyncHandler(async (req: Request, res: Response) => {
+export const triggerBackup = asyncHandler(async (_req: Request, res: Response) => {
     res.json({ success: true, message: "Backup started successfully" });
 });
 
-export const restoreBackup = asyncHandler(async (req: Request, res: Response) => {
+export const restoreBackup = asyncHandler(async (_req: Request, res: Response) => {
     res.json({ success: true, message: "Restore process initiated" });
 });
 

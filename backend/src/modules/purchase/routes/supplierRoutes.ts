@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get('/analytics', protect, getSupplierAnalytics);
 router.get('/groups', protect, getGroups); // Fix for 500 error on /suppliers/groups
-router.get('/statements', protect, (req, res) => {
+router.get('/statements', protect, (_req, res) => {
     // Placeholder to prevent collision with /:id
     res.status(200).json({ success: true, message: "Statements endpoint ready" });
 });

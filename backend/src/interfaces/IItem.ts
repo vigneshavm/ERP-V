@@ -15,6 +15,7 @@ export interface IItem extends Document {
     size?: string;
     washingInstructions?: string;
     categoryCode?: string;
+    isActive: boolean;
     addedBy: string; // ObjectId of User - Keep for audit
     tenantId: Types.ObjectId | string; // ObjectId of Tenant - NEW: Scoping
 
