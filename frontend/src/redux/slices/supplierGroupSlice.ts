@@ -13,6 +13,11 @@ export interface SupplierGroup {
     creditLimit: number;
     discountPercent: number;
     icon: string;
+    nature?: string;
+    region?: string;
+    financialCategory?: string;
+    priority?: string;
+    taxType?: string;
     memberCount?: number; // Computed on frontend for now
 }
 

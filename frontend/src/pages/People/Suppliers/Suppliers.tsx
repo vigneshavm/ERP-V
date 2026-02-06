@@ -122,12 +122,13 @@ const Suppliers: React.FC = () => {
   });
 
   // Calculate Pending Dues from Supplier Analytics
-  const pendingDues = suppliers.reduce((sum, s) => sum + (s.pendingAmount || 0), 0);
+  const pendingDues = suppliers.reduce((sum, s) => sum + (s.totalOutstanding || 0), 0);
+  const overdueTotal = suppliers.reduce((sum, s) => sum + (s.overdueAmount || 0), 0);
 
   const metrics = [
     { label: 'Total Suppliers', value: suppliers.length, icon: Users, color: 'indigo', trend: `+${suppliers.filter(s => new Date(s.createdAt!).getMonth() === new Date().getMonth()).length} this month` },
-    { label: 'Active Partners', value: suppliers.filter(s => s.status === 'active').length, icon: ShieldCheck, color: 'emerald', trend: `${Math.round((suppliers.filter(s => s.status === 'active').length / (suppliers.length || 1)) * 100)}%` },
-    { label: 'Pending Dues', value: `₹${(pendingDues / 100000).toFixed(2)}L`, icon: TrendingUp, color: 'amber', trend: 'High' }
+    { label: 'Overdue Amount', value: `₹${(overdueTotal / 1000).toFixed(1)}k`, icon: ShieldCheck, color: 'red', trend: `${suppliers.filter(s => s.paymentStatus === 'Overdue').length} Suppliers` },
+    { label: 'Total Outstanding', value: `₹${(pendingDues / 100000).toFixed(2)}L`, icon: TrendingUp, color: 'amber', trend: 'High' }
   ];
 
   // Grouping Logic
@@ -238,7 +239,7 @@ const Suppliers: React.FC = () => {
                   <th className="px-8 py-5">Supplier Profile</th>
                   <th className="px-8 py-5">Contact Node</th>
                   <th className="px-8 py-5">Classification</th>
-                  <th className="px-8 py-5">Operational Status</th>
+                  <th className="px-8 py-5">Outstanding Balance</th>
                   <th className="px-8 py-5">Payment Status</th>
                   <th
                     className="px-8 py-5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors group"
@@ -288,7 +289,7 @@ const Suppliers: React.FC = () => {
                   Object.entries(groupedSuppliers).map(([groupName, groupSuppliers]) => {
                     const isExpanded = expandedGroups.includes(groupName);
                     const groupTotal = groupSuppliers.reduce((sum, s) => sum + (s.totalAmount || 0), 0);
-                    const groupPending = groupSuppliers.reduce((sum, s) => sum + (s.pendingAmount || 0), 0);
+                    const groupPending = groupSuppliers.reduce((sum, s) => sum + (s.totalOutstanding || 0), 0);
                     const groupBillCount = groupSuppliers.reduce((sum, s) => sum + (s.billCount || 0), 0);
 
                     return (
@@ -325,7 +326,7 @@ const Suppliers: React.FC = () => {
                             {groupPending > 0 ? (
                               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
                                 <TrendingUp className="w-3 h-3" />
-                                <span className="text-xs font-black">₹{groupPending.toLocaleString('en-IN')} Due</span>
+                                <span className="text-xs font-black">₹{groupPending.toLocaleString('en-IN')} Outstanding</span>
                               </div>
                             ) : (
                               <span className="text-xs font-bold text-emerald-500">No Dues</span>
@@ -361,17 +362,23 @@ const Suppliers: React.FC = () => {
                               </span>
                             </td>
                             <td className="px-8 py-6">
-                              {/* Status Logic Simplified for Child Row */}
-                              {supplier.status === 'active' ? (
-                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                              ) : (
-                                <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                              {/* Outstanding Balance */}
+                              <span className={`text-xs font-bold ${supplier.totalOutstanding && supplier.totalOutstanding > 10000 ? 'text-red-500' : 'text-slate-700 dark:text-slate-300'}`}>
+                                ₹{(supplier.totalOutstanding || 0).toLocaleString('en-IN')}
+                              </span>
+                              {supplier.isCreditRisk && (
+                                <span className="ml-2 px-1.5 py-0.5 bg-red-100 text-red-600 text-[9px] rounded font-bold">Risk</span>
                               )}
                             </td>
                             <td className="px-8 py-6">
                               {(() => {
                                 const status = supplier.paymentStatus || 'Good';
-                                if (status === 'Overdue') return <span className="text-[10px] font-bold text-red-500">Overdue</span>;
+                                if (status === 'Overdue') return (
+                                  <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-red-500">Overview</span>
+                                    <span className="text-[9px] text-red-500 font-medium">₹{(supplier.overdueAmount || 0).toLocaleString()}</span>
+                                  </div>
+                                );
                                 if (status === 'Due Soon') return <span className="text-[10px] font-bold text-amber-500">Due Soon</span>;
                                 return <span className="text-[10px] font-bold text-emerald-500">Good</span>;
                               })()}
@@ -431,31 +438,34 @@ const Suppliers: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-8 py-6">
-                        {supplier.status === 'active' ? (
-                          <div className="flex items-center gap-2 text-emerald-500">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                            <span className="text-[10px] font-black uppercase tracking-widest">Active</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 text-slate-400">
-                            <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-                            <span className="text-[10px] font-black uppercase tracking-widest">Inactive</span>
-                          </div>
-                        )}
+                        <div className="flex flex-col">
+                          <span className={`text-sm font-black ${supplier.totalOutstanding && supplier.totalOutstanding > 0 ? 'text-slate-800 dark:text-white' : 'text-slate-400'}`}>
+                            ₹{(supplier.totalOutstanding || 0).toLocaleString('en-IN')}
+                          </span>
+                          {supplier.isCreditRisk && (
+                            <span className="text-[9px] font-bold text-red-500">Credit Limit Exceeded</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-8 py-6">
                         {(() => {
                           const status = supplier.paymentStatus || 'Good';
                           if (status === 'Overdue') return (
-                            <div className="flex items-center gap-2 text-red-500">
-                              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                              <span className="text-[10px] font-black uppercase tracking-widest">Overdue</span>
+                            <div className="flex flex-col gap-1 text-red-500">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Overdue</span>
+                              </div>
+                              <span className="text-[10px] font-bold ml-4">₹{(supplier.overdueAmount || 0).toLocaleString()}</span>
                             </div>
                           );
                           if (status === 'Due Soon') return (
-                            <div className="flex items-center gap-2 text-amber-500">
-                              <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                              <span className="text-[10px] font-black uppercase tracking-widest">Due Soon</span>
+                            <div className="flex flex-col gap-1 text-amber-500">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Due Soon</span>
+                              </div>
+                              <span className="text-[10px] font-bold ml-4">₹{(supplier.dueNext7DaysAmount || 0).toLocaleString()}</span>
                             </div>
                           );
                           return (

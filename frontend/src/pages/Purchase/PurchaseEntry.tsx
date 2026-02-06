@@ -430,9 +430,25 @@ const PurchaseEntry: React.FC = () => {
         } catch (err: any) {
             console.error(err);
             const code = err.response?.data?.code;
-            if (code === 'CREDIT_LIMIT_EXCEEDED' || code === 'CREDIT_PERIOD_EXCEEDED') {
+            if (code === 'CREDIT_LIMIT_EXCEEDED') {
+                const { currentOutstanding, limit, shortage } = err.response?.data?.data || {};
+                const confirmOverride = window.confirm(
+                    `⚠️ CREDIT LIMIT EXCEEDED\n\n` +
+                    `Outstanding: Rs. ${currentOutstanding?.toLocaleString()}\n` +
+                    `Limit: Rs. ${limit?.toLocaleString()}\n` +
+                    `Shortage: Rs. ${shortage?.toLocaleString()}\n\n` +
+                    `Do you want to AUTHORIZE this purchase and override the limit?`
+                );
+
+                if (confirmOverride) {
+                    setIsProcessing(false);
+                    // Retry with override flag
+                    await handleSave(status, { overrideCreditLimit: true });
+                    return;
+                }
+            } else if (code === 'CREDIT_PERIOD_EXCEEDED') {
                 const reason = err.response?.data?.message || 'Supplier Limit Reached';
-                const promiseDate = prompt(`⚠️ SUPPLIER CREDIT LOCKOUT\n\n${reason}\n\nMANAGER ACTION: Enter Payment Promise Date (YYYY-MM-DD) to bypass:`);
+                const promiseDate = prompt(`⚠️ SUPPLIER LOCKOUT (Overdue Bills)\n\n${reason}\n\nMANAGER ACTION: Enter Payment Promise Date (YYYY-MM-DD) to bypass:`);
                 if (promiseDate) {
                     setIsProcessing(false);
                     await handleSave(status, { paymentPromiseDate: promiseDate });

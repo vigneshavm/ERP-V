@@ -5,7 +5,11 @@ import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { name, description, color, paymentTerms, creditLimit, discountPercent, icon } = req.body;
+        const {
+            name, description, color, nature, region,
+            financialCategory, priority, taxType,
+            paymentTerms, creditLimit, discountPercent, icon
+        } = req.body;
         const tenantId = req.user?.tenantId;
 
         if (!tenantId) {
@@ -22,6 +26,11 @@ export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
             name,
             description,
             color,
+            nature,
+            region,
+            financialCategory,
+            priority,
+            taxType,
             paymentTerms,
             creditLimit,
             discountPercent,

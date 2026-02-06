@@ -66,6 +66,11 @@ import { LazyModules } from "../../services/ModuleRegistry";
 // but most are moved to the registry.
 // Local lazy loads removed - now using LazyModules from ModuleRegistry
 
+const PayableSnapshot = lazy(() => import('../../pages/Purchase/PayableSnapshot'));
+const UnclearedCheques = lazy(() => import('../../pages/Purchase/UnclearedCheques'));
+const RateRevisionList = lazy(() => import('../../pages/Purchase/RateRevisionList'));
+const RateRevisionForm = lazy(() => import('../../pages/Purchase/RateRevisionForm'));
+
 interface TenantViewProps {
     currentTenant: Tenant | null;
     isLoggedIn: boolean;
@@ -434,6 +439,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                     <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
                                 </EntitlementGuard>
                             } />
+                            <Route path="/suppliers/:id/ledger" element={
+                                <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
+                            } />
                             <Route path="/purchase/grn/new" element={
                                 <Suspense fallback={<div>Loading GRN Form...</div>}><LazyModules.GRNForm /></Suspense>
                             } />
@@ -470,11 +478,26 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/purchase/payments" element={
                                 <Suspense fallback={<div>Loading Payments...</div>}><LazyModules.SupplierPayments /></Suspense>
                             } />
+                            <Route path="/purchase/payments/add" element={
+                                <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
+                            } />
                             <Route path="/purchase/payment-out" element={
                                 <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
                             } />
+                            <Route path="/purchase/snapshot" element={
+                                <Suspense fallback={<div>Loading Snapshot...</div>}><PayableSnapshot /></Suspense>
+                            } />
                             <Route path="/purchase/payment-out/:vendorId" element={
                                 <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
+                            } />
+                            <Route path="/purchase/cheques-vault" element={
+                                <Suspense fallback={<div>Loading Vault...</div>}><UnclearedCheques /></Suspense>
+                            } />
+                            <Route path="/purchase/rate-revisions" element={
+                                <Suspense fallback={<div>Loading Revisions...</div>}><RateRevisionList /></Suspense>
+                            } />
+                            <Route path="/purchase/rate-revisions/new" element={
+                                <Suspense fallback={<div>Loading Form...</div>}><RateRevisionForm /></Suspense>
                             } />
                             <Route path="/growth/tenant-architect/:tenantId" element={
                                 <Suspense fallback={<div>Loading Tenant Architect...</div>}><LazyModules.TenantArchitect /></Suspense>

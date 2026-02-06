@@ -73,8 +73,10 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
 
         // Supplier Credit Protocol
         if (status === 'COMPLETED' && supplier) {
-            const { paymentPromiseDate } = req.body;
-            if (!paymentPromiseDate) {
+            const { paymentPromiseDate, overrideCreditLimit } = req.body;
+
+            // If override is TRUE, skip these checks
+            if (!paymentPromiseDate && !overrideCreditLimit) {
                 // 1. Check Credit Period Limit (Overdue Invoices)
                 const overdueBills = await Bill.countDocuments({
                     supplier: supplier._id,
@@ -104,7 +106,11 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                         const error: any = new Error(`Credit Limit Exceeded. Outstanding: ${currentOutstanding}, Limit: ${supplier.creditLimit}`);
                         error.statusCode = 403;
                         error.code = 'CREDIT_LIMIT_EXCEEDED';
-                        error.shortage = (currentOutstanding + newAmount) - supplier.creditLimit;
+                        error.data = {
+                            currentOutstanding,
+                            limit: supplier.creditLimit,
+                            shortage: (currentOutstanding + newAmount) - supplier.creditLimit
+                        };
                         throw error;
                     }
                 }
@@ -154,7 +160,8 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                 sellingPrice: i.selling_price || 0,
                 color: i.color,
                 size: i.size,
-                categoryCode: catCode
+                categoryCode: catCode,
+                lotNumber: i.lot_number
             });
         }
 
@@ -180,17 +187,24 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
             const product = await Item.findById(item.productId).session(session);
             if (product) {
                 purchase.items[i].productName = product.name;
-                if (status === 'COMPLETED') {
-                    product.stockQty = (product.stockQty || 0) + item.quantity;
-                    // Update prices and metadata
-                    if (item.sellingPrice && item.sellingPrice > 0) {
-                        product.sellingPrice = item.sellingPrice;
-                        product.costPrice = item.rate;
-                    }
-                    if (item.color) product.color = item.color;
-                    if (item.size) product.size = item.size;
+                if (status === 'COMPLETED' || status === 'RECEIVED') {
+                    // Refactored to use InventoryService for robust Stock Management
+                    const { container } = await import('../../../config/di-container.js');
+                    const { InventoryService } = await import('../../inventory/services/InventoryService.js');
+                    const inventoryService = container.resolve(InventoryService);
 
-                    await product.save({ session });
+                    await inventoryService.addStock(
+                        item.productId.toString(),
+                        item.quantity,
+                        item.rate,
+                        {
+                            batchNumber: (item as any).lotNumber || `${purchaseNumber}-Batch`,
+                            expiryDate: undefined, // Add inputs for this later
+                            supplierId: purchase.vendorId.toString()
+                        },
+                        req.user?.tenantId || 'default',
+                        req.user
+                    );
                 }
             }
         }
@@ -202,17 +216,20 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
             const dueDate = new Date(purchase.date);
             dueDate.setDate(dueDate.getDate() + creditPeriod);
 
+            const isCash = req.body.details?.payment_method === 'Cash';
+
             const bill = new Bill({
                 billNo: `BILL-${purchaseNumber}`,
                 date: purchase.date,
                 supplier: purchase.vendorId,
                 amount: purchase.totalAmount,
-                status: 'unpaid',
-                paymentMethod: 'cash',
+                status: isCash ? 'paid' : 'unpaid',
+                paymentMethod: req.body.details?.payment_method || 'credit',
                 createdBy: req.user?._id,
                 description: `Generated from Purchase ${purchaseNumber}`,
-                paymentStatus: 'unpaid',
-                dueDate: dueDate,
+                paymentStatus: isCash ? 'paid' : 'unpaid',
+                paidAmount: isCash ? purchase.totalAmount : 0,
+                dueDate: isCash ? purchase.date : dueDate,
                 tenantId: req.user?.tenantId
             });
             await bill.save({ session });
@@ -234,7 +251,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
         const responseData = {
             message: err.message,
             code: err.code,
-            shortage: err.shortage
+            data: err.data // Pass back detailed data for frontend modal
         };
         res.status(status).json(responseData);
     }
@@ -374,5 +391,57 @@ export default {
     getPurchaseById,
     updatePurchase,
     deletePurchase,
-    getSupplierTotals
+    getSupplierTotals,
+    getPurchaseHistory
+};
+
+/**
+ * @swagger
+ * /api/purchase/history/item/{itemId}:
+ *   get:
+ *     summary: Get last 5 purchase history for an item
+ *     tags: [Purchase]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: List of purchase history
+ */
+export const getPurchaseHistory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { itemId } = req.params;
+        const tenantId = req.user?.tenantId;
+
+        // Find last 10 purchases containing this item
+        const purchases = await Purchase.find({
+            tenantId,
+            'items.productId': itemId,
+            status: 'COMPLETED'
+        })
+            .sort({ date: -1 })
+            .limit(10)
+            .populate('vendorId', 'businessName shortCode');
+
+        const history = purchases.map(p => {
+            const item = p.items.find(i => i.productId.toString() === itemId);
+            return {
+                _id: p._id,
+                date: p.date,
+                vendorName: (p.vendorId as any)?.businessName || 'Unknown',
+                vendorId: (p.vendorId as any)?._id,
+                quantity: item?.quantity || 0,
+                rate: item?.rate || 0,
+                unit: item?.unitId || ''
+            };
+        });
+
+        res.json({ success: true, data: history });
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
 };

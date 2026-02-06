@@ -21,7 +21,9 @@ export type PurchaseOrderStatus =
     | 'Billed'
     | 'Paid'
     | 'Cancelled'
-    | 'Rejected';
+    | 'Rejected'
+    | 'RECEIVED'
+    | 'COMPLETED';
 
 export type GRNStatus = 'Draft' | 'Submitted' | 'Accepted' | 'Rejected' | 'Partial';
 export type InspectionStatus = 'Accepted' | 'Rejected' | 'Hold' | 'Partial';
@@ -45,6 +47,7 @@ export interface PurchaseOrderItem {
     discount_amount: number;
     line_total: number;
     received_quantity?: number;
+    lot_number?: string;
 }
 
 export interface PurchaseOrder {
@@ -250,6 +253,11 @@ export interface PurchaseBill {
     grn_number?: string;
     items: PurchaseBillItem[];
     amount: number;
+    vendorInvoiceNo?: string;
+    subTotal?: number;
+    discount?: number;
+    freight?: number;
+    roundOff?: number;
     tax_breakdown: TaxBreakdown & { other: number };
     total_amount: number;
     due_date: string;

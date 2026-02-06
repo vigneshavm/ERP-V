@@ -102,6 +102,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         if (grn) {
             const returnItems: PurchaseReturnItem[] = grn.items.map(item => ({
                 id: Math.random().toString(36).substr(2, 9),
+                itemId: item.productId, // Ensure backend receives this for stock adjustment
                 product_id: item.productId,
                 product_name: item.productName,
                 sku: item.sku,

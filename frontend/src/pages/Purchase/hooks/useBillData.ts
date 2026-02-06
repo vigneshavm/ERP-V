@@ -8,6 +8,7 @@ import { PurchaseBill, PurchaseBillItem, PurchaseOrder, GRN, BillStatus } from '
 export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseBill | null) => {
     const [bill, setBill] = useState<Partial<PurchaseBill>>({
         bill_date: new Date().toISOString().split('T')[0],
+        vendorInvoiceNo: '',
         status: 'Received',
         amount: 0,
         total_amount: 0,

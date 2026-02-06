@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import Supplier from '../models/Supplier.js';
 import Purchase from '../models/Purchase.js';
 import PurchaseReturn from '../models/PurchaseReturn.js';
@@ -7,12 +8,23 @@ import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const tenantId = req.user?.tenantId?.toString();
+        const branchId = req.query.branchId as string;
+        const supplierId = req.query.supplierId as string;
+
         if (!tenantId) {
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
+        const matchStage: any = { tenantId };
+        if (supplierId) {
+            matchStage._id = new mongoose.Types.ObjectId(supplierId);
+        }
+        // Note: Supplier itself is global per Tenant, but we filter their TRANSACTIONS by branch
+
+        // We need to filter Bills and Purchases by branchId if provided
+
         const stats = await Supplier.aggregate([
-            { $match: { tenantId } },
+            { $match: matchStage },
             {
                 $lookup: {
                     from: "bills",
@@ -21,7 +33,8 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                         {
                             $match: {
                                 $expr: { $eq: ["$supplier", "$$supplierId"] },
-                                status: { $ne: "paid" }
+                                status: { $ne: "paid" },
+                                ...(branchId ? { branchId: branchId } : {})
                             }
                         }
                     ],
@@ -31,8 +44,15 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
             {
                 $lookup: {
                     from: "purchases",
-                    localField: "_id",
-                    foreignField: "vendorId",
+                    let: { supplierId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$vendorId", "$$supplierId"] },
+                                ...(branchId ? { branchId: branchId } : {})
+                            }
+                        }
+                    ],
                     as: "purchases"
                 }
             },
@@ -48,10 +68,12 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     supplierGroup: 1,
                     groupId: 1,
                     createdAt: 1,
+                    openingBalance: { $ifNull: ["$openingBalance", 0] },
+                    creditLimit: { $ifNull: ["$creditLimit", 0] },
                     // Metrics
                     billCount: { $size: "$purchases" },
                     totalAmount: { $sum: "$purchases.totalAmount" },
-                    pendingAmount: {
+                    currentBillOutstanding: {
                         $sum: {
                             $map: {
                                 input: "$unpaidBills",
@@ -70,6 +92,21 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                             }
                         }
                     },
+                    overdueAmount: {
+                        $sum: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: "$unpaidBills",
+                                        as: "bill",
+                                        cond: { $lt: ["$$bill.dueDate", new Date()] }
+                                    }
+                                },
+                                as: "bill",
+                                in: { $subtract: ["$$bill.amount", { $ifNull: ["$$bill.paidAmount", 0] }] }
+                            }
+                        }
+                    },
                     dueSoonCount: {
                         $size: {
                             $filter: {
@@ -78,15 +115,47 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                                 cond: {
                                     $and: [
                                         { $gte: ["$$bill.dueDate", new Date()] },
-                                        { $lt: ["$$bill.dueDate", new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)] }
+                                        { $lt: ["$$bill.dueDate", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)] } // 7 Days
                                     ]
                                 }
+                            }
+                        }
+                    },
+                    dueNext7DaysAmount: {
+                        $sum: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: "$unpaidBills",
+                                        as: "bill",
+                                        cond: {
+                                            $and: [
+                                                { $gte: ["$$bill.dueDate", new Date()] },
+                                                { $lt: ["$$bill.dueDate", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                as: "bill",
+                                in: { $subtract: ["$$bill.amount", { $ifNull: ["$$bill.paidAmount", 0] }] }
                             }
                         }
                     }
                 }
             },
-            { $sort: { createdAt: -1 } }
+            {
+                $addFields: {
+                    totalOutstanding: { $add: ["$openingBalance", "$currentBillOutstanding"] },
+                    creditUtilization: {
+                        $cond: {
+                            if: { $gt: ["$creditLimit", 0] },
+                            then: { $multiply: [{ $divide: [{ $add: ["$openingBalance", "$currentBillOutstanding"] }, "$creditLimit"] }, 100] },
+                            else: 0
+                        }
+                    }
+                }
+            },
+            { $sort: { totalOutstanding: -1 } } // Sort by who we owe the most
         ]);
 
         // Enrich with simplified status string
@@ -95,9 +164,13 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
             if (s.overdueCount > 0) paymentStatus = 'Overdue';
             else if (s.dueSoonCount > 0) paymentStatus = 'Due Soon';
 
+            // Add risk flag if credit limit exceeded (e.g. > 90%)
+            const isCreditRisk = s.creditLimit > 0 && s.totalOutstanding > s.creditLimit;
+
             return {
                 ...s,
-                paymentStatus
+                paymentStatus,
+                isCreditRisk
             };
         });
 
@@ -113,7 +186,8 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
     try {
         const {
             businessName, contactPersonName, contactNo, email, physicalAddress,
-            gstNo, supplierType, openingBalance, balanceType, creditPeriod, status, supplierGroup, groupId
+            gstNo, panNo, supplierType, openingBalance, balanceType, creditPeriod,
+            status, supplierGroup, groupId, defaultPaymentMode, isOneTime, bankAccounts
         } = req.body;
 
         const tenantId = req.user?.tenantId?.toString();
@@ -145,6 +219,7 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
             email,
             physicalAddress,
             gstNo,
+            panNo,
             supplierType,
             openingBalance: openingBalance || 0,
             balanceType: balanceType || 'payable',
@@ -152,6 +227,9 @@ export const createSupplier = async (req: AuthenticatedRequest, res: Response) =
             status: status || 'active',
             supplierGroup: supplierGroup || undefined,
             groupId: groupId || undefined,
+            defaultPaymentMode: defaultPaymentMode || 'NEFT',
+            isOneTime: !!isOneTime,
+            bankAccounts: bankAccounts || [],
             owner: req.user?._id
         });
 
@@ -259,7 +337,53 @@ export const deleteSupplier = async (req: AuthenticatedRequest, res: Response) =
 
         res.status(200).json({ success: true, message: 'Supplier deleted successfully' });
     } catch (error: any) {
-        console.error('Delete Supplier Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const evaluateSupplierPerformance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { evaluateSupplier } = await import('../services/SupplierPerformanceService.js');
+        const metrics = await evaluateSupplier(req.params.id);
+        res.json({ success: true, data: metrics });
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export const getSupplierReports = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const tenantId = req.user?.tenantId?.toString();
+        if (!tenantId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const {
+            getPayablesOverview,
+            getPurchaseTrends,
+            getCashFlowForecast,
+            getProfitabilityAnalysis,
+            getOverdueList
+        } = await import('../services/SupplierReportService.js');
+
+        const [payables, trends, cashFlow, profitability, overdue] = await Promise.all([
+            getPayablesOverview(tenantId),
+            getPurchaseTrends(tenantId),
+            getCashFlowForecast(tenantId),
+            getProfitabilityAnalysis(tenantId),
+            getOverdueList(tenantId)
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                payables,
+                trends,
+                cashFlow,
+                profitability,
+                overdue
+            }
+        });
+    } catch (err: any) {
+        console.error('Report Error', err);
+        res.status(500).json({ message: err.message });
     }
 };

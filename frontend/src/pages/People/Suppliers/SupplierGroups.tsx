@@ -141,9 +141,28 @@ const SupplierGroups: React.FC = () => {
                                         >
                                             {getGroupIcon(group.icon)}
                                         </div>
-                                        <div>
+                                        <div className="flex flex-col gap-1 min-w-[120px]">
                                             <h3 className="font-bold text-neutral-900 dark:text-white">{group.name}</h3>
-                                            <p className="text-sm text-neutral-500">{group.description}</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {group.priority && (
+                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${group.priority === 'High' ? 'bg-rose-100 text-rose-600' :
+                                                            group.priority === 'Medium' ? 'bg-amber-100 text-amber-600' :
+                                                                'bg-emerald-100 text-emerald-600'
+                                                        }`}>
+                                                        {group.priority}
+                                                    </span>
+                                                )}
+                                                {group.nature && (
+                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold uppercase">
+                                                        {group.nature}
+                                                    </span>
+                                                )}
+                                                {group.region && (
+                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-bold uppercase">
+                                                        {group.region}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">

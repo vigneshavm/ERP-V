@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPurchaseReturnItem {
+    itemId: mongoose.Types.ObjectId; // Link to Inventory Item
     productName: string;
     quantity: number;
     rate: number;
@@ -12,6 +13,7 @@ export interface IPurchaseReturnItem {
 export interface IPurchaseReturn extends Document {
     returnId: string;
     bill?: mongoose.Types.ObjectId;
+    debitNoteId?: mongoose.Types.ObjectId; // Link to Debit Note
     supplier: mongoose.Types.ObjectId;
     returnDate: Date;
     refundMethod: "credit" | "cash" | "bank_transfer" | "adjust_next_bill";
@@ -28,6 +30,11 @@ export interface IPurchaseReturn extends Document {
 }
 
 const purchaseReturnItemSchema = new Schema<IPurchaseReturnItem>({
+    itemId: {
+        type: Schema.Types.ObjectId,
+        ref: "Item",
+        required: true
+    },
     productName: {
         type: String,
         required: true,
@@ -63,6 +70,10 @@ const purchaseReturnSchema = new Schema<IPurchaseReturn>(
         bill: {
             type: Schema.Types.ObjectId,
             ref: "Bill",
+        },
+        debitNoteId: {
+            type: Schema.Types.ObjectId,
+            ref: "DebitNote",
         },
         supplier: {
             type: Schema.Types.ObjectId,

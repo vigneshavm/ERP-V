@@ -98,6 +98,16 @@ export const createBill = async (req: AuthenticatedRequest, res: Response): Prom
             date,
             supplier,
             amount: amountRaw,
+            vendorInvoiceNo,
+            items,
+            subTotal,
+            discount,
+            freight,
+            roundOff,
+            taxBreakdown,
+            grnId,
+            purchaseOrderId,
+            paymentTerms,
             dueDate,
             status: _status,
             description,
@@ -169,11 +179,25 @@ export const createBill = async (req: AuthenticatedRequest, res: Response): Prom
         // Create bill
         const bill = new Bill({
             billNo,
+            vendorInvoiceNo,
             date,
             supplier,
             amount,
+
+            // Details
+            items: items || [],
+            subTotal: subTotal || 0,
+            discount: discount || 0,
+            freight: freight || 0,
+            roundOff: roundOff || 0,
+            taxBreakdown: taxBreakdown || { cgst: 0, sgst: 0, igst: 0, other: 0 },
+
+            grnId,
+            purchaseOrderId,
+
             dueDate: dueDate || undefined,
-            status: paymentStatus === 'paid' ? 'paid' : 'unpaid',
+            paymentTerms,
+            status: paymentStatus === 'paid' ? 'paid' : (_status || 'unpaid'),
             description,
             paymentMethod,
             paidAmount,

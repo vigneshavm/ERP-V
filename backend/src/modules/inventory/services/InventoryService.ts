@@ -364,4 +364,170 @@ export class InventoryService {
 
         return { ...results, alerts };
     }
+    async addStock(
+        itemId: string,
+        quantity: number,
+        rate: number,
+        batchInfo: { batchNumber?: string, expiryDate?: Date, supplierId?: string },
+        tenantId: string,
+        user: any
+    ): Promise<void> {
+        const item = await this.inventoryRepository.findById(itemId, tenantId);
+        if (!item) throw new AppError("Item not found", 404);
+
+        // 1. WAC Calculation
+        // New Cost = ((Old Qty * Old Cost) + (New Qty * New Rate)) / (Old Qty + New Qty)
+        const oldQty = item.stockQty || 0;
+        const oldCost = item.costPrice || 0;
+        const totalVal = (oldQty * oldCost) + (quantity * rate);
+        const newTotalQty = oldQty + quantity;
+        const newWac = newTotalQty > 0 ? totalVal / newTotalQty : rate;
+
+        // 2. Prepare Update
+        const updates: any = {
+            $inc: { stockQty: quantity },
+            $set: { costPrice: parseFloat(newWac.toFixed(2)) }
+        };
+
+        // 3. Batch Tracking
+        if (batchInfo.batchNumber) {
+            updates.$push = {
+                batches: {
+                    batchNumber: batchInfo.batchNumber,
+                    expiryDate: batchInfo.expiryDate,
+                    quantity: quantity,
+                    costPrice: rate, // Store actual purchase cost for this batch
+                    supplierId: batchInfo.supplierId,
+                    receivedDate: new Date()
+                }
+            };
+        }
+
+        await Item.findByIdAndUpdate(itemId, updates);
+
+        // 4. Log
+        await StockLog.create({
+            itemId: item._id,
+            tenantId,
+            type: 'PURCHASE',
+            delta: quantity,
+            finalQty: newTotalQty,
+            reason: `Purchase Recv: ${batchInfo.batchNumber || 'N/A'}`,
+            performedBy: user._id
+        });
+    }
+
+    async reduceStock(
+        itemId: string,
+        quantity: number,
+        tenantId: string,
+        user: any,
+        reason: string = 'SALES'
+    ): Promise<void> {
+        const item: any = await this.inventoryRepository.findById(itemId, tenantId);
+        if (!item) throw new AppError("Item not found", 404);
+
+        if (item.stockQty < quantity) {
+            throw new AppError(`Insufficient stock for ${item.name}. Available: ${item.stockQty}`, 400);
+        }
+
+        // 1. FIFO Logic for Batches
+        let remainingToDeduct = quantity;
+        const updatedBatches = [...(item.batches || [])].sort((a: any, b: any) =>
+            new Date(a.receivedDate).getTime() - new Date(b.receivedDate).getTime()
+        );
+
+        for (const batch of updatedBatches) {
+            if (remainingToDeduct <= 0) break;
+
+            if (batch.quantity >= remainingToDeduct) {
+                batch.quantity -= remainingToDeduct;
+                remainingToDeduct = 0;
+            } else {
+                remainingToDeduct -= batch.quantity;
+                batch.quantity = 0;
+            }
+        }
+
+        // Clean up empty batches
+        const finalBatches = updatedBatches.filter((b: any) => b.quantity > 0);
+
+        await Item.findByIdAndUpdate(itemId, {
+            $inc: { stockQty: -quantity },
+            $set: { batches: finalBatches }
+        });
+
+        await StockLog.create({
+            itemId: item._id,
+            tenantId,
+            type: reason === 'PURCHASE_RETURN' ? 'RETURN' : 'SALES',
+            delta: -quantity,
+            finalQty: item.stockQty - quantity,
+            reason: reason,
+            performedBy: user._id
+        });
+    }
+    async updateBatchCost(
+        itemId: string,
+        batchNumber: string,
+        newCost: number,
+        tenantId: string,
+        user: any
+    ): Promise<void> {
+        const item: any = await this.inventoryRepository.findById(itemId, tenantId);
+        if (!item) throw new AppError("Item not found", 404);
+
+        const batchIndex = item.batches?.findIndex((b: any) => b.batchNumber === batchNumber);
+        if (batchIndex === -1) throw new AppError(`Batch ${batchNumber} not found`, 404);
+
+        const oldCost = item.batches[batchIndex].costPrice;
+
+        // Update Batch Cost
+        item.batches[batchIndex].costPrice = newCost;
+
+        // Recalculate WAC (Weighted Average Cost)
+        // This is complex because we need to know the cost of ALL batches to be accurate.
+        // Assuming current WAC is based on current stock. We can re-derive it.
+        // WAC = Sum(BatchQty * BatchCost) / TotalQty
+        // BUT item.batches might not have all historical batches if they were consumed.
+        // However, standard WAC is usually updated on receipt.
+        // If we change history, we should update current WAC based on *existing* stock weight.
+
+        if (item.stockQty > 0 && item.batches && item.batches.length > 0) {
+            let totalValue = 0;
+            let totalQty = 0;
+
+            // Loop through existing batches to calc new WAC
+            item.batches.forEach((b: any) => {
+                totalValue += (b.quantity || 0) * (b.costPrice || 0);
+                totalQty += (b.quantity || 0);
+            });
+
+            // If there's a discrepancy between batch qty sum and stockQty (due to untracked batches?), 
+            // we should probably trust the calculated WAC from batches for the *batch tracked* portion.
+            // Or simpler: Just Adjust WAC by the diff for the specific batch's *remaining* qty.
+
+            // Let's use the re-calculation from available batches for best accuracy of *current* value.
+            if (totalQty > 0) {
+                item.costPrice = parseFloat((totalValue / totalQty).toFixed(2));
+            }
+        }
+
+        await Item.findByIdAndUpdate(itemId, {
+            $set: {
+                batches: item.batches,
+                costPrice: item.costPrice
+            }
+        });
+
+        await StockLog.create({
+            itemId: item._id,
+            tenantId,
+            type: 'ADJUST',
+            delta: 0,
+            finalQty: item.stockQty,
+            reason: `Cost Revision: Batch ${batchNumber} (${oldCost} -> ${newCost})`,
+            performedBy: user._id
+        });
+    }
 }

@@ -15,6 +15,7 @@ export interface IPurchaseItem {
     color?: string;
     size?: string;
     categoryCode?: string;
+    lotNumber?: string;
 }
 
 export interface IPurchase extends Document {
@@ -52,7 +53,8 @@ const purchaseItemSchema = new Schema({
     sellingPrice: { type: Number, default: 0 },
     color: { type: String },
     size: { type: String },
-    categoryCode: { type: String }
+    categoryCode: { type: String },
+    lotNumber: { type: String }
 }, { _id: false });
 
 const purchaseSchema = new Schema({
@@ -72,7 +74,7 @@ const purchaseSchema = new Schema({
     notes: { type: String },
     status: {
         type: String,
-        enum: ['DRAFT', 'COMPLETED', 'CANCELLED'],
+        enum: ['DRAFT', 'COMPLETED', 'CANCELLED', 'RECEIVED'],
         default: 'DRAFT'
     },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }

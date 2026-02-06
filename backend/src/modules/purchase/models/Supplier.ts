@@ -10,10 +10,30 @@ export interface ISupplier extends Document {
     email: string;
     physicalAddress: string;
     gstNo: string;
-    supplierType: 'manufacturer' | 'wholesaler' | 'distributor';
+    panNo?: string;
+    supplierType: 'manufacturer' | 'wholesaler' | 'distributor' | 'retailer';
     openingBalance: number;
     balanceType: 'payable' | 'receivable';
     creditPeriod: number;
+    creditEnforcement: 'strict' | 'flexible';
+    performanceMetrics?: {
+        totalOrders: number;
+        lateDeliveries: number;
+        totalReturns: number;
+        averageDeliveryTime: number;
+        reliabilityScore: number;
+        lastEvaluated: Date;
+    };
+    defaultPaymentMode?: 'Cash' | 'Cheque' | 'NEFT' | 'RTGS' | 'IMPS' | 'UPI';
+    isOneTime: boolean;
+    bankAccounts: {
+        accountName: string;
+        accountNumber: string;
+        bankName: string;
+        branch: string;
+        ifsc: string;
+        isDefault: boolean;
+    }[];
     status: 'active' | 'inactive';
     supplierGroup?: string; // Brand/Parent Group
     createdAt: Date;
@@ -30,9 +50,10 @@ const SupplierSchema: Schema = new Schema({
     email: { type: String, required: false, lowercase: true, trim: true },
     physicalAddress: { type: String, required: false },
     gstNo: { type: String, required: false },
+    panNo: { type: String, required: false },
     supplierType: {
         type: String,
-        enum: ['manufacturer', 'wholesaler', 'distributor', 'retailer'],
+        enum: ['manufacturer', 'wholesaler', 'distributor', 'retailer', 'other'],
         default: 'manufacturer'
     },
     openingBalance: { type: Number, default: 0 },
@@ -43,6 +64,33 @@ const SupplierSchema: Schema = new Schema({
     },
     creditLimit: { type: Number, default: 0 },
     creditPeriod: { type: Number, default: 30 },
+    creditEnforcement: {
+        type: String,
+        enum: ['strict', 'flexible'],
+        default: 'flexible'
+    },
+    performanceMetrics: {
+        totalOrders: { type: Number, default: 0 },
+        lateDeliveries: { type: Number, default: 0 },
+        totalReturns: { type: Number, default: 0 },
+        averageDeliveryTime: { type: Number, default: 0 }, // in Days
+        reliabilityScore: { type: Number, default: 100 }, // 0 to 100
+        lastEvaluated: { type: Date }
+    },
+    defaultPaymentMode: {
+        type: String,
+        enum: ['Cash', 'Cheque', 'NEFT', 'RTGS', 'IMPS', 'UPI'],
+        default: 'NEFT'
+    },
+    isOneTime: { type: Boolean, default: false },
+    bankAccounts: [{
+        accountName: { type: String },
+        accountNumber: { type: String },
+        bankName: { type: String },
+        branch: { type: String },
+        ifsc: { type: String },
+        isDefault: { type: Boolean, default: false }
+    }],
     status: {
         type: String,
         enum: ['active', 'inactive'],

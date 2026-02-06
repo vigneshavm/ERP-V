@@ -31,14 +31,22 @@ const SupplierDetail: React.FC = () => {
     (state: RootState) => state.suppliers
   );
 
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [selectedBranch, setSelectedBranch] = React.useState<string>(user?.branchId || '');
+
   useEffect(() => {
     if (id) {
-      dispatch(getSupplierById(id) as any);
+      // We'll need to modify the slice to accept params, or just dispatch generic and filter locally?
+      // Actually, the slice usually fetches the static profile.
+      // The analytics (Outstanding info) is fetched via separate call or part of getSupplierById?
+      // Checking getSupplierById implementation... it seems it fetches the whole aggregated object.
+      // We should update the slice thunk to accept query params.
+      dispatch(getSupplierById({ id, branchId: selectedBranch }) as any);
     }
     return () => {
       dispatch(reset() as any);
     };
-  }, [dispatch, id]);
+  }, [dispatch, id, selectedBranch]);
 
   if (isLoading) {
     return (
@@ -74,12 +82,25 @@ const SupplierDetail: React.FC = () => {
         description={supplier.supplierId}
         breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Directory', link: '/suppliers' }, { label: 'Supplier Profile' }]}
         actions={
-          <button
-            onClick={() => navigate(`/suppliers/${supplier._id}/edit`)}
-            className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all"
-          >
-            <Edit3 className="w-4 h-4" /> Edit Profile
-          </button>
+          <div className="flex gap-2">
+            <select
+              value={selectedBranch}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 outline-none"
+            >
+              <option value="">All Branches</option>
+              {/* Ideally fetch branches dynamically, hardcoding for demo/MVP */}
+              <option value="Main">Main Branch</option>
+              <option value="B1">Branch 1</option>
+              <option value="B2">Branch 2</option>
+            </select>
+            <button
+              onClick={() => navigate(`/suppliers/${supplier._id}/edit`)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all"
+            >
+              <Edit3 className="w-4 h-4" /> Edit Profile
+            </button>
+          </div>
         }
       />
 
@@ -230,6 +251,7 @@ const SupplierDetail: React.FC = () => {
           </div>
 
           {/* Operational Insights */}
+          {/* Operational Insights */}
           <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 space-y-6">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Partner Analysis</h3>
             <div className="space-y-4">
@@ -263,7 +285,26 @@ const SupplierDetail: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button className="w-full py-3 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100 dark:border-slate-700 hover:bg-slate-100 transition-all">
+
+            <div className="flex items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 group-hover:text-orange-600 transition-colors">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Reliability Score</p>
+                <div className="flex items-center gap-2">
+                  <p className={`text-xl font-black ${(supplier.performanceMetrics?.reliabilityScore || 100) >= 80 ? 'text-emerald-500' :
+                    (supplier.performanceMetrics?.reliabilityScore || 100) >= 50 ? 'text-amber-500' : 'text-rose-500'
+                    }`}>
+                    {supplier.performanceMetrics?.reliabilityScore || 100}/100
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate(`/suppliers/${supplier._id}/ledger`)}
+              className="w-full py-3 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100 dark:border-slate-700 hover:bg-slate-100 transition-all">
               Generate Ledger
             </button>
           </div>

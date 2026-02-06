@@ -43,6 +43,16 @@ verifyEmailTransport().catch(err => {
 // Connect to Database
 connectDB();
 
+// Initialize Cron Jobs
+import cron from 'node-cron';
+import PaymentReminderService from './modules/finance/services/PaymentReminderService.js';
+
+// Schedule Payment Reminders (Daily at 9:00 AM)
+cron.schedule('0 9 * * *', async () => {
+    logger.info('⏰ Running Daily Payment Reminder Job');
+    await PaymentReminderService.checkAll();
+});
+
 const server = http.createServer(app);
 
 server.listen(PORT, () => {

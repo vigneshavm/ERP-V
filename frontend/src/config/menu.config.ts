@@ -40,7 +40,8 @@ import {
     Calendar,
     Building,
     Key,
-    Lock
+    Lock,
+    TrendingUp
 } from 'lucide-react';
 import { AppView, ModuleType } from '../types/common';
 
@@ -122,6 +123,8 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'PURCHASE_PAYMENT_OUT', label: 'Payment Out', icon: ArrowRight, module: 'PURCHASE', path: '/purchase/payment-out' },
             { id: 'OUTSTANDING_PAYABLES', label: 'Outstanding Payables', icon: AlertTriangle, module: 'PURCHASE', path: '/purchase/payables' },
             { id: 'PURCHASE_UPLOAD', label: 'Upload Purchase', icon: Upload, module: 'PURCHASE', path: '/purchase/upload' },
+            { id: 'RATE_REVISIONS', label: 'Rate Revisions', icon: TrendingUp, module: 'PURCHASE', path: '/purchase/rate-revisions' },
+            { id: 'CHEQUES_VAULT', label: 'PDC Vault', icon: Shield, module: 'PURCHASE', path: '/purchase/cheques-vault' },
         ]
     },
     {

@@ -28,6 +28,17 @@ export interface Supplier {
     pendingAmount?: number;
     billCount?: number;
     paymentStatus?: 'Good' | 'Overdue' | 'Due Soon';
+
+    // Enhanced Balances
+    totalOutstanding?: number;
+    currentBillOutstanding?: number;
+    overdueAmount?: number;
+    dueNext7DaysAmount?: number;
+    creditUtilization?: number;
+    isCreditRisk?: boolean;
+
+    dueSoonCount?: number;
+    overdueCount?: number;
     [key: string]: any;
 }
 
@@ -187,7 +198,7 @@ export const getSupplierStats = createAsyncThunk<{ _id: string, supplierName: st
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get('/api/purchase/stats/supplier-totals', getConfig(token));
+            const response = await api.get('/api/purchases/stats/supplier-totals', getConfig(token));
             return response.data;
         } catch (error: any) {
             const message = (error.response?.data?.message) || error.message || error.toString();

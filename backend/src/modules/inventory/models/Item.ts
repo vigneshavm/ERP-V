@@ -1,6 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 import { IItem } from "../../../interfaces/IItem.js";
 
+interface IBatch {
+    batchNumber: string;
+    expiryDate?: Date;
+    quantity: number;
+    costPrice: number;
+    supplierId: mongoose.Types.ObjectId;
+    receivedDate: Date;
+}
+
+// Extend IItem locally if needed, or assume IItem will be updated in its definition file.
+// For Mongoose schema, we can define the shape directly.
+
+
 const itemSchema = new Schema<IItem>(
     {
         name: {
@@ -71,7 +84,21 @@ const itemSchema = new Schema<IItem>(
             ref: "Tenant",
             required: true,
             index: true
-        }
+        },
+        // Inventory Tracking
+        valuationMethod: {
+            type: String,
+            enum: ['FIFO', 'WAC'],
+            default: 'WAC'
+        },
+        batches: [{
+            batchNumber: String,
+            expiryDate: Date,
+            quantity: Number,
+            costPrice: Number, // Cost for this specific batch
+            supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier' },
+            receivedDate: { type: Date, default: Date.now }
+        }]
     },
     { timestamps: true }
 );
