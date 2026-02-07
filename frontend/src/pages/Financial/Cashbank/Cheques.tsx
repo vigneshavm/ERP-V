@@ -34,6 +34,7 @@ import {
 import { formatCurrency } from "../../../utils/helpers";
 import TransferModal from './TransferModal';
 import DayEndModal from './DayEndModal';
+import ClearingParameters from './ClearingParameters';
 
 const Cheques: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -45,6 +46,7 @@ const Cheques: React.FC = () => {
     const [showAddCheque, setShowAddCheque] = useState(false);
     const [showTransferModal, setShowTransferModal] = useState(false);
     const [showDayEndModal, setShowDayEndModal] = useState(false);
+    const [showClearingParams, setShowClearingParams] = useState(false);
     const [showBulkPaymentModal, setShowBulkPaymentModal] = useState(false);
     const [selectedInvoices, setSelectedInvoices] = useState<any[]>([]);
     const [bulkPayAccountId, setBulkPayAccountId] = useState('');
@@ -211,6 +213,12 @@ const Cheques: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-3">
+                        <button
+                            onClick={() => setShowClearingParams(true)}
+                            className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
+                        >
+                            <Zap className="w-4 h-4" /> Parameters
+                        </button>
                         <button
                             onClick={() => setShowDayEndModal(true)}
                             className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
@@ -712,6 +720,10 @@ const Cheques: React.FC = () => {
 
             {showDayEndModal && (
                 <DayEndModal onClose={() => setShowDayEndModal(false)} />
+            )}
+
+            {showClearingParams && (
+                <ClearingParameters onClose={() => setShowClearingParams(false)} />
             )}
         </Layout>
     );

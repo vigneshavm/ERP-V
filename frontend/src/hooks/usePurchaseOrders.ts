@@ -23,7 +23,7 @@ export const usePurchaseOrders = () => {
     const fetchOrders = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await api.get('/purchases');
+            const response = await api.get('/api/purchases');
             dispatch(setOrders(response.data));
         } catch (error) {
             console.error("Failed to fetch orders:", error);
@@ -35,7 +35,7 @@ export const usePurchaseOrders = () => {
     const fetchOrderDetails = useCallback(async (id: string) => {
         try {
             setLoading(true);
-            const response = await api.get(`/purchases/${id}`);
+            const response = await api.get(`/api/purchases/${id}`);
             return response.data;
         } catch (error) {
             console.error("Failed to fetch order details:", error);
@@ -74,10 +74,10 @@ export const usePurchaseOrders = () => {
             };
 
             if (order.id) {
-                await api.put(`/purchases/${order.id}`, payload);
+                await api.put(`/api/purchases/${order.id}`, payload);
                 dispatch(updateOrderAction({ id: order.id, updates: order }));
             } else {
-                await api.post('/purchases', payload);
+                await api.post('/api/purchases', payload);
                 // Ideally, we fetch orders again or add the returned order to Redux
                 fetchOrders();
             }
@@ -92,7 +92,7 @@ export const usePurchaseOrders = () => {
     const updateStatus = useCallback(async (id: string, status: string) => {
         try {
             setLoading(true);
-            await api.put(`/purchases/${id}`, { status });
+            await api.put(`/api/purchases/${id}`, { status });
             dispatch(updateOrderAction({ id, updates: { status: status as PurchaseOrderStatus } }));
         } catch (error) {
             console.error("Failed to update status:", error);
@@ -117,7 +117,7 @@ export const usePurchaseOrders = () => {
 
     const deleteOrder = useCallback(async (id: string) => {
         try {
-            await api.delete(`/purchases/${id}`);
+            await api.delete(`/api/purchases/${id}`);
             dispatch(deleteOrderAction(id));
         } catch (error) {
             console.error("Failed to delete order:", error);

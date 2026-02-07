@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, Printer, Filter, Calendar } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store'; // Adjust path as needed
-import api from '../../../../services/api';
+import { RootState } from '../../../redux/store';
+import api from '../../../services/api';
 import { toast } from 'react-toastify';
 
 // Interfaces for response data
@@ -197,8 +197,8 @@ const SupplierLedger: React.FC = () => {
                                     <td className="py-3">{new Date(t.date).toLocaleDateString()}</td>
                                     <td className="py-3">
                                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${t.type === 'BILL' ? 'bg-orange-100 text-orange-800' :
-                                                t.type === 'PAYMENT' ? 'bg-green-100 text-green-800' :
-                                                    'bg-blue-100 text-blue-800'
+                                            t.type === 'PAYMENT' ? 'bg-green-100 text-green-800' :
+                                                'bg-blue-100 text-blue-800'
                                             }`}>
                                             {t.type.replace('_', ' ')}
                                         </span>

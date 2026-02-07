@@ -233,7 +233,9 @@ export const bulkReconcile = async (req: AuthenticatedRequest, res: Response): P
 export const getBankSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const accounts = await BankAccount.find({ userId: req.user?._id });
-        res.status(200).json({ accounts });
+        const totalBalance = accounts.reduce((sum, acc) => sum + (acc.currentBalance || 0), 0);
+        const accountCount = accounts.length;
+        res.status(200).json({ accounts, totalBalance, accountCount });
     } catch (err) {
         error(`Get Summary Error: ${(err as Error).message}`);
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });

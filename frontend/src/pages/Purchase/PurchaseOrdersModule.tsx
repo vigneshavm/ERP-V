@@ -70,7 +70,7 @@ const PurchaseOrdersModule: React.FC = () => {
         if (confirm('This will navigate to Purchase Entry to finalize the purchase. Continue?')) {
             const conversionData = {
                 po_id: order.id,
-                vendor_id: order.vendor_id,
+                vendor_id: typeof order.vendor_id === 'object' ? (order.vendor_id as any)._id || (order.vendor_id as any).id : order.vendor_id,
                 items: items.map(i => ({
                     productId: i.product_id,
                     quantity: i.quantity,

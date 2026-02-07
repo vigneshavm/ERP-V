@@ -80,7 +80,7 @@ const BankAccounts: React.FC = () => {
     return (
         <Layout>
             <PageHeader
-                title="Treasury Units"
+                title="Corporate Banking Portfolio"
                 description="Aggregated bank inventory for enterprise liquidity management"
                 breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Bank Units' }]}
                 actions={
@@ -114,8 +114,8 @@ const BankAccounts: React.FC = () => {
             <CashBankModal
                 isOpen={showAddAccount}
                 onClose={() => setShowAddAccount(false)}
-                title="Unit Initialization"
-                subtitle="Register new institutional clearing parameters"
+                title="New Banking Relationship"
+                subtitle="Configure institutional liquidity nodes"
                 icon={Building2}
                 footer={
                     <>
@@ -127,8 +127,8 @@ const BankAccounts: React.FC = () => {
                 }
             >
                 <form id="add-account-form" onSubmit={handleSubmit} className="space-y-8">
-                    <CashBankFormSection title="Institutional Details">
-                        <CashBankInput label="Institution Name" icon={Building2}>
+                    <CashBankFormSection title="Institution Details">
+                        <CashBankInput label="Financial Institution" icon={Building2}>
                             <input
                                 type="text"
                                 value={formData.bankName}
@@ -138,7 +138,7 @@ const BankAccounts: React.FC = () => {
                                 required
                             />
                         </CashBankInput>
-                        <CashBankInput label="Branch Coordinate" icon={ChevronDown}>
+                        <CashBankInput label="Branch Domicile" icon={ChevronDown}>
                             <input
                                 type="text"
                                 value={formData.branch}
@@ -149,8 +149,8 @@ const BankAccounts: React.FC = () => {
                         </CashBankInput>
                     </CashBankFormSection>
 
-                    <CashBankFormSection title="Access Parameters">
-                        <CashBankInput label="Primary Account ID" icon={CreditCard}>
+                    <CashBankFormSection title="Clearing Identifiers">
+                        <CashBankInput label="Account Reference ID" icon={CreditCard}>
                             <input
                                 type="text"
                                 value={formData.accountNumber}
@@ -160,7 +160,7 @@ const BankAccounts: React.FC = () => {
                                 required
                             />
                         </CashBankInput>
-                        <CashBankInput label="IFSC Protocol" icon={ShieldCheck}>
+                        <CashBankInput label="Interbank Routing Code" icon={ShieldCheck}>
                             <input
                                 type="text"
                                 value={formData.ifsc}
@@ -172,8 +172,8 @@ const BankAccounts: React.FC = () => {
                         </CashBankInput>
                     </CashBankFormSection>
 
-                    <CashBankFormSection title="Liquidity Matrix">
-                        <CashBankInput label="Unit Classification" icon={Activity}>
+                    <CashBankFormSection title="Liquidity Configuration">
+                        <CashBankInput label="Account Classification" icon={Activity}>
                             <select
                                 value={formData.accountType}
                                 onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
@@ -184,7 +184,7 @@ const BankAccounts: React.FC = () => {
                                 <option>Overdraft</option>
                             </select>
                         </CashBankInput>
-                        <CashBankInput label="Initial Balance Unit" icon={Activity}>
+                        <CashBankInput label="Opening Position" icon={Activity}>
                             <input
                                 type="number"
                                 value={formData.openingBalance}
@@ -209,7 +209,7 @@ const BankAccounts: React.FC = () => {
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{acc.bankName}</h3>
                                 <div className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5 mt-1">
                                     <div className={`w-1.5 h-1.5 rounded-full ${acc.currentBalance > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
-                                    {acc.accountType} Unit • {acc.branch}
+                                    {acc.accountType} Classification • {acc.branch} Node
                                 </div>
                             </div>
                             <div className="flex gap-1.5">
@@ -225,8 +225,8 @@ const BankAccounts: React.FC = () => {
                         <div className="space-y-6 relative z-10">
                             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-[1.5rem] space-y-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aggregate Registry</span>
-                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 font-mono">IFSC: {acc.ifsc}</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ledger identification</span>
+                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 font-mono">Routing: {acc.ifsc}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="font-mono text-sm font-bold text-slate-800 dark:text-slate-200 tracking-wider">
@@ -238,7 +238,7 @@ const BankAccounts: React.FC = () => {
 
                             <div className="flex items-end justify-between">
                                 <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Balance</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Liquidity Position</p>
                                     <h4 className="text-2xl font-black text-emerald-600">₹{acc.currentBalance.toLocaleString('en-IN')}</h4>
                                 </div>
                                 <div className="flex gap-2">

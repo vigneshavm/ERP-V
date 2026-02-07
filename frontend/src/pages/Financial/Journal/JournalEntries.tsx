@@ -5,7 +5,7 @@ import { fetchJournalEntries, clearCurrentEntry } from '../../../redux/slices/jo
 import Layout from '../../../components/shared/Layout/Layout';
 import { Plus, Search, Filter, Calendar as CalendarIcon, FileText, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/shared/Layout/Header';
+import Header from '../../../components/shared/Layout/PageHeader';
 
 const JournalEntries: React.FC = () => {
     const dispatch = useDispatch<any>();

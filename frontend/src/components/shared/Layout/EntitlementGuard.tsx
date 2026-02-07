@@ -14,7 +14,10 @@ interface EntitlementGuardProps {
 /**
  * EntitlementGuard
  * 
- * Protects a feature or route based on tenant entitlements.
+ * Protects a feature or route based on tenant e
+ * 
+ 
+ ntitlements.
  * Use 'module' for strictly plan-based checks, or 'view' for combined role+plan checks.
  */
 const EntitlementGuard: React.FC<EntitlementGuardProps> = ({

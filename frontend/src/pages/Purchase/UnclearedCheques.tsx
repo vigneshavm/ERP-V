@@ -19,7 +19,7 @@ const UnclearedCheques: React.FC = () => {
         try {
             // Fetch all payments and filter for pending cheques
             // Ideally backend should support ?status=pending&mode=Cheque filtering
-            const { data } = await api.get('/purchase-payments');
+            const { data } = await api.get('/api/purchase-payments');
             if (data && data.success) {
                 const pending = data.data.filter((p: any) =>
                     p.paymentMode === 'Cheque' && p.status === 'pending'
@@ -41,7 +41,7 @@ const UnclearedCheques: React.FC = () => {
         if (!window.confirm(`Are you sure you want to mark this cheque as ${status.toUpperCase()}?`)) return;
 
         try {
-            await api.patch(`/purchase-payments/${id}/status`, { status, bounceReason: reason });
+            await api.patch(`/api/purchase-payments/${id}/status`, { status, bounceReason: reason });
             toast.success(`Cheque marked as ${status}`);
             fetchCheques(); // Refresh list
         } catch (err: any) {

@@ -17,4 +17,8 @@ router.use('/day-end', dayEndRoutes);
 import journalEntryRoutes from './journalEntryRoutes.js';
 router.use('/journal', journalEntryRoutes);
 
+// Mount Clearing Parameter routes
+import clearingParameterRoutes from './clearingParameterRoutes.js';
+router.use('/clearing', clearingParameterRoutes);
+
 export default router;

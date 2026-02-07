@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import Layout from "../../../components/shared/Layout";
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { FileText, Upload, CheckCircle, AlertTriangle, XCircle, Search } from 'lucide-react';
 
 const GSTReconciliation: React.FC = () => {
@@ -74,8 +74,8 @@ const GSTReconciliation: React.FC = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
                             className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all ${activeTab === tab
-                                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
-                                    : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                                : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                                 }`}
                         >
                             {tab} Records

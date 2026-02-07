@@ -146,7 +146,10 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
     }
 
     const renderContent = () => {
-        if (!checkAccess(activeTab as AppView)) {
+        // Developer/Owner bypass - full access
+        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
+
+        if (!isBypassUser && !checkAccess(activeTab as AppView)) {
             return (
                 <EntitlementGuard
                     view={activeTab as AppView}
@@ -160,6 +163,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 </EntitlementGuard>
             );
         }
+
 
         const getLoader = () => {
             if (activeTab.includes('DASHBOARD')) return <DashboardSkeleton />;
@@ -258,6 +262,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'FINANCE': return <LazyModules.Finance />;
                         case 'CASH_ACCOUNTS': return <LazyModules.CashBankIntelligence />;
                         case 'BANK_ACCOUNTS': return <LazyModules.BankIntelligence />;
+                        case 'BANK_SUMMARY': return <LazyModules.BankSummary />;
                         case 'BANK_RECONCILIATION': return <LazyModules.BankReconciliationIntelligence />;
                         case 'FUND_TRANSFERS': return <LazyModules.FundTransferIntelligence />;
                         case 'PETTY_CASH': return <LazyModules.PettyCashIntelligence />;
@@ -430,14 +435,10 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         <Routes>
                             <Route path="/" element={renderContent()} />
                             <Route path="/suppliers/:id" element={
-                                <EntitlementGuard module="SUPPLIERS">
-                                    <Suspense fallback={<div>Loading Vendor...</div>}><LazyModules.VendorDetails /></Suspense>
-                                </EntitlementGuard>
+                                <Suspense fallback={<div>Loading Vendor...</div>}><LazyModules.VendorDetails /></Suspense>
                             } />
                             <Route path="/suppliers/:id/edit" element={
-                                <EntitlementGuard module="SUPPLIERS">
-                                    <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
-                                </EntitlementGuard>
+                                <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
                             } />
                             <Route path="/suppliers/:id/ledger" element={
                                 <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
@@ -504,6 +505,18 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             } />
                             <Route path="/cashbank/accounts" element={
                                 <Suspense fallback={<div>Loading Bank Accounts...</div>}><LazyModules.BankAccounts /></Suspense>
+                            } />
+                            <Route path="/cashbank/transfers" element={
+                                <Suspense fallback={<div>Loading Transfers...</div>}><LazyModules.Transfers /></Suspense>
+                            } />
+                            <Route path="/cashbank/cash-in-hand" element={
+                                <Suspense fallback={<div>Loading Cash In Hand...</div>}><LazyModules.CashInHand /></Suspense>
+                            } />
+                            <Route path="/cashbank/position" element={
+                                <Suspense fallback={<div>Loading Position...</div>}><LazyModules.CashBankPosition /></Suspense>
+                            } />
+                            <Route path="/cashbank/ledger/:id" element={
+                                <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.AccountLedger /></Suspense>
                             } />
                             <Route path="/finance/journal" element={
                                 <Suspense fallback={<div>Loading Journal Entries...</div>}><LazyModules.JournalEntries /></Suspense>

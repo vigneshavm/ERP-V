@@ -8,6 +8,7 @@ import { getAllSuppliers } from '../../redux/slices/supplierSlice';
 // For now, I'll assume we can filter expenses or use a new endpoint. 
 // Actually, let's presume we fetch all bills and filter by status 'unpaid' / 'partial' for the supplier.
 import { getAllBills } from '../../redux/slices/billSlice';
+import { getAccounts } from '../../redux/slices/cashbankSlice';
 
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
@@ -20,6 +21,7 @@ const PaymentOutForm: React.FC = () => {
     const navigate = useNavigate();
 
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
+    const { accounts } = useSelector((state: RootState) => state.cashbank);
     // const { bills } = useSelector((state: RootState) => state.bill); // Assuming billSlice exists and has bills
 
     // Local State
@@ -28,7 +30,7 @@ const PaymentOutForm: React.FC = () => {
     const [amount, setAmount] = useState<number>(0);
     const [paymentMode, setPaymentMode] = useState('Bank Transfer');
     const [referenceNo, setReferenceNo] = useState('');
-    const [bankName, setBankName] = useState('');
+    const [bankAccountId, setBankAccountId] = useState('');
     const [chequeDate, setChequeDate] = useState('');
     const [notes, setNotes] = useState('');
 
@@ -38,6 +40,7 @@ const PaymentOutForm: React.FC = () => {
 
     useEffect(() => {
         dispatch(getAllSuppliers());
+        dispatch(getAccounts());
     }, [dispatch]);
 
     useEffect(() => {
@@ -104,12 +107,13 @@ const PaymentOutForm: React.FC = () => {
         if (totalAllocated > amount) return toast.error("Allocation exceeds payment amount");
 
         const paymentData: any = {
+
             supplierId,
             paymentDate,
             amount,
             paymentMode,
             referenceNo,
-            bankName: paymentMode === 'Cheque' ? bankName : undefined,
+            bankAccountId: (paymentMode === 'Cheque' || paymentMode === 'Bank Transfer') ? bankAccountId : undefined,
             chequeDate: paymentMode === 'Cheque' ? chequeDate : undefined,
             notes,
             allocations: Object.entries(allocations)
@@ -223,18 +227,26 @@ const PaymentOutForm: React.FC = () => {
                                 />
                             </div>
 
+                            {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer') && (
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Source Bank Account</label>
+                                    <select
+                                        value={bankAccountId}
+                                        onChange={e => setBankAccountId(e.target.value)}
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                    >
+                                        <option value="">-- Select Bank Account --</option>
+                                        {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
+                                            <option key={acc._id} value={acc._id}>
+                                                {acc.bankName} - {acc.accountType} (****{acc.accountNumber?.slice(-4)})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
                             {paymentMode === 'Cheque' && (
-                                <>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Bank Name</label>
-                                        <input
-                                            type="text"
-                                            value={bankName}
-                                            onChange={e => setBankName(e.target.value)}
-                                            className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                            placeholder="Issuing Bank"
-                                        />
-                                    </div>
+                                <div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cheque Date</label>
                                         <input
@@ -245,7 +257,7 @@ const PaymentOutForm: React.FC = () => {
                                         />
                                         <p className="text-xs text-slate-400 mt-1">For Post-Dated Cheques</p>
                                     </div>
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>

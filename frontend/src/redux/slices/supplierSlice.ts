@@ -90,14 +90,24 @@ export const getAllSuppliers = createAsyncThunk<Supplier[], void, { state: RootS
 );
 
 // Get supplier by ID
-export const getSupplierById = createAsyncThunk<Supplier, string, { state: RootState, rejectValue: string }>(
+export const getSupplierById = createAsyncThunk<Supplier, string | { id: string, branchId?: string }, { state: RootState, rejectValue: string }>(
     'suppliers/getById',
-    async (id, thunkAPI) => {
+    async (arg, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get(`${API_URL}/${id}`, getConfig(token));
+
+            const id = typeof arg === 'string' ? arg : arg.id;
+            const branchId = typeof arg === 'object' ? arg.branchId : undefined;
+
+            // Construct URL with optional branchId
+            let url = `${API_URL}/${id}`;
+            if (branchId) {
+                url += `?branchId=${branchId}`;
+            }
+
+            const response = await api.get(url, getConfig(token));
             return response.data.data || response.data;
         } catch (error: any) {
             const message =

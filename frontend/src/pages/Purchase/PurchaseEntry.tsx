@@ -100,6 +100,7 @@ const PurchaseEntry: React.FC = () => {
     const [paymentTerms, setPaymentTerms] = useState('Net 30');
     const [referenceDoc, setReferenceDoc] = useState('');
     const [attachments, setAttachments] = useState<{ name: string; type: string }[]>([]);
+    const [manualTotalAmount, setManualTotalAmount] = useState<number | ''>('');
 
     const [showDesignSetModal, setShowDesignSetModal] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -134,7 +135,9 @@ const PurchaseEntry: React.FC = () => {
 
     // Derived Totals from hook
     const { subtotal, tax: totalTax, discount: discountTotal, total: grandTotalRaw } = totals;
-    const grandTotal = grandTotalRaw + shippingAmount - discountAmount; // Apply extra shipping/global discount
+
+    const computedGrandTotal = grandTotalRaw + shippingAmount - discountAmount;
+    const grandTotal = manualTotalAmount !== '' ? Number(manualTotalAmount) : computedGrandTotal;
 
 
     // Fetch Suppliers
@@ -226,9 +229,10 @@ const PurchaseEntry: React.FC = () => {
         if (storedPo) {
             try {
                 const poData = JSON.parse(storedPo);
-                setSupplierId(poData.vendor_id);
+                const vId = typeof poData.vendor_id === 'object' ? (poData.vendor_id as any)._id || (poData.vendor_id as any).id : poData.vendor_id;
+                setSupplierId(vId);
                 // Fetch supplier name via API if not in list yet
-                api.get(`/api/purchases/suppliers/${poData.vendor_id}`)
+                api.get(`/api/purchases/suppliers/${vId}`)
                     .then(({ data }) => {
                         const sup = data.data || data;
                         if (sup) setSupplierName(sup.businessName);
@@ -376,7 +380,12 @@ const PurchaseEntry: React.FC = () => {
 
     const handleSave = async (status: 'DRAFT' | 'COMPLETED', overrideOptions: any = {}) => {
         if (!supplierId) return alert('Please select a supplier');
-        if (items.filter((i: any) => i.product_id || i.product_name).length === 0) return alert('Please add at least one item');
+        const hasItems = items.filter((i: any) => i.product_id || i.product_name).length > 0;
+        const hasManualTotal = manualTotalAmount !== '' && Number(manualTotalAmount) > 0;
+
+        if (!hasItems && !hasManualTotal) {
+            return alert('Please add at least one item or enter a total purchase amount.');
+        }
 
         setIsProcessing(true);
         try {
@@ -418,7 +427,7 @@ const PurchaseEntry: React.FC = () => {
                 ...overrideOptions
             };
 
-            const { data } = await api.post('/purchases', payload);
+            const { data } = await api.post('/api/purchases', payload);
 
             toast.success(`Purchase ${status === 'DRAFT' ? 'Saved as Draft' : 'Completed Successfully'}! #${data.purchase_number}`);
 
@@ -773,6 +782,20 @@ const PurchaseEntry: React.FC = () => {
                                         placeholder="Add payment terms or delivery notes..."
                                     />
                                 </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Manual Total Amount</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                                        <input
+                                            type="number"
+                                            value={manualTotalAmount}
+                                            onChange={e => setManualTotalAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                            className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-violet-500/50 outline-none transition-all"
+                                            placeholder="Auto-calculated if empty"
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-slate-400">Overrides calculated total if set</p>
+                                </div>
                             </div>
                         </div>
 
@@ -1077,7 +1100,7 @@ const PurchaseEntry: React.FC = () => {
 
                 </div>
             </div>
-        </Layout>
+        </Layout >
     );
 };
 

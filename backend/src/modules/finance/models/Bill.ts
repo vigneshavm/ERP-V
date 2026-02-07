@@ -39,7 +39,7 @@ export interface IBill extends Document {
     dueDate?: Date;
     paymentTerms?: number; // In days
     status: 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'disputed' | 'paid' | 'unpaid' | 'overdue';
-    paymentMethod: 'cash' | 'upi' | 'card' | 'bank_transfer' | 'cheque';
+    paymentMethod: 'cash' | 'upi' | 'card' | 'bank_transfer' | 'cheque' | 'credit' | 'other';
     paidAmount: number;
     discountReceived?: number;
     bankAccount?: mongoose.Types.ObjectId;
@@ -115,7 +115,7 @@ const billSchema = new Schema<IBill>(
         },
         paymentMethod: {
             type: String,
-            enum: ['cash', 'upi', 'card', 'bank_transfer', 'cheque'],
+            enum: ['cash', 'upi', 'card', 'bank_transfer', 'cheque', 'credit', 'other'],
             default: 'cash',
         },
         paidAmount: {

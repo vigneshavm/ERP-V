@@ -130,6 +130,11 @@ export const Modules = {
     BankAccounts: () => import("../pages/Financial/Cashbank/BankAccounts"),
     JournalEntries: () => import("../pages/Financial/Journal/JournalEntries"),
     JournalEntryForm: () => import("../pages/Financial/Journal/JournalEntryForm"),
+    BankSummary: () => import("../pages/Financial/Cashbank/BankSummary"),
+    Transfers: () => import("../pages/Financial/Cashbank/Transfers"),
+    CashInHand: () => import("../pages/Financial/Cashbank/CashInHand"),
+    CashBankPosition: () => import("../pages/Financial/Cashbank/CashBankPosition"),
+    AccountLedger: () => import("../pages/Financial/Cashbank/AccountLedger"),
 
     // Expense Features
     ExpenseIntelligence: () => import("../pages/Expenses/ExpenseIntelligence"),
@@ -275,6 +280,11 @@ export const LazyModules = {
     BankAccounts: lazy(Modules.BankAccounts),
     JournalEntries: lazy(Modules.JournalEntries),
     JournalEntryForm: lazy(Modules.JournalEntryForm),
+    BankSummary: lazy(Modules.BankSummary),
+    Transfers: lazy(Modules.Transfers),
+    CashInHand: lazy(Modules.CashInHand),
+    CashBankPosition: lazy(Modules.CashBankPosition),
+    AccountLedger: lazy(Modules.AccountLedger),
 
     // Expenses
     ExpenseIntelligence: lazy(Modules.ExpenseIntelligence),

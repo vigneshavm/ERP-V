@@ -187,11 +187,19 @@ export const updatePaymentStatus = async (req: AuthenticatedRequest, res: Respon
         // Application Logic
         if (status === 'cleared' && oldStatus === 'pending') {
             // Deduct from bank now
+            console.log('Clearing Payment:', payment);
+            const fromAccount = payment.paymentMode === 'Cash' ? 'cash' : payment.bankAccountId;
+            console.log('From Account:', fromAccount);
+
+            if (!fromAccount) {
+                throw new Error(`Cannot clear payment: Source Bank Account is missing. Please ensure the payment record has a valid Bank Account assigned.`);
+            }
+
             const transaction = new CashbankTransaction({
                 userId,
                 type: 'out',
                 amount: payment.amount,
-                fromAccount: payment.bankAccountId,
+                fromAccount,
                 toAccount: payment.supplierId,
                 description: `Cheque Cleared - ${payment.supplierId} (${payment.paymentNo})`,
                 date: new Date(),

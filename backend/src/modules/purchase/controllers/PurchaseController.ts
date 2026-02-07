@@ -220,6 +220,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
 
             const bill = new Bill({
                 billNo: `BILL-${purchaseNumber}`,
+                vendorInvoiceNo: purchase.invoiceNo,
                 date: purchase.date,
                 supplier: purchase.vendorId,
                 amount: purchase.totalAmount,
