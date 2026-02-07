@@ -189,7 +189,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                 purchase.items[i].productName = product.name;
                 if (status === 'COMPLETED' || status === 'RECEIVED') {
                     // Refactored to use InventoryService for robust Stock Management
-                    const { container } = await import('../../../config/di-container.js');
+                    const { container } = await import('tsyringe');
                     const { InventoryService } = await import('../../inventory/services/InventoryService.js');
                     const inventoryService = container.resolve(InventoryService);
 
@@ -385,15 +385,6 @@ export const deletePurchase = async (req: AuthenticatedRequest, res: Response): 
     }
 };
 
-export default {
-    createPurchase,
-    getAllPurchases,
-    getPurchaseById,
-    updatePurchase,
-    deletePurchase,
-    getSupplierTotals,
-    getPurchaseHistory
-};
 
 /**
  * @swagger
@@ -444,4 +435,14 @@ export const getPurchaseHistory = async (req: AuthenticatedRequest, res: Respons
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
+};
+
+export default {
+    createPurchase,
+    getAllPurchases,
+    getPurchaseById,
+    updatePurchase,
+    deletePurchase,
+    getSupplierTotals,
+    getPurchaseHistory
 };

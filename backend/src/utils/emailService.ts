@@ -1,132 +1,113 @@
-import nodemailer, { Transporter, SendMailOptions } from "nodemailer";
+import FormData from "form-data";
+import Mailgun from "mailgun.js";
 
 declare global {
-    var EMAIL_ENABLED: boolean;
+  var EMAIL_ENABLED: boolean;
 }
+
+// Lazy initialization - Mailgun client is only created when first needed
+let mgClient: ReturnType<InstanceType<typeof Mailgun>["client"]> | null = null;
+
+const getMailgunClient = () => {
+  if (!mgClient) {
+    const mailgun = new Mailgun(FormData);
+    mgClient = mailgun.client({
+      username: "api",
+      key: process.env.MAILGUN_API_KEY || "",
+    });
+  }
+  return mgClient;
+};
+
+const MAILGUN_DOMAIN = () => process.env.MAILGUN_DOMAIN || "sandbox4ef2ea71ecce46a5bf391da4b54e0299.mailgun.org";
 
 /**
  * Check if email is configured
  */
 export const isEmailConfigured = (): boolean => {
-    return global.EMAIL_ENABLED === true;
-};
-
-/**
- * Creates a reusable nodemailer transporter
- */
-const createTransporter = (): Transporter => {
-    // Custom SMTP configuration (recommended for production)
-    if (process.env.SMTP_HOST) {
-        return nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT || "587", 10),
-            secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
-    }
-
-    // Gmail configuration (fallback for development)
-    return nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
+  return global.EMAIL_ENABLED === true;
 };
 
 /**
  * Verify email transport on server startup
  */
 export const verifyEmailTransport = async (): Promise<boolean> => {
-    if (process.env.EMAIL_ENABLED !== "true") {
-        console.warn('⚠️  Email transport verification skipped (not enabled)');
-        global.EMAIL_ENABLED = false;
-        return false;
-    }
+  if (process.env.EMAIL_ENABLED !== "true") {
+    console.warn('⚠️  Email transport verification skipped (not enabled)');
+    global.EMAIL_ENABLED = false;
+    return false;
+  }
 
-    try {
-        const transporter = createTransporter();
-        await transporter.verify();
-        console.log('✅ Email transport verified successfully');
-        global.EMAIL_ENABLED = true;
-        return true;
-    } catch (error: any) {
-        console.error('❌ Email transport verification failed:', error.message);
-        console.error('   Email features will be disabled');
-        global.EMAIL_ENABLED = false;
-        return false;
-    }
+  if (!process.env.MAILGUN_API_KEY) {
+    console.error('❌ MAILGUN_API_KEY is not set');
+    global.EMAIL_ENABLED = false;
+    return false;
+  }
+
+  console.log('✅ Mailgun API configured');
+  global.EMAIL_ENABLED = true;
+  return true;
 };
 
 /**
- * Sends an email with optional attachment
+ * Sends an email with optional attachment (plain text)
  */
 export const sendEmail = async (to: string, subject: string, text: string, attachmentPath: string | null = null): Promise<boolean> => {
-    if (!isEmailConfigured()) {
-        console.warn('Email not sent - email service not configured');
-        return false;
-    }
+  if (!isEmailConfigured()) {
+    console.warn('Email not sent - email service not configured');
+    return false;
+  }
 
-    try {
-        const transporter = createTransporter();
+  try {
+    const domain = MAILGUN_DOMAIN();
+    const data = await getMailgunClient().messages.create(domain, {
+      from: process.env.EMAIL_FROM || `BizzAI <postmaster@${domain}>`,
+      to: [to],
+      subject,
+      text,
+    });
 
-        const mailOptions: SendMailOptions = {
-            from: `"BizzAI" <${process.env.EMAIL_FROM || process.env.EMAIL_USER || "noreply@bizzai.com"}>`,
-            to,
-            subject,
-            text,
-            attachments: attachmentPath
-                ? [{ filename: "invoice.pdf", path: attachmentPath }]
-                : [],
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log("📨 Email sent:", info.response);
-        return true;
-    } catch (error: any) {
-        console.error("Email Error:", error.message);
-        return false;
-    }
+    console.log("📨 Email sent:", data.id);
+    return true;
+  } catch (error: any) {
+    console.error("Email Error:", error.message);
+    return false;
+  }
 };
 
 /**
  * Sends an HTML email with optional plain text fallback
  */
 export const sendHtmlEmail = async (to: string, subject: string, html: string, text: string | null = null): Promise<boolean> => {
-    if (!isEmailConfigured()) {
-        console.warn('Email not sent - email service not configured');
-        return false;
-    }
+  if (!isEmailConfigured()) {
+    console.warn('Email not sent - email service not configured');
+    return false;
+  }
 
-    try {
-        const transporter = createTransporter();
+  try {
+    const domain = MAILGUN_DOMAIN();
+    const data = await getMailgunClient().messages.create(domain, {
+      from: process.env.EMAIL_FROM || `BizzAI <postmaster@${domain}>`,
+      to: [to],
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ""), // Strip HTML tags for text fallback
+    });
 
-        const mailOptions: SendMailOptions = {
-            from: `"BizzAI" <${process.env.EMAIL_FROM || process.env.EMAIL_USER || "noreply@bizzai.com"}>`,
-            to,
-            subject,
-            html,
-            text: text || html.replace(/<[^>]*>/g, ""), // Strip HTML tags for text fallback
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log("📨 HTML Email sent:", info.response);
-        return true;
-    } catch (error: any) {
-        console.error("HTML Email Error:", error.message);
-        return false;
-    }
+    console.log("📨 HTML Email sent:", data.id);
+    return true;
+  } catch (error: any) {
+    console.error("HTML Email Error:", error.message);
+    return false;
+  }
 };
+
 
 /**
  * Generates a professional password reset email template
  */
 export const generatePasswordResetEmail = (resetUrl: string, userName = "User"): { html: string; text: string } => {
-    const html = `
+  const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -223,7 +204,7 @@ export const generatePasswordResetEmail = (resetUrl: string, userName = "User"):
 </html>
   `.trim();
 
-    const text = `
+  const text = `
 Reset Your Password - BizzAI
 
 Hi ${userName},
@@ -237,5 +218,5 @@ If you didn't request a password reset, you can safely ignore this email. Your p
 © ${new Date().getFullYear()} BizzAI. All rights reserved.
   `.trim();
 
-    return { html, text };
+  return { html, text };
 };
