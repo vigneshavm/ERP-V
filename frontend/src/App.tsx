@@ -28,6 +28,9 @@ import TenantView from './pages/Views/TenantView';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const { user, role } = useSelector((state: RootState) => state.auth);
@@ -299,28 +302,31 @@ const App: React.FC = () => {
 
   // --- Main Render ---
   return (
-    <Routes>
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/signup" element={<Register />} />
-      <Route path="/*" element={
-        isResolving ? <LoadingScreen /> :
-          viewMode === 'ADMIN' ? <AdminView /> :
-            viewMode === 'TENANT' ? (
-              <TenantView
-                currentTenant={currentTenant}
-                isLoggedIn={isLoggedIn}
-                onLogout={() => {
-                  // Callback from TenantView when user confirms logout
-                  clearSession();
-                  setIsLoggedIn(false);
-                }}
-                onLogin={() => setIsLoggedIn(true)}
-              />
-            ) :
-              <LandingPage />
-      } />
-    </Routes>
+    <>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+      <Routes>
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/signup" element={<Register />} />
+        <Route path="/*" element={
+          isResolving ? <LoadingScreen /> :
+            viewMode === 'ADMIN' ? <AdminView /> :
+              viewMode === 'TENANT' ? (
+                <TenantView
+                  currentTenant={currentTenant}
+                  isLoggedIn={isLoggedIn}
+                  onLogout={() => {
+                    // Callback from TenantView when user confirms logout
+                    clearSession();
+                    setIsLoggedIn(false);
+                  }}
+                  onLogin={() => setIsLoggedIn(true)}
+                />
+              ) :
+                <LandingPage />
+        } />
+      </Routes>
+    </>
   );
 };
 

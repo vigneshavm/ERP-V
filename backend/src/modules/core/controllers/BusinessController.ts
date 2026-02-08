@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import BusinessProfile from "../models/BusinessProfile.js";
+import Tenant from "../models/Tenant.js";
 import Sector from "../models/Sector.js";
 import BusinessType from "../models/BusinessType.js";
 
@@ -118,9 +119,18 @@ export const getProfile = async (req: Request, res: Response) => {
             });
         }
 
+        // Fetch Tenant to get structured address
+        const tenant = await Tenant.findById((req as any).user.tenantId);
+
+        const responseData = {
+            ...profile.toObject(),
+            tenantAddress: tenant?.address || null,
+            gstNumber: tenant?.subscriptionPlan ? "" : (req as any).user.gstNumber // Placeholder logic
+        };
+
         res.status(200).json({
             success: true,
-            data: profile
+            data: responseData
         });
     } catch (error: any) {
         res.status(500).json({

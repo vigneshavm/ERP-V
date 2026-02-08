@@ -6,17 +6,19 @@ import {
     getSupplierById,
     updateSupplier,
     deleteSupplier,
-    updateSupplier,
-    deleteSupplier,
     getSupplierAnalytics,
-    getSupplierReports
+    getSupplierReports,
+    getAgeingAnalysis,
+    bulkUpdateOpeningBalance
 } from '../controllers/SupplierController.js';
 import { getGroups } from '../controllers/SupplierGroupController.js';
 
 const router = express.Router();
 
 router.get('/analytics', protect, getSupplierAnalytics);
+router.get('/ageing-analysis', protect, getAgeingAnalysis);
 router.get('/reports', protect, getSupplierReports);
+router.post('/bulk-opening-balance', protect, bulkUpdateOpeningBalance);
 router.get('/groups', protect, getGroups); // Fix for 500 error on /suppliers/groups
 router.get('/statements', protect, (_req, res) => {
     // Placeholder to prevent collision with /:id

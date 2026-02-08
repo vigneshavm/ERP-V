@@ -41,7 +41,7 @@ const PaymentOutSchema: Schema = new Schema({
     paymentMode: {
         type: String,
         required: true,
-        enum: ['Cash', 'Cheque', 'UPI', 'Bank Transfer']
+        enum: ['Cash', 'Cheque', 'UPI', 'Bank Transfer', 'Discount Received']
     },
 
     // Details

@@ -64,10 +64,8 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'DASHBOARD',
         path: '/',
         children: [
-            { id: 'DASHBOARD_OVERVIEW', label: 'Overview', icon: LayoutDashboard, module: 'DASHBOARD', path: '/' },
-            { id: 'DASHBOARD_SNAPSHOT', label: 'Business Snapshot', icon: PieChart, module: 'DASHBOARD', path: '/dashboard/snapshot' },
+            { id: 'DASHBOARD_OVERVIEW', label: 'Intelligence Hub', icon: LayoutDashboard, module: 'DASHBOARD', path: '/' },
             { id: 'DASHBOARD_SUMMARY', label: 'Today\'s Summary', icon: ClipboardList, module: 'DASHBOARD', path: '/dashboard/summary' },
-            { id: 'PROFIT_PULSE', label: 'Profit Pulse', icon: BarChart, module: 'DASHBOARD', path: '/dashboard/profit-pulse' },
         ]
     },
     {

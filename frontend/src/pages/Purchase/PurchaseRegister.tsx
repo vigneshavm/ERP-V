@@ -25,10 +25,14 @@ import {
     User,
     ChevronLeft,
     ChevronRight,
-    FileSpreadsheet
+    FileSpreadsheet,
+    ArrowUpDown,
+    ArrowUp,
+    ArrowDown
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import StatsCard from "../../components/shared/Display/StatsCard";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -48,6 +52,10 @@ const PurchaseRegister: React.FC = () => {
     const [amountMax, setAmountMax] = useState('');
     const [isRefreshing, setIsRefreshing] = useState(false);
 
+    // Sort State
+    const [sortColumn, setSortColumn] = useState<string>('date');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -61,6 +69,15 @@ const PurchaseRegister: React.FC = () => {
         setIsRefreshing(true);
         await dispatch(getAllPurchases());
         setTimeout(() => setIsRefreshing(false), 500);
+    };
+
+    const handleSort = (column: string) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(column);
+            setSortDirection('asc'); // Default new column to asc, or maybe desc for date? let's stick to standard toggle
+        }
     };
 
     // Derived Data for Filters 
@@ -117,8 +134,54 @@ const PurchaseRegister: React.FC = () => {
             if (amountMax && tAmount > parseFloat(amountMax)) return false;
 
             return true;
+        }).sort((a, b) => {
+            let valA: any = '';
+            let valB: any = '';
+
+            switch (sortColumn) {
+                case 'number':
+                    valA = a.purchaseNumber || a.po_number || '';
+                    valB = b.purchaseNumber || b.po_number || '';
+                    break;
+                case 'date':
+                    valA = new Date((a as any).createdAt || a.created_at || a.date || a.po_date || 0).getTime();
+                    valB = new Date((b as any).createdAt || b.created_at || b.date || b.po_date || 0).getTime();
+                    break;
+                case 'vendor':
+                    if (a.vendorId && typeof a.vendorId === 'object') {
+                        valA = (a.vendorId.businessName || a.vendorId.name || '').toLowerCase();
+                    } else {
+                        valA = (a.vendor_name || '').toLowerCase();
+                    }
+                    if (b.vendorId && typeof b.vendorId === 'object') {
+                        valB = (b.vendorId.businessName || b.vendorId.name || '').toLowerCase();
+                    } else {
+                        valB = (b.vendor_name || '').toLowerCase();
+                    }
+                    break;
+                case 'items':
+                    valA = a.items.length;
+                    valB = b.items.length;
+                    break;
+                case 'amount':
+                    valA = a.totalAmount || a.total_amount || 0;
+                    valB = b.totalAmount || b.total_amount || 0;
+                    break;
+                case 'status':
+                    valA = a.status || '';
+                    valB = b.status || '';
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (sortDirection === 'asc') {
+                return valA > valB ? 1 : -1;
+            } else {
+                return valA < valB ? 1 : -1;
+            }
         });
-    }, [orders, searchTerm, statusFilter, dateFrom, dateTo, vendorFilter, amountMin, amountMax]);
+    }, [orders, searchTerm, statusFilter, dateFrom, dateTo, vendorFilter, amountMin, amountMax, sortColumn, sortDirection]);
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
@@ -231,46 +294,49 @@ const PurchaseRegister: React.FC = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <div className="flex items-center justify-between">
-                            <div><p className="text-xs font-medium text-neutral-500 uppercase">Total Value</p><p className="text-2xl font-bold text-primary mt-1">₹{totalPurchasesValue.toLocaleString()}</p></div>
-                            <div className="p-3 bg-primary/10 rounded-xl"><TrendingUp className="w-6 h-6 text-primary" /></div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <div className="flex items-center justify-between">
-                            <div><p className="text-xs font-medium text-neutral-500 uppercase">Transactions</p><p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{filteredOrders.length}</p></div>
-                            <div className="p-3 bg-neutral-100 dark:bg-neutral-700 rounded-xl"><FileText className="w-6 h-6" /></div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <div className="flex items-center justify-between">
-                            <div><p className="text-xs font-medium text-neutral-500 uppercase">Pending</p><p className="text-2xl font-bold text-warning mt-1">{pendingCount}</p></div>
-                            <div className="p-3 bg-warning/10 rounded-xl"><Clock className="w-6 h-6 text-warning" /></div>
-                        </div>
-                    </div>
+                    <StatsCard
+                        title="Total Value"
+                        value={`₹${totalPurchasesValue.toLocaleString()}`}
+                        icon={<TrendingUp />}
+                        iconBgColor="bg-primary/10"
+                        iconColor="text-primary"
+                    />
+                    <StatsCard
+                        title="Transactions"
+                        value={filteredOrders.length}
+                        icon={<FileText />}
+                        iconBgColor="bg-neutral-100 dark:bg-neutral-700"
+                        iconColor="text-neutral-600 dark:text-neutral-300"
+                    />
+                    <StatsCard
+                        title="Pending"
+                        value={pendingCount}
+                        icon={<Clock />}
+                        iconBgColor="bg-warning/10"
+                        iconColor="text-warning"
+                    />
                 </div>
 
                 {/* Advanced Filters */}
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4">
+                <div className="bg-card rounded-xl border border-default p-4 flex flex-col gap-4">
                     <div className="flex flex-wrap gap-4 items-end">
                         <div className="flex-1 min-w-[200px]">
-                            <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Search</label>
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
                             <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
-                                <input type="text" placeholder="Search PO #..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm" />
+                                <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted" />
+                                <input type="text" placeholder="Search PO #..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-input border border-default rounded-lg text-sm text-main placeholder-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
                             </div>
                         </div>
                         <div className="w-48">
-                            <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Vendor</label>
-                            <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm">
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Vendor</label>
+                            <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
                                 <option value="ALL">All Vendors</option>
                                 {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
                             </select>
                         </div>
                         <div className="w-40">
-                            <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Status</label>
-                            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm">
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Status</label>
+                            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
                                 <option value="ALL">All Status</option>
                                 <option value="COMPLETED">Completed</option>
                                 <option value="Approved">Approved</option>
@@ -280,34 +346,70 @@ const PurchaseRegister: React.FC = () => {
                             </select>
                         </div>
                         <div className="w-36">
-                            <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">From</label>
-                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm" />
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">From</label>
+                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
                         </div>
                         <div className="w-36">
-                            <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">To</label>
-                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-3 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm" />
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">To</label>
+                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
                         </div>
                     </div>
                 </div>
 
                 {/* Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 flex-1 flex flex-col overflow-hidden">
+                <div className="bg-card rounded-xl border border-default flex-1 flex flex-col overflow-hidden">
                     <div className="flex-1 overflow-auto custom-scrollbar">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 text-neutral-500 uppercase text-xs font-medium sticky top-0 z-10">
+                            <thead className="bg-surface text-muted uppercase text-xs font-medium sticky top-0 z-10">
                                 <tr>
-                                    <th className="p-4">Number #</th>
-                                    <th className="p-4">Date</th>
-                                    <th className="p-4">Vendor</th>
-                                    <th className="p-4 text-center">Items</th>
-                                    <th className="p-4 text-right">Amount</th>
-                                    <th className="p-4 text-center">Status</th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('number')}>
+                                        <div className="flex items-center gap-2">
+                                            Number #
+                                            {sortColumn === 'number' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'number' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('date')}>
+                                        <div className="flex items-center gap-2">
+                                            Date
+                                            {sortColumn === 'date' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'date' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('vendor')}>
+                                        <div className="flex items-center gap-2">
+                                            Vendor
+                                            {sortColumn === 'vendor' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'vendor' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center" onClick={() => handleSort('items')}>
+                                        <div className="flex items-center justify-center gap-2">
+                                            Items
+                                            {sortColumn === 'items' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'items' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right" onClick={() => handleSort('amount')}>
+                                        <div className="flex items-center justify-end gap-2">
+                                            Amount
+                                            {sortColumn === 'amount' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'amount' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center" onClick={() => handleSort('status')}>
+                                        <div className="flex items-center justify-center gap-2">
+                                            Status
+                                            {sortColumn === 'status' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
+                                            {sortColumn !== 'status' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                        </div>
+                                    </th>
                                     <th className="p-4 text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                            <tbody className="divide-y divide-default">
                                 {paginatedOrders.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-neutral-500">No records found</td></tr>
+                                    <tr><td colSpan={7} className="p-8 text-center text-muted">No records found</td></tr>
                                 ) : (
                                     paginatedOrders.map(order => {
                                         let vName = '';
@@ -318,23 +420,30 @@ const PurchaseRegister: React.FC = () => {
                                         }
 
                                         return (
-                                            <tr key={order._id || order.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                                            <tr key={order._id || order.id} className="hover:bg-surface transition-colors">
                                                 <td className="p-4 font-mono text-xs text-primary font-bold">
                                                     #{order.purchaseNumber || order.po_number || 'N/A'}
                                                 </td>
-                                                <td className="p-4 text-neutral-600">
-                                                    {new Date(order.date || order.po_date).toLocaleDateString()}
+                                                <td className="p-4 text-secondary">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium text-main">
+                                                            {new Date(order.date || order.po_date).toLocaleDateString()}
+                                                        </span>
+                                                        <span className="text-xs text-muted">
+                                                            {new Date((order as any).createdAt || (order as any).created_at || order.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
                                                 </td>
-                                                <td className="p-4 font-medium">
+                                                <td className="p-4 font-medium text-main">
                                                     {vName}
                                                 </td>
-                                                <td className="p-4 text-center">{order.items.length}</td>
-                                                <td className="p-4 text-right font-bold">
+                                                <td className="p-4 text-center text-secondary">{order.items.length}</td>
+                                                <td className="p-4 text-right font-bold text-main">
                                                     ₹{(order.totalAmount || order.total_amount || 0).toLocaleString()}
                                                 </td>
                                                 <td className="p-4 text-center">{getStatusBadge(order.status)}</td>
                                                 <td className="p-4 text-center">
-                                                    <button onClick={() => handleView(order)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg text-primary transition-colors">
+                                                    <button onClick={() => handleView(order)} className="p-2 hover:bg-surface rounded-lg text-primary transition-colors">
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                 </td>
@@ -347,23 +456,23 @@ const PurchaseRegister: React.FC = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-between bg-neutral-50 dark:bg-neutral-900">
-                        <div className="text-xs text-neutral-500">
+                    <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
+                        <div className="text-xs text-muted">
                             Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} entries
                         </div>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-white dark:hover:bg-neutral-700 disabled:opacity-50"
+                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <span className="text-sm font-medium px-2">Page {currentPage} of {totalPages || 1}</span>
+                            <span className="text-sm font-medium px-2 text-main">Page {currentPage} of {totalPages || 1}</span>
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-white dark:hover:bg-neutral-700 disabled:opacity-50"
+                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>

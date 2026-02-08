@@ -115,7 +115,7 @@ const SalesInvoiceDetail = () => {
                     </div>
                     <div className="relative z-10">
                         <button
-                            onClick={() => navigate('/sales/invoice')}
+                            onClick={() => navigate('/sales')}
                             className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium mb-6 transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4" /> Back to Invoices

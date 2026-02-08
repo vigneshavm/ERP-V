@@ -8,10 +8,10 @@ const router = Router();
 router.post('/', protect, purchaseController.createPurchase);
 router.get('/', protect, purchaseController.getAllPurchases);
 router.get('/stats/supplier-totals', protect, purchaseController.getSupplierTotals);
-router.get('/suppliers/:id/ledger', protect, getSupplierLedger); // Ledger Route
+router.get('/suppliers/:id/ledger', protect, getSupplierLedger); // Ledger Route - MUST BE BEFORE /:id
+router.get('/history/item/:itemId', protect, purchaseController.getPurchaseHistory); // Also move this up just in case
 router.get('/:id', protect, purchaseController.getPurchaseById);
 router.put('/:id', protect, purchaseController.updatePurchase);
-router.get('/history/item/:itemId', protect, purchaseController.getPurchaseHistory);
 router.delete('/:id', protect, purchaseController.deletePurchase);
 
 import * as rateRevisionController from '../controllers/RateRevisionController.js';

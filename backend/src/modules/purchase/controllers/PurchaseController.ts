@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import Purchase from '../models/Purchase.js';
 import Item from '../../inventory/models/Item.js';
 import Bill from '../../finance/models/Bill.js';
+import JournalEntry from '../../finance/models/JournalEntry.js';
+import Tenant from '../../core/models/Tenant.js';
 import Supplier from '../models/Supplier.js';
 import { error } from '../../../config/logger.js';
 
@@ -234,6 +236,93 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                 tenantId: req.user?.tenantId
             });
             await bill.save({ session });
+
+            // ---------------------------------------------------------
+            // 4. AUTOMATED LEDGER POSTING (Double Entry Accounting)
+            // ---------------------------------------------------------
+            try {
+                const tenant = await Tenant.findOne({ _id: req.user?.tenantId }).session(session);
+                const tenantState = tenant?.address?.state?.toLowerCase() || '';
+                const supplierState = supplier.state?.toLowerCase() || '';
+
+                // Tax Logic: Intra-state (Same) -> CGST/SGST, Inter-state (Diff) -> IGST
+                const isInterState = tenantState && supplierState && tenantState !== supplierState;
+
+                const taxAmount = details.tax_amount || 0;
+                let cgst = 0, sgst = 0, igst = 0;
+
+                if (taxAmount > 0) {
+                    if (isInterState) {
+                        igst = taxAmount;
+                    } else {
+                        cgst = taxAmount / 2;
+                        sgst = taxAmount / 2;
+                    }
+                }
+
+                // Ledger Entries
+                // Debit: Purchase Account (Base Amount)
+                // Debit: Input Tax (CGST/SGST or IGST)
+                // Credit: Supplier (Total Amount)
+
+                const journalEntries = [
+                    {
+                        accountId: 'PURCHASE_ACCOUNT', // Replace with real ID lookup later
+                        accountName: 'Purchase Account',
+                        debit: details.total_amount - taxAmount,
+                        credit: 0
+                    },
+                    {
+                        accountId: supplier._id.toString(),
+                        accountName: supplier.businessName,
+                        debit: 0,
+                        credit: details.total_amount
+                    }
+                ];
+
+                if (igst > 0) {
+                    journalEntries.push({
+                        accountId: 'INPUT_IGST',
+                        accountName: 'Input IGST',
+                        debit: igst,
+                        credit: 0
+                    });
+                } else {
+                    if (cgst > 0) {
+                        journalEntries.push({
+                            accountId: 'INPUT_CGST',
+                            accountName: 'Input CGST',
+                            debit: cgst,
+                            credit: 0
+                        });
+                    }
+                    if (sgst > 0) {
+                        journalEntries.push({
+                            accountId: 'INPUT_SGST',
+                            accountName: 'Input SGST',
+                            debit: sgst,
+                            credit: 0
+                        });
+                    }
+                }
+
+                const journalEntry = new JournalEntry({
+                    tenantId: req.user?.tenantId,
+                    date: purchase.date,
+                    description: `Purchase Recorded - ${purchase.purchaseNumber}`,
+                    reference: purchase.purchaseNumber,
+                    entries: journalEntries,
+                    status: 'POSTED',
+                    createdBy: req.user?._id
+                });
+
+                await journalEntry.save({ session });
+
+            } catch (jeError: any) {
+                console.error("Ledger Posting Failed:", jeError);
+                // We don't block the purchase if ledger fails, but ideally we should.
+                // For now, logging error. In strict ERP, this should rollback.
+            }
         }
 
         await session.commitTransaction();
@@ -282,7 +371,7 @@ export const getAllPurchases = async (req: AuthenticatedRequest, res: Response):
         const purchases = await Purchase.find(query)
             .populate('vendorId', 'name businessName')
             .populate('createdBy', 'name')
-            .sort({ date: -1 });
+            .sort({ createdAt: -1 });
         res.json(purchases);
     }
     catch (err: any) {

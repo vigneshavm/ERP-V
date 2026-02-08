@@ -123,7 +123,7 @@ export const createPayment = async (req: AuthenticatedRequest, res: Response) =>
         // We do not store explicit balance in Supplier model currently.
 
         // 8. Financial Transaction (Money Leaving)
-        if (status === 'cleared') {
+        if (status === 'cleared' && paymentMode !== 'Discount Received') {
             // Only deduct from bank/cash if cleared immediately
             const transaction = new CashbankTransaction({
                 userId,

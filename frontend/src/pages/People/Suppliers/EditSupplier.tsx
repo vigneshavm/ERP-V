@@ -42,6 +42,7 @@ const EditSupplier: React.FC = () => {
         contactNo: supplier.contactNo || '',
         email: supplier.email || '',
         physicalAddress: supplier.physicalAddress || '',
+        state: supplier.state || '',
         gstNo: supplier.gstNo || '',
         supplierType: supplier.supplierType || 'manufacturer',
         openingBalance: supplier.openingBalance || 0,

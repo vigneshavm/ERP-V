@@ -34,6 +34,8 @@ const Suppliers: React.FC = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
+  const [filterStatus, setFilterStatus] = useState<'all' | 'overdue' | 'due_week'>('all');
+
   useEffect(() => {
     dispatch(getSupplierAnalytics());
   }, [dispatch]);
@@ -59,11 +61,11 @@ const Suppliers: React.FC = () => {
       'Supplier ID': s.supplierId,
       'Phone': s.contactNo,
       'Email': s.email || 'N/A',
-      'Type': s.supplierType,
       'Status': s.status,
-      'GST No': s.gstNo || 'N/A',
-      'Total Purchase': s.totalAmount || 0,
-      'Pending Amount': s.pendingAmount || 0
+      'Total Invoiced': s.totalAmount || 0,
+      'Total Paid': s.totalPaid || 0,
+      'Net Balance': s.netBalance || 0,
+      'Last Payment': s.lastPaymentDate ? new Date(s.lastPaymentDate).toLocaleDateString() : 'N/A'
     }));
 
     const wb = XLSX.utils.book_new();
@@ -86,22 +88,31 @@ const Suppliers: React.FC = () => {
 
   const filteredSuppliers = useMemo(() => {
     return suppliers.filter(
-      (supplier) =>
-        supplier.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (supplier.supplierGroup && supplier.supplierGroup.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        supplier.contactPersonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        supplier.contactNo.includes(searchTerm) ||
-        (supplier.email && supplier.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      (supplier) => {
+        const matchesSearch = supplier.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.supplierGroup && supplier.supplierGroup.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          supplier.contactPersonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          supplier.contactNo.includes(searchTerm) ||
+          (supplier.email && supplier.email.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        if (!matchesSearch) return false;
+
+        if (filterStatus === 'overdue') return (supplier.overdueCount || 0) > 0;
+        if (filterStatus === 'due_week') return (supplier.dueSoonCount || 0) > 0;
+
+        return true;
+      }
     ).sort((a, b) => {
       if (!sortConfig) return 0;
-      if (sortConfig.key === 'totalAmount') {
-        const amountA = a.totalAmount || 0;
-        const amountB = b.totalAmount || 0;
-        return sortConfig.direction === 'asc' ? amountA - amountB : amountB - amountA;
+      const valA = a[sortConfig.key] || 0;
+      const valB = b[sortConfig.key] || 0;
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return sortConfig.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
       }
-      return 0;
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
     });
-  }, [suppliers, searchTerm, sortConfig]);
+  }, [suppliers, searchTerm, sortConfig, filterStatus]);
 
   // Calculate Metrics
   const pendingDues = suppliers.reduce((sum, s) => sum + (s.totalOutstanding || 0), 0);
@@ -184,6 +195,22 @@ const Suppliers: React.FC = () => {
           />
         </div>
 
+        {/* Filters */}
+        <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-700 pb-1">
+          {['all', 'overdue', 'due_week'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status as any)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${filterStatus === status
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                }`}
+            >
+              {status === 'all' ? 'All Suppliers' : status === 'overdue' ? 'Overdue' : 'Due This Week'}
+            </button>
+          ))}
+        </div>
+
         {/* Table Section - Dashboard Pattern */}
         <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
           <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -213,29 +240,18 @@ const Suppliers: React.FC = () => {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-neutral-50 dark:bg-neutral-900/50 text-[11px] uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400">
-                  <th className="px-6 py-4">Supplier</th>
-                  <th className="px-6 py-4">Contact</th>
-                  <th className="px-6 py-4">Type</th>
-                  <th className="px-6 py-4">Outstanding</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th
-                    className="px-6 py-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                    onClick={() => handleSort('totalAmount')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Total Purchase
-                      {sortConfig?.key === 'totalAmount' && (
-                        <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-                      )}
-                    </div>
-                  </th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-neutral-100" onClick={() => handleSort('businessName')}>Supplier</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-neutral-100" onClick={() => handleSort('totalAmount')}>Total Invoiced</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-neutral-100" onClick={() => handleSort('totalPaid')}>Total Paid</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-neutral-100" onClick={() => handleSort('netBalance')}>Net Balance</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-neutral-100" onClick={() => handleSort('lastPaymentDate')}>Last Payment Date</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-16 text-center">
+                    <td colSpan={6} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                         <p className="text-sm font-medium text-neutral-400">Loading suppliers...</p>
@@ -244,7 +260,7 @@ const Suppliers: React.FC = () => {
                   </tr>
                 ) : filteredSuppliers.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-16 text-center">
+                    <td colSpan={6} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <Users className="w-12 h-12 text-neutral-300" />
                         <p className="text-sm font-medium text-neutral-500">No suppliers found</p>
@@ -253,7 +269,11 @@ const Suppliers: React.FC = () => {
                   </tr>
                 ) : (
                   filteredSuppliers.map((supplier) => (
-                    <tr key={supplier._id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
+                    <tr
+                      key={supplier._id}
+                      className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/suppliers/${supplier._id}`)}
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
@@ -266,59 +286,26 @@ const Suppliers: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
-                            <Phone className="w-3.5 h-3.5" />
-                            <span className="text-xs">{supplier.contactNo}</span>
-                          </div>
-                          {supplier.email && (
-                            <div className="flex items-center gap-2 text-neutral-400">
-                              <Mail className="w-3.5 h-3.5" />
-                              <span className="text-xs truncate max-w-[140px]">{supplier.email}</span>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-primary/10 text-primary rounded-md text-xs font-medium">
-                          {supplier.supplierType}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-sm font-semibold ${(supplier.totalOutstanding || 0) > 0 ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>
-                          ₹{(supplier.totalOutstanding || 0).toLocaleString('en-IN')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        {(() => {
-                          const status = supplier.paymentStatus || 'Good';
-                          if (status === 'Overdue') return (
-                            <span className="flex items-center gap-1.5 text-error text-xs font-medium">
-                              <span className="w-2 h-2 rounded-full bg-error animate-pulse"></span>
-                              Overdue
-                            </span>
-                          );
-                          if (status === 'Due Soon') return (
-                            <span className="flex items-center gap-1.5 text-warning text-xs font-medium">
-                              <span className="w-2 h-2 rounded-full bg-warning"></span>
-                              Due Soon
-                            </span>
-                          );
-                          return (
-                            <span className="flex items-center gap-1.5 text-success text-xs font-medium">
-                              <span className="w-2 h-2 rounded-full bg-success"></span>
-                              Good
-                            </span>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-6 py-4">
                         <span className="text-sm font-semibold text-neutral-900 dark:text-white">
                           ₹{(supplier.totalAmount || 0).toLocaleString('en-IN')}
                         </span>
-                        <p className="text-xs text-neutral-400">{supplier.billCount || 0} bills</p>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-semibold text-emerald-600">
+                          ₹{(supplier.totalPaid || 0).toLocaleString('en-IN')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`text-sm font-bold ${(supplier.netBalance || 0) > 0 ? 'text-rose-600' : 'text-neutral-500'}`}>
+                          ₹{(supplier.netBalance || 0).toLocaleString('en-IN')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                          {supplier.lastPaymentDate ? new Date(supplier.lastPaymentDate).toLocaleDateString() : '-'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => navigate(`/suppliers/${supplier._id}`)}

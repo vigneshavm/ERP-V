@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import DebitNote from "../models/DebitNote.js";
+import { container } from "tsyringe";
+import { InventoryService } from "../../inventory/services/InventoryService.js";
+import { info, error } from "../../../config/logger.js";
 
 /**
  * @swagger
@@ -19,10 +22,10 @@ export const getDebitNotes = async (req: Request, res: Response) => {
             success: true,
             data: debitNotes
         });
-    } catch (error: any) {
+    } catch (err: any) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };
@@ -53,10 +56,10 @@ export const getDebitNoteById = async (req: Request, res: Response) => {
             success: true,
             data: debitNote
         });
-    } catch (error: any) {
+    } catch (err: any) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };
@@ -73,6 +76,7 @@ export const getDebitNoteById = async (req: Request, res: Response) => {
 export const createDebitNote = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
+        const tenantId = (req as any).user.tenantId;
         const debitNoteData = req.body;
 
         // Generate a unique note ID if not provided
@@ -86,15 +90,38 @@ export const createDebitNote = async (req: Request, res: Response) => {
             createdBy: userId
         });
 
+        // If status is APPROVED and reason warrants stock reduction
+        if (debitNote.status === 'APPROVED' && ['RETURN', 'QUALITY', 'SHORTAGE', 'OTHER'].includes(debitNote.reason)) {
+            const inventoryService = container.resolve(InventoryService);
+
+            for (const item of debitNote.items) {
+                if (item.itemId) {
+                    try {
+                        await inventoryService.reduceStock(
+                            item.itemId.toString(),
+                            item.qty,
+                            tenantId,
+                            (req as any).user,
+                            `DEBIT_NOTE_${debitNote.reason}`
+                        );
+                    } catch (err) {
+                        error(`Failed to reduce stock for Debit Note ${debitNote.noteId}: ${(err as Error).message}`);
+                        // Should we rollback? For now, just log. 
+                        // Ideally, we should use a transaction.
+                    }
+                }
+            }
+        }
+
         res.status(201).json({
             success: true,
             message: "Debit note created successfully",
             data: debitNote
         });
-    } catch (error: any) {
+    } catch (err: any) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };
@@ -111,14 +138,11 @@ export const createDebitNote = async (req: Request, res: Response) => {
 export const updateDebitNoteStatus = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
+        const tenantId = (req as any).user.tenantId;
         const { id } = req.params;
         const { status } = req.body;
 
-        const debitNote = await DebitNote.findOneAndUpdate(
-            { _id: id, createdBy: userId },
-            { $set: { status } },
-            { new: true, runValidators: true }
-        );
+        const debitNote = await DebitNote.findOne({ _id: id, createdBy: userId });
 
         if (!debitNote) {
             return res.status(404).json({
@@ -127,15 +151,42 @@ export const updateDebitNoteStatus = async (req: Request, res: Response) => {
             });
         }
 
+        const oldStatus = debitNote.status;
+        debitNote.status = status;
+        await debitNote.save();
+
+        // Trigger stock reduction if moving to APPROVED
+        if (oldStatus !== 'APPROVED' && status === 'APPROVED' &&
+            ['RETURN', 'QUALITY', 'SHORTAGE', 'OTHER'].includes(debitNote.reason)) {
+
+            const inventoryService = container.resolve(InventoryService);
+
+            for (const item of debitNote.items) {
+                if (item.itemId) {
+                    try {
+                        await inventoryService.reduceStock(
+                            item.itemId.toString(),
+                            item.qty,
+                            tenantId,
+                            (req as any).user,
+                            `DEBIT_NOTE_${debitNote.reason}`
+                        );
+                    } catch (err) {
+                        error(`Failed to reduce stock on Debit Note Update ${debitNote.noteId}: ${(err as Error).message}`);
+                    }
+                }
+            }
+        }
+
         res.status(200).json({
             success: true,
             message: "Debit note status updated",
             data: debitNote
         });
-    } catch (error: any) {
+    } catch (err: any) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };
@@ -167,10 +218,10 @@ export const deleteDebitNote = async (req: Request, res: Response) => {
             success: true,
             message: "Debit note deleted successfully"
         });
-    } catch (error: any) {
+    } catch (err: any) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };

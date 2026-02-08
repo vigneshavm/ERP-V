@@ -159,4 +159,29 @@ export class SalesService {
             invoice: updatedInvoice
         };
     }
+    async createInvoice(invoiceData: any, userId: string, tenantId: string): Promise<IInvoice> {
+        // Basic validation
+        if (!invoiceData.items || invoiceData.items.length === 0) {
+            throw new AppError("Invoice must have at least one item", 400);
+        }
+
+        const invoice = await this.invoiceRepository.create({
+            ...invoiceData,
+            createdBy: userId,
+            tenantId: tenantId,
+            paymentStatus: invoiceData.status || 'unpaid',
+            paymentMethod: invoiceData.paymentMethod || 'due',
+            hasReturns: false,
+            returnedAmount: 0,
+            paidAmount: 0
+        });
+
+        // Update customer dues if applicable (optional, depending on flow)
+        if (invoice.customer && invoice.paymentStatus === 'unpaid') {
+            // Logic to update customer dues could go here or be handled by a separate event/method
+            // For now, we'll keep it simple as per other methods
+        }
+
+        return invoice;
+    }
 }

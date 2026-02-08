@@ -178,9 +178,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 {(() => {
                     switch (activeTab) {
                         // === DASHBOARD ===
+                        case 'PROFIT_PULSE':
+                        case 'DASHBOARD_SNAPSHOT':
                         case 'DASHBOARD': return <LazyModules.Dashboard />;
-                        case 'PROFIT_PULSE': return <LazyModules.ProfitPulse />;
-                        case 'DASHBOARD_SNAPSHOT': return <LazyModules.BusinessSnapshot />;
                         case 'DASHBOARD_OVERVIEW': return <LazyModules.Dashboard />;
                         case 'DASHBOARD_SUMMARY': return <LazyModules.DailyFinanceTracker />; // Today's Summary
 
@@ -228,6 +228,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'PURCHASE_RETURNS': return <LazyModules.PurchaseReturns />;
                         case 'PURCHASE_RETURN_FORM': return <LazyModules.PurchaseReturnForm />;
                         case 'PURCHASE_UPLOAD': return <LazyModules.PurchaseUpload />;
+                        case 'SUPPLIER_AGEING': return <LazyModules.SupplierAgeing />;
 
                         // Customers
                         case 'CUSTOMER_LIST': return <LazyModules.CustomerList />;
@@ -434,11 +435,25 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                     <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-neutral-900 dark:text-neutral-100">
                         <Routes>
                             <Route path="/" element={renderContent()} />
+                            {/* SALES ROUTES */}
+                            <Route path="/sales/new" element={
+                                <Suspense fallback={<div>Loading Form...</div>}><LazyModules.SalesInvoiceForm /></Suspense>
+                            } />
+                            <Route path="/sales/invoice/create" element={
+                                <Navigate to="/sales/new" replace />
+                            } />
+                            <Route path="/sales/invoice/:id" element={
+                                <Suspense fallback={<div>Loading Invoice...</div>}><LazyModules.SalesInvoiceDetail /></Suspense>
+                            } />
+                            {/* END SALES ROUTES */}
                             <Route path="/suppliers/:id" element={
                                 <Suspense fallback={<div>Loading Vendor...</div>}><LazyModules.VendorDetails /></Suspense>
                             } />
                             <Route path="/suppliers/:id/edit" element={
                                 <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
+                            } />
+                            <Route path="/suppliers/ledger" element={
+                                <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
                             } />
                             <Route path="/suppliers/:id/ledger" element={
                                 <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
@@ -475,6 +490,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             } />
                             <Route path="/purchase/returns/view/:id" element={
                                 <Suspense fallback={<div>Loading Return Details...</div>}><LazyModules.PurchaseReturnForm /></Suspense>
+                            } />
+                            <Route path="/purchase/ageing-analysis" element={
+                                <Suspense fallback={<div>Loading Ageing...</div>}><LazyModules.SupplierAgeing /></Suspense>
                             } />
                             <Route path="/purchase/payments" element={
                                 <Suspense fallback={<div>Loading Payments...</div>}><LazyModules.SupplierPayments /></Suspense>

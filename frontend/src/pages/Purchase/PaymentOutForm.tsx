@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { createPayment } from '../../redux/slices/paymentOutSlice';
+import { createPayment, PaymentOut } from '../../redux/slices/paymentOutSlice';
 import { getAllSuppliers } from '../../redux/slices/supplierSlice';
-// getPurchases removed
-// Note: We need a way to get unpaid bills. Ideally new thunk 'getUnpaidBills' in billSlice or similar.
-// For now, I'll assume we can filter expenses or use a new endpoint. 
-// Actually, let's presume we fetch all bills and filter by status 'unpaid' / 'partial' for the supplier.
-import { getAllBills } from '../../redux/slices/billSlice';
 import { getAccounts } from '../../redux/slices/cashbankSlice';
-
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { User, Calendar, CreditCard, Banknote, Landmark, CheckCircle, Search } from 'lucide-react';
+import { User, CreditCard, Banknote, CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import BillSelectionModal from './Modals/BillSelectionModal';
+import { Bill } from '../../redux/slices/billSlice';
 
 const PaymentOutForm: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -22,98 +18,81 @@ const PaymentOutForm: React.FC = () => {
 
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
     const { accounts } = useSelector((state: RootState) => state.cashbank);
-    // const { bills } = useSelector((state: RootState) => state.bill); // Assuming billSlice exists and has bills
 
     // Local State
     const [supplierId, setSupplierId] = useState('');
     const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0]);
     const [amount, setAmount] = useState<number>(0);
-    const [paymentMode, setPaymentMode] = useState('Bank Transfer');
+    const [paymentMode, setPaymentMode] = useState<PaymentOut['paymentMode']>('Bank Transfer');
     const [referenceNo, setReferenceNo] = useState('');
     const [bankAccountId, setBankAccountId] = useState('');
     const [chequeDate, setChequeDate] = useState('');
     const [notes, setNotes] = useState('');
 
-    const [unpaidBills, setUnpaidBills] = useState<any[]>([]);
+    // Allocation State
+    const [selectedBills, setSelectedBills] = useState<Bill[]>([]);
     const [allocations, setAllocations] = useState<{ [billId: string]: number }>({});
     const [discounts, setDiscounts] = useState<{ [billId: string]: number }>({});
+
+    // UI State
+    const [isBillModalOpen, setIsBillModalOpen] = useState(false);
 
     useEffect(() => {
         dispatch(getAllSuppliers());
         dispatch(getAccounts());
     }, [dispatch]);
 
+    // Reset allocations if supplier changes
     useEffect(() => {
-        if (supplierId) {
-            // In real app, dispatch(getUnpaidBills(supplierId));
-            // Simulating fetch or assuming we have a way to search bills.
-            // For now, let's try to fetch all bills and filter. 
-            // Warning: This might be inefficient if 1000s of bills. 
-            // Better strategy: The backend 'getSupplierAnalytics' or dedicated 'getUnpaidBills' endpoint.
-            // I will implement a quick fetch logic or assume 'fetchBills' is available.
-            dispatch(getAllBills()).unwrap().then((allBills: any[]) => { // Assuming returns array
-                const relevant = allBills.filter(b =>
-                    b.supplierId?._id === supplierId &&
-                    (b.status === 'unpaid' || b.paymentStatus === 'partial' || b.paymentStatus === 'overdue')
-                );
-                setUnpaidBills(relevant);
-            }).catch(() => { });
-        } else {
-            setUnpaidBills([]);
-        }
-    }, [supplierId, dispatch]);
+        setSelectedBills([]);
+        setAllocations({});
+        setDiscounts({});
+    }, [supplierId]);
 
+    const handleBillsSelected = (bills: Bill[], newAllocations: { [billId: string]: number }, newDiscounts: { [billId: string]: number }) => {
+        setSelectedBills(bills);
+        setAllocations(newAllocations);
+        setDiscounts(newDiscounts);
 
-    const handleAllocationChange = (billId: string, val: number) => {
-        setAllocations(prev => ({ ...prev, [billId]: val }));
+        // Auto-update total amount
+        const totalAllocated = Object.values(newAllocations).reduce((a, b) => a + b, 0);
+        setAmount(totalAllocated);
+    };
+
+    const removeBill = (billId: string) => {
+        setSelectedBills(prev => prev.filter(b => b._id !== billId));
+        const newAllocations = { ...allocations };
+        const newDiscounts = { ...discounts };
+        delete newAllocations[billId];
+        delete newDiscounts[billId];
+        setAllocations(newAllocations);
+        setDiscounts(newDiscounts);
+
+        // Update amount? Maybe keep amount as is, or reduce it?
+        // Usually if I remove a bill, I expect the total payment amount to drop.
+        const totalAllocated = Object.values(newAllocations).reduce((a, b) => a + b, 0);
+        setAmount(totalAllocated);
     };
 
     const totalAllocated = Object.values(allocations).reduce((a, b) => a + b, 0);
+    const totalDiscount = Object.values(discounts).reduce((a, b) => a + b, 0);
     const unallocated = Math.max(0, amount - totalAllocated);
-
-    const handleAutoAllocate = () => {
-        if (amount <= 0) return toast.warning("Please enter a valid payment amount first");
-        if (unpaidBills.length === 0) return toast.warning("No unpaid bills to allocate to");
-
-        // Sort bills by date (FIFO)
-        const sortedBills = [...unpaidBills].sort((a, b) => new Date(a.billDate).getTime() - new Date(b.billDate).getTime());
-
-        let remaining = amount;
-        const newAllocations: { [billId: string]: number } = {};
-
-        sortedBills.forEach(bill => {
-            if (remaining <= 0) return;
-
-            const due = (bill.amount || 0) - (bill.paidAmount || 0);
-            if (due <= 0) return;
-
-            const allocation = Math.min(remaining, due);
-            newAllocations[bill._id] = allocation;
-            remaining -= allocation;
-        });
-
-        setAllocations(newAllocations);
-        if (remaining > 0) {
-            toast.info(`Allocated to all bills. ₹${remaining.toLocaleString()} remaining unallocated.`);
-        } else {
-            toast.success("Amount auto-allocated to oldest bills first.");
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!supplierId) return toast.error("Select Supplier");
         if (amount <= 0) return toast.error("Enter valid amount");
-        if (totalAllocated > amount) return toast.error("Allocation exceeds payment amount");
+        // if (totalAllocated > amount) return toast.error("Allocation exceeds payment amount"); 
+        // Allow unallocated amount (advance payment), but not negative unallocated.
+        if (unallocated < 0) return toast.error("Allocation exceeds payment amount");
 
-        const paymentData: any = {
-
+        const paymentData: PaymentOut = {
             supplierId,
             paymentDate,
             amount,
             paymentMode,
             referenceNo,
-            bankAccountId: (paymentMode === 'Cheque' || paymentMode === 'Bank Transfer') ? bankAccountId : undefined,
+            bankAccountId: (['Cheque', 'Bank Transfer', 'UPI'].includes(paymentMode)) ? bankAccountId : undefined,
             chequeDate: paymentMode === 'Cheque' ? chequeDate : undefined,
             notes,
             allocations: Object.entries(allocations)
@@ -134,11 +113,13 @@ const PaymentOutForm: React.FC = () => {
         }
     };
 
+    const isNonCashMode = paymentMode === 'Discount Received';
+
     return (
         <Layout>
             <PageHeader
                 title="Record Payment"
-                description="Issue payment to supplier"
+                description="Issue payment to supplier or settle via discount"
                 breadcrumbs={[{ label: 'Payments', link: '/purchase/payments' }, { label: 'New' }]}
             />
 
@@ -194,69 +175,80 @@ const PaymentOutForm: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2">
                             <CreditCard size={20} className="text-emerald-500" />
-                            Mode & Reference
+                            {isNonCashMode ? 'Settlement Mode' : 'Payment Mode'}
                         </h3>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-2">
-                                {['Bank Transfer', 'Cheque', 'UPI', 'Cash'].map(m => (
+                                {['Bank Transfer', 'Cheque', 'UPI', 'Cash', 'Discount Received'].map(m => (
                                     <button
                                         type="button"
                                         key={m}
-                                        onClick={() => setPaymentMode(m)}
+                                        onClick={() => setPaymentMode(m as PaymentOut['paymentMode'])}
                                         className={`px-3 py-2 text-sm font-medium rounded-lg border transition-all ${paymentMode === m
                                             ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                                             : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
-                                            }`}
+                                            } ${m === 'Discount Received' ? 'col-span-2' : ''}`}
                                     >
                                         {m}
                                     </button>
                                 ))}
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                    {paymentMode === 'Cheque' ? 'Cheque No' : 'Transaction Ref / UTR'}
-                                </label>
-                                <input
-                                    type="text"
-                                    value={referenceNo}
-                                    onChange={e => setReferenceNo(e.target.value)}
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                    placeholder="e.g. 123456"
-                                />
-                            </div>
+                            {!isNonCashMode && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            {paymentMode === 'Cheque' ? 'Cheque No' : 'Transaction Ref / UTR'}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={referenceNo}
+                                            onChange={e => setReferenceNo(e.target.value)}
+                                            className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                            placeholder="e.g. 123456"
+                                        />
+                                    </div>
 
-                            {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer') && (
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Source Bank Account</label>
-                                    <select
-                                        value={bankAccountId}
-                                        onChange={e => setBankAccountId(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                    >
-                                        <option value="">-- Select Bank Account --</option>
-                                        {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
-                                            <option key={acc._id} value={acc._id}>
-                                                {acc.bankName} - {acc.accountType} (****{acc.accountNumber?.slice(-4)})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer' || paymentMode === 'UPI') && (
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Source Bank Account</label>
+                                            <select
+                                                value={bankAccountId}
+                                                onChange={e => setBankAccountId(e.target.value)}
+                                                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                            >
+                                                <option value="">-- Select Bank Account --</option>
+                                                {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
+                                                    <option key={acc._id} value={acc._id}>
+                                                        {acc.bankName} - {acc.accountType} (****{acc.accountNumber?.slice(-4)})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {paymentMode === 'Cheque' && (
+                                        <div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cheque Date</label>
+                                                <input
+                                                    type="date"
+                                                    value={chequeDate}
+                                                    onChange={e => setChequeDate(e.target.value)}
+                                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                                />
+                                                <p className="text-xs text-slate-400 mt-1">For Post-Dated Cheques</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
 
-                            {paymentMode === 'Cheque' && (
-                                <div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cheque Date</label>
-                                        <input
-                                            type="date"
-                                            value={chequeDate}
-                                            onChange={e => setChequeDate(e.target.value)}
-                                            className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                        />
-                                        <p className="text-xs text-slate-400 mt-1">For Post-Dated Cheques</p>
-                                    </div>
+                            {isNonCashMode && (
+                                <div className="p-3 bg-amber-50 text-amber-700 rounded-lg text-sm border border-amber-200">
+                                    <p className="font-bold">Discount Settlement</p>
+                                    <p>Select bills to apply discount against. This will reduce the bill balance without reducing bank/cash balance.</p>
                                 </div>
                             )}
                         </div>
@@ -269,23 +261,36 @@ const PaymentOutForm: React.FC = () => {
                         <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center justify-between">
                             <span className="flex items-center gap-2"><Banknote size={20} className="text-amber-500" /> Allocation</span>
                             <div className="flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={handleAutoAllocate}
-                                    className="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 rounded-lg font-bold transition-colors"
-                                >
-                                    Auto-Allocate
-                                </button>
                                 <span className="text-sm font-normal text-slate-500">
                                     Unallocated: <strong className={unallocated > 0 ? 'text-emerald-600' : 'text-slate-700'}>₹{unallocated.toLocaleString()}</strong>
                                 </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (!supplierId) return toast.error("Please select a supplier first");
+                                        setIsBillModalOpen(true);
+                                    }}
+                                    className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 rounded-lg font-bold transition-all flex items-center gap-2 text-sm"
+                                >
+                                    <Plus size={16} /> Select Bills
+                                </button>
                             </div>
                         </h3>
 
-                        {unpaidBills.length === 0 ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-60 min-h-[200px]">
-                                <Search size={48} className="mb-2" />
-                                <p>Select a supplier to view unpaid bills</p>
+                        {selectedBills.length === 0 ? (
+                            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-60 min-h-[200px] border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
+                                <Banknote size={48} className="mb-2" />
+                                <p>No bills selected for allocation</p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (!supplierId) return toast.error("Please select a supplier first");
+                                        setIsBillModalOpen(true);
+                                    }}
+                                    className="mt-4 text-indigo-600 font-bold hover:underline"
+                                >
+                                    Select Bills
+                                </button>
                             </div>
                         ) : (
                             <div className="overflow-x-auto flex-1">
@@ -294,44 +299,44 @@ const PaymentOutForm: React.FC = () => {
                                         <tr>
                                             <th className="px-4 py-3 rounded-l-lg">Bill No</th>
                                             <th className="px-4 py-3">Date</th>
-                                            <th className="px-4 py-3 text-right">Bill Amt</th>
-                                            <th className="px-4 py-3 text-right">Due Amt</th>
-                                            <th className="px-4 py-3 w-32">Allocate</th>
-                                            <th className="px-4 py-3 rounded-r-lg w-24">Discount</th>
+                                            <th className="px-4 py-3 text-right">Total</th>
+                                            <th className="px-4 py-3 text-right">Allocated</th>
+                                            <th className="px-4 py-3 text-right">Discount</th>
+                                            <th className="px-4 py-3 rounded-r-lg w-10">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                                        {unpaidBills.map(bill => (
-                                            <tr key={bill._id} className={allocations[bill._id] > 0 ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : ''}>
+                                        {selectedBills.map(bill => (
+                                            <tr key={bill._id}>
                                                 <td className="px-4 py-3 font-medium">{bill.billNo}</td>
-                                                <td className="px-4 py-3 text-slate-500">{new Date(bill.billDate).toLocaleDateString()}</td>
+                                                <td className="px-4 py-3 text-slate-500">{new Date(bill.date).toLocaleDateString()}</td>
                                                 <td className="px-4 py-3 text-right text-slate-600">₹{bill.amount?.toLocaleString()}</td>
-                                                <td className="px-4 py-3 text-right font-bold text-slate-800 dark:text-slate-200">
-                                                    {/* Calculate due considering partial payments not yet in Redux maybe? 
-                                                        Assuming bill.paidAmount is up to date */}
-                                                    ₹{((bill.amount || 0) - (bill.paidAmount || 0)).toLocaleString()}
+                                                <td className="px-4 py-3 text-right font-bold text-indigo-600">
+                                                    ₹{allocations[bill._id || '']?.toLocaleString()}
                                                 </td>
-                                                <td className="px-4 py-3">
-                                                    <input
-                                                        type="number"
-                                                        className="w-full p-1.5 border border-slate-300 dark:border-slate-600 rounded text-right focus:border-indigo-500 outline-none"
-                                                        value={allocations[bill._id] || ''}
-                                                        placeholder="0"
-                                                        onChange={e => handleAllocationChange(bill._id, parseFloat(e.target.value))}
-                                                    />
+                                                <td className="px-4 py-3 text-right text-slate-500">
+                                                    {discounts[bill._id || ''] ? `₹${discounts[bill._id || ''].toLocaleString()}` : '-'}
                                                 </td>
-                                                <td className="px-4 py-3">
-                                                    <input
-                                                        type="number"
-                                                        className="w-full p-1.5 border border-slate-300 dark:border-slate-600 rounded text-right text-xs focus:border-indigo-500 outline-none"
-                                                        value={discounts[bill._id] || ''}
-                                                        placeholder="0"
-                                                        onChange={e => setDiscounts(prev => ({ ...prev, [bill._id]: parseFloat(e.target.value) }))}
-                                                    />
+                                                <td className="px-4 py-3 text-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeBill(bill._id || '')}
+                                                        className="text-slate-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
+                                    <tfoot className="border-t border-slate-200 dark:border-slate-700 font-bold">
+                                        <tr>
+                                            <td colSpan={3} className="px-4 py-3 text-right">Total</td>
+                                            <td className="px-4 py-3 text-right text-indigo-600">₹{totalAllocated.toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-right text-slate-600">₹{totalDiscount.toLocaleString()}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         )}
@@ -356,6 +361,15 @@ const PaymentOutForm: React.FC = () => {
                 </div>
 
             </form>
+
+            <BillSelectionModal
+                isOpen={isBillModalOpen}
+                onClose={() => setIsBillModalOpen(false)}
+                supplierId={supplierId}
+                onConfirm={handleBillsSelected}
+                initialAllocations={allocations}
+                initialDiscounts={discounts}
+            />
         </Layout>
     );
 };

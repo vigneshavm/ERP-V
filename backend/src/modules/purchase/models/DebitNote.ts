@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IDebitNoteItem {
+    itemId?: mongoose.Types.ObjectId;
     name: string;
     qty: number;
     amount: number;
@@ -53,6 +54,7 @@ const debitNoteSchema = new Schema<IDebitNote>(
         },
         items: [
             {
+                itemId: { type: Schema.Types.ObjectId, ref: "Item" },
                 name: { type: String, required: true },
                 qty: { type: Number, required: true },
                 amount: { type: Number, required: true },

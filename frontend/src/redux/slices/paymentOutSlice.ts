@@ -13,7 +13,7 @@ export interface PaymentOut {
     supplierId: string | any;
     paymentDate: string;
     amount: number;
-    paymentMode: 'Cash' | 'Cheque' | 'UPI' | 'Bank Transfer';
+    paymentMode: 'Cash' | 'Cheque' | 'UPI' | 'Bank Transfer' | 'Discount Received';
     referenceNo?: string;
     bankAccountId?: string;
     chequeDate?: string;

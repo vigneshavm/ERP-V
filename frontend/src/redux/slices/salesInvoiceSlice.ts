@@ -135,6 +135,26 @@ export const markSalesInvoiceAsPaid = createAsyncThunk(
     }
 );
 
+// Create new sales invoice
+export const createSalesInvoice = createAsyncThunk(
+    'salesInvoice/create',
+    async (invoiceData: any, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as any;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.post(API_URL, invoiceData, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 export const salesInvoiceSlice = createSlice({
     name: 'salesInvoice',
     initialState,
@@ -176,6 +196,20 @@ export const salesInvoiceSlice = createSlice({
                 state.invoices = action.payload;
             })
             .addCase(getAllSalesInvoices.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            // Create sales invoice
+            .addCase(createSalesInvoice.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createSalesInvoice.fulfilled, (state, action: PayloadAction<Invoice>) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.invoices.push(action.payload);
+            })
+            .addCase(createSalesInvoice.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

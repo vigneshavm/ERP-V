@@ -33,27 +33,41 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                         {
                             $match: {
                                 $expr: { $eq: ["$supplier", "$$supplierId"] },
-                                status: { $ne: "paid" },
+                                status: { $nin: ["draft", "rejected", "cancelled"] },
                                 ...(branchId ? { branchId: branchId } : {})
                             }
                         }
                     ],
-                    as: "unpaidBills"
+                    as: "bills"
                 }
             },
             {
                 $lookup: {
-                    from: "purchases",
+                    from: "purchasepayments",
+                    let: { supplierId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$supplierId", "$$supplierId"] }
+                            }
+                        }
+                    ],
+                    as: "payments"
+                }
+            },
+            {
+                $lookup: {
+                    from: "debitnotes",
                     let: { supplierId: "$_id" },
                     pipeline: [
                         {
                             $match: {
                                 $expr: { $eq: ["$vendorId", "$$supplierId"] },
-                                ...(branchId ? { branchId: branchId } : {})
+                                status: "APPROVED"
                             }
                         }
                     ],
-                    as: "purchases"
+                    as: "debitNotes"
                 }
             },
             {
@@ -70,13 +84,27 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     createdAt: 1,
                     openingBalance: { $ifNull: ["$openingBalance", 0] },
                     creditLimit: { $ifNull: ["$creditLimit", 0] },
-                    // Metrics
-                    billCount: { $size: "$purchases" },
-                    totalAmount: { $sum: "$purchases.totalAmount" },
+                    // Metrics (Based on Bills)
+                    billCount: { $size: "$bills" },
+                    totalAmount: { $sum: "$bills.amount" },
+                    totalPaid: { $sum: "$payments.amount" },
+                    lastPaymentDate: { $max: "$payments.paymentDate" },
+                    netBalance: {
+                        $subtract: [
+                            { $add: [{ $ifNull: ["$openingBalance", 0] }, { $sum: "$bills.amount" }] },
+                            { $add: [{ $sum: "$payments.amount" }, { $sum: "$debitNotes.totalAmount" }] }
+                        ]
+                    },
                     currentBillOutstanding: {
                         $sum: {
                             $map: {
-                                input: "$unpaidBills",
+                                input: {
+                                    $filter: {
+                                        input: "$bills",
+                                        as: "bill",
+                                        cond: { $ne: ["$$bill.status", "paid"] }
+                                    }
+                                },
                                 as: "bill",
                                 in: { $subtract: ["$$bill.amount", { $ifNull: ["$$bill.paidAmount", 0] }] }
                             }
@@ -86,9 +114,14 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     overdueCount: {
                         $size: {
                             $filter: {
-                                input: "$unpaidBills",
+                                input: "$bills",
                                 as: "bill",
-                                cond: { $lt: ["$$bill.dueDate", new Date()] }
+                                cond: {
+                                    $and: [
+                                        { $ne: ["$$bill.status", "paid"] },
+                                        { $lt: ["$$bill.dueDate", new Date()] }
+                                    ]
+                                }
                             }
                         }
                     },
@@ -97,9 +130,14 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                             $map: {
                                 input: {
                                     $filter: {
-                                        input: "$unpaidBills",
+                                        input: "$bills",
                                         as: "bill",
-                                        cond: { $lt: ["$$bill.dueDate", new Date()] }
+                                        cond: {
+                                            $and: [
+                                                { $ne: ["$$bill.status", "paid"] },
+                                                { $lt: ["$$bill.dueDate", new Date()] }
+                                            ]
+                                        }
                                     }
                                 },
                                 as: "bill",
@@ -110,10 +148,11 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     dueSoonCount: {
                         $size: {
                             $filter: {
-                                input: "$unpaidBills",
+                                input: "$bills",
                                 as: "bill",
                                 cond: {
                                     $and: [
+                                        { $ne: ["$$bill.status", "paid"] },
                                         { $gte: ["$$bill.dueDate", new Date()] },
                                         { $lt: ["$$bill.dueDate", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)] } // 7 Days
                                     ]
@@ -126,10 +165,11 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                             $map: {
                                 input: {
                                     $filter: {
-                                        input: "$unpaidBills",
+                                        input: "$bills",
                                         as: "bill",
                                         cond: {
                                             $and: [
+                                                { $ne: ["$$bill.status", "paid"] },
                                                 { $gte: ["$$bill.dueDate", new Date()] },
                                                 { $lt: ["$$bill.dueDate", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)] }
                                             ]
@@ -384,6 +424,77 @@ export const getSupplierReports = async (req: AuthenticatedRequest, res: Respons
         });
     } catch (err: any) {
         console.error('Report Error', err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export const getAgeingAnalysis = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const tenantId = req.user?.tenantId?.toString();
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+
+        const { getSupplierAgeingReport } = await import('../services/SupplierAgeingService.js');
+        const data = await getSupplierAgeingReport(tenantId);
+
+        res.status(200).json({
+            success: true,
+            data
+        });
+    } catch (error: any) {
+        console.error('Ageing Analysis Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const bulkUpdateOpeningBalance = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const tenantId = req.user?.tenantId?.toString();
+        if (!tenantId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const { updates } = req.body; // Array of { supplierName, openingBalance }
+        if (!updates || !Array.isArray(updates)) {
+            return res.status(400).json({ message: 'Invalid updates format' });
+        }
+
+        const results = { updated: 0, failed: 0, errors: [] as any[] };
+
+        for (const update of updates) {
+            try {
+                const { businessName, openingBalance, balanceType = 'payable' } = update;
+
+                // Find supplier by name (case insensitive)
+                const supplier = await Supplier.findOne({
+                    tenantId,
+                    businessName: { $regex: new RegExp(`^${businessName}$`, 'i') }
+                });
+
+                if (supplier) {
+                    supplier.openingBalance = parseFloat(openingBalance);
+                    supplier.balanceType = balanceType;
+                    await supplier.save();
+                    results.updated++;
+                } else {
+                    results.failed++;
+                    results.errors.push(`Supplier not found: ${businessName}`);
+                }
+            } catch (err: any) {
+                results.failed++;
+                results.errors.push(`Error updating ${update.businessName}: ${err.message}`);
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Bulk update completed. Updated: ${results.updated}, Failed: ${results.failed}`,
+            data: results
+        });
+
+    } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
 };

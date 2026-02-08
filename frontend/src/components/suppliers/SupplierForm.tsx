@@ -14,6 +14,7 @@ interface SupplierFormData {
     contactNo: string;
     email: string;
     physicalAddress: string;
+    state: string;
     gstNo: string;
     panNo: string;
     supplierType: string;
@@ -53,6 +54,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         contactNo: '',
         email: '',
         physicalAddress: '',
+        state: '',
         gstNo: '',
         panNo: '',
         supplierType: 'manufacturer',
@@ -87,6 +89,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 contactNo: supplier.contactNo || '',
                 email: supplier.email || '',
                 physicalAddress: supplier.physicalAddress || '',
+                state: supplier.state || '',
                 gstNo: supplier.gstNo || '',
                 panNo: supplier.panNo || '',
                 supplierType: supplier.supplierType || 'manufacturer',
@@ -314,6 +317,29 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
                                 placeholder="email@company.com"
                             />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Physical Address</label>
+                            <textarea
+                                name="physicalAddress"
+                                value={formData.physicalAddress}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
+                                placeholder="Full Street Address"
+                                rows={2}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">State / Province</label>
+                            <input
+                                type="text"
+                                name="state"
+                                value={formData.state}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
+                                placeholder="e.g. Maharashtra"
+                            />
+                            <p className="text-[10px] text-amber-500 font-bold ml-1">Critical for GST (IGST vs SGST/CGST)</p>
                         </div>
                     </div>
                 </div>

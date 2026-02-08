@@ -49,6 +49,7 @@ const SupplierSchema: Schema = new Schema({
     contactNo: { type: String, required: false },
     email: { type: String, required: false, lowercase: true, trim: true },
     physicalAddress: { type: String, required: false },
+    state: { type: String, required: false }, // For GST Calculation
     gstNo: { type: String, required: false },
     panNo: { type: String, required: false },
     supplierType: {

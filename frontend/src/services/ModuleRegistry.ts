@@ -10,8 +10,6 @@ import { lazy } from 'react';
 export const Modules = {
     // Core
     Dashboard: () => import("../pages/Dashboard/Dashboard"),
-    ProfitPulse: () => import("../pages/Dashboard/ProfitPulse"),
-    BusinessSnapshot: () => import("../pages/Dashboard/BusinessSnapshot"),
     Finance: () => import("../pages/Financial/Cashbank/FinanceOverview"),
     AgedStockManager: () => import("../pages/Inventory/AgedStockManager"),
     Inventory: () => import("../pages/Inventory/InventoryManager"),
@@ -70,7 +68,9 @@ export const Modules = {
     ReturnedItemsManager: () => import("../pages/Sales/returns/ReturnedItems"),
     CustomerCredits: () => import("../pages/Sales/payments/PaymentIn"), // Map to PaymentIn for now if missing
     OutstandingDues: () => import("../pages/Sales/payments/PaymentInList"),
-    SalesModulePlaceholder: () => import("@/components/sales/SalesModulePlaceholder"),
+    SalesModulePlaceholder: import("@/components/sales/SalesModulePlaceholder"),
+    SalesInvoiceForm: () => import("../pages/Sales/salesInvoices/SalesInvoiceForm"),
+    SalesInvoiceDetail: () => import("../pages/Sales/salesInvoices/SalesInvoiceDetail"), // Added New Form
 
     // Purchase Features
     PurchaseOrdersModule: () => import("../pages/Purchase/PurchaseOrdersModule"),
@@ -110,6 +110,7 @@ export const Modules = {
     SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
     SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
     SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
+    SupplierAgeing: () => import("../pages/Purchase/SupplierAgeing"),
 
     // Inventory Features
     ItemCategories: () => import("../pages/Inventory/CategoryManager"),
@@ -161,8 +162,6 @@ export const Modules = {
 
 export const LazyModules = {
     Dashboard: lazy(Modules.Dashboard),
-    ProfitPulse: lazy(Modules.ProfitPulse),
-    BusinessSnapshot: lazy(Modules.BusinessSnapshot),
     AgedStockManager: lazy(Modules.AgedStockManager),
     Inventory: lazy(Modules.Inventory),
     POS: lazy(Modules.POS),
@@ -221,6 +220,8 @@ export const LazyModules = {
     CustomerCredits: lazy(Modules.CustomerCredits),
     OutstandingDues: lazy(Modules.OutstandingDues),
     SalesModulePlaceholder: lazy(Modules.SalesModulePlaceholder),
+    SalesInvoiceForm: lazy(Modules.SalesInvoiceForm),
+    SalesInvoiceDetail: lazy(Modules.SalesInvoiceDetail), // Added New Form
 
     // Purchase
     PurchaseOrdersModule: lazy(Modules.PurchaseOrdersModule),
@@ -260,6 +261,7 @@ export const LazyModules = {
     SupplierLedger: lazy(Modules.SupplierLedger),
     SupplierStatements: lazy(Modules.SupplierStatements),
     SupplierGroups: lazy(Modules.SupplierGroups),
+    SupplierAgeing: lazy(Modules.SupplierAgeing),
 
     // Inventory
     ItemCategories: lazy(Modules.ItemCategories),

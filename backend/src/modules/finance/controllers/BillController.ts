@@ -59,9 +59,24 @@ const generateBillNo = async (userId: string): Promise<string> => {
  */
 export const getAllBills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const bills = await Bill.find({ createdBy: req.user?._id })
+        const { supplier, status, paymentStatus } = req.query;
+        const query: any = { createdBy: req.user?._id };
+
+        if (supplier) query.supplier = supplier;
+        if (status) query.status = status;
+        if (paymentStatus) {
+            const statuses = (paymentStatus as string).split(',');
+            if (statuses.length > 1) {
+                query.paymentStatus = { $in: statuses };
+            } else {
+                query.paymentStatus = paymentStatus;
+            }
+        }
+
+        const bills = await Bill.find(query)
             .populate('supplier', 'businessName')
             .sort({ createdAt: -1 });
+
         res.status(200).json(bills);
     } catch (err) {
         error(`Get all bills failed: ${(err as Error).message}`);

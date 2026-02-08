@@ -14,6 +14,8 @@ export interface Bill extends PurchaseBill {
     status: BillStatus;
     _id?: string;
     paidAmount?: number;
+    billNo: string; // Backend returns billNo, PurchaseBill has bill_number
+    discountReceived?: number;
 }
 
 interface BillState {
@@ -35,7 +37,7 @@ const initialState: BillState = {
 };
 
 // Get token from state
-const getConfig = (token: string) => {
+const getConfig = (token: string): any => {
     return {
         headers: {
             Authorization: 'Bearer ' + token,
@@ -44,14 +46,21 @@ const getConfig = (token: string) => {
 };
 
 // Get all bills
-export const getAllBills = createAsyncThunk<Bill[], void, { state: RootState, rejectValue: string }>(
+export const getAllBills = createAsyncThunk<Bill[], any, { state: RootState, rejectValue: string }>(
     'bill/getAll',
-    async (_, thunkAPI) => {
+    async (params, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
-            const response = await api.get(API_URL, getConfig(token));
+
+            // Format query params
+            const config = getConfig(token);
+            if (params) {
+                config.params = params;
+            }
+
+            const response = await api.get(API_URL, config);
             return response.data;
         } catch (error: any) {
             const message =

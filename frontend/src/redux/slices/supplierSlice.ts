@@ -25,20 +25,12 @@ export interface Supplier {
     updatedAt?: string;
     // Analytics
     totalAmount?: number;
+    totalPaid?: number;
+    netBalance?: number;
+    lastPaymentDate?: string;
     pendingAmount?: number;
     billCount?: number;
     paymentStatus?: 'Good' | 'Overdue' | 'Due Soon';
-
-    // Enhanced Balances
-    totalOutstanding?: number;
-    currentBillOutstanding?: number;
-    overdueAmount?: number;
-    dueNext7DaysAmount?: number;
-    creditUtilization?: number;
-    isCreditRisk?: boolean;
-
-    dueSoonCount?: number;
-    overdueCount?: number;
     [key: string]: any;
 }
 

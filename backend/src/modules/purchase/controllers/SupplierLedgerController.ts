@@ -36,10 +36,9 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
                 {
                     $match: {
                         supplier: new mongoose.Types.ObjectId(id as string),
-                        tenantId: tenantId, // Bill schema has tenantId? Let's check. If not, filter by other means.
-                        // Checked Bill.ts earlier, it usually has tenantId or createdBy. 
-                        // Standardizing on tenantId for robustness.
-                        date: { $lt: start }
+                        tenantId: tenantId,
+                        date: { $lt: start },
+                        status: { $nin: ['draft', 'rejected', 'cancelled'] }
                     }
                 },
                 { $group: { _id: null, total: { $sum: "$amount" } } } // Using amount (Total Bill Value)
@@ -106,7 +105,8 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             Bill.find({
                 supplier: id,
                 tenantId,
-                date: { $gte: start, $lte: end }
+                date: { $gte: start, $lte: end },
+                status: { $nin: ['draft', 'rejected', 'cancelled'] }
             }).lean(),
             PaymentOut.find({
                 supplierId: id,
@@ -120,6 +120,18 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
                 status: 'APPROVED'
             }).lean()
         ]);
+
+        // FETCH LINKED PURCHASE RETURNS
+        const debitNoteIds = debitNotes.map(d => d._id);
+        const purchaseReturns = await PurchaseReturn.find({
+            debitNoteId: { $in: debitNoteIds },
+            tenantId
+        }).select('_id debitNoteId').lean();
+
+        const dnToPrMap: Record<string, string> = {};
+        purchaseReturns.forEach(pr => {
+            if (pr.debitNoteId) dnToPrMap[pr.debitNoteId.toString()] = pr._id.toString();
+        });
 
         // 4. Transform and Merge
         let transactions: any[] = [];
@@ -151,7 +163,8 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             description: `Debit Note (${d.reason})`,
             credit: 0,
             debit: d.totalAmount, // Reduces liability
-            originalRef: d
+            originalRef: d,
+            purchaseReturnId: dnToPrMap[d._id.toString()] // Link to PR if exists
         }));
 
         // Sort Chronologically
