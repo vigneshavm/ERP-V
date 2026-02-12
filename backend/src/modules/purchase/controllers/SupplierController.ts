@@ -384,7 +384,8 @@ export const deleteSupplier = async (req: AuthenticatedRequest, res: Response) =
 export const evaluateSupplierPerformance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const { evaluateSupplier } = await import('../services/SupplierPerformanceService.js');
-        const metrics = await evaluateSupplier(req.params.id);
+        const id = req.params.id as string;
+        const metrics = await evaluateSupplier(id);
         res.json({ success: true, data: metrics });
     } catch (err: any) {
         res.status(500).json({ message: err.message });
@@ -496,5 +497,152 @@ export const bulkUpdateOpeningBalance = async (req: AuthenticatedRequest, res: R
 
     } catch (err: any) {
         res.status(500).json({ message: err.message });
+    }
+};
+
+export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const tenantId = req.user?.tenantId?.toString();
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+        }
+
+        const { startDate, endDate, supplierId } = req.query as {
+            startDate?: string;
+            endDate?: string;
+            supplierId?: string;
+        };
+
+        // Build supplier match stage
+        const supplierMatch: any = { tenantId };
+        if (supplierId) {
+            supplierMatch._id = new mongoose.Types.ObjectId(supplierId);
+        }
+
+        // Build date filter for bills and payments
+        const billDateFilter: any = {};
+        const paymentDateFilter: any = {};
+        if (startDate) {
+            billDateFilter.$gte = new Date(startDate);
+            paymentDateFilter.$gte = new Date(startDate);
+        }
+        if (endDate) {
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            billDateFilter.$lte = end;
+            paymentDateFilter.$lte = end;
+        }
+
+        const hasBillDateFilter = Object.keys(billDateFilter).length > 0;
+        const hasPaymentDateFilter = Object.keys(paymentDateFilter).length > 0;
+
+        const stats = await Supplier.aggregate([
+            { $match: supplierMatch },
+            // Lookup bills (inflow)
+            {
+                $lookup: {
+                    from: 'bills',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$supplier', '$$supplierId'] },
+                                tenantId,
+                                status: { $nin: ['draft', 'rejected', 'cancelled'] },
+                                ...(hasBillDateFilter ? { billDate: billDateFilter } : {})
+                            }
+                        }
+                    ],
+                    as: 'bills'
+                }
+            },
+            // Lookup payments (outflow)
+            {
+                $lookup: {
+                    from: 'purchasepayments',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$supplierId', '$$supplierId'] },
+                                tenantId,
+                                ...(hasPaymentDateFilter ? { paymentDate: paymentDateFilter } : {})
+                            }
+                        }
+                    ],
+                    as: 'payments'
+                }
+            },
+            // Lookup debit notes (adjustments)
+            {
+                $lookup: {
+                    from: 'debitnotes',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$vendorId', '$$supplierId'] },
+                                tenantId,
+                                status: 'APPROVED',
+                                ...(hasBillDateFilter ? { date: billDateFilter } : {})
+                            }
+                        }
+                    ],
+                    as: 'debitNotes'
+                }
+            },
+            {
+                $project: {
+                    businessName: 1,
+                    contactPersonName: 1,
+                    supplierId: 1,
+                    totalInflow: { $sum: '$bills.amount' },
+                    totalOutflow: { $sum: '$payments.amount' },
+                    debitNoteTotal: { $sum: '$debitNotes.totalAmount' },
+                    billCount: { $size: '$bills' },
+                    paymentCount: { $size: '$payments' },
+                    netBalance: {
+                        $subtract: [
+                            { $sum: '$bills.amount' },
+                            { $add: [{ $sum: '$payments.amount' }, { $sum: '$debitNotes.totalAmount' }] }
+                        ]
+                    }
+                }
+            },
+            // Only include suppliers that have activity
+            {
+                $match: {
+                    $or: [
+                        { totalInflow: { $gt: 0 } },
+                        { totalOutflow: { $gt: 0 } },
+                        { debitNoteTotal: { $gt: 0 } }
+                    ]
+                }
+            },
+            { $sort: { totalInflow: -1 } }
+        ]);
+
+        // Calculate overall totals
+        const totals = stats.reduce(
+            (acc, s) => ({
+                totalInflow: acc.totalInflow + (s.totalInflow || 0),
+                totalOutflow: acc.totalOutflow + (s.totalOutflow || 0),
+                debitNoteTotal: acc.debitNoteTotal + (s.debitNoteTotal || 0),
+                netBalance: acc.netBalance + (s.netBalance || 0),
+                vendorCount: acc.vendorCount + 1
+            }),
+            { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, netBalance: 0, vendorCount: 0 }
+        );
+
+        res.status(200).json({
+            success: true,
+            data: {
+                vendors: stats,
+                totals
+            }
+        });
+    } catch (error: any) {
+        console.error('Get Vendor Inflow/Outflow Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };

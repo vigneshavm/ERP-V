@@ -68,7 +68,7 @@ export const Modules = {
     ReturnedItemsManager: () => import("../pages/Sales/returns/ReturnedItems"),
     CustomerCredits: () => import("../pages/Sales/payments/PaymentIn"), // Map to PaymentIn for now if missing
     OutstandingDues: () => import("../pages/Sales/payments/PaymentInList"),
-    SalesModulePlaceholder: import("@/components/sales/SalesModulePlaceholder"),
+    SalesModulePlaceholder: () => import("@/components/sales/SalesModulePlaceholder"),
     SalesInvoiceForm: () => import("../pages/Sales/salesInvoices/SalesInvoiceForm"),
     SalesInvoiceDetail: () => import("../pages/Sales/salesInvoices/SalesInvoiceDetail"), // Added New Form
 
@@ -93,6 +93,7 @@ export const Modules = {
     PurchaseReturns: () => import("../pages/Purchase/PurchaseReturns"),
     PurchaseReturnForm: () => import("../pages/Purchase/PurchaseReturnForm"),
     PurchaseUpload: () => import("../pages/Purchase/PurchaseUpload"),
+    VendorInflowOutflow: () => import("../pages/Purchase/VendorInflowOutflow"),
 
     // Customer Features
     CustomerList: () => import("../pages/People/Customers/CustomerList"),
@@ -244,6 +245,7 @@ export const LazyModules = {
     PurchaseReturns: lazy(Modules.PurchaseReturns),
     PurchaseReturnForm: lazy(Modules.PurchaseReturnForm),
     PurchaseUpload: lazy(Modules.PurchaseUpload),
+    VendorInflowOutflow: lazy(Modules.VendorInflowOutflow),
 
     // Customers
     CustomerList: lazy(Modules.CustomerList),

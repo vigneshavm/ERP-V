@@ -123,6 +123,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'PURCHASE_UPLOAD', label: 'Upload Purchase', icon: Upload, module: 'PURCHASE', path: '/purchase/upload' },
             { id: 'RATE_REVISIONS', label: 'Rate Revisions', icon: TrendingUp, module: 'PURCHASE', path: '/purchase/rate-revisions' },
             { id: 'CHEQUES_VAULT', label: 'PDC Vault', icon: Shield, module: 'PURCHASE', path: '/purchase/cheques-vault' },
+            { id: 'VENDOR_INFLOW_OUTFLOW', label: 'Vendor Inflow/Outflow', icon: TrendingUp, module: 'PURCHASE', path: '/purchase/inflow-outflow' },
         ]
     },
     {

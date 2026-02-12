@@ -229,6 +229,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'PURCHASE_RETURN_FORM': return <LazyModules.PurchaseReturnForm />;
                         case 'PURCHASE_UPLOAD': return <LazyModules.PurchaseUpload />;
                         case 'SUPPLIER_AGEING': return <LazyModules.SupplierAgeing />;
+                        case 'VENDOR_INFLOW_OUTFLOW': return <LazyModules.VendorInflowOutflow />;
 
                         // Customers
                         case 'CUSTOMER_LIST': return <LazyModules.CustomerList />;
