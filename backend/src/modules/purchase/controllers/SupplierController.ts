@@ -538,7 +538,7 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
 
         const stats = await Supplier.aggregate([
             { $match: supplierMatch },
-            // Lookup bills (inflow)
+            // Lookup transactions BEFORE startDate to calculate Opening Balance
             {
                 $lookup: {
                     from: 'bills',
@@ -549,23 +549,76 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                                 $expr: { $eq: ['$supplier', '$$supplierId'] },
                                 tenantId,
                                 status: { $nin: ['draft', 'rejected', 'cancelled'] },
-                                ...(hasBillDateFilter ? { billDate: billDateFilter } : {})
+                                ...(startDate ? { date: { $lt: new Date(startDate) } } : { _id: null }) // if no startDate, pre is empty
                             }
                         }
                     ],
-                    as: 'bills'
+                    as: 'preBills'
                 }
             },
-            // Lookup payments (outflow)
             {
                 $lookup: {
-                    from: 'purchasepayments',
+                    from: 'paymentouts',
                     let: { supplierId: '$_id' },
                     pipeline: [
                         {
                             $match: {
                                 $expr: { $eq: ['$supplierId', '$$supplierId'] },
                                 tenantId,
+                                status: { $in: ['cleared', 'pending'] },
+                                ...(startDate ? { paymentDate: { $lt: new Date(startDate) } } : { _id: null })
+                            }
+                        }
+                    ],
+                    as: 'prePayments'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'debitnotes',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$vendorId', '$$supplierId'] },
+                                tenantId,
+                                status: 'APPROVED',
+                                ...(startDate ? { date: { $lt: new Date(startDate) } } : { _id: null })
+                            }
+                        }
+                    ],
+                    as: 'preDebitNotes'
+                }
+            },
+            // Lookup bills (inflow) in period
+            {
+                $lookup: {
+                    from: 'bills',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$supplier', '$$supplierId'] },
+                                tenantId,
+                                status: { $nin: ['draft', 'rejected', 'cancelled'] },
+                                ...(hasBillDateFilter ? { date: billDateFilter } : {})
+                            }
+                        }
+                    ],
+                    as: 'bills'
+                }
+            },
+            // Lookup payments (outflow) in period
+            {
+                $lookup: {
+                    from: 'paymentouts',
+                    let: { supplierId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$supplierId', '$$supplierId'] },
+                                tenantId,
+                                status: { $in: ['cleared', 'pending'] },
                                 ...(hasPaymentDateFilter ? { paymentDate: paymentDateFilter } : {})
                             }
                         }
@@ -573,7 +626,7 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                     as: 'payments'
                 }
             },
-            // Lookup debit notes (adjustments)
+            // Lookup debit notes (adjustments) in period
             {
                 $lookup: {
                     from: 'debitnotes',
@@ -601,21 +654,29 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                     debitNoteTotal: { $sum: '$debitNotes.totalAmount' },
                     billCount: { $size: '$bills' },
                     paymentCount: { $size: '$payments' },
-                    netBalance: {
+                    openingBalance: {
                         $subtract: [
-                            { $sum: '$bills.amount' },
-                            { $add: [{ $sum: '$payments.amount' }, { $sum: '$debitNotes.totalAmount' }] }
+                            { $add: [{ $ifNull: ['$openingBalance', 0] }, { $sum: '$preBills.amount' }] },
+                            { $add: [{ $sum: '$prePayments.amount' }, { $sum: '$preDebitNotes.totalAmount' }] }
+                        ]
+                    },
+                    closingBalance: {
+                        $subtract: [
+                            { $add: [{ $ifNull: ['$openingBalance', 0] }, { $sum: '$preBills.amount' }, { $sum: '$bills.amount' }] },
+                            { $add: [{ $sum: '$prePayments.amount' }, { $sum: '$payments.amount' }, { $sum: '$preDebitNotes.totalAmount' }, { $sum: '$debitNotes.totalAmount' }] }
                         ]
                     }
                 }
             },
-            // Only include suppliers that have activity
+            // Only include suppliers that have activity or a non-zero balance
             {
                 $match: {
                     $or: [
                         { totalInflow: { $gt: 0 } },
                         { totalOutflow: { $gt: 0 } },
-                        { debitNoteTotal: { $gt: 0 } }
+                        { debitNoteTotal: { $gt: 0 } },
+                        { openingBalance: { $ne: 0 } },
+                        { closingBalance: { $ne: 0 } }
                     ]
                 }
             },
@@ -628,10 +689,11 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                 totalInflow: acc.totalInflow + (s.totalInflow || 0),
                 totalOutflow: acc.totalOutflow + (s.totalOutflow || 0),
                 debitNoteTotal: acc.debitNoteTotal + (s.debitNoteTotal || 0),
-                netBalance: acc.netBalance + (s.netBalance || 0),
+                totalOpeningBalance: acc.totalOpeningBalance + (s.openingBalance || 0),
+                totalClosingBalance: acc.totalClosingBalance + (s.closingBalance || 0),
                 vendorCount: acc.vendorCount + 1
             }),
-            { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, netBalance: 0, vendorCount: 0 }
+            { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, totalOpeningBalance: 0, totalClosingBalance: 0, vendorCount: 0 }
         );
 
         res.status(200).json({

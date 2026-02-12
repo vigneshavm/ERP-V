@@ -17,7 +17,8 @@ import {
     ChevronRight,
     Calendar,
     DollarSign,
-    Activity
+    Activity,
+    ArrowLeft
 } from 'lucide-react';
 import Layout from '../../components/shared/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
@@ -35,20 +36,41 @@ interface VendorRow {
     debitNoteTotal: number;
     billCount: number;
     paymentCount: number;
-    netBalance: number;
+    openingBalance: number;
+    closingBalance: number;
 }
 
 interface Totals {
     totalInflow: number;
     totalOutflow: number;
     debitNoteTotal: number;
-    netBalance: number;
+    totalOpeningBalance: number;
+    totalClosingBalance: number;
     vendorCount: number;
 }
 
 interface InflowOutflowData {
     vendors: VendorRow[];
     totals: Totals;
+}
+
+interface LedgerTransaction {
+    date: string;
+    type: 'BILL' | 'PAYMENT' | 'DEBIT_NOTE';
+    refNo: string;
+    description: string;
+    credit: number;
+    debit: number;
+    balance: number;
+}
+
+interface LedgerData {
+    supplier: { _id: string; businessName: string; openingBalance: number };
+    period: { start: string; end: string };
+    openingBalance: number;
+    closingBalance: number;
+    totals: { credit: number; debit: number };
+    transactions: LedgerTransaction[];
 }
 
 const VendorInflowOutflow: React.FC = () => {
@@ -66,6 +88,11 @@ const VendorInflowOutflow: React.FC = () => {
     const [dateTo, setDateTo] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // Detail View State
+    const [selectedVendor, setSelectedVendor] = useState<VendorRow | null>(null);
+    const [ledgerData, setLedgerData] = useState<LedgerData | null>(null);
+    const [isLedgerLoading, setIsLedgerLoading] = useState(false);
 
     // Sort State
     const [sortColumn, setSortColumn] = useState<string>('totalInflow');
@@ -103,6 +130,31 @@ const VendorInflowOutflow: React.FC = () => {
     useEffect(() => {
         if (user?.token) fetchData();
     }, [user?.token]);
+
+    // Fetch vendor ledger detail
+    const fetchLedger = async (vendor: VendorRow) => {
+        setSelectedVendor(vendor);
+        setIsLedgerLoading(true);
+        setLedgerData(null);
+        try {
+            const params = new URLSearchParams();
+            if (dateFrom) params.append('startDate', dateFrom);
+            if (dateTo) params.append('endDate', dateTo);
+            const qs = params.toString();
+            const url = `/api/purchases/suppliers/${vendor._id}/ledger${qs ? `?${qs}` : ''}`;
+            const response = await api.get(url, getConfig());
+            setLedgerData(response.data.data);
+        } catch (err: any) {
+            console.error('Ledger fetch error:', err);
+        } finally {
+            setIsLedgerLoading(false);
+        }
+    };
+
+    const closeDetail = () => {
+        setSelectedVendor(null);
+        setLedgerData(null);
+    };
 
     const handleApplyFilters = () => {
         setCurrentPage(1);
@@ -189,17 +241,21 @@ const VendorInflowOutflow: React.FC = () => {
         if (!searchTerm && data?.totals) return data.totals;
         return processedVendors.reduce(
             (acc, v) => ({
-                totalInflow: acc.totalInflow + v.totalInflow,
-                totalOutflow: acc.totalOutflow + v.totalOutflow,
-                debitNoteTotal: acc.debitNoteTotal + v.debitNoteTotal,
-                netBalance: acc.netBalance + v.netBalance,
+                totalInflow: acc.totalInflow + (v.totalInflow || 0),
+                totalOutflow: acc.totalOutflow + (v.totalOutflow || 0),
+                debitNoteTotal: acc.debitNoteTotal + (v.debitNoteTotal || 0),
+                totalOpeningBalance: acc.totalOpeningBalance + (v.openingBalance || 0),
+                totalClosingBalance: acc.totalClosingBalance + (v.closingBalance || 0),
                 vendorCount: acc.vendorCount + 1
             }),
-            { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, netBalance: 0, vendorCount: 0 }
+            { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, totalOpeningBalance: 0, totalClosingBalance: 0, vendorCount: 0 }
         );
     }, [data?.totals, processedVendors, searchTerm]);
 
-    const formatCurrency = (n: number) => `₹${Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 0 })}`;
+    const formatCurrency = (n: number | undefined | null) => {
+        if (typeof n !== 'number' || isNaN(n)) return '₹0';
+        return `₹${Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 0 })}`;
+    };
 
     const SortIcon = ({ column }: { column: string }) => {
         if (sortColumn === column) {
@@ -224,11 +280,11 @@ const VendorInflowOutflow: React.FC = () => {
             formatCurrency(v.totalInflow),
             formatCurrency(v.totalOutflow),
             formatCurrency(v.debitNoteTotal),
-            formatCurrency(v.netBalance)
+            formatCurrency(v.closingBalance)
         ]);
 
         autoTable(doc, {
-            head: [['Vendor', 'Total Inflow', 'Total Outflow', 'Debit Notes', 'Net Balance']],
+            head: [['Vendor', 'Total Inflow', 'Total Outflow', 'Debit Notes', 'Closing Balance']],
             body: tableData,
             startY: dateFrom || dateTo ? 28 : 22,
         });
@@ -238,9 +294,9 @@ const VendorInflowOutflow: React.FC = () => {
 
     // CSV Export
     const handleExportCSV = () => {
-        const headers = ['Vendor,Supplier ID,Total Inflow,Total Outflow,Debit Notes,Net Balance,Bills,Payments'];
+        const headers = ['Vendor,Supplier ID,Total Inflow,Total Outflow,Debit Notes,Closing Balance,Bills,Payments'];
         const rows = processedVendors.map(v =>
-            `"${v.businessName || 'N/A'}",${v.supplierId || '-'},${v.totalInflow},${v.totalOutflow},${v.debitNoteTotal},${v.netBalance},${v.billCount},${v.paymentCount}`
+            `"${v.businessName || 'N/A'}",${v.supplierId || '-'},${v.totalInflow},${v.totalOutflow},${v.debitNoteTotal},${v.closingBalance},${v.billCount},${v.paymentCount}`
         );
         const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
         const link = document.createElement('a');
@@ -251,6 +307,147 @@ const VendorInflowOutflow: React.FC = () => {
         document.body.removeChild(link);
     };
 
+    // ─── Detail Page View ─────────────────────────────────────────
+    if (selectedVendor) {
+        return (
+            <Layout>
+                <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
+                    <PageHeader
+                        title={selectedVendor.businessName}
+                        description={selectedVendor.supplierId ? `Supplier ID: ${selectedVendor.supplierId}` : 'Vendor Ledger — Transaction Details'}
+                        actions={
+                            <button
+                                onClick={closeDetail}
+                                className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2"
+                            >
+                                <ArrowLeft className="w-4 h-4" /> Back to Report
+                            </button>
+                        }
+                    />
+
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                        <StatsCard
+                            title="Total Inflow"
+                            value={formatCurrency(selectedVendor.totalInflow)}
+                            icon={<TrendingUp />}
+                            iconBgColor="bg-blue-100 dark:bg-blue-900/30"
+                            iconColor="text-blue-600 dark:text-blue-400"
+                        />
+                        <StatsCard
+                            title="Total Outflow"
+                            value={formatCurrency(selectedVendor.totalOutflow)}
+                            icon={<TrendingDown />}
+                            iconBgColor="bg-red-100 dark:bg-red-900/30"
+                            iconColor="text-red-600 dark:text-red-400"
+                        />
+                        <StatsCard
+                            title="Closing Balance"
+                            value={formatCurrency(selectedVendor.closingBalance)}
+                            icon={<FileText />}
+                            iconBgColor="bg-orange-100 dark:bg-orange-900/30"
+                            iconColor="text-orange-600 dark:text-orange-400"
+                        />
+                        <StatsCard
+                            title="Opening Balance"
+                            value={ledgerData ? formatCurrency(ledgerData.openingBalance) : '...'}
+                            icon={<DollarSign />}
+                            iconBgColor="bg-purple-100 dark:bg-purple-900/30"
+                            iconColor="text-purple-600 dark:text-purple-400"
+                        />
+                        <StatsCard
+                            title="Ledger Balance"
+                            value={ledgerData ? formatCurrency(ledgerData.closingBalance) : '...'}
+                            icon={<Activity />}
+                            iconBgColor={selectedVendor.closingBalance >= 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'}
+                            iconColor={selectedVendor.closingBalance >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
+                        />
+                    </div>
+
+                    {/* Period Info */}
+                    {ledgerData && (
+                        <div className="text-xs text-muted flex items-center gap-2">
+                            <Calendar className="w-3 h-3" />
+                            Period: {new Date(ledgerData.period.start).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            {' — '}
+                            {new Date(ledgerData.period.end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            &nbsp;•&nbsp; {ledgerData.transactions.length} transactions
+                        </div>
+                    )}
+
+                    {/* Transactions Table */}
+                    <div className="bg-card rounded-xl border border-default flex-1 flex flex-col overflow-hidden">
+                        <div className="flex-1 overflow-auto custom-scrollbar">
+                            {isLedgerLoading ? (
+                                <div className="flex items-center justify-center h-40 text-muted gap-2">
+                                    <RefreshCw className="w-4 h-4 animate-spin" /> Loading ledger...
+                                </div>
+                            ) : !ledgerData || ledgerData.transactions.length === 0 ? (
+                                <div className="flex items-center justify-center h-40 text-muted">
+                                    No transactions found for this period
+                                </div>
+                            ) : (
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-surface text-muted uppercase text-xs font-medium sticky top-0 z-10">
+                                        <tr>
+                                            <th className="p-4">Date</th>
+                                            <th className="p-4">Type</th>
+                                            <th className="p-4">Ref #</th>
+                                            <th className="p-4">Description</th>
+                                            <th className="p-4 text-right">Debit</th>
+                                            <th className="p-4 text-right">Credit</th>
+                                            <th className="p-4 text-right">Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-default">
+                                        {/* Opening Balance Row */}
+                                        <tr className="bg-surface/50">
+                                            <td className="p-4 text-muted italic" colSpan={4}>Opening Balance</td>
+                                            <td className="p-4" colSpan={2}></td>
+                                            <td className="p-4 text-right font-semibold text-main">{formatCurrency(ledgerData.openingBalance)}</td>
+                                        </tr>
+                                        {ledgerData.transactions.map((txn, idx) => (
+                                            <tr key={idx} className="hover:bg-surface transition-colors">
+                                                <td className="p-4 text-secondary whitespace-nowrap">
+                                                    {new Date(txn.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                </td>
+                                                <td className="p-4">
+                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${txn.type === 'BILL' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' :
+                                                        txn.type === 'PAYMENT' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
+                                                            'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300'
+                                                        }`}>
+                                                        {txn.type === 'BILL' ? 'Bill' : txn.type === 'PAYMENT' ? 'Payment' : 'Debit Note'}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4 font-mono text-xs text-secondary">{txn.refNo || '-'}</td>
+                                                <td className="p-4 text-secondary text-sm max-w-[250px] truncate" title={txn.description}>{txn.description}</td>
+                                                <td className="p-4 text-right font-medium text-green-600 dark:text-green-400">
+                                                    {txn.debit > 0 ? formatCurrency(txn.debit) : '-'}
+                                                </td>
+                                                <td className="p-4 text-right font-medium text-red-600 dark:text-red-400">
+                                                    {txn.credit > 0 ? formatCurrency(txn.credit) : '-'}
+                                                </td>
+                                                <td className="p-4 text-right font-semibold text-main">{formatCurrency(txn.balance)}</td>
+                                            </tr>
+                                        ))}
+                                        {/* Closing Balance Row */}
+                                        <tr className="bg-surface/50 border-t-2 border-default font-bold">
+                                            <td className="p-4 text-main" colSpan={4}>Closing Balance</td>
+                                            <td className="p-4 text-right text-green-600 dark:text-green-400">{formatCurrency(ledgerData.totals.debit)}</td>
+                                            <td className="p-4 text-right text-red-600 dark:text-red-400">{formatCurrency(ledgerData.totals.credit)}</td>
+                                            <td className="p-4 text-right font-bold text-main">{formatCurrency(ledgerData.closingBalance)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        );
+    }
+
+    // ─── List Page View ──────────────────────────────────────────
     return (
         <Layout>
             <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
@@ -276,27 +473,34 @@ const VendorInflowOutflow: React.FC = () => {
                 />
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                     <StatsCard
-                        title="Total Inflow (Bills)"
+                        title="Total Inflow"
                         value={formatCurrency(displayTotals.totalInflow)}
                         icon={<TrendingUp />}
                         iconBgColor="bg-blue-100 dark:bg-blue-900/30"
                         iconColor="text-blue-600 dark:text-blue-400"
                     />
                     <StatsCard
-                        title="Total Outflow (Payments)"
+                        title="Total Outflow"
                         value={formatCurrency(displayTotals.totalOutflow)}
                         icon={<TrendingDown />}
                         iconBgColor="bg-red-100 dark:bg-red-900/30"
                         iconColor="text-red-600 dark:text-red-400"
                     />
                     <StatsCard
-                        title="Net Balance"
-                        value={`${displayTotals.netBalance >= 0 ? '' : '-'}${formatCurrency(displayTotals.netBalance)}`}
+                        title="Total Closing Balance"
+                        value={formatCurrency(displayTotals.totalClosingBalance)}
+                        icon={<FileText className="text-orange-600 dark:text-orange-400" />}
+                        iconBgColor="bg-orange-100 dark:bg-orange-900/30"
+                        iconColor="text-orange-600 dark:text-orange-400"
+                    />
+                    <StatsCard
+                        title="Net Period Change"
+                        value={formatCurrency(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal)}
                         icon={<DollarSign />}
-                        iconBgColor={displayTotals.netBalance >= 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'}
-                        iconColor={displayTotals.netBalance >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
+                        iconBgColor={(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'}
+                        iconColor={(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
                     />
                     <StatsCard
                         title="Active Vendors"
@@ -425,25 +629,31 @@ const VendorInflowOutflow: React.FC = () => {
                                         </div>
                                     </th>
                                     <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('netBalance')}>
-                                        <div className="flex items-center justify-end gap-2">
-                                            Net Balance <SortIcon column="netBalance" />
+                                        onClick={() => handleSort('closingBalance')}>
+                                        <div className="flex items-center justify-end gap-2 text-orange-600 dark:text-orange-400 font-bold">
+                                            Closing Balance <SortIcon column="closingBalance" />
+                                        </div>
+                                    </th>
+                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
+                                        onClick={() => handleSort('openingBalance')}>
+                                        <div className="flex items-center justify-end gap-2 text-muted">
+                                            Opening <SortIcon column="openingBalance" />
                                         </div>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
                                 {isLoading ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-muted">
+                                    <tr><td colSpan={9} className="p-8 text-center text-muted">
                                         <div className="flex items-center justify-center gap-2">
                                             <RefreshCw className="w-4 h-4 animate-spin" /> Loading...
                                         </div>
                                     </td></tr>
                                 ) : paginatedVendors.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-muted">No records found</td></tr>
+                                    <tr><td colSpan={9} className="p-8 text-center text-muted">No records found</td></tr>
                                 ) : (
                                     paginatedVendors.map(vendor => (
-                                        <tr key={vendor._id} className="hover:bg-surface transition-colors">
+                                        <tr key={vendor._id} className="hover:bg-surface transition-colors cursor-pointer" onClick={() => fetchLedger(vendor)}>
                                             <td className="p-4">
                                                 <div className="flex flex-col">
                                                     <span className="font-medium text-main">{vendor.businessName || 'N/A'}</span>
@@ -463,10 +673,11 @@ const VendorInflowOutflow: React.FC = () => {
                                             </td>
                                             <td className="p-4 text-center text-secondary">{vendor.billCount}</td>
                                             <td className="p-4 text-center text-secondary">{vendor.paymentCount}</td>
-                                            <td className={`p-4 text-right font-bold ${vendor.netBalance > 0 ? 'text-amber-600 dark:text-amber-400' : vendor.netBalance < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-main'}`}>
-                                                {vendor.netBalance > 0 && ''}
-                                                {vendor.netBalance < 0 && '-'}
-                                                {formatCurrency(vendor.netBalance)}
+                                            <td className="p-4 text-right font-bold text-orange-600 dark:text-orange-400">
+                                                {formatCurrency(vendor.closingBalance)}
+                                            </td>
+                                            <td className="p-4 text-right text-muted font-medium">
+                                                {formatCurrency(vendor.openingBalance)}
                                             </td>
                                         </tr>
                                     ))
@@ -482,9 +693,8 @@ const VendorInflowOutflow: React.FC = () => {
                                         <td className="p-4 text-right text-secondary">{formatCurrency(displayTotals.debitNoteTotal)}</td>
                                         <td className="p-4 text-center text-secondary">-</td>
                                         <td className="p-4 text-center text-secondary">-</td>
-                                        <td className={`p-4 text-right ${displayTotals.netBalance >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                                            {displayTotals.netBalance < 0 && '-'}{formatCurrency(displayTotals.netBalance)}
-                                        </td>
+                                        <td className="p-4 text-right text-orange-600 dark:text-orange-400">{formatCurrency(displayTotals.totalClosingBalance)}</td>
+                                        <td className="p-4 text-right text-muted">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
                                     </tr>
                                 </tfoot>
                             )}
