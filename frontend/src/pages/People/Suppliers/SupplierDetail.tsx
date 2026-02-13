@@ -18,7 +18,7 @@ import {
   ShieldCheck,
   Briefcase,
   Globe,
-  FileText
+  ArrowUpRight
 } from 'lucide-react';
 
 import SupplierSubNav from './SupplierSubNav';
@@ -106,22 +106,64 @@ const SupplierDetail: React.FC = () => {
 
       <SupplierSubNav />
 
+      {/* Summary Cards - Matching Directory Flow */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {/* Total Invoiced */}
+        <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+              <Package className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Total Invoiced</span>
+          </div>
+          <span className="text-3xl font-black text-slate-900 dark:text-white">
+            ₹ {(supplier.totalAmount || 0).toLocaleString('en-IN')}
+          </span>
+        </div>
+
+        {/* Total Paid */}
+        <div className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Paid</span>
+          </div>
+          <span className="text-3xl font-black text-slate-900 dark:text-white">
+            ₹ {(supplier.totalPaid || 0).toLocaleString('en-IN')}
+          </span>
+        </div>
+
+        {/* Net Balance */}
+        <div className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Outstanding Balance</span>
+          </div>
+          <span className="text-3xl font-black text-slate-900 dark:text-white">
+            ₹ {(supplier.netBalance || supplier.openingBalance || 0).toLocaleString('en-IN')}
+          </span>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-12 gap-6">
         {/* Main Content Area */}
         <div className="lg:col-span-8 space-y-6">
           {/* Core Identity Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-8 relative">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden p-8 relative">
             <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
               <Building2 className="w-48 h-48 text-indigo-500" />
             </div>
             <div className="flex items-start gap-6">
-              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-3xl shadow-xl shadow-indigo-200 dark:shadow-none">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-3xl shadow-xl shadow-indigo-200 dark:shadow-none">
                 {(supplier.businessName || '?').charAt(0).toUpperCase()}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-black text-slate-800 dark:text-white leading-none">{supplier.businessName}</h2>
-                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest ${supplier.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                  <h2 className="text-2xl font-black text-slate-800 dark:text-white leading-none tracking-tight">{supplier.businessName}</h2>
+                  <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${supplier.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200'}`}>
                     {supplier.status}
                   </span>
                 </div>
@@ -163,7 +205,7 @@ const SupplierDetail: React.FC = () => {
 
           {/* Reachability & Logistics */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                   <MapPin className="w-5 h-5" />
@@ -174,7 +216,7 @@ const SupplierDetail: React.FC = () => {
                 {supplier.physicalAddress || "No registered facility address provided."}
               </p>
             </div>
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
                   <Phone className="w-5 h-5" />
@@ -182,11 +224,11 @@ const SupplierDetail: React.FC = () => {
                 <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Tele-Response</h3>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
                   <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Direct Line</span>
                   <span className="text-xs font-black text-indigo-600">{supplier.contactNo}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
                   <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Email Node</span>
                   <span className="text-xs font-black text-slate-600 dark:text-slate-300 truncate max-w-[150px]">{supplier.email || 'N/A'}</span>
                 </div>
@@ -195,14 +237,14 @@ const SupplierDetail: React.FC = () => {
           </div>
 
           {/* Inventory/Items History */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm p-8">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none">Catalog Intelligence</h3>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none tracking-tight">Catalog Intelligence</h3>
                   <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Items regularly sourced</p>
                 </div>
               </div>
@@ -217,7 +259,7 @@ const SupplierDetail: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
+              <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No procurement history detected</p>
               </div>
             )}
@@ -226,87 +268,74 @@ const SupplierDetail: React.FC = () => {
 
         {/* Sidebar Stats Area */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Financial health card */}
-          <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-none relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-              <CreditCard className="w-32 h-32 text-white" />
+          {/* Financial Health - Metrics Grid */}
+          {/* Credit & Terms Sidebar */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Credit Limit */}
+            <div className="bg-[#F8FBFF] dark:bg-blue-500/10 border border-blue-100/50 dark:border-blue-500/20 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
+              <p className="text-[9px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Credit Limit</p>
+              <p className="text-lg font-black text-blue-600 dark:text-blue-400">₹{(supplier.creditLimit || 0).toLocaleString()}</p>
             </div>
-            <h3 className="text-sm font-black uppercase tracking-widest mb-6 opacity-70">Financial Pulse</h3>
-            <div className="space-y-6 relative z-10">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Current Liabilities</p>
-                <p className="text-4xl font-black">₹{supplier.openingBalance?.toLocaleString('en-IN') || '0.00'}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-md">
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Exposure</p>
-                  <p className="text-sm font-black uppercase leading-none mt-1">{supplier.balanceType}</p>
-                </div>
-                <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-md">
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Credit Days</p>
-                  <p className="text-sm font-black leading-none mt-1">{supplier.creditPeriod || 0} Days</p>
-                </div>
-              </div>
+
+            {/* Credit Days */}
+            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
+              <p className="text-[9px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Term</p>
+              <p className="text-lg font-black text-slate-700 dark:text-slate-200">{supplier.creditPeriod || 0} Days</p>
             </div>
           </div>
 
-          {/* Operational Insights */}
-          {/* Operational Insights */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 space-y-6">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Supplier Analysis</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+          {/* Operational Insights - Checklist Style */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-slate-50 dark:border-neutral-700">
+              <h3 className="font-bold text-slate-800 dark:text-neutral-100">Performance Check</h3>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {/* Reliability Widget */}
+              <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-xl group hover:bg-emerald-100/30 dark:hover:bg-emerald-500/15 transition-all cursor-pointer">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-emerald-500 rounded-lg text-white">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-widest text-emerald-600">Reliability Score</span>
+                  </div>
+                </div>
+                <div className="flex items-end justify-between">
+                  <span className={`text-2xl font-black ${(supplier.performanceMetrics?.reliabilityScore || 100) >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>
+                    {supplier.performanceMetrics?.reliabilityScore || 100}/100
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Excellent</span>
+                </div>
+                {/* Mini Progress Bar */}
+                <div className="mt-3 w-full h-1 bg-white/50 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 transition-all duration-1000"
+                    style={{ width: `${supplier.performanceMetrics?.reliabilityScore || 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Last Update Widget */}
+              <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
                   <History className="w-5 h-5" />
                 </div>
-                <div className="flex-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Last Update</p>
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-none mt-1">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Last Interaction</p>
+                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
                     {supplier.updatedAt ? new Date(supplier.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Initial Seed'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Contract Status</p>
-                  <p className="text-xs font-bold text-emerald-500 leading-none mt-1 uppercase tracking-widest">Active Agreement</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Vetting Score</p>
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-none mt-1 uppercase tracking-widest tracking-[0.2em]">Verified</p>
-                </div>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 group-hover:text-orange-600 transition-colors">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Reliability Score</p>
-                <div className="flex items-center gap-2">
-                  <p className={`text-xl font-black ${(supplier.performanceMetrics?.reliabilityScore || 100) >= 80 ? 'text-emerald-500' :
-                    (supplier.performanceMetrics?.reliabilityScore || 100) >= 50 ? 'text-amber-500' : 'text-rose-500'
-                    }`}>
-                    {supplier.performanceMetrics?.reliabilityScore || 100}/100
-                  </p>
-                </div>
-              </div>
+              <button
+                onClick={() => navigate(`/suppliers/${supplier._id}/ledger`)}
+                className="w-full py-3 mt-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] border border-indigo-100 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all"
+              >
+                Generate Ledger
+              </button>
             </div>
-
-            <button
-              onClick={() => navigate(`/suppliers/${supplier._id}/ledger`)}
-              className="w-full py-3 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100 dark:border-slate-700 hover:bg-slate-100 transition-all">
-              Generate Ledger
-            </button>
           </div>
         </div>
       </div>

@@ -373,25 +373,25 @@ const SupplierLedger: React.FC = () => {
                         <table className="w-full text-sm">
                             <thead className="bg-slate-50/80 dark:bg-neutral-900/50">
                                 <tr>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Date</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Type</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Description</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Debit (₹)</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Credit (₹)</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Balance (₹)</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Date</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Type</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Description</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Debit (₹)</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Credit (₹)</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Balance (₹)</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
                                 {/* Opening Balance Row */}
                                 <tr className="bg-slate-50/30 dark:bg-neutral-800/50">
-                                    <td className="py-3.5 px-5 text-slate-500 font-medium text-xs">{new Date(data.period.start).toLocaleDateString('en-IN')}</td>
-                                    <td className="py-3.5 px-5">
+                                    <td className="py-3.5 px-5 text-slate-500 font-medium text-xs whitespace-nowrap">{new Date(data.period.start).toLocaleDateString('en-IN')}</td>
+                                    <td className="py-3.5 px-5 whitespace-nowrap">
                                         <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-700 text-[9px] font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Opening</span>
                                     </td>
-                                    <td className="py-3.5 px-5 italic text-slate-400 dark:text-neutral-500 text-xs">Opening Balance Forwarded</td>
-                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700">—</td>
-                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700">—</td>
-                                    <td className="py-3.5 px-5 text-right font-black text-slate-600 dark:text-neutral-300">{formatCurrency(data.openingBalance)}</td>
+                                    <td className="py-3.5 px-5 italic text-slate-400 dark:text-neutral-500 text-xs whitespace-nowrap">Opening Balance Forwarded</td>
+                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700 whitespace-nowrap">—</td>
+                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700 whitespace-nowrap">—</td>
+                                    <td className="py-3.5 px-5 text-right font-black text-slate-600 dark:text-neutral-300 whitespace-nowrap">{formatCurrency(data.openingBalance)}</td>
                                 </tr>
 
                                 {data.transactions.map((t, i) => (
@@ -400,26 +400,26 @@ const SupplierLedger: React.FC = () => {
                                         className="hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 cursor-pointer group transition-colors"
                                         onClick={() => handleRowClick(t)}
                                     >
-                                        <td className="py-3.5 px-5 text-slate-600 dark:text-neutral-400 font-medium text-xs">{new Date(t.date).toLocaleDateString('en-IN')}</td>
-                                        <td className="py-3.5 px-5">
+                                        <td className="py-3.5 px-5 text-slate-600 dark:text-neutral-400 font-medium text-xs whitespace-nowrap">{new Date(t.date).toLocaleDateString('en-IN')}</td>
+                                        <td className="py-3.5 px-5 whitespace-nowrap">
                                             <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-500/20' :
-                                                    t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20' :
-                                                        'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20'
+                                                t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20' :
+                                                    'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20'
                                                 }`}>
                                                 {t.type === 'DEBIT_NOTE' ? (t.purchaseReturnId ? 'Return' : 'D.Note') : t.type}
                                             </span>
                                         </td>
-                                        <td className="py-3.5 px-5">
+                                        <td className="py-3.5 px-5 whitespace-nowrap">
                                             <div className="font-bold text-slate-800 dark:text-neutral-200 text-xs group-hover:text-indigo-500 transition-colors">#{t.refNo}</div>
                                             <div className="text-[10px] text-slate-400 dark:text-neutral-500 mt-0.5 truncate max-w-[200px]">{t.description}</div>
                                         </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs">
+                                        <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs whitespace-nowrap">
                                             {t.debit > 0 ? formatCurrency(t.debit) : '—'}
                                         </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs">
+                                        <td className="py-3.5 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs whitespace-nowrap">
                                             {t.credit > 0 ? formatCurrency(t.credit) : '—'}
                                         </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-slate-900 dark:text-white text-xs">
+                                        <td className="py-3.5 px-5 text-right font-black text-slate-900 dark:text-white text-xs whitespace-nowrap">
                                             {formatCurrency(t.balance)}
                                             <span className="text-[9px] ml-1 text-slate-400 dark:text-neutral-500 font-bold">
                                                 {t.balance > 0 ? 'Cr' : 'Dr'}

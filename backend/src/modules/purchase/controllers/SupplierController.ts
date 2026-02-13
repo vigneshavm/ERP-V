@@ -308,13 +308,52 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
         const { id } = req.params;
         const tenantId = req.user?.tenantId?.toString();
 
-        const supplier = await Supplier.findOne({ _id: id, tenantId }).populate('groupId');
+        // Dynamic Imports to avoid circular dependencies
+        const { default: Bill } = await import('../../finance/models/Bill.js');
+        const { default: PaymentOut } = await import('../models/PaymentOut.js');
+        const { default: DebitNote } = await import('../models/DebitNote.js');
+
+        const supplier = await Supplier.findOne({ _id: id, tenantId }).populate('groupId').lean();
 
         if (!supplier) {
             return res.status(404).json({ success: false, message: 'Supplier not found' });
         }
 
-        res.status(200).json({ success: true, data: supplier });
+        // Calculate functionality metrics (Live Data)
+        const [billStats, paymentStats, debitNoteStats] = await Promise.all([
+            Bill.aggregate([
+                { $match: { supplier: supplier._id, tenantId, status: { $nin: ['draft', 'rejected', 'cancelled'] } } },
+                { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
+            ]),
+            PaymentOut.aggregate([
+                { $match: { supplierId: supplier._id, tenantId, status: { $in: ['cleared', 'pending'] } } },
+                { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
+            ]),
+            DebitNote.aggregate([
+                { $match: { vendorId: supplier._id, tenantId, status: 'APPROVED' } },
+                { $group: { _id: null, totalAmount: { $sum: '$totalAmount' } } }
+            ])
+        ]);
+
+        const totalInvoiced = billStats[0]?.totalAmount || 0;
+        const totalPaid = paymentStats[0]?.totalAmount || 0;
+        const totalDebitNotes = debitNoteStats[0]?.totalAmount || 0;
+        const openingBalance = supplier.openingBalance || 0;
+
+        // Net Balance = (Opening + Invoiced) - (Paid + DebitNotes)
+        // Assuming standard payable context
+        let netBalance = (openingBalance + totalInvoiced) - (totalPaid + totalDebitNotes);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                ...supplier,
+                totalAmount: totalInvoiced,
+                totalPaid,
+                netBalance,
+                debitNoteTotal: totalDebitNotes
+            }
+        });
     } catch (error: any) {
         console.error('Get Supplier Error:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
