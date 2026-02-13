@@ -1,94 +1,75 @@
-import React, { useState, useEffect, FormEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { requestPasswordReset, resetAuthState } from "../../redux/slices/authSlice";
-import { RootState, AppDispatch } from "../../redux/store";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, ArrowRight, LifeBuoy } from 'lucide-react';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';
+import AuthInput from '../../components/Auth/AuthInput';
+import { useForgotPasswordForm } from '../../hooks/auth/useForgotPasswordForm';
 
 const ForgotPassword: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
-
-    const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
-    const { isLoading, isError, isSuccess, message, user } = useSelector((state: RootState) => state.auth);
-
-    useEffect(() => {
-        // If already logged in, go to dashboard
-        if (user) navigate('/dashboard');
-
-        return () => {
-            dispatch(resetAuthState());
-        };
-    }, [user, navigate, dispatch]);
-
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!email) return;
-        dispatch(requestPasswordReset(email));
-    };
+    const { form, onSubmit, isLoading } = useForgotPasswordForm();
+    const { register, formState: { errors } } = form;
+    const { isError, isSuccess, message } = form as any;
 
     return (
         <AuthLayout
-            title="Recover your account."
+            title="Account Recovery"
             subtitle="Forgot Password?"
-            secondarySubtitle="Enter your registered email address and we'll send you a link to reset your password."
-            description="Don't worry, it happens. We'll help you reset your password and get back to managing your business in no time."
+            secondarySubtitle="Initiate the secure reset protocol"
+            description="Don't worry, it happens. Enter your registered email address and we'll send you a secure link to reset your credentials."
         >
             {/* Feedback Alert */}
             {(isError || isSuccess) && (
                 <AuthAlert
                     type={isSuccess ? 'success' : 'error'}
-                    title={isSuccess ? 'Email Sent' : 'Error'}
+                    title={isSuccess ? 'Frequency Sent' : 'Protocol Error'}
                     message={message}
                 />
             )}
 
             <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-                <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
-                        Email Address
-                    </label>
-                    <div className="mt-1">
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border"
-                            placeholder="you@company.com"
-                        />
-                    </div>
-                </div>
+                <AuthInput
+                    id="email"
+                    label="Registered Identity (Email)"
+                    type="email"
+                    placeholder="you@company.com"
+                    icon={Mail}
+                    registration={register('email')}
+                    error={errors.email?.message}
+                />
 
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                    className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
                 >
                     {isLoading ? (
-                        <span className="flex items-center">
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Sending Link...
-                        </span>
+                        <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
                     ) : (
-                        'Send Reset Link'
+                        <>Send Recovery Link <ArrowRight className="w-4 h-4" /></>
                     )}
                 </button>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-                <p className="text-slate-600">
-                    Remember your password?{' '}
-                    <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                        Sign in here
+            <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
+                <div className="space-y-4">
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                        Remembered your Key?
+                    </p>
+                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                        Return to Sign In <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
-                </p>
+                </div>
+            </div>
+
+            <div className="mt-8 bg-slate-900/50 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0">
+                    <LifeBuoy className="w-5 h-5 text-indigo-400" />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Need Support?</p>
+                    <p className="text-xs text-slate-500 font-medium">Contact our enterprise desk for further assistance.</p>
+                </div>
             </div>
         </AuthLayout>
     );

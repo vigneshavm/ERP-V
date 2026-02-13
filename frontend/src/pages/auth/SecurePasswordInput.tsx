@@ -1,34 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
+import { Eye, EyeOff, AlertCircle, Lock } from 'lucide-react';
 
-interface SecurePasswordInputProps {
-    id: string;
-    name: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder?: string;
-    required?: boolean;
+interface SecurePasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label?: string;
+    registration?: UseFormRegisterReturn;
+    error?: string;
     showPassword?: boolean;
     onToggleVisibility?: () => void;
-    className?: string;
+    icon?: boolean;
 }
 
 const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
     id,
-    name,
-    value,
-    onChange,
+    label,
+    registration,
+    error,
     placeholder = "Enter password",
-    required = false,
-    showPassword,
+    showPassword: externalShowPassword,
     onToggleVisibility,
     className = "",
+    icon = true,
+    ...props
 }) => {
+    const [internalShowPassword, setInternalShowPassword] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
     const [tooltipMessage, setTooltipMessage] = useState('');
     const [ariaMessage, setAriaMessage] = useState('');
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Cleanup timeout on unmount to prevent memory leaks
+    const isVisible = externalShowPassword !== undefined ? externalShowPassword : internalShowPassword;
+    const toggleVisibility = onToggleVisibility || (() => setInternalShowPassword(!internalShowPassword));
+
+    // Cleanup timeout on unmount
     useEffect(() => {
         return () => {
             if (timeoutRef.current) {
@@ -37,34 +41,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
         };
     }, []);
 
-    // Prevent copy, paste, cut, and drag operations
-    const handlePreventAction = (e: React.SyntheticEvent, action: string) => {
-        e.preventDefault();
-        const message = `For security reasons, ${action} passwords is disabled.`;
-        setTooltipMessage(message);
-        setAriaMessage(message); // For screen readers
-        setShowTooltip(true);
-
-        // Clear previous timeout
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-
-        // Hide tooltip after 3 seconds
-        timeoutRef.current = setTimeout(() => {
-            setShowTooltip(false);
-            setAriaMessage(''); // Clear screen reader message
-        }, 3000);
-    };
-
-    const handleCopy = (e: React.ClipboardEvent) => handlePreventAction(e, 'copying');
-    const handlePaste = (e: React.ClipboardEvent) => handlePreventAction(e, 'pasting');
-    const handleCut = (e: React.ClipboardEvent) => handlePreventAction(e, 'cutting');
-    const handleDrag = (e: React.DragEvent) => handlePreventAction(e, 'dragging');
-    const handleDrop = (e: React.DragEvent) => handlePreventAction(e, 'dropping');
-    const handleContextMenu = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const message = 'For security reasons, right-click is disabled on password fields.';
+    const showSecurityMessage = (message: string) => {
         setTooltipMessage(message);
         setAriaMessage(message);
         setShowTooltip(true);
@@ -79,134 +56,92 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
         }, 3000);
     };
 
-    // Prevent keyboard shortcuts (Ctrl+C, Ctrl+V, Ctrl+X, Cmd+C, Cmd+V, Cmd+X)
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handlePreventAction = (e: React.SyntheticEvent<HTMLInputElement>, action: string) => {
+        e.preventDefault();
+        showSecurityMessage(`For security reasons, ${action} passwords is disabled.`);
+    };
+
+    const handleContextMenu = (e: React.MouseEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        showSecurityMessage('For security reasons, right-click is disabled on password fields.');
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
             e.preventDefault();
             const action = e.key === 'c' ? 'copying' : e.key === 'v' ? 'pasting' : 'cutting';
-            const message = `For security reasons, ${action} passwords is disabled.`;
-            setTooltipMessage(message);
-            setAriaMessage(message);
-            setShowTooltip(true);
-
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-
-            timeoutRef.current = setTimeout(() => {
-                setShowTooltip(false);
-                setAriaMessage('');
-            }, 3000);
+            showSecurityMessage(`For security reasons, ${action} passwords is disabled.`);
         }
+        if (props.onKeyDown) props.onKeyDown(e);
     };
 
     return (
-        <div className="relative">
-            {/* ARIA live region for screen reader announcements */}
-            <div
-                role="status"
-                aria-live="polite"
-                aria-atomic="true"
-                className="sr-only"
-            >
-                {ariaMessage}
+        <div className="space-y-2 group">
+            {label && (
+                <label
+                    htmlFor={id}
+                    className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-indigo-400"
+                >
+                    {label}
+                </label>
+            )}
+            <div className="relative">
+                {/* ARIA live region */}
+                <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                    {ariaMessage}
+                </div>
+
+                {icon && (
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                )}
+
+                <input
+                    type={isVisible ? "text" : "password"}
+                    id={id}
+                    {...registration}
+                    {...props}
+                    onCopy={handlePreventAction ? (e) => handlePreventAction(e, 'copying') : undefined}
+                    onPaste={handlePreventAction ? (e) => handlePreventAction(e, 'pasting') : undefined}
+                    onCut={handlePreventAction ? (e) => handlePreventAction(e, 'cutting') : undefined}
+                    onDragStart={handlePreventAction ? (e) => handlePreventAction(e, 'dragging') : undefined}
+                    onDrop={handlePreventAction ? (e) => handlePreventAction(e, 'dropping') : undefined}
+                    onContextMenu={handleContextMenu}
+                    onKeyDown={handleKeyDown}
+                    autoComplete="new-password"
+                    data-lpignore="true"
+                    className={`w-full h-14 bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'
+                        } rounded-2xl ${icon ? 'pl-12' : 'pl-4'} pr-12 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600 ${className}`}
+                    placeholder={placeholder}
+                    aria-label={placeholder}
+                    aria-describedby={showTooltip ? `${id}-security-message` : undefined}
+                />
+
+                <button
+                    type="button"
+                    onClick={toggleVisibility}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1"
+                    aria-label={isVisible ? 'Hide password' : 'Show password'}
+                >
+                    {isVisible ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                </button>
             </div>
 
-            <input
-                type={showPassword ? "text" : "password"}
-                id={id}
-                name={name}
-                value={value}
-                onChange={onChange}
-                onCopy={handleCopy}
-                onPaste={handlePaste}
-                onCut={handleCut}
-                onDrag={handleDrag}
-                onDrop={handleDrop}
-                onContextMenu={handleContextMenu}
-                onKeyDown={handleKeyDown}
-                required={required}
-                autoComplete="new-password"
-                data-lpignore="true" // Prevent LastPass interference
-                data-form-type="other" // Prevent browser autofill interference
-                className={className || "w-full px-4 py-3 pr-12 border border-gray-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-main dark:text-[rgb(var(--color-text))] rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-[rgb(var(--color-placeholder))]"}
-                placeholder={placeholder}
-                aria-label={placeholder}
-                aria-describedby={showTooltip ? `${id}-security-message` : undefined}
-            />
-
-            {/* Password visibility toggle button */}
-            <button
-                type="button"
-                onClick={onToggleVisibility}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted dark:text-[rgb(var(--color-text-secondary))] hover:text-secondary dark:hover:text-[rgb(var(--color-text))] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] rounded"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                tabIndex={0}
-            >
-                {showPassword ? (
-                    <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                    </svg>
-                ) : (
-                    <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                    </svg>
-                )}
-            </button>
+            {error && (
+                <p className="mt-1 text-xs text-red-500 font-medium ml-1 animate-in fade-in slide-in-from-top-1">
+                    {error}
+                </p>
+            )}
 
             {/* Tooltip */}
             {showTooltip && (
                 <div
                     id={`${id}-security-message`}
-                    className="absolute left-0 -bottom-12 w-full z-10 animate-fade-in"
+                    className="absolute left-0 -bottom-12 w-full z-20 animate-in fade-in zoom-in-95"
                     role="alert"
                 >
-                    <div className="bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
-                        <div className="flex items-start gap-2">
-                            <svg
-                                className="w-4 h-4 flex-shrink-0 mt-0.5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                                />
-                            </svg>
-                            <span>{tooltipMessage}</span>
-                        </div>
+                    <div className="bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl py-2 px-3 shadow-2xl flex items-center gap-2">
+                        <AlertCircle className="w-3.5 h-3.5 text-red-400" />
+                        <span>{tooltipMessage}</span>
                     </div>
                 </div>
             )}

@@ -1,106 +1,23 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { register, resetAuthState } from "../../redux/slices/authSlice";
-import { AppDispatch, RootState } from "../../redux/store";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { User, Mail, Store, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';
-import { isStrongPassword, isValidPhone, formatPhoneInput } from "../../utils/authUtils";
+import AuthInput from '../../components/Auth/AuthInput';
+import { useRegisterForm } from '../../hooks/auth/useRegisterForm';
 
 const Register: React.FC = () => {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        shopName: "",
-        phone: "",
-    });
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const { name, email, password, confirmPassword, shopName, phone } = formData;
-
-    const navigate = useNavigate();
-    const dispatch = useDispatch<AppDispatch>();
-
-    const { user, isLoading, isError, isSuccess, message } = useSelector(
-        (state: RootState) => state.auth
-    );
-
-    const [validationError, setValidationError] = useState("");
-    const [phoneError, setPhoneError] = useState("");
-
-    useEffect(() => {
-        if (isSuccess || user) {
-            navigate("/dashboard");
-            dispatch(resetAuthState());
-        }
-
-        // Keep error visible; reset only on unmount
-        return () => {
-            dispatch(resetAuthState());
-        };
-    }, [user, isSuccess, navigate, dispatch]);
-
-    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        const nextValue = name === "phone" ? formatPhoneInput(value) : value;
-
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: nextValue,
-        }));
-
-        if (name === "phone") {
-            if (nextValue.length > 0 && nextValue.length < 10) {
-                setPhoneError("Mobile number cannot be less than 10 digits.");
-            } else {
-                setPhoneError("");
-            }
-        }
-
-        setValidationError("");
-    };
-
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (!isValidPhone(phone)) {
-            setValidationError("Phone number must be exactly 10 digits.");
-            setPhoneError("Mobile number cannot be less than 10 digits.");
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setValidationError("Passwords do not match");
-            return;
-        }
-
-        if (!isStrongPassword(password)) {
-            setValidationError(
-                "Password must be 8+ chars with uppercase, lowercase, number, and symbol."
-            );
-            return;
-        }
-
-        const userData = {
-            name,
-            email,
-            password,
-            shopName,
-            phone,
-        };
-
-        dispatch(register(userData));
-    };
+    const { form, onSubmit, isLoading } = useRegisterForm();
+    const { register, formState: { errors } } = form;
+    const { isError, message, validationError } = form as any;
 
     return (
         <AuthLayout
-            title="Start your 14-day Free Trial"
-            subtitle="Set up your business profile"
-            secondarySubtitle="No credit card required. Cancel anytime."
-            description="Join thousands of retailers using our platform to grow their business. Instant setup."
+            title="Enterprise Registration"
+            subtitle="Start your 14-day Free Trial"
+            secondarySubtitle="Set up your professional business profile"
+            description="Join thousands of retailers using our platform to scale their logic. Professional tools for professional growth."
         >
             {/* Error Alert */}
             {(isError || validationError) && (
@@ -115,134 +32,86 @@ const Register: React.FC = () => {
                 <div className="space-y-6">
                     {/* Name & Email Group */}
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Full Name</label>
-                            <div className="mt-1">
-                                <input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={onChange}
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
-                                    placeholder="John Doe"
-                                />
-                            </div>
-                        </div>
+                        <AuthInput
+                            id="name"
+                            label="Full Name"
+                            placeholder="John Doe"
+                            icon={User}
+                            registration={register('name')}
+                            error={errors.name?.message}
+                        />
 
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
-                            <div className="mt-1">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    required
-                                    value={email}
-                                    onChange={onChange}
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
-                                    placeholder="name@company.com"
-                                />
-                            </div>
-                        </div>
+                        <AuthInput
+                            id="email"
+                            label="Identity (Email)"
+                            type="email"
+                            placeholder="name@company.com"
+                            icon={Mail}
+                            registration={register('email')}
+                            error={errors.email?.message}
+                        />
                     </div>
 
                     {/* Business Name & Phone Group */}
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="shopName" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Business / Store Name</label>
-                            <div className="mt-1">
-                                <input
-                                    id="shopName"
-                                    name="shopName"
-                                    type="text"
-                                    value={shopName}
-                                    onChange={onChange}
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
-                                    placeholder="Acme Corp"
-                                />
-                            </div>
-                        </div>
+                        <AuthInput
+                            id="shopName"
+                            label="Enterprise Name"
+                            placeholder="Acme Corp"
+                            icon={Store}
+                            registration={register('shopName')}
+                            error={errors.shopName?.message}
+                        />
 
-                        <div>
-                            <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number</label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 flex items-center">
-                                    <span className="h-full rounded-l-md border-r border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-500 dark:text-slate-400 sm:text-sm font-medium transition-colors">
-                                        +91
-                                    </span>
-                                </div>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    id="phone"
-                                    required
-                                    pattern="\d{10}"
-                                    maxLength={10}
-                                    value={phone}
-                                    onChange={onChange}
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white pl-16 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 border transition-colors"
-                                    placeholder="9876543210"
-                                />
-                            </div>
-                            {phoneError && <p className="mt-1 text-xs text-red-600">{phoneError}</p>}
-                        </div>
+                        <AuthInput
+                            id="phone"
+                            label="Contact Number"
+                            type="tel"
+                            placeholder="9876543210"
+                            leftElement={
+                                <span className="h-full rounded-l-2xl border-r border-slate-800 bg-slate-950 px-3 flex items-center text-slate-500 text-[10px] font-black tracking-widest transition-colors group-focus-within:text-indigo-400 group-focus-within:border-indigo-500/50">
+                                    +91
+                                </span>
+                            }
+                            registration={register('phone')}
+                            error={errors.phone?.message}
+                        />
                     </div>
 
                     {/* Password Group */}
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Password</label>
-                            <div className="mt-1">
-                                <SecurePasswordInput
-                                    id="password"
-                                    name="password"
-                                    value={password}
-                                    onChange={onChange}
-                                    required
-                                    showPassword={showPassword}
-                                    onToggleVisibility={() => setShowPassword(!showPassword)}
-                                    placeholder="Min 8 chars"
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
-                                />
-                            </div>
-                        </div>
+                        <SecurePasswordInput
+                            id="password"
+                            label="Security Key"
+                            placeholder="Min 8 characters"
+                            registration={register('password')}
+                            error={errors.password?.message}
+                        />
 
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                Confirm Password
-                            </label>
-                            <div className="mt-1">
-                                <SecurePasswordInput
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={confirmPassword}
-                                    onChange={onChange}
-                                    required
-                                    showPassword={showConfirmPassword}
-                                    onToggleVisibility={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    placeholder="Repeat password"
-                                    className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 px-3 border transition-colors"
-                                />
-                            </div>
-                        </div>
+                        <SecurePasswordInput
+                            id="confirmPassword"
+                            label="Re-Verify Key"
+                            placeholder="Repeat security key"
+                            registration={register('confirmPassword')}
+                            error={errors.confirmPassword?.message}
+                        />
                     </div>
                 </div>
 
-                <div className="flex items-start">
-                    <div className="flex h-5 items-center">
-                        <input
-                            id="terms"
-                            name="terms"
-                            type="checkbox"
-                            required
-                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800"
-                        />
-                    </div>
-                    <div className="ml-3 text-sm">
-                        <label htmlFor="terms" className="font-medium text-slate-700 dark:text-slate-300 transition-colors">I agree to the <a href="#" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Terms of Service</a> and <a href="#" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Privacy Policy</a></label>
+                <div className="flex items-start px-1">
+                    <div className="flex items-center gap-3 group cursor-pointer">
+                        <div className="relative flex items-center">
+                            <input
+                                id="terms"
+                                type="checkbox"
+                                {...register('terms')}
+                                className="peer h-5 w-5 rounded-lg border-slate-800 bg-slate-900 text-indigo-500 focus:ring-indigo-500/50 transition-all cursor-pointer appearance-none border-2 checked:bg-indigo-600 checked:border-indigo-600"
+                            />
+                            <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5" />
+                        </div>
+                        <label htmlFor="terms" className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-400 transition-colors cursor-pointer leading-tight">
+                            I agree to the <a href="#" className="underline text-indigo-500 hover:text-indigo-400">Terms</a> and <a href="#" className="underline text-indigo-500 hover:text-indigo-400">Privacy Policy</a>
+                        </label>
                     </div>
                 </div>
 
@@ -250,30 +119,26 @@ const Register: React.FC = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                        className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
                     >
                         {isLoading ? (
-                            <span className="flex items-center">
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Creating Account...
-                            </span>
+                            <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
                         ) : (
-                            "Launch My Store"
+                            <>Initialize Enterprise <ArrowRight className="w-4 h-4" /></>
                         )}
                     </button>
                 </div>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-                <p className="text-slate-600 dark:text-slate-400 transition-colors">
-                    Already have an account?{' '}
-                    <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
-                        Sign in here
+            <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
+                <div className="space-y-4">
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                        Already have access?
+                    </p>
+                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                        Sign In to Workspace <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
-                </p>
+                </div>
             </div>
         </AuthLayout>
     );

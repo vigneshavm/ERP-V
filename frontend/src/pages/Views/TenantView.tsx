@@ -446,18 +446,27 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/sales/invoice/:id" element={
                                 <Suspense fallback={<div>Loading Invoice...</div>}><LazyModules.SalesInvoiceDetail /></Suspense>
                             } />
-                            {/* END SALES ROUTES */}
-                            <Route path="/suppliers/:id" element={
-                                <Suspense fallback={<div>Loading Vendor...</div>}><LazyModules.VendorDetails /></Suspense>
+                            {/* SUPPLIER ROUTES */}
+                            <Route path="/suppliers/add" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorForm /></Suspense>
                             } />
-                            <Route path="/suppliers/:id/edit" element={
-                                <Suspense fallback={<div>Loading Vendor Form...</div>}><LazyModules.VendorForm /></Suspense>
+                            <Route path="/suppliers/groups" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierGroups /></Suspense>
+                            } />
+                            <Route path="/suppliers/statements" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierStatements /></Suspense>
                             } />
                             <Route path="/suppliers/ledger" element={
-                                <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierLedger /></Suspense>
+                            } />
+                            <Route path="/suppliers/:id" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorDetails /></Suspense>
+                            } />
+                            <Route path="/suppliers/:id/edit" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorForm /></Suspense>
                             } />
                             <Route path="/suppliers/:id/ledger" element={
-                                <Suspense fallback={<div>Loading Ledger...</div>}><LazyModules.SupplierLedger /></Suspense>
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierLedger /></Suspense>
                             } />
                             <Route path="/purchase/grn/new" element={
                                 <Suspense fallback={<div>Loading GRN Form...</div>}><LazyModules.GRNForm /></Suspense>

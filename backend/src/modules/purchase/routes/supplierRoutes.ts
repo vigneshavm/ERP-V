@@ -10,7 +10,8 @@ import {
     getSupplierReports,
     getAgeingAnalysis,
     bulkUpdateOpeningBalance,
-    getVendorInflowOutflow
+    getVendorInflowOutflow,
+    getSupplierLedger
 } from '../controllers/SupplierController.js';
 import { getGroups } from '../controllers/SupplierGroupController.js';
 
@@ -26,6 +27,8 @@ router.get('/statements', protect, (_req, res) => {
     // Placeholder to prevent collision with /:id
     res.status(200).json({ success: true, message: "Statements endpoint ready" });
 });
+
+router.get('/:id/ledger', protect, getSupplierLedger);
 
 router.route('/')
     .post(protect, createSupplier)

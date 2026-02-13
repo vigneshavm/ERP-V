@@ -10,15 +10,14 @@ import {
 import { SyncManager } from "../../services/SyncManager";
 import Layout from "../../components/shared/Layout";
 import {
-    Briefcase, IndianRupee, Plus, CheckCircle2, History,
-    Activity, AlertCircle, CreditCard, Search,
-    Edit2, Trash2, X, Clock, Zap, ArrowRight,
+    IndianRupee, Plus, CheckCircle2, History,
+    AlertCircle, Search,
+    Edit2, Trash2, X, Zap,
     TrendingUp, TrendingDown, Calendar, Download,
-    Filter, Info, ShieldCheck, Layers, MoreVertical
+    Filter, Layers, RotateCcw
 } from 'lucide-react';
 import { formatCurrency } from "../../utils/helpers";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-import MetricCard from "../../components/shared/UI/MetricCard";
 import {
     AreaChart, Area, CartesianGrid, Legend,
     ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -92,7 +91,7 @@ const DailyFinancePage: React.FC = () => {
         }
 
         setCash(""); setOnline(""); setExp(""); setDrawerCash(""); setNotes("");
-        setStatusMsg({ type: 'success', text: editingId ? 'Vault updated.' : 'Daily record committed.' });
+        setStatusMsg({ type: 'success', text: editingId ? 'Record updated successfully.' : 'Daily record saved.' });
         setTimeout(() => setStatusMsg(null), 3000);
     };
 
@@ -112,9 +111,9 @@ const DailyFinancePage: React.FC = () => {
     };
 
     const handleDelete = (id: string) => {
-        if (window.confirm("Purge this financial record from the ledger?")) {
+        if (window.confirm("Delete this financial record?")) {
             dispatch(deleteDailyRecord(id));
-            setStatusMsg({ type: 'success', text: 'Purge complete.' });
+            setStatusMsg({ type: 'success', text: 'Record deleted.' });
             setTimeout(() => setStatusMsg(null), 3000);
         }
     };
@@ -185,81 +184,97 @@ const DailyFinancePage: React.FC = () => {
         return list;
     }, [tx, recentFrom, recentTo, recentSearch, netMin, netMax, recentSortBy, recentSortDir]);
 
-    const CHART_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6'];
     const isDark = theme === 'dark';
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
 
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-md">Ledger Node</span>
-                            <span className="text-neutral-300 dark:text-neutral-700">/</span>
-                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">{getBranchName((user as any).branchId || 'All')}</span>
+                <div className="flex items-center justify-between pb-2">
+                    <div className="flex items-center gap-4">
+                        <div className="flex flex-col">
+                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Today's Summary</h1>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-indigo-500/20">
+                                    {user?.tenantId || 'Business'}
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 capitalize">
+                                    {getBranchName((user as any).branchId || 'All')}
+                                </span>
+                            </div>
                         </div>
-                        <h2 className="text-4xl font-black text-neutral-900 dark:text-white tracking-tight leading-none">
-                            Daily Finance Tracker
-                        </h2>
-                        <p className="text-sm text-neutral-500 mt-2 font-medium flex items-center gap-2 italic">
-                            Transactional audit terminal for <span className="text-primary font-bold">{user?.tenantId}</span>
-                        </p>
                     </div>
+
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-neutral-50 transition-all active:scale-95">
-                            <Download className="w-4 h-4 text-primary" /> Export Records
+                        <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider shadow-sm hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all active:scale-95">
+                            <Download className="w-3.5 h-3.5" /> Export
                         </button>
                     </div>
                 </div>
 
-                {/* Summary Metrics Grid */}
+                {/* Summary Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <MetricCard
-                        title="Total Sales"
-                        value={`₹${formatCurrency(summaryStats.sales)}`}
-                        icon={TrendingUp}
-                        color="emerald"
-                        progress={75}
-                    />
-                    <MetricCard
-                        title="Total Expenses"
-                        value={`₹${formatCurrency(summaryStats.expenses)}`}
-                        icon={TrendingDown}
-                        color="rose"
-                        progress={35}
-                    />
-                    <MetricCard
-                        title="Projected Extraction"
-                        value={`₹${formatCurrency(summaryStats.profit)}`}
-                        icon={Zap}
-                        color="primary"
-                        progress={60}
+                    {/* Total Sales */}
+                    <div className="bg-[#F8FFF9] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Sales</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.sales)}</span>
+                        </div>
+                    </div>
 
-                    />
+                    {/* Total Expenses */}
+                    <div className="bg-[#FFF8F8] dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <TrendingDown className="w-4 h-4 text-rose-500" />
+                                <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest">Total Expenses</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.expenses)}</span>
+                        </div>
+                    </div>
+
+                    {/* Net Profit */}
+                    <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Zap className="w-4 h-4 text-indigo-500" />
+                                <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Net Profit</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.profit)}</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Unified Intelligence Hub Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    {/* Main Command Hub (Analytics & History) */}
-                    <div className="lg:col-span-8 space-y-12">
+                    {/* Left: Chart + Transaction History */}
+                    <div className="lg:col-span-2 space-y-6">
 
-                        {/* 1. Flow Analytics */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 p-8 shadow-sm">
-                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 px-2">
-                                <h3 className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.3em] flex items-center gap-3">
-                                    <TrendingUp className="w-5 h-5 text-primary" /> Capital Flow Topology
-                                </h3>
-                                <div className="flex bg-neutral-100 dark:bg-neutral-900 p-1 rounded-xl">
+                        {/* Sales Flow Chart */}
+                        <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
+                            <div className="flex items-center justify-between mb-6 relative z-10">
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                                        <TrendingUp className="w-5 h-5 text-indigo-500" /> Sales Flow
+                                    </h3>
+                                    <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">Income vs Expense Trend</p>
+                                </div>
+
+                                <div className="flex items-center bg-slate-50 dark:bg-neutral-900 p-1 rounded-lg border border-slate-100 dark:border-neutral-700">
                                     {['DAILY', 'MONTHLY', 'YEARLY', 'CUSTOM'].map(p => (
                                         <button
                                             key={p}
                                             onClick={() => setPeriod(p as PeriodType)}
-                                            className={`px-4 py-2 rounded-lg text-[9px] font-black tracking-widest uppercase transition-all ${period === p
-                                                ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm'
-                                                : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                                            className={`px-3 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${period === p
+                                                ? 'bg-white dark:bg-neutral-800 text-indigo-500 shadow-sm border border-slate-100 dark:border-neutral-700'
+                                                : 'text-slate-400 dark:text-neutral-500 hover:text-slate-700 dark:hover:text-neutral-300'
                                                 }`}
                                         >
                                             {p === 'CUSTOM' ? 'Range' : p.charAt(0) + p.slice(1).toLowerCase()}
@@ -269,22 +284,22 @@ const DailyFinancePage: React.FC = () => {
                             </div>
 
                             {period === 'CUSTOM' && (
-                                <div className="flex flex-wrap gap-4 mb-10 p-6 bg-neutral-50 dark:bg-neutral-900/50 rounded-3xl border border-neutral-100 dark:border-neutral-800">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-[10px] font-black text-neutral-400 uppercase">Analysis Entry:</span>
-                                        <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-[10px] font-black uppercase" />
+                                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-slate-50 dark:bg-neutral-900 rounded-xl border border-slate-100 dark:border-neutral-700">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase">From:</span>
+                                        <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-slate-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-[10px] font-bold text-slate-700 dark:text-neutral-200" />
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-[10px] font-black text-neutral-400 uppercase">Analysis Exit:</span>
-                                        <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-[10px] font-black uppercase" />
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase">To:</span>
+                                        <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-slate-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-[10px] font-bold text-slate-700 dark:text-neutral-200" />
                                     </div>
                                 </div>
                             )}
 
-                            <div className="h-[350px] relative z-10 font-bold overflow-hidden">
+                            <div className="h-[300px] relative z-10">
                                 {chartData.length > 0 ? (
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                             <defs>
                                                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                                                     <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
@@ -295,109 +310,104 @@ const DailyFinancePage: React.FC = () => {
                                                     <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#262626' : '#f5f5f5'} />
-                                            <XAxis dataKey="label" fontSize={9} axisLine={false} tickLine={false} tick={{ fill: '#737373', fontWeight: 900 }} dy={10} />
-                                            <YAxis fontSize={9} axisLine={false} tickLine={false} tick={{ fill: '#737373', fontWeight: 900 }} tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} />
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#262626' : '#f1f5f9'} />
+                                            <XAxis dataKey="label" fontSize={10} stroke="#94a3b8" axisLine={false} tickLine={false} fontWeight={600} dy={10} />
+                                            <YAxis fontSize={10} stroke="#94a3b8" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={600} />
                                             <Tooltip
-                                                cursor={{ stroke: '#6366f1', strokeWidth: 2, strokeDasharray: '5 5' }}
-                                                contentStyle={{ backgroundColor: theme === 'dark' ? '#0a0a0a' : '#fff', borderRadius: '1.5rem', border: '1px solid #262626', color: '#fff', padding: '1.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.2)' }}
-                                                itemStyle={{ fontFamily: 'var(--font-mono)', fontWeight: 900, textTransform: 'uppercase', fontSize: '10px' }}
-                                                labelStyle={{ fontWeight: 900, fontSize: '12px', marginBottom: '0.5rem', textTransform: 'uppercase' }}
-                                                formatter={(val: number) => `₹${formatCurrency(val)}`}
+                                                contentStyle={{ backgroundColor: isDark ? '#171717' : '#fff', borderColor: isDark ? '#404040' : '#e2e8f0', borderRadius: '12px' }}
+                                                formatter={(val: number) => [`₹${formatCurrency(val)}`, '']}
                                             />
-                                            <Legend iconType="circle" align="right" verticalAlign="top" wrapperStyle={{ paddingTop: '0', textTransform: 'uppercase', fontWeight: 900, fontSize: '9px', letterSpacing: '0.2em' }} />
-                                            <Area type="monotone" dataKey="income" name="Pulse Inflow" stroke="#6366f1" fill="url(#colorIncome)" strokeWidth={3} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
-                                            <Area type="monotone" dataKey="expense" name="Operational Burn" stroke="#f43f5e" fill="url(#colorExpense)" strokeWidth={3} strokeDasharray="5 5" activeDot={{ r: 4, strokeWidth: 0, fill: '#f43f5e' }} />
-                                            <Area type="monotone" dataKey="profit" name="Net Velocity" stroke="#10b981" fill="transparent" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: '#10b981' }} />
+                                            <Legend iconType="circle" align="right" verticalAlign="top" wrapperStyle={{ fontSize: '10px', fontWeight: 600 }} />
+                                            <Area type="monotone" dataKey="income" name="Income" stroke="#6366f1" fill="url(#colorIncome)" strokeWidth={3} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
+                                            <Area type="monotone" dataKey="expense" name="Expense" stroke="#f43f5e" fill="url(#colorExpense)" strokeWidth={3} strokeDasharray="5 5" activeDot={{ r: 4, strokeWidth: 0, fill: '#f43f5e' }} />
+                                            <Area type="monotone" dataKey="profit" name="Net Profit" stroke="#10b981" fill="transparent" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: '#10b981' }} />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-neutral-400">
-                                        <Layers size={48} className="mb-4 opacity-10 animate-pulse" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest italic text-center">No financial topology <br /> detected for this window</p>
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-neutral-600">
+                                        <Layers size={48} className="mb-4 opacity-30" />
+                                        <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest text-center">No data available for this period</p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* 2. Audit History Ledger */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
-                            <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-                                        <History size={24} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-black italic tracking-tighter uppercase">Audit History Node</h3>
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-0.5">Immutable financial tracking</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-3">
-                                    <div className="relative">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={14} />
-                                        <input
-                                            value={recentSearch}
-                                            onChange={e => setRecentSearch(e.target.value)}
-                                            placeholder="Search ledger..."
-                                            className="pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase outline-none w-48 focus:ring-2 focus:ring-primary/10 transition-all"
-                                        />
-                                    </div>
+                        {/* Transaction History Table */}
+                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+                            <div className="p-5 border-b border-slate-50 dark:border-neutral-700 flex items-center justify-between">
+                                <h3 className="font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                                    <History className="w-4 h-4 text-indigo-500" /> Transaction History
+                                </h3>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                                    <input
+                                        value={recentSearch}
+                                        onChange={e => setRecentSearch(e.target.value)}
+                                        placeholder="Search..."
+                                        className="pl-9 pr-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-lg text-[10px] font-bold text-slate-600 dark:text-neutral-300 uppercase outline-none w-44 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="overflow-x-auto relative min-h-[400px]">
-                                <table className="w-full text-left text-sm tabular-nums border-collapse">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-[0.2em] text-[10px] sticky top-0 z-10">
-                                        <tr>
-                                            <th className="p-8">Audit Seal</th>
-                                            <th className="p-8 text-right text-primary">Inflow</th>
-                                            <th className="p-8 text-right text-rose-500">Burn</th>
-                                            <th className="p-8 text-right text-neutral-900 dark:text-white">Net</th>
-                                            <th className="p-8 text-right"></th>
+                            <div className="overflow-x-auto flex-1">
+                                <table className="w-full text-left text-sm tabular-nums">
+                                    <thead className="bg-slate-50 dark:bg-neutral-900 border-b border-slate-100 dark:border-neutral-700">
+                                        <tr className="text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest">
+                                            <th className="p-5">Date</th>
+                                            <th className="p-5 text-right">Income</th>
+                                            <th className="p-5 text-right">Expense</th>
+                                            <th className="p-5 text-right">Net</th>
+                                            <th className="p-5 text-right"></th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                    <tbody className="divide-y divide-slate-50 dark:divide-neutral-700">
                                         {recentFiltered.length === 0 ? (
-                                            <tr><td colSpan={5} className="p-32 text-center text-[10px] font-black uppercase tracking-widest italic text-neutral-400 opacity-50">Empty analysis window</td></tr>
+                                            <tr>
+                                                <td colSpan={5} className="p-16 text-center">
+                                                    <div className="flex flex-col items-center">
+                                                        <Layers className="w-10 h-10 text-slate-200 dark:text-neutral-700 mb-3" />
+                                                        <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">No records found</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         ) : recentFiltered.map((t: any) => {
                                             const netFlow = (t.totalSales || (t.cashSales + t.onlineSales)) - t.expenses;
                                             return (
                                                 <tr
                                                     key={t.id}
                                                     onClick={() => setSelectedRowId(t.id === selectedRowId ? null : t.id)}
-                                                    className={`hover:bg-primary/[0.02] dark:hover:bg-primary/[0.05] transition-all group cursor-default ${selectedRowId === t.id ? 'bg-primary/[0.05] dark:bg-primary/[0.1]' : ''}`}
+                                                    className={`hover:bg-slate-50 dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${selectedRowId === t.id ? 'bg-indigo-50/50 dark:bg-indigo-500/5' : ''}`}
                                                 >
-                                                    <td className="p-8">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className={`w-2.5 h-2.5 rounded-full ${t.synced === false ? 'bg-warning animate-pulse' : 'bg-primary shadow-[0_0_12px_rgba(99,102,241,0.4)]'}`} />
-                                                            <div className="flex flex-col">
-                                                                <span className="font-black text-neutral-900 dark:text-white uppercase tracking-tighter text-sm italic">
+                                                    <td className="p-5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-2 h-2 rounded-full ${t.synced === false ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+                                                            <div>
+                                                                <div className="font-bold text-slate-800 dark:text-neutral-100 text-sm">
                                                                     {new Date(t.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                                </span>
-                                                                <span className="text-[9px] text-neutral-400 font-black uppercase tracking-[0.2em] mt-1 opacity-50">{t.id.slice(0, 8)}</span>
+                                                                </div>
+                                                                <div className="text-[9px] text-slate-400 dark:text-neutral-500 font-bold">{t.id.slice(0, 8)}</div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="p-8 text-right">
-                                                        <span className="font-black italic text-primary bg-primary/5 px-3 py-1 rounded-xl text-xs">
+                                                    <td className="p-5 text-right">
+                                                        <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                                                             ₹{formatCurrency(t.totalSales || (t.cashSales + t.onlineSales))}
                                                         </span>
                                                     </td>
-                                                    <td className="p-8 text-right">
-                                                        <span className="font-bold text-rose-500 text-xs">
+                                                    <td className="p-5 text-right">
+                                                        <span className="font-bold text-rose-500 text-sm">
                                                             {t.expenses > 0 ? `₹${formatCurrency(t.expenses)}` : '—'}
                                                         </span>
                                                     </td>
-                                                    <td className="p-8 text-right">
-                                                        <div className={`text-base font-black italic tracking-tighter tabular-nums ${netFlow >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                    <td className="p-5 text-right">
+                                                        <span className={`text-sm font-black ${netFlow >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                                                             ₹{formatCurrency(netFlow)}
-                                                        </div>
+                                                        </span>
                                                     </td>
-                                                    <td className="p-8 text-right">
-                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                            <button onClick={(e) => { e.stopPropagation(); handleEdit(t); }} className="p-2.5 text-primary hover:bg-primary/10 rounded-xl transition-all active:scale-90"><Edit2 size={14} /></button>
-                                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} className="p-2.5 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all active:scale-90"><Trash2 size={14} /></button>
+                                                    <td className="p-5 text-right">
+                                                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                            <button onClick={(e) => { e.stopPropagation(); handleEdit(t); }} className="p-2 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition-all active:scale-90"><Edit2 size={14} /></button>
+                                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-all active:scale-90"><Trash2 size={14} /></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -409,99 +419,84 @@ const DailyFinancePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Intelligence Sidebar (Engagement Terminal) */}
-                    <div className="lg:col-span-4 space-y-12">
+                    {/* Right Sidebar: Entry Form */}
+                    <div className="space-y-6">
 
-                        {/* 1. Vault Entry Terminal */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl" />
+                        {/* Daily Entry Form */}
+                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+                            <div className="p-5 border-b border-slate-50 dark:border-neutral-700 flex items-center justify-between">
+                                <h3 className="font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                                    <Plus className="w-4 h-4 text-indigo-500" /> {editingId ? 'Edit Record' : 'New Entry'}
+                                </h3>
+                                {editingId && (
+                                    <button onClick={cancelEdit} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-colors">
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
 
-                            <div className="p-8 relative z-10">
-                                <div className="flex items-center justify-between mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                                            <Zap className="w-5 h-5 fill-current" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-widest">{editingId ? 'Modify Commitment' : 'Vault Entry'}</h3>
-                                            <p className="text-[9px] font-black text-primary uppercase tracking-[0.3em] opacity-60">Ledger Protocol v4</p>
-                                        </div>
+                            <form onSubmit={saveTransaction} className="p-5 space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Date</label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-neutral-500" />
+                                        <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full pl-9 pr-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                     </div>
-                                    {editingId && (
-                                        <button onClick={cancelEdit} className="p-2 hover:bg-rose-500/10 text-neutral-400 hover:text-rose-500 rounded-lg transition-colors"><X size={16} /></button>
-                                    )}
                                 </div>
 
-                                <form onSubmit={saveTransaction} className="space-y-8">
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest pl-1">Target Date</label>
-                                            <div className="relative group/input">
-                                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                                                <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full pl-10 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800 rounded-xl text-[10px] font-black uppercase outline-none focus:ring-4 focus:ring-primary/10 transition-all" />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest pl-1">Cash In</label>
-                                                <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full px-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-sm font-black italic tabular-nums outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono" />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest pl-1">Digital In</label>
-                                                <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full px-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-sm font-black italic tabular-nums outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono" />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-1">Audit Burn (Expense)</label>
-                                            <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full px-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-sm font-black italic tabular-nums outline-none focus:ring-4 focus:ring-rose-500/10 transition-all font-mono text-rose-500" />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest pl-1">Drawer Total</label>
-                                            <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted amount" className="w-full px-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-sm font-black italic tabular-nums outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono" />
-                                        </div>
-
-                                        <MetricCard
-                                            title="Projected Node Liquidity"
-                                            value={`₹${formatCurrency(currentTotalSales)}`}
-                                            icon={Zap}
-                                            color="primary"
-                                            variant="dark"
-                                            compact
-                                        />
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Cash Sales</label>
+                                        <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                     </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Online Sales</label>
+                                        <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                    </div>
+                                </div>
 
-                                    <button type="submit" className="w-full py-5 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                                        <ShieldCheck className="w-4 h-4" />
-                                        {editingId ? 'Modify Commitment' : 'Commit to Ledger'}
-                                    </button>
-                                </form>
-                            </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Expenses</label>
+                                    <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-rose-500 tabular-nums outline-none focus:ring-2 focus:ring-rose-500/20 transition-all" />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Cash in Drawer</label>
+                                    <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted amount" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Notes</label>
+                                    <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-medium text-slate-700 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                </div>
+
+                                {/* Live Preview */}
+                                <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-4 rounded-xl">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Total Sales Preview</span>
+                                        <span className="text-lg font-black text-slate-900 dark:text-white">₹ {formatCurrency(currentTotalSales)}</span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="w-full py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    {editingId ? 'Update Record' : 'Save Entry'}
+                                </button>
+                            </form>
                         </div>
 
-                        {/* 2. Feedback Messaging */}
+                        {/* Status Message */}
                         {statusMsg && (
-                            <div className={`p-6 rounded-[2.5rem] flex items-center gap-4 text-[10px] font-black uppercase tracking-widest border animate-in slide-in-from-right-4 ${statusMsg.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
-                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${statusMsg.type === 'success' ? 'bg-emerald-500/20' : 'bg-rose-500/20'}`}>
-                                    {statusMsg.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-                                </div>
-                                <div>
-                                    <div className="text-[9px] opacity-60">System Notification</div>
-                                    {statusMsg.text}
-                                </div>
+                            <div className={`p-4 rounded-xl flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest border ${statusMsg.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20' : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-500/20'}`}>
+                                {statusMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                                {statusMsg.text}
                             </div>
                         )}
 
-                        {/* 3. Global Analytics Context */}
-                        <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 relative overflow-hidden">
-                            <Layers className="absolute -bottom-6 -right-6 w-24 h-24 text-primary opacity-10" />
-                            <h4 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <Info size={14} className="text-primary" /> Authority Protocol
-                            </h4>
-                            <p className="text-[10px] text-neutral-400 font-bold leading-relaxed italic">
-                                Your entries are cryptographically signed and synced to the tenant hub. Total ledger records: <span className="text-primary">{tx.length}</span>.
+                        {/* Records Count */}
+                        <div className="bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 p-4 rounded-xl text-center">
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">
+                                Total Records: <span className="text-indigo-500 dark:text-indigo-400 font-black">{tx.length}</span>
                             </p>
                         </div>
                     </div>

@@ -148,7 +148,7 @@ const SupplierPayments: React.FC = () => {
             <div className="space-y-6 animate-in fade-in duration-500 pb-10">
                 <PageHeader
                     title="Supplier Payments"
-                    description="Process settlements for vendor bills, manage payment advice, and track clearing status."
+                    description="Process settlements for supplier bills, manage payment advice, and track clearing status."
                     actions={
                         <button
                             onClick={() => navigate('/purchase/payment-out')}
@@ -198,7 +198,7 @@ const SupplierPayments: React.FC = () => {
                         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                         <input
                             type="text"
-                            placeholder="Search by Payment #, Vendor, or Ref ID..."
+                            placeholder="Search by Payment #, Supplier, or Ref ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
@@ -229,7 +229,7 @@ const SupplierPayments: React.FC = () => {
                             <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
                                 <tr>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Payment Details</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Vendor / Supplier</th>
+                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Supplier</th>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Method & Reference</th>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-right">Amount Settled</th>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center">Status</th>

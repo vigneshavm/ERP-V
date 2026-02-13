@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Printer, Filter, Calendar, ChevronLeft, TrendingUp, FileText, Clock } from 'lucide-react';
+import { ArrowLeft, Printer, Filter, Calendar, TrendingUp, FileText, Clock, Search, Book, RefreshCw } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import api from '../../../services/api';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/shared/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import SupplierSubNav from './SupplierSubNav';
 
 // Interfaces for response data
 interface Transaction {
@@ -45,16 +45,25 @@ const SupplierLedger: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<LedgerData | null>(null);
+    const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(id || null);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Redirect if no ID (Global view not supported yet, must select supplier)
-    useEffect(() => {
-        if (!id) {
-            navigate('/suppliers');
-            toast.info('Please select a supplier to view their ledger.');
-        }
-    }, [id, navigate]);
+    const user = useSelector((state: RootState) => state.auth.user);
+    const token = user?.token;
+    const { suppliers } = useSelector((state: RootState) => state.suppliers);
 
-    // Date State (Default to current month)
+    // Filtered suppliers for picker
+    const filteredSuppliers = useMemo(() => {
+        const list = (suppliers || []).filter((s: any) => s.status === 'active');
+        if (!searchTerm) return list;
+        const term = searchTerm.toLowerCase();
+        return list.filter((s: any) =>
+            s.businessName?.toLowerCase().includes(term) ||
+            s.contactPersonName?.toLowerCase().includes(term) ||
+            s.supplierId?.toLowerCase().includes(term)
+        );
+    }, [suppliers, searchTerm]);
+
     const [startDate, setStartDate] = useState(() => {
         const date = new Date();
         date.setDate(1);
@@ -64,14 +73,13 @@ const SupplierLedger: React.FC = () => {
         return new Date().toISOString().split('T')[0];
     });
 
-    const user = useSelector((state: RootState) => state.auth.user);
-    const token = user?.token;
+    const effectiveId = selectedSupplierId || id;
 
     const fetchLedger = async () => {
-        if (!id || !token) return;
+        if (!effectiveId || !token) return;
         setLoading(true);
         try {
-            const response = await api.get(`/api/purchases/suppliers/${id}/ledger`, {
+            const response = await api.get(`/api/purchases/suppliers/${effectiveId}/ledger`, {
                 params: { startDate, endDate },
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -87,23 +95,22 @@ const SupplierLedger: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchLedger();
-    }, [id, token]); // Don't auto-fetch on date change to let user select range first? Or auto fetch?
-    // Usually auto-fetch on date change is better UX.
+        if (effectiveId) fetchLedger();
+    }, [effectiveId, token]);
+
     useEffect(() => {
-        fetchLedger();
+        if (effectiveId) fetchLedger();
     }, [startDate, endDate]);
 
-    const handlePrint = () => {
-        window.print();
+    const handleSelectSupplier = (supplierId: string) => {
+        setSelectedSupplierId(supplierId);
+        setData(null);
     };
 
-    // Helper for currency
+    const handlePrint = () => { window.print(); };
+
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR'
-        }).format(amount);
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
     };
 
     const handleRowClick = (t: Transaction) => {
@@ -113,173 +120,330 @@ const SupplierLedger: React.FC = () => {
             if (t.purchaseReturnId) {
                 navigate(`/purchase/returns/view/${t.purchaseReturnId}`);
             } else {
-                // Fallback for manual debit notes or if return link missing
-                // Navigate to generic returns or debit notes list? 
-                // Assuming Debit Notes list
                 navigate(`/purchase/debit-notes`);
             }
         } else if (t.type === 'PAYMENT') {
-            // No direct view for payment usually, maybe list?
             navigate(`/purchase/payments`);
         }
     };
 
-    if (loading && !data) return <div className="p-8 text-center pt-20">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-neutral-500 font-medium">Loading Ledger...</p>
-    </div>;
+    // ==========================================
+    // SUPPLIER PICKER VIEW (no supplier selected)
+    // ==========================================
+    if (!effectiveId) {
+        return (
+            <Layout>
+                <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+                    <SupplierSubNav />
 
-    if (!data) return <div className="p-8 text-center pt-20">
-        <p className="text-neutral-500 font-medium">No Data Found</p>
-    </div>;
+                    {/* Header - Dashboard style */}
+                    <div className="flex items-center justify-between pb-2">
+                        <div className="flex flex-col">
+                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Supplier Ledger</h1>
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest mt-1">Select a supplier to view their account statement</p>
+                        </div>
+                    </div>
 
+                    {/* Search */}
+                    <div className="relative max-w-md">
+                        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search suppliers..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm text-slate-800 dark:text-neutral-200 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 outline-none shadow-sm placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+                        />
+                    </div>
+
+                    {/* Supplier Grid - Dashboard card style */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {filteredSuppliers.length === 0 ? (
+                            <div className="col-span-full text-center py-20">
+                                <Book className="w-12 h-12 mx-auto mb-3 text-slate-200 dark:text-neutral-700" />
+                                <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No suppliers found</p>
+                                <p className="text-[10px] text-slate-300 dark:text-neutral-600 mt-1 uppercase tracking-wider font-bold">Try adjusting your search term</p>
+                            </div>
+                        ) : (
+                            filteredSuppliers.map((s: any) => (
+                                <button
+                                    key={s._id}
+                                    onClick={() => handleSelectSupplier(s._id)}
+                                    className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all text-left group relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-all" />
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50 dark:border-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-500 font-black text-sm shrink-0 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-500 transition-all">
+                                            {s.businessName?.charAt(0)?.toUpperCase() || 'S'}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-bold text-slate-800 dark:text-neutral-100 text-sm truncate">{s.businessName}</p>
+                                            {s.contactPersonName && (
+                                                <p className="text-[10px] text-slate-400 dark:text-neutral-500 truncate font-medium mt-0.5">{s.contactPersonName}</p>
+                                            )}
+                                        </div>
+                                        <Book className="w-4 h-4 text-slate-200 dark:text-neutral-700 group-hover:text-indigo-500 transition-colors shrink-0" />
+                                    </div>
+                                </button>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </Layout>
+        );
+    }
+
+    // ==========================================
+    // LOADING STATE
+    // ==========================================
+    if (loading && !data) return (
+        <Layout>
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+                <SupplierSubNav />
+                <div className="flex flex-col items-center justify-center py-20">
+                    <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin mb-4" />
+                    <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">Loading Ledger...</p>
+                </div>
+            </div>
+        </Layout>
+    );
+
+    // ==========================================
+    // NO DATA STATE
+    // ==========================================
+    if (!data) return (
+        <Layout>
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+                <SupplierSubNav />
+                <div className="flex flex-col items-center justify-center py-20">
+                    <FileText className="w-12 h-12 text-slate-200 dark:text-neutral-700 mb-3" />
+                    <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No Data Found</p>
+                </div>
+            </div>
+        </Layout>
+    );
+
+    // ==========================================
+    // MAIN LEDGER VIEW
+    // ==========================================
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                <PageHeader
-                    title={data.supplier.businessName}
-                    description="Supplier Ledger Statement"
-                    actions={
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 bg-white dark:bg-neutral-800 p-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                                <Calendar size={16} className="ml-2 text-neutral-400" />
-                                <input
-                                    type="date"
-                                    className="bg-transparent border-none text-sm px-2 py-1 outline-none text-neutral-700 dark:text-neutral-200 font-medium"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <span className="text-neutral-300 font-bold px-1">/</span>
-                                <input
-                                    type="date"
-                                    className="bg-transparent border-none text-sm px-2 py-1 outline-none text-neutral-700 dark:text-neutral-200 font-medium"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                <button
-                                    onClick={fetchLedger}
-                                    className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors ml-1 text-primary group"
-                                    title="Filter Range"
-                                >
-                                    <Filter size={16} className="group-hover:scale-110 transition-transform" />
-                                </button>
-                            </div>
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+
+                {/* Header Section — Dashboard style */}
+                <div className="flex items-center justify-between pb-2">
+                    <div className="flex items-center gap-4">
+                        {!id && selectedSupplierId && (
                             <button
-                                onClick={handlePrint}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-sm active:scale-95 text-sm font-bold"
+                                onClick={() => { setSelectedSupplierId(null); setData(null); }}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-indigo-50 hover:text-indigo-500 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/20 transition-all"
                             >
-                                <Printer size={18} />
-                                <span>Print Ledger</span>
+                                <ArrowLeft className="w-4 h-4" />
+                            </button>
+                        )}
+                        <div className="flex flex-col">
+                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">{data.supplier.businessName}</h1>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-indigo-500/20">
+                                    Ledger
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500">
+                                    {new Date(data.period.start).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} — {new Date(data.period.end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-800 p-1.5 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm">
+                            <Calendar size={14} className="ml-2 text-slate-400" />
+                            <input
+                                type="date"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <span className="text-slate-200 dark:text-neutral-600 font-bold text-xs">→</span>
+                            <input
+                                type="date"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            <button
+                                onClick={fetchLedger}
+                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-indigo-500"
+                                title="Apply Filter"
+                            >
+                                <Filter size={14} />
                             </button>
                         </div>
-                    }
-                />
+                        <button
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-all shadow-sm active:scale-95 text-xs font-black uppercase tracking-wider"
+                        >
+                            <Printer size={14} />
+                            Print
+                        </button>
+                    </div>
+                </div>
 
-                {/* Statement Header */}
-                <div className="text-center mb-8 border-b border-neutral-100 dark:border-neutral-700 pb-6">
-                    <h2 className="text-2xl font-bold uppercase tracking-wide mb-2 text-neutral-900 dark:text-white">Statement of Accounts</h2>
-                    <h3 className="text-lg font-semibold text-primary">{data.supplier.businessName}</h3>
-                    <p className="text-neutral-500 text-sm mt-1">
-                        Period: <span className="font-medium text-neutral-700 dark:text-neutral-300">{new Date(data.period.start).toLocaleDateString()}</span> to <span className="font-medium text-neutral-700 dark:text-neutral-300">{new Date(data.period.end).toLocaleDateString()}</span>
+                {/* Metrics Grid — Dashboard tinted cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Opening Balance */}
+                    <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-neutral-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <TrendingUp className="w-4 h-4 text-slate-500 dark:text-neutral-400" />
+                                <span className="text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-widest">Opening Balance</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.openingBalance)}</span>
+                        </div>
+                    </div>
+
+                    {/* Total Debit (Payments) */}
+                    <div className="bg-[#F8FFF9] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                    <FileText className="w-3 h-3" />
+                                </div>
+                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Debit</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.debit)}</span>
+                        </div>
+                    </div>
+
+                    {/* Total Credit (Bills) */}
+                    <div className="bg-[#FFF8F8] dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-rose-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                                    <FileText className="w-3 h-3" />
+                                </div>
+                                <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest">Total Credit</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.credit)}</span>
+                        </div>
+                    </div>
+
+                    {/* Closing Balance */}
+                    <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+                                <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Closing Balance</span>
+                            </div>
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.closingBalance)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Statement Header - for print */}
+                <div className="hidden print:block text-center mb-6 border-b-2 border-black pb-4">
+                    <h2 className="text-2xl font-bold uppercase tracking-wide">Statement of Accounts</h2>
+                    <h3 className="text-lg font-semibold mt-1">{data.supplier.businessName}</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                        Period: {new Date(data.period.start).toLocaleDateString('en-IN')} to {new Date(data.period.end).toLocaleDateString('en-IN')}
                     </p>
                 </div>
 
-                {/* Summary Cards - Grid Layout aligned with Registers */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 print:grid-cols-4 print:gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Opening</p>
-                                <p className="text-2xl font-black text-neutral-900 dark:text-white mt-1">{formatCurrency(data.openingBalance).replace('₹', '')}</p>
-                            </div>
-                            <div className="p-3 bg-neutral-100 dark:bg-neutral-700/50 rounded-xl text-neutral-400"><TrendingUp size={24} /></div>
+                {/* Transactions Table — Dashboard container style */}
+                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative">
+                    {/* Table Header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-neutral-700 print:hidden">
+                        <div>
+                            <h3 className="text-sm font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                                <Book className="w-4 h-4 text-indigo-500" /> Transaction History
+                            </h3>
+                            <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest mt-0.5">
+                                {data.transactions.length} transaction{data.transactions.length !== 1 ? 's' : ''} in period
+                            </p>
                         </div>
+                        {loading && <RefreshCw className="w-4 h-4 text-indigo-500 animate-spin" />}
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Total Debit</p>
-                                <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{formatCurrency(data.totals.debit).replace('₹', '')}</p>
-                            </div>
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-emerald-600"><FileText size={24} /></div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-rose-100 dark:border-rose-900/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Total Credit</p>
-                                <p className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">{formatCurrency(data.totals.credit).replace('₹', '')}</p>
-                            </div>
-                            <div className="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-xl text-rose-600"><FileText size={24} /></div>
-                        </div>
-                    </div>
-                    <div className="bg-primary/5 dark:bg-primary/10 p-5 rounded-2xl border border-primary/20 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-bold text-primary uppercase tracking-wider">Closing</p>
-                                <p className="text-2xl font-black text-primary mt-1">{formatCurrency(data.closingBalance).replace('₹', '')}</p>
-                            </div>
-                            <div className="p-3 bg-primary/10 rounded-xl text-primary"><Clock size={24} /></div>
-                        </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-slate-50/80 dark:bg-neutral-900/50">
+                                <tr>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Date</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Type</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left">Description</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Debit (₹)</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Credit (₹)</th>
+                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right">Balance (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
+                                {/* Opening Balance Row */}
+                                <tr className="bg-slate-50/30 dark:bg-neutral-800/50">
+                                    <td className="py-3.5 px-5 text-slate-500 font-medium text-xs">{new Date(data.period.start).toLocaleDateString('en-IN')}</td>
+                                    <td className="py-3.5 px-5">
+                                        <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-700 text-[9px] font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Opening</span>
+                                    </td>
+                                    <td className="py-3.5 px-5 italic text-slate-400 dark:text-neutral-500 text-xs">Opening Balance Forwarded</td>
+                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700">—</td>
+                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700">—</td>
+                                    <td className="py-3.5 px-5 text-right font-black text-slate-600 dark:text-neutral-300">{formatCurrency(data.openingBalance)}</td>
+                                </tr>
+
+                                {data.transactions.map((t, i) => (
+                                    <tr
+                                        key={i}
+                                        className="hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 cursor-pointer group transition-colors"
+                                        onClick={() => handleRowClick(t)}
+                                    >
+                                        <td className="py-3.5 px-5 text-slate-600 dark:text-neutral-400 font-medium text-xs">{new Date(t.date).toLocaleDateString('en-IN')}</td>
+                                        <td className="py-3.5 px-5">
+                                            <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-500/20' :
+                                                    t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20' :
+                                                        'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20'
+                                                }`}>
+                                                {t.type === 'DEBIT_NOTE' ? (t.purchaseReturnId ? 'Return' : 'D.Note') : t.type}
+                                            </span>
+                                        </td>
+                                        <td className="py-3.5 px-5">
+                                            <div className="font-bold text-slate-800 dark:text-neutral-200 text-xs group-hover:text-indigo-500 transition-colors">#{t.refNo}</div>
+                                            <div className="text-[10px] text-slate-400 dark:text-neutral-500 mt-0.5 truncate max-w-[200px]">{t.description}</div>
+                                        </td>
+                                        <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs">
+                                            {t.debit > 0 ? formatCurrency(t.debit) : '—'}
+                                        </td>
+                                        <td className="py-3.5 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs">
+                                            {t.credit > 0 ? formatCurrency(t.credit) : '—'}
+                                        </td>
+                                        <td className="py-3.5 px-5 text-right font-black text-slate-900 dark:text-white text-xs">
+                                            {formatCurrency(t.balance)}
+                                            <span className="text-[9px] ml-1 text-slate-400 dark:text-neutral-500 font-bold">
+                                                {t.balance > 0 ? 'Cr' : 'Dr'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr className="bg-slate-50/80 dark:bg-neutral-900/50">
+                                    <td colSpan={3} className="py-4 px-5 text-right text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-widest">Closing Balance</td>
+                                    <td className="py-4 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs">{formatCurrency(data.totals.debit)}</td>
+                                    <td className="py-4 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs">{formatCurrency(data.totals.credit)}</td>
+                                    <td className="py-4 px-5 text-right font-black text-indigo-500 text-lg">{formatCurrency(data.closingBalance)}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-2xl border border-neutral-100 dark:border-neutral-700">
-                    <table className="w-full text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-900/50">
-                            <tr>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-left">Date</th>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-left">Type</th>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-left">Description</th>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-right">Debit (₹)</th>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-right">Credit (₹)</th>
-                                <th className="py-4 px-4 font-bold text-neutral-500 uppercase text-[10px] tracking-widest text-right">Balance (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
-                            <tr className="bg-neutral-50/50 dark:bg-neutral-800/30">
-                                <td className="py-4 px-4 text-neutral-500 font-medium">{new Date(data.period.start).toLocaleDateString()}</td>
-                                <td className="py-4 px-4"><span className="px-2 py-0.5 rounded-md bg-neutral-200 dark:bg-neutral-700 text-[10px] font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">OPENING</span></td>
-                                <td className="py-4 px-4 italic text-neutral-400 text-xs">Opening Balance Forwarded</td>
-                                <td className="py-4 px-4 text-right text-neutral-300">-</td>
-                                <td className="py-4 px-4 text-right text-neutral-300">-</td>
-                                <td className="py-4 px-4 text-right font-bold text-neutral-600 dark:text-neutral-400">{formatCurrency(data.openingBalance).replace('₹', '')}</td>
-                            </tr>
-                            {data.transactions.map((t, i) => (
-                                <tr
-                                    key={i}
-                                    className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer group transition-colors"
-                                    onClick={() => handleRowClick(t)}
-                                >
-                                    <td className="py-4 px-4 text-neutral-600 dark:text-neutral-400 font-medium">{new Date(t.date).toLocaleDateString()}</td>
-                                    <td className="py-4 px-4">
-                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
-                                            t.type === 'PAYMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                                'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                                            }`}>
-                                            {t.type === 'DEBIT_NOTE' ? (t.purchaseReturnId ? 'RETURN' : 'DBT NOTE') : t.type}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-4">
-                                        <div className="font-bold text-neutral-800 dark:text-neutral-200 group-hover:text-primary transition-colors">#{t.refNo}</div>
-                                        <div className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[200px]">{t.description}</div>
-                                    </td>
-                                    <td className="py-4 px-4 text-right font-black text-emerald-600 dark:text-emerald-400">
-                                        {t.debit > 0 ? formatCurrency(t.debit).replace('₹', '') : '-'}
-                                    </td>
-                                    <td className="py-4 px-4 text-right font-black text-rose-600 dark:text-rose-400">
-                                        {t.credit > 0 ? formatCurrency(t.credit).replace('₹', '') : '-'}
-                                    </td>
-                                    <td className="py-4 px-4 text-right font-black text-neutral-900 dark:text-white">
-                                        {formatCurrency(t.balance).replace('₹', '')}
-                                        <span className="text-[10px] ml-1 text-neutral-400 font-medium">
-                                            {t.balance > 0 ? 'Cr' : 'Dr'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {/* Print-only Statement Footer */}
+                <div className="hidden print:block mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-500">
+                    <p>This is a computer-generated statement and does not require a signature.</p>
+                    <p className="mt-1">For any queries, please contact us.</p>
                 </div>
             </div>
         </Layout>

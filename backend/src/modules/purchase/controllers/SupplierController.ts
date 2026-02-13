@@ -4,6 +4,7 @@ import Supplier from '../models/Supplier.js';
 import Purchase from '../models/Purchase.js';
 import PurchaseReturn from '../models/PurchaseReturn.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+// Removed static imports for Bill, PaymentOut, DebitNote to use dynamic imports in getSupplierLedger
 
 export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -43,12 +44,13 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
             },
             {
                 $lookup: {
-                    from: "purchasepayments",
+                    from: "paymentouts",
                     let: { supplierId: "$_id" },
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$supplierId", "$$supplierId"] }
+                                $expr: { $eq: ["$supplierId", "$$supplierId"] },
+                                status: { $in: ["cleared", "pending"] }
                             }
                         }
                     ],
@@ -705,6 +707,197 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
         });
     } catch (error: any) {
         console.error('Get Vendor Inflow/Outflow Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const tenantId = req.user?.tenantId?.toString();
+        const { id } = req.params;
+        const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+        }
+
+        // Dynamic Imports
+        const { default: Bill } = await import('../../finance/models/Bill.js');
+        const { default: PaymentOut } = await import('../models/PaymentOut.js');
+        const { default: DebitNote } = await import('../models/DebitNote.js');
+
+
+        const supplier = await Supplier.findOne({ _id: id, tenantId });
+        if (!supplier) {
+            return res.status(404).json({ success: false, message: 'Supplier not found' });
+        }
+
+        // Default dates: Start of current month to today
+        const start = startDate ? new Date(startDate) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const end = endDate ? new Date(endDate) : new Date();
+        end.setHours(23, 59, 59, 999);
+
+        // 1. Calculate Opening Balance (before start date)
+        // Opening = Initial Opening Balance + (Bills - Payments - DebitNotes) before start date
+        const preBills = await Bill.aggregate([
+            {
+                $match: {
+                    supplier: new mongoose.Types.ObjectId(id),
+                    tenantId,
+                    status: { $nin: ['draft', 'rejected', 'cancelled'] },
+                    date: { $lt: start }
+                }
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+
+        const prePayments = await PaymentOut.aggregate([
+            {
+                $match: {
+                    supplierId: new mongoose.Types.ObjectId(id),
+                    tenantId,
+                    status: { $in: ['cleared', 'pending'] },
+                    paymentDate: { $lt: start }
+                }
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+
+        const preDebitNotes = await DebitNote.aggregate([
+            {
+                $match: {
+                    vendorId: new mongoose.Types.ObjectId(id),
+                    tenantId,
+                    status: 'APPROVED',
+                    date: { $lt: start }
+                }
+            },
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+        ]);
+
+        const initialOpening = supplier.openingBalance || 0;
+        const billsBefore = preBills[0]?.total || 0;
+        const paymentsBefore = prePayments[0]?.total || 0;
+        const debitNotesBefore = preDebitNotes[0]?.total || 0;
+
+        // For a supplier (Credit):
+        // Balance = (Opening + Bills) - (Payments + DebitNotes)
+        // If BalanceType is 'receivable', Opening is negative liability (asset). Let's assume standard Payable.
+        // Actually, if balanceType is 'receivable', we should treat opening balance as negative in payable context?
+        // Standard approach: Opening Balance is amount WE OWE.
+        let openingBalance = initialOpening;
+        if (supplier.balanceType === 'receivable') {
+            openingBalance = -initialOpening;
+        }
+
+        // Calculate running opening balance at start date
+        const runningOpeningBalance = (openingBalance + billsBefore) - (paymentsBefore + debitNotesBefore);
+
+
+        // 2. Fetch Transactions in Range
+        const bills = await Bill.find({
+            supplier: id,
+            tenantId,
+            status: { $nin: ['draft', 'rejected', 'cancelled'] },
+            date: { $gte: start, $lte: end }
+        }).lean();
+
+        const payments = await PaymentOut.find({
+            supplierId: id,
+            tenantId,
+            status: { $in: ['cleared', 'pending'] },
+            paymentDate: { $gte: start, $lte: end }
+        }).lean();
+
+        const debitNotes = await DebitNote.find({
+            vendorId: id,
+            tenantId,
+            status: 'APPROVED',
+            date: { $gte: start, $lte: end }
+        }).lean();
+
+        // 3. Merge and Sort
+        const transactions: any[] = [];
+
+        bills.forEach(b => {
+            transactions.push({
+                date: b.date,
+                type: 'BILL',
+                refNo: b.billNo,
+                description: `Bill #${b.billNo}`,
+                credit: b.amount, // Bill increases payable (Credit)
+                debit: 0,
+                originalRef: b
+            });
+        });
+
+        payments.forEach(p => {
+            transactions.push({
+                date: p.paymentDate,
+                type: 'PAYMENT',
+                refNo: p.paymentNo,
+                description: `Payment via ${p.paymentMode}`,
+                credit: 0,
+                debit: p.amount, // Payment decreases payable (Debit)
+                originalRef: p
+            });
+        });
+
+        debitNotes.forEach(d => {
+            transactions.push({
+                date: d.date,
+                type: 'DEBIT_NOTE',
+                refNo: d.debitNoteNumber,
+                description: d.reason || 'Debit Note',
+                credit: 0,
+                debit: d.totalAmount, // Debit Note decreases payable (Debit)
+                originalRef: d,
+                purchaseReturnId: d.sourceId // Link to return if exists
+            });
+        });
+
+        // Sort by Date
+        transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        // 4. Calculate Running Balance
+        let currentBalance = runningOpeningBalance;
+        let totalCredit = 0;
+        let totalDebit = 0;
+
+        const processedTransactions = transactions.map(t => {
+            currentBalance = currentBalance + t.credit - t.debit;
+            totalCredit += t.credit;
+            totalDebit += t.debit;
+            return {
+                ...t,
+                balance: currentBalance
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            data: {
+                supplier: {
+                    _id: supplier._id,
+                    businessName: supplier.businessName,
+                    openingBalance: supplier.openingBalance
+                },
+                period: {
+                    start: start.toISOString(),
+                    end: end.toISOString()
+                },
+                openingBalance: runningOpeningBalance,
+                closingBalance: currentBalance,
+                totals: {
+                    credit: totalCredit,
+                    debit: totalDebit
+                },
+                transactions: processedTransactions
+            }
+        });
+
+    } catch (error: any) {
+        console.error('Get Supplier Ledger Error:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };

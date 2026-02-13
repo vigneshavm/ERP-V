@@ -131,7 +131,7 @@ const VendorInflowOutflow: React.FC = () => {
         if (user?.token) fetchData();
     }, [user?.token]);
 
-    // Fetch vendor ledger detail
+    // Fetch supplier ledger detail
     const fetchLedger = async (vendor: VendorRow) => {
         setSelectedVendor(vendor);
         setIsLedgerLoading(true);
@@ -269,7 +269,7 @@ const VendorInflowOutflow: React.FC = () => {
     // PDF Export
     const handleExportPDF = () => {
         const doc = new jsPDF();
-        doc.text('Vendor Inflow / Outflow Report', 14, 15);
+        doc.text('Supplier Inflow / Outflow Report', 14, 15);
         if (dateFrom || dateTo) {
             doc.setFontSize(10);
             doc.text(`Period: ${dateFrom || 'Start'} to ${dateTo || 'Today'}`, 14, 22);
@@ -284,24 +284,24 @@ const VendorInflowOutflow: React.FC = () => {
         ]);
 
         autoTable(doc, {
-            head: [['Vendor', 'Total Inflow', 'Total Outflow', 'Debit Notes', 'Closing Balance']],
+            head: [['Supplier', 'Total Inflow', 'Total Outflow', 'Debit Notes', 'Closing Balance']],
             body: tableData,
             startY: dateFrom || dateTo ? 28 : 22,
         });
 
-        doc.save('vendor_inflow_outflow.pdf');
+        doc.save('supplier_inflow_outflow.pdf');
     };
 
     // CSV Export
     const handleExportCSV = () => {
-        const headers = ['Vendor,Supplier ID,Total Inflow,Total Outflow,Debit Notes,Closing Balance,Bills,Payments'];
+        const headers = ['Supplier,Supplier ID,Total Inflow,Total Outflow,Debit Notes,Closing Balance,Bills,Payments'];
         const rows = processedVendors.map(v =>
             `"${v.businessName || 'N/A'}",${v.supplierId || '-'},${v.totalInflow},${v.totalOutflow},${v.debitNoteTotal},${v.closingBalance},${v.billCount},${v.paymentCount}`
         );
         const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
         const link = document.createElement('a');
         link.setAttribute('href', encodeURI(csvContent));
-        link.setAttribute('download', 'vendor_inflow_outflow.csv');
+        link.setAttribute('download', 'supplier_inflow_outflow.csv');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -314,7 +314,7 @@ const VendorInflowOutflow: React.FC = () => {
                 <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
                     <PageHeader
                         title={selectedVendor.businessName}
-                        description={selectedVendor.supplierId ? `Supplier ID: ${selectedVendor.supplierId}` : 'Vendor Ledger — Transaction Details'}
+                        description={selectedVendor.supplierId ? `Supplier ID: ${selectedVendor.supplierId}` : 'Supplier Ledger — Transaction Details'}
                         actions={
                             <button
                                 onClick={closeDetail}
@@ -452,8 +452,8 @@ const VendorInflowOutflow: React.FC = () => {
         <Layout>
             <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
                 <PageHeader
-                    title="Vendor Inflow / Outflow"
-                    description="Consolidated view of all vendor purchase inflows and payment outflows"
+                    title="Supplier Inflow / Outflow"
+                    description="Consolidated view of all supplier purchase inflows and payment outflows"
                     actions={
                         <div className="flex gap-2">
                             <button onClick={handleRefresh} disabled={isRefreshing || isLoading}
@@ -503,7 +503,7 @@ const VendorInflowOutflow: React.FC = () => {
                         iconColor={(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
                     />
                     <StatsCard
-                        title="Active Vendors"
+                        title="Active Suppliers"
                         value={displayTotals.vendorCount}
                         icon={<Users />}
                         iconBgColor="bg-purple-100 dark:bg-purple-900/30"
@@ -520,7 +520,7 @@ const VendorInflowOutflow: React.FC = () => {
                                 <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted" />
                                 <input
                                     type="text"
-                                    placeholder="Search vendor..."
+                                    placeholder="Search supplier..."
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
                                     className="w-full pl-9 pr-4 py-2 bg-input border border-default rounded-lg text-sm text-main placeholder-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
@@ -528,13 +528,13 @@ const VendorInflowOutflow: React.FC = () => {
                             </div>
                         </div>
                         <div className="w-56">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Vendor</label>
+                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Supplier</label>
                             <select
                                 value={vendorFilter}
                                 onChange={e => setVendorFilter(e.target.value)}
                                 className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                             >
-                                <option value="ALL">All Vendors</option>
+                                <option value="ALL">All Suppliers</option>
                                 {vendorOptions.map((v: any) => (
                                     <option key={v.id} value={v.id}>{v.name}</option>
                                 ))}
@@ -595,7 +595,7 @@ const VendorInflowOutflow: React.FC = () => {
                                     <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                                         onClick={() => handleSort('businessName')}>
                                         <div className="flex items-center gap-2">
-                                            Vendor <SortIcon column="businessName" />
+                                            Supplier <SortIcon column="businessName" />
                                         </div>
                                     </th>
                                     <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
@@ -687,7 +687,7 @@ const VendorInflowOutflow: React.FC = () => {
                             {!isLoading && processedVendors.length > 0 && (
                                 <tfoot className="bg-surface border-t-2 border-default">
                                     <tr className="font-bold">
-                                        <td className="p-4 text-main">Total ({displayTotals.vendorCount} vendors)</td>
+                                        <td className="p-4 text-main">Total ({displayTotals.vendorCount} suppliers)</td>
                                         <td className="p-4 text-right text-blue-600 dark:text-blue-400">{formatCurrency(displayTotals.totalInflow)}</td>
                                         <td className="p-4 text-right text-red-600 dark:text-red-400">{formatCurrency(displayTotals.totalOutflow)}</td>
                                         <td className="p-4 text-right text-secondary">{formatCurrency(displayTotals.debitNoteTotal)}</td>
@@ -705,7 +705,7 @@ const VendorInflowOutflow: React.FC = () => {
                     {processedVendors.length > itemsPerPage && (
                         <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
                             <div className="text-xs text-muted">
-                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, processedVendors.length)} of {processedVendors.length} vendors
+                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, processedVendors.length)} of {processedVendors.length} suppliers
                             </div>
                             <div className="flex items-center gap-2">
                                 <button

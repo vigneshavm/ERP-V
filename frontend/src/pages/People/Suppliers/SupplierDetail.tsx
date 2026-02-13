@@ -54,7 +54,7 @@ const SupplierDetail: React.FC = () => {
         <div className="flex justify-center items-center py-20">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-            <p className="text-sm font-bold text-slate-400">Fetching Partner Profile...</p>
+            <p className="text-sm font-bold text-slate-400">Loading supplier...</p>
           </div>
         </div>
       </Layout>
@@ -253,7 +253,7 @@ const SupplierDetail: React.FC = () => {
           {/* Operational Insights */}
           {/* Operational Insights */}
           <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 space-y-6">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Partner Analysis</h3>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Supplier Analysis</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">

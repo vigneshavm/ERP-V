@@ -11,7 +11,6 @@ const SupplierSubNav: React.FC = () => {
         { name: 'Directory', path: '/suppliers', icon: Users, end: true },
         { name: 'Groups', path: '/suppliers/groups', icon: Tag },
         { name: 'Ledger', path: '/suppliers/ledger', icon: Book },
-        { name: 'Statements', path: '/suppliers/statements', icon: FileText },
     ];
 
     // Contextual Links (when viewing a specific supplier)

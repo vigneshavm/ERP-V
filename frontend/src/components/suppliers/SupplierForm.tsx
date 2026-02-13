@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
 import { addSupplier, updateSupplier, getSupplierById } from '../../redux/slices/supplierSlice';
 import { getSupplierGroups } from '../../redux/slices/supplierGroupSlice';
-import { Save, X, Building2, User, Phone, Wallet, Tag, CreditCard, Trash2, Plus, Landmark, ShieldCheck } from 'lucide-react';
+import { Save, X, Plus, Trash2, CreditCard, Landmark } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 interface SupplierFormData {
@@ -42,6 +42,13 @@ interface SupplierFormProps {
     initialData?: any;
 }
 
+/* ─── shared field classes ──────────────────────────────── */
+const inputCls =
+    'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
+const labelCls =
+    'block text-[11px] font-semibold text-slate-500 dark:text-neutral-400 mb-1';
+const requiredDot = <span className="text-rose-500 ml-0.5">*</span>;
+
 const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialData }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -71,8 +78,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
     const { groups } = useSelector((state: RootState) => state.supplierGroups);
 
     useEffect(() => {
-        // Only fetch if we are editing, have an ID, AND don't have the supplier loaded or initialData
-        // This prevents double-fetching if the parent (EditSupplier) already fetched it.
         if (mode === 'edit' && supplierId && !supplier && !initialData) {
             dispatch(getSupplierById(supplierId));
         }
@@ -80,7 +85,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
     }, [mode, supplierId, dispatch, supplier, initialData]);
 
     useEffect(() => {
-        // Update form if Redux supplier changes (and we didn't have initialData or it outdated)
         if (mode === 'edit' && supplier) {
             setFormData({
                 businessName: supplier.businessName || '',
@@ -134,7 +138,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         setFormData(prev => {
             const newAccounts = [...prev.bankAccounts];
             if (field === 'isDefault' && value === true) {
-                // Set all others to false if this is becoming default
                 newAccounts.forEach((acc, i) => acc.isDefault = i === index);
             } else {
                 newAccounts[index] = { ...newAccounts[index], [field]: value };
@@ -148,379 +151,335 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         try {
             if (mode === 'add') {
                 await dispatch(addSupplier(formData)).unwrap();
-                toast.success('Supplier onboarded successfully');
+                toast.success('Supplier added successfully');
             } else if (mode === 'edit' && supplierId) {
                 await dispatch(updateSupplier({ id: supplierId, supplierData: formData })).unwrap();
-                toast.success('Supplier record updated');
+                toast.success('Supplier updated');
             }
             navigate('/suppliers');
         } catch (error: any) {
             console.error('Failed to save supplier:', error);
-            toast.error(error || 'Failed to save supplier record');
+            toast.error(error || 'Failed to save supplier');
         }
     };
 
+    /* ─── Section Header Component ─────────────────────── */
+    const SectionTitle = ({ title }: { title: string }) => (
+        <div className="border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
+            <h3 className="text-sm font-bold text-slate-700 dark:text-neutral-200">{title}</h3>
+        </div>
+    );
+
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
 
-                {/* Section 1: Business Identity */}
-                <div className="mb-8 border-b border-slate-100 dark:border-slate-800 pb-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600">
-                            <Building2 className="w-5 h-5" />
-                        </div>
-                        <h3 className="text-lg font-black text-slate-800 dark:text-white">Business Identity</h3>
-                    </div>
+            {/* ═══ GENERAL DETAILS ═══ */}
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+                <SectionTitle title="General Details" />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Business / Entity Name</label>
-                            <input
-                                type="text"
-                                name="businessName"
-                                value={formData.businessName}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-700 dark:text-white"
-                                placeholder="e.g. Tata Steel Ltd."
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Strategic Group</label>
-                            <select
-                                name="groupId"
-                                value={formData.groupId}
-                                onChange={(e) => {
-                                    const selectedGroup = groups.find(g => g._id === e.target.value);
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        groupId: e.target.value,
-                                        supplierGroup: selectedGroup ? selectedGroup.name : prev.supplierGroup
-                                    }));
-                                }}
-                                className="w-full px-4 py-3 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-300"
-                            >
-                                <option value="">Select Predefined Group...</option>
-                                {groups.map(g => (
-                                    <option key={g._id} value={g._id}>{g.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Custom Label / Brand</label>
-                            <input
-                                type="text"
-                                name="supplierGroup"
-                                value={formData.supplierGroup}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-700 dark:text-white"
-                                placeholder="e.g. Tata Group"
-                            />
-                            <p className="text-[10px] text-slate-400 font-medium ml-1">Optional override for analytics grouping</p>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Classification</label>
-                            <select
-                                name="supplierType"
-                                value={formData.supplierType}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700 dark:text-white"
-                            >
-                                <option value="manufacturer">Manufacturer</option>
-                                <option value="wholesaler">Wholesaler</option>
-                                <option value="distributor">Distributor</option>
-                                <option value="retailer">Retailer</option>
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">GST Number</label>
-                            <input
-                                type="text"
-                                name="gstNo"
-                                value={formData.gstNo}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="GSTIN..."
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">PAN Number</label>
-                            <input
-                                type="text"
-                                name="panNo"
-                                value={formData.panNo}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="PAN..."
-                            />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <div className="flex items-center gap-4 p-4 bg-indigo-50/30 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${formData.isOneTime ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'}`}>
-                                    <ShieldCheck className="w-6 h-6" />
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="text-sm font-black text-slate-800 dark:text-white">One-time Supplier / Urgent Onboarding</h4>
-                                    <p className="text-[10px] text-slate-500 font-bold uppercase">Enable for urgent purchases without full KYC</p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData(prev => ({ ...prev, isOneTime: !prev.isOneTime }))}
-                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${formData.isOneTime ? 'bg-indigo-600' : 'bg-slate-300'}`}
-                                >
-                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isOneTime ? 'translate-x-6' : 'translate-x-1'}`} />
-                                </button>
-                            </div>
-                        </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+                    <div>
+                        <label className={labelCls}>Supplier Name{requiredDot}</label>
+                        <input
+                            type="text"
+                            name="businessName"
+                            value={formData.businessName}
+                            onChange={handleChange}
+                            required
+                            className={inputCls}
+                            placeholder="Enter supplier / business name"
+                        />
                     </div>
-                </div>
-
-                {/* Section 2: Contact Info */}
-                <div className="mb-8 border-b border-slate-100 dark:border-slate-800 pb-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600">
-                            <User className="w-5 h-5" />
-                        </div>
-                        <h3 className="text-lg font-black text-slate-800 dark:text-white">Contact Details</h3>
+                    <div>
+                        <label className={labelCls}>Mobile Number</label>
+                        <input
+                            type="text"
+                            name="contactNo"
+                            value={formData.contactNo}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="Enter mobile number"
+                        />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Person</label>
-                            <input
-                                type="text"
-                                name="contactPersonName"
-                                value={formData.contactPersonName}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="Full Name"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone / Mobile</label>
-                            <input
-                                type="text"
-                                name="contactNo"
-                                value={formData.contactNo}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="+91..."
-                            />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="email@company.com"
-                            />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Physical Address</label>
-                            <textarea
-                                name="physicalAddress"
-                                value={formData.physicalAddress}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="Full Street Address"
-                                rows={2}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">State / Province</label>
-                            <input
-                                type="text"
-                                name="state"
-                                value={formData.state}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 dark:text-white"
-                                placeholder="e.g. Maharashtra"
-                            />
-                            <p className="text-[10px] text-amber-500 font-bold ml-1">Critical for GST (IGST vs SGST/CGST)</p>
-                        </div>
+                    <div>
+                        <label className={labelCls}>Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="Enter email"
+                        />
                     </div>
-                </div>
-
-                {/* Section 3: Financials */}
-                <div>
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600">
-                            <Wallet className="w-5 h-5" />
-                        </div>
-                        <h3 className="text-lg font-black text-slate-800 dark:text-white">Financial Configuration</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Opening Balance</label>
+                    <div>
+                        <label className={labelCls}>Opening Balance</label>
+                        <div className="flex">
+                            <span className="inline-flex items-center px-3 bg-slate-50 dark:bg-neutral-900 border border-r-0 border-slate-200 dark:border-neutral-700 rounded-l-lg text-sm text-slate-400">₹</span>
                             <input
                                 type="number"
                                 name="openingBalance"
                                 value={formData.openingBalance}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-bold text-slate-700 dark:text-white"
+                                className={`${inputCls} rounded-l-none border-l-0`}
+                                placeholder="0"
                             />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Balance Type</label>
                             <select
                                 name="balanceType"
                                 value={formData.balanceType}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-medium text-slate-700 dark:text-white"
+                                className="px-2 bg-slate-50 dark:bg-neutral-900 border border-l-0 border-slate-200 dark:border-neutral-700 rounded-r-lg text-xs text-slate-600 dark:text-neutral-300 outline-none"
                             >
-                                <option value="payable">Payable (You Owe)</option>
-                                <option value="receivable">Receivable (They Owe)</option>
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Credit Period (Days)</label>
-                            <input
-                                type="number"
-                                name="creditPeriod"
-                                value={formData.creditPeriod}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-bold text-slate-700 dark:text-white"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Default Payment Mode</label>
-                            <select
-                                name="defaultPaymentMode"
-                                value={formData.defaultPaymentMode}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-medium text-slate-700 dark:text-white"
-                            >
-                                <option value="NEFT">NEFT (Recommended)</option>
-                                <option value="RTGS">RTGS</option>
-                                <option value="IMPS">IMPS</option>
-                                <option value="UPI">UPI</option>
-                                <option value="Cheque">Cheque</option>
-                                <option value="Cash">Cash / Petty Cash</option>
+                                <option value="payable">To Pay</option>
+                                <option value="receivable">To Collect</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                {/* Section 4: Banking Detail */}
-                <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
-                                <Landmark className="w-5 h-5" />
-                            </div>
-                            <h3 className="text-lg font-black text-slate-800 dark:text-white">Banking Details</h3>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={addBankAccount}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none"
-                        >
-                            <Plus className="w-4 h-4" /> Add Account
-                        </button>
+                {/* Row 2: GSTIN, PAN */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 mt-4">
+                    <div>
+                        <label className={labelCls}>GSTIN</label>
+                        <input
+                            type="text"
+                            name="gstNo"
+                            value={formData.gstNo}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="ex: 29XXXXX9438X1X"
+                        />
+                        <p className="text-[10px] text-indigo-400 mt-1 font-medium">Auto-populate supplier details from GSTIN</p>
                     </div>
+                    <div>
+                        <label className={labelCls}>PAN Number</label>
+                        <input
+                            type="text"
+                            name="panNo"
+                            value={formData.panNo}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="Enter PAN number"
+                        />
+                    </div>
+                </div>
 
-                    <div className="space-y-4">
-                        {formData.bankAccounts.length === 0 ? (
-                            <div className="p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl">
-                                <Landmark className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                                <p className="text-sm font-bold text-slate-400 italic">No bank accounts added yet.</p>
-                            </div>
-                        ) : (
-                            formData.bankAccounts.map((account, index) => (
-                                <div key={index} className="p-6 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl relative group">
-                                    <button
-                                        type="button"
-                                        onClick={() => removeBankAccount(index)}
-                                        className="absolute top-4 right-4 p-2 text-slate-400 hover:text-rose-500 transition-colors"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                {/* Divider */}
+                <hr className="border-slate-100 dark:border-neutral-700 my-5" />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Name</label>
-                                            <input
-                                                type="text"
-                                                value={account.accountName}
-                                                onChange={(e) => updateBankAccount(index, 'accountName', e.target.value)}
-                                                className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white"
-                                                placeholder="Payee Name"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Number</label>
-                                            <input
-                                                type="text"
-                                                value={account.accountNumber}
-                                                onChange={(e) => updateBankAccount(index, 'accountNumber', e.target.value)}
-                                                className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white"
-                                                placeholder="A/C No."
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Bank & Branch</label>
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={account.bankName}
-                                                    onChange={(e) => updateBankAccount(index, 'bankName', e.target.value)}
-                                                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white"
-                                                    placeholder="Bank"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={account.branch}
-                                                    onChange={(e) => updateBankAccount(index, 'branch', e.target.value)}
-                                                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white"
-                                                    placeholder="Branch"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">IFSC Code</label>
-                                            <input
-                                                type="text"
-                                                value={account.ifsc}
-                                                onChange={(e) => updateBankAccount(index, 'ifsc', e.target.value)}
-                                                className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white uppercase"
-                                                placeholder="IFSC"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 flex items-center gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => updateBankAccount(index, 'isDefault', true)}
-                                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${account.isDefault ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
-                                            >
-                                                {account.isDefault ? <Save className="w-3 h-3" /> : <CreditCard className="w-3 h-3" />}
-                                                {account.isDefault ? 'Primary Account' : 'Set as Primary'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
+                {/* Row 3: Classification */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+                    <div>
+                        <label className={labelCls}>Supplier Type{requiredDot}</label>
+                        <select
+                            name="supplierType"
+                            value={formData.supplierType}
+                            onChange={handleChange}
+                            className={inputCls}
+                        >
+                            <option value="manufacturer">Manufacturer</option>
+                            <option value="wholesaler">Wholesaler</option>
+                            <option value="distributor">Distributor</option>
+                            <option value="retailer">Retailer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className={labelCls}>Supplier Category</label>
+                        <select
+                            name="groupId"
+                            value={formData.groupId}
+                            onChange={(e) => {
+                                const selectedGroup = groups.find(g => g._id === e.target.value);
+                                setFormData(prev => ({
+                                    ...prev,
+                                    groupId: e.target.value,
+                                    supplierGroup: selectedGroup ? selectedGroup.name : prev.supplierGroup
+                                }));
+                            }}
+                            className={inputCls}
+                        >
+                            <option value="">Select Category</option>
+                            {groups.map(g => (
+                                <option key={g._id} value={g._id}>{g.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className={labelCls}>Contact Person</label>
+                        <input
+                            type="text"
+                            name="contactPersonName"
+                            value={formData.contactPersonName}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="Contact person name"
+                        />
+                    </div>
+                    <div>
+                        <label className={labelCls}>Credit Period (Days)</label>
+                        <input
+                            type="number"
+                            name="creditPeriod"
+                            value={formData.creditPeriod}
+                            onChange={handleChange}
+                            className={inputCls}
+                        />
+                    </div>
+                </div>
+
+                {/* One-time toggle */}
+                <div className="flex items-center gap-3 mt-5 p-3 bg-slate-50 dark:bg-neutral-900 rounded-lg border border-slate-100 dark:border-neutral-700">
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, isOneTime: !prev.isOneTime }))}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${formData.isOneTime ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-neutral-600'}`}
+                    >
+                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${formData.isOneTime ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+                    </button>
+                    <span className="text-xs font-medium text-slate-600 dark:text-neutral-300">One-time Supplier</span>
+                </div>
+            </div>
+
+            {/* ═══ ADDRESS ═══ */}
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+                <SectionTitle title="Address" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label className={labelCls}>Address</label>
+                        <textarea
+                            name="physicalAddress"
+                            value={formData.physicalAddress}
+                            onChange={handleChange}
+                            className={`${inputCls} resize-none`}
+                            placeholder="Enter full address"
+                            rows={3}
+                        />
+                    </div>
+                    <div>
+                        <label className={labelCls}>State</label>
+                        <input
+                            type="text"
+                            name="state"
+                            value={formData.state}
+                            onChange={handleChange}
+                            className={inputCls}
+                            placeholder="e.g. Maharashtra"
+                        />
+                        <p className="text-[10px] text-amber-500 mt-1 font-medium">Important for GST (IGST vs SGST/CGST)</p>
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center justify-end gap-4">
+            {/* ═══ PAYMENT MODE ═══ */}
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+                <SectionTitle title="Payment Details" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                    <div>
+                        <label className={labelCls}>Default Payment Mode</label>
+                        <select
+                            name="defaultPaymentMode"
+                            value={formData.defaultPaymentMode}
+                            onChange={handleChange}
+                            className={inputCls}
+                        >
+                            <option value="NEFT">NEFT</option>
+                            <option value="RTGS">RTGS</option>
+                            <option value="IMPS">IMPS</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ BANKING DETAILS ═══ */}
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-neutral-200">Bank Accounts</h3>
+                    <button
+                        type="button"
+                        onClick={addBankAccount}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg text-xs font-semibold transition-colors"
+                    >
+                        <Plus className="w-3.5 h-3.5" /> Add Account
+                    </button>
+                </div>
+
+                {formData.bankAccounts.length === 0 ? (
+                    <div className="p-8 text-center border border-dashed border-slate-200 dark:border-neutral-700 rounded-lg">
+                        <Landmark className="w-8 h-8 text-slate-200 dark:text-neutral-700 mx-auto mb-2" />
+                        <p className="text-xs text-slate-400 dark:text-neutral-500">No bank accounts added yet</p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {formData.bankAccounts.map((account, index) => (
+                            <div key={index} className="p-4 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-lg relative group">
+                                <button
+                                    type="button"
+                                    onClick={() => removeBankAccount(index)}
+                                    className="absolute top-3 right-3 p-1.5 text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-3">
+                                    <div>
+                                        <label className={labelCls}>Account Name</label>
+                                        <input type="text" value={account.accountName} onChange={(e) => updateBankAccount(index, 'accountName', e.target.value)} className={inputCls} placeholder="Account holder name" />
+                                    </div>
+                                    <div>
+                                        <label className={labelCls}>Account Number</label>
+                                        <input type="text" value={account.accountNumber} onChange={(e) => updateBankAccount(index, 'accountNumber', e.target.value)} className={inputCls} placeholder="A/C Number" />
+                                    </div>
+                                    <div>
+                                        <label className={labelCls}>Bank Name</label>
+                                        <input type="text" value={account.bankName} onChange={(e) => updateBankAccount(index, 'bankName', e.target.value)} className={inputCls} placeholder="Bank name" />
+                                    </div>
+                                    <div>
+                                        <label className={labelCls}>Branch</label>
+                                        <input type="text" value={account.branch} onChange={(e) => updateBankAccount(index, 'branch', e.target.value)} className={inputCls} placeholder="Branch" />
+                                    </div>
+                                    <div>
+                                        <label className={labelCls}>IFSC Code</label>
+                                        <input type="text" value={account.ifsc} onChange={(e) => updateBankAccount(index, 'ifsc', e.target.value)} className={`${inputCls} uppercase`} placeholder="IFSC" />
+                                    </div>
+                                    <div className="flex items-end">
+                                        <button
+                                            type="button"
+                                            onClick={() => updateBankAccount(index, 'isDefault', true)}
+                                            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${account.isDefault
+                                                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                                                : 'bg-white dark:bg-neutral-800 text-slate-400 hover:text-slate-600 border border-slate-200 dark:border-neutral-700'
+                                                }`}
+                                        >
+                                            <CreditCard className="w-3.5 h-3.5" />
+                                            {account.isDefault ? 'Primary' : 'Set Primary'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* ═══ FOOTER ACTIONS ═══ */}
+            <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                     type="button"
                     onClick={() => navigate('/suppliers')}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 transition-all"
+                    className="px-5 py-2.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-sm font-medium text-slate-600 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all"
                 >
-                    <X className="w-4 h-4" /> Cancel
+                    Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-70"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold shadow-sm transition-all active:scale-95 disabled:opacity-60"
                 >
-                    <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : 'Save Supplier'}
+                    <Save className="w-4 h-4" />
+                    {isLoading ? 'Saving...' : mode === 'edit' ? 'Save Changes' : 'Save Supplier'}
                 </button>
             </div>
         </form>
