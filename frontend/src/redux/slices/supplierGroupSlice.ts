@@ -83,6 +83,46 @@ export const createSupplierGroup = createAsyncThunk<SupplierGroup, Partial<Suppl
     }
 );
 
+// Update group
+export const updateSupplierGroup = createAsyncThunk<SupplierGroup, { id: string, data: Partial<SupplierGroup> }, { state: RootState, rejectValue: string }>(
+    'supplierGroups/update',
+    async ({ id, data }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue('Token not found');
+            const response = await api.put(`${API_URL}/${id}`, data, getConfig(token));
+            return response.data.data || response.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Delete group
+export const deleteSupplierGroup = createAsyncThunk<string, string, { state: RootState, rejectValue: string }>(
+    'supplierGroups/delete',
+    async (id, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue('Token not found');
+            await api.delete(`${API_URL}/${id}`, getConfig(token));
+            return id;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 export const supplierGroupSlice = createSlice({
     name: 'supplierGroups',
     initialState,
@@ -121,6 +161,19 @@ export const supplierGroupSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload as string;
+            })
+            .addCase(updateSupplierGroup.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                const index = state.groups.findIndex(g => g._id === action.payload._id);
+                if (index !== -1) {
+                    state.groups[index] = action.payload;
+                }
+            })
+            .addCase(deleteSupplierGroup.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.groups = state.groups.filter(g => g._id !== action.payload);
             });
     },
 });

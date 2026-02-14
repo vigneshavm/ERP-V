@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
-import { getSupplierGroups } from "../../../redux/slices/supplierGroupSlice";
+import { getSupplierGroups, deleteSupplierGroup, SupplierGroup } from "../../../redux/slices/supplierGroupSlice";
 import {
     Search,
     Truck,
@@ -17,7 +17,8 @@ import {
     Building,
     Star,
     Clock,
-    CreditCard
+    CreditCard,
+    MoreVertical
 } from 'lucide-react';
 
 
@@ -36,6 +37,18 @@ const SupplierGroups: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [editingGroup, setEditingGroup] = useState<SupplierGroup | null>(null);
+
+    const handleDeleteGroup = async (id: string) => {
+        if (window.confirm('Are you sure you want to delete this group?')) {
+            try {
+                await dispatch(deleteSupplierGroup(id)).unwrap();
+            } catch (error) {
+                console.error('Failed to delete group:', error);
+            }
+        }
+    };
 
     useEffect(() => {
         dispatch(getSupplierGroups());
@@ -70,11 +83,9 @@ const SupplierGroups: React.FC = () => {
         <Layout>
             <PageHeader
                 title="Supplier Groups"
-                description="Organize suppliers into groups with custom terms and limits"
-                breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Groups' }]}
                 actions={
                     <button
-                        onClick={() => setIsCreateModalOpen(true)}
+                        onClick={() => { setEditingGroup(null); setIsCreateModalOpen(true); }}
                         className="px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
                     >
                         <FolderPlus className="w-4 h-4" /> Create Group
@@ -86,173 +97,229 @@ const SupplierGroups: React.FC = () => {
 
             <div className="space-y-6 animate-fade-in">
                 {/* Summary Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <p className="text-xs font-medium text-neutral-500 uppercase">Total Groups</p>
-                        <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{groups.length}</p>
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Total Groups */}
+                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                                <FolderPlus className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Total Groups</span>
+                        </div>
+                        <span className="text-3xl font-black text-slate-900 dark:text-white">{groups.length}</span>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <p className="text-xs font-medium text-neutral-500 uppercase">Total Suppliers</p>
-                        <p className="text-2xl font-bold text-primary mt-1">{totalSuppliers}</p>
+
+                    {/* Total Suppliers */}
+                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                <Truck className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Suppliers</span>
+                        </div>
+                        <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers}</span>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <p className="text-xs font-medium text-neutral-500 uppercase">Assigned</p>
-                        <p className="text-2xl font-bold text-success mt-1">{assignedSuppliers}</p>
+
+                    {/* Assigned */}
+                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                                <UserPlus className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Assigned</span>
+                        </div>
+                        <span className="text-3xl font-black text-slate-900 dark:text-white">{assignedSuppliers}</span>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                        <p className="text-xs font-medium text-neutral-500 uppercase">Unassigned</p>
-                        <p className="text-2xl font-bold text-warning mt-1">{totalSuppliers - assignedSuppliers}</p>
+
+                    {/* Unassigned */}
+                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                <Tag className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Unassigned</span>
+                        </div>
+                        <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers - assignedSuppliers}</span>
                     </div>
                 </div>
 
-                {/* Search */}
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <div className="relative max-w-md">
+                {/* Filter Bar */}
+                <div className="flex items-center justify-between">
+                    <div className="relative group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search groups..."
-                            className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
                             value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
                         />
-                        <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
                     </div>
                 </div>
 
-                {/* Groups List */}
-                <div className="space-y-4">
-                    {filteredGroups.length === 0 ? (
-                        <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center">
-                            <Tag className="w-12 h-12 mx-auto mb-4 text-neutral-300" />
-                            <p className="text-neutral-500">No supplier groups found</p>
-                        </div>
-                    ) : (
-                        filteredGroups.map(group => (
-                            <div key={group._id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                                {/* Group Header */}
-                                <div
-                                    className="p-4 flex justify-between items-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
-                                    onClick={() => setExpandedGroup(expandedGroup === group._id ? null : group._id)}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div
-                                            className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
-                                            style={{ backgroundColor: group.color }}
+                {/* Groups Table */}
+                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-slate-100 dark:border-neutral-700">
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Group Name</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Members</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Payment Terms</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Credit Limit</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Tags</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider text-right whitespace-nowrap">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
+                                {filteredGroups.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-16 text-center">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <Tag className="w-10 h-10 text-slate-200 dark:text-neutral-700" />
+                                                <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No supplier groups found</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredGroups.map((group) => (
+                                        <tr
+                                            key={group._id}
+                                            className="group hover:bg-slate-50/50 dark:hover:bg-neutral-700/30 transition-colors"
+                                            onClick={() => { setEditingGroup(group); setIsCreateModalOpen(true); }}
                                         >
-                                            {getGroupIcon(group.icon)}
-                                        </div>
-                                        <div className="flex flex-col gap-1 min-w-[120px]">
-                                            <h3 className="font-bold text-neutral-900 dark:text-white">{group.name}</h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {group.priority && (
-                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${group.priority === 'High' ? 'bg-rose-100 text-rose-600' :
-                                                            group.priority === 'Medium' ? 'bg-amber-100 text-amber-600' :
-                                                                'bg-emerald-100 text-emerald-600'
-                                                        }`}>
-                                                        {group.priority}
-                                                    </span>
-                                                )}
-                                                {group.nature && (
-                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold uppercase">
-                                                        {group.nature}
-                                                    </span>
-                                                )}
-                                                {group.region && (
-                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-bold uppercase">
-                                                        {group.region}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-6">
-                                        <div className="text-center hidden md:block">
-                                            <p className="text-xs text-neutral-500">Members</p>
-                                            <p className="font-bold text-primary">{group.memberCount}</p>
-                                        </div>
-                                        <div className="text-center hidden md:block">
-                                            <p className="text-xs text-neutral-500">Payment Terms</p>
-                                            <p className="font-bold text-neutral-700 dark:text-neutral-300">{group.paymentTerms} days</p>
-                                        </div>
-                                        <div className="text-center hidden md:block">
-                                            <p className="text-xs text-neutral-500">Credit Limit</p>
-                                            <p className="font-bold text-neutral-700 dark:text-neutral-300">₹{group.creditLimit.toLocaleString()}</p>
-                                        </div>
-                                        {expandedGroup === group._id ? (
-                                            <ChevronUp className="w-5 h-5 text-neutral-400" />
-                                        ) : (
-                                            <ChevronDown className="w-5 h-5 text-neutral-400" />
-                                        )}
-                                    </div>
-                                </div>
+                                            {/* Name */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center gap-3">
+                                                    <div
+                                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm"
+                                                        style={{ backgroundColor: group.color }}
+                                                    >
+                                                        {getGroupIcon(group.icon)}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-800 dark:text-neutral-100">{group.name}</p>
+                                                        <p className="text-xs text-slate-500 dark:text-neutral-400 truncate max-w-[200px]">{group.description}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                                {/* Expanded Details */}
-                                {expandedGroup === group._id && (
-                                    <div className="border-t border-neutral-100 dark:border-neutral-700 p-4 bg-neutral-50 dark:bg-neutral-900">
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                            <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                                <p className="text-xs text-neutral-500 flex items-center gap-1">
-                                                    <Truck className="w-3 h-3" /> Members
-                                                </p>
-                                                <p className="text-lg font-bold text-primary">{group.memberCount}</p>
-                                            </div>
-                                            <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                                <p className="text-xs text-neutral-500 flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" /> Payment Terms
-                                                </p>
-                                                <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">{group.paymentTerms} days</p>
-                                            </div>
-                                            <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                                <p className="text-xs text-neutral-500 flex items-center gap-1">
-                                                    <CreditCard className="w-3 h-3" /> Credit Limit
-                                                </p>
-                                                <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">₹{group.creditLimit.toLocaleString()}</p>
-                                            </div>
-                                            <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                                <p className="text-xs text-neutral-500 flex items-center gap-1">
-                                                    <Percent className="w-3 h-3" /> Discount Rate
-                                                </p>
-                                                <p className="text-lg font-bold text-success">{group.discountPercent}%</p>
-                                            </div>
-                                        </div>
+                                            {/* Members */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 dark:bg-neutral-700 dark:text-neutral-300">
+                                                    {group.memberCount} Suppliers
+                                                </span>
+                                            </td>
 
-                                        <div className="flex gap-2">
-                                            <button
-                                                className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center gap-2"
-                                            >
-                                                <Edit className="w-4 h-4" /> Edit Group
-                                            </button>
-                                            <button className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 flex items-center gap-2">
-                                                <UserPlus className="w-4 h-4" /> Add Suppliers
-                                            </button>
-                                            <button className="px-4 py-2 bg-error/10 text-error rounded-lg text-sm font-bold hover:bg-error/20 flex items-center gap-2 ml-auto">
-                                                <Trash2 className="w-4 h-4" /> Delete
-                                            </button>
-                                        </div>
-                                    </div>
+                                            {/* Terms */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm font-medium text-slate-700 dark:text-neutral-200">
+                                                    {group.paymentTerms} Days
+                                                </span>
+                                            </td>
+
+                                            {/* Credit Limit */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm font-bold text-slate-700 dark:text-neutral-200">
+                                                    ₹ {group.creditLimit.toLocaleString('en-IN')}
+                                                </span>
+                                            </td>
+
+                                            {/* Tags */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex gap-1.5">
+                                                    {group.priority && (
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${group.priority === 'High' ? 'bg-rose-50 border-rose-100 text-rose-600' :
+                                                            group.priority === 'Medium' ? 'bg-amber-50 border-amber-100 text-amber-600' :
+                                                                'bg-emerald-50 border-emerald-100 text-emerald-600'
+                                                            }`}>
+                                                            {group.priority}
+                                                        </span>
+                                                    )}
+                                                    {group.nature && (
+                                                        <span className="text-[10px] px-2 py-0.5 rounded border bg-slate-50 border-slate-100 text-slate-600 font-bold uppercase">
+                                                            {group.nature}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+
+                                            {/* Actions */}
+                                            <td className="px-6 py-4 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={() => setOpenMenuId(openMenuId === group._id ? null : group._id)}
+                                                        className="p-1.5 text-slate-300 dark:text-neutral-600 hover:text-slate-500 dark:hover:text-neutral-400 hover:bg-slate-100 dark:hover:bg-neutral-700 rounded-lg transition-all"
+                                                    >
+                                                        <MoreVertical className="w-4 h-4" />
+                                                    </button>
+                                                    {openMenuId === group._id && (
+                                                        <div className="absolute right-0 top-8 w-48 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-150">
+                                                            <button
+                                                                onClick={() => { setEditingGroup(group); setIsCreateModalOpen(true); setOpenMenuId(null); }}
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-slate-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
+                                                            >
+                                                                <Edit className="w-3.5 h-3.5 text-slate-400" /> Edit Group
+                                                            </button>
+                                                            <button
+                                                                onClick={() => { /* Add logic for adding suppliers */ setOpenMenuId(null); }}
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-slate-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
+                                                            >
+                                                                <UserPlus className="w-3.5 h-3.5 text-slate-400" /> Add Suppliers
+                                                            </button>
+                                                            <div className="h-px bg-slate-100 dark:bg-neutral-700 my-1" />
+                                                            <button
+                                                                onClick={() => { handleDeleteGroup(group._id); setOpenMenuId(null); }}
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 font-medium"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
                                 )}
-                            </div>
-                        ))
-                    )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* Quick Tips */}
-                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-xl border border-primary/20">
-                    <h4 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                        <Star className="w-4 h-4 text-primary" /> Tips for Supplier Groups
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-500/20">
+                    <h4 className="font-bold text-indigo-900 dark:text-indigo-100 flex items-center gap-2 mb-2">
+                        <div className="p-1 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg">
+                            <Star className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        Tips for Supplier Groups
                     </h4>
-                    <ul className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 space-y-1">
-                        <li>• Group suppliers by reliability and importance for better management</li>
-                        <li>• Set appropriate payment terms based on supplier relationships</li>
-                        <li>• Define credit limits to control purchasing exposure</li>
-                        <li>• Use discount rates to track negotiated pricing from strategic partners</li>
+                    <ul className="text-sm text-indigo-700 dark:text-indigo-300 space-y-2 pl-1">
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            Group suppliers by reliability and importance for better management
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            Set appropriate payment terms based on supplier relationships
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            Define credit limits to control purchasing exposure
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            Use discount rates to track negotiated pricing from strategic partners
+                        </li>
                     </ul>
                 </div>
             </div>
 
             <SupplierGroupModal
                 isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                onClose={() => { setIsCreateModalOpen(false); setEditingGroup(null); }}
+                initialData={editingGroup}
             />
         </Layout>
     );

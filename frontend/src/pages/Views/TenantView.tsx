@@ -450,6 +450,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/suppliers/add" element={
                                 <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorForm /></Suspense>
                             } />
+                            <Route path="/suppliers/inflow" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorInflowOutflow /></Suspense>
+                            } />
                             <Route path="/suppliers/groups" element={
                                 <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierGroups /></Suspense>
                             } />
@@ -463,7 +466,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                                 <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorDetails /></Suspense>
                             } />
                             <Route path="/suppliers/:id/edit" element={
-                                <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorForm /></Suspense>
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.EditSupplier /></Suspense>
                             } />
                             <Route path="/suppliers/:id/ledger" element={
                                 <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierLedger /></Suspense>

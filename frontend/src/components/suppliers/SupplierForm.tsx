@@ -46,7 +46,7 @@ interface SupplierFormProps {
 const inputCls =
     'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
 const labelCls =
-    'block text-[11px] font-semibold text-slate-500 dark:text-neutral-400 mb-1';
+    'block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-1';
 const requiredDot = <span className="text-rose-500 ml-0.5">*</span>;
 
 const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialData }) => {
@@ -166,7 +166,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
     /* ─── Section Header Component ─────────────────────── */
     const SectionTitle = ({ title }: { title: string }) => (
         <div className="border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-neutral-200">{title}</h3>
+            <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">{title}</h3>
         </div>
     );
 
@@ -396,7 +396,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
             {/* ═══ BANKING DETAILS ═══ */}
             <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-neutral-200">Bank Accounts</h3>
+                    <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">Bank Accounts</h3>
                     <button
                         type="button"
                         onClick={addBankAccount}

@@ -68,7 +68,6 @@ const SupplierDetail: React.FC = () => {
           <PageHeader
             title="Profile Error"
             description={message || "The requested supplier profile could not be retrieved from the terminal."}
-            breadcrumbs={[{ label: 'Suppliers', link: '/suppliers' }, { label: 'Detail' }]}
           />
         </div>
       </Layout>
@@ -80,7 +79,6 @@ const SupplierDetail: React.FC = () => {
       <PageHeader
         title={supplier.businessName}
         description={supplier.supplierId}
-        breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Suppliers', link: '/suppliers' }, { label: 'Directory', link: '/suppliers' }, { label: 'Supplier Profile' }]}
         actions={
           <div className="flex gap-2">
             <select
@@ -169,31 +167,31 @@ const SupplierDetail: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8 mt-6">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary Contact Person</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Primary Contact Person</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                       <User className="w-3.5 h-3.5 text-indigo-500" /> {supplier.contactPersonName}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand Affiliation</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Brand Affiliation</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                       <Briefcase className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierGroup || 'Independent'}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Enterprise Type</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Enterprise Type</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                       <Building2 className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierType}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tax Identity (GST)</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tax Identity (GST)</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                       <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" /> {supplier.gstNo || 'Not Registered'}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Communication Channel</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Communication Channel</p>
                     <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                       <Globe className="w-3.5 h-3.5 text-indigo-500" /> {supplier.email || 'offline-only'}
                     </div>
@@ -225,11 +223,11 @@ const SupplierDetail: React.FC = () => {
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Direct Line</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Direct Line</span>
                   <span className="text-xs font-black text-indigo-600">{supplier.contactNo}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Email Node</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Node</span>
                   <span className="text-xs font-black text-slate-600 dark:text-slate-300 truncate max-w-[150px]">{supplier.email || 'N/A'}</span>
                 </div>
               </div>
@@ -245,7 +243,7 @@ const SupplierDetail: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none tracking-tight">Catalog Intelligence</h3>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Items regularly sourced</p>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Items regularly sourced</p>
                 </div>
               </div>
               <button className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline">View History</button>
@@ -273,13 +271,13 @@ const SupplierDetail: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Credit Limit */}
             <div className="bg-[#F8FBFF] dark:bg-blue-500/10 border border-blue-100/50 dark:border-blue-500/20 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[9px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Credit Limit</p>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Credit Limit</p>
               <p className="text-lg font-black text-blue-600 dark:text-blue-400">₹{(supplier.creditLimit || 0).toLocaleString()}</p>
             </div>
 
             {/* Credit Days */}
             <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[9px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Term</p>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Term</p>
               <p className="text-lg font-black text-slate-700 dark:text-slate-200">{supplier.creditPeriod || 0} Days</p>
             </div>
           </div>
@@ -298,14 +296,14 @@ const SupplierDetail: React.FC = () => {
                     <div className="p-1.5 bg-emerald-500 rounded-lg text-white">
                       <ShieldCheck className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-[11px] font-black uppercase tracking-widest text-emerald-600">Reliability Score</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Reliability Score</span>
                   </div>
                 </div>
                 <div className="flex items-end justify-between">
                   <span className={`text-2xl font-black ${(supplier.performanceMetrics?.reliabilityScore || 100) >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>
                     {supplier.performanceMetrics?.reliabilityScore || 100}/100
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Excellent</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Excellent</span>
                 </div>
                 {/* Mini Progress Bar */}
                 <div className="mt-3 w-full h-1 bg-white/50 rounded-full overflow-hidden">

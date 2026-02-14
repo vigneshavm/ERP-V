@@ -111,7 +111,11 @@ export const Modules = {
     SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
     SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
     SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
+    SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
+    SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
+    SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
     SupplierAgeing: () => import("../pages/Purchase/SupplierAgeing"),
+    EditSupplier: () => import("../pages/People/Suppliers/EditSupplier"),
 
     // Inventory Features
     ItemCategories: () => import("../pages/Inventory/CategoryManager"),
@@ -263,7 +267,11 @@ export const LazyModules = {
     SupplierLedger: lazy(Modules.SupplierLedger),
     SupplierStatements: lazy(Modules.SupplierStatements),
     SupplierGroups: lazy(Modules.SupplierGroups),
+    SupplierLedger: lazy(Modules.SupplierLedger),
+    SupplierStatements: lazy(Modules.SupplierStatements),
+    SupplierGroups: lazy(Modules.SupplierGroups),
     SupplierAgeing: lazy(Modules.SupplierAgeing),
+    EditSupplier: lazy(Modules.EditSupplier),
 
     // Inventory
     ItemCategories: lazy(Modules.ItemCategories),

@@ -1,28 +1,29 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import api from '../../services/api';
 import {
-    Search,
-    TrendingUp,
-    TrendingDown,
-    ArrowUpDown,
-    ArrowUp,
-    ArrowDown,
-    FileText,
-    FileSpreadsheet,
     RefreshCw,
     Users,
     ChevronLeft,
     ChevronRight,
     Calendar,
+    TrendingUp,
+    TrendingDown,
+    FileText,
     DollarSign,
-    Activity,
-    ArrowLeft
+    FileSpreadsheet,
+    ArrowUp,
+    ArrowDown,
+    ArrowUpDown,
+    Filter
 } from 'lucide-react';
 import Layout from '../../components/shared/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import StatsCard from '../../components/shared/Display/StatsCard';
+import SupplierSubNav from '../People/Suppliers/SupplierSubNav';
+import SupplierStatsCards from '../People/Suppliers/components/SupplierStatsCards';
+import SupplierFilterBar from '../People/Suppliers/components/SupplierFilterBar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -54,26 +55,13 @@ interface InflowOutflowData {
     totals: Totals;
 }
 
-interface LedgerTransaction {
-    date: string;
-    type: 'BILL' | 'PAYMENT' | 'DEBIT_NOTE';
-    refNo: string;
-    description: string;
-    credit: number;
-    debit: number;
-    balance: number;
+
+
+interface VendorInflowOutflowProps {
+    embedded?: boolean;
 }
 
-interface LedgerData {
-    supplier: { _id: string; businessName: string; openingBalance: number };
-    period: { start: string; end: string };
-    openingBalance: number;
-    closingBalance: number;
-    totals: { credit: number; debit: number };
-    transactions: LedgerTransaction[];
-}
-
-const VendorInflowOutflow: React.FC = () => {
+const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = false }) => {
     const { user } = useSelector((state: RootState) => state.auth);
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
 
@@ -89,10 +77,7 @@ const VendorInflowOutflow: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    // Detail View State
-    const [selectedVendor, setSelectedVendor] = useState<VendorRow | null>(null);
-    const [ledgerData, setLedgerData] = useState<LedgerData | null>(null);
-    const [isLedgerLoading, setIsLedgerLoading] = useState(false);
+    const navigate = useNavigate();
 
     // Sort State
     const [sortColumn, setSortColumn] = useState<string>('totalInflow');
@@ -131,30 +116,7 @@ const VendorInflowOutflow: React.FC = () => {
         if (user?.token) fetchData();
     }, [user?.token]);
 
-    // Fetch supplier ledger detail
-    const fetchLedger = async (vendor: VendorRow) => {
-        setSelectedVendor(vendor);
-        setIsLedgerLoading(true);
-        setLedgerData(null);
-        try {
-            const params = new URLSearchParams();
-            if (dateFrom) params.append('startDate', dateFrom);
-            if (dateTo) params.append('endDate', dateTo);
-            const qs = params.toString();
-            const url = `/api/purchases/suppliers/${vendor._id}/ledger${qs ? `?${qs}` : ''}`;
-            const response = await api.get(url, getConfig());
-            setLedgerData(response.data.data);
-        } catch (err: any) {
-            console.error('Ledger fetch error:', err);
-        } finally {
-            setIsLedgerLoading(false);
-        }
-    };
 
-    const closeDetail = () => {
-        setSelectedVendor(null);
-        setLedgerData(null);
-    };
 
     const handleApplyFilters = () => {
         setCurrentPage(1);
@@ -308,426 +270,332 @@ const VendorInflowOutflow: React.FC = () => {
     };
 
     // ─── Detail Page View ─────────────────────────────────────────
-    if (selectedVendor) {
-        return (
-            <Layout>
-                <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
-                    <PageHeader
-                        title={selectedVendor.businessName}
-                        description={selectedVendor.supplierId ? `Supplier ID: ${selectedVendor.supplierId}` : 'Supplier Ledger — Transaction Details'}
-                        actions={
-                            <button
-                                onClick={closeDetail}
-                                className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2"
-                            >
-                                <ArrowLeft className="w-4 h-4" /> Back to Report
-                            </button>
-                        }
-                    />
-
-                    {/* Summary Cards */}
-                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                        <StatsCard
-                            title="Total Inflow"
-                            value={formatCurrency(selectedVendor.totalInflow)}
-                            icon={<TrendingUp />}
-                            iconBgColor="bg-blue-100 dark:bg-blue-900/30"
-                            iconColor="text-blue-600 dark:text-blue-400"
-                        />
-                        <StatsCard
-                            title="Total Outflow"
-                            value={formatCurrency(selectedVendor.totalOutflow)}
-                            icon={<TrendingDown />}
-                            iconBgColor="bg-red-100 dark:bg-red-900/30"
-                            iconColor="text-red-600 dark:text-red-400"
-                        />
-                        <StatsCard
-                            title="Closing Balance"
-                            value={formatCurrency(selectedVendor.closingBalance)}
-                            icon={<FileText />}
-                            iconBgColor="bg-orange-100 dark:bg-orange-900/30"
-                            iconColor="text-orange-600 dark:text-orange-400"
-                        />
-                        <StatsCard
-                            title="Opening Balance"
-                            value={ledgerData ? formatCurrency(ledgerData.openingBalance) : '...'}
-                            icon={<DollarSign />}
-                            iconBgColor="bg-purple-100 dark:bg-purple-900/30"
-                            iconColor="text-purple-600 dark:text-purple-400"
-                        />
-                        <StatsCard
-                            title="Ledger Balance"
-                            value={ledgerData ? formatCurrency(ledgerData.closingBalance) : '...'}
-                            icon={<Activity />}
-                            iconBgColor={selectedVendor.closingBalance >= 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'}
-                            iconColor={selectedVendor.closingBalance >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
-                        />
-                    </div>
-
-                    {/* Period Info */}
-                    {ledgerData && (
-                        <div className="text-xs text-muted flex items-center gap-2">
-                            <Calendar className="w-3 h-3" />
-                            Period: {new Date(ledgerData.period.start).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                            {' — '}
-                            {new Date(ledgerData.period.end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                            &nbsp;•&nbsp; {ledgerData.transactions.length} transactions
-                        </div>
-                    )}
-
-                    {/* Transactions Table */}
-                    <div className="bg-card rounded-xl border border-default flex-1 flex flex-col overflow-hidden">
-                        <div className="flex-1 overflow-auto custom-scrollbar">
-                            {isLedgerLoading ? (
-                                <div className="flex items-center justify-center h-40 text-muted gap-2">
-                                    <RefreshCw className="w-4 h-4 animate-spin" /> Loading ledger...
-                                </div>
-                            ) : !ledgerData || ledgerData.transactions.length === 0 ? (
-                                <div className="flex items-center justify-center h-40 text-muted">
-                                    No transactions found for this period
-                                </div>
-                            ) : (
-                                <table className="w-full text-left text-sm">
-                                    <thead className="bg-surface text-muted uppercase text-xs font-medium sticky top-0 z-10">
-                                        <tr>
-                                            <th className="p-4">Date</th>
-                                            <th className="p-4">Type</th>
-                                            <th className="p-4">Ref #</th>
-                                            <th className="p-4">Description</th>
-                                            <th className="p-4 text-right">Debit</th>
-                                            <th className="p-4 text-right">Credit</th>
-                                            <th className="p-4 text-right">Balance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-default">
-                                        {/* Opening Balance Row */}
-                                        <tr className="bg-surface/50">
-                                            <td className="p-4 text-muted italic" colSpan={4}>Opening Balance</td>
-                                            <td className="p-4" colSpan={2}></td>
-                                            <td className="p-4 text-right font-semibold text-main">{formatCurrency(ledgerData.openingBalance)}</td>
-                                        </tr>
-                                        {ledgerData.transactions.map((txn, idx) => (
-                                            <tr key={idx} className="hover:bg-surface transition-colors">
-                                                <td className="p-4 text-secondary whitespace-nowrap">
-                                                    {new Date(txn.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                </td>
-                                                <td className="p-4">
-                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${txn.type === 'BILL' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' :
-                                                        txn.type === 'PAYMENT' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
-                                                            'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300'
-                                                        }`}>
-                                                        {txn.type === 'BILL' ? 'Bill' : txn.type === 'PAYMENT' ? 'Payment' : 'Debit Note'}
-                                                    </span>
-                                                </td>
-                                                <td className="p-4 font-mono text-xs text-secondary">{txn.refNo || '-'}</td>
-                                                <td className="p-4 text-secondary text-sm max-w-[250px] truncate" title={txn.description}>{txn.description}</td>
-                                                <td className="p-4 text-right font-medium text-green-600 dark:text-green-400">
-                                                    {txn.debit > 0 ? formatCurrency(txn.debit) : '-'}
-                                                </td>
-                                                <td className="p-4 text-right font-medium text-red-600 dark:text-red-400">
-                                                    {txn.credit > 0 ? formatCurrency(txn.credit) : '-'}
-                                                </td>
-                                                <td className="p-4 text-right font-semibold text-main">{formatCurrency(txn.balance)}</td>
-                                            </tr>
-                                        ))}
-                                        {/* Closing Balance Row */}
-                                        <tr className="bg-surface/50 border-t-2 border-default font-bold">
-                                            <td className="p-4 text-main" colSpan={4}>Closing Balance</td>
-                                            <td className="p-4 text-right text-green-600 dark:text-green-400">{formatCurrency(ledgerData.totals.debit)}</td>
-                                            <td className="p-4 text-right text-red-600 dark:text-red-400">{formatCurrency(ledgerData.totals.credit)}</td>
-                                            <td className="p-4 text-right font-bold text-main">{formatCurrency(ledgerData.closingBalance)}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </Layout>
-        );
-    }
-
     // ─── List Page View ──────────────────────────────────────────
-    return (
-        <Layout>
-            <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
-                <PageHeader
-                    title="Supplier Inflow / Outflow"
-                    description="Consolidated view of all supplier purchase inflows and payment outflows"
-                    actions={
+    const Content = () => (
+        <div className={`space-y-6 animate-fade-in pb-10 h-full flex flex-col ${embedded ? '' : ''}`}>
+            {!embedded && (
+                <div className="flex items-center justify-between pb-2">
+                    <div className="flex flex-col">
+                        <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Supplier Inflow / Outflow</h1>
+                        <p className="text-sm text-slate-500 dark:text-neutral-400 mt-1">Consolidated view of all supplier purchase inflows and payment outflows</p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {/* Date Range Picker - Ledger Style */}
+                        <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-800 p-1.5 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm">
+                            <Calendar size={14} className="ml-2 text-slate-400" />
+                            <input
+                                type="date"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                value={dateFrom}
+                                onChange={(e) => setDateFrom(e.target.value)}
+                            />
+                            <span className="text-slate-200 dark:text-neutral-600 font-bold text-xs">→</span>
+                            <input
+                                type="date"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                value={dateTo}
+                                onChange={(e) => setDateTo(e.target.value)}
+                            />
+                            <button
+                                onClick={handleApplyFilters}
+                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-indigo-500"
+                                title="Apply Filter"
+                            >
+                                <Filter size={14} />
+                            </button>
+                        </div>
+
                         <div className="flex gap-2">
                             <button onClick={handleRefresh} disabled={isRefreshing || isLoading}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700">
+                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors text-slate-500">
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
                             </button>
                             <button onClick={handleExportCSV}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
                                 <FileSpreadsheet className="w-4 h-4 text-green-600" /> Excel
                             </button>
                             <button onClick={handleExportPDF}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
                                 <FileText className="w-4 h-4 text-red-600" /> PDF
                             </button>
                         </div>
-                    }
-                />
+                    </div>
+                </div>
+            )}
 
-                {/* KPI Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                    <StatsCard
-                        title="Total Inflow"
-                        value={formatCurrency(displayTotals.totalInflow)}
-                        icon={<TrendingUp />}
-                        iconBgColor="bg-blue-100 dark:bg-blue-900/30"
-                        iconColor="text-blue-600 dark:text-blue-400"
-                    />
-                    <StatsCard
-                        title="Total Outflow"
-                        value={formatCurrency(displayTotals.totalOutflow)}
-                        icon={<TrendingDown />}
-                        iconBgColor="bg-red-100 dark:bg-red-900/30"
-                        iconColor="text-red-600 dark:text-red-400"
-                    />
-                    <StatsCard
-                        title="Total Closing Balance"
-                        value={formatCurrency(displayTotals.totalClosingBalance)}
-                        icon={<FileText className="text-orange-600 dark:text-orange-400" />}
-                        iconBgColor="bg-orange-100 dark:bg-orange-900/30"
-                        iconColor="text-orange-600 dark:text-orange-400"
-                    />
-                    <StatsCard
-                        title="Net Period Change"
-                        value={formatCurrency(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal)}
-                        icon={<DollarSign />}
-                        iconBgColor={(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'}
-                        iconColor={(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}
-                    />
-                    <StatsCard
-                        title="Active Suppliers"
-                        value={displayTotals.vendorCount}
-                        icon={<Users />}
-                        iconBgColor="bg-purple-100 dark:bg-purple-900/30"
-                        iconColor="text-purple-600 dark:text-purple-400"
-                    />
+            {!embedded && <SupplierSubNav />}
+
+            {embedded && (
+                <div className="flex justify-end mb-4">
+                    <div className="flex gap-2">
+                        <button onClick={handleRefresh} disabled={isRefreshing || isLoading}
+                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors">
+                            <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
+                        </button>
+                        <button onClick={handleExportCSV}
+                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                            <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Excel
+                        </button>
+                        <button onClick={handleExportPDF}
+                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                            <FileText className="w-4 h-4 text-rose-600" /> PDF
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {/* Total Inflow */}
+                <div className="bg-white dark:bg-neutral-800 border-2 border-blue-100 dark:border-blue-900/30 rounded-xl p-5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1">
+                        <TrendingUp className="w-4 h-4 text-blue-500" />
+                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Total Inflow</span>
+                    </div>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalInflow)}</span>
                 </div>
 
-                {/* Filters */}
-                <div className="bg-card rounded-xl border border-default p-4 flex flex-col gap-4">
-                    <div className="flex flex-wrap gap-4 items-end">
-                        <div className="flex-1 min-w-[200px]">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
-                            <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted" />
-                                <input
-                                    type="text"
-                                    placeholder="Search supplier..."
-                                    value={searchTerm}
-                                    onChange={e => setSearchTerm(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2 bg-input border border-default rounded-lg text-sm text-main placeholder-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                                />
-                            </div>
-                        </div>
-                        <div className="w-56">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Supplier</label>
-                            <select
-                                value={vendorFilter}
-                                onChange={e => setVendorFilter(e.target.value)}
-                                className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                            >
-                                <option value="ALL">All Suppliers</option>
-                                {vendorOptions.map((v: any) => (
-                                    <option key={v.id} value={v.id}>{v.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="w-40">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block flex items-center gap-1">
-                                <Calendar className="w-3 h-3" /> From
-                            </label>
-                            <input
-                                type="date"
-                                value={dateFrom}
-                                onChange={e => setDateFrom(e.target.value)}
-                                className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                            />
-                        </div>
-                        <div className="w-40">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block flex items-center gap-1">
-                                <Calendar className="w-3 h-3" /> To
-                            </label>
-                            <input
-                                type="date"
-                                value={dateTo}
-                                onChange={e => setDateTo(e.target.value)}
-                                className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={handleApplyFilters}
-                                className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
-                            >
-                                <Activity className="w-4 h-4" /> Apply
-                            </button>
+                {/* Total Outflow */}
+                <div className="bg-white dark:bg-neutral-800 border-2 border-rose-100 dark:border-rose-900/30 rounded-xl p-5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1">
+                        <TrendingDown className="w-4 h-4 text-rose-500" />
+                        <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Total Outflow</span>
+                    </div>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalOutflow)}</span>
+                </div>
+
+                {/* Total Closing Balance */}
+                <div className="bg-white dark:bg-neutral-800 border-2 border-orange-100 dark:border-orange-900/30 rounded-xl p-5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1">
+                        <FileText className="w-4 h-4 text-orange-500" />
+                        <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wide">Closing Balance</span>
+                    </div>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalClosingBalance)}</span>
+                </div>
+
+                {/* Net Period Change */}
+                <div className={`bg-white dark:bg-neutral-800 border-2 rounded-xl p-5 relative overflow-hidden ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'border-amber-100 dark:border-amber-900/30' : 'border-emerald-100 dark:border-emerald-900/30'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                        <DollarSign className={`w-4 h-4 ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-500' : 'text-emerald-500'}`} />
+                        <span className={`text-xs font-bold uppercase tracking-wide ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>Net Change</span>
+                    </div>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal)}</span>
+                </div>
+
+                {/* Active Suppliers */}
+                <div className="bg-white dark:bg-neutral-800 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl p-5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1">
+                        <Users className="w-4 h-4 text-purple-500" />
+                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Active Suppliers</span>
+                    </div>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{displayTotals.vendorCount}</span>
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-4 mb-6">
+                <SupplierFilterBar
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    onRefresh={fetchData}
+                    isLoading={isLoading}
+                    placeholder="Search supplier..."
+                >
+                    <div className="flex flex-wrap items-center gap-2">
+                        {/* Supplier Select */}
+                        <select
+                            value={vendorFilter}
+                            onChange={e => setVendorFilter(e.target.value)}
+                            className="px-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all w-48"
+                        >
+                            <option value="ALL">All Suppliers</option>
+                            {vendorOptions.map((v: any) => (
+                                <option key={v.id} value={v.id}>{v.name}</option>
+                            ))}
+                        </select>
+
+                        <button
+                            onClick={handleApplyFilters}
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 shadow-sm transition-colors"
+                        >
+                            Apply
+                        </button>
+                        {(vendorFilter !== 'ALL' || dateFrom || dateTo) && (
                             <button
                                 onClick={handleClearFilters}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                                className="px-3 py-2 text-slate-500 hover:text-slate-700 dark:text-neutral-400 dark:hover:text-neutral-200 text-sm font-medium"
                             >
                                 Clear
                             </button>
-                        </div>
+                        )}
                     </div>
+                </SupplierFilterBar>
+            </div>
+
+            {/* Error */}
+            {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-300 text-sm">
+                    {error}
+                </div>
+            )}
+
+            {/* Table */}
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex-1 flex flex-col">
+                <div className="flex-1 overflow-auto custom-scrollbar">
+                    <table className="w-full text-left">
+                        <thead className="bg-slate-50/50 dark:bg-neutral-900/50 sticky top-0 z-10 backdrop-blur-sm">
+                            <tr className="border-b border-slate-100 dark:border-neutral-700">
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors whitespace-nowrap"
+                                    onClick={() => handleSort('businessName')}>
+                                    <div className="flex items-center gap-1">
+                                        Supplier <SortIcon column="businessName" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                    onClick={() => handleSort('totalInflow')}>
+                                    <div className="flex items-center justify-end gap-1">
+                                        Total Inflow <SortIcon column="totalInflow" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                    onClick={() => handleSort('totalOutflow')}>
+                                    <div className="flex items-center justify-end gap-1">
+                                        Total Outflow <SortIcon column="totalOutflow" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                    onClick={() => handleSort('debitNoteTotal')}>
+                                    <div className="flex items-center justify-end gap-1">
+                                        Debit Notes <SortIcon column="debitNoteTotal" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-center whitespace-nowrap"
+                                    onClick={() => handleSort('billCount')}>
+                                    <div className="flex items-center justify-center gap-1">
+                                        Bills <SortIcon column="billCount" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-center whitespace-nowrap"
+                                    onClick={() => handleSort('paymentCount')}>
+                                    <div className="flex items-center justify-center gap-1">
+                                        Payments <SortIcon column="paymentCount" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                    onClick={() => handleSort('closingBalance')}>
+                                    <div className="flex items-center justify-end gap-1">
+                                        Closing Balance <SortIcon column="closingBalance" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                    onClick={() => handleSort('openingBalance')}>
+                                    <div className="flex items-center justify-end gap-1">
+                                        Opening <SortIcon column="openingBalance" />
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
+                            {isLoading ? (
+                                <tr><td colSpan={8} className="px-6 py-16 text-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <RefreshCw className="w-6 h-6 text-indigo-500 animate-spin" />
+                                        <p className="text-xs font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Loading data...</p>
+                                    </div>
+                                </td></tr>
+                            ) : paginatedVendors.length === 0 ? (
+                                <tr><td colSpan={8} className="px-6 py-16 text-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <FileSpreadsheet className="w-10 h-10 text-slate-200 dark:text-neutral-700" />
+                                        <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No records found</p>
+                                    </div>
+                                </td></tr>
+                            ) : (
+                                paginatedVendors.map(vendor => (
+                                    <tr key={vendor._id} className="group hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/suppliers/${vendor._id}/ledger`)}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{vendor.businessName || 'N/A'}</span>
+                                                {vendor.supplierId && (
+                                                    <span className="text-[10px] text-slate-400 dark:text-neutral-500 font-mono mt-0.5">{vendor.supplierId}</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{formatCurrency(vendor.totalInflow)}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="text-sm font-semibold text-rose-600 dark:text-rose-400">{formatCurrency(vendor.totalOutflow)}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center whitespace-nowrap">
+                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.billCount}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center whitespace-nowrap">
+                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.paymentCount}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatCurrency(vendor.closingBalance)}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(vendor.openingBalance)}</span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                        {/* Footer totals row */}
+                        {!isLoading && processedVendors.length > 0 && (
+                            <tfoot className="bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-700">
+                                <tr>
+                                    <td className="px-6 py-4 text-xs font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Total ({displayTotals.vendorCount})</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-blue-600 dark:text-blue-400">{formatCurrency(displayTotals.totalInflow)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-rose-600 dark:text-rose-400">{formatCurrency(displayTotals.totalOutflow)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-neutral-400">{formatCurrency(displayTotals.debitNoteTotal)}</td>
+                                    <td colSpan={2}></td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-orange-600 dark:text-orange-400">{formatCurrency(displayTotals.totalClosingBalance)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
+                                </tr>
+                            </tfoot>
+                        )}
+                    </table>
                 </div>
 
-                {/* Error */}
-                {error && (
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-300 text-sm">
-                        {error}
+                {/* Pagination */}
+                {processedVendors.length > itemsPerPage && (
+                    <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
+                        <div className="text-xs text-muted">
+                            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, processedVendors.length)} of {processedVendors.length} suppliers
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <span className="text-sm font-medium px-2 text-main">Page {currentPage} of {totalPages || 1}</span>
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 )}
-
-                {/* Table */}
-                <div className="bg-card rounded-xl border border-default flex-1 flex flex-col overflow-hidden">
-                    <div className="flex-1 overflow-auto custom-scrollbar">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-surface text-muted uppercase text-xs font-medium sticky top-0 z-10">
-                                <tr>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                                        onClick={() => handleSort('businessName')}>
-                                        <div className="flex items-center gap-2">
-                                            Supplier <SortIcon column="businessName" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('totalInflow')}>
-                                        <div className="flex items-center justify-end gap-2">
-                                            Total Inflow <SortIcon column="totalInflow" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('totalOutflow')}>
-                                        <div className="flex items-center justify-end gap-2">
-                                            Total Outflow <SortIcon column="totalOutflow" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('debitNoteTotal')}>
-                                        <div className="flex items-center justify-end gap-2">
-                                            Debit Notes <SortIcon column="debitNoteTotal" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center"
-                                        onClick={() => handleSort('billCount')}>
-                                        <div className="flex items-center justify-center gap-2">
-                                            Bills <SortIcon column="billCount" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center"
-                                        onClick={() => handleSort('paymentCount')}>
-                                        <div className="flex items-center justify-center gap-2">
-                                            Payments <SortIcon column="paymentCount" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('closingBalance')}>
-                                        <div className="flex items-center justify-end gap-2 text-orange-600 dark:text-orange-400 font-bold">
-                                            Closing Balance <SortIcon column="closingBalance" />
-                                        </div>
-                                    </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right"
-                                        onClick={() => handleSort('openingBalance')}>
-                                        <div className="flex items-center justify-end gap-2 text-muted">
-                                            Opening <SortIcon column="openingBalance" />
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-default">
-                                {isLoading ? (
-                                    <tr><td colSpan={9} className="p-8 text-center text-muted">
-                                        <div className="flex items-center justify-center gap-2">
-                                            <RefreshCw className="w-4 h-4 animate-spin" /> Loading...
-                                        </div>
-                                    </td></tr>
-                                ) : paginatedVendors.length === 0 ? (
-                                    <tr><td colSpan={9} className="p-8 text-center text-muted">No records found</td></tr>
-                                ) : (
-                                    paginatedVendors.map(vendor => (
-                                        <tr key={vendor._id} className="hover:bg-surface transition-colors cursor-pointer" onClick={() => fetchLedger(vendor)}>
-                                            <td className="p-4">
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium text-main">{vendor.businessName || 'N/A'}</span>
-                                                    {vendor.supplierId && (
-                                                        <span className="text-xs text-muted font-mono">{vendor.supplierId}</span>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="p-4 text-right font-semibold text-blue-600 dark:text-blue-400">
-                                                {formatCurrency(vendor.totalInflow)}
-                                            </td>
-                                            <td className="p-4 text-right font-semibold text-red-600 dark:text-red-400">
-                                                {formatCurrency(vendor.totalOutflow)}
-                                            </td>
-                                            <td className="p-4 text-right text-secondary">
-                                                {vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}
-                                            </td>
-                                            <td className="p-4 text-center text-secondary">{vendor.billCount}</td>
-                                            <td className="p-4 text-center text-secondary">{vendor.paymentCount}</td>
-                                            <td className="p-4 text-right font-bold text-orange-600 dark:text-orange-400">
-                                                {formatCurrency(vendor.closingBalance)}
-                                            </td>
-                                            <td className="p-4 text-right text-muted font-medium">
-                                                {formatCurrency(vendor.openingBalance)}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                            {/* Footer totals row */}
-                            {!isLoading && processedVendors.length > 0 && (
-                                <tfoot className="bg-surface border-t-2 border-default">
-                                    <tr className="font-bold">
-                                        <td className="p-4 text-main">Total ({displayTotals.vendorCount} suppliers)</td>
-                                        <td className="p-4 text-right text-blue-600 dark:text-blue-400">{formatCurrency(displayTotals.totalInflow)}</td>
-                                        <td className="p-4 text-right text-red-600 dark:text-red-400">{formatCurrency(displayTotals.totalOutflow)}</td>
-                                        <td className="p-4 text-right text-secondary">{formatCurrency(displayTotals.debitNoteTotal)}</td>
-                                        <td className="p-4 text-center text-secondary">-</td>
-                                        <td className="p-4 text-center text-secondary">-</td>
-                                        <td className="p-4 text-right text-orange-600 dark:text-orange-400">{formatCurrency(displayTotals.totalClosingBalance)}</td>
-                                        <td className="p-4 text-right text-muted">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
-                                    </tr>
-                                </tfoot>
-                            )}
-                        </table>
-                    </div>
-
-                    {/* Pagination */}
-                    {processedVendors.length > itemsPerPage && (
-                        <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
-                            <div className="text-xs text-muted">
-                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, processedVendors.length)} of {processedVendors.length} suppliers
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                    className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
-                                >
-                                    <ChevronLeft className="w-4 h-4" />
-                                </button>
-                                <span className="text-sm font-medium px-2 text-main">Page {currentPage} of {totalPages || 1}</span>
-                                <button
-                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                    disabled={currentPage === totalPages}
-                                    className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
-                                >
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
             </div>
+        </div>
+    );
+
+    return embedded ? <Content /> : (
+        <Layout>
+            <Content />
         </Layout>
     );
 };

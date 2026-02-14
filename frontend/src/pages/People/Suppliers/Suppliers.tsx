@@ -8,14 +8,11 @@ import Modal from "../../../components/shared/Overlay/Modal";
 import {
   Users,
   UserPlus,
-  Search,
   MoreVertical,
   Eye,
   Trash2,
   Download,
   RefreshCcw,
-  TrendingUp,
-  AlertTriangle,
   Phone,
   Mail,
   ArrowDownLeft,
@@ -24,7 +21,10 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import SupplierSubNav from './SupplierSubNav';
+import SupplierStatsCards from './components/SupplierStatsCards';
+import SupplierFilterBar from './components/SupplierFilterBar';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 
@@ -137,102 +137,45 @@ const Suppliers: React.FC = () => {
       <div className="space-y-6 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Suppliers</h1>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-600 dark:text-neutral-300 rounded-lg text-xs font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all shadow-sm"
-            >
-              <Download className="w-3.5 h-3.5" /> Export
-            </button>
-            <button
-              onClick={() => navigate('/suppliers/add')}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-bold hover:bg-indigo-600 transition-all shadow-sm"
-            >
-              <UserPlus className="w-3.5 h-3.5" /> Add Supplier
-            </button>
-          </div>
-        </div>
+        <PageHeader
+          title="Suppliers"
+          actions={
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-600 dark:text-neutral-300 rounded-lg text-xs font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5" /> Export
+              </button>
+              <button
+                onClick={() => navigate('/suppliers/add')}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-bold hover:bg-indigo-600 transition-all shadow-sm"
+              >
+                <UserPlus className="w-3.5 h-3.5" /> Add Supplier
+              </button>
+            </div>
+          }
+        />
 
         <SupplierSubNav />
 
-        {/* Summary Cards — Reference style with colored left border */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* All Suppliers */}
-          <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1">
-              <Users className="w-4 h-4 text-indigo-500" />
-              <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400">All Suppliers</span>
-            </div>
-            <span className="text-3xl font-black text-slate-900 dark:text-white">{suppliers.length}</span>
-          </div>
+        {/* Summary Cards */}
+        <SupplierStatsCards
+          totalSuppliers={suppliers.length}
+          totalToCollect={totalToCollect}
+          totalToPay={totalToPay}
+        />
 
-          {/* To Collect */}
-          <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
-                <ArrowDownLeft className="w-3 h-3 text-emerald-500" />
-              </div>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">To Collect</span>
-            </div>
-            <span className="text-3xl font-black text-slate-900 dark:text-white">₹ {totalToCollect.toLocaleString('en-IN')}</span>
-          </div>
-
-          {/* To Pay */}
-          <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
-                <ArrowUpRight className="w-3 h-3 text-rose-500" />
-              </div>
-              <span className="text-xs font-bold text-rose-600 dark:text-rose-400">To Pay</span>
-            </div>
-            <span className="text-3xl font-black text-slate-900 dark:text-white">₹ {totalToPay.toLocaleString('en-IN')}</span>
-          </div>
-        </div>
-
-        {/* Filter Bar — Reference style */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            {/* Search */}
-            <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-              <input
-                type="text"
-                placeholder="Search suppliers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-64 pl-9 pr-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400"
-              />
-            </div>
-
-            {/* Status Filter */}
-            <div className="flex items-center bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg overflow-hidden">
-              {['all', 'overdue', 'due_week'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status as any)}
-                  className={`px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${filterStatus === status
-                    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-                    : 'text-slate-400 dark:text-neutral-500 hover:text-slate-600 dark:hover:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700'
-                    }`}
-                >
-                  {status === 'all' ? 'All' : status === 'overdue' ? 'Overdue' : 'Due Soon'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleRefresh}
-              className={`p-2 text-slate-400 hover:text-indigo-500 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}
-              title="Refresh"
-            >
-              <RefreshCcw className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        {/* Filter Bar */}
+        <SupplierFilterBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          showStatusFilter={true}
+          filterStatus={filterStatus}
+          onFilterChange={setFilterStatus}
+          onRefresh={handleRefresh}
+          isLoading={isLoading}
+        />
 
         {/* Supplier Table — Clean reference style */}
         <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
@@ -249,12 +192,7 @@ const Suppliers: React.FC = () => {
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
                     Group
                   </th>
-                  <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
-                    Type
-                  </th>
-                  <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
-                    Status
-                  </th>
+
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
                     Mobile Number
                   </th>
@@ -326,22 +264,7 @@ const Suppliers: React.FC = () => {
                         </span>
                       </td>
 
-                      {/* Type */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-neutral-700 text-slate-600 dark:text-neutral-300 uppercase tracking-wide border border-slate-200 dark:border-neutral-600">
-                          {supplier.supplierType}
-                        </span>
-                      </td>
 
-                      {/* Status */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          <span className={`w-1.5 h-1.5 rounded-full ${supplier.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-300 dark:bg-neutral-600'}`} />
-                          <span className={`text-xs font-semibold uppercase tracking-wide ${supplier.status === 'active' ? 'text-slate-700 dark:text-neutral-200' : 'text-slate-400 dark:text-neutral-500'}`}>
-                            {supplier.status}
-                          </span>
-                        </div>
-                      </td>
 
                       {/* Mobile Number */}
                       <td className="px-6 py-4 whitespace-nowrap">

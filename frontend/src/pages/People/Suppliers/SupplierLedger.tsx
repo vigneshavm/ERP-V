@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Printer, Filter, Calendar, TrendingUp, FileText, Clock, Search, Book, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Printer, Filter, Calendar, Book, RefreshCw, FileText, Search } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import api from '../../../services/api';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/shared/Layout';
+import PageHeader from '../../../components/shared/Layout/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
+import SupplierLedgerSummary from './components/SupplierLedgerSummary';
+import SupplierLedgerTable from './components/SupplierLedgerTable';
 
 // Interfaces for response data
 interface Transaction {
@@ -134,15 +137,11 @@ const SupplierLedger: React.FC = () => {
         return (
             <Layout>
                 <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+                    <PageHeader
+                        title="Supplier Ledger"
+                        description="Select a supplier to view their account statement"
+                    />
                     <SupplierSubNav />
-
-                    {/* Header - Dashboard style */}
-                    <div className="flex items-center justify-between pb-2">
-                        <div className="flex flex-col">
-                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Supplier Ledger</h1>
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest mt-1">Select a supplier to view their account statement</p>
-                        </div>
-                    </div>
 
                     {/* Search */}
                     <div className="relative max-w-md">
@@ -233,10 +232,10 @@ const SupplierLedger: React.FC = () => {
                 {/* Header Section — Dashboard style */}
                 <div className="flex items-center justify-between pb-2">
                     <div className="flex items-center gap-4">
-                        {!id && selectedSupplierId && (
+                        {(id || selectedSupplierId) && (
                             <button
-                                onClick={() => { setSelectedSupplierId(null); setData(null); }}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-indigo-50 hover:text-indigo-500 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/20 transition-all"
+                                onClick={() => id ? navigate(`/suppliers/${id}`) : (setSelectedSupplierId(null), setData(null))}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-indigo-50 hover:text-indigo-500 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/20 transition-all mr-2"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                             </button>
@@ -291,59 +290,7 @@ const SupplierLedger: React.FC = () => {
                 </div>
 
                 {/* Metrics Grid — Dashboard tinted cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Opening Balance */}
-                    <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-neutral-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <TrendingUp className="w-4 h-4 text-slate-500 dark:text-neutral-400" />
-                                <span className="text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-widest">Opening Balance</span>
-                            </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.openingBalance)}</span>
-                        </div>
-                    </div>
-
-                    {/* Total Debit (Payments) */}
-                    <div className="bg-[#F8FFF9] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                                    <FileText className="w-3 h-3" />
-                                </div>
-                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Debit</span>
-                            </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.debit)}</span>
-                        </div>
-                    </div>
-
-                    {/* Total Credit (Bills) */}
-                    <div className="bg-[#FFF8F8] dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-rose-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
-                                    <FileText className="w-3 h-3" />
-                                </div>
-                                <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest">Total Credit</span>
-                            </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.credit)}</span>
-                        </div>
-                    </div>
-
-                    {/* Closing Balance */}
-                    <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-                                <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Closing Balance</span>
-                            </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(data.closingBalance)}</span>
-                        </div>
-                    </div>
-                </div>
+                <SupplierLedgerSummary data={data} />
 
                 {/* Statement Header - for print */}
                 <div className="hidden print:block text-center mb-6 border-b-2 border-black pb-4">
@@ -355,90 +302,11 @@ const SupplierLedger: React.FC = () => {
                 </div>
 
                 {/* Transactions Table — Dashboard container style */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative">
-                    {/* Table Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-neutral-700 print:hidden">
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
-                                <Book className="w-4 h-4 text-indigo-500" /> Transaction History
-                            </h3>
-                            <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest mt-0.5">
-                                {data.transactions.length} transaction{data.transactions.length !== 1 ? 's' : ''} in period
-                            </p>
-                        </div>
-                        {loading && <RefreshCw className="w-4 h-4 text-indigo-500 animate-spin" />}
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead className="bg-slate-50/80 dark:bg-neutral-900/50">
-                                <tr>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Date</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Type</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-left whitespace-nowrap">Description</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Debit (₹)</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Credit (₹)</th>
-                                    <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[10px] tracking-widest text-right whitespace-nowrap">Balance (₹)</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
-                                {/* Opening Balance Row */}
-                                <tr className="bg-slate-50/30 dark:bg-neutral-800/50">
-                                    <td className="py-3.5 px-5 text-slate-500 font-medium text-xs whitespace-nowrap">{new Date(data.period.start).toLocaleDateString('en-IN')}</td>
-                                    <td className="py-3.5 px-5 whitespace-nowrap">
-                                        <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-700 text-[9px] font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Opening</span>
-                                    </td>
-                                    <td className="py-3.5 px-5 italic text-slate-400 dark:text-neutral-500 text-xs whitespace-nowrap">Opening Balance Forwarded</td>
-                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700 whitespace-nowrap">—</td>
-                                    <td className="py-3.5 px-5 text-right text-slate-200 dark:text-neutral-700 whitespace-nowrap">—</td>
-                                    <td className="py-3.5 px-5 text-right font-black text-slate-600 dark:text-neutral-300 whitespace-nowrap">{formatCurrency(data.openingBalance)}</td>
-                                </tr>
-
-                                {data.transactions.map((t, i) => (
-                                    <tr
-                                        key={i}
-                                        className="hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 cursor-pointer group transition-colors"
-                                        onClick={() => handleRowClick(t)}
-                                    >
-                                        <td className="py-3.5 px-5 text-slate-600 dark:text-neutral-400 font-medium text-xs whitespace-nowrap">{new Date(t.date).toLocaleDateString('en-IN')}</td>
-                                        <td className="py-3.5 px-5 whitespace-nowrap">
-                                            <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-500/20' :
-                                                t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20' :
-                                                    'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20'
-                                                }`}>
-                                                {t.type === 'DEBIT_NOTE' ? (t.purchaseReturnId ? 'Return' : 'D.Note') : t.type}
-                                            </span>
-                                        </td>
-                                        <td className="py-3.5 px-5 whitespace-nowrap">
-                                            <div className="font-bold text-slate-800 dark:text-neutral-200 text-xs group-hover:text-indigo-500 transition-colors">#{t.refNo}</div>
-                                            <div className="text-[10px] text-slate-400 dark:text-neutral-500 mt-0.5 truncate max-w-[200px]">{t.description}</div>
-                                        </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs whitespace-nowrap">
-                                            {t.debit > 0 ? formatCurrency(t.debit) : '—'}
-                                        </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs whitespace-nowrap">
-                                            {t.credit > 0 ? formatCurrency(t.credit) : '—'}
-                                        </td>
-                                        <td className="py-3.5 px-5 text-right font-black text-slate-900 dark:text-white text-xs whitespace-nowrap">
-                                            {formatCurrency(t.balance)}
-                                            <span className="text-[9px] ml-1 text-slate-400 dark:text-neutral-500 font-bold">
-                                                {t.balance > 0 ? 'Cr' : 'Dr'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                            <tfoot>
-                                <tr className="bg-slate-50/80 dark:bg-neutral-900/50">
-                                    <td colSpan={3} className="py-4 px-5 text-right text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-widest">Closing Balance</td>
-                                    <td className="py-4 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-xs">{formatCurrency(data.totals.debit)}</td>
-                                    <td className="py-4 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-xs">{formatCurrency(data.totals.credit)}</td>
-                                    <td className="py-4 px-5 text-right font-black text-indigo-500 text-lg">{formatCurrency(data.closingBalance)}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
+                <SupplierLedgerTable
+                    data={data}
+                    loading={loading}
+                    onRowClick={handleRowClick}
+                />
 
                 {/* Print-only Statement Footer */}
                 <div className="hidden print:block mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-500">

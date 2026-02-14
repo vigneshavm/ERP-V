@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { createSupplierGroup } from '../../redux/slices/supplierGroupSlice';
+import { createSupplierGroup, updateSupplierGroup } from '../../redux/slices/supplierGroupSlice';
 import Modal from '../shared/Overlay/Modal';
 import {
     Tag, MapPin, DollarSign, Flag, Percent, Calendar,
@@ -58,11 +58,16 @@ const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await dispatch(createSupplierGroup(formData)).unwrap();
-            toast.success('Supplier group created successfully');
+            if (initialData && initialData._id) {
+                await dispatch(updateSupplierGroup({ id: initialData._id, data: formData })).unwrap();
+                toast.success('Supplier group updated successfully');
+            } else {
+                await dispatch(createSupplierGroup(formData)).unwrap();
+                toast.success('Supplier group created successfully');
+            }
             onClose();
         } catch (error: any) {
-            toast.error(error || 'Failed to create group');
+            toast.error(error || 'Failed to save group');
         }
     };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { Users, Tag, Book, FileText, User, Edit3, ArrowLeft } from 'lucide-react';
+import { Users, Tag, Book, FileText, User, Edit3, ArrowLeft, TrendingUp } from 'lucide-react';
 
 const SupplierSubNav: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -11,6 +11,7 @@ const SupplierSubNav: React.FC = () => {
         { name: 'Directory', path: '/suppliers', icon: Users, end: true },
         { name: 'Groups', path: '/suppliers/groups', icon: Tag },
         { name: 'Ledger', path: '/suppliers/ledger', icon: Book },
+        { name: 'Inflow / Outflow', path: '/suppliers/inflow', icon: TrendingUp },
     ];
 
     // Contextual Links (when viewing a specific supplier)

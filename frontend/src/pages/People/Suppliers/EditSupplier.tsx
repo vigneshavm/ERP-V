@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getSupplierById, reset } from "../../../redux/slices/supplierSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import SupplierForm from "../../../components/suppliers/SupplierForm";
 import SupplierSubNav from "./SupplierSubNav";
 import { ArrowLeft } from 'lucide-react';
@@ -51,25 +52,18 @@ const EditSupplier: React.FC = () => {
         status: supplier.status || 'active',
         supplierGroup: supplier.supplierGroup || '',
         groupId: (supplier.groupId as any)?._id || supplier.groupId || '',
+        bankAccounts: supplier.bankAccounts || [],
+        isOneTime: supplier.isOneTime || false,
+        defaultPaymentMode: supplier.defaultPaymentMode || 'NEFT',
     } : undefined;
 
     return (
         <Layout>
             <div className="max-w-5xl mx-auto pb-10">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate('/suppliers')}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-neutral-400" />
-                        </button>
-                        <div>
-                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100">Edit Supplier</h1>
-                            <p className="text-sm text-slate-400 dark:text-neutral-500">{supplier?.businessName || ''}</p>
-                        </div>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Edit Supplier"
+                    description={supplier?.businessName}
+                />
                 <SupplierSubNav />
                 <SupplierForm mode="edit" supplierId={id} initialData={initialData} />
             </div>
