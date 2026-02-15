@@ -21,7 +21,7 @@ const AttendanceSummaryManager = () => {
     useEffect(() => {
         const loadEmployees = async () => {
             try {
-                const res = await api.get('/api/employees');
+                const res = await api.get('/api/hr/employees');
                 if (res.data.success) setEmployees(res.data.data);
             } catch (e) {
                 console.error("Failed to load employees");
@@ -46,7 +46,8 @@ const AttendanceSummaryManager = () => {
             });
 
             if (existing) {
-                initialData[emp._id] = { ...existing, isModified: false };
+                const aId = typeof existing.employeeId === 'string' ? existing.employeeId : existing.employeeId._id;
+                initialData[emp._id] = { ...existing, employeeId: aId, isModified: false };
             } else {
                 initialData[emp._id] = {
                     employeeId: emp._id,
@@ -138,7 +139,8 @@ const AttendanceSummaryManager = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {Object.values(summaryData).map((record: any) => {
-                                    const emp = employees.find(e => e._id === record.employeeId);
+                                    const recordEmpId = typeof record.employeeId === 'string' ? record.employeeId : record.employeeId?._id;
+                                    const emp = employees.find(e => e._id === recordEmpId);
                                     return (
                                         <tr key={record.employeeId} className="hover:bg-gray-50/30 transition-colors">
                                             <td className="px-6 py-4 font-medium text-gray-900">

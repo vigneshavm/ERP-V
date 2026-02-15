@@ -5,7 +5,7 @@ import { updateEmployee } from "../../../redux/slices/laborSlice";
 import { SecurityTabProps } from './types';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { Role } from "../../../types/tenant";
-import { AppView } from "../../../types/common";
+import { AppView, SystemRole } from "../../../types/common";
 import ChangePasswordModal from '../../../components/shared/Auth/ChangePasswordModal';
 
 const isSecuredIdeally = () => true;
@@ -208,7 +208,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                 </div>
 
                 <div className="space-y-6">
-                    {roles.filter((r: any) => r.code !== 'owner').map((role: any) => (
+                    {roles.filter((r: any) => r.code !== SystemRole.OWNER).map((role: any) => (
                         <div key={role.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700">

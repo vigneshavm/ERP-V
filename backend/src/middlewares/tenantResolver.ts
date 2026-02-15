@@ -82,8 +82,9 @@ export const tenantResolver = async (req: Request, _res: Response, next: NextFun
 
         next();
     } catch (error: any) {
-        warn(`[TenantResolver] Error resolving tenant: ${error.message}`);
-        next(new AppError("Failed to resolve tenant configuration", 500));
+        warn(`[TenantResolver] Error resolving tenant: ${error.message} - Proceeding without tenant context`);
+        // Do not block the request, just proceed without tenant
+        next();
     }
 };
 

@@ -8,10 +8,17 @@ export interface IEmployee extends Document {
     mobile: string;
     dailyRate: number;
     hourlyRate: number;
+    baseSalary: number;
     wageType: 'DAILY' | 'MONTHLY' | 'HOURLY' | 'COMMISSION' | 'HYBRID';
     branchId?: string;
     sector?: string; // Scope by industry sector if needed
     email?: string;
+    employmentHistory: {
+        startDate: Date;
+        endDate?: Date;
+        reasonForLeaving?: string;
+    }[];
+    joiningDate?: Date; // Kept for backward compatibility or as the very first join date
     bankDetails?: {
         accountNumber: string;
         ifsc: string;
@@ -54,6 +61,10 @@ const employeeSchema = new Schema<IEmployee>({
         type: Number,
         default: 0
     },
+    baseSalary: {
+        type: Number,
+        default: 0
+    },
     wageType: {
         type: String,
         enum: ['DAILY', 'MONTHLY', 'HOURLY', 'COMMISSION', 'HYBRID'],
@@ -72,6 +83,15 @@ const employeeSchema = new Schema<IEmployee>({
         trim: true,
         lowercase: true
     },
+    joiningDate: {
+        type: Date,
+        default: null
+    },
+    employmentHistory: [{
+        startDate: { type: Date, required: true },
+        endDate: { type: Date, default: null },
+        reasonForLeaving: { type: String, default: "" }
+    }],
     bankDetails: {
         accountNumber: String,
         ifsc: String,

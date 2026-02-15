@@ -15,7 +15,10 @@ import { useVisualPreferences } from './useVisualPreferences';
  */
 export const useDBDataSync = () => {
     const { user } = useSelector((state: RootState) => state.auth);
-    const tenantId = user?.tenantId;
+    // Ensure tenantId is a string, even if user object has full tenant populated
+    const tenantId = user?.tenantId && typeof user.tenantId === 'object'
+        ? (user.tenantId as any)._id
+        : user?.tenantId;
 
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);

@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { singleton } from 'tsyringe';
 import User from '../models/User.js';
 import Tenant from '../models/Tenant.js';
+import Employee from '../../../modules/hr/models/Employee.js'; // Import Employee model
 import RefreshToken from '../models/RefreshToken.js';
 import { generateToken, generateRandomToken } from '../../../config/jwt.js';
 import { sendHtmlEmail, generatePasswordResetEmail } from '../../../utils/emailService.js';
@@ -66,7 +67,7 @@ export class AuthController {
      */
     public register = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { name, email, password, shopName, phone, sector, subdomain } = req.body;
+            const { name, email, password, shopName, phone, sector, subdomain, address, city, state, zipCode, gstIn, pan } = req.body;
 
             // Validate inputs
             if (!name || !email || !password || !phone) {
@@ -104,6 +105,15 @@ export class AuthController {
                     return;
                 }
 
+                // Construct Address Object
+                const tenantAddress = {
+                    street: address || '',
+                    city: city || '',
+                    state: state || '',
+                    zipCode: zipCode || '',
+                    country: 'India'
+                };
+
                 // 2. Create Tenant
                 const newTenant = await Tenant.create([{
                     name: shopName,
@@ -111,6 +121,9 @@ export class AuthController {
                     slug: generatedSlug,
                     ownerId: new mongoose.Types.ObjectId(), // Placeholder, will update after user creation
                     status: 'ACTIVE',
+                    gstNumber: gstIn, // Save GSTIN
+                    panNumber: pan,   // Save PAN
+                    address: tenantAddress, // Save Address
                     config: {
                         theme: {
                             primaryColor: '#007bff',
@@ -132,11 +145,27 @@ export class AuthController {
                     sector,
                     role: 'owner',
                     tenantId: tenant._id,
+                    gstNumber: gstIn, // Backward compatibility
+                    shopAddress: `${address}, ${city}, ${state} - ${zipCode}`, // Backward compatibility
                     // Subdomain field in User is deprecated in favor of Tenant.slug, but keeping for backward compat if needed
                     subdomain: generatedSlug
                 }], { session });
 
                 const user = newUser[0];
+
+                // 3b. Create Employee Record for Owner (Auto-onboarding)
+                await Employee.create([{
+                    tenantId: tenant._id,
+                    name: name,
+                    role: 'owner', // consistent lowercase
+                    mobile: phone,
+                    email: email,
+                    weeklyOffs: [], // Owners typically work 24/7 or manage their own time
+                    baseSalary: 0, // Owners take drawings, not usually Salary, but record needed
+                    wageType: 'MONTHLY',
+                    isActive: true,
+                    joiningDate: new Date()
+                }], { session });
 
                 // 4. Update Tenant with Owner ID
                 tenant.ownerId = user._id as any;
@@ -176,6 +205,7 @@ export class AuthController {
                         _id: user._id,
                         name: user.name,
                         email: user.email,
+                        tenantId: tenant._id, // Return tenantId for immediate context
                         shopName: tenant.shopName || tenant.name, // Return from tenant
                         tenantSlug: tenant.slug, // Return slug to frontend
                         token: accessToken,
@@ -220,10 +250,10 @@ export class AuthController {
      *         description: Invalid credentials
      */
     public login = async (req: Request, res: Response): Promise<void> => {
-        // Import rate limiter handler
-        const { handleLoginAttempt } = await import('../../../middlewares/rateLimiter.js');
-
         try {
+            // Import rate limiter handler
+            const { handleLoginAttempt } = await import('../../../middlewares/rateLimiter.js');
+
             const { email, password } = req.body;
 
             // Validate input
@@ -348,6 +378,8 @@ export class AuthController {
                 gstNumber: user.gstNumber,
                 shopAddress: user.shopAddress,
                 phone: user.phone,
+                role: user.role, // Return user role
+                tenantId: user.tenantId, // Return tenantId
                 token: accessToken,
                 refreshToken: refreshToken,
             });
@@ -377,7 +409,7 @@ export class AuthController {
      */
     public getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const user = await User.findById(req.user?._id).select('-password');
+            const user = await User.findById(req.user?._id).select('-password').populate('tenantId');
             if (!user) {
                 res.status(404).json({ message: 'User not found' });
                 return;

@@ -18,11 +18,15 @@ import {
     updateChequeStatus,
     getEffectiveBalance,
     getDayEndSummary,
-    saveDayEndToDB
+    saveDayEndToDB,
+    getAllTransactions // Import new method
 } from "../controllers/CashBankController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
 
 const router = Router();
+
+// Global Transactions (for Sync)
+router.get("/", protect, getAllTransactions);
 
 // Account Management
 router.get("/accounts", protect, getAccounts);

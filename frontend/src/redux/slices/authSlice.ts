@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "../../services/api.js";
 import { RootState } from '../store';
 import { Sector } from "../../types/common";
+import { clearSession } from "../../utils/session";
+
 
 const API_URL = "/api/auth";
 
@@ -45,7 +47,7 @@ const initialState: AuthState = {
     user: user,
     currentSector: 'General',
     currentBranch: 'All',
-    role: 'Staff',
+    role: user?.role,
     theme: getStoredTheme(),
     isLoading: false,
     isSuccess: false,
@@ -131,9 +133,9 @@ export const performPasswordReset = createAsyncThunk<{ message: string }, any, {
 );
 
 // Logout user
+// Logout user
 export const logout = createAsyncThunk('auth/logout', async () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('returnDraft');
+    clearSession();
 });
 
 // Force logout from previous device
@@ -227,6 +229,7 @@ export const authSlice = createSlice({
         },
         setUser: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload;
+            state.role = action.payload?.role;
         },
         setAuthError: (state, action: PayloadAction<string | null>) => {
             state.isError = !!action.payload;
@@ -275,6 +278,9 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.user = action.payload;
+                if (action.payload.role) {
+                    state.role = action.payload.role;
+                }
             })
             .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
@@ -361,6 +367,9 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 if (state.user) {
                     state.user = { ...state.user, ...action.payload };
+                }
+                if (action.payload.role) {
+                    state.role = action.payload.role;
                 }
             })
             .addCase(getProfile.rejected, (state, action) => {

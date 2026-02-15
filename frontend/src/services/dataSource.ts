@@ -1,9 +1,4 @@
-import { demoDB } from '../data/demo';
-
-
-export type DataMode = 'DEMO' | 'DB';
-
-export const DATA_MODE: DataMode = 'DB'; // Default to DB for API usage
+// export const DATA_MODE: DataMode = 'DB'; // Removed
 
 export interface DataSourceOptions {
     filters?: Record<string, any>;
@@ -12,95 +7,10 @@ export interface DataSourceOptions {
 
 /**
  * Unified Data Access Layer
- * Automatically switches between Demo Mock Data and Real Supabase Database
+ * Fetches data from Real Supabase Database
  */
 export async function getTable<T = any>(tableName: string, options: DataSourceOptions = {}): Promise<T[]> {
-    if (DATA_MODE === 'DEMO') {
-        return getDemoData(tableName, options);
-    }
-
     return getDbData(tableName, options);
-}
-
-/**
- * Internal logic for fetching and filtering demo data
- */
-async function getDemoData(tableName: string, options: DataSourceOptions): Promise<any[]> {
-    // Map standard Supabase table names to demoDB keys if they differ
-    const tableMap: Record<string, string> = {
-        'tenants': 'tenants',
-        'branches': 'branches',
-        'tenant_users': 'employees',
-        'inventory': 'inventory',
-        'products': 'inventory',
-        'sales_invoices': 'salesInvoices',
-        'sales_items': 'salesItems',
-        'sales': 'salesInvoices',
-        'purchase_orders': 'purchases',
-        'expenses': 'expenses',
-        'payments': 'payments',
-        'customers': 'customers',
-        'suppliers': 'suppliers',
-        'transactions': 'transactions',
-        'daily_finance': 'daily_finance'
-    };
-
-    // Table to required module mapping (Canonical Keys)
-    const TABLE_TO_MODULE: Record<string, string> = {
-        'inventory': 'INVENTORY',
-        'products': 'INVENTORY',
-        'sales_invoices': 'POS',
-        'sales_items': 'POS',
-        'sales': 'POS',
-        'purchase_orders': 'PURCHASE',
-        'expenses': 'EXPENSES',
-        'payments': 'FINANCE',
-        'customers': 'CUSTOMERS',
-        'suppliers': 'SUPPLIERS',
-        'daily_finance': 'FINANCE'
-    };
-
-    const dbKey = tableMap[tableName] || tableName;
-    const requiredModule = TABLE_TO_MODULE[tableName];
-
-    // Check Entitlements if tenant_id is provided in filters
-    const filterTenantId = options.filters?.tenant_id || options.filters?.tenantId;
-    if (filterTenantId && requiredModule && tableName !== 'tenants') {
-        const tenant = demoDB.tenants.find(t => t.id === filterTenantId);
-        // If tenant exists and doesn't have the module, return empty list
-        if (tenant && !tenant.modules?.includes(requiredModule)) {
-            console.warn(`[Entitlement] Blocked access to table ${tableName} for tenant ${filterTenantId}. Required module: ${requiredModule}`);
-            return [];
-        }
-    }
-
-    let baseData = demoDB[dbKey] || [];
-
-    // Load dynamic data from localStorage (registrations)
-    try {
-        const { registrationUtil } = await import("../utils/registrationUtil");
-        const dynamicData = registrationUtil.loadDynamicData() as any;
-        const extraData = dynamicData[dbKey] || [];
-        baseData = [...baseData, ...extraData];
-    } catch (e) {
-        console.warn("Failed to load dynamic data", e);
-    }
-
-    let data = [...baseData];
-
-    // Apply filters if provided (e.g., .eq('tenant_id', id))
-    if (options.filters) {
-        data = data.filter(item => {
-            return Object.entries(options.filters || {}).every(([key, value]) => {
-                return item[key] === value;
-            });
-        });
-    }
-
-    // Simulate network latency for realism
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    return data;
 }
 
 /**
@@ -111,18 +21,18 @@ import api from './api';
 // ... (existing imports, but remove supabase)
 
 const TABLE_TO_ENDPOINT: Record<string, string> = {
-    'products': '/inventory',
-    'vendors': '/suppliers',
-    'tenants': '/tenants', // Might need specific endpoint if valid
-    'customers': '/customers',
-    'sales_invoices': '/sales-invoice',
-    'sales': '/sales-invoice',
-    'purchase_orders': '/orders', // or /purchases
-    'purchases': '/purchases',
-    'expenses': '/expenses',
-    'payments': '/payment-in',
-    'transactions': '/cashbank',
-    'daily_finance': '/daily-finance' // Placeholder
+    'products': '/api/inventory',
+    'vendors': '/api/suppliers',
+    'tenants': '/api/tenants', // Might need specific endpoint if valid
+    'customers': '/api/customers', // Correct: crmRoutes mounted at /api + /customers
+    'sales_invoices': '/api/sales-invoice/invoices', // Correct: salesRoutes mounted at /api/sales-invoice + /invoices
+    'sales': '/api/sales-invoice/invoices', // Reuse same endpoint for sales history
+    'purchases': '/api/purchases',
+    'expenses': '/api/expenses',
+    'payments': '/api/payment-in',
+    'transactions': '/api/cashbank',
+    'daily_finance': '/api/daily-finance',
+    'cheques': '/api/cashbank/cheques'
 };
 
 async function getDbData(tableName: string, options: DataSourceOptions): Promise<any[]> {
@@ -136,7 +46,12 @@ async function getDbData(tableName: string, options: DataSourceOptions): Promise
         const { data } = await api.get(endpoint, {
             params: options.filters
         });
-        return data || [];
+        // Handle standard API response wrapper { success: true, data: [...] }
+        if (data && data.success && Array.isArray(data.data)) {
+            return data.data;
+        }
+        // Handle direct array response or other formats
+        return Array.isArray(data) ? data : (data.data || []);
     } catch (error) {
         console.error(`Error fetching data for ${tableName}`, error);
         throw error;

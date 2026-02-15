@@ -1,16 +1,15 @@
-import { db, OfflineSale } from './db';
+import { db } from './db';
 import api from './api';
 import { store } from "../redux/store";
 import { setDailyRecordSynced } from "../redux/slices/financeSlice";
-import { DATA_MODE } from './dataSource';
 import { SyncIntelligenceService } from './SyncIntelligenceService';
 
 export class SyncManager {
+    private static isSyncingSelection = false;
     private static isSyncing = false;
     private static isSyncingDF = false;
 
     static async syncOfflineSales() {
-        if (DATA_MODE === 'DEMO') return; // Skip sync in demo mode
         if (this.isSyncing || !navigator.onLine) return;
         this.isSyncing = true;
 
@@ -88,7 +87,6 @@ export class SyncManager {
     }
 
     static async syncDailyFinanceEntries() {
-        if (DATA_MODE === 'DEMO') return; // Skip sync in demo mode
         if (this.isSyncingDF || !navigator.onLine) return;
         this.isSyncingDF = true;
 

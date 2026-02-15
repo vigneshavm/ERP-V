@@ -59,7 +59,7 @@ const PayrollRuns = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <PageHeader
                         title={`Payroll Run: ${new Date(0, runDetails.month).toLocaleString('default', { month: 'long' })} ${runDetails.year}`}
-                        description={`Status: ${runDetails.status} | Generated: ${formatDateISO(new Date(runDetails.generatedAt))}`}
+                        description={`Status: ${runDetails.status} | Generated: ${runDetails.processedDate || runDetails.createdAt ? formatDateISO(new Date(runDetails.processedDate || runDetails.createdAt)) : 'N/A'}`}
                         breadcrumbs={[
                             { label: 'Payroll', link: '/people/payroll' },
                             { label: 'Runs', link: '/people/payroll/run' },
@@ -69,6 +69,42 @@ const PayrollRuns = () => {
                     <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                         <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                             <h3 className="font-bold text-gray-700">Employee Payslips ({payslips.length})</h3>
+                            <div className="flex gap-2">
+                                {runDetails.status === 'DRAFT' && (
+                                    <button
+                                        onClick={async () => {
+                                            if (confirm('Are you sure you want to approve this payroll?')) {
+                                                await api.put(`/api/hr/payroll/runs/${id}/approve`);
+                                                // Refresh
+                                                const response = await api.get(`/api/hr/payroll/runs/${id}`);
+                                                setRunDetails(response.data.data.run);
+                                            }
+                                        }}
+                                        className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                                    >
+                                        Approve Run
+                                    </button>
+                                )}
+                                {runDetails.status === 'APPROVED' && (
+                                    <button
+                                        onClick={async () => {
+                                            const accountId = prompt('Enter Account ID (Placeholder UI):');
+                                            if (accountId) {
+                                                await api.post(`/api/hr/payroll/runs/${id}/pay`, { accountId, paymentMode: 'CASH' });
+                                                // Refresh
+                                                const response = await api.get(`/api/hr/payroll/runs/${id}`);
+                                                setRunDetails(response.data.data.run);
+                                            }
+                                        }}
+                                        className="px-4 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+                                    >
+                                        Mark as Paid
+                                    </button>
+                                )}
+                                <button className="p-2 text-gray-400 hover:text-gray-600">
+                                    <Printer size={18} />
+                                </button>
+                            </div>
                         </div>
                         <table className="w-full text-left">
                             <thead>
@@ -105,7 +141,7 @@ const PayrollRuns = () => {
                         </table>
                     </div>
                 </div>
-            </Layout>
+            </Layout >
         );
     }
 
@@ -195,10 +231,16 @@ const PayrollRuns = () => {
                                 {runs.map((run) => (
                                     <tr key={run._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {new Date(run.year, run.month).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                            <div>
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    Run Date: {run.processedDate || run.createdAt ? formatDateISO(run.processedDate || run.createdAt) : 'N/A'}
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{formatDateISO(run.runDate)}</td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{run.totalPayout.toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                                                 ${run.status === 'PAID' ? 'bg-green-100 text-green-800' :

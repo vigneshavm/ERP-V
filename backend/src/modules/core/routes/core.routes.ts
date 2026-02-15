@@ -10,6 +10,7 @@ import shopRoutes from './shopRoutes.js';
 import branchRoutes from './branchRoutes.js';
 import subscriptionPlanRoutes from './subscriptionPlanRoutes.js';
 import auditLogRoutes from './auditLogRoutes.js';
+import adminRoutes from './adminRoutes.js';
 
 const router = express.Router();
 
@@ -24,5 +25,7 @@ router.use('/shop', shopRoutes);
 router.use('/branches', branchRoutes);
 router.use('/subscription-plans', subscriptionPlanRoutes);
 router.use('/audit-logs', auditLogRoutes);
+router.use('/admin', adminRoutes);
+
 
 export default router;

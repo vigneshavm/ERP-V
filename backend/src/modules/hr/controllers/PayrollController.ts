@@ -39,6 +39,45 @@ export const getSalaryComponents = async (req: Request, res: Response) => {
     }
 };
 
+export const updateSalaryComponent = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const tenantId = (req as any).user.tenantId;
+        const updates = req.body;
+
+        const component = await SalaryComponent.findOneAndUpdate(
+            { _id: id, tenantId },
+            updates,
+            { new: true }
+        );
+
+        if (!component) {
+            return res.status(404).json({ success: false, message: "Component not found" });
+        }
+
+        res.status(200).json({ success: true, data: component });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const deleteSalaryComponent = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const tenantId = (req as any).user.tenantId;
+
+        const component = await SalaryComponent.findOneAndDelete({ _id: id, tenantId });
+
+        if (!component) {
+            return res.status(404).json({ success: false, message: "Component not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Component deleted successfully" });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // Salary Structure
 export const upsertSalaryStructure = async (req: Request, res: Response) => {
     try {
@@ -81,6 +120,38 @@ export const getSalaryStructure = async (req: Request, res: Response) => {
         res.status(200).json({ success: true, data: structure });
     } catch (error: any) {
         res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const getAllSalaryStructures = async (req: Request, res: Response) => {
+    try {
+        const tenantId = (req as any).user.tenantId;
+        const structures = await SalaryStructure.find({ tenantId, isActive: true }).populate('components.componentId');
+        res.status(200).json({ success: true, data: structures });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const bulkUpdateSalaryStructure = async (req: Request, res: Response) => {
+    try {
+        const tenantId = (req as any).user.tenantId;
+        const userId = (req as any).user._id;
+        const { componentId, amount } = req.body;
+
+        if (!componentId || amount === undefined) {
+            return res.status(400).json({ success: false, message: "ComponentId and Amount are required" });
+        }
+
+        console.log(`[Bulk Update] Request - Tenant: ${tenantId}, User: ${userId}, Component: ${componentId}, Amount: ${amount}`);
+
+        const payrollService = container.resolve(PayrollService);
+        const result = await payrollService.bulkUpdateStructure(tenantId, componentId, Number(amount), userId);
+
+        res.status(200).json(result);
+    } catch (error: any) {
+        console.error(`[Bulk Update] Error:`, error);
+        res.status(error.statusCode || 500).json({ success: false, message: error.message });
     }
 };
 
@@ -260,6 +331,21 @@ export const sendPayslip = async (req: Request, res: Response) => {
         const results = await payrollService.sendPayslip(id, tenantId, channels);
 
         res.status(200).json({ success: true, data: results });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const processIndividualPayout = async (req: Request, res: Response) => {
+    try {
+        const tenantId = (req as any).user.tenantId;
+        const userId = (req as any).user._id;
+        const { employeeId, month, year, paymentMode, accountId, overrideWorkedDays, force } = req.body;
+
+        const payrollService = container.resolve(PayrollService);
+        const result = await payrollService.processIndividualPayout(tenantId, employeeId, month, year, userId, paymentMode, accountId, overrideWorkedDays, force);
+
+        res.status(200).json({ success: true, data: result });
     } catch (error: any) {
         res.status(500).json({ success: false, message: error.message });
     }

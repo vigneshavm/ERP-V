@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../../redux/store";
-import { addEmployee, markAttendance, addLaborPayment, setEmployees } from "../../../redux/slices/laborSlice";
+import { addEmployee, markAttendance, addLaborPayment, setEmployees, createAdvanceAction, fetchAdvances } from "../../../redux/slices/laborSlice";
 import { ensureBranchRecorded } from "../../../redux/slices/tenantSlice";
 import api from "../../../services/api.js";
 import Layout from "../../../components/shared/Layout";
@@ -36,6 +36,7 @@ export const LaborManager = () => {
 
   // -- State --
   const [selectedLaborerId, setSelectedLaborerId] = useState<string | null>(null);
+  const [staffType, setStaffType] = useState<'ALL' | 'OFFICE' | 'FIELD'>('ALL');
 
   // Derive activeTab from URL
   const activeTab = useMemo(() => {
@@ -82,7 +83,16 @@ export const LaborManager = () => {
   const currentMonthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   // Filter Employees
-  const sectorEmps = (employees as any[]).filter(e => e.sector === currentSector);
+  const sectorEmps = (employees as any[]).filter(e => {
+    // Sector Check
+    if (e.sector !== currentSector) return false;
+
+    // Type Check
+    if (staffType === 'OFFICE' && (e.wageType === 'DAILY' || e.wageType === 'HOURLY')) return false;
+    if (staffType === 'FIELD' && (e.wageType === 'MONTHLY' || !e.wageType)) return false;
+
+    return true;
+  });
 
   const activeTenantId = employees.length > 0 ? employees[0].tenantId : null;
 
@@ -90,7 +100,7 @@ export const LaborManager = () => {
   React.useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await api.get('/api/employees');
+        const response = await api.get('/api/hr/employees');
         if (response.data && response.data.success) {
           // Adapt to Redux format
           const emps = response.data.data.map((e: any) => ({
@@ -105,11 +115,11 @@ export const LaborManager = () => {
             branchId: e.branchId,
             sector: currentSector, // Fallback or store in DB
             isActive: e.isActive,
-            systemRole: 'STAFF',
+            systemRole: SystemRole.STAFF,
             pin: '****'
           }));
           // Update redux
-          // Assuming setEmployees is exported from slice, let's use it.
+          dispatch(setEmployees(emps));
         }
       } catch (err) {
         console.error("Failed to load employees", err);
@@ -117,6 +127,12 @@ export const LaborManager = () => {
     };
     fetchEmployees();
   }, []);
+
+  useEffect(() => {
+    if (selectedLaborerId) {
+      dispatch(fetchAdvances(selectedLaborerId));
+    }
+  }, [selectedLaborerId, dispatch]);
 
   // Removed legacy roles loading for now or keep if needed for role selection
   React.useEffect(() => {
@@ -167,7 +183,7 @@ export const LaborManager = () => {
     };
 
     try {
-      const response = await api.post('/api/employees', payload);
+      const response = await api.post('/api/hr/employees', payload);
       if (response.data && response.data.success) {
         const insertedUser = response.data.data;
 
@@ -227,23 +243,39 @@ export const LaborManager = () => {
     }
   };
 
-  const handleAddPayment = () => {
+  const handleAddPayment = async () => {
     if (!selectedLaborer || !paymentAmount) return;
     const amount = parseFloat(paymentAmount);
     if (isNaN(amount) || amount <= 0) return;
-    dispatch(addLaborPayment({ id: generateId(), employeeId: selectedLaborer.id, amount: amount, date: new Date().toISOString(), type: paymentType, note: paymentNote }));
-    setPaymentAmount(''); setPaymentNote('');
+
+    try {
+      await dispatch(createAdvanceAction({
+        employeeId: selectedLaborer.id,
+        amount: amount,
+        type: paymentType,
+        notes: paymentNote
+      })).unwrap();
+
+      setPaymentAmount('');
+      setPaymentNote('');
+    } catch (err: any) {
+      alert("Failed to record payment: " + err);
+    }
   };
+
+  const existingLog = editingDate && selectedLaborerId
+    ? attendance.find((a: any) => a.employeeId === selectedLaborerId && a.date === editingDate)
+    : undefined;
 
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full flex flex-col">
         <PageHeader
-          title="Staff & Labor Management"
-          description="Monitor attendance, process payroll, and manage laborers across your branches."
+          title="Staff Management"
+          description="Manage all your office and field staff in one place."
           breadcrumbs={[
             { label: 'Home', link: '/dashboard' },
-            { label: 'Employees' }
+            { label: 'Staff' }
           ]}
         />
 
@@ -252,7 +284,12 @@ export const LaborManager = () => {
             <TimeEntryModal
               key={`${editingDate}-${selectedLaborerId}`}
               isOpen={!!editingDate} date={editingDate} onClose={() => setEditingDate(null)} onSave={handleSaveAttendance}
-              initialData={attendance.find((a: any) => a.employeeId === selectedLaborerId && a.date === editingDate)}
+              initialData={existingLog ? {
+                ...existingLog,
+                duration: 0,
+                inTime: existingLog.inTime || '09:00',
+                outTime: existingLog.outTime || '18:00'
+              } : null}
             />
           )}
 
@@ -263,6 +300,8 @@ export const LaborManager = () => {
               onSelectLaborer={setSelectedLaborerId}
               onToggleAddForm={() => setIsAddingLaborer(!isAddingLaborer)}
               isAddingLaborer={isAddingLaborer}
+              staffType={staffType}
+              onStaffTypeChange={setStaffType}
             />
 
             {isAddingLaborer && (
@@ -296,7 +335,7 @@ export const LaborManager = () => {
                         }`}
                     >
                       <Users className="w-4 h-4" />
-                      Labor Stats
+                      Field Staff Stats
                     </button>
                     <button
                       onClick={() => setActiveTab('ATTENDANCE')}

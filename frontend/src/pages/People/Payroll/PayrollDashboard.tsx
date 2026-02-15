@@ -30,10 +30,10 @@ const PayrollDashboard = () => {
         dispatch(fetchPayrollRuns());
     }, [dispatch]);
 
-    const recentRuns = [...runs].sort((a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()).slice(0, 5);
+    const recentRuns = [...runs].sort((a, b) => new Date(b.processedDate || b.createdAt).getTime() - new Date(a.processedDate || a.createdAt).getTime()).slice(0, 5);
 
     const stats = {
-        lastRun: recentRuns.length > 0 && recentRuns[0].generatedAt ? formatDateISO(new Date(recentRuns[0].generatedAt)) : 'N/A',
+        lastRun: recentRuns.length > 0 ? formatDateISO(new Date(recentRuns[0].processedDate || recentRuns[0].createdAt)) : 'N/A',
         totalPaidYTD: '₹0.00', // Placeholder
         pendingApprovals: runs.filter(r => r.status === 'DRAFT').length
     };
@@ -112,10 +112,12 @@ const PayrollDashboard = () => {
                                 {recentRuns.map((run) => (
                                     <tr key={run._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {new Date(run.year, run.month).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                            {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{formatDateISO(run.runDate)}</td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{run.totalPayout.toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {run.processedDate || run.createdAt ? formatDateISO(run.processedDate || run.createdAt) : 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                                                 ${run.status === 'PAID' ? 'bg-green-100 text-green-800' :

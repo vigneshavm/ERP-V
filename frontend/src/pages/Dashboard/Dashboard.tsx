@@ -131,31 +131,60 @@ const Dashboard: React.FC = () => {
     }).replace(',', ' |');
   }, [dashboardStats]);
 
-  // RESTORED: 6-Month Profitability Data Synthesis
+  // RESTORED: 6-Month Profitability Data Synthesis - LIVE
   const profitabilityData = useMemo(() => {
-    const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
-    const baseRevenue = totalRevenueLive || 450000;
+    if (!stats.revenueVsExpenses || stats.revenueVsExpenses.length === 0) {
+      // Fallback/Synthetic data if backend data is empty
+      const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+      const baseRevenue = totalRevenueLive || 450000;
+      return months.map((month, i) => {
+        const trend = 0.8 + (i * 0.04);
+        const income = Math.round(baseRevenue * trend);
+        const expense = Math.round(income * (0.75 + (Math.random() * 0.05)));
+        return { month, income, expense };
+      });
+    }
 
-    return months.map((month, i) => {
-      // Create a stable upward trend with slight noise for realism
-      const trend = 0.8 + (i * 0.04);
-      const income = Math.round(baseRevenue * trend);
-      const expense = Math.round(income * (0.75 + (Math.random() * 0.05)));
-      return { month, income, expense };
+    return stats.revenueVsExpenses.map((d: any) => {
+      const date = new Date(d.month + '-01');
+      return {
+        month: date.toLocaleString('default', { month: 'short' }),
+        income: d.revenue || 0,
+        expense: d.expenses || 0
+      };
     });
-  }, [totalRevenueLive]);
+  }, [stats.revenueVsExpenses, totalRevenueLive]);
 
-  // RESTORED: Cost Intelligence - Expenditure Categories Synthesis
+  // RESTORED: Cost Intelligence - Expenditure Categories Synthesis - LIVE
   const costCategoriesData = useMemo(() => {
-    const totalExp = (totalRevenueLive || 450000) * 0.75;
-    return [
-      { name: 'Logistics', value: Math.round(totalExp * 0.15), color: '#6366f1' },
-      { name: 'Inventory', value: Math.round(totalExp * 0.40), color: '#94a3b8' },
-      { name: 'Salaries', value: Math.round(totalExp * 0.25), color: '#f43f5e' },
-      { name: 'Utilities', value: Math.round(totalExp * 0.10), color: '#10b981' },
-      { name: 'Others', value: Math.round(totalExp * 0.10), color: '#f59e0b' },
-    ];
-  }, [totalRevenueLive]);
+    if (!expenses || expenses.length === 0) {
+      const totalExp = (totalRevenueLive || 450000) * 0.75;
+      return [
+        { name: 'Logistics', value: Math.round(totalExp * 0.15), color: '#6366f1' },
+        { name: 'Inventory', value: Math.round(totalExp * 0.40), color: '#94a3b8' },
+        { name: 'Salaries', value: Math.round(totalExp * 0.25), color: '#f43f5e' },
+        { name: 'Utilities', value: Math.round(totalExp * 0.10), color: '#10b981' },
+        { name: 'Others', value: Math.round(totalExp * 0.10), color: '#f59e0b' },
+      ];
+    }
+
+    // Grouping actual expenses by category
+    const categories: Record<string, number> = {};
+    expenses.forEach((exp: any) => {
+      const cat = exp.category || 'Others';
+      categories[cat] = (categories[cat] || 0) + (exp.amount || 0);
+    });
+
+    const colors = ['#6366f1', '#94a3b8', '#f43f5e', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'];
+
+    return Object.entries(categories)
+      .map(([name, value], index) => ({
+        name,
+        value,
+        color: colors[index % colors.length]
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [expenses, totalRevenueLive]);
 
   // NEW: Inventory AI - Smart Stock Prediction Logic
   const stockInsights = useMemo(() => {

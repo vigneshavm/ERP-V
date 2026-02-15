@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setProducts, upsertProduct, setCategories, setHydrating } from '../redux/slices/inventorySlice';
 import { Product } from "../types/product";
 import { SyncManager } from "../services/SyncManager";
-import { getTable, DATA_MODE } from "../services/dataSource";
+import { getTable } from "../services/dataSource";
 import { setSyncing } from '../redux/slices/uiSlice';
 
 export const useProductSync = (tenantId: string | undefined) => {
@@ -17,11 +17,9 @@ export const useProductSync = (tenantId: string | undefined) => {
             dispatch(setSyncing(true));
             try {
                 // 1. Immediate Hydration (SWR) - only if DB mode
-                if (DATA_MODE === 'DB') {
-                    const cached = await SyncManager.getOfflineProducts(tenantId);
-                    if (cached && cached.length > 0) {
-                        dispatch(setProducts(cached));
-                    }
+                const cached = await SyncManager.getOfflineProducts(tenantId);
+                if (cached && cached.length > 0) {
+                    dispatch(setProducts(cached));
                 }
 
                 // 2. Parallelized Background Fetch (Switches between DEMO/DB)
@@ -57,7 +55,7 @@ export const useProductSync = (tenantId: string | undefined) => {
                         discount: p.discount || 0
                     })) as Product[];
                     dispatch(setProducts(mappedProducts));
-                    if (DATA_MODE === 'DB') SyncManager.cacheProducts(mappedProducts);
+                    SyncManager.cacheProducts(mappedProducts);
                 }
 
                 // 4. Process Categories

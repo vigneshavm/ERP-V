@@ -9,6 +9,8 @@ interface LaborSidebarProps {
     onSelectLaborer: (id: string) => void;
     onToggleAddForm: () => void;
     isAddingLaborer: boolean;
+    staffType: 'ALL' | 'OFFICE' | 'FIELD';
+    onStaffTypeChange: (type: 'ALL' | 'OFFICE' | 'FIELD') => void;
 }
 
 const LaborSidebar: React.FC<LaborSidebarProps> = ({
@@ -16,24 +18,44 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
     selectedLaborerId,
     onSelectLaborer,
     onToggleAddForm,
-    isAddingLaborer
+    isAddingLaborer,
+    staffType,
+    onStaffTypeChange
 }) => {
     return (
         <div className="w-full flex flex-col gap-4 h-full bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-700 p-4 transition-colors">
-            <div className="flex items-center justify-between mb-2">
-                <div>
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">Team Members</h2>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{employees.length} Active Staff</p>
+            <div className="flex flex-col gap-3 mb-2">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">Team Members</h2>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{employees.length} Active Staff</p>
+                    </div>
+                    <button
+                        onClick={onToggleAddForm}
+                        className={`p-2 rounded-lg transition-all ${isAddingLaborer
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50'
+                            }`}
+                    >
+                        <Plus size={20} />
+                    </button>
                 </div>
-                <button
-                    onClick={onToggleAddForm}
-                    className={`p-2 rounded-lg transition-all ${isAddingLaborer
-                        ? 'bg-indigo-600 text-white shadow-md'
-                        : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50'
-                        }`}
-                >
-                    <Plus size={20} />
-                </button>
+
+                {/* Filter Tabs */}
+                <div className="flex bg-slate-100 dark:bg-neutral-900 p-1 rounded-lg">
+                    {(['ALL', 'OFFICE', 'FIELD'] as const).map((type) => (
+                        <button
+                            key={type}
+                            onClick={() => onStaffTypeChange(type)}
+                            className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${staffType === type
+                                ? 'bg-white dark:bg-neutral-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                }`}
+                        >
+                            {type === 'ALL' ? 'All' : type === 'OFFICE' ? 'Office' : 'Field'}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div className="relative">

@@ -77,8 +77,11 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
         if (status === 'COMPLETED' && supplier) {
             const { paymentPromiseDate, overrideCreditLimit } = req.body;
 
-            // If override is TRUE, skip these checks
-            if (!paymentPromiseDate && !overrideCreditLimit) {
+            // If override is TRUE or User is Co-Owner/Owner, skip these checks
+            const userRole = req.user?.systemRole?.toLowerCase() || req.user?.role?.toLowerCase() || '';
+            const isExempt = userRole === 'co-owner' || userRole === 'owner' || userRole === 'admin';
+
+            if (!paymentPromiseDate && !overrideCreditLimit && !isExempt) {
                 // 1. Check Credit Period Limit (Overdue Invoices)
                 const overdueBills = await Bill.countDocuments({
                     supplier: supplier._id,

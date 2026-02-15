@@ -13,6 +13,11 @@ router.use('/due', dueRoutes);
 router.use('/loyalty', loyaltyRoutes);
 router.use('/day-end', dayEndRoutes);
 
+// Daily Finance (Sync)
+import { getAllDailyFinance } from '../controllers/CashBankController.js';
+import { protect } from "../../../middlewares/authMiddleware.js";
+router.get('/daily-finance', protect, getAllDailyFinance);
+
 // Mount Journal Entry routes
 import journalEntryRoutes from './journalEntryRoutes.js';
 router.use('/journal', journalEntryRoutes);

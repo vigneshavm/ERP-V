@@ -68,9 +68,11 @@ const SupplierLedger: React.FC = () => {
     }, [suppliers, searchTerm]);
 
     const [startDate, setStartDate] = useState(() => {
-        const date = new Date();
-        date.setDate(1);
-        return date.toISOString().split('T')[0];
+        const now = new Date();
+        // Indian Fiscal Year: April 1 to March 31
+        // If current month is Jan-Mar (0-2), start year is previous year
+        const startYear = now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear();
+        return `${startYear}-04-01`;
     });
     const [endDate, setEndDate] = useState(() => {
         return new Date().toISOString().split('T')[0];

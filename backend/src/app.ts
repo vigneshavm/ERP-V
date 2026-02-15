@@ -139,6 +139,9 @@ app.get("/", (_req, res) => {
 import coreRoutes from "./modules/core/routes/core.routes.js";
 app.use("/api", coreRoutes);
 
+import roleRoutes from "./modules/core/routes/roleRoutes.js";
+app.use("/api/roles", roleRoutes);
+
 import syncRoutes from "./modules/core/routes/syncRoutes.js";
 app.use("/api/sync", syncRoutes);
 
@@ -188,7 +191,7 @@ app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
 
 // HR Module
 import hrRoutes from "./modules/hr/routes/hr.routes.js";
-app.use("/api", hrRoutes); // Employees
+app.use("/api/hr", hrRoutes); // Employees
 
 // MARKETING Module
 import metaRoutes from "./modules/marketing/routes/meta.routes.js";

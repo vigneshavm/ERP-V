@@ -335,8 +335,8 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
             ])
         ]);
 
-        const totalInvoiced = billStats[0]?.totalAmount || 0;
-        const totalPaid = paymentStats[0]?.totalAmount || 0;
+        const totalInvoiced = (billStats[0]?.totalAmount || 0) + (supplier.manualTotalInvoiced || 0);
+        const totalPaid = (paymentStats[0]?.totalAmount || 0) + (supplier.manualTotalPaid || 0);
         const totalDebitNotes = debitNoteStats[0]?.totalAmount || 0;
         const openingBalance = supplier.openingBalance || 0;
 
@@ -351,7 +351,10 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
                 totalAmount: totalInvoiced,
                 totalPaid,
                 netBalance,
-                debitNoteTotal: totalDebitNotes
+                debitNoteTotal: totalDebitNotes,
+                // Explicitly return manual fields for UI editing
+                manualTotalInvoiced: supplier.manualTotalInvoiced || 0,
+                manualTotalPaid: supplier.manualTotalPaid || 0
             }
         });
     } catch (error: any) {

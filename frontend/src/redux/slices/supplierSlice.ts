@@ -27,6 +27,9 @@ export interface Supplier {
     totalAmount?: number;
     totalPaid?: number;
     netBalance?: number;
+    // Manual Overrides
+    manualTotalInvoiced?: number;
+    manualTotalPaid?: number;
     lastPaymentDate?: string;
     pendingAmount?: number;
     billCount?: number;

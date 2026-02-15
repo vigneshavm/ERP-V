@@ -27,7 +27,7 @@ import Employee from '../models/Employee.js';
  */
 export const addEmployee = async (req: Request, res: Response) => {
     try {
-        const { name, role, roleId, mobile, dailyRate, wageType, branchId, sector } = req.body;
+        const { name, role, roleId, mobile, dailyRate, baseSalary, wageType, joiningDate, branchId, sector } = req.body;
         const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
 
         if (!tenantId) {
@@ -47,7 +47,9 @@ export const addEmployee = async (req: Request, res: Response) => {
             roleId,
             mobile,
             dailyRate,
+            baseSalary,
             wageType,
+            joiningDate,
             branchId,
             sector
         });

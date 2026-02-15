@@ -158,11 +158,12 @@ export const Modules = {
     // HR
     LaborManager: () => import("../pages/People/Employees/LaborManager"),
     StaffManager: () => import("../pages/People/Employees/StaffManager"),
+    AllowanceManager: () => import("../pages/People/Employees/AllowanceManager"),
     PayrollDashboard: () => import("../pages/People/Payroll/PayrollDashboard"),
     SalaryStructureManager: () => import("../pages/People/Payroll/SalaryStructureManager"),
     PayrollRuns: () => import("../pages/People/Payroll/PayrollRuns"),
     AttendanceSummaryManager: () => import("../pages/People/Payroll/AttendanceSummaryManager"),
-    PayslipView: () => import("../pages/People/Payroll/PayslipView"),
+    DailyAttendanceBoard: () => import("../pages/People/Employees/DailyAttendanceBoard"),
 };
 
 export const LazyModules = {
@@ -314,11 +315,12 @@ export const LazyModules = {
     // HR
     LaborManager: lazy(Modules.LaborManager),
     StaffManager: lazy(Modules.StaffManager),
+    AllowanceManager: lazy(Modules.AllowanceManager),
     PayrollDashboard: lazy(Modules.PayrollDashboard),
     SalaryStructureManager: lazy(Modules.SalaryStructureManager),
     PayrollRuns: lazy(Modules.PayrollRuns),
     AttendanceSummaryManager: lazy(Modules.AttendanceSummaryManager),
-    PayslipView: lazy(Modules.PayslipView),
+    DailyAttendanceBoard: lazy(Modules.DailyAttendanceBoard),
 };
 
 

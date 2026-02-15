@@ -20,7 +20,8 @@ export interface IUser extends Document {
     subdomain?: string;
     // NEW: Multi-tenancy
     tenantId?: Types.ObjectId;
-    role: "owner" | "manager" | "staff" | "customer";
+    role: "owner" | "manager" | "staff" | "customer" | "superadmin";
+
 
     // Reset Password
     resetPasswordToken?: string | null;

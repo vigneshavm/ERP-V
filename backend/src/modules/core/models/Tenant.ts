@@ -8,6 +8,8 @@ export interface ITenant extends Document {
     ownerId: mongoose.Types.ObjectId;
     status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
     businessType?: string;
+    gstNumber?: string;
+    panNumber?: string;
     address?: {
         street?: string;
         city?: string;
@@ -71,6 +73,16 @@ const tenantSchema = new Schema<ITenant>({
     businessType: {
         type: String,
         required: false
+    },
+    gstNumber: {
+        type: String,
+        trim: true,
+        uppercase: true
+    },
+    panNumber: {
+        type: String,
+        trim: true,
+        uppercase: true
     },
     address: {
         street: { type: String },

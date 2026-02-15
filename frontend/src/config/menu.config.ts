@@ -201,10 +201,11 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'HR',
         path: '/staff',
         children: [
-            { id: 'STAFF_MANAGER', label: 'Directory', icon: Users, module: 'HR', path: '/people/employees' },
-            { id: 'LABOR', label: 'Labor', icon: Wrench, module: 'HR', path: '/people/employees/labor' },
+            { id: 'STAFF_MANAGER', label: 'Staff Management', icon: Users, module: 'HR', path: '/people/employees/labor' },
             { id: 'PAYROLL', label: 'Payroll', icon: DollarSign, module: 'HR', path: '/people/payroll' },
+            { id: 'ALLOWANCE_MANAGER', label: 'Allowances', icon: List, module: 'HR', path: '/people/employees/allowances' },
             { id: 'ATTENDANCE_SUMMARY', label: 'Attendance', icon: Clock, module: 'HR', path: '/people/payroll/attendance' },
+            { id: 'ATTENDANCE_BOARD', label: 'Daily Board', icon: ClipboardList, module: 'HR', path: '/people/attendance' },
         ]
     },
     {

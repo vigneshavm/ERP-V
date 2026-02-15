@@ -206,64 +206,16 @@ export const syncGoogle = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
 
-        // Simulate fetching data from Google API
         // In a real app, this would exchange tokens and fetch from GMB API
+        // Removing simulated data for now
         const simulatedInsights = {
-            views: Math.floor(Math.random() * 5000) + 500,
-            calls: Math.floor(Math.random() * 100) + 10,
-            directions: Math.floor(Math.random() * 200) + 20,
-            websiteClicks: Math.floor(Math.random() * 300) + 50
+            views: 0,
+            calls: 0,
+            directions: 0,
+            websiteClicks: 0
         };
 
-        const simulatedCompleteness = 85;
-
-        // Mock Reviews
-        const mockReviews = [
-            {
-                reviewer: "Arun Kumar",
-                rating: 5,
-                comment: "Excellent service and great collection! consistent quality.",
-                reply: "Thank you Arun! We look forward to serving you again.",
-                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-                profilePhoto: ""
-            },
-            {
-                reviewer: "Priya S",
-                rating: 4,
-                comment: "Good variety but parking was difficult.",
-                reply: "",
-                date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-                profilePhoto: ""
-            },
-            {
-                reviewer: "David Wilson",
-                rating: 5,
-                comment: "Best place in town for authentic wear.",
-                reply: "Thanks David!",
-                date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
-                profilePhoto: ""
-            }
-        ];
-
-        // Mock Posts
-        const mockPosts = [
-            {
-                content: "New Summer Collection is here! Visit us for exclusive discounts.",
-                type: "OFFER",
-                views: 1250,
-                clicks: 45,
-                date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-                imageUrl: "https://placehold.co/300x200/e0e7ff/4338ca?text=Summer+Sale"
-            },
-            {
-                content: "We will be closed this Sunday for maintenance.",
-                type: "UPDATE",
-                views: 800,
-                clicks: 12,
-                date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                imageUrl: ""
-            }
-        ];
+        const simulatedCompleteness = 0;
 
         const profile = await BusinessProfile.findOneAndUpdate(
             { userId },
@@ -272,15 +224,11 @@ export const syncGoogle = async (req: Request, res: Response) => {
                     insights: simulatedInsights,
                     completeness: simulatedCompleteness,
                     isConnected: true,
-                    verified: true, // Assuming sync implies verification for this demo
+                    verified: false,
                     lastSyncAt: new Date(),
-                    reviews: mockReviews,
-                    posts: mockPosts,
-                    photos: [
-                        { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=300", type: "Interior", uploadedAt: new Date() },
-                        { url: "https://images.unsplash.com/photo-1522071823991-b19c72f140ef?auto=format&fit=crop&q=80&w=300", type: "Team", uploadedAt: new Date() },
-                        { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=300", type: "Exterior", uploadedAt: new Date() }
-                    ]
+                    reviews: [],
+                    posts: [],
+                    photos: []
                 }
             },
             { new: true }
@@ -295,7 +243,7 @@ export const syncGoogle = async (req: Request, res: Response) => {
 
         res.status(200).json({
             success: true,
-            message: "Google Business Profile successfully synced.",
+            message: "Google Business Profile sync initiated (Real API integration pending).",
             data: profile
         });
     } catch (error: any) {

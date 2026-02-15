@@ -8,15 +8,11 @@ import { setUser } from '../redux/slices/authSlice';
 import { TenantUser } from "../types/tenant";
 import { useTenantDataMappers } from './useTenantDataMappers';
 import { fetchTenantsRaw, fetchBranchesRaw, fetchEmployeesRaw } from './tenantQueries';
-import { DATA_MODE } from "../services/dataSource";
 
 export const useTenantData = (user: any) => {
     const dispatch = useDispatch();
     const { mapTenant, mapBranch, mapEmployee } = useTenantDataMappers();
 
-    const isDemo = DATA_MODE === 'DEMO';
-    // const isSupabase = APP_CONFIG.USE_SUPABASE || isDemo; // Usage removed
-    // const isSupabase = APP_CONFIG.USE_SUPABASE || isDemo; // Usage removed
     const shouldFetch = !!user; // Only fetch if user is logged in
 
     // 1. Fetch Tenants
@@ -85,8 +81,8 @@ export const useTenantData = (user: any) => {
         const mappedEmployees = rawEmployees.map(mapEmployee);
         dispatch(setEmployees(mappedEmployees));
 
-        // CRITICAL: Skip session overwrite in DEMO mode to prevent role downgrades
-        if (user && user.id && !isDemo) {
+        // CRITICAL: Prevent session overwrite issues
+        if (user && user.id) {
             const currentUserInList = mappedEmployees.find((me: any) => me.id === user.id);
             if (currentUserInList && currentUserInList.branchId !== user.branchId) {
                 const updatedUser: TenantUser = {
@@ -104,5 +100,5 @@ export const useTenantData = (user: any) => {
                 dispatch(setUser(updatedUser as any));
             }
         }
-    }, [rawEmployees, user?.id, dispatch, isDemo, mapEmployee]);
+    }, [rawEmployees, user?.id, dispatch, mapEmployee]);
 };

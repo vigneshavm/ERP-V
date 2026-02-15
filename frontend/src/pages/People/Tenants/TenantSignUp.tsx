@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { setUser } from '../../../redux/slices/authSlice';
 import {
     Building2,
     User,
@@ -53,6 +54,14 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
     const [businessName, setBusinessName] = useState('');
     const [sector, setSector] = useState<string>(Sector.GENERAL);
     const [subdomain, setSubdomain] = useState('');
+
+    // Enhanced Business Details
+    const [gstIn, setGstIn] = useState('');
+    const [pan, setPan] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zipCode, setZipCode] = useState('');
 
     // Step 2: Owner Account
     const [ownerName, setOwnerName] = useState('');
@@ -123,43 +132,38 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
         setError('');
 
         try {
-            if (DATA_MODE === 'DEMO') {
-                // Use registrationUtil for demo mode
-                registrationUtil.registerTenant({
-                    businessName: businessName,
-                    businessType: 'Retail',
-                    sector: sector,
-                    city: 'Default City',
-                    state: 'Default State',
-                    modules: ['DASHBOARD', 'POS', 'INVENTORY', 'CUSTOMERS', 'SALES', 'GROW'],
-                    adminName: ownerName,
-                    adminEmail: ownerEmail,
-                    adminMobile: ownerMobile,
-                    adminPassword: ownerPassword,
-                    preferredLogin: 'email',
-                    employeeCount: 1,
-                    branchCount: 1
-                });
-            } else {
-                // Add to Backend (which handles DB)
+            // Add to Backend
+            const response = await api.post('/api/auth/register', {
+                name: ownerName,
+                email: ownerEmail,
+                password: ownerPassword,
+                phone: ownerMobile,
+                shopName: businessName,
+                sector: sector,
+                subdomain: subdomain,
+                gstIn,
+                pan,
+                address,
+                city,
+                state,
+                zipCode
+            });
 
-                await api.post('/auth/register-tenant', {
-                    businessName,
-                    sector,
-                    subdomain,
-                    ownerName,
-                    ownerEmail,
-                    ownerMobile,
-                    ownerPassword
-                });
+            if (response.data) {
+                // Auto-login the user
+                localStorage.setItem('user', JSON.stringify(response.data));
+                if (response.data.tenantId) {
+                    localStorage.setItem('erp_current_tenant', response.data.tenantId);
+                }
+                dispatch(setUser(response.data));
+
+                // Success - redirect to home (which will now see the user as logged in)
+                onComplete();
             }
-
-            // Success - redirect to login
-            onComplete();
 
         } catch (err: any) {
             console.error('Registration error:', err);
-            setError(err.message || 'Failed to create account. Please try again.');
+            setError(err.response?.data?.message || err.message || 'Failed to create account. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -251,23 +255,89 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         ))}
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Store URL</label>
-                                    <div className="relative">
-                                        <Globe className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                            {/* Address & Tax Details */}
+                            <div className="space-y-4 pt-4 border-t border-white/10">
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Location & Tax Details</h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="group">
                                         <input
                                             type="text"
-                                            value={subdomain}
-                                            onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                                            placeholder="yourstore"
-                                            className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            value={address}
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            placeholder="Street Address"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
-                                        <span className="absolute right-4 top-4 text-slate-500 text-sm font-medium">.app.com</span>
+                                    </div>
+                                    <div className="group">
+                                        <input
+                                            type="text"
+                                            value={city}
+                                            onChange={(e) => setCity(e.target.value)}
+                                            placeholder="City"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        />
+                                    </div>
+                                    <div className="group">
+                                        <input
+                                            type="text"
+                                            value={state}
+                                            onChange={(e) => setState(e.target.value)}
+                                            placeholder="State"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        />
+                                    </div>
+                                    <div className="group">
+                                        <input
+                                            type="text"
+                                            value={zipCode}
+                                            onChange={(e) => setZipCode(e.target.value)}
+                                            placeholder="ZIP / Pincode"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="group">
+                                        <input
+                                            type="text"
+                                            value={gstIn}
+                                            onChange={(e) => setGstIn(e.target.value.toUpperCase())}
+                                            placeholder="GSTIN (Optional)"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        />
+                                    </div>
+                                    <div className="group">
+                                        <input
+                                            type="text"
+                                            value={pan}
+                                            onChange={(e) => setPan(e.target.value.toUpperCase())}
+                                            placeholder="PAN (Optional)"
+                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        />
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="group">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Store URL</label>
+                                <div className="relative">
+                                    <Globe className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                    <input
+                                        type="text"
+                                        value={subdomain}
+                                        onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                                        placeholder="yourstore"
+                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                    />
+                                    <span className="absolute right-4 top-4 text-slate-500 text-sm font-medium">.app.com</span>
+                                </div>
+                            </div>
                         </div>
+
                     )}
 
                     {step === 2 && (
@@ -447,7 +517,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

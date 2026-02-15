@@ -61,22 +61,22 @@ const memoryStore = new Map();
  */
 const LIMITS = {
     IP: {
-        max: 5,
+        max: 100,
         windowMs: 15 * 60 * 1000, // 15 minutes
         keyPrefix: 'rl:ip:',
     },
     ACCOUNT: {
-        max: 5,
+        max: 100,
         windowMs: 15 * 60 * 1000, // 15 minutes
         keyPrefix: 'rl:account:',
     },
     DEVICE: {
-        max: 3,
+        max: 100,
         windowMs: 5 * 60 * 1000, // 5 minutes
         keyPrefix: 'rl:device:',
     },
     GLOBAL: {
-        max: process.env.NODE_ENV === 'test' ? 1000 : 100, // Higher limit in tests to prevent interference
+        max: process.env.NODE_ENV === 'test' ? 1000 : 500, // Higher limit in tests to prevent interference
         windowMs: 60 * 1000, // 1 minute (spike detection)
         keyPrefix: 'rl:global:',
     },

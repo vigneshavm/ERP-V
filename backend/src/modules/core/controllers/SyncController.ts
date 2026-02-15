@@ -59,10 +59,10 @@ export const getDevices = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const addDevice = asyncHandler(async (_req: Request, res: Response) => {
-    // Generate QR or similar
+    // Real QR generation logic should be added here
     res.json({
         success: true,
-        data: { qrCode: "mock-qr-code-data", expiry: new Date(Date.now() + 5 * 60000).toISOString() }
+        data: { qrCode: null, expiry: null }
     });
 });
 
@@ -70,13 +70,13 @@ export const getBackups = asyncHandler(async (req: Request, res: Response) => {
     const tenantId = (req as any).user?.tenantId;
     const backups = await Backup.find({ tenantId }).sort({ createdAt: -1 });
 
-    // Should verify if we have a BackupsSettings model, otherwise returning defaults or derived
+    // Using defaults instead of hardcoded true for demo
     const config = {
-        autoBackupEnabled: true,
-        scheduleTime: '02:00',
-        retentionDays: 30,
+        autoBackupEnabled: false,
+        scheduleTime: '00:00',
+        retentionDays: 7,
         destination: 'LOCAL',
-        modulesToBackup: { invoices: true }
+        modulesToBackup: {}
     };
 
     res.json({
@@ -84,7 +84,7 @@ export const getBackups = asyncHandler(async (req: Request, res: Response) => {
         data: {
             config,
             history: backups,
-            storage: { used: 0, total: 5368709120, warningThreshold: 80 } // 5GB Mock total
+            storage: { used: 0, total: 0, warningThreshold: 80 }
         }
     });
 });

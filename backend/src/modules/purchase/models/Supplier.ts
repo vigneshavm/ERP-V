@@ -12,6 +12,8 @@ export interface ISupplier extends Document {
     gstNo: string;
     panNo?: string;
     supplierType: 'manufacturer' | 'wholesaler' | 'distributor' | 'retailer';
+    manualTotalInvoiced?: number;
+    manualTotalPaid?: number;
     openingBalance: number;
     balanceType: 'payable' | 'receivable';
     creditPeriod: number;
@@ -57,6 +59,9 @@ const SupplierSchema: Schema = new Schema({
         enum: ['manufacturer', 'wholesaler', 'distributor', 'retailer', 'other'],
         default: 'manufacturer'
     },
+    // Manual overrides for historical data migration
+    manualTotalInvoiced: { type: Number, default: 0 },
+    manualTotalPaid: { type: Number, default: 0 },
     openingBalance: { type: Number, default: 0 },
     balanceType: {
         type: String,

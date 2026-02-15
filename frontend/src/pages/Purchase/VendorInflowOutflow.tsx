@@ -346,52 +346,14 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             )}
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* Total Inflow */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-blue-100 dark:border-blue-900/30 rounded-xl p-5 relative overflow-hidden">
-                    <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp className="w-4 h-4 text-blue-500" />
-                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Total Inflow</span>
-                    </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalInflow)}</span>
-                </div>
-
-                {/* Total Outflow */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-rose-100 dark:border-rose-900/30 rounded-xl p-5 relative overflow-hidden">
-                    <div className="flex items-center gap-2 mb-1">
-                        <TrendingDown className="w-4 h-4 text-rose-500" />
-                        <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Total Outflow</span>
-                    </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalOutflow)}</span>
-                </div>
-
-                {/* Total Closing Balance */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-orange-100 dark:border-orange-900/30 rounded-xl p-5 relative overflow-hidden">
-                    <div className="flex items-center gap-2 mb-1">
-                        <FileText className="w-4 h-4 text-orange-500" />
-                        <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wide">Closing Balance</span>
-                    </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalClosingBalance)}</span>
-                </div>
-
-                {/* Net Period Change */}
-                <div className={`bg-white dark:bg-neutral-800 border-2 rounded-xl p-5 relative overflow-hidden ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'border-amber-100 dark:border-amber-900/30' : 'border-emerald-100 dark:border-emerald-900/30'}`}>
-                    <div className="flex items-center gap-2 mb-1">
-                        <DollarSign className={`w-4 h-4 ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-500' : 'text-emerald-500'}`} />
-                        <span className={`text-xs font-bold uppercase tracking-wide ${(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal) >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>Net Change</span>
-                    </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal)}</span>
-                </div>
-
-                {/* Active Suppliers */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl p-5 relative overflow-hidden">
-                    <div className="flex items-center gap-2 mb-1">
-                        <Users className="w-4 h-4 text-purple-500" />
-                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Active Suppliers</span>
-                    </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{displayTotals.vendorCount}</span>
-                </div>
-            </div>
+            <SupplierStatsCards
+                variant="inflow"
+                totalInflow={displayTotals.totalInflow}
+                totalOutflow={displayTotals.totalOutflow}
+                totalClosingBalance={displayTotals.totalClosingBalance}
+                netChange={displayTotals.totalInflow - displayTotals.totalOutflow - displayTotals.debitNoteTotal}
+                activeSuppliers={displayTotals.vendorCount}
+            />
 
             {/* Filters */}
             <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-4 mb-6">

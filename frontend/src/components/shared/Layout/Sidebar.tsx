@@ -89,8 +89,21 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
         // High-level rule: Access requires User Permission AND Tenant Module
         if (!isBypassUser) {
-            if (!checkAccess(item.id)) return null;
-            if (!checkModuleAccess(item.module)) return null;
+            const hasRoleAccess = checkAccess(item.id);
+            const hasModuleAccess = checkModuleAccess(item.module);
+
+            if (item.id === 'PURCHASE' || item.id === 'DASHBOARD') {
+                console.log(`Sidebar Debug [${item.id}]:`, {
+                    hasRoleAccess,
+                    hasModuleAccess,
+                    userRole: user?.role,
+                    rolePermissionCheck: checkAccess(item.id),
+                    moduleCheck: checkModuleAccess(item.module)
+                });
+            }
+
+            if (!hasRoleAccess) return null;
+            if (!hasModuleAccess) return null;
         }
 
         if (item.children) {

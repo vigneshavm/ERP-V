@@ -8,10 +8,8 @@ import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, UserCircle, Eye, EyeOf
 
 import { Sector, SystemRole } from "../../types/common";
 import { Tenant, TenantUser, DbRoleCode } from "../../types/tenant";
-import { setSession } from "../../utils/session";
 import api from "../../services/api.js";
-import { DATA_MODE } from "../../services/dataSource";
-import { getTable } from "../../services/dataSource";
+import { setSession } from "../../utils/session";
 
 interface LoginProps {
     tenant: Tenant | null;
@@ -68,81 +66,41 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
         }
 
         try {
-            if (DATA_MODE === 'DEMO') {
-                const employees = await getTable('tenant_users');
-                const demoUser = employees.find((e: any) =>
-                    (e.email === cleanIdentity || e.id === cleanIdentity || e.mobile === cleanIdentity) &&
-                    (e.password === password || password === 'demo123') &&
-                    e.tenant_id === tenant.id
-                );
+            const response = await api.post('/auth/login', {
+                tenantId: tenant.id,
+                identity: cleanIdentity,
+                password: password
+            });
 
-                if (!demoUser) {
-                    setError("Invalid demo credentials.");
-                    setIsLoading(false);
-                    return;
-                }
+            const data = response.data;
 
-                const roleCode = demoUser.role_id?.toLowerCase();
-                let systemRole: SystemRole = 'Staff';
-                if (roleCode === 'admin') systemRole = 'Admin';
-                else if (roleCode === 'owner') systemRole = 'Owner';
-                else if (roleCode === 'manager') systemRole = 'Manager';
-
-                const sessionUser: any = {
-                    _id: demoUser.id,
-                    token: 'demo-token',
-                    id: demoUser.id,
-                    tenantId: demoUser.tenant_id,
-                    fullName: demoUser.full_name,
-                    name: demoUser.full_name,
-                    mobile: demoUser.mobile || '',
-                    email: demoUser.email || '',
-                    role: demoUser.role_id || 'Staff',
-                    roleId: demoUser.role_id,
-                    systemRole: systemRole,
-                    sector: allowedSector,
-                    branchId: demoUser.branch_id || ''
-                };
-
-                setSession(sessionUser, 'demo-token');
-                dispatch(setUser(sessionUser));
-            } else {
-                const response = await api.post('/auth/login', {
-                    tenantId: tenant.id,
-                    identity: cleanIdentity,
-                    password: password
-                });
-
-                const data = response.data;
-
-                if (!data || !data.success || !data.user) {
-                    setError(data?.message || "Invalid credentials.");
-                    setIsLoading(false);
-                    return;
-                }
-
-                const apiUser = data.user;
-                let systemRole: SystemRole = 'Staff';
-
-                if (apiUser.role) {
-                    const code = apiUser.role.code?.toLowerCase();
-                    if (code === DbRoleCode.OWNER) systemRole = 'Owner';
-                    else if (code === DbRoleCode.ADMIN) systemRole = 'Admin';
-                    else if (code === DbRoleCode.MANAGER) systemRole = 'Manager';
-                }
-
-                const sessionUser: any = {
-                    ...apiUser,
-                    id: apiUser._id,
-                    name: apiUser.fullName,
-                    systemRole: systemRole,
-                    sector: allowedSector,
-                    tenantId: tenant.id
-                };
-
-                setSession(sessionUser, apiUser.token);
-                dispatch(setUser(apiUser));
+            if (!data || !data.success || !data.user) {
+                setError(data?.message || "Invalid credentials.");
+                setIsLoading(false);
+                return;
             }
+
+            const apiUser = data.user;
+            let systemRole: SystemRole = 'Staff';
+
+            if (apiUser.role) {
+                const code = apiUser.role.code?.toLowerCase();
+                if (code === DbRoleCode.OWNER) systemRole = 'Owner';
+                else if (code === DbRoleCode.ADMIN) systemRole = 'Admin';
+                else if (code === DbRoleCode.MANAGER) systemRole = 'Manager';
+            }
+
+            const sessionUser: any = {
+                ...apiUser,
+                id: apiUser._id,
+                name: apiUser.fullName,
+                systemRole: systemRole,
+                sector: allowedSector,
+                tenantId: tenant.id
+            };
+
+            setSession(sessionUser, apiUser.token);
+            dispatch(setUser(apiUser));
         } catch (err: any) {
             console.error('Login error:', err);
             setError(err.response?.data?.message || "Connection failed. Please check your internet.");

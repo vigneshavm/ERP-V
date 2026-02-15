@@ -97,16 +97,26 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
         if (path === '/') {
             if (tabParam) {
-                // If we have a settings tab param, ensure we show the settings view
-                if (activeTab !== 'SETTINGS') {
-                    dispatch(setActiveTab('SETTINGS'));
-                }
+                if (activeTab !== 'SETTINGS') dispatch(setActiveTab('SETTINGS'));
             } else if (activeTab === 'DASHBOARD' || !activeTab) {
-                // Only default to DASHBOARD if we don't have a tab param and no specific tab is active
-                // However, the original logic forced DASHBOARD on mount/path change. 
-                // We should only force it if we are "reset" to root without state.
                 dispatch(setActiveTab('DASHBOARD'));
             }
+        } else if (path.startsWith('/people/payroll')) {
+            if (path.includes('/structure')) {
+                if (activeTab !== 'PAYROLL') dispatch(setActiveTab('PAYROLL')); // Structure falls under Payroll context mostly
+            } else if (path.includes('/attendance')) {
+                if (activeTab !== 'ATTENDANCE_SUMMARY') dispatch(setActiveTab('ATTENDANCE_SUMMARY'));
+            } else {
+                if (activeTab !== 'PAYROLL') dispatch(setActiveTab('PAYROLL'));
+            }
+        } else if (path.startsWith('/people/employees')) {
+            if (path.includes('/allowances')) {
+                if (activeTab !== 'ALLOWANCE_MANAGER') dispatch(setActiveTab('ALLOWANCE_MANAGER'));
+            } else {
+                if (activeTab !== 'STAFF_MANAGER') dispatch(setActiveTab('STAFF_MANAGER'));
+            }
+        } else if (path.startsWith('/people/attendance')) {
+            if (activeTab !== 'ATTENDANCE_BOARD') dispatch(setActiveTab('ATTENDANCE_BOARD'));
         }
     }, [location.pathname, location.search, dispatch]);
 
@@ -321,6 +331,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                         // HR
                         case 'LABOR': return <LazyModules.LaborManager />;
+                        case 'ALLOWANCE_MANAGER': return <LazyModules.AllowanceManager />;
                         case 'DAILY': return <LazyModules.DailyFinanceTracker />;
                         case 'STOREFRONT': return <LazyModules.Storefront />;
 
@@ -557,7 +568,16 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             } />
                             <Route path="*" element={renderContent()} />
                             <Route path="/people/employees" element={
-                                <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.StaffManager /></Suspense>
+                                <Navigate to="/people/employees/labor" replace />
+                            } />
+                            <Route path="/people/employees/labor" element={
+                                <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.LaborManager /></Suspense>
+                            } />
+                            <Route path="/people/employees/allowances" element={
+                                <Suspense fallback={<div>Loading Allowances...</div>}><LazyModules.AllowanceManager /></Suspense>
+                            } />
+                            <Route path="/people/attendance" element={
+                                <Suspense fallback={<div>Loading...</div>}><LazyModules.DailyAttendanceBoard /></Suspense>
                             } />
                             <Route path="/people/payroll" element={
                                 <Suspense fallback={<div>Loading Payroll...</div>}><LazyModules.PayrollDashboard /></Suspense>

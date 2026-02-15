@@ -28,6 +28,7 @@ import {
     FileSpreadsheet,
     ArrowUpDown,
     ArrowUp,
+    CheckSquare,
     ArrowDown
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
@@ -50,6 +51,10 @@ const PurchaseRegister: React.FC = () => {
     const [vendorFilter, setVendorFilter] = useState('ALL');
     const [amountMin, setAmountMin] = useState('');
     const [amountMax, setAmountMax] = useState('');
+
+    // View Mode State
+    const [viewMode, setViewMode] = useState<'ALL' | 'BILLED' | 'UNBILLED' | 'DRAFT'>('ALL');
+
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     // Sort State
@@ -183,15 +188,46 @@ const PurchaseRegister: React.FC = () => {
         });
     }, [orders, searchTerm, statusFilter, dateFrom, dateTo, vendorFilter, amountMin, amountMax, sortColumn, sortDirection]);
 
+    // Apply View Mode
+    const displayOrders = useMemo(() => {
+        switch (viewMode) {
+            case 'BILLED':
+                return filteredOrders.filter(o =>
+                    o.status === 'COMPLETED' ||
+                    o.status === 'Billed' ||
+                    o.status === 'Paid' ||
+                    o.status === 'Converted'
+                );
+            case 'UNBILLED':
+                return filteredOrders.filter(o =>
+                    o.status === 'Pending' ||
+                    o.status === 'Pending Approval' ||
+                    o.status === 'Approved' ||
+                    o.status === 'Partial Receipt' || // Corrected from Partially Received
+                    o.status === 'Fully Received' ||
+                    o.status === 'RECEIVED'
+                );
+            case 'DRAFT':
+                return filteredOrders.filter(o => o.status === 'Draft');
+            case 'ALL':
+            default:
+                return filteredOrders;
+        }
+    }, [filteredOrders, viewMode]);
+
     // Pagination Logic
-    const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+    const totalPages = Math.ceil(displayOrders.length / itemsPerPage);
     const paginatedOrders = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
-        return filteredOrders.slice(start, start + itemsPerPage);
-    }, [filteredOrders, currentPage, itemsPerPage]);
+        return displayOrders.slice(start, start + itemsPerPage);
+    }, [displayOrders, currentPage, itemsPerPage]);
 
-    // Stats
+    // Stats (Calculated on Base Filtered Orders, NOT affected by 'Billed Only' toggle)
     const totalPurchasesValue = filteredOrders.reduce((acc, o) => acc + (o.totalAmount || o.total_amount || 0), 0);
+    const totalBilledValue = filteredOrders
+        .filter(o => o.status === 'COMPLETED')
+        .reduce((acc, o) => acc + (o.totalAmount || o.total_amount || 0), 0);
+
     const pendingCount = filteredOrders.filter(o => o.status === 'Pending' || o.status === 'Pending Approval' || o.status === 'Draft').length;
     const approvedCount = filteredOrders.filter(o => o.status === 'Approved' || o.status === 'Fully Received').length;
 
@@ -226,7 +262,7 @@ const PurchaseRegister: React.FC = () => {
         const doc = new jsPDF();
         doc.text("Purchase Register", 14, 15);
 
-        const tableData = filteredOrders.map(o => {
+        const tableData = displayOrders.map(o => {
             const vName = (o.vendorId && typeof o.vendorId === 'object') ? (o.vendorId.businessName || o.vendorId.name) : (o.vendor_name || 'N/A');
             return [
                 new Date(o.date || o.po_date).toLocaleDateString(),
@@ -249,7 +285,7 @@ const PurchaseRegister: React.FC = () => {
 
     const handleExportCSV = () => {
         const headers = ["Date,Number #,Vendor,Status,Items,Amount,Created By"];
-        const rows = filteredOrders.map(o => {
+        const rows = displayOrders.map(o => {
             const vName = (o.vendorId && typeof o.vendorId === 'object') ? (o.vendorId.businessName || o.vendorId.name) : (o.vendor_name || 'N/A');
             const created = (o.createdBy && typeof o.createdBy === 'object') ? o.createdBy.name : (o.created_by || '-');
             return `${new Date(o.date || o.po_date).toLocaleDateString()},${o.purchaseNumber || o.po_number},"${vName}",${o.status},${o.items.length},${o.totalAmount || o.total_amount || 0},${created}`;
@@ -264,6 +300,7 @@ const PurchaseRegister: React.FC = () => {
         link.click();
         document.body.removeChild(link);
     };
+
 
     return (
         <Layout>
@@ -282,6 +319,16 @@ const PurchaseRegister: React.FC = () => {
                             <button onClick={handleExportPDF} className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-red-600" /> PDF
                             </button>
+                            <select
+                                value={viewMode}
+                                onChange={(e) => setViewMode(e.target.value as any)}
+                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 outline-none focus:ring-2 focus:ring-primary/20"
+                            >
+                                <option value="ALL">All Orders</option>
+                                <option value="BILLED">Billed / Completed</option>
+                                <option value="UNBILLED">Unbilled / Pending</option>
+                                <option value="DRAFT">Drafts</option>
+                            </select>
                             <button
                                 onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
                                 className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
@@ -302,6 +349,13 @@ const PurchaseRegister: React.FC = () => {
                         iconColor="text-primary"
                     />
                     <StatsCard
+                        title="Total Billed"
+                        value={`₹${totalBilledValue.toLocaleString()}`}
+                        icon={<CheckSquare />}
+                        iconBgColor="bg-emerald-100 dark:bg-emerald-900/30"
+                        iconColor="text-emerald-600 dark:text-emerald-400"
+                    />
+                    <StatsCard
                         title="Transactions"
                         value={filteredOrders.length}
                         icon={<FileText />}
@@ -315,6 +369,7 @@ const PurchaseRegister: React.FC = () => {
                         iconBgColor="bg-warning/10"
                         iconColor="text-warning"
                     />
+
                 </div>
 
                 {/* Advanced Filters */}
@@ -458,8 +513,9 @@ const PurchaseRegister: React.FC = () => {
                     {/* Pagination */}
                     <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
                         <div className="text-xs text-muted">
-                            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} entries
+                            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, displayOrders.length)} of {displayOrders.length} entries
                         </div>
+
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}

@@ -15,6 +15,31 @@ const initialLaborState: LaborState = {
     payments: [],
 };
 
+export const fetchAdvances = createAsyncThunk(
+    'labor/fetchAdvances',
+    async (employeeId: string | undefined, thunkAPI) => {
+        try {
+            const url = employeeId ? `/api/hr/advances/employee/${employeeId}` : '/api/hr/advances';
+            const response = await api.get(url);
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch advances');
+        }
+    }
+);
+
+export const createAdvanceAction = createAsyncThunk(
+    'labor/createAdvance',
+    async (data: { employeeId: string; amount: number; type: string; notes?: string }, thunkAPI) => {
+        try {
+            const response = await api.post('/api/hr/advances', data);
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to record advance');
+        }
+    }
+);
+
 export const updateEmployee = createAsyncThunk(
     'labor/updateEmployee',
     async ({ id, data }: { id: string; data: Partial<Employee> }, thunkAPI) => {
@@ -25,7 +50,7 @@ export const updateEmployee = createAsyncThunk(
             // Assuming the endpoint for updating any user (as admin) is /api/users/:id
             // If it's specifically for labor/employees, it might be /api/labor/:id
             // Using /api/users/:id as a safe bet based on authSlice
-            const response = await api.put(`/api/users/${id}`, data, {
+            const response = await api.put(`/api/hr/employees/${id}`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             return response.data;
@@ -41,7 +66,7 @@ export const updateEmployee = createAsyncThunk(
 
 const laborSlice = createSlice({
     name: 'labor',
-    initialState: loadState('labor_v2', initialLaborState),
+    initialState: initialLaborState,
     reducers: {
         addEmployee: (state, action: PayloadAction<Employee>) => {
             state.employees.push(action.payload);
@@ -62,13 +87,34 @@ const laborSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(updateEmployee.fulfilled, (state, action) => {
-                const index = state.employees.findIndex((e: Employee) => e.id === action.meta.arg.id || e._id === action.meta.arg.id);
-                if (index !== -1) {
-                    state.employees[index] = { ...state.employees[index], ...action.meta.arg.data };
-                }
-            });
+        builder.addCase(updateEmployee.fulfilled, (state, action) => {
+            const index = state.employees.findIndex((e: Employee) => e.id === action.meta.arg.id || e._id === action.meta.arg.id);
+            if (index !== -1) {
+                state.employees[index] = { ...state.employees[index], ...action.meta.arg.data };
+            }
+        })
+            .addCase(fetchAdvances.fulfilled, (state, action) => {
+                state.payments = action.payload.map((p: any) => ({
+                    id: p._id,
+                    employeeId: p.employeeId?._id || p.employeeId,
+                    amount: p.amount,
+                    date: p.date,
+                    type: p.type,
+                    note: p.notes
+                }));
+            })
+            .addCase(createAdvanceAction.fulfilled, (state, action) => {
+                const p = action.payload;
+                state.payments.unshift({
+                    id: p._id,
+                    employeeId: p.employeeId,
+                    amount: p.amount,
+                    date: p.date,
+                    type: p.type,
+                    note: p.notes
+                });
+            }
+            );
     }
 });
 

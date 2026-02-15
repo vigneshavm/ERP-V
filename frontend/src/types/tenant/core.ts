@@ -3,10 +3,11 @@ import { Sector, ModuleType, SystemRole } from '../common';
 import { SettingsState } from '../settings';
 
 export enum DbRoleCode {
-    OWNER = 'OWNER',
-    ADMIN = 'ADMIN',
-    MANAGER = 'MANAGER',
-    STAFF = 'STAFF'
+    OWNER = SystemRole.OWNER,
+    ADMIN = SystemRole.ADMIN,
+    MANAGER = SystemRole.MANAGER,
+    STAFF = SystemRole.STAFF,
+    CO_OWNER = SystemRole.CO_OWNER
 }
 
 export interface RegionConfig {

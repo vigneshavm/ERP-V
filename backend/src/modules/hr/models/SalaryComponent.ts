@@ -4,7 +4,7 @@ export interface ISalaryComponent extends Document {
     tenantId: mongoose.Types.ObjectId;
     name: string; // e.g., Basic, HRA, Provident Fund
     type: 'EARNING' | 'DEDUCTION';
-    calculationType: 'FIXED' | 'PERCENTAGE_OF_BASIC';
+    calculationType: 'FLAT' | 'PERCENTAGE';
     defaultValue?: number; // e.g., 0 or percentage value
     isActive: boolean;
     isTaxable: boolean;
@@ -29,8 +29,8 @@ const salaryComponentSchema = new Schema<ISalaryComponent>(
         },
         calculationType: {
             type: String,
-            enum: ['FIXED', 'PERCENTAGE_OF_BASIC'],
-            default: 'FIXED',
+            enum: ['FLAT', 'PERCENTAGE'],
+            default: 'FLAT',
         },
         defaultValue: {
             type: Number,

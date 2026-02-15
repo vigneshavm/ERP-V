@@ -26,12 +26,16 @@ export interface SalaryStructure {
 
 export interface PayrollRun {
     _id: string;
-    month: number;
-    year: number;
-    totalPayout: number;
+    periodStart: string;
+    periodEnd: string;
+    totalAmount: number;
     status: 'DRAFT' | 'APPROVED' | 'PAID';
-    generatedAt: string;
-    runDate: string;
+    processedDate: string;
+    createdAt: string;
+    month?: number; // Optional for backward compat
+    year?: number;  // Optional for backward compat
+    totalPayout?: number; // Optional alias
+    runDate?: string; // Optional alias
 }
 
 export interface AttendanceSummary {
@@ -110,6 +114,36 @@ export const createSalaryComponent = createAsyncThunk(
     }
 );
 
+export const updateSalaryComponent = createAsyncThunk(
+    'payroll/updateComponent',
+    async ({ id, data }: { id: string, data: Partial<SalaryComponent> }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.put(`${API_URL}/components/${id}`, data, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to update component');
+        }
+    }
+);
+
+export const deleteSalaryComponent = createAsyncThunk(
+    'payroll/deleteComponent',
+    async (id: string, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            await api.delete(`${API_URL}/components/${id}`, getConfig(token));
+            return id;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to delete component');
+        }
+    }
+);
+
 export const fetchSalaryStructure = createAsyncThunk(
     'payroll/fetchStructure',
     async (employeeId: string, thunkAPI) => {
@@ -121,6 +155,21 @@ export const fetchSalaryStructure = createAsyncThunk(
             return { employeeId, structure: response.data.data };
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch structure');
+        }
+    }
+);
+
+export const fetchAllSalaryStructures = createAsyncThunk(
+    'payroll/fetchAllStructures',
+    async (_, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.get(`${API_URL}/structures`, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch all structures');
         }
     }
 );
@@ -140,6 +189,21 @@ export const saveSalaryStructure = createAsyncThunk(
     }
 );
 
+export const bulkUpdateSalaryStructure = createAsyncThunk(
+    'payroll/bulkUpdateStructure',
+    async (data: { componentId: string, amount: number }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.post(`${API_URL}/structures/bulk`, data, getConfig(token)); // Corrected route
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to bulk update structure');
+        }
+    }
+);
+
 export const fetchPayrollRuns = createAsyncThunk(
     'payroll/fetchRuns',
     async (_, thunkAPI) => {
@@ -155,9 +219,12 @@ export const fetchPayrollRuns = createAsyncThunk(
     }
 );
 
+
+
+
 export const generatePayrollRun = createAsyncThunk(
-    'payroll/generateRun',
-    async (data: { month: number; year: number }, thunkAPI) => {
+    'payroll/generate',
+    async (data: { month: number, year: number }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
             const token = state.auth.user?.token;
@@ -166,6 +233,52 @@ export const generatePayrollRun = createAsyncThunk(
             return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to generate payroll');
+        }
+    }
+);
+
+export const approvePayroll = createAsyncThunk(
+    'payroll/approve',
+    async (id: string, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.put(`${API_URL}/runs/${id}/approve`, {}, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to approve payroll');
+        }
+    }
+);
+
+export const payPayroll = createAsyncThunk(
+    'payroll/pay',
+    async ({ id, accountId, paymentMode }: { id: string; accountId: string; paymentMode: string }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.post(`${API_URL}/runs/${id}/pay`, { accountId, paymentMode }, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to pay payroll');
+        }
+    }
+);
+
+
+export const processIndividualPayout = createAsyncThunk(
+    'payroll/processIndividualPayout',
+    async (data: { employeeId: string, month: number, year: number, paymentMode: string, accountId: string, overrideWorkedDays?: number, force?: boolean }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as RootState;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.post(`${API_URL}/payout`, data, getConfig(token));
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to process payout');
         }
     }
 );
@@ -219,11 +332,25 @@ const payrollSlice = createSlice({
             .addCase(createSalaryComponent.fulfilled, (state, action) => {
                 state.components.push(action.payload);
             })
+            .addCase(updateSalaryComponent.fulfilled, (state, action) => {
+                const index = state.components.findIndex(c => c._id === action.payload._id);
+                if (index >= 0) state.components[index] = action.payload;
+            })
+            .addCase(deleteSalaryComponent.fulfilled, (state, action) => {
+                state.components = state.components.filter(c => c._id !== action.payload);
+            })
             // Structure
             .addCase(fetchSalaryStructure.fulfilled, (state, action) => {
                 if (action.payload.structure) {
                     state.structures[action.payload.employeeId] = action.payload.structure;
                 }
+            })
+            .addCase(fetchAllSalaryStructures.fulfilled, (state, action: PayloadAction<SalaryStructure[]>) => {
+                const newStructures: Record<string, SalaryStructure> = {};
+                action.payload.forEach(s => {
+                    newStructures[s.employeeId] = s;
+                });
+                state.structures = newStructures;
             })
             .addCase(saveSalaryStructure.fulfilled, (state, action) => {
                 state.structures[action.payload.employeeId] = action.payload;
@@ -252,6 +379,26 @@ const payrollSlice = createSlice({
             .addCase(generatePayrollRun.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            // Approve
+            .addCase(approvePayroll.pending, (state) => { state.loading = true; })
+            .addCase(approvePayroll.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.runs.findIndex(r => r._id === action.payload._id);
+                if (index >= 0) state.runs[index] = action.payload;
+                if (state.currentRun && state.currentRun._id === action.payload._id) {
+                    state.currentRun = action.payload;
+                }
+            })
+            // Pay
+            .addCase(payPayroll.pending, (state) => { state.loading = true; })
+            .addCase(payPayroll.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.runs.findIndex(r => r._id === action.payload._id);
+                if (index >= 0) state.runs[index] = action.payload;
+                if (state.currentRun && state.currentRun._id === action.payload._id) {
+                    state.currentRun = action.payload;
+                }
             })
             // Attendance
             .addCase(fetchAttendanceSummary.fulfilled, (state, action) => {

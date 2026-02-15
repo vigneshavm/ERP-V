@@ -1,11 +1,6 @@
-import api from "../services/api.js";
-import { DATA_MODE } from "../services/dataSource";
-import { demoDB } from '../data/demo';
+import api from "../services/api";
 
 export const fetchTenantsRaw = async () => {
-    if (DATA_MODE === 'DEMO') {
-        return demoDB.tenants;
-    }
     // Fetch from Node.js API
     try {
         const { data } = await api.get('/api/business/profile');
@@ -36,10 +31,6 @@ export const fetchTenantsRaw = async () => {
 };
 
 export const fetchBranchesRaw = async (tenantId: string | null) => {
-    if (DATA_MODE === 'DEMO') {
-        const branches = demoDB.branches;
-        return tenantId ? branches.filter(b => b.tenantId === tenantId) : branches;
-    }
     try {
         // Assuming backend has /api/branches endpoint
         const { data } = await api.get('/api/branches');
@@ -54,10 +45,6 @@ export const fetchBranchesRaw = async (tenantId: string | null) => {
 };
 
 export const fetchEmployeesRaw = async (tenantId: string | null) => {
-    if (DATA_MODE === 'DEMO') {
-        const users = demoDB.employees;
-        return tenantId ? users.filter(u => u.tenantId === tenantId) : users;
-    }
     try {
         // Assuming backend has /api/users endpoint
         const { data } = await api.get('/api/users');

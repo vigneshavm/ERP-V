@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setCustomersList, setSalesHistory } from "../redux/slices/posSlice";
 import { Sale, Customer } from "../types/sales";
 import { SyncManager } from "../services/SyncManager";
-import { getTable, DATA_MODE } from "../services/dataSource";
+import { getTable } from "../services/dataSource";
 
 export const useSalesSync = (tenantId: string | undefined) => {
     const dispatch = useDispatch();
@@ -18,10 +18,8 @@ export const useSalesSync = (tenantId: string | undefined) => {
 
             if (custData) {
                 dispatch(setCustomersList(custData as Customer[]));
-                if (DATA_MODE === 'DB') {
-                    SyncManager.cacheCustomers(custData as Customer[]);
-                }
-            } else if (DATA_MODE === 'DB' && !navigator.onLine) {
+                SyncManager.cacheCustomers(custData as Customer[]);
+            } else if (!navigator.onLine) {
                 const offlineCustomers = await SyncManager.getOfflineCustomers(tenantId);
                 dispatch(setCustomersList(offlineCustomers));
             }
@@ -46,8 +44,8 @@ export const useSalesSync = (tenantId: string | undefined) => {
                 dispatch(setSalesHistory(mappedSales));
             }
 
-            if (DATA_MODE === 'DB' && navigator.onLine) {
-                SyncManager.syncOfflineSales().catch(err => console.error('Background sync failed:', err));
+            if (navigator.onLine) {
+                SyncManager.syncOfflineSales().catch((err: any) => console.error('Background sync failed:', err));
             }
         };
 

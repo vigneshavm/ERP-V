@@ -5,7 +5,6 @@ import { SystemRole } from "../../../types/common";
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { APP_CONFIG } from "../../../config";
 import api from "../../../services/api.js";
-import { DATA_MODE } from "../../../services/dataSource";
 
 import { securePassword } from "../../../utils/auth";
 import { TenantUser, DbRoleCode, Tenant } from "../../../types/tenant";
@@ -23,12 +22,14 @@ const StaffManager: React.FC = () => {
 
     const [newEmp, setNewEmp] = useState({
         name: '',
-        roleId: '', // Changed from role string to roleId
-        systemRole: 'Staff' as SystemRole, // Keep for UI logic if needed, or derive from selected role
+        roleId: '',
+        systemRole: SystemRole.STAFF,
         pin: '',
-        dailyRate: '',
-        branchId: '',
+        baseSalary: '',
+        wageType: 'MONTHLY',
+        joiningDate: new Date().toISOString().split('T')[0],
         mobile: '',
+        branchId: '',
         assignedCounterId: '',
         is2faEnabled: false
     });
@@ -43,22 +44,22 @@ const StaffManager: React.FC = () => {
     const fetchTenantEmployees = async (tenantId: string) => {
         setIsLoadingEmployees(true);
         try {
-            if (DATA_MODE === 'DEMO') {
-                // Demo logic could go here if needed
-            } else {
-                const response = await api.get('/api/hr/employees');
-                const data = response.data.data;
+            const response = await api.get('/api/hr/employees');
+            const data = response.data.data;
 
-                // For now, roles might still need an endpoint
-                try {
-                    const rolesResponse = await api.get('/roles'); // Verify if this exists, or remove
-                    setRoles(rolesResponse.data || []);
-                } catch (e) {
-                    console.warn("Failed to fetch roles via API, using defaults.");
+            // Fetch roles
+            try {
+                const rolesResponse = await api.get('/api/roles'); // Fetches all system & tenant roles
+                if (rolesResponse.data) {
+                    setRoles(rolesResponse.data);
                 }
-
-                setTenantEmployees(data || []);
+            } catch (error) {
+                console.error("Failed to load roles", error);
             }
+
+            // Filter for Office Staff (Monthly or unspecified)
+            const officeStaff = (data || []).filter((e: any) => !e.wageType || e.wageType === 'MONTHLY');
+            setTenantEmployees(officeStaff);
         } catch (err) {
             console.error('Error fetching employees:', err);
         } finally {
@@ -71,33 +72,35 @@ const StaffManager: React.FC = () => {
         if (!activeTenant || !newEmp.name) return;
 
         try {
-            if (DATA_MODE !== 'DEMO') {
-                const empData: any = {
-                    name: newEmp.name,
-                    role: newEmp.roleId, // Assuming UI sends role name or ID. Backend expects string
-                    mobile: newEmp.mobile,
-                    dailyRate: parseFloat(newEmp.dailyRate) || 0,
-                    branchId: newEmp.branchId,
-                    wageType: 'DAILY', // Default or add UI selector
-                    sector: 'Retail' // Default
-                };
+            const empData: any = {
+                name: newEmp.name,
+                role: roles.find(r => r.id === newEmp.roleId)?.name || SystemRole.STAFF,
+                roleId: newEmp.roleId,
+                mobile: newEmp.mobile,
+                baseSalary: parseFloat(newEmp.baseSalary) || 0,
+                dailyRate: newEmp.wageType === 'DAILY' ? parseFloat(newEmp.baseSalary) || 0 : 0,
+                branchId: newEmp.branchId,
+                wageType: newEmp.wageType,
+                joiningDate: newEmp.joiningDate,
+                pin: newEmp.pin,
+                sector: activeTenant?.sector || 'General'
+            };
 
-                if (editingEmpId) {
-                    const response = await api.put(`/api/hr/employees/${editingEmpId}`, empData);
-                    const data = response.data.data;
+            if (editingEmpId) {
+                const response = await api.put(`/api/hr/employees/${editingEmpId}`, empData);
+                const data = response.data.data;
 
-                    if (data) {
-                        setTenantEmployees(prev => prev.map(e => e._id === editingEmpId ? data : e));
-                        handleCancelEditEmp();
-                    }
-                } else {
-                    const response = await api.post('/api/hr/employees', empData);
-                    const data = response.data.data;
+                if (data) {
+                    setTenantEmployees(prev => prev.map(e => e._id === editingEmpId ? data : e));
+                    handleCancelEditEmp();
+                }
+            } else {
+                const response = await api.post('/api/hr/employees', empData);
+                const data = response.data.data;
 
-                    if (data) {
-                        setTenantEmployees(prev => [data, ...prev]);
-                        handleCancelEditEmp();
-                    }
+                if (data) {
+                    setTenantEmployees(prev => [data, ...prev]);
+                    handleCancelEditEmp();
                 }
             }
         } catch (err: any) {
@@ -109,20 +112,27 @@ const StaffManager: React.FC = () => {
     const handleStartEditEmp = (emp: any) => {
         setNewEmp({
             name: emp.name,
-            roleId: emp.role_id || '',
-            systemRole: 'Staff', // Default, logic to derive from role would go here
-            pin: '', // Do NOT verify or populate existing PIN for security
-            dailyRate: emp.daily_rate?.toString() || '',
-            branchId: emp.assigned_branch_id || '',
+            roleId: emp.roleId || '',
+            systemRole: SystemRole.STAFF,
+            pin: emp.pin || '',
+            baseSalary: (emp.baseSalary || emp.dailyRate || '').toString(),
+            wageType: emp.wageType || 'MONTHLY',
+            joiningDate: emp.joiningDate ? new Date(emp.joiningDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            branchId: emp.branchId || '',
             mobile: emp.mobile || '',
-            assignedCounterId: emp.assigned_counter_id || '',
-            is2faEnabled: emp.is_2fa_enabled || false
+            assignedCounterId: emp.assignedCounterId || '',
+            is2faEnabled: emp.is2faEnabled || false
         });
         setEditingEmpId(emp.id);
     };
 
     const handleCancelEditEmp = () => {
-        setNewEmp({ name: '', roleId: '', systemRole: 'Staff', pin: '', dailyRate: '', branchId: '', mobile: '', assignedCounterId: '', is2faEnabled: false });
+        setNewEmp({
+            name: '', roleId: '', systemRole: SystemRole.STAFF, pin: '',
+            baseSalary: '', wageType: 'MONTHLY',
+            joiningDate: new Date().toISOString().split('T')[0],
+            mobile: '', branchId: '', assignedCounterId: '', is2faEnabled: false
+        });
         setEditingEmpId(null);
     };
 
@@ -130,18 +140,15 @@ const StaffManager: React.FC = () => {
         if (!window.confirm('Are you sure you want to remove this employee?')) return;
 
         try {
-            if (DATA_MODE !== 'DEMO') {
-                await api.delete(`/api/hr/employees/${id}`);
-                setTenantEmployees(prev => prev.filter(e => e._id !== id));
-            }
+            await api.delete(`/api/hr/employees/${id}`);
+            setTenantEmployees(prev => prev.filter(e => e._id !== id));
         } catch (err: any) {
             console.error('Error deleting employee:', err);
         }
     };
 
-    if (!activeTenant) return null;
-
-    const branches = activeTenant.locations?.flatMap((l: any) => l.branches) || [];
+    // if (!activeTenant) return null; // Non-blocking render
+    const branches = activeTenant?.locations?.flatMap((l: any) => l.branches) || [];
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -197,16 +204,54 @@ const StaffManager: React.FC = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Login PIN (4 Digits)</label>
-                                <input
-                                    required
-                                    maxLength={4}
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono tracking-widest dark:text-white"
-                                    value={newEmp.pin}
-                                    onChange={e => setNewEmp({ ...newEmp, pin: e.target.value.replace(/\D/g, '') })}
-                                    placeholder="1234"
-                                />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Joining Date</label>
+                                    <input
+                                        required
+                                        type="date"
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        value={newEmp.joiningDate}
+                                        onChange={e => setNewEmp({ ...newEmp, joiningDate: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Login PIN (4 Digits)</label>
+                                    <input
+                                        required
+                                        maxLength={4}
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono tracking-widest dark:text-white"
+                                        value={newEmp.pin}
+                                        onChange={e => setNewEmp({ ...newEmp, pin: e.target.value.replace(/\D/g, '') })}
+                                        placeholder="1234"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Base Salary / Rate</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        value={newEmp.baseSalary}
+                                        onChange={e => setNewEmp({ ...newEmp, baseSalary: e.target.value })}
+                                        placeholder="e.g. 15000"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Wage Type</label>
+                                    <select
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        value={newEmp.wageType}
+                                        onChange={e => setNewEmp({ ...newEmp, wageType: e.target.value })}
+                                    >
+                                        <option value="MONTHLY">Monthly</option>
+                                        <option value="DAILY">Daily</option>
+                                        <option value="HOURLY">Hourly</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Assigned Branch</label>
@@ -301,7 +346,7 @@ const StaffManager: React.FC = () => {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === 'Owner' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === 'Admin' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>
@@ -322,9 +367,17 @@ const StaffManager: React.FC = () => {
                                                     </>
                                                 )}
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className={`font-bold flex items-center gap-1 ${emp.is_2fa_enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
                                                     <ShieldCheck className="w-3 h-3" />
-                                                    {emp.is_2fa_enabled ? '2FA ON' : '2FA OFF'}
+                                                    {emp.is2faEnabled ? '2FA ON' : '2FA OFF'}
+                                                </span>
+                                                <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                <span className="text-indigo-600 dark:text-indigo-400 font-bold">
+                                                    ₹{emp.baseSalary || emp.dailyRate}/ {emp.wageType?.toLowerCase()}
+                                                </span>
+                                                <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                <span className="text-slate-500 dark:text-slate-400">
+                                                    Joined: {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : 'N/A'}
                                                 </span>
                                             </div>
                                         </div>

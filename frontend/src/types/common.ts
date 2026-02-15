@@ -140,6 +140,14 @@ export type AppView =
     | 'PLATFORM_ADMIN' | 'SUPER_ADMIN_CONSOLE' | 'TENANT_ARCHITECT' | 'ARCHITECTURE' | 'SUPER_ADMIN'
 
     // Missing Types
-    | 'GST_RECONCILIATION' | 'REPRINT_QUEUE' | 'ATTENDANCE_SUMMARY';
+    | 'GST_RECONCILIATION' | 'REPRINT_QUEUE' | 'ATTENDANCE_SUMMARY' | 'ATTENDANCE_BOARD' | 'ALLOWANCE_MANAGER';
 
-export type SystemRole = 'SuperAdmin' | 'Owner' | 'Admin' | 'Manager' | 'Staff';
+export enum SystemRole {
+    SUPER_ADMIN = 'superadmin',
+    OWNER = 'owner',
+    CO_OWNER = 'co-owner',
+    ADMIN = 'admin',
+    MANAGER = 'manager',
+    STAFF = 'staff',
+    CUSTOMER = 'customer'
+}

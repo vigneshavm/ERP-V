@@ -34,6 +34,50 @@ const SupplierDetail: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [selectedBranch, setSelectedBranch] = React.useState<string>(user?.branchId || '');
 
+  // Edit Financials Logic
+  const [editingField, setEditingField] = React.useState<'invoiced' | 'paid' | 'outstanding' | null>(null);
+
+  const handleSaveFinancial = (newValue: number) => {
+    if (isNaN(newValue)) return;
+    if (!supplier) return;
+
+    const updatePayload: any = {};
+
+    if (editingField === 'invoiced') {
+      // New Total = Real Bills + Manual
+      // Manual = New Total - Real Bills
+      const currentTotal = supplier.totalAmount || 0;
+      const currentManual = supplier.manualTotalInvoiced || 0;
+      const realBills = currentTotal - currentManual;
+      updatePayload.manualTotalInvoiced = newValue - realBills;
+    } else if (editingField === 'paid') {
+      const currentTotal = supplier.totalPaid || 0;
+      const currentManual = supplier.manualTotalPaid || 0;
+      const realPayments = currentTotal - currentManual;
+      updatePayload.manualTotalPaid = newValue - realPayments;
+    } else if (editingField === 'outstanding') {
+      // Net Balance = Opening + Invoiced - Paid - DebitNotes
+      // New Opening = New Outstanding - (Invoiced - Paid - DebitNotes)
+      // We must use values EXCLUDING the opening balance component
+      const currentOutstanding = supplier.netBalance ?? 0;
+      const currentOpening = supplier.openingBalance || 0;
+
+      // The "Activity" component of balance
+      const activityBalance = currentOutstanding - currentOpening;
+
+      updatePayload.openingBalance = newValue - activityBalance;
+    }
+
+    dispatch(import('../../../redux/slices/supplierSlice').then(mod => mod.updateSupplier({
+      id: supplier._id,
+      supplierData: updatePayload
+    })) as any).then(() => {
+      setEditingField(null);
+      // Refresh to see updated calculation
+      dispatch(getSupplierById({ id: supplier._id, branchId: selectedBranch }) as any);
+    });
+  };
+
   useEffect(() => {
     if (id) {
       // We'll need to modify the slice to accept params, or just dispatch generic and filter locally?
@@ -107,7 +151,15 @@ const SupplierDetail: React.FC = () => {
       {/* Summary Cards - Matching Directory Flow */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {/* Total Invoiced */}
-        <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div
+          onClick={() => setEditingField('invoiced')}
+          className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+        >
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="p-1 bg-indigo-50 rounded-md text-indigo-600">
+              <Edit3 className="w-3 h-3" />
+            </div>
+          </div>
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
               <Package className="w-4 h-4" />
@@ -117,10 +169,19 @@ const SupplierDetail: React.FC = () => {
           <span className="text-3xl font-black text-slate-900 dark:text-white">
             ₹ {(supplier.totalAmount || 0).toLocaleString('en-IN')}
           </span>
+          {supplier.manualTotalInvoiced ? <span className="text-[10px] text-slate-400 block mt-1">(Includes manual adj.)</span> : null}
         </div>
 
         {/* Total Paid */}
-        <div className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div
+          onClick={() => setEditingField('paid')}
+          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+        >
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="p-1 bg-emerald-50 rounded-md text-emerald-600">
+              <Edit3 className="w-3 h-3" />
+            </div>
+          </div>
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="w-4 h-4" />
@@ -133,7 +194,15 @@ const SupplierDetail: React.FC = () => {
         </div>
 
         {/* Net Balance */}
-        <div className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div
+          onClick={() => setEditingField('outstanding')}
+          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+        >
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="p-1 bg-rose-50 rounded-md text-rose-600">
+              <Edit3 className="w-3 h-3" />
+            </div>
+          </div>
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <ArrowUpRight className="w-4 h-4" />
@@ -141,10 +210,78 @@ const SupplierDetail: React.FC = () => {
             <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Outstanding Balance</span>
           </div>
           <span className="text-3xl font-black text-slate-900 dark:text-white">
-            ₹ {(supplier.netBalance || supplier.openingBalance || 0).toLocaleString('en-IN')}
+            ₹ {(supplier.netBalance ?? supplier.openingBalance ?? 0).toLocaleString('en-IN')}
           </span>
         </div>
       </div>
+
+      {/* Edit Financials Modal */}
+      {editingField && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+                Edit {editingField === 'invoiced' ? 'Total Invoiced' : editingField === 'paid' ? 'Total Paid' : 'Outstanding Balance'}
+              </h3>
+              <button onClick={() => setEditingField(null)} className="p-1 hover:bg-slate-100 rounded-full dark:hover:bg-slate-800">
+                <span className="sr-only">Close</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase">Current Value</label>
+                <div className="text-2xl font-black text-slate-900 dark:text-white">
+                  ₹ {
+                    editingField === 'invoiced' ? (supplier.totalAmount || 0).toLocaleString() :
+                      editingField === 'paid' ? (supplier.totalPaid || 0).toLocaleString() :
+                        (supplier.netBalance ?? supplier.openingBalance ?? 0).toLocaleString()
+                  }
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-indigo-600 uppercase">New TOTAL Value</label>
+                <input
+                  type="number"
+                  autoFocus
+                  className="w-full text-xl font-bold p-3 rounded-xl border-2 border-indigo-100 focus:border-indigo-500 outline-none bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-white transition-all"
+                  placeholder="Enter new total..."
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSaveFinancial(parseFloat((e.target as HTMLInputElement).value));
+                    }
+                  }}
+                />
+                <p className="text-[10px] text-slate-400">
+                  {editingField === 'outstanding'
+                    ? "This will adjust the supplier's Opening Balance."
+                    : "This will add a manual adjustment to account for historical data."}
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setEditingField(null)}
+                  className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={(e) => {
+                    const input = (e.currentTarget.parentElement?.previousElementSibling?.querySelector('input') as HTMLInputElement);
+                    handleSaveFinancial(parseFloat(input.value));
+                  }}
+                  className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-colors"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-12 gap-6">
         {/* Main Content Area */}

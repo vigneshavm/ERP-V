@@ -1,5 +1,5 @@
-import React from 'react';
-import { Book, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Book, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface Transaction {
     date: string;
@@ -33,10 +33,69 @@ interface SupplierLedgerTableProps {
     onRowClick?: (t: Transaction) => void;
 }
 
+type SortKey = 'date' | 'type' | 'refNo' | 'debit' | 'credit' | 'balance';
+
 const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading, onRowClick }) => {
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' } | null>(null);
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
     };
+
+    const handleSort = (key: SortKey) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedTransactions = useMemo(() => {
+        let sortableItems = [...data.transactions];
+        if (sortConfig !== null) {
+            sortableItems.sort((a, b) => {
+                let aValue: any = a[sortConfig.key];
+                let bValue: any = b[sortConfig.key];
+
+                // Handle specifically for description/details if mapped differently, 
+                // but checking the interface, keys match directly for most.
+                // date is string ISO, works with localization string compare or Date object
+
+                if (sortConfig.key === 'debit' || sortConfig.key === 'credit' || sortConfig.key === 'balance') {
+                    // Numeric sort
+                    return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+                }
+
+                // String sort
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [data.transactions, sortConfig]);
+
+    const SortIcon = ({ column }: { column: SortKey }) => {
+        if (sortConfig?.key !== column) return <ArrowUpDown className="w-3 h-3 text-slate-300 dark:text-neutral-600 opacity-50 group-hover:opacity-100" />;
+        if (sortConfig.direction === 'asc') return <ArrowUp className="w-3 h-3 text-indigo-500" />;
+        return <ArrowDown className="w-3 h-3 text-indigo-500" />;
+    };
+
+    const renderHeader = (label: string, key: SortKey, align: 'left' | 'right' = 'left') => (
+        <th
+            className={`py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-${align} whitespace-nowrap cursor-pointer group hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors select-none`}
+            onClick={() => handleSort(key)}
+        >
+            <div className={`flex items-center gap-1.5 ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+                {label}
+                <SortIcon column={key} />
+            </div>
+        </th>
+    );
 
     return (
         <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative">
@@ -57,12 +116,12 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
                 <table className="w-full text-sm">
                     <thead className="bg-slate-50/80 dark:bg-neutral-900/50">
                         <tr>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-left whitespace-nowrap">Date</th>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-left whitespace-nowrap">Type</th>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-left whitespace-nowrap">Description</th>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-right whitespace-nowrap">Debit (₹)</th>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-right whitespace-nowrap">Credit (₹)</th>
-                            <th className="py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-right whitespace-nowrap">Balance (₹)</th>
+                            {renderHeader('Date', 'date')}
+                            {renderHeader('Type', 'type')}
+                            {renderHeader('Ref No', 'refNo')}
+                            {renderHeader('Debit (₹)', 'debit', 'right')}
+                            {renderHeader('Credit (₹)', 'credit', 'right')}
+                            {renderHeader('Balance (₹)', 'balance', 'right')}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
@@ -78,7 +137,7 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
                             <td className="py-3.5 px-5 text-right font-black text-slate-600 dark:text-neutral-300 whitespace-nowrap text-sm">{formatCurrency(data.openingBalance)}</td>
                         </tr>
 
-                        {data.transactions.map((t, i) => (
+                        {sortedTransactions.map((t, i) => (
                             <tr
                                 key={i}
                                 className={`hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 transition-colors group ${onRowClick ? 'cursor-pointer' : ''}`}

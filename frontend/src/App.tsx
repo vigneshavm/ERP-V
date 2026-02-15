@@ -3,7 +3,7 @@ import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './redux/store';
-import { setUser } from './redux/slices/authSlice';
+import { setUser, getProfile } from './redux/slices/authSlice';
 import { setActiveTab } from './redux/slices/uiSlice';
 import { APP_CONFIG } from './config';
 
@@ -13,6 +13,7 @@ import ResetPassword from './pages/Auth/ResetPassword';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import Register from './pages/Auth/Register';
 import TenantManager from './pages/People/Tenants/TenantManager';
+import TenantSignUp from './pages/People/Tenants/TenantSignUp';
 import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
 
 // Config
@@ -52,6 +53,14 @@ const App: React.FC = () => {
   });
 
   const { tenants } = useSelector((state: RootState) => state.tenant);
+
+  // Fetch profile on mount if user exists but role might be stale/missing
+  React.useEffect(() => {
+    if (user && user.token) {
+      // Dispatch getProfile to fetch latest role and details
+      dispatch(getProfile() as any);
+    }
+  }, [dispatch, user?.token]); // Dependency on token ensures run on login/reload
 
   // Initialize currentTenant from localStorage if available, or null
   const [currentTenant, setCurrentTenant] = useState<Tenant | null>(() => {
@@ -307,7 +316,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/signup" element={<Register />} />
+        <Route path="/signup" element={<TenantSignUp onComplete={() => window.location.href = '/'} onBackToLogin={() => window.location.href = '/login'} />} />
         <Route path="/*" element={
           isResolving ? <LoadingScreen /> :
             viewMode === 'ADMIN' ? <AdminView /> :

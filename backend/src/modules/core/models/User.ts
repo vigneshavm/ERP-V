@@ -55,7 +55,7 @@ const userSchema = new Schema<IUser>(
         },
         role: {
             type: String,
-            enum: ["owner", "manager", "staff", "customer"], // Expanded roles
+            enum: ["owner", "co-owner", "manager", "staff", "customer", "superadmin"], // Expanded roles
             default: "owner",
         },
         resetPasswordToken: {

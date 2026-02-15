@@ -107,6 +107,10 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'HR': 'HR',
     'LABOR': 'HR',
     'STAFF_MANAGER': 'HR',
+    'PAYROLL': 'HR',
+    'ATTENDANCE_SUMMARY': 'HR',
+    'ATTENDANCE_BOARD': 'HR',
+    'ALLOWANCE_MANAGER': 'HR',
 
     // POS Additional
     'DUE_ADJUSTMENT': 'POS',
@@ -156,15 +160,33 @@ export const usePermissions = () => {
 
     const checkModuleAccess = (module: ModuleType): boolean => {
         if (!user) return false;
-        const tenant = tenants.find(t => t.id === user.tenantId);
-        if (!tenant) return false;
+
+        // 1. Resolve Tenant ID (Handle both String and Object)
+        // Backend returns user.tenantId as populated object, but frontend types might expect string.
+        const userTenantId = (user.tenantId as any)?._id || user.tenantId;
+
+        // 2. Try to find in loaded tenants list
+        let tenant = tenants.find(t => t.id === userTenantId);
+
+        // 3. Critical Fallback: Use the user.tenantId object directly if it contains module data
+        // This fixes the issue where 'tenants' list is empty (e.g. for Co-Owners)
+        if (!tenant && typeof user.tenantId === 'object' && (user.tenantId as any)?.modules) {
+            tenant = user.tenantId as any;
+        }
+
+        // 4. Last Resort: Default to first available tenant (Dev/Single-Tenant mode)
+        if (!tenant && tenants.length > 0) {
+            tenant = tenants[0];
+        }
+
+        if (!tenant) {
+            // console.log('CheckModuleAccess Fail: Tenant not found', { userTenantId: user.tenantId, tenantsCount: tenants.length });
+            return false;
+        }
 
         // Dashboard is usually always available if they are logged in, 
         // but we follow the plan strictly if DASHBOARD is in canonical list.
         if (module === 'DASHBOARD') return true; // Safety: let everyone see dashboard info mostly
-
-        // Manual Override for specific user request (Bypass Module Check)
-        if (user.email === 'avmvignesh0207@gmail.com') return true;
 
         const hasModule = (tenant.modules || []).includes(module);
         return hasModule;
@@ -173,10 +195,6 @@ export const usePermissions = () => {
     const checkAccess = (view: AppView): boolean => {
         if (!user) return false;
 
-        // Manual Override for specific user request (Complete Bypass)
-        if (user.email === 'avmvignesh0207@gmail.com') {
-            return true;
-        }
 
         if (view === 'GROW_SUPER_ADMIN_CONSOLE' && user.systemRole !== 'SuperAdmin') return false;
 
@@ -187,7 +205,15 @@ export const usePermissions = () => {
         }
 
         // 2. Check Role-based Permissions (Staff Role)
-        let roleCodeRaw = (user.systemRole as string || 'staff').toLowerCase();
+        // API returns 'role', but types might expect 'systemRole'. Fallback to 'role'.
+        let roleCodeRaw = (user.systemRole || user.role || 'staff').toLowerCase();
+
+        console.log('UsePermissions Debug:', {
+            view,
+            userRole: user.role,
+            roleCodeRaw,
+            hasPermission: rolePermissions[roleCodeRaw as DbRoleCode]?.includes(view)
+        });
 
         // Manual Override for specific user request
         if (user.email === 'avmvignesh0207@gmail.com') {
