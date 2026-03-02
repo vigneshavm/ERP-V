@@ -131,7 +131,7 @@ const CashBankIntelligence: React.FC = () => {
                             Cash & Bank Intelligence Agent
                         </h2>
                         <p className="text-sm text-neutral-500 mt-1">
-                            Live reconciliation and financial auditing for <span className="font-bold text-primary">{tenant_id}</span>
+                            Live reconciliation and financial auditing for <span className="font-bold text-primary">{typeof tenant_id === 'object' && tenant_id !== null ? (tenant_id as any).name : tenant_id}</span>
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -345,7 +345,7 @@ const CashBankIntelligence: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </Layout>
+        </Layout >
     );
 };
 

@@ -83,10 +83,10 @@ const ResetPassword: React.FC = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
+                        className="btn-cyber-primary w-full h-14 !rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
                     >
                         {isLoading ? (
-                            <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
+                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : (
                             <>Update Security Key <ArrowRight className="w-4 h-4" /></>
                         )}
@@ -95,7 +95,7 @@ const ResetPassword: React.FC = () => {
             </form>
 
             <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
-                <Link to="/login" className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                <Link to="/login" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
                     <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Abort and Return to Login
                 </Link>
             </div>

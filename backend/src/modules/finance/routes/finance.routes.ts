@@ -13,6 +13,14 @@ router.use('/due', dueRoutes);
 router.use('/loyalty', loyaltyRoutes);
 router.use('/day-end', dayEndRoutes);
 
+// Bank Statement
+import bankStatementRoutes from './bankStatementRoutes.js';
+router.use('/bank-statement', bankStatementRoutes);
+
+// Loans
+import loanRoutes from './loanRoutes.js';
+router.use('/loans', loanRoutes);
+
 // Daily Finance (Sync)
 import { getAllDailyFinance } from '../controllers/CashBankController.js';
 import { protect } from "../../../middlewares/authMiddleware.js";

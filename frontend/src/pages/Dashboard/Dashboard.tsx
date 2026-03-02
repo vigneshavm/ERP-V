@@ -160,11 +160,11 @@ const Dashboard: React.FC = () => {
     if (!expenses || expenses.length === 0) {
       const totalExp = (totalRevenueLive || 450000) * 0.75;
       return [
-        { name: 'Logistics', value: Math.round(totalExp * 0.15), color: '#6366f1' },
-        { name: 'Inventory', value: Math.round(totalExp * 0.40), color: '#94a3b8' },
-        { name: 'Salaries', value: Math.round(totalExp * 0.25), color: '#f43f5e' },
-        { name: 'Utilities', value: Math.round(totalExp * 0.10), color: '#10b981' },
-        { name: 'Others', value: Math.round(totalExp * 0.10), color: '#f59e0b' },
+        { name: 'Logistics', value: Math.round(totalExp * 0.15), color: 'rgb(var(--color-primary))' },
+        { name: 'Inventory', value: Math.round(totalExp * 0.40), color: 'rgb(var(--color-info))' },
+        { name: 'Salaries', value: Math.round(totalExp * 0.25), color: 'rgb(var(--color-error))' },
+        { name: 'Utilities', value: Math.round(totalExp * 0.10), color: 'rgb(var(--color-success))' },
+        { name: 'Others', value: Math.round(totalExp * 0.10), color: 'rgb(var(--color-warning))' },
       ];
     }
 
@@ -175,7 +175,15 @@ const Dashboard: React.FC = () => {
       categories[cat] = (categories[cat] || 0) + (exp.amount || 0);
     });
 
-    const colors = ['#6366f1', '#94a3b8', '#f43f5e', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'];
+    const colors = [
+      'rgb(var(--color-primary))',
+      'rgb(var(--color-info))',
+      'rgb(var(--color-error))',
+      'rgb(var(--color-success))',
+      'rgb(var(--color-warning))',
+      'rgb(var(--color-accent))',
+      'rgb(var(--color-secondary))'
+    ];
 
     return Object.entries(categories)
       .map(([name, value], index) => ({
@@ -245,134 +253,174 @@ const Dashboard: React.FC = () => {
     <Layout>
       <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
 
-        {/* Header Section */}
-        <div className="flex items-center justify-between pb-2">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Dashboard</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-indigo-500/20">
-                  {sectorName}
-                </span>
-                <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
-                <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 capitalize">
-                  {branchName}
-                </span>
+        {/* Header Section with Blueprint Atmosphere */}
+        <div className="relative overflow-hidden glass-panel p-8 mb-8 group border-t-2 border-t-primary/30">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-aura opacity-50" />
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px] -ml-32 -mb-32 animate-aura" style={{ animationDelay: '5s' }} />
+
+          {/* Subtle Scanline Overlay for Header */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]" />
+
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-sm bg-primary/20 border border-primary/40 flex items-center justify-center glow-primary">
+                <Target className="w-8 h-8 text-primary" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-5xl font-display font-black text-main tracking-tighter uppercase mb-1 drop-shadow-sm">Mission Control</h1>
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase rounded-sm border border-primary/30 tracking-[0.2em]">
+                    {sectorName}
+                  </span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-70">
+                    {branchName} Node
+                  </span>
+                </div>
               </div>
             </div>
 
-          </div>
-
-          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end mr-4">
+                <span className="text-[10px] font-black text-secondary uppercase tracking-widest opacity-50 mb-1">System Frequency</span>
+                <span className="text-xl font-display font-black text-main tracking-tighter">2.4 GHz <span className="text-primary text-xs ml-1">STABLE</span></span>
+              </div>
+              <div className="w-px h-12 bg-default opacity-20" />
+            </div>
           </div>
         </div>
 
         {/* Business Overview Section */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-800 dark:text-neutral-100">Business Overview</h2>
-            <div className="flex items-center gap-2 bg-slate-50/50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 px-3 py-1.5 rounded-lg active:scale-95 transition-all">
-              <span className="text-[10px] font-medium text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Last Update: {lastUpdate}</span>
+            <h2 className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-60">Operational Overview</h2>
+            <div className="flex items-center gap-3 glass-panel px-4 py-2 hover:border-primary/40 transition-all">
+              <span className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Sync: {lastUpdate}</span>
+              <div className="w-px h-3 bg-default opacity-50" />
               <RotateCcw
                 onClick={handleRefresh}
-                className={`w-3.5 h-3.5 text-indigo-500 cursor-pointer transition-transform duration-500 ${reportsLoading || supplierLoading ? 'animate-spin' : 'hover:rotate-180'}`}
+                className={`w-3.5 h-3.5 text-primary cursor-pointer transition-transform duration-700 ${reportsLoading || supplierLoading ? 'animate-spin' : 'hover:rotate-180'}`}
               />
             </div>
           </div>
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {/* Total Revenue - RESTORED */}
-            <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
+            {/* Total Revenue */}
+            <div className="card-interactive p-6 flex flex-col justify-between min-h-[170px] grad-primary border-l-4 border-l-primary group bg-card/60 backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 animate-aura" />
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <TrendingUp className="w-4 h-4 text-indigo-500" />
-                  <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Total Revenue</span>
-                </div>
-                <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {totalRevenueLive.toLocaleString()}</span>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-16 opacity-40 group-hover:opacity-60 transition-opacity">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="#6366f1" fill="#6366f1" strokeWidth={2} dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* To Collect */}
-            <div className="bg-[#F8FFF9] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <ArrowDownLeft className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center text-primary border border-primary/30 group-hover:glow-primary transition-all">
+                    <TrendingUp className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">To Collect</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue Matrix</span>
                 </div>
-                <span className="text-3xl font-black text-slate-900 dark:text-white leading-tight">₹ {totalOutstandingLive.toLocaleString()}</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-black text-primary opacity-50">₹</span>
+                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-primary transition-colors">{totalRevenueLive.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30 group-hover:opacity-50 transition-opacity">
+              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="#10b981" fill="#10b981" strokeWidth={2} dot={false} />
+                    <Area type="monotone" dataKey="revenue" stroke="var(--primary)" fill="var(--primary)" strokeWidth={3} dot={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* To Pay */}
-            <div className="bg-[#FFF8F8] dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
+            {/* Flux Inbound */}
+            <div className="card-interactive p-6 flex flex-col justify-between min-h-[170px] grad-success border-l-4 border-l-success group bg-card/60 backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full blur-3xl -mr-16 -mt-16 animate-aura" style={{ animationDelay: '1s' }} />
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-sm bg-success/20 flex items-center justify-center text-success border border-success/30 group-hover:glow-success transition-all">
+                    <ArrowDownLeft className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400">To Pay</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Flux Inbound</span>
                 </div>
-                <span className="text-3xl font-black text-slate-900 dark:text-white leading-tight">₹ {totalToPay.toLocaleString()}</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-black text-success opacity-50">₹</span>
+                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-success transition-colors">{totalOutstandingLive.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30 group-hover:opacity-50 transition-opacity">
+              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="#f43f5e" fill="#f43f5e" strokeWidth={2} dot={false} />
+                    <Area type="monotone" dataKey="revenue" stroke="var(--success)" fill="var(--success)" strokeWidth={3} dot={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Stock Value - RESTORED */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
+            {/* Flux Outbound */}
+            <div className="card-interactive p-6 flex flex-col justify-between min-h-[170px] grad-error border-l-4 border-l-danger group bg-card/60 backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-danger/5 rounded-full blur-3xl -mr-16 -mt-16 animate-aura" style={{ animationDelay: '2s' }} />
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <Package className="w-4 h-4 text-slate-500 dark:text-neutral-400" />
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-widest">Stock Value</span>
-                </div>
-                <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {totalStockValueLive.toLocaleString()}</span>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30 group-hover:opacity-50 transition-opacity">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="#94a3b8" fill="#94a3b8" strokeWidth={2} dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Total Balance */}
-            <div className="bg-[#F8FBFF] dark:bg-blue-500/10 border border-blue-100/50 dark:border-blue-500/20 p-5 rounded-2xl shadow-sm flex flex-col justify-between min-h-[140px] relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-blue-50 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <Landmark className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-sm bg-danger/20 flex items-center justify-center text-danger border border-danger/30 group-hover:glow-error transition-all">
+                    <ArrowUpRight className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-neutral-400">Total Cash + Bank Balance</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Flux Outbound</span>
                 </div>
-                <span className="text-3xl font-black text-slate-900 dark:text-white leading-tight">₹ {totalBalance.toLocaleString()}</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-black text-danger opacity-50">₹</span>
+                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-danger transition-colors">{totalToPay.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-16 opacity-20 group-hover:opacity-40 transition-opacity">
+              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fill="#3b82f6" strokeWidth={2} dot={false} />
+                    <Area type="monotone" dataKey="revenue" stroke="var(--danger)" fill="var(--danger)" strokeWidth={3} dot={false} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Asset Matrix */}
+            <div className="card-interactive p-6 flex flex-col justify-between min-h-[170px] grad-primary border-l-4 border-l-info group bg-card/60 backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-info/5 rounded-full blur-3xl -mr-16 -mt-16 animate-aura" style={{ animationDelay: '3s' }} />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-sm bg-info/20 flex items-center justify-center text-info border border-info/30 group-hover:glow-primary transition-all">
+                    <Package className="w-5 h-5" />
+                  </div>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Asset Matrix</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-black text-info opacity-50">₹</span>
+                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-info transition-colors">{totalStockValueLive.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartDataLive}>
+                    <Area type="monotone" dataKey="revenue" stroke="var(--info)" fill="var(--info)" strokeWidth={3} dot={false} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Liquidity Pulse */}
+            <div className="card-interactive p-6 flex flex-col justify-between min-h-[170px] grad-primary border-l-4 border-l-warning group bg-card/60 backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-warning/5 rounded-full blur-3xl -mr-16 -mt-16 animate-aura" style={{ animationDelay: '4s' }} />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-sm bg-warning/20 flex items-center justify-center text-warning border border-warning/30 group-hover:glow-primary transition-all">
+                    <Landmark className="w-5 h-5" />
+                  </div>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Liquidity Pulse</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-black text-warning opacity-50">₹</span>
+                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-warning transition-colors">{totalBalance.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartDataLive}>
+                    <Area type="monotone" dataKey="revenue" stroke="var(--warning)" fill="var(--warning)" strokeWidth={3} dot={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -382,35 +430,40 @@ const Dashboard: React.FC = () => {
 
         {/* Intelligence Hub Grid - Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Performance Visualization - RESTORED */}
+          {/* Performance Visualization */}
           {chartDataLive.length > 0 && (
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
-              <div className="flex items-center justify-between mb-8 relative z-10">
+            <div className="card-interactive p-8 group bg-card/60 backdrop-blur-2xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-32 -mt-32 animate-aura opacity-50" />
+              <div className="flex items-center justify-between mb-10 relative z-10 border-b border-default pb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-indigo-500" /> Sales Performance
+                  <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
+                    <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
+                    Sales Flux
                   </h3>
-                  <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">7 Day Revenue Trend</p>
+                  <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Operational Revenue Matrix / 7D</p>
+                </div>
+                <div className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-sm text-[10px] font-black text-primary uppercase tracking-widest">
+                  Live Feed
                 </div>
               </div>
-              <div className="h-64 relative z-10">
+              <div className="h-72 relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartDataLive} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="name" fontSize={10} stroke="#94a3b8" axisLine={false} tickLine={false} fontWeight={600} dy={10} />
-                    <YAxis fontSize={10} stroke="#94a3b8" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val} `} axisLine={false} tickLine={false} fontWeight={600} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-default)" opacity={0.2} />
+                    <XAxis dataKey="name" fontSize={10} stroke="var(--secondary)" axisLine={false} tickLine={false} fontWeight={900} dy={15} />
+                    <YAxis fontSize={10} stroke="var(--secondary)" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={900} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#fff', borderColor: '#e2e8f0', borderRadius: '12px' }}
-                      formatter={(value: number) => [`₹${value.toLocaleString()} `, 'Revenue']}
+                      contentStyle={{ backgroundColor: 'rgb(var(--color-card))', borderColor: 'var(--border-default)', borderRadius: '4px', border: '1px solid rgba(var(--color-primary), 0.2)', color: 'var(--text-main)', boxShadow: 'var(--glow-primary)' }}
+                      itemStyle={{ color: 'var(--primary)', fontWeight: '900' }}
+                      formatter={(value: number) => [`₹${value.toLocaleString()}`, 'MAGNITUDE']}
                     />
-                    <Area type="monotone" dataKey="revenue" stroke="#6366f1" fill="url(#colorRevenue)" strokeWidth={3} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
+                    <Area type="monotone" dataKey="revenue" stroke="var(--primary)" fill="url(#colorRevenue)" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: 'var(--primary)' }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -421,47 +474,49 @@ const Dashboard: React.FC = () => {
 
         {/* Analytical Intelligence Grid - Profitability & Cost Intelligence */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* RESTORED: Profitability Analysis - 6 Month Trend */}
-          <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
-            <div className="flex justify-between items-center mb-8 relative z-10">
+          {/* Profitability Analysis */}
+          <div className="card-interactive p-8 group bg-card/60 backdrop-blur-2xl overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-success/10 rounded-full blur-3xl -mr-32 -mt-32 animate-aura opacity-50" style={{ animationDelay: '2s' }} />
+            <div className="flex justify-between items-center mb-10 relative z-10 border-b border-default pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-indigo-500" /> Profitability
+                <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
+                  <div className="w-2 h-8 bg-success rounded-full shadow-[0_0_15px_rgba(var(--color-success),0.5)]" />
+                  Net Yield
                 </h3>
-                <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">6-Month Trend</p>
+                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">6-Month Profitability Hub</p>
               </div>
             </div>
-            <div className="h-48 relative z-10">
+            <div className="h-56 relative z-10">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={profitabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="month" fontSize={8} stroke="#94a3b8" axisLine={false} tickLine={false} fontWeight={600} />
-                  <YAxis fontSize={8} stroke="#94a3b8" tickFormatter={val => `₹${(val / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} fontWeight={600} />
+                <BarChart data={profitabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={8}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-default)" opacity={0.2} />
+                  <XAxis dataKey="month" fontSize={10} stroke="var(--secondary)" axisLine={false} tickLine={false} fontWeight={900} />
+                  <YAxis fontSize={10} stroke="var(--secondary)" tickFormatter={val => `₹${(val / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} fontWeight={900} />
                   <Tooltip
-                    cursor={{ fill: 'transparent' }}
-                    contentStyle={{ backgroundColor: '#fff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '10px' }}
+                    cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
+                    contentStyle={{ backgroundColor: 'rgb(var(--color-card))', borderColor: 'var(--border-default)', borderRadius: '4px', border: '1px solid rgba(var(--color-success), 0.2)', fontSize: '10px', color: 'var(--text-main)', boxShadow: 'var(--glow-success)' }}
                     formatter={(value: number) => [`₹${value.toLocaleString()}`, '']}
                   />
-                  <Bar dataKey="income" fill="#6366f1" radius={[2, 2, 0, 0]} barSize={16} />
-                  <Bar dataKey="expense" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={16} />
+                  <Bar dataKey="income" fill="var(--primary)" radius={[2, 2, 0, 0]} barSize={24} />
+                  <Bar dataKey="expense" fill="var(--secondary)" radius={[2, 2, 0, 0]} barSize={24} opacity={0.2} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* NEW: Cost Intelligence Pie Chart */}
-          <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
-            <div className="flex justify-between items-center mb-4 relative z-10">
+          {/* Cost Intelligence Pie Chart */}
+          <div className="card-interactive p-8 group bg-card/60 backdrop-blur-2xl overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-danger/10 rounded-full blur-3xl -mr-32 -mt-32 animate-aura opacity-50" style={{ animationDelay: '4s' }} />
+            <div className="flex justify-between items-center mb-10 relative z-10 border-b border-default pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
-                  <LucidePieChart className="w-5 h-5 text-rose-500" /> Cost Intelligence
+                <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
+                  <div className="w-2 h-8 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-error),0.5)]" />
+                  Leakage Map
                 </h3>
-                <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">Expenditure Breakdown</p>
+                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Expenditure Logic / Current Cycle</p>
               </div>
             </div>
-            <div className="h-48 relative z-10 flex items-center">
+            <div className="h-56 relative z-10 flex items-center">
               <div className="flex-1 h-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <RechartsPieChart>
@@ -469,30 +524,30 @@ const Dashboard: React.FC = () => {
                       data={costCategoriesData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={70}
-                      paddingAngle={5}
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={10}
                       dataKey="value"
                     >
                       {costCategoriesData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      contentStyle={{ backgroundColor: 'rgb(var(--color-card))', border: '1px solid var(--border-default)', borderRadius: '4px', color: 'var(--text-main)', boxShadow: 'var(--glow-error)', fontSize: '10px' }}
                       formatter={(value: number) => `₹${value.toLocaleString()}`}
                     />
                   </RechartsPieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="w-1/2 space-y-2">
+              <div className="w-1/2 space-y-4">
                 {costCategoriesData.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span className="text-[10px] font-bold text-slate-500 dark:text-neutral-400 truncate max-w-[80px]">{item.name}</span>
+                  <div key={i} className="flex items-center justify-between border-b border-default/30 pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}40` }} />
+                      <span className="text-[10px] font-black text-secondary uppercase tracking-[0.1em] truncate max-w-[100px] opacity-80">{item.name}</span>
                     </div>
-                    <span className="text-[10px] font-black text-slate-700 dark:text-neutral-200">{Math.round((item.value / costCategoriesData.reduce((s, c) => s + c.value, 0)) * 100)}%</span>
+                    <span className="text-[11px] font-black text-main tracking-tighter">{Math.round((item.value / costCategoriesData.reduce((s, c) => s + c.value, 0)) * 100)}%</span>
                   </div>
                 ))}
               </div>
@@ -501,173 +556,145 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Sections Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* Latest Transactions Table */}
-        <div className="lg:col-span-2 bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-          <div className="p-5 border-b border-slate-50 dark:border-neutral-700">
-            <h3 className="font-bold text-slate-800 dark:text-neutral-100">Latest Transactions</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Flux Log - Latest Transactions */}
+        <div className="lg:col-span-2 card-interactive p-8 group min-h-[600px] flex flex-col bg-card/60 backdrop-blur-2xl overflow-hidden">
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-[120px] -mr-48 -mb-48 animate-aura" style={{ animationDelay: '6s' }} />
+          <div className="flex items-center justify-between mb-10 pb-4 border-b border-default relative z-10">
+            <div>
+              <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
+                <div className="w-2 h-8 bg-accent rounded-full shadow-[0_0_15px_rgba(var(--color-accent),0.5)]" />
+                Flux Log
+              </h3>
+              <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Real-Time Transaction Stream</p>
+            </div>
+            <button className="px-5 py-2 bg-accent/10 border border-accent/20 text-[10px] font-black text-accent uppercase tracking-widest hover:bg-accent hover:text-white transition-all rounded-sm">
+              Full Registry
+            </button>
           </div>
 
-          <div className="flex-1 flex flex-col">
-            {/* Table Header */}
-            <div className="grid grid-cols-5 px-5 py-3 bg-slate-50 dark:bg-neutral-900 text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest">
-              <span>Date</span>
-              <span>Type</span>
-              <span>Txn No</span>
-              <span>Party Name</span>
-              <span className="text-right">Amount</span>
-            </div>
-
-            {/* Empty State */}
-            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-              <div className="w-48 h-48 mb-6 opacity-80">
-                <svg viewBox="0 0 200 200" className="w-full h-full text-slate-200 dark:text-neutral-700">
-                  <rect x="60" y="40" width="80" height="110" rx="4" fill="currentColor" opacity="0.1" />
-                  <path d="M70 60h60M70 80h40M70 100h60M70 120h30" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.3" />
-                  <circle cx="140" cy="140" r="20" fill="#6366f1" opacity="0.2" />
-                  <path d="M132 140h16M140 132v16" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-              </div>
-              <h4 className="text-xl font-black text-slate-800 dark:text-neutral-100 mb-2">No transactions made yet!</h4>
-              <p className="text-xs text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">
-                Create your first transaction to start seeing your data
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Today's Checklist */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-          <div className="p-5 border-b border-slate-50 dark:border-neutral-700">
-            <h3 className="font-bold text-slate-800 dark:text-neutral-100">Today's Checklist</h3>
-          </div>
-
-          <div className="p-5 flex-1 space-y-4">
-            {/* Cost Intelligence Widget */}
-            <div className="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-100/50 dark:border-rose-500/20 rounded-xl group hover:bg-rose-100/30 dark:hover:bg-rose-500/15 transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-rose-500 rounded-lg text-white">
-                    <Zap className="w-3.5 h-3.5" />
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-widest text-rose-600">Cost Intelligence</span>
-                </div>
-                <AlertTriangle className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
-              </div>
-              <p className="text-xs font-bold text-slate-700 dark:text-neutral-200 leading-snug">
-                High OpEx detected in <span className="text-rose-600 underline underline-offset-2">Logistics</span>.
-                Efficiency loss of 12% in Coimbatore branch.
-              </p>
-              <div className="mt-3 flex items-center gap-1.5 text-[9px] font-black uppercase text-rose-500">
-                <ShieldAlert className="w-3 h-3" /> Potential Leakage: ₹14,200
-              </div>
-            </div>
-
-            {/* Inventory AI Widget - DYNAMIC */}
-            {stockInsights.length > 0 ? (
-              <div className="space-y-4">
-                {stockInsights.map((insight, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => dispatch(setActiveTab('INVENTORY'))}
-                    className="p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50 dark:border-indigo-500/20 rounded-xl group hover:bg-indigo-100/30 dark:hover:bg-indigo-500/15 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-indigo-500 rounded-lg text-white">
-                          <Package className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-[11px] font-black uppercase tracking-widest text-indigo-600">Smart Stock</span>
-                      </div>
-                      <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${insight.urgency === 'Critical' ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-indigo-600'}`}>
-                        {insight.urgency}
-                      </div>
+          <div className="space-y-4 flex-1">
+            {transactions && transactions.length > 0 ? (
+              transactions.slice(0, 7).map((tx, idx) => (
+                <div key={idx} className="flex items-center justify-between p-5 bg-surface/30 border border-default/50 rounded-sm hover:border-accent/40 hover:bg-surface/50 transition-all group/item hover:translate-x-1 duration-300">
+                  <div className="flex items-center gap-5">
+                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center border ${tx.type === 'INCOME' ? 'bg-success/10 border-success/30 text-success' : 'bg-danger/10 border-danger/30 text-danger'}`}>
+                      {tx.type === 'INCOME' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                     </div>
-                    <p className="text-xs font-bold text-slate-700 dark:text-neutral-200 leading-snug">
-                      <span className="text-indigo-600 font-extrabold">{insight.name}</span> predicted to stock out by <span className="underline underline-offset-2">{insight.refillDate}</span>.
+                    <div>
+                      <p className="text-sm font-black text-main uppercase tracking-tight">{tx.description || 'System Protocol'}</p>
+                      <p className="text-[10px] text-secondary font-bold uppercase opacity-50 flex items-center gap-2">
+                        <span className={`w-1.5 h-1.5 rounded-full ${tx.type === 'INCOME' ? 'bg-success' : 'bg-danger'}`} />
+                        {tx.category || 'General'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-lg font-black tracking-tighter ${tx.type === 'INCOME' ? 'text-success' : 'text-danger'}`}>
+                      {tx.type === 'INCOME' ? '+' : '-'}₹{tx.amount.toLocaleString()}
                     </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase text-indigo-500">
-                        <TrendingUp className="w-3 h-3" /> Velocity: {insight.velocity} u/day
-                      </div>
-                      <div className="text-[9px] font-black uppercase text-slate-400 dark:text-neutral-500">
-                        Refill in {insight.daysLeft} days
-                      </div>
-                    </div>
+                    <p className="text-[10px] text-secondary font-black opacity-40 uppercase tracking-widest">{new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))
             ) : (
-              <div
-                onClick={() => dispatch(setActiveTab('INVENTORY'))}
-                className="p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50 dark:border-indigo-500/20 rounded-xl group hover:bg-indigo-100/30 dark:hover:bg-indigo-500/15 transition-all cursor-pointer text-center"
-              >
-                <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Package className="w-5 h-5 text-indigo-500" />
-                </div>
-                <h5 className="text-[10px] font-black text-indigo-600 uppercase mb-1">Stock Healthy</h5>
-                <p className="text-[10px] text-slate-500 dark:text-neutral-400">All fast-moving items are adequately stocked.</p>
+              <div className="flex-1 flex flex-col items-center justify-center py-20 opacity-20 grayscale">
+                <div className="w-32 h-32 mb-8 rounded-full border-4 border-dashed border-secondary animate-spin duration-[30s]" />
+                <p className="text-xs font-black uppercase tracking-[0.4em]">No Active Flux Detected</p>
               </div>
             )}
-
-            {/* Credit Intelligence Widget - NEW */}
-            {creditInsights.length > 0 && (
-              <div className="space-y-4 pt-2 border-t border-slate-50 dark:border-neutral-700 mt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 bg-amber-500 rounded-lg text-white">
-                    <User className="w-3.5 h-3.5" />
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-widest text-amber-600">Credit Intelligence</span>
-                </div>
-
-                {creditInsights.map((credit, idx) => (
-                  <div key={idx} className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-100/50 dark:border-amber-500/20 rounded-xl group hover:bg-amber-100/30 dark:hover:bg-amber-500/15 transition-all cursor-pointer">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-slate-800 dark:text-neutral-100 truncate max-w-[120px]">{credit.name}</span>
-                      <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${credit.risk === 'High' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'}`}>
-                        Risk: {credit.risk}
-                      </div>
-                    </div>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <p className="text-[10px] text-slate-500 dark:text-neutral-400 font-bold">Trust Score</p>
-                        <span className={`text-lg font-black ${credit.score > 70 ? 'text-emerald-500' : credit.score > 40 ? 'text-amber-500' : 'text-rose-500'}`}>
-                          {credit.score}
-                        </span>
-                        <span className="text-[10px] text-slate-300 dark:text-neutral-500 font-bold"> / 100</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[10px] text-slate-500 dark:text-neutral-400 font-bold">{credit.status}</p>
-                        <span className="text-xs font-black text-slate-800 dark:text-neutral-100">₹{credit.outstanding.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    {/* Mini Progress Bar */}
-                    <div className="mt-3 w-full h-1 bg-white/50 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-1000 ${credit.score > 70 ? 'bg-emerald-500' : credit.score > 40 ? 'bg-amber-500' : 'bg-rose-500'}`}
-                        style={{ width: `${credit.score}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Daily Checklist Placeholder */}
-            <div className="p-4 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl flex flex-col items-center justify-center py-8 text-center border-dashed">
-              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-neutral-800 flex items-center justify-center mb-3">
-                <CheckCircle2 className="w-5 h-5 text-slate-400 dark:text-neutral-500" />
-              </div>
-              <h4 className="text-[11px] font-black text-slate-800 dark:text-neutral-100 uppercase tracking-widest mb-1">More Insights Pending</h4>
-              <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-medium">Continue processing orders to unlock daily checklist automation.</p>
-            </div>
           </div>
         </div>
 
-      </div>
+        {/* Neural Hub - Intelligence Widgets */}
+        <div className="space-y-8">
+          <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.5em] opacity-50 pl-2 mb-4">Neural Priority Hub</h3>
 
+          {/* Cost Intelligence Widget */}
+          <div className="card-interactive p-8 grad-error border-l-4 border-l-danger group relative overflow-hidden bg-card/60 backdrop-blur-2xl">
+            <div className="absolute -right-4 -top-4 w-32 h-32 bg-danger/10 rounded-full blur-3xl animate-aura opacity-50" />
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-sm bg-danger/20 flex items-center justify-center text-danger border border-danger/30 group-hover:glow-error transition-all">
+                  <ShieldAlert className="w-7 h-7 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-main uppercase tracking-tight">CapEx Anomaly</h4>
+                  <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Logic Engine: Risk detected</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-secondary leading-relaxed mb-6 font-bold opacity-80 relative z-10">
+              Logistics expenditure has deviated by <span className="text-danger font-black">+18%</span> from the standard baseline in Coimbatore node.
+            </p>
+            <div className="flex items-end justify-between mb-6 relative z-10">
+              <div className="px-3 py-1 bg-danger/20 border border-danger/30 rounded-sm text-[9px] font-black text-danger uppercase tracking-widest">
+                URGENT MITIGATION
+              </div>
+              <p className="text-2xl font-display font-black text-main tracking-tighter">₹42.5k</p>
+            </div>
+            <button className="w-full py-3 bg-danger/10 border border-danger/30 text-[10px] font-black text-danger uppercase tracking-[0.3em] hover:bg-danger hover:text-white transition-all relative z-10 rounded-sm">
+              Initiate Protocol
+            </button>
+          </div>
+
+          {/* Inventory Predictor Widget */}
+          <div className="card-interactive p-8 grad-primary border-l-4 border-l-primary group bg-card/60 backdrop-blur-2xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 animate-aura opacity-50" />
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-sm bg-primary/20 flex items-center justify-center text-primary border border-primary/30 group-hover:glow-primary transition-all">
+                <Package className="w-7 h-7" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-main uppercase tracking-tight">Depletion Logic</h4>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Auto-Calibration Active</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {stockInsights.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between bg-surface/40 p-4 rounded-sm border border-default/30 hover:border-primary/40 transition-all group/stock">
+                  <div>
+                    <p className="text-[11px] font-black text-main uppercase tracking-tight mb-1 group-hover/stock:text-primary transition-colors">{item.name}</p>
+                    <p className="text-[9px] text-secondary uppercase font-black opacity-40">Predictive ETA: {item.refillDate}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-[11px] font-black uppercase tracking-widest ${item.urgency === 'Critical' ? 'text-danger animate-pulse' : 'text-primary'}`}>
+                      {item.daysLeft} CYCLES
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Credit Intelligence Widget */}
+          <div className="card-interactive p-8 grad-primary border-l-4 border-l-accent group bg-card/60 backdrop-blur-2xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -mr-16 -mt-16 animate-aura opacity-50" />
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-sm bg-accent/20 flex items-center justify-center text-accent border border-accent/30 group-hover:glow-primary transition-all">
+                <User className="w-7 h-7" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-main uppercase tracking-tight">Trust Profile</h4>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Counterparty Calibration</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {creditInsights.map((item, idx) => (
+                <div key={idx} className="p-4 bg-surface/40 rounded-sm border border-default/30 hover:border-accent/40 transition-all">
+                  <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] mb-4 opacity-50">{item.name}</p>
+                  <div className="flex items-end justify-between">
+                    <p className="text-xl font-display font-black text-main tracking-tighter">{item.score}<span className="text-[10px] text-secondary ml-1 opacity-30">/100</span></p>
+                    <span className={`text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-widest border shadow-sm ${item.risk === 'High' ? 'bg-danger/20 border-danger/40 text-danger' : 'bg-success/20 border-success/40 text-success'}`}>
+                      {item.risk}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };

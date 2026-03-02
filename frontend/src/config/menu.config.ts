@@ -17,7 +17,6 @@ import {
     UserCircle,
     ClipboardList,
     DollarSign,
-    CreditCard,
     Briefcase,
     Shield,
     Database,
@@ -41,7 +40,8 @@ import {
     Building,
     Key,
     Lock,
-    TrendingUp
+    TrendingUp,
+    CreditCard
 } from 'lucide-react';
 import { AppView, ModuleType } from '../types/common';
 
@@ -155,6 +155,8 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'FUND_TRANSFERS', label: 'Transfers', icon: ArrowRight, module: 'FINANCE', path: '/finance/transfers' },
             { id: 'BANK_RECONCILIATION', label: 'Reconciliation', icon: RefreshCw, module: 'FINANCE', path: '/finance/reconciliation' },
             { id: 'BANK_SUMMARY', label: 'Summary', icon: FileText, module: 'FINANCE', path: '/finance/summary' },
+            { id: 'LOAN_ACCOUNTS', label: 'Loans', icon: CreditCard, module: 'FINANCE', path: '/finance/loans' },
+            { id: 'BANK_STATEMENT', label: 'Statements', icon: Upload, module: 'FINANCE', path: '/finance/bank-statement' },
             { id: 'GST_RECONCILIATION', label: 'GST', icon: FileText, module: 'FINANCE', path: '/finance/gst' },
             { id: 'JOURNAL_ENTRIES', label: 'Journal', icon: FileText, module: 'FINANCE', path: '/finance/journal' },
         ]

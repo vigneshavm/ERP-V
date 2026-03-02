@@ -159,7 +159,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
         // Developer/Owner bypass - full access
         const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
 
-        if (!isBypassUser && !checkAccess(activeTab as AppView)) {
+        if (!isBypassUser && activeTab !== 'BANK_STATEMENT' && !checkAccess(activeTab as AppView)) {
             return (
                 <EntitlementGuard
                     view={activeTab as AppView}
@@ -271,6 +271,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'BATCH_EXPIRY': return <LazyModules.BatchExpiryIntelligence />;
 
                         // Finance
+                        case 'FINANCE_AGENTS': return <LazyModules.FinanceAgentDashboard />;
                         case 'FINANCE': return <LazyModules.Finance />;
                         case 'CASH_ACCOUNTS': return <LazyModules.CashBankIntelligence />;
                         case 'BANK_ACCOUNTS': return <LazyModules.BankIntelligence />;
@@ -278,6 +279,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                         case 'BANK_RECONCILIATION': return <LazyModules.BankReconciliationIntelligence />;
                         case 'FUND_TRANSFERS': return <LazyModules.FundTransferIntelligence />;
                         case 'PETTY_CASH': return <LazyModules.PettyCashIntelligence />;
+                        case 'BANK_STATEMENT': return <LazyModules.BankStatementView />;
+                        case 'LOAN_ACCOUNTS': return <LazyModules.LoanAccounts />;
 
                         // POS
                         case 'POS': return <LazyModules.POS />;
@@ -412,9 +415,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     return (
         <ConfigProvider tenant={effectiveTenant}>
-            <div className="flex h-screen bg-neutral-50 overflow-hidden text-neutral-900 dark:text-neutral-100">
+            <div className="flex h-screen bg-app overflow-hidden text-main">
                 {/* Mobile Bottom Navigation */}
-                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 z-50 flex justify-around items-center h-16 pb-safe">
+                <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-card/80 backdrop-blur-lg border-t border-default z-50 flex justify-around items-center h-16 pb-safe">
                     {/* Keep minimal mobile nav or refactor? Keeping explicit for now as Sidebar is desktop focused mostly */}
                     <button
                         onClick={() => dispatch(setActiveTab('DASHBOARD'))}
@@ -443,8 +446,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 <Sidebar onLogout={onLogout} />
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full bg-neutral-50 dark:bg-neutral-900 relative">
-                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-neutral-900 dark:text-neutral-100">
+                <main className="flex-1 overflow-hidden w-full bg-app relative">
+                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-main">
                         <Routes>
                             <Route path="/" element={renderContent()} />
                             {/* SALES ROUTES */}
@@ -566,6 +569,12 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                             <Route path="/finance/journal/new" element={
                                 <Suspense fallback={<div>Loading Journal Form...</div>}><LazyModules.JournalEntryForm /></Suspense>
                             } />
+                            <Route path="/finance/bank-statement" element={
+                                <Suspense fallback={<div>Loading Bank Statements...</div>}><LazyModules.BankStatementView /></Suspense>
+                            } />
+                            <Route path="/finance/agents" element={
+                                <Suspense fallback={<div>Loading Finance Agents...</div>}><LazyModules.FinanceAgentDashboard /></Suspense>
+                            } />
                             <Route path="*" element={renderContent()} />
                             <Route path="/people/employees" element={
                                 <Navigate to="/people/employees/labor" replace />
@@ -620,20 +629,20 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                 {/* Confirmation Modal */}
                 {confirmDialog.isOpen && (
-                    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-                        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-neutral-200 dark:border-neutral-700">
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{confirmDialog.title}</h3>
-                            <p className="text-neutral-500 dark:text-neutral-400 mb-6">{confirmDialog.message}</p>
+                    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+                        <div className="glass-panel rounded-2xl p-6 max-w-sm w-full border border-white/10 shadow-2xl">
+                            <h3 className="text-xl font-display font-bold text-main mb-2">{confirmDialog.title}</h3>
+                            <p className="text-secondary mb-6">{confirmDialog.message}</p>
                             <div className="flex gap-3 justify-end">
                                 <button
                                     onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-                                    className="px-4 py-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
+                                    className="px-4 py-2 text-secondary hover:bg-white/5 rounded-lg font-bold transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleConfirm}
-                                    className="px-4 py-2 bg-error hover:bg-error/90 text-white rounded-lg font-bold transition-colors"
+                                    className="btn-cyber-primary bg-error hover:bg-error/90"
                                 >
                                     Confirm
                                 </button>

@@ -7,11 +7,11 @@ import { setUser, getProfile } from './redux/slices/authSlice';
 import { setActiveTab } from './redux/slices/uiSlice';
 import { APP_CONFIG } from './config';
 
-import Login from './pages/Auth/Login';
+import Login from './pages/auth/Login';
 import AdminLogin from './components/AdminLogin';
-import ResetPassword from './pages/Auth/ResetPassword';
-import ForgotPassword from './pages/Auth/ForgotPassword';
-import Register from './pages/Auth/Register';
+import ResetPassword from './pages/auth/ResetPassword';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import Register from './pages/auth/Register';
 import TenantManager from './pages/People/Tenants/TenantManager';
 import TenantSignUp from './pages/People/Tenants/TenantSignUp';
 import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
@@ -197,72 +197,81 @@ const App: React.FC = () => {
   };
 
   const LoadingScreen = () => (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-app flex flex-col items-center justify-center p-4">
       <div className="w-16 h-16 relative">
-        <div className="absolute inset-0 border-4 border-indigo-200 rounded-full"></div>
-        <div className="absolute inset-0 border-4 border-t-indigo-600 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+        <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
       </div>
-      <p className="mt-4 text-slate-500 font-medium animate-pulse">Initializing Terminal...</p>
+      <p className="mt-6 text-secondary font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Neural Link</p>
     </div>
   );
 
   const LandingPage = () => (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-4xl w-full text-center mb-12">
-        <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/20">
-          <span className="font-bold text-3xl text-white">E</span>
+    <div className="min-h-screen bg-app flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40">
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[160px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent/20 rounded-full blur-[160px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      <div className="max-w-4xl w-full text-center mb-16 relative z-10">
+        <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20 rotate-3 animate-fade-in">
+          <span className="font-display font-black text-4xl text-white">E</span>
         </div>
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Enterprise Manager</h1>
-        <p className="text-xl text-slate-500 max-w-2xl mx-auto">
-          The all-in-one ERP & POS platform for modern retail chains.
-          Manage inventory, sales, finance, and workforce from a single dashboard.
+        <h1 className="text-5xl md:text-6xl font-display font-black text-main mb-6 tracking-tighter animate-slide-down">
+          Next-Gen <span className="text-primary">ERP</span> Matrix
+        </h1>
+        <p className="text-xl text-secondary max-w-2xl mx-auto font-medium leading-relaxed opacity-80 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          The intelligent neural center for modern commerce.
+          Synchronize inventory, finance, and operations with industrial-grade precision.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-3xl w-full">
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl w-full relative z-10 animate-fade-in" style={{ animationDelay: '0.4s' }}>
         <button
           onClick={() => setViewMode('ADMIN')}
-          className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-blue-600 hover:shadow-xl transition-all duration-300 text-left"
+          className="card-interactive group text-left relative overflow-hidden"
         >
-          <div className="absolute top-6 right-6 text-slate-300 group-hover:text-blue-600 transition-colors">
-            <ArrowRight className="w-6 h-6" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+            <Shield className="w-7 h-7" />
           </div>
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-            <Shield className="w-6 h-6" />
+          <h2 className="text-2xl font-display font-bold text-main mb-2">Platform Control</h2>
+          <p className="text-secondary opacity-70 mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
+          <div className="flex items-center text-primary font-bold text-sm tracking-widest uppercase">
+            Initialize Access <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Super Admin</h2>
-          <p className="text-slate-500">Provision new tenants, manage subscriptions, and oversee platform health.</p>
         </button>
 
         <button
           onClick={() => {
-            // Setup demo tenant
             setCurrentTenant({
               id: 'demo',
-              name: 'Demo Retail Co',
+              name: 'Neural Retail Co',
               subdomain: 'demo',
               sector: 'Retail',
               modules: ['POS', 'INVENTORY', 'FINANCE', 'HR'],
-              isActive: true, // Assuming isActive needed
+              isActive: true,
               region: { currency: 'USD', currencySymbol: '$', dateFormat: 'MM/DD/YYYY' }
             } as any);
             setViewMode('TENANT');
-            setIsLoggedIn(false); // Force login
+            setIsLoggedIn(false);
           }}
-          className="group relative bg-white p-8 rounded-2xl shadow-sm border-2 border-slate-100 hover:border-emerald-600 hover:shadow-xl transition-all duration-300 text-left"
+          className="card-interactive group text-left relative overflow-hidden"
         >
-          <div className="absolute top-6 right-6 text-slate-300 group-hover:text-emerald-600 transition-colors">
-            <ArrowRight className="w-6 h-6" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+          <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+            <Store className="w-7 h-7" />
           </div>
-          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
-            <Store className="w-6 h-6" />
+          <h2 className="text-2xl font-display font-bold text-main mb-2">Tenant Interface</h2>
+          <p className="text-secondary opacity-70 mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
+          <div className="flex items-center text-secondary font-bold text-sm tracking-widest uppercase">
+            Authenticate Unit <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Tenant Login</h2>
-          <p className="text-slate-500">Access your store's POS, Inventory, and Financial dashboards.</p>
         </button>
       </div>
 
-      <p className="mt-12 text-sm text-slate-400">© 2024 Enterprise Manager Platform. All rights reserved.</p>
+      <p className="mt-20 text-xs text-secondary font-bold tracking-[0.2em] opacity-40 uppercase">© 2026 ERP Matrix Systems // Secure Access Point</p>
     </div>
   );
 
@@ -277,26 +286,29 @@ const App: React.FC = () => {
     }
 
     return (
-      <div className="min-h-screen bg-slate-100 flex flex-col">
-        <header className="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
+      <div className="min-h-screen bg-app flex flex-col">
+        <header className="glass-panel border-b border-default text-main p-4 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold">A</div>
-              <span className="font-bold text-lg">Super Admin Portal</span>
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-display font-black shadow-lg shadow-primary/20">A</div>
+              <div>
+                <span className="font-display font-bold text-xl tracking-tight">System Core</span>
+                <div className="text-[10px] text-primary font-bold tracking-[0.2em] uppercase leading-none mt-0.5">Administrator Console</div>
+              </div>
             </div>
             <button
               onClick={() => {
                 setViewMode('LANDING');
                 setIsAdminAuthenticated(false);
               }}
-              className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              Terminate Session
             </button>
           </div>
         </header>
-        <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
             <TenantManager onLoginAs={(tenant) => {
               setCurrentTenant(tenant);

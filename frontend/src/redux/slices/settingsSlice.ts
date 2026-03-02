@@ -38,7 +38,7 @@ const initialSettingsState: SettingsState = {
             'LOW_STOCK_ALERTS', 'UNITS_HSN', 'WAREHOUSES', 'BATCH_EXPIRY', 'AGED_STOCK',
 
             // Finance (Cash & Bank)
-            'CASH_ACCOUNTS', 'BANK_ACCOUNTS', 'PETTY_CASH', 'FUND_TRANSFERS', 'BANK_RECONCILIATION',
+            'CASH_ACCOUNTS', 'BANK_ACCOUNTS', 'PETTY_CASH', 'FUND_TRANSFERS', 'BANK_RECONCILIATION', 'BANK_STATEMENT', 'LOAN_ACCOUNTS',
 
             // POS
             'POS_ORDERS', 'POS_RETURNS', 'SHIFT_MANAGEMENT', 'CASH_DRAWER',
@@ -84,7 +84,10 @@ const initialSettingsState: SettingsState = {
 
             // Vendor Management
             'SUPPLIERS', 'SUPPLIER_LIST', 'SUPPLIER_LEDGER', 'SUPPLIER_STATEMENTS', 'SUPPLIER_GROUPS',
-            'VENDORS', 'VENDOR_DETAILS', 'VENDOR_FORM'
+            'VENDORS', 'VENDOR_DETAILS', 'VENDOR_FORM',
+
+            // Finance (Cash & Bank)
+            'FINANCE', 'CASH_ACCOUNTS', 'BANK_ACCOUNTS', 'PETTY_CASH', 'FUND_TRANSFERS', 'BANK_RECONCILIATION', 'BANK_STATEMENT', 'LOAN_ACCOUNTS'
         ],
         [DbRoleCode.ADMIN]: [
             // Main Groups
@@ -115,7 +118,7 @@ const initialSettingsState: SettingsState = {
             'LOW_STOCK_ALERTS', 'UNITS_HSN', 'WAREHOUSES', 'BATCH_EXPIRY', 'AGED_STOCK',
 
             // Finance (Cash & Bank)
-            'CASH_ACCOUNTS', 'BANK_ACCOUNTS', 'PETTY_CASH', 'FUND_TRANSFERS', 'BANK_RECONCILIATION',
+            'CASH_ACCOUNTS', 'BANK_ACCOUNTS', 'PETTY_CASH', 'FUND_TRANSFERS', 'BANK_RECONCILIATION', 'BANK_STATEMENT', 'LOAN_ACCOUNTS',
 
             // POS
             'POS_ORDERS', 'POS_RETURNS', 'SHIFT_MANAGEMENT', 'CASH_DRAWER',

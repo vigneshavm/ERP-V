@@ -43,7 +43,7 @@ export const Modules = {
     Data: () => import("../pages/System/Data/index"),
     GrowReports: () => import("../pages/Reports/index"),
     Architecture: () => import("../pages/System/Architecture/ArchitectureIntelligence"),
-    Login: () => import("../pages/Auth/Login"),
+    Login: () => import("../pages/auth/Login"),
     SMSMarketing: () => import("../pages/Marketing/SMSMarketing"),
     WhatsAppEngagement: () => import("../pages/CustomerEngagement/WhatsAppEngagement"),
     LoyaltyEngagement: () => import("../pages/CustomerEngagement/LoyaltyEngagement"),
@@ -110,10 +110,7 @@ export const Modules = {
     // Supplier Features
     SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
     SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
-    SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
-    SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
-    SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
-    SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
+    SupplierGroups: () => import("../pages/People/Customers/CustomerGroups"), // Actually Customers? Let's check config.
     SupplierAgeing: () => import("../pages/Purchase/SupplierAgeing"),
     EditSupplier: () => import("../pages/People/Suppliers/EditSupplier"),
 
@@ -127,6 +124,7 @@ export const Modules = {
     BatchExpiryIntelligence: () => import("../pages/Inventory/InventoryManager"),
 
     // Finance Features
+    FinanceAgentDashboard: () => import("../pages/Financial/FinanceAgentDashboard"),
     DailyFinanceTracker: () => import("../pages/Expenses/DailyFinance"),
     CashBankIntelligence: () => import("../pages/Financial/Cashbank/CashBankIntelligence"),
     PettyCashIntelligence: () => import("../pages/Financial/Cashbank/PettyCash"),
@@ -141,6 +139,8 @@ export const Modules = {
     CashInHand: () => import("../pages/Financial/Cashbank/CashInHand"),
     CashBankPosition: () => import("../pages/Financial/Cashbank/CashBankPosition"),
     AccountLedger: () => import("../pages/Financial/Cashbank/AccountLedger"),
+    BankStatementView: () => import("../pages/Finance/BankStatementView"),
+    LoanAccounts: () => import("../pages/Financial/Cashbank/LoanAccounts"),
 
     // Expense Features
     ExpenseIntelligence: () => import("../pages/Expenses/ExpenseIntelligence"),
@@ -164,6 +164,7 @@ export const Modules = {
     PayrollRuns: () => import("../pages/People/Payroll/PayrollRuns"),
     AttendanceSummaryManager: () => import("../pages/People/Payroll/AttendanceSummaryManager"),
     DailyAttendanceBoard: () => import("../pages/People/Employees/DailyAttendanceBoard"),
+    PayslipView: () => import("../pages/People/Payroll/PayslipView"),
 };
 
 export const LazyModules = {
@@ -268,9 +269,6 @@ export const LazyModules = {
     SupplierLedger: lazy(Modules.SupplierLedger),
     SupplierStatements: lazy(Modules.SupplierStatements),
     SupplierGroups: lazy(Modules.SupplierGroups),
-    SupplierLedger: lazy(Modules.SupplierLedger),
-    SupplierStatements: lazy(Modules.SupplierStatements),
-    SupplierGroups: lazy(Modules.SupplierGroups),
     SupplierAgeing: lazy(Modules.SupplierAgeing),
     EditSupplier: lazy(Modules.EditSupplier),
 
@@ -284,6 +282,7 @@ export const LazyModules = {
     BatchExpiryIntelligence: lazy(Modules.BatchExpiryIntelligence),
 
     // Finance
+    FinanceAgentDashboard: lazy(Modules.FinanceAgentDashboard),
     DailyFinanceTracker: lazy(Modules.DailyFinanceTracker),
     CashBankIntelligence: lazy(Modules.CashBankIntelligence),
     PettyCashIntelligence: lazy(Modules.PettyCashIntelligence),
@@ -298,6 +297,8 @@ export const LazyModules = {
     CashInHand: lazy(Modules.CashInHand),
     CashBankPosition: lazy(Modules.CashBankPosition),
     AccountLedger: lazy(Modules.AccountLedger),
+    BankStatementView: lazy(Modules.BankStatementView),
+    LoanAccounts: lazy(Modules.LoanAccounts),
 
     // Expenses
     ExpenseIntelligence: lazy(Modules.ExpenseIntelligence),
@@ -321,6 +322,7 @@ export const LazyModules = {
     PayrollRuns: lazy(Modules.PayrollRuns),
     AttendanceSummaryManager: lazy(Modules.AttendanceSummaryManager),
     DailyAttendanceBoard: lazy(Modules.DailyAttendanceBoard),
+    PayslipView: lazy(Modules.PayslipView),
 };
 
 

@@ -1,5 +1,11 @@
+import dns from "dns";
 import mongoose from "mongoose";
 import { info, error as logError } from "./logger.js";
+
+// Fix: Windows DNS may fail to resolve MongoDB Atlas SRV records.
+// Force Cloudflare (1.1.1.1) and Google (8.8.8.8) DNS for reliable resolution.
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 5000; // 5 seconds

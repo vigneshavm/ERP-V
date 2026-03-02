@@ -166,7 +166,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         <select
                             value={selectedBranch}
                             onChange={(e) => dispatch(setBranch(e.target.value))}
-                            className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg py-1.5 px-2 text-xs font-bold text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+                            className="w-full bg-surface border border-default rounded-lg py-1.5 px-2 text-xs font-black text-main focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-all"
                         >
                             <option value="All">All Branches (HQ View)</option>
                             {availableBranches.map((b: any) => (
@@ -213,7 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     return (
         <aside className={`
-            fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 p-2 flex flex-col transition-all duration-300 transform 
+            fixed lg:static inset-y-0 left-0 z-40 bg-sidebar border-r border-default p-2 flex flex-col transition-all duration-300 transform 
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
         `}>
@@ -229,8 +229,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     </div>
                     {!desktopCollapsed && (
                         <div className="overflow-hidden">
-                            <span className="text-lg font-bold tracking-tight block leading-none truncate">{user?.name || 'User'}</span>
-                            <span className="text-xs text-neutral-500 dark:text-neutral-400 uppercase font-bold tracking-wider">{role}</span>
+                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">{user?.name || 'User'}</span>
+                            <span className="text-[10px] text-secondary uppercase font-bold tracking-widest leading-relaxed">{role}</span>
                         </div>
                     )}
                 </div>
@@ -239,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 </button>
                 <button
                     onClick={() => dispatch(setDesktopCollapsed(!desktopCollapsed))}
-                    className="hidden lg:flex p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400"
+                    className="hidden lg:flex p-1.5 rounded-md hover:bg-white/5 text-secondary transition-colors"
                 >
                     {desktopCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </button>
@@ -247,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
             {/* Tenant Info & Branch */}
             <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                {!desktopCollapsed && <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">{currentTenant?.name}</span>}
+                {!desktopCollapsed && <span className="text-[10px] text-secondary uppercase font-bold tracking-[0.2em] opacity-80">{currentTenant?.name}</span>}
                 {branchSelector}
             </div>
 
@@ -256,15 +256,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Main ERP Section */}
                 {!desktopCollapsed && visibleErpItems.length > 0 && (
                     <div className="px-3 pt-4 pb-2">
-                        <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Main ERP</h3>
+                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">System Core</h3>
                     </div>
                 )}
                 {visibleErpItems.map((item: MenuItem) => renderRecursive(item, false))}
 
                 {/* Growth Platform Section */}
                 {!desktopCollapsed && visibleGrowItems.length > 0 && (
-                    <div className="px-3 pt-6 pb-2 border-t border-neutral-100 dark:border-neutral-800/50 mt-4">
-                        <h3 className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Growth Platform</h3>
+                    <div className="px-3 pt-6 pb-2 border-t border-white/5 mt-4">
+                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">Growth Matrix</h3>
                     </div>
                 )}
                 {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -274,17 +274,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-2 space-y-2">
                 <button
                     onClick={onLogout}
-                    className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors`}
+                    className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-secondary hover:bg-white/5 hover:text-main transition-all group`}
                 >
-                    <Lock className="w-5 h-5" />
-                    <span className="font-medium">Staff Logout</span>
+                    <Lock className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                    <span className="font-black text-[11px] uppercase tracking-widest">Terminate Protocol</span>
                 </button>
                 {desktopCollapsed && (
                     <div className="flex flex-col gap-2 w-full px-2">
-                        <button onClick={onLogout} title="Logout" className="flex-1 flex justify-center py-3 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                        <button onClick={onLogout} title="Logout" className="flex-1 flex justify-center py-3 rounded-lg text-secondary hover:bg-white/5 transition-colors">
                             <Lock className="w-5 h-5" />
                         </button>
-                        <button onClick={() => setIsChangePasswordOpen(true)} title="Change Password" className="px-3 flex justify-center py-3 rounded-lg text-neutral-400 dark:text-neutral-500 hover:text-primary hover:bg-primary/10 dark:hover:bg-neutral-800 transition-colors">
+                        <button onClick={() => setIsChangePasswordOpen(true)} title="Change Password" className="px-3 flex justify-center py-3 rounded-lg text-secondary hover:text-primary hover:bg-white/5 transition-colors">
                             <Key className="w-5 h-5" />
                         </button>
                     </div>

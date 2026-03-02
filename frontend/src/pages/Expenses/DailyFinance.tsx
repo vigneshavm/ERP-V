@@ -80,7 +80,7 @@ const DailyFinancePage: React.FC = () => {
             cashInDrawer: parseFloat(drawerCash) || 0,
             notes: notes || '',
             timestamp: new Date().toISOString(),
-            tenantId: user?.tenantId
+            tenantId: typeof user?.tenantId === 'object' && user?.tenantId !== null ? (user.tenantId as any)._id : user?.tenantId
         };
 
         if (editingId) {
@@ -197,7 +197,7 @@ const DailyFinancePage: React.FC = () => {
                             <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Today's Summary</h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-indigo-500/20">
-                                    {user?.tenantId || 'Business'}
+                                    {typeof user?.tenantId === 'object' && user?.tenantId !== null ? (user.tenantId as any).name : (user?.tenantId || 'Business')}
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
                                 <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 capitalize">

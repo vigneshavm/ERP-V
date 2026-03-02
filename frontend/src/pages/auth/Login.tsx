@@ -65,17 +65,17 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                                 id="rememberMe"
                                 type="checkbox"
                                 {...register('rememberMe')}
-                                className="peer h-5 w-5 rounded-lg border-slate-800 bg-slate-900 text-indigo-500 focus:ring-indigo-500/50 transition-all cursor-pointer appearance-none border-2 checked:bg-indigo-600 checked:border-indigo-600"
+                                className="peer h-5 w-5 rounded-lg border-default bg-card text-primary focus:ring-primary/50 transition-all cursor-pointer appearance-none border-2 checked:bg-primary checked:border-primary"
                             />
                             <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5" />
                         </div>
-                        <label htmlFor="rememberMe" className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-400 transition-colors cursor-pointer">
+                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-secondary uppercase tracking-widest group-hover:text-main transition-colors cursor-pointer opacity-60 group-hover:opacity-100">
                             Remember Access
                         </label>
                     </div>
 
-                    <div className="text-[10px] font-black uppercase tracking-widest">
-                        <Link to="/forgot-password" university-anchor="forgot-password" className="text-indigo-500 hover:text-indigo-400 transition-colors">
+                    <div className="text-[10px] font-bold uppercase tracking-widest">
+                        <Link to="/forgot-password" university-anchor="forgot-password" className="text-primary hover:text-primary/80 transition-colors">
                             Recover Key
                         </Link>
                     </div>
@@ -85,10 +85,10 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
+                        className="btn-cyber-primary w-full h-14 !rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
                     >
                         {isLoading ? (
-                            <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
+                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : (
                             <>Authenticate Access <ArrowRight className="w-4 h-4" /></>
                         )}
@@ -96,19 +96,19 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                 </div>
             </form>
 
-            <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
+            <div className="mt-8 pt-8 border-t border-default text-center">
                 {!isAdmin && (
                     <div className="space-y-4">
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                        <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
                             New to the Platform?
                         </p>
-                        <Link to="/signup" className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                        <Link to="/signup" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
                             Start 14-day Enterprise Trial <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
                 )}
                 {isAdmin && (
-                    <Link to="/" className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                    <Link to="/" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
                         <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Back to System Login
                     </Link>
                 )}

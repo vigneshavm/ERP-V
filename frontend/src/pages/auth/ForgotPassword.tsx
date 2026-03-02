@@ -41,34 +41,34 @@ const ForgotPassword: React.FC = () => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
+                    className="btn-cyber-primary w-full h-14 !rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
                 >
                     {isLoading ? (
-                        <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                     ) : (
                         <>Send Recovery Link <ArrowRight className="w-4 h-4" /></>
                     )}
                 </button>
             </form>
 
-            <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
+            <div className="mt-8 pt-8 border-t border-default text-center">
                 <div className="space-y-4">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
                         Remembered your Key?
                     </p>
-                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
                         Return to Sign In <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                 </div>
             </div>
 
-            <div className="mt-8 bg-slate-900/50 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0">
-                    <LifeBuoy className="w-5 h-5 text-indigo-400" />
+            <div className="mt-8 bg-card border border-default p-4 rounded-2xl flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <LifeBuoy className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Need Support?</p>
-                    <p className="text-xs text-slate-500 font-medium">Contact our enterprise desk for further assistance.</p>
+                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">Need Support?</p>
+                    <p className="text-xs text-secondary font-medium">Contact our enterprise desk for further assistance.</p>
                 </div>
             </div>
         </AuthLayout>

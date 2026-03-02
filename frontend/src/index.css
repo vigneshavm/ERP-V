@@ -41,6 +41,30 @@
   }
 }
 
+@keyframes aura-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(10%, 10%) scale(1.1);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out;
 }
@@ -49,8 +73,8 @@
   animation: slide-down 0.5s ease-out;
 }
 
-.animate-bounce-arrow {
-  animation: bounce-arrow 1s infinite;
+.animate-aura {
+  animation: aura-float 20s ease-in-out infinite;
 }
 
 .group:hover .group-hover\:scale-105 {
@@ -58,110 +82,156 @@
 }
 
 @layer base {
-
-  /* Light Theme (Default) */
   :root {
-    /* Backgrounds */
-    --color-bg: 249 250 251;
-    /* gray-50 */
-    --color-card: 255 255 255;
-    /* white */
-    --color-input: 255 255 255;
-    /* white */
-    --color-sidebar: 255 255 255;
-    /* white */
-    --color-table-row: 255 255 255;
-    /* white */
-    --color-table-header: 249 250 251;
-    /* gray-50 */
+    /* Backgrounds - Refined & Premium Cyber-Carbon */
+    --color-bg: 5 7 10;
+    /* Deep Obsidian */
+    --color-card: 16 20 24;
+    /* Hardware Surface */
+    --color-input: 9 12 16;
+    --color-sidebar: 5 7 10;
+    --color-table-row: 16 20 24;
+    --color-table-header: 22 27 34;
 
-    /* Text */
-    --color-text: 17 24 39;
-    /* gray-900 */
-    --color-text-secondary: 55 65 81;
-    /* slate-700 */
+    /* Text - High-Contrast Cyber */
+    --color-text: 230 237 243;
+    --color-text-secondary: 139 148 158;
+    --color-text-muted: 110 118 129;
+    --color-placeholder: 72 82 92;
+
+    /* Borders - Industrial Grip */
+    --color-border: 48 54 61;
+    --color-border-light: 33 38 45;
+
+    /* Primary Accent - Cyber Indigo */
+    --color-primary: 99 102 241;
+    /* indigo-500 */
+    --color-primary-hover: 79 70 229;
+    /* indigo-600 */
+
+    /* Secondary Accent - Emerald Precision */
+    --color-secondary: 16 185 129;
+    /* emerald-500 */
+
+    /* Semantic Colors - High Tech */
+    --color-error: 244 63 94;
+    --color-success: 16 185 129;
+    --color-warning: 245 158 11;
+    --color-info: 56 189 248;
+    --color-accent: 139 92 246;
+
+    /* Glow Tokens */
+    --glow-primary: 0 0 20px rgba(var(--color-primary), 0.3);
+    --glow-success: 0 0 20px rgba(var(--color-success), 0.3);
+    --glow-error: 0 0 20px rgba(var(--color-error), 0.3);
+
+    /* Fonts */
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .dark {
+    /* Backgrounds - Deep Space */
+    --color-bg: 10 12 16;
+    --color-card: 16 20 28;
+    --color-input: 11 15 22;
+    --color-sidebar: 10 12 16;
+    --color-table-row: 16 20 28;
+    --color-table-header: 23 29 41;
+
+    /* Text - High Contrast Crystal */
+    --color-text: 241 245 249;
+    /* slate-100 */
+    --color-text-secondary: 148 163 184;
+    /* slate-400 */
     --color-text-muted: 71 85 105;
     /* slate-600 */
-    --color-placeholder: 100 116 139;
-    /* slate-500 */
+    --color-placeholder: 51 65 85;
+    /* slate-700 */
 
-    /* Borders */
-    --color-border: 229 231 235;
-    /* gray-200 */
-    --color-border-light: 243 244 246;
-    /* gray-100 */
+    /* Borders - Stealth */
+    --color-border: 30 41 59;
+    /* slate-800 */
+    --color-border-light: 22 30 46;
 
-    /* Primary Accent (Indigo for Light) */
-    --color-primary: 79 70 229;
-    /* indigo-600 */
-    --color-primary-hover: 67 56 202;
-    --color-primary-hover: 67 56 202;
-    /* indigo-700 */
+    /* Primary Accent - Neon Emerald */
+    --color-primary: 52 211 153;
+    /* emerald-400 */
+    --color-primary-hover: 16 185 129;
+    /* emerald-500 */
 
-    /* Semantic Colors (Light) */
-    --color-error: 239 68 68;
-    /* red-500 */
-    --color-success: 22 163 74;
-    /* green-600 */
-    --color-warning: 202 138 4;
-    /* yellow-600 */
+    /* Secondary Accent - Cyber Orange */
+    --color-secondary: 245 158 11;
+    /* amber-500 */
+
+    /* Semantic Colors */
+    --color-error: 251 113 133;
+    --color-success: 52 211 153;
+    --color-warning: 251 191 36;
   }
 
-  /* Dark Theme */
-  .dark {
-    /* Backgrounds */
-    --color-bg: 11 15 20;
-    /* #0B0F14 */
-    --color-card: 17 24 39;
-    /* #111827 */
-    --color-input: 2 6 23;
-    /* #020617 */
-    --color-sidebar: 15 23 42;
-    /* #0F172A */
-    --color-table-row: 17 24 39;
-    /* #111827 */
-    --color-table-header: 2 6 23;
-    /* #020617 */
-
-    /* Text - BRIGHT and READABLE */
-    --color-text: 243 244 246;
-    /* gray-100 */
-    --color-text-secondary: 163 163 163;
-    /* neutral-400 - improved from 300 for better balance */
-    --color-text-muted: 115 115 115;
-    /* neutral-500 - improved from 400 for better contrast */
-    --color-placeholder: 115 115 115;
-    /* #737373 - neutral-500 */
-
-    /* Borders */
-    --color-border: 31 41 51;
-    /* #1F2933 */
-    --color-border-light: 31 41 51;
-    /* #1F2933 */
-
-    /* Primary Accent (Orange for Dark) */
-    --color-primary: 245 158 11;
-    /* #F59E0B */
-    --color-primary-hover: 217 119 6;
-    --color-primary-hover: 217 119 6;
-    /* #D97706 */
-
-    /* Semantic Colors (Dark) */
-    --color-error: 248 113 113;
-    /* red-400 */
-    --color-success: 74 222 128;
-    /* green-400 */
-    --color-warning: 250 204 21;
-    /* yellow-400 */
+  * {
+    @apply border-default;
+    font-family: var(--font-body);
   }
 
-  /* Apply color scheme to html element */
-  html {
-    color-scheme: light;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
   }
 
-  html.dark {
-    color-scheme: dark;
+  body {
+    @apply bg-app text-main antialiased selection:bg-primary/30;
+    background-color: #05070a;
+    background-image:
+      /* Atmosphere Auras */
+      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.06) 0%, transparent 40%),
+      /* Blueprint Grid */
+      linear-gradient(rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px);
+    background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
+    background-attachment: fixed;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Layered Textures: Grain & Scanlines */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Noise Texture Overlay */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Scanline Texture Overlay */
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.05) 50%);
+    background-size: 100% 4px;
+    /* High Precision Micron Grid */
+    background-image: radial-gradient(rgba(var(--color-primary), 0.1) 0.5px, transparent 0);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
@@ -182,6 +252,10 @@
     background-color: rgb(var(--color-input));
   }
 
+  .bg-sidebar {
+    background-color: rgb(var(--color-sidebar));
+  }
+
   .text-main {
     color: rgb(var(--color-text));
   }
@@ -194,21 +268,12 @@
     color: rgb(var(--color-text-muted));
   }
 
-  .placeholder-muted::placeholder {
-    color: rgb(var(--color-placeholder));
-  }
-
   .border-default {
     border-color: rgb(var(--color-border));
   }
 
   .border-light {
     border-color: rgb(var(--color-border-light));
-  }
-
-  .divide-border,
-  .divide-default> :not([hidden])~ :not([hidden]) {
-    border-color: rgb(var(--color-border));
   }
 
   .bg-primary {
@@ -219,68 +284,79 @@
     background-color: rgb(var(--color-primary-hover));
   }
 
-  .bg-primary-soft {
-    background-color: rgb(var(--color-primary) / 0.1);
-  }
-
   .text-primary {
     color: rgb(var(--color-primary));
   }
 
-  .hover\:bg-primary-hover:hover {
-    background-color: rgb(var(--color-primary-hover));
+  /* Premium Glassmorphism */
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-md border border-white/10 shadow-xl;
   }
 
-  /* Semantic Utilities */
-  .text-error {
-    color: rgb(var(--color-error));
+  .dark .glass-panel {
+    @apply bg-card/60 border-white/5;
   }
 
-  .bg-error {
-    background-color: rgb(var(--color-error));
+  /* Cyber Buttons */
+  .btn-cyber {
+    @apply relative px-6 py-2.5 font-display font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 rounded-sm overflow-hidden border;
+    @apply active:scale-95;
   }
 
-  .bg-error-soft {
-    background-color: rgb(var(--color-error) / 0.1);
+  .btn-cyber-primary {
+    @apply btn-cyber bg-primary/20 border-primary/50 text-primary hover:bg-primary hover:text-white;
+    box-shadow: var(--glow-primary);
   }
 
-  .border-error-soft {
-    border-color: rgb(var(--color-error) / 0.2);
+  .btn-cyber-outline {
+    @apply btn-cyber border-2 border-primary text-primary hover:bg-primary/10;
   }
 
-  .text-success {
-    color: rgb(var(--color-success));
+  /* Glow Utilities */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
   }
 
-  .bg-success-soft {
-    background-color: rgb(var(--color-success) / 0.1);
+  .glow-success {
+    box-shadow: var(--glow-success);
   }
 
-  .text-warning {
-    color: rgb(var(--color-warning));
+  .glow-error {
+    box-shadow: var(--glow-error);
   }
 
-  .bg-warning-soft {
-    background-color: rgb(var(--color-warning) / 0.1);
+  /* Metric Gradients */
+  .grad-primary {
+    background: linear-gradient(135deg, rgba(var(--color-primary), 0.15) 0%, transparent 100%);
   }
 
-  /* Dark mode select/dropdown styling */
-  .dark select {
-    background-color: rgb(var(--color-input));
-    color: rgb(var(--color-text));
+  .grad-success {
+    background: linear-gradient(135deg, rgba(var(--color-success), 0.15) 0%, transparent 100%);
   }
 
-  .dark select option {
-    background-color: rgb(var(--color-card));
-    color: rgb(var(--color-text));
+  .grad-error {
+    background: linear-gradient(135deg, rgba(var(--color-error), 0.15) 0%, transparent 100%);
   }
 
-  .dark select:focus {
-    outline: none;
+  /* Interactive Cards */
+  .card-interactive {
+    @apply bg-card/60 backdrop-blur-xl border border-white/5 p-6 rounded-sm transition-all duration-500 relative overflow-hidden;
+    @apply hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1;
   }
 
-  .btn-interactive {
-    @apply transition-transform duration-200 active:scale-95 hover:scale-[1.02] disabled:opacity-50 disabled:scale-100;
+  .card-interactive::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 transition-opacity duration-500;
+  }
+
+  .card-interactive:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Form Elements */
+  .input-refined {
+    @apply w-full px-4 py-2.5 bg-input border border-default rounded-xl transition-all duration-200;
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-main;
   }
 }
 

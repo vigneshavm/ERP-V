@@ -95,7 +95,7 @@ const FundTransfer: React.FC = () => {
                             Fund Transfer Intelligence
                         </h2>
                         <p className="text-sm text-neutral-500 mt-0.5">
-                            Inter-branch liquidity optimization for <span className="font-bold text-primary">{tenant_id}</span>
+                            Inter-branch liquidity optimization for <span className="font-bold text-primary">{typeof tenant_id === 'object' && tenant_id !== null ? (tenant_id as any).name : tenant_id}</span>
                         </p>
                     </div>
                     <div className="flex gap-2">
