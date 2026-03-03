@@ -171,7 +171,7 @@
   }
 
   * {
-    @apply border-default;
+    border-color: rgb(var(--color-border));
     font-family: var(--font-body);
   }
 
@@ -182,11 +182,15 @@
   h5,
   h6 {
     font-family: var(--font-display);
-    @apply font-bold tracking-tight;
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
 
   body {
-    @apply bg-app text-main antialiased selection:bg-primary/30;
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-text));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     background-color: #05070a;
     background-image:
       /* Atmosphere Auras */
@@ -290,26 +294,56 @@
 
   /* Premium Glassmorphism */
   .glass-panel {
-    @apply bg-card/80 backdrop-blur-md border border-white/10 shadow-xl;
+    background-color: rgba(var(--color-card), 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 
   .dark .glass-panel {
-    @apply bg-card/60 border-white/5;
+    background-color: rgba(var(--color-card), 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   /* Cyber Buttons */
   .btn-cyber {
-    @apply relative px-6 py-2.5 font-display font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 rounded-sm overflow-hidden border;
-    @apply active:scale-95;
+    position: relative;
+    padding: 0.625rem 1.5rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.125rem;
+    overflow: hidden;
+    border-width: 1px;
+    border-style: solid;
+  }
+
+  .btn-cyber:active {
+    transform: scale(0.95);
   }
 
   .btn-cyber-primary {
-    @apply btn-cyber bg-primary/20 border-primary/50 text-primary hover:bg-primary hover:text-white;
-    box-shadow: var(--glow-primary);
+    background-color: rgba(var(--color-primary), 0.2);
+    border-color: rgba(var(--color-primary), 0.5);
+    color: rgb(var(--color-primary));
+  }
+
+  .btn-cyber-primary:hover {
+    background-color: rgb(var(--color-primary));
+    color: white;
   }
 
   .btn-cyber-outline {
-    @apply btn-cyber border-2 border-primary text-primary hover:bg-primary/10;
+    border-width: 2px;
+    border-color: rgb(var(--color-primary));
+    color: rgb(var(--color-primary));
+  }
+
+  .btn-cyber-outline:hover {
+    background-color: rgba(var(--color-primary), 0.1);
   }
 
   /* Glow Utilities */
@@ -340,23 +374,53 @@
 
   /* Interactive Cards */
   .card-interactive {
-    @apply bg-card/60 backdrop-blur-xl border border-white/5 p-6 rounded-sm transition-all duration-500 relative overflow-hidden;
-    @apply hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1;
+    background-color: rgba(var(--color-card), 0.6);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 0.125rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-interactive:hover {
+    border-color: rgba(var(--color-primary), 0.5);
+    box-shadow: 0 25px 50px -12px rgba(var(--color-primary), 0.2);
+    transform: translateY(-0.25rem);
   }
 
   .card-interactive::before {
     content: '';
-    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 transition-opacity duration-500;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0.25rem;
+    background: linear-gradient(to right, transparent, rgba(var(--color-primary), 0.6), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
   }
 
   .card-interactive:hover::before {
-    @apply opacity-100;
+    opacity: 1;
   }
 
   /* Form Elements */
   .input-refined {
-    @apply w-full px-4 py-2.5 bg-input border border-default rounded-xl transition-all duration-200;
-    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-main;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    background-color: rgb(var(--color-input));
+    border: 1px solid rgb(var(--color-border));
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+    outline: none;
+    color: rgb(var(--color-text));
+  }
+
+  .input-refined:focus {
+    box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+    border-color: rgb(var(--color-primary));
   }
 }
 
