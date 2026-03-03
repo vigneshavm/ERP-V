@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createSalesInvoice, reset } from "@/redux/slices/salesInvoiceSlice";
 import Layout from "@/components/shared/Layout/Layout";
@@ -7,7 +7,7 @@ import PageHeader from "@/components/shared/Layout/PageHeader";
 import FormInput from "@/components/core/Form/Input";
 import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal"; // Assuming this exists or similar
 import { AppDispatch, RootState } from "@/redux/store";
-import { Plus, Trash2, Save, User, Calendar, Receipt, Percent, Truck, FileText } from "lucide-react";
+import { Plus, Trash2, Save, User, Calendar, Receipt, Percent, Truck, FileText, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
 
 // Types (Adjust based on your actual types/sales.ts)
@@ -138,7 +138,14 @@ const SalesInvoiceForm = () => {
                 <PageHeader
                     title="Create New Invoice"
                     description="Draft and issue a new sales invoice"
-                    backUrl="/sales" // Or /sales/invoice if that's the list
+                    backButton={
+                        <Link
+                            to="/sales"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-neutral-500 hover:text-primary transition-colors"
+                        >
+                            <ArrowLeft className="w-4 h-4" /> Back to Sales
+                        </Link>
+                    }
                 />
 
                 <form onSubmit={handleSubmit} className="space-y-6 mt-6">

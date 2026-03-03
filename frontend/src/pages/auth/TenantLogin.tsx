@@ -81,13 +81,13 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
             }
 
             const apiUser = data.user;
-            let systemRole: SystemRole = 'Staff';
+            let systemRole: SystemRole = SystemRole.STAFF;
 
             if (apiUser.role) {
                 const code = apiUser.role.code?.toLowerCase();
-                if (code === DbRoleCode.OWNER) systemRole = 'Owner';
-                else if (code === DbRoleCode.ADMIN) systemRole = 'Admin';
-                else if (code === DbRoleCode.MANAGER) systemRole = 'Manager';
+                if (code === DbRoleCode.OWNER) systemRole = SystemRole.OWNER;
+                else if (code === DbRoleCode.ADMIN) systemRole = SystemRole.ADMIN;
+                else if (code === DbRoleCode.MANAGER) systemRole = SystemRole.MANAGER;
             }
 
             const sessionUser: any = {

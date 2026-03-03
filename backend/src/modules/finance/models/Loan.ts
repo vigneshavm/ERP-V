@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { ILoan } from "../../../../interfaces/ILoan.js";
+import { ILoan } from "../../../interfaces/ILoan.js";
 
 const loanSchema = new Schema<ILoan>(
     {

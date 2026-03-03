@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from '../../redux/slices/uiSlice';
+import { AppView } from '../../types/common';
 import {
     TrendingUp, TrendingDown, Zap, RefreshCw, AlertTriangle,
     CheckCircle2, CreditCard, Building2, Landmark, FileText,
@@ -23,7 +24,7 @@ interface Agent {
     glowColor: string;
     workflow: string;
     capabilities: string[];
-    tab?: string;
+    tab?: AppView;
 }
 
 interface KPI {
@@ -242,7 +243,7 @@ const HealthBadge: React.FC<{ health: LoanBar['health'] }> = ({ health }) => {
 /* ─────────────────────────────────────────────
    Agent Detail Drawer
 ───────────────────────────────────────────── */
-const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNavigate: (tab: string) => void }> = ({
+const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNavigate: (tab: AppView) => void }> = ({
     agent, onClose, onNavigate
 }) => {
     if (!agent) return null;
@@ -346,7 +347,7 @@ const FinanceAgentDashboard: React.FC = () => {
         setTimeout(() => { setRefreshing(false); setLastRefreshed(new Date()); }, 1200);
     };
 
-    const navigateTo = (tab: string) => dispatch(setActiveTab(tab));
+    const navigateTo = (tab: AppView) => dispatch(setActiveTab(tab));
 
     return (
         <div className="min-h-screen bg-[#09090f] text-white" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>

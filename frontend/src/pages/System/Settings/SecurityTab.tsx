@@ -60,9 +60,9 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
         let successCount = 0;
         for (const user of insecureUsers) {
             try {
-                const secured = await securePassword(user.pin);
+                const secured = await securePassword(user.pin || "");
                 await dispatch(updateEmployee({
-                    id: user.id || user._id,
+                    id: user.id || user._id || "",
                     data: {
                         pin_hash: secured,
                         password_hash: secured,

@@ -23,7 +23,7 @@ export const useBills = () => {
     });
 
     useEffect(() => {
-        dispatch(getAllBills());
+        dispatch(getAllBills({}));
         dispatch(getAllSuppliers());
         fetchBankAccounts();
         return () => {
@@ -69,7 +69,7 @@ export const useBills = () => {
 
             toast.success('Payment recorded successfully');
             setPaymentModal({ isOpen: false, bill: null });
-            dispatch(getAllBills());
+            dispatch(getAllBills({}));
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Payment failed');
         }
@@ -84,7 +84,7 @@ export const useBills = () => {
             }
             setShowForm(false);
             setEditingBill(null);
-            dispatch(getAllBills());
+            dispatch(getAllBills({}));
         } catch (error) {
             console.error('Error saving bill:', error);
         }

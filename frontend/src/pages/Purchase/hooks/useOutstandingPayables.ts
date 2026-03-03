@@ -41,7 +41,7 @@ export const useOutstandingPayables = () => {
     const [viewMode, setViewMode] = useState<'bill-wise' | 'vendor-wise'>('bill-wise');
 
     useEffect(() => {
-        dispatch(getAllBills());
+        dispatch(getAllBills({}));
         dispatch(getAllSuppliers());
     }, [dispatch]);
 
