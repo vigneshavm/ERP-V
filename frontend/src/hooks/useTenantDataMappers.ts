@@ -112,10 +112,10 @@ export const useTenantDataMappers = () => {
 
     const mapEmployee = (e: any): Employee => {
         const roleCode = (e.role?.code || e.role_id || 'staff').toLowerCase();
-        let derivedSystemRole: SystemRole = 'Staff';
-        if (roleCode === DbRoleCode.OWNER || roleCode === 'owner') derivedSystemRole = 'Owner';
-        else if (roleCode === DbRoleCode.ADMIN || roleCode === 'admin') derivedSystemRole = 'Admin';
-        else if (roleCode === DbRoleCode.MANAGER || roleCode === 'manager') derivedSystemRole = 'Manager';
+        let derivedSystemRole: SystemRole = SystemRole.STAFF;
+        if (roleCode === DbRoleCode.OWNER || roleCode === 'owner') derivedSystemRole = SystemRole.OWNER;
+        else if (roleCode === DbRoleCode.ADMIN || roleCode === 'admin') derivedSystemRole = SystemRole.ADMIN;
+        else if (roleCode === DbRoleCode.MANAGER || roleCode === 'manager') derivedSystemRole = SystemRole.MANAGER;
         return {
             id: e.id,
             name: e.full_name,

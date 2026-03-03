@@ -60,7 +60,7 @@ const DebitNotes: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        dispatch(getAllBills());
+        dispatch(getAllBills({}));
         dispatch(fetchPurchaseOrders());
     }, [dispatch]);
 

@@ -2,7 +2,6 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import PaymentOut from '../models/PaymentOut.js';
 import Bill from '../../finance/models/Bill.js';
-import Supplier from '../models/Supplier.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import BankAccount from '../../finance/models/BankAccount.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';

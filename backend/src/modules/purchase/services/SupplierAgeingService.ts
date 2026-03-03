@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+// mongoose removed to fix build
 import Bill from "../../finance/models/Bill.js";
 import Supplier from "../models/Supplier.js";
 import DebitNote from "../models/DebitNote.js";

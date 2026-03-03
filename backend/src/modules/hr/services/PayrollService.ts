@@ -1,11 +1,10 @@
-import { injectable, container } from "tsyringe";
+import { injectable } from "tsyringe";
 import mongoose from "mongoose";
 import PayrollRun from "../models/PayrollRun.js";
 import Payslip from "../models/Payslip.js";
 import SalaryStructure from "../models/SalaryStructure.js";
 import Employee from "../models/Employee.js";
 import AttendanceSummary from "../models/AttendanceSummary.js";
-import DailyAttendance from "../models/DailyAttendance.js";
 import SalaryAdvance from "../models/SalaryAdvance.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
 import BankAccount from "../../finance/models/BankAccount.js";
@@ -18,7 +17,7 @@ import { sendEmail } from "../../../utils/emailService.js";
 export class PayrollService {
 
     // 1. Generate Payroll (Draft)
-    async generatePayroll(tenantId: string, month: number, year: number, userId: string, branchId?: string) {
+    async generatePayroll(tenantId: string, month: number, year: number, _userId: string, branchId?: string) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -62,16 +61,8 @@ export class PayrollService {
                 const workedDays = attendance ? attendance.workedDays : daysInMonth;
                 const overtimeHours = attendance ? (attendance.overtimeHours || 0) : 0;
 
-                // Advanced Attendance Config
-                const holidays = attendance ? (attendance.holidays || 0) : 0;
-                const weeklyOffs = attendance ? (attendance.weeklyOffs || 0) : 0;
-                const paidLeaves = attendance ? (attendance.paidLeaves || 0) : 0;
-                const halfDays = attendance ? (attendance.halfDays || 0) : 0;
-
+                // Advanced Attendance Config (Unused logic kept for reference if needed later but variables removed to fix build)
                 const regularHours = attendance ? (attendance.regularHours || 0) : 0;
-                const incentive = attendance ? (attendance.incentiveAmount || 0) : 0;
-                const commission = attendance ? (attendance.commissionAmount || 0) : 0;
-                const bonus = attendance ? (attendance.bonusAmount || 0) : 0;
 
                 // --- ADVANCE RECOVERY ---
                 // Fetch all pending advances for this employee
@@ -291,10 +282,10 @@ export class PayrollService {
             if (!account) throw new AppError("Payment Account not found", 404);
 
             // Validation based on Mode
-            if (paymentMode === 'CASH' && account.accountType !== 'Cash') {
+            if (paymentMode === 'CASH' && (account.accountType as string) !== 'Cash') {
                 throw new AppError("Selected account is not a Cash Account", 400);
             }
-            if (['BANK_TRANSFER', 'CHEQUE', 'UPI'].includes(paymentMode) && account.accountType === 'Cash') {
+            if (['BANK_TRANSFER', 'CHEQUE', 'UPI'].includes(paymentMode) && (account.accountType as string) === 'Cash') {
                 // Warning or Error? Usually logical error.
                 throw new AppError("Cannot process Bank/Cheque/UPI from a Cash Account", 400);
             }
@@ -479,7 +470,7 @@ export class PayrollService {
         return results;
     }
     // 7. Bulk Update Structure (e.g. Tea Allowance for All)
-    async bulkUpdateStructure(tenantId: string, componentId: string, amount: number, userId: string) {
+    async bulkUpdateStructure(tenantId: string, componentId: string, amount: number) {
         const session = await mongoose.startSession();
         session.startTransaction();
 

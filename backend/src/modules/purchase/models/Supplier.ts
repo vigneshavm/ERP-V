@@ -16,6 +16,7 @@ export interface ISupplier extends Document {
     manualTotalPaid?: number;
     openingBalance: number;
     balanceType: 'payable' | 'receivable';
+    creditLimit: number;
     creditPeriod: number;
     creditEnforcement: 'strict' | 'flexible';
     performanceMetrics?: {
@@ -38,6 +39,9 @@ export interface ISupplier extends Document {
     }[];
     status: 'active' | 'inactive';
     supplierGroup?: string; // Brand/Parent Group
+    groupId?: mongoose.Types.ObjectId;
+    owner?: mongoose.Types.ObjectId;
+    itemsSupplied?: mongoose.Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
 }

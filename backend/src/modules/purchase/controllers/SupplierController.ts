@@ -320,25 +320,26 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
         }
 
         // Calculate functionality metrics (Live Data)
+        const s = supplier as any;
         const [billStats, paymentStats, debitNoteStats] = await Promise.all([
             Bill.aggregate([
-                { $match: { supplier: supplier._id, tenantId, status: { $nin: ['draft', 'rejected', 'cancelled'] } } },
+                { $match: { supplier: s._id, tenantId, status: { $nin: ['draft', 'rejected', 'cancelled'] } } },
                 { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
             ]),
             PaymentOut.aggregate([
-                { $match: { supplierId: supplier._id, tenantId, status: { $in: ['cleared', 'pending'] } } },
+                { $match: { supplierId: s._id, tenantId, status: { $in: ['cleared', 'pending'] } } },
                 { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
             ]),
             DebitNote.aggregate([
-                { $match: { vendorId: supplier._id, tenantId, status: 'APPROVED' } },
+                { $match: { vendorId: s._id, tenantId, status: 'APPROVED' } },
                 { $group: { _id: null, totalAmount: { $sum: '$totalAmount' } } }
             ])
         ]);
 
-        const totalInvoiced = (billStats[0]?.totalAmount || 0) + (supplier.manualTotalInvoiced || 0);
-        const totalPaid = (paymentStats[0]?.totalAmount || 0) + (supplier.manualTotalPaid || 0);
+        const totalInvoiced = (billStats[0]?.totalAmount || 0) + (s.manualTotalInvoiced || 0);
+        const totalPaid = (paymentStats[0]?.totalAmount || 0) + (s.manualTotalPaid || 0);
         const totalDebitNotes = debitNoteStats[0]?.totalAmount || 0;
-        const openingBalance = supplier.openingBalance || 0;
+        const openingBalance = s.openingBalance || 0;
 
         // Net Balance = (Opening + Invoiced) - (Paid + DebitNotes)
         // Assuming standard payable context
@@ -353,8 +354,8 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
                 netBalance,
                 debitNoteTotal: totalDebitNotes,
                 // Explicitly return manual fields for UI editing
-                manualTotalInvoiced: supplier.manualTotalInvoiced || 0,
-                manualTotalPaid: supplier.manualTotalPaid || 0
+                manualTotalInvoiced: s.manualTotalInvoiced || 0,
+                manualTotalPaid: s.manualTotalPaid || 0
             }
         });
     } catch (error: any) {
@@ -784,7 +785,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
         const preBills = await Bill.aggregate([
             {
                 $match: {
-                    supplier: new mongoose.Types.ObjectId(id),
+                    supplier: new mongoose.Types.ObjectId(id as string),
                     tenantId,
                     status: { $nin: ['draft', 'rejected', 'cancelled'] },
                     date: { $lt: start }
@@ -796,7 +797,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
         const prePayments = await PaymentOut.aggregate([
             {
                 $match: {
-                    supplierId: new mongoose.Types.ObjectId(id),
+                    supplierId: new mongoose.Types.ObjectId(id as string),
                     tenantId,
                     status: { $in: ['cleared', 'pending'] },
                     paymentDate: { $lt: start }
@@ -808,7 +809,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
         const preDebitNotes = await DebitNote.aggregate([
             {
                 $match: {
-                    vendorId: new mongoose.Types.ObjectId(id),
+                    vendorId: new mongoose.Types.ObjectId(id as string),
                     tenantId,
                     status: 'APPROVED',
                     date: { $lt: start }

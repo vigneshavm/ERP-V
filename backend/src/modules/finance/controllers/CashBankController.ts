@@ -512,7 +512,7 @@ export const getAllTransactions = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-export const getAllDailyFinance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getAllDailyFinance = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         // Assuming we store daily finance records. 
         // If saveDayEndToDB just logs, then we don't have a model yet?
@@ -530,10 +530,7 @@ export const getAllDailyFinance = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-export const getEffectBalance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    // ... exist code ...
-    // duplicate fix logic
-};
+// Redundant stub removed
 
 const CashBankController = {
     getAccounts, createAccount, updateAccount, deleteAccount, getTransactions, createTransfer, createCashTransaction,

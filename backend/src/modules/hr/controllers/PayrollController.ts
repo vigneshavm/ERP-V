@@ -84,17 +84,6 @@ export const upsertSalaryStructure = async (req: Request, res: Response) => {
         const tenantId = (req as any).user.tenantId;
         const { employeeId, components, effectiveFrom } = req.body;
 
-        // Calc gross and estimates
-        let grossMsg = 0;
-        let deductMsg = 0;
-
-        components.forEach((c: any) => {
-            // In a real app we would fetch component types to know if earning/deduction
-            // For now assuming caller passes refined structure or we trust the sum logic later on Payroll
-            // But to save 'gross' we need to know. 
-            // Let's assume frontend passes base amounts.
-        });
-
         // Deactivate old active structure
         await SalaryStructure.updateMany({ employeeId, tenantId, isActive: true }, { isActive: false });
 
@@ -146,7 +135,7 @@ export const bulkUpdateSalaryStructure = async (req: Request, res: Response) => 
         console.log(`[Bulk Update] Request - Tenant: ${tenantId}, User: ${userId}, Component: ${componentId}, Amount: ${amount}`);
 
         const payrollService = container.resolve(PayrollService);
-        const result = await payrollService.bulkUpdateStructure(tenantId, componentId, Number(amount), userId);
+        const result = await payrollService.bulkUpdateStructure(tenantId, componentId, Number(amount));
 
         res.status(200).json(result);
     } catch (error: any) {
@@ -268,7 +257,7 @@ export const approvePayroll = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         const payrollService = container.resolve(PayrollService);
-        const run = await payrollService.approvePayroll(id, tenantId, userId);
+        const run = await payrollService.approvePayroll(id as string, tenantId, userId);
 
         res.status(200).json({ success: true, data: run });
     } catch (error: any) {
@@ -284,7 +273,7 @@ export const payPayroll = async (req: Request, res: Response) => {
         const { accountId, paymentMode } = req.body; // Changed bankAccountId -> accountId
 
         const payrollService = container.resolve(PayrollService);
-        const run = await payrollService.payPayroll(id, accountId, paymentMode, tenantId, userId);
+        const run = await payrollService.payPayroll(id as string, accountId, paymentMode, tenantId, userId);
 
         res.status(200).json({ success: true, data: run });
     } catch (error: any) {
@@ -299,7 +288,7 @@ export const updatePayslip = async (req: Request, res: Response) => {
         const updates = req.body;
 
         const payrollService = container.resolve(PayrollService);
-        const payslip = await payrollService.updatePayslip(id, tenantId, updates);
+        const payslip = await payrollService.updatePayslip(id as string, tenantId, updates);
 
         res.status(200).json({ success: true, data: payslip });
     } catch (error: any) {
@@ -313,7 +302,7 @@ export const deleteRun = async (req: Request, res: Response) => {
         const { id } = req.params; // Run ID
 
         const payrollService = container.resolve(PayrollService);
-        await payrollService.deleteRun(id, tenantId);
+        await payrollService.deleteRun(id as string, tenantId);
 
         res.status(200).json({ success: true, message: 'Run deleted successfully' });
     } catch (error: any) {
@@ -328,7 +317,7 @@ export const sendPayslip = async (req: Request, res: Response) => {
         const { channels } = req.body; // ['EMAIL', 'WHATSAPP']
 
         const payrollService = container.resolve(PayrollService);
-        const results = await payrollService.sendPayslip(id, tenantId, channels);
+        const results = await payrollService.sendPayslip(id as string, tenantId, channels);
 
         res.status(200).json({ success: true, data: results });
     } catch (error: any) {

@@ -1,14 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { IItem } from "../../../interfaces/IItem.js";
 
-interface IBatch {
-    batchNumber: string;
-    expiryDate?: Date;
-    quantity: number;
-    costPrice: number;
-    supplierId: mongoose.Types.ObjectId;
-    receivedDate: Date;
-}
+// IBatch interface removed as it was unused locally
 
 // Extend IItem locally if needed, or assume IItem will be updated in its definition file.
 // For Mongoose schema, we can define the shape directly.

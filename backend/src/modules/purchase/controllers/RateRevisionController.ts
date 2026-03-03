@@ -94,7 +94,7 @@ export const approveRevision = async (req: Request, res: Response) => {
 
         // 1. Create Debit Note
         const debitNoteCount = await DebitNote.countDocuments();
-        const debitNote = await DebitNote.create([{
+        await DebitNote.create([{
             noteId: `DN-${(debitNoteCount + 1).toString().padStart(6, '0')}`,
             vendorId: revision.supplierId,
             vendorName: "Unknown", // Ideally fetch supplier name or populate logic

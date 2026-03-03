@@ -1,6 +1,6 @@
 import Bill from "../models/Bill.js";
 import GSTReconciliation from "../models/GSTReconciliation.js";
-import Supplier from "../../purchase/models/Supplier.js"; // Need GSTIN from Supplier
+// Supplier import removed as it was unused
 
 interface GSTR2BRecord {
     invoiceNo: string;
@@ -13,7 +13,7 @@ interface GSTR2BRecord {
 
 export const reconcileGSTR2B = async (
     tenantId: string,
-    branchId: string,
+    _branchId: string,
     returnPeriod: string,
     gstrData: GSTR2BRecord[],
     userId: string
@@ -99,7 +99,7 @@ export const reconcileGSTR2B = async (
 
     // 4. Remaining in Map = MISSING IN GSTR-2B
     let missingInGSTRCount = 0;
-    for (const [key, bill] of systemMap) {
+    for (const [_key, bill] of systemMap) {
         results.push({
             billId: bill._id,
             status: 'MISSING_IN_GSTR2B',

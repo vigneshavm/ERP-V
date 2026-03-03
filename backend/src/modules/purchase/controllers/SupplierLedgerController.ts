@@ -31,7 +31,7 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
         // 2. Calculate "Effective Opening Balance" as of 'start' date
         // Formula: SupplierInitialOpening + (Bills < start) - (Payments < start) - (DebitNotes < start)
 
-        const [preBills, prePayments, preDebitNotes, preReturns] = await Promise.all([
+        const [preBills, prePayments, preDebitNotes] = await Promise.all([
             Bill.aggregate([
                 {
                     $match: {
@@ -75,23 +75,6 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
                 },
                 { $group: { _id: null, total: { $sum: "$totalAmount" } } }
             ]),
-            PurchaseReturn.aggregate([
-                {
-                    $match: {
-                        supplier: new mongoose.Types.ObjectId(id as string),
-                        returnDate: { $lt: start },
-                        refundMethod: 'adjust_next_bill' // Only if it affects ledger directly? 
-                        // Actually Purchase Return usually creates a Debit Note or is a direct adjustment.
-                        // If PurchaseReturn creates a DebitNote, we shouldn't double count.
-                        // Checking implementation: PurchaseReturn model exists. 
-                        // Does creating a PurchaseReturn auto-create a DebitNote?
-                        // Implementation details vague. Let's assume they are distinct or we count DebitNotes primarily.
-                        // If DebitNotes track returns, then querying DebitNotes is enough.
-                        // Let's stick to DebitNotes for 'Debits' to Supplier. 
-                    }
-                },
-                { $group: { _id: null, total: { $sum: "0" } } } // Placeholder if needed
-            ])
         ]);
 
         const totalPreBills = preBills[0]?.total || 0;

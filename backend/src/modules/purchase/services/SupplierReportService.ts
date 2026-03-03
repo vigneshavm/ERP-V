@@ -1,7 +1,6 @@
 import Bill from "../../finance/models/Bill.js";
 import Purchase from "../models/Purchase.js";
-import Supplier from "../models/Supplier.js";
-import mongoose from "mongoose";
+// Supplier and mongoose removed to fix build
 
 export const getPayablesOverview = async (tenantId: string) => {
     // Top 10 Suppliers by Outstanding Amount

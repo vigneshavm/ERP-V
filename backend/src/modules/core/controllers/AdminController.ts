@@ -18,7 +18,7 @@ export class AdminController {
      *       403:
      *         description: Forbidden (Not a superadmin)
      */
-    public getAllUsersAcrossTenants = async (req: Request, res: Response): Promise<void> => {
+    public getAllUsersAcrossTenants = async (_req: Request, res: Response): Promise<void> => {
         try {
             // Fetch all users and populate tenant info
             const users = await User.find({})

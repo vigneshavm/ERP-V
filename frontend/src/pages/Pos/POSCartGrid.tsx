@@ -4,7 +4,7 @@ import { Product } from "../../types/product";
 import { CartItem } from "../../types/sales";
 import { Sector } from "../../types/common";
 import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
-import { productTypes, ProductType } from '../../data/demo/productTypes';
+import { productTypes, ProductType } from '../../data/productTypes';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from "../../../services/GeminiService";
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout/Layout';
-import Header from '../../../components/shared/Layout/Header';
+import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { ArrowLeft, Save, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { RootState } from '../../../redux/store';
 import { createJournalEntry } from '../../../redux/slices/journalEntrySlice';
@@ -109,7 +109,18 @@ const JournalEntryForm: React.FC = () => {
     return (
         <Layout>
             <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900">
-                <Header title="New Journal Entry" backPath="/finance/journal" />
+                <PageHeader
+                    title="New Journal Entry"
+                    backButton={
+                        <button
+                            onClick={() => navigate('/finance/journal')}
+                            className="flex items-center gap-2 text-neutral-500 hover:text-neutral-700 transition-colors"
+                        >
+                            <ArrowLeft size={20} />
+                            <span>Back to Journal</span>
+                        </button>
+                    }
+                />
 
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-6 pb-20">
                     <div className="max-w-5xl mx-auto space-y-6">

@@ -236,7 +236,7 @@ const PayrollRuns = () => {
                                                     {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
-                                                    Run Date: {run.processedDate || run.createdAt ? formatDateISO(run.processedDate || run.createdAt) : 'N/A'}
+                                                    Run Date: {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                                 </div>
                                             </div>
                                         </td>

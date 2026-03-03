@@ -52,7 +52,7 @@ export const verifyEmailTransport = async (): Promise<boolean> => {
 /**
  * Sends an email with optional attachment (plain text)
  */
-export const sendEmail = async (to: string, subject: string, text: string, attachmentPath: string | null = null): Promise<boolean> => {
+export const sendEmail = async (to: string, subject: string, text: string): Promise<boolean> => {
   if (!isEmailConfigured()) {
     console.warn('Email not sent - email service not configured');
     return false;

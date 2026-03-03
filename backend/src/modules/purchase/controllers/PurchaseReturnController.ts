@@ -19,11 +19,7 @@ interface AuthenticatedRequest extends Request {
     };
 }
 
-interface ReturnItem {
-    quantity: number;
-    rate: number;
-    tax: number;
-}
+// ReturnItem interface removed to fix build
 
 /**
  * @swagger

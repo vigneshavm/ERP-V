@@ -42,7 +42,7 @@ export class PaymentReminderService {
 
                 await this.createNotification({
                     type: 'due',
-                    message: `Bill #${bill.billNo} from ${bill.supplier['businessName']} is due on ${bill.dueDate?.toLocaleDateString()}`,
+                    message: `Bill #${bill.billNo} from ${(bill.supplier as any).businessName} is due on ${bill.dueDate?.toLocaleDateString()}`,
                     relatedEntity: bill._id as mongoose.Types.ObjectId,
                     onModel: 'Bill',
                     recipients: recipients
@@ -123,7 +123,7 @@ export class PaymentReminderService {
 
                     await this.createNotification({
                         type: 'payment',
-                        message: `Cheque #${pay.referenceNo} for ₹${pay.amount} to ${pay.supplierId['businessName']} is set to clear tomorrow. Ensure sufficient balance.`,
+                        message: `Cheque #${pay.referenceNo} for ₹${pay.amount} to ${(pay.supplierId as any).businessName} is set to clear tomorrow. Ensure sufficient balance.`,
                         relatedEntity: pay._id as mongoose.Types.ObjectId,
                         onModel: 'PaymentOut',
                         recipients: recipients

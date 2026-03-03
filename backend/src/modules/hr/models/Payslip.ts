@@ -25,6 +25,8 @@ export interface IPayslip extends Document {
         ifsc: string;
         bankName: string;
     };
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const payslipSchema = new Schema<IPayslip>(

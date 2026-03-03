@@ -23,7 +23,6 @@ import {
 import { Sector } from "../../../types/common";
 import { APP_CONFIG } from "../../../config";
 import api from "../../../services/api.js";
-import { DATA_MODE } from "../../../services/dataSource";
 import { securePassword } from "../../../utils/auth";
 import { registrationUtil } from "../../../utils/registrationUtil";
 
@@ -45,6 +44,7 @@ const SECTORS = [
 ];
 
 const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }) => {
+    const dispatch = useDispatch();
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');

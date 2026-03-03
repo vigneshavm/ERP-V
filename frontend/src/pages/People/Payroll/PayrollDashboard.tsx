@@ -115,7 +115,7 @@ const PayrollDashboard = () => {
                                             {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            {run.processedDate || run.createdAt ? formatDateISO(run.processedDate || run.createdAt) : 'N/A'}
+                                            {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">

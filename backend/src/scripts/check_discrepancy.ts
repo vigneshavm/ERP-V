@@ -20,10 +20,7 @@ const BillSchema = new mongoose.Schema({
 
 const Bill = mongoose.model('Bill', BillSchema);
 
-const SupplierSchema = new mongoose.Schema({
-    businessName: String
-});
-const Supplier = mongoose.model('Supplier', SupplierSchema);
+// Supplier model removed as it was unused
 
 
 async function checkDiscrepancy() {

@@ -3,7 +3,7 @@ import { Document, Types } from "mongoose";
 export interface IBankAccount extends Document {
     bankName: string;
     accountNumber: string;
-    accountType: "Savings" | "Current" | "Overdraft" | "Loan";
+    accountType: "Savings" | "Current" | "Overdraft" | "Loan" | "Cash";
     branch: string;
     ifsc: string;
     openingBalance: number;

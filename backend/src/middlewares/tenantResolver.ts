@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Tenant, { ITenant } from "../modules/core/models/Tenant.js";
-import { AppError } from "../utils/AppError.js";
+// AppError import removed as it was unused
 import { info, warn } from "../config/logger.js";
 
 declare global {

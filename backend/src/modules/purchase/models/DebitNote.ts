@@ -9,6 +9,8 @@ export interface IDebitNoteItem {
 
 export interface IDebitNote extends Document {
     noteId: string;
+    debitNoteNumber?: string; // For ledger consistency
+    sourceId?: string; // For ledger consistency
     date: Date;
     vendorId: mongoose.Types.ObjectId;
     vendorName: string;

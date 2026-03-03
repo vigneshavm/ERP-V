@@ -1,7 +1,7 @@
 import Purchase from "../models/Purchase.js";
 import PurchaseReturn from "../models/PurchaseReturn.js";
 import Supplier from "../models/Supplier.js";
-import { GRN } from "../../../inventory/types/purchase.js"; // Type check only, we might need model if stored separately
+// GRN import removed as it was not found and is unused
 // Assuming GRN is part of Purchase or separate model. Based on previous context, GRN might be a separate collection or part of purchase flow.
 // Just in case, let's use Purchase dates if GRN model isn't distinct or use the GRN date if captured in Purchase/Bill.
 // Correction: We don't have a direct GRN mongoose model imported in previous steps, but we have Purchase. 

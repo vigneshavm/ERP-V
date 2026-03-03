@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import DebitNote from "../models/DebitNote.js";
 import { container } from "tsyringe";
 import { InventoryService } from "../../inventory/services/InventoryService.js";
-import { info, error } from "../../../config/logger.js";
+import { error } from "../../../config/logger.js";
 
 /**
  * @swagger

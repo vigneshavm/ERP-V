@@ -17,7 +17,7 @@ import { printSaleReceipt, downloadSaleReceiptPDF } from "../utils/printService"
 import { Sector, TaxMode, PaymentMethod } from "../types/common";
 import { db } from "../services/db";
 import { SyncManager } from "../services/SyncManager";
-import { productTypes } from '../data/demo/productTypes';
+import { productTypes } from '../data/productTypes';
 
 const DEFAULT_CUSTOMER: Customer = {
     id: 'c1',
@@ -156,7 +156,7 @@ export const usePOSLogic = () => {
     // Merge inventory product types with productTypes from ItemCategories
     const allProductTypes = useMemo(() => {
         const inventoryTypes = new Set(products.map(p => p.productType || p.subCategory || p.category));
-        const categoryTypes = productTypes.map(pt => pt.name);
+        const categoryTypes = productTypes.map((pt: any) => pt.name);
         const combined = new Set([...inventoryTypes, ...categoryTypes]);
         return Array.from(combined).filter(Boolean).sort() as string[];
     }, [products]);
