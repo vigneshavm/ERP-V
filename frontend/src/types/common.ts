@@ -142,7 +142,13 @@ export type AppView =
     // Missing Types
     | 'GST_RECONCILIATION' | 'REPRINT_QUEUE' | 'ATTENDANCE_SUMMARY' | 'ATTENDANCE_BOARD' | 'ALLOWANCE_MANAGER'
     // Finance Agents
-    | 'FINANCE_AGENTS';
+    | 'FINANCE_AGENTS'
+    // SMS Tracker
+    | 'SMS_TRACKER'
+    // Budget Tracker
+    | 'BUDGET_TRACKER'
+    // Financial Goals
+    | 'FINANCIAL_GOALS';
 
 export enum SystemRole {
     SUPER_ADMIN = 'superadmin',

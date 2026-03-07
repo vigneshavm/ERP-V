@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             const hasRoleAccess = checkAccess(item.id);
             const hasModuleAccess = checkModuleAccess(item.module);
 
-            if (item.id === 'PURCHASE' || item.id === 'DASHBOARD') {
+            if (item.id === 'PURCHASE' || item.id === 'DASHBOARD' || item.id === 'FINANCE') {
                 console.log(`Sidebar Debug [${item.id}]:`, {
                     hasRoleAccess,
                     hasModuleAccess,

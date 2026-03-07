@@ -305,6 +305,44 @@
     border-color: rgba(255, 255, 255, 0.05);
   }
 
+  /* EXPANAGER Premium Styles */
+  .expanager-glass {
+    background: rgba(23, 23, 23, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .expanager-card-gradient {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  .expanager-glow-border {
+    position: relative;
+  }
+
+  .expanager-glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.3), transparent);
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .expanager-glow-border:hover::after {
+    opacity: 1;
+  }
+
+  .expanager-text-gradient {
+    background: linear-gradient(to right, #fff, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   /* Cyber Buttons */
   .btn-cyber {
     position: relative;

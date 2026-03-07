@@ -379,7 +379,7 @@ export class AuthController {
                 shopAddress: user.shopAddress,
                 phone: user.phone,
                 role: user.role, // Return user role
-                tenantId: user.tenantId, // Return tenantId
+                tenantId: tenant ? tenant._id : user.tenantId, // Return only tenantId (extract from populated object)
                 token: accessToken,
                 refreshToken: refreshToken,
             });
@@ -414,7 +414,12 @@ export class AuthController {
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
-            res.status(200).json(user);
+            // Transform tenantId to just the ID if it's a populated object
+            const userResponse = user.toObject?.() || user;
+            if (userResponse.tenantId && typeof userResponse.tenantId === 'object' && userResponse.tenantId._id) {
+                userResponse.tenantId = userResponse.tenantId._id;
+            }
+            res.status(200).json(userResponse);
         } catch (error) {
             res.status(500).json({ message: 'Server Error', error: (error as Error).message });
         }

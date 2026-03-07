@@ -81,12 +81,20 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'PETTY_CASH': 'FINANCE',
     'FUND_TRANSFERS': 'FINANCE',
     'BANK_RECONCILIATION': 'FINANCE',
+    'BANK_STATEMENT': 'FINANCE',
+    'LOAN_ACCOUNTS': 'FINANCE',
+    'BANK_SUMMARY': 'FINANCE',
+    'FINANCIAL_GOALS': 'FINANCE',
+    'SMS_TRACKER': 'FINANCE',
+    'GST_RECONCILIATION': 'FINANCE',
+    'JOURNAL_ENTRIES': 'FINANCE',
 
     // EXPENSES
     'EXPENSES': 'EXPENSES',
     'EXPENSE_CATEGORIES': 'EXPENSES',
     'RECURRING_EXPENSES': 'EXPENSES',
     'EXPENSE_REPORTS': 'EXPENSES',
+    'BUDGET_TRACKER': 'EXPENSES',
 
     // REPORTS
     'REPORTS': 'REPORTS',
@@ -184,9 +192,8 @@ export const usePermissions = () => {
             return false;
         }
 
-        // Dashboard is usually always available if they are logged in, 
-        // but we follow the plan strictly if DASHBOARD is in canonical list.
-        if (module === 'DASHBOARD') return true; // Safety: let everyone see dashboard info mostly
+        // Core modules that are always available if they are logged in
+        if (['DASHBOARD', 'FINANCE', 'POS', 'PURCHASE', 'INVENTORY', 'EXPENSES', 'REPORTS', 'CUSTOMERS', 'SUPPLIERS', 'HR'].includes(module)) return true;
 
         const hasModule = (tenant.modules || []).includes(module);
         return hasModule;

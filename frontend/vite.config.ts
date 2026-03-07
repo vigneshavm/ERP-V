@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      strictPort: false,
     },
     // Keep optimizeDeps to ensure dependencies used in root src are pre-bundled
     optimizeDeps: {

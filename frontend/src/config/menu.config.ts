@@ -13,6 +13,7 @@ import {
     PieChart,
     Package,
     ArrowRight,
+    Target,
     ArrowDownCircle,
     UserCircle,
     ClipboardList,
@@ -156,7 +157,9 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'BANK_RECONCILIATION', label: 'Reconciliation', icon: RefreshCw, module: 'FINANCE', path: '/finance/reconciliation' },
             { id: 'BANK_SUMMARY', label: 'Summary', icon: FileText, module: 'FINANCE', path: '/finance/summary' },
             { id: 'LOAN_ACCOUNTS', label: 'Loans', icon: CreditCard, module: 'FINANCE', path: '/finance/loans' },
+            { id: 'FINANCIAL_GOALS', label: 'Goals', icon: Target, module: 'FINANCE', path: '/finance/goals' },
             { id: 'BANK_STATEMENT', label: 'Statements', icon: Upload, module: 'FINANCE', path: '/finance/bank-statement' },
+            { id: 'SMS_TRACKER', label: 'SMS Tracker', icon: MessageCircle, module: 'FINANCE', path: '/finance/sms-tracker' },
             { id: 'GST_RECONCILIATION', label: 'GST', icon: FileText, module: 'FINANCE', path: '/finance/gst' },
             { id: 'JOURNAL_ENTRIES', label: 'Journal', icon: FileText, module: 'FINANCE', path: '/finance/journal' },
         ]
@@ -172,6 +175,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'EXPENSE_CATEGORIES', label: 'Categories', icon: Layers, module: 'EXPENSES', path: '/expenses/categories' },
             { id: 'RECURRING_EXPENSES', label: 'Recurring', icon: Repeat, module: 'EXPENSES', path: '/expenses/recurring' },
             { id: 'EXPENSE_REPORTS', label: 'Reports', icon: PieChart, module: 'EXPENSES', path: '/expenses/reports' },
+            { id: 'BUDGET_TRACKER', label: 'Budget Tracker', icon: Target, module: 'EXPENSES', path: '/finance/budget-tracker' },
         ]
     },
     {
@@ -233,16 +237,16 @@ export const MENU_ITEMS: MenuItem[] = [
         id: 'SETTINGS',
         label: 'System',
         icon: Settings,
-        module: 'MULTI_BRANCH',
+        module: 'DASHBOARD',
         path: '/settings',
         children: [
-            { id: 'SETTINGS', label: 'General', icon: Settings, module: 'MULTI_BRANCH', path: '/settings' },
-            { id: 'SYNC_SHARE', label: 'Sync', icon: RefreshCw, module: 'MULTI_BRANCH', path: '/settings/sync' },
-            { id: 'RESTORE', label: 'Restore', icon: Upload, module: 'MULTI_BRANCH', path: '/settings/restore' },
+            { id: 'SETTINGS', label: 'General', icon: Settings, module: 'DASHBOARD', path: '/settings' },
+            { id: 'SYNC_SHARE', label: 'Sync', icon: RefreshCw, module: 'DASHBOARD', path: '/settings/sync' },
+            { id: 'RESTORE', label: 'Restore', icon: Upload, module: 'DASHBOARD', path: '/settings/restore' },
             { id: 'TENANT_MANAGEMENT', label: 'Tenants', icon: Building, module: 'MULTI_BRANCH', path: '/settings/tenants' },
             { id: 'TENANT_ARCHITECT', label: 'Architect', icon: Wrench, module: 'MULTI_BRANCH', path: '/settings/architect' },
-            { id: 'AUDIT_LOGS', label: 'Audit', icon: Shield, module: 'MULTI_BRANCH', path: '/settings/audit' },
-            { id: 'SUPER_ADMIN_CONSOLE', label: 'Admin', icon: Shield, module: 'MULTI_BRANCH', path: '/settings/super-admin' },
+            { id: 'AUDIT_LOGS', label: 'Audit', icon: Shield, module: 'DASHBOARD', path: '/settings/audit' },
+            { id: 'SUPER_ADMIN_CONSOLE', label: 'Admin', icon: Shield, module: 'DASHBOARD', path: '/settings/super-admin' },
         ]
     },
 

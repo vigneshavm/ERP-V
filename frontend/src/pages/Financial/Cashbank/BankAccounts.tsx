@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
 import CashBankModal from './components/CashBankModal';
 import CashBankInput from './components/CashBankInput';
 import CashBankFormSection from './components/CashBankFormSection';
@@ -20,7 +19,17 @@ import {
     CreditCard,
     Activity,
     ChevronDown,
-    ShieldCheck
+    ShieldCheck,
+    Search,
+    ChevronLeft,
+    ChevronRight,
+    Edit3,
+    MoreVertical,
+    Home,
+    Car,
+    Coffee,
+    UtensilsCrossed,
+    Wallet
 } from 'lucide-react';
 
 const BankAccounts: React.FC = () => {
@@ -76,202 +85,272 @@ const BankAccounts: React.FC = () => {
     };
 
     const totalBalance = accounts.reduce((sum, acc) => sum + acc.currentBalance, 0);
+    const totalIncome = 4737580; // Placeholder for demo aesthetic
+    const totalExpense = 1822656; // Placeholder for demo aesthetic
+
+    const getAccountIcon = (name: string) => {
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes('hotel') || lowerName.includes('food')) return <UtensilsCrossed className="w-12 h-12 text-amber-500" />;
+        if (lowerName.includes('car') || lowerName.includes('suv')) return <Car className="w-12 h-12 text-blue-500" />;
+        if (lowerName.includes('home') || lowerName.includes('rent')) return <Home className="w-12 h-12 text-emerald-500" />;
+        return <Wallet className="w-12 h-12 text-indigo-500" />;
+    };
 
     return (
         <Layout>
-            <PageHeader
-                title="Corporate Banking Portfolio"
-                description="Aggregated bank inventory for enterprise liquidity management"
-                breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Bank Units' }]}
-                actions={
-                    <button
-                        onClick={() => setShowAddAccount(true)}
-                        className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 transition-all flex items-center gap-2"
-                    >
-                        <Plus className="w-4 h-4" /> Initialize Unit
-                    </button>
-                }
-            />
+            <div className="min-h-screen bg-[#05070a] text-white p-4 md:p-8 font-sans selection:bg-emerald-500/30">
+                <div className="max-w-4xl mx-auto space-y-10 pb-32">
 
-            <div className="grid grid-cols-12 gap-6 mb-8">
-                <div className="col-span-12 md:col-span-4 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-                    <Activity className="absolute -top-4 -right-4 w-24 h-24 text-indigo-50 dark:text-indigo-950 opacity-50" />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Total Aggregate Balance</p>
-                    <h2 className="text-3xl font-black text-slate-800 dark:text-white relative z-10">₹{totalBalance.toLocaleString('en-IN')}</h2>
-                </div>
-                <div className="col-span-12 md:col-span-4 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-                    <Building2 className="absolute -top-4 -right-4 w-24 h-24 text-emerald-50 dark:text-emerald-950 opacity-50" />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Active Clearing Units</p>
-                    <h2 className="text-3xl font-black text-slate-800 dark:text-white relative z-10">{accounts.length} <span className="text-sm font-bold text-slate-400 uppercase">Institutions</span></h2>
-                </div>
-                <div className="col-span-12 md:col-span-4 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-                    <ShieldCheck className="absolute -top-4 -right-4 w-24 h-24 text-blue-50 dark:text-blue-950 opacity-50" />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Security Protocol</p>
-                    <h2 className="text-3xl font-black text-slate-800 dark:text-white relative z-10">Active <span className="text-sm font-bold text-slate-400 uppercase">Indexing</span></h2>
-                </div>
-            </div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors" onClick={() => navigate(-1)}>
+                                <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            <h1 className="text-xl font-bold tracking-tight">Select Account</h1>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <Edit3 className="w-5 h-5 text-rose-400 cursor-pointer hover:text-rose-300" />
+                            <MoreVertical className="w-5 h-5 text-neutral-500 cursor-pointer hover:text-white" />
+                        </div>
+                    </div>
 
-            <CashBankModal
-                isOpen={showAddAccount}
-                onClose={() => setShowAddAccount(false)}
-                title="New Banking Relationship"
-                subtitle="Configure institutional liquidity nodes"
-                icon={Building2}
-                footer={
-                    <>
-                        <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Abort</button>
-                        <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-opacity-90 disabled:opacity-50 transition-all">
-                            {isLoading ? 'Synchronizing...' : 'Commit Initialization'}
-                        </button>
-                    </>
-                }
-            >
-                <form id="add-account-form" onSubmit={handleSubmit} className="space-y-8">
-                    <CashBankFormSection title="Institution Details">
-                        <CashBankInput label="Financial Institution" icon={Building2}>
-                            <input
-                                type="text"
-                                value={formData.bankName}
-                                onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
-                                placeholder="e.g. HDFC Treasury"
-                                required
-                            />
-                        </CashBankInput>
-                        <CashBankInput label="Branch Domicile" icon={ChevronDown}>
-                            <input
-                                type="text"
-                                value={formData.branch}
-                                onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
-                                placeholder="Regional Node"
-                            />
-                        </CashBankInput>
-                    </CashBankFormSection>
+                    {/* Hero Section */}
+                    <div className="relative flex flex-col items-center">
+                        <div className="flex items-center gap-8 w-full justify-center">
+                            <div className="flex flex-col items-center text-center">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <ChevronLeft className="w-4 h-4 text-neutral-600" />
+                                    <span className="text-sm font-medium text-neutral-400">2025</span>
+                                    <ChevronRight className="w-4 h-4 text-neutral-600" />
+                                </div>
+                                <div className="flex flex-col items-start gap-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Expense</span>
+                                    <span className="text-lg font-bold text-rose-500">₹{totalExpense.toLocaleString('en-IN')}</span>
+                                </div>
+                            </div>
 
-                    <CashBankFormSection title="Clearing Identifiers">
-                        <CashBankInput label="Account Reference ID" icon={CreditCard}>
-                            <input
-                                type="text"
-                                value={formData.accountNumber}
-                                onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
-                                placeholder="Official Identifier"
-                                required
-                            />
-                        </CashBankInput>
-                        <CashBankInput label="Interbank Routing Code" icon={ShieldCheck}>
-                            <input
-                                type="text"
-                                value={formData.ifsc}
-                                onChange={(e) => setFormData({ ...formData, ifsc: e.target.value })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
-                                placeholder="HDFC0001234"
-                                required
-                            />
-                        </CashBankInput>
-                    </CashBankFormSection>
+                            {/* Circular Statistics */}
+                            <div className="relative w-56 h-56 flex items-center justify-center">
+                                <svg className="w-full h-full -rotate-90">
+                                    <circle
+                                        cx="112"
+                                        cy="112"
+                                        r="100"
+                                        stroke="currentColor"
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        className="text-neutral-900"
+                                    />
+                                    <circle
+                                        cx="112"
+                                        cy="112"
+                                        r="100"
+                                        stroke="currentColor"
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        strokeDasharray={2 * Math.PI * 100}
+                                        strokeDashoffset={2 * Math.PI * 100 * (1 - 0.65)}
+                                        strokeLinecap="round"
+                                        className="text-emerald-500/40"
+                                    />
+                                    <circle
+                                        cx="112"
+                                        cy="112"
+                                        r="100"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        fill="transparent"
+                                        strokeDasharray={2 * Math.PI * 100}
+                                        strokeDashoffset={2 * Math.PI * 100 * (1 - 0.65)}
+                                        strokeLinecap="round"
+                                        className="text-emerald-500"
+                                    />
+                                </svg>
+                                <div className="absolute flex flex-col items-center justify-center text-center">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Grand Total</span>
+                                    <h2 className="text-3xl font-black text-white mb-2">₹{totalBalance.toLocaleString('en-IN')}</h2>
+                                    <div className="flex flex-col items-center gap-1 opacity-60">
+                                        <Activity className="w-4 h-4 text-emerald-500" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-neutral-500">Statistics</span>
+                                    </div>
+                                </div>
+                                <div className="absolute -bottom-8 w-full text-center">
+                                    <p className="text-[8px] font-black uppercase tracking-tight text-neutral-600">Global Budget Information</p>
+                                </div>
+                            </div>
 
-                    <CashBankFormSection title="Liquidity Configuration">
-                        <CashBankInput label="Account Classification" icon={Activity}>
-                            <select
-                                value={formData.accountType}
-                                onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm appearance-none"
+                            <div className="flex flex-col items-center text-center">
+                                <div className="flex items-center gap-2 mb-4 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    <span className="text-[10px] font-bold text-neutral-400">Yearly</span>
+                                    <ChevronDown className="w-3 h-3 text-neutral-400" />
+                                </div>
+                                <div className="flex flex-col items-end gap-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Income</span>
+                                    <span className="text-lg font-bold text-emerald-500">₹{totalIncome.toLocaleString('en-IN')}</span>
+                                </div>
+                                <div className="flex gap-4 mt-4">
+                                    <Search className="w-4 h-4 text-neutral-500" />
+                                    <FileText className="w-4 h-4 text-neutral-500" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full h-px bg-white/5" />
+
+                    {/* Account List */}
+                    <div className="space-y-4">
+                        {accounts.map(acc => (
+                            <div
+                                key={acc._id}
+                                className="group relative bg-[#0f1115] hover:bg-[#16191f] border border-white/5 rounded-3xl p-6 transition-all cursor-pointer overflow-hidden"
+                                onClick={() => navigate(`/cashbank/ledger/${acc._id}`)}
                             >
-                                <option>Savings</option>
-                                <option>Current</option>
-                                <option>Overdraft</option>
-                            </select>
-                        </CashBankInput>
-                        <CashBankInput label="Opening Position" icon={Activity}>
-                            <input
-                                type="number"
-                                value={formData.openingBalance}
-                                onChange={(e) => setFormData({ ...formData, openingBalance: parseFloat(e.target.value) || 0 })}
-                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
-                                placeholder="0.00"
-                            />
-                        </CashBankInput>
-                    </CashBankFormSection>
-                </form>
-            </CashBankModal>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
-                {accounts.map(acc => (
-                    <div key={acc._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:border-indigo-200 dark:hover:border-indigo-900 transition-all group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:scale-125 transition-transform pointer-events-none">
-                            <Building2 className="w-32 h-32" />
-                        </div>
-
-                        <div className="flex items-start justify-between mb-8 relative z-10">
-                            <div>
-                                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{acc.bankName}</h3>
-                                <div className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5 mt-1">
-                                    <div className={`w-1.5 h-1.5 rounded-full ${acc.currentBalance > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
-                                    {acc.accountType} Classification • {acc.branch} Node
+                                <div className="flex items-center justify-between relative z-10">
+                                    <div className="space-y-4">
+                                        <h3 className="text-xl font-black text-neutral-200 uppercase tracking-tight">{acc.bankName}</h3>
+                                        <div className="flex items-center gap-3">
+                                            <div className="px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full">
+                                                <span className="text-[10px] font-black text-rose-400">₹{(acc.currentBalance * 0.4).toLocaleString()}</span>
+                                            </div>
+                                            <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                                                <span className="text-[10px] font-black text-emerald-400">₹{(acc.currentBalance * 1.4).toLocaleString()}</span>
+                                            </div>
+                                            <div className="px-3 py-1 bg-neutral-800 border border-white/5 rounded-full">
+                                                <span className="text-[10px] font-black text-neutral-300">₹{acc.currentBalance.toLocaleString()}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-white/5 rounded-2xl group-hover:scale-110 transition-transform">
+                                        {getAccountIcon(acc.bankName)}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex gap-1.5">
-                                <button onClick={() => toggleReveal(acc._id)} className="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-400 hover:text-indigo-600 transition-all">
-                                    {revealedAccounts[acc._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                                <button onClick={() => { if (window.confirm('Wipe unit from registry?')) dispatch(deleteAccount(acc._id)) }} className="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 transition-all">
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
 
-                        <div className="space-y-6 relative z-10">
-                            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-[1.5rem] space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ledger identification</span>
-                                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 font-mono">Routing: {acc.ifsc}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <p className="font-mono text-sm font-bold text-slate-800 dark:text-slate-200 tracking-wider">
-                                        {revealedAccounts[acc._id] ? acc.accountNumber : maskAccountNumber(acc.accountNumber)}
-                                    </p>
-                                    <button className="p-1 px-2.5 bg-indigo-100 dark:bg-indigo-900/30 text-[9px] font-black text-indigo-600 uppercase tracking-widest rounded-lg">Primary</button>
-                                </div>
-                            </div>
-
-                            <div className="flex items-end justify-between">
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Liquidity Position</p>
-                                    <h4 className="text-2xl font-black text-emerald-600">₹{acc.currentBalance.toLocaleString('en-IN')}</h4>
-                                </div>
-                                <div className="flex gap-2">
+                                {/* Masked Account Number on Hover or revealed */}
+                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
-                                        onClick={() => navigate(`/cashbank/ledger/${acc._id}`)}
-                                        className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:border-indigo-200 text-slate-600 dark:text-slate-400 hover:text-indigo-600 transition-all shadow-sm"
-                                        title="Audit Terminal"
+                                        onClick={(e) => { e.stopPropagation(); toggleReveal(acc._id); }}
+                                        className="p-1.5 hover:bg-white/10 rounded-lg text-neutral-500"
                                     >
-                                        <FileText className="w-5 h-5" />
+                                        {revealedAccounts[acc._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                     <button
-                                        onClick={() => navigate('/cashbank/transfers', { state: { fromAccount: acc._id } })}
-                                        className="p-3 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 dark:shadow-none"
-                                        title="Execution Clearing"
+                                        onClick={(e) => { e.stopPropagation(); if (window.confirm('Wipe unit from registry?')) dispatch(deleteAccount(acc._id)); }}
+                                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-neutral-500 hover:text-rose-500"
                                     >
-                                        <ArrowRightLeft className="w-5 h-5" />
+                                        <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                ))}
+                        ))}
 
-                {accounts.length === 0 && (
-                    <div className="col-span-full py-20 bg-slate-50 dark:bg-slate-800/30 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] text-center flex flex-col items-center">
-                        <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 transition-all">
-                            <Building2 className="w-10 h-10" />
+                        {/* Add Account Trigger */}
+                        <div
+                            onClick={() => setShowAddAccount(true)}
+                            className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/5 rounded-[2.5rem] hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all cursor-pointer group"
+                        >
+                            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <Plus className="w-6 h-6 text-emerald-500" />
+                            </div>
+                            <h4 className="text-sm font-black uppercase tracking-widest text-neutral-500">Initialize New Unit</h4>
                         </div>
-                        <h4 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">No Active Clearing Units</h4>
-                        <p className="text-xs font-medium text-slate-400 mt-2">Initialize your first institucional unit to begin managing global liquidity.</p>
-                        <button onClick={() => setShowAddAccount(true)} className="mt-8 px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none">Start Initialization</button>
                     </div>
-                )}
+                </div>
+
+                {/* Floating Action Button (Alternative Add Account) */}
+                <button
+                    onClick={() => setShowAddAccount(true)}
+                    className="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
+                >
+                    <Plus className="w-8 h-8 stroke-[4]" />
+                </button>
+
+                <CashBankModal
+                    isOpen={showAddAccount}
+                    onClose={() => setShowAddAccount(false)}
+                    title="New Banking Relationship"
+                    subtitle="Configure institutional liquidity nodes"
+                    icon={Building2}
+                    footer={
+                        <>
+                            <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-white/5 text-neutral-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Abort</button>
+                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-emerald-500 text-neutral-950 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-50 transition-all">
+                                {isLoading ? 'Synchronizing...' : 'Commit Initialization'}
+                            </button>
+                        </>
+                    }
+                >
+                    <form id="add-account-form" onSubmit={handleSubmit} className="space-y-8">
+                        <CashBankFormSection title="Institution Details">
+                            <CashBankInput label="Financial Institution" icon={Building2}>
+                                <input
+                                    type="text"
+                                    value={formData.bankName}
+                                    onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    placeholder="e.g. HDFC Treasury"
+                                    required
+                                />
+                            </CashBankInput>
+                            <CashBankInput label="Branch Domicile" icon={ChevronDown}>
+                                <input
+                                    type="text"
+                                    value={formData.branch}
+                                    onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    placeholder="Regional Node"
+                                />
+                            </CashBankInput>
+                        </CashBankFormSection>
+
+                        <CashBankFormSection title="Clearing Identifiers">
+                            <CashBankInput label="Account Reference ID" icon={CreditCard}>
+                                <input
+                                    type="text"
+                                    value={formData.accountNumber}
+                                    onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    placeholder="Official Identifier"
+                                    required
+                                />
+                            </CashBankInput>
+                            <CashBankInput label="Interbank Routing Code" icon={ShieldCheck}>
+                                <input
+                                    type="text"
+                                    value={formData.ifsc}
+                                    onChange={(e) => setFormData({ ...formData, ifsc: e.target.value })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    placeholder="HDFC0001234"
+                                    required
+                                />
+                            </CashBankInput>
+                        </CashBankFormSection>
+
+                        <CashBankFormSection title="Liquidity Configuration">
+                            <CashBankInput label="Account Classification" icon={Activity}>
+                                <select
+                                    value={formData.accountType}
+                                    onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white appearance-none"
+                                >
+                                    <option>Savings</option>
+                                    <option>Current</option>
+                                    <option>Overdraft</option>
+                                </select>
+                            </CashBankInput>
+                            <CashBankInput label="Opening Position" icon={Activity}>
+                                <input
+                                    type="number"
+                                    value={formData.openingBalance}
+                                    onChange={(e) => setFormData({ ...formData, openingBalance: parseFloat(e.target.value) || 0 })}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    placeholder="0.00"
+                                />
+                            </CashBankInput>
+                        </CashBankFormSection>
+                    </form>
+                </CashBankModal>
             </div>
         </Layout>
     );

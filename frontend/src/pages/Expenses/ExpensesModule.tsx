@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Plus, Search, Filter, FilterX, Receipt, Clock, CheckCircle2, XCircle, MoreVertical, Building2, UserCircle, CreditCard, Landmark, Wallet, Trash2 } from 'lucide-react';
 import { useExpenses, Expense } from "../../hooks/useExpenses";
 import { useExpenseCategories } from "../../hooks/useExpenseCategories";
-import ExpenseDashboard from './ExpenseDashboard';
+import PremiumExpenseDashboard from './PremiumExpenseDashboard';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
-import ExpenseForm from './ExpenseForm';
+import ExpenseForm from '../../components/Finance/ExpenseForm';
 
 interface AuthState {
     user: any;
@@ -84,7 +84,7 @@ const ExpensesModule: React.FC = () => {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    <ExpenseDashboard expenses={expenses} />
+                    <PremiumExpenseDashboard expenses={expenses} />
 
                     {/* Transaction List Layer */}
                     <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">

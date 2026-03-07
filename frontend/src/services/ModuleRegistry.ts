@@ -140,7 +140,10 @@ export const Modules = {
     CashBankPosition: () => import("../pages/Financial/Cashbank/CashBankPosition"),
     AccountLedger: () => import("../pages/Financial/Cashbank/AccountLedger"),
     BankStatementView: () => import("../pages/Finance/BankStatementView"),
+    SmsTrackerPage: () => import("../pages/Finance/SmsTrackerPage"),
+    BudgetTrackerPage: () => import("../pages/Finance/BudgetTrackerPage"),
     LoanAccounts: () => import("../pages/Financial/Cashbank/LoanAccounts"),
+    FinancialGoals: () => import("../pages/Financial/Cashbank/FinancialGoals"),
 
     // Expense Features
     ExpenseIntelligence: () => import("../pages/Expenses/ExpenseIntelligence"),
@@ -298,7 +301,10 @@ export const LazyModules = {
     CashBankPosition: lazy(Modules.CashBankPosition),
     AccountLedger: lazy(Modules.AccountLedger),
     BankStatementView: lazy(Modules.BankStatementView),
+    SmsTrackerPage: lazy(Modules.SmsTrackerPage),
+    BudgetTrackerPage: lazy(Modules.BudgetTrackerPage),
     LoanAccounts: lazy(Modules.LoanAccounts),
+    FinancialGoals: lazy(Modules.FinancialGoals),
 
     // Expenses
     ExpenseIntelligence: lazy(Modules.ExpenseIntelligence),

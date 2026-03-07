@@ -1,4 +1,4 @@
-﻿import app from "./app.js";
+import app from "./app.js";
 import http from "http";
 import mongoose from "mongoose";
 import connectDB from "./config/database.js";
@@ -55,28 +55,31 @@ cron.schedule('0 9 * * *', async () => {
 
 const server = http.createServer(app);
 
-server.listen(PORT, () => {
-    logger.info(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+const startServer = (port: number | string) => {
+    const serverInstance = server.listen(port, () => {
+        logger.info(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
+    });
 
-server.on('error', (error: any) => {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-
-    switch (error.code) {
-        case 'EACCES':
-            logger.error(`❌ Port ${PORT} requires elevated privileges`);
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            logger.error(`❌ Port ${PORT} is already in use`);
-            process.exit(1);
-            break;
-        default:
+    serverInstance.on('error', (error: any) => {
+        if (error.syscall !== 'listen') {
             throw error;
-    }
-});
+        }
+
+        if (error.code === 'EADDRINUSE') {
+            logger.warn(`⚠️  Port ${port} is already in use. Trying next available port...`);
+            startServer(Number(port) + 1);
+        } else if (error.code === 'EACCES') {
+            logger.error(`❌ Port ${port} requires elevated privileges`);
+            process.exit(1);
+        } else {
+            throw error;
+        }
+    });
+
+    return serverInstance;
+};
+
+const finalServer = startServer(PORT);
 
 // =======================
 // Graceful Shutdown

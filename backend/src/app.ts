@@ -185,6 +185,10 @@ app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
 import expenseModuleRoutes from "./modules/expense/routes/expense.routes.js";
 app.use("/api", expenseModuleRoutes);
 
+// SMS Tracker Module
+import smsTrackerRoutes from "./modules/sms-tracker/routes/sms-tracker.routes.js";
+app.use("/api/sms-tracker", smsTrackerRoutes);
+
 // CRM Module
 import crmRoutes from "./modules/crm/routes/crm.routes.js";
 app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
