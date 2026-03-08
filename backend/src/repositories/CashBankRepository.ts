@@ -3,13 +3,49 @@ import BankAccount from "../modules/finance/models/BankAccount.js";
 import CashbankTransaction from "../modules/finance/models/CashbankTransaction.js";
 import { IBankAccount } from "../interfaces/IBankAccount.js";
 import { ICashbankTransaction } from "../interfaces/ICashbankTransaction.js";
+import { ICheque } from "../interfaces/ICheque.js";
+import Cheque from "../modules/finance/models/Cheque.js";
+import crypto from "crypto";
 import mongoose from "mongoose";
 
 @injectable()
 @singleton()
 export class CashBankRepository {
+    // Cryptography Helpers
+    public encryptAccountNumber(accountNumber: string): string {
+        const algorithm = "aes-256-cbc";
+        const secret = process.env.ENCRYPTION_KEY || process.env.COOKIE_SECRET || "default_fallback_secret_must_be_long";
+        const key = crypto.scryptSync(secret, "salt", 32);
+        const iv = crypto.randomBytes(16);
+
+        const cipher = crypto.createCipheriv(algorithm, key, iv);
+        let encrypted = cipher.update(accountNumber, "utf8", "hex");
+        encrypted += cipher.final("hex");
+
+        return iv.toString("hex") + ":" + encrypted;
+    }
+
+    public decryptAccountNumber(encryptedAccountNumber: string): string {
+        const parts = encryptedAccountNumber.split(":");
+        if (parts.length < 2) return encryptedAccountNumber;
+
+        const iv = Buffer.from(parts[0], "hex");
+        const encrypted = parts[1];
+        const algorithm = "aes-256-cbc";
+        const secret = process.env.ENCRYPTION_KEY || process.env.COOKIE_SECRET || "default_fallback_secret_must_be_long";
+        const key = crypto.scryptSync(secret, "salt", 32);
+
+        const decipher = crypto.createDecipheriv(algorithm, key, iv);
+        let decrypted = decipher.update(encrypted, "hex", "utf8");
+        decrypted += decipher.final("utf8");
+        return decrypted;
+    }
+
     // Bank Account Methods
     async createAccount(data: Partial<IBankAccount>): Promise<IBankAccount> {
+        if (data.accountNumber) {
+            data.accountNumber = this.encryptAccountNumber(data.accountNumber);
+        }
         return BankAccount.create(data);
     }
 
@@ -24,7 +60,7 @@ export class CashBankRepository {
         // Given current encryption is randomized (IV), direct search is impossible without fetching all.
         // Optimization: Fetch all for user and filter in memory (assuming low count of accounts).
         const accounts = await BankAccount.find({ userId });
-        const match = accounts.find((acc: any) => acc.getDecryptedAccountNumber() === accountNumber);
+        const match = accounts.find((acc: any) => this.decryptAccountNumber(acc.accountNumber) === accountNumber);
         return match || null;
     }
 
@@ -33,6 +69,9 @@ export class CashBankRepository {
     }
 
     async updateAccount(id: string, userId: string, updates: Partial<IBankAccount>): Promise<IBankAccount | null> {
+        if (updates.accountNumber) {
+            updates.accountNumber = this.encryptAccountNumber(updates.accountNumber);
+        }
         return BankAccount.findOneAndUpdate(
             { _id: id, userId },
             updates,
@@ -100,5 +139,26 @@ export class CashBankRepository {
 
     async queryTransactions(query: any, sort: any = { date: 1, createdAt: 1 }): Promise<ICashbankTransaction[]> {
         return CashbankTransaction.find(query).sort(sort).lean() as unknown as ICashbankTransaction[];
+    }
+
+    // Cheque Methods
+    async queryCheques(query: any, sort: any = { date: 1 }): Promise<ICheque[]> {
+        return Cheque.find(query).sort(sort);
+    }
+
+    async findChequeById(id: string, userId: string): Promise<ICheque | null> {
+        return Cheque.findOne({ _id: id, userId });
+    }
+
+    async createCheque(data: Partial<ICheque>): Promise<ICheque> {
+        return Cheque.create(data);
+    }
+
+    async updateCheque(id: string, userId: string, updates: Partial<ICheque>): Promise<ICheque | null> {
+        return Cheque.findOneAndUpdate(
+            { _id: id, userId },
+            updates,
+            { new: true }
+        );
     }
 }

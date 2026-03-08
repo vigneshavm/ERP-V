@@ -22,6 +22,17 @@ import {
     getAllTransactions // Import new method
 } from "../controllers/CashBankController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
+import { validate } from "../../../middlewares/validate.js";
+import {
+    CreateAccountSchema,
+    UpdateAccountSchema,
+    CreateTransferSchema,
+    CreateCashTransactionSchema,
+    CreateChequeSchema,
+    UpdateChequeStatusSchema,
+    ValidatePaymentsSchema,
+    BulkReconcileSchema
+} from "../schemas/CashBankSchemas.js";
 
 const router = Router();
 
@@ -30,29 +41,29 @@ router.get("/", protect, getAllTransactions);
 
 // Account Management
 router.get("/accounts", protect, getAccounts);
-router.post("/accounts", protect, createAccount);
-router.put("/accounts/:id", protect, updateAccount);
+router.post("/accounts", protect, validate(CreateAccountSchema), createAccount);
+router.put("/accounts/:id", protect, validate(UpdateAccountSchema), updateAccount);
 router.delete("/accounts/:id", protect, deleteAccount);
 
 // Transactions
 router.get("/accounts/:id/transactions", protect, getTransactions);
-router.post("/transfers", protect, createTransfer);
-router.post("/cash-transactions", protect, createCashTransaction);
+router.post("/transfers", protect, validate(CreateTransferSchema), createTransfer);
+router.post("/cash-transactions", protect, validate(CreateCashTransactionSchema), createCashTransaction);
 
 // Cheques
 router.get("/cheques", protect, getCheques);
-router.post("/cheques", protect, createCheque);
-router.put("/cheques/:id/status", protect, updateChequeStatus);
+router.post("/cheques", protect, validate(CreateChequeSchema), createCheque);
+router.put("/cheques/:id/status", protect, validate(UpdateChequeStatusSchema), updateChequeStatus);
 
 // Reconciliation & Ledger
 router.get("/accounts/:id/ledger", protect, getAccountLedger);
 router.put("/transactions/:id/reconcile", protect, toggleReconciliation);
-router.put("/transactions/bulk-reconcile", protect, bulkReconcile);
+router.put("/transactions/bulk-reconcile", protect, validate(BulkReconcileSchema), bulkReconcile);
 
 // Reporting & Analysis
 router.get("/summary", protect, getBankSummary);
 router.get("/position", protect, getCashBankPosition);
-router.post("/validate-payments", protect, validatePayments);
+router.post("/validate-payments", protect, validate(ValidatePaymentsSchema), validatePayments);
 router.get("/accounts/:id/effective-balance", protect, getEffectiveBalance);
 
 // Day End Logic

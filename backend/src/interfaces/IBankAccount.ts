@@ -13,9 +13,6 @@ export interface IBankAccount extends Document {
     tenantId: Types.ObjectId;
     transactions: Types.ObjectId[];
 
-    // Methods
-    getDecryptedAccountNumber(): string;
-
     createdAt: Date;
     updatedAt: Date;
 }
