@@ -4,7 +4,7 @@ import { AppError } from "../../../utils/AppError.js";
 // import { IBankAccount } from "../../../interfaces/IBankAccount.js";
 import { ICashbankTransaction } from "../../../interfaces/ICashbankTransaction.js";
 import { info } from "../../../config/logger.js";
-import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 @injectable()
 export class CashBankService {
@@ -16,7 +16,7 @@ export class CashBankService {
     async getAccounts(userId: string): Promise<any[]> {
         const accounts = await this.cashBankRepository.getAccounts(userId);
         return accounts.map(acc => ({
-            ...acc.toObject(),
+            ...acc,
             accountNumber: this.cashBankRepository.decryptAccountNumber(acc.accountNumber)
         }));
     }
@@ -41,7 +41,7 @@ export class CashBankService {
         info(`Bank account added by ${userName}: ${account.bankName}`);
 
         return {
-            ...account.toObject(),
+            ...account,
             accountNumber: this.cashBankRepository.decryptAccountNumber(account.accountNumber)
         };
     }
@@ -57,7 +57,7 @@ export class CashBankService {
 
         info(`Bank account updated by ${userName}: ${updated.bankName}`);
         return {
-            ...updated.toObject(),
+            ...updated,
             accountNumber: this.cashBankRepository.decryptAccountNumber(updated.accountNumber)
         };
     }
@@ -120,7 +120,7 @@ export class CashBankService {
             toAccount = otherAccount;
         }
 
-        const isBankTransfer = mongoose.Types.ObjectId.isValid(otherAccount);
+        const isBankTransfer = ObjectId.isValid(otherAccount);
 
         if (isBankTransfer) {
             if (type === 'in') { // Bank -> Cash
@@ -174,7 +174,7 @@ export class CashBankService {
             const acc = await this.cashBankRepository.findAccountById(accountId, userId);
             if (!acc) throw new AppError("Account not found", 404);
             account = {
-                ...acc.toObject(),
+                ...acc,
                 accountNumber: this.cashBankRepository.decryptAccountNumber(acc.accountNumber)
             };
         }
@@ -268,7 +268,7 @@ export class CashBankService {
         const accountCount = accounts.length;
 
         const decryptedAccounts = accounts.map(acc => ({
-            ...acc.toObject(),
+            ...acc,
             accountNumber: this.cashBankRepository.decryptAccountNumber(acc.accountNumber)
         }));
 

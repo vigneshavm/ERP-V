@@ -290,7 +290,7 @@ export class PayrollService {
                 throw new AppError("Cannot process Bank/Cheque/UPI from a Cash Account", 400);
             }
 
-            if (account.currentBalance < run.totalAmount && account.accountType !== 'Overdraft') {
+            if (account.currentBalance < run.totalAmount && account.accountType !== 'OD') {
                 throw new AppError(`Insufficient Funds in ${account.bankName} (${account.accountType})`, 400);
             }
 
@@ -667,7 +667,7 @@ export class PayrollService {
 
             const account = await BankAccount.findOne({ _id: accountId, tenantId }).session(session);
             if (!account) throw new AppError("Payment Account not found", 404);
-            if (account.currentBalance < netPay && account.accountType !== 'Overdraft') {
+            if (account.currentBalance < netPay && account.accountType !== 'OD') {
                 throw new AppError(`Insufficient Funds`, 400);
             }
 

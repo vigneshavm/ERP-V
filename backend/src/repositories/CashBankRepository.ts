@@ -1,16 +1,23 @@
 import { injectable, singleton } from "tsyringe";
-import BankAccount from "../modules/finance/models/BankAccount.js";
-import CashbankTransaction from "../modules/finance/models/CashbankTransaction.js";
 import { IBankAccount } from "../interfaces/IBankAccount.js";
 import { ICashbankTransaction } from "../interfaces/ICashbankTransaction.js";
 import { ICheque } from "../interfaces/ICheque.js";
-import Cheque from "../modules/finance/models/Cheque.js";
 import crypto from "crypto";
-import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
+import { mongoClient } from "../config/database.js";
+
+const getDb = () => {
+    if (!mongoClient) throw new Error("MongoDB Client not initialized");
+    return mongoClient.db();
+};
 
 @injectable()
 @singleton()
 export class CashBankRepository {
+    private get accounts() { return getDb().collection('bankaccounts'); }
+    private get transactions() { return getDb().collection('cashbanktransactions'); }
+    private get cheques() { return getDb().collection('cheques'); }
+
     // Cryptography Helpers
     public encryptAccountNumber(accountNumber: string): string {
         const algorithm = "aes-256-cbc";
@@ -26,6 +33,7 @@ export class CashBankRepository {
     }
 
     public decryptAccountNumber(encryptedAccountNumber: string): string {
+        if (!encryptedAccountNumber) return encryptedAccountNumber;
         const parts = encryptedAccountNumber.split(":");
         if (parts.length < 2) return encryptedAccountNumber;
 
@@ -46,119 +54,150 @@ export class CashBankRepository {
         if (data.accountNumber) {
             data.accountNumber = this.encryptAccountNumber(data.accountNumber);
         }
-        return BankAccount.create(data);
+        data.createdAt = new Date();
+        data.updatedAt = new Date();
+
+        if (data.tenantId && typeof data.tenantId === 'string') data.tenantId = new ObjectId(data.tenantId);
+        if (data.userId && typeof data.userId === 'string') data.userId = new ObjectId(data.userId);
+
+        const result = await this.accounts.insertOne(data as IBankAccount);
+        return { ...data, _id: result.insertedId } as IBankAccount;
     }
 
     async findAccountById(id: string, userId: string): Promise<IBankAccount | null> {
-        return BankAccount.findOne({ _id: id, userId });
+        return this.accounts.findOne({ _id: new ObjectId(id), userId: new ObjectId(userId) });
     }
 
     async findAccountByNumber(accountNumber: string, userId: string): Promise<IBankAccount | null> {
-        // Since account number is encrypted, we can't search directly unless we replicate encryption logic here
-        // or search all and decrypt. For strict searching, we'd need deterministic encryption or a hash index.
-        // Assuming unique constraint logic handled at application level or schema level if possible.
-        // Given current encryption is randomized (IV), direct search is impossible without fetching all.
-        // Optimization: Fetch all for user and filter in memory (assuming low count of accounts).
-        const accounts = await BankAccount.find({ userId });
-        const match = accounts.find((acc: any) => this.decryptAccountNumber(acc.accountNumber) === accountNumber);
+        const _userId = new ObjectId(userId);
+        const accountsCursor = this.accounts.find({ userId: _userId });
+        const allAccounts = await accountsCursor.toArray();
+        const match = allAccounts.find((acc: any) => this.decryptAccountNumber(acc.accountNumber) === accountNumber);
         return match || null;
     }
 
     async getAccounts(userId: string): Promise<IBankAccount[]> {
-        return BankAccount.find({ userId });
+        return this.accounts.find({ userId: new ObjectId(userId) }).toArray();
     }
 
     async updateAccount(id: string, userId: string, updates: Partial<IBankAccount>): Promise<IBankAccount | null> {
         if (updates.accountNumber) {
             updates.accountNumber = this.encryptAccountNumber(updates.accountNumber);
         }
-        return BankAccount.findOneAndUpdate(
-            { _id: id, userId },
-            updates,
-            { new: true }
+        updates.updatedAt = new Date();
+        const result = await this.accounts.findOneAndUpdate(
+            { _id: new ObjectId(id), userId: new ObjectId(userId) },
+            { $set: updates },
+            { returnDocument: 'after' }
         );
+        return result;
     }
 
     async updateBalance(id: string, amount: number): Promise<void> {
-        await BankAccount.findByIdAndUpdate(id, { $inc: { currentBalance: amount } });
+        await this.accounts.updateOne(
+            { _id: new ObjectId(id) },
+            { $inc: { currentBalance: amount }, $set: { updatedAt: new Date() } }
+        );
     }
 
     async deleteAccount(id: string, userId: string): Promise<IBankAccount | null> {
-        return BankAccount.findOneAndDelete({ _id: id, userId });
+        const result = await this.accounts.findOneAndDelete({ _id: new ObjectId(id), userId: new ObjectId(userId) });
+        return result;
     }
 
     // Transaction Methods
     async createTransaction(data: Partial<ICashbankTransaction>): Promise<ICashbankTransaction> {
-        return CashbankTransaction.create(data);
+        data.createdAt = new Date();
+        data.updatedAt = new Date();
+        if (data.userId && typeof data.userId === 'string') data.userId = new ObjectId(data.userId) as any;
+        if (data.reconciledBy && typeof data.reconciledBy === 'string') data.reconciledBy = new ObjectId(data.reconciledBy) as any;
+
+        const result = await this.transactions.insertOne(data as ICashbankTransaction);
+        return { ...data, _id: result.insertedId } as ICashbankTransaction;
     }
 
     async findTransactionById(id: string, userId: string): Promise<ICashbankTransaction | null> {
-        return CashbankTransaction.findOne({ _id: id, userId });
+        return this.transactions.findOne({ _id: new ObjectId(id), userId: new ObjectId(userId) });
     }
 
     async getTransactions(userId: string, accountId: string): Promise<ICashbankTransaction[]> {
-        return CashbankTransaction.find({
-            userId,
+        return this.transactions.find({
+            userId: new ObjectId(userId),
             $or: [{ fromAccount: accountId }, { toAccount: accountId }]
-        }).sort({ date: -1 });
+        }).sort({ date: -1 }).toArray();
     }
 
     async updateTransaction(id: string, userId: string, updates: Partial<ICashbankTransaction>): Promise<ICashbankTransaction | null> {
-        return CashbankTransaction.findOneAndUpdate(
-            { _id: id, userId },
-            updates,
-            { new: true }
+        updates.updatedAt = new Date();
+        const result = await this.transactions.findOneAndUpdate(
+            { _id: new ObjectId(id), userId: new ObjectId(userId) },
+            { $set: updates },
+            { returnDocument: 'after' }
         );
+        return result;
     }
 
     async updateManyTransactions(ids: string[], userId: string, updates: Partial<ICashbankTransaction>): Promise<any> {
-        return CashbankTransaction.updateMany(
-            { _id: { $in: ids }, userId },
+        const objectIds = ids.map(id => new ObjectId(id));
+        updates.updatedAt = new Date();
+        return this.transactions.updateMany(
+            { _id: { $in: objectIds }, userId: new ObjectId(userId) },
             { $set: updates }
         );
     }
 
     async countTransactions(accountId: string): Promise<number> {
-        return CashbankTransaction.countDocuments({
+        return this.transactions.countDocuments({
             $or: [{ fromAccount: accountId }, { toAccount: accountId }]
         });
     }
 
     // Aggregations
     async getCashBalance(userId: string): Promise<number> {
-        const cashIn = await CashbankTransaction.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(userId), toAccount: 'cash' } },
+        const _userId = new ObjectId(userId);
+        const cashIn = await this.transactions.aggregate([
+            { $match: { userId: _userId, toAccount: 'cash' } },
             { $group: { _id: null, total: { $sum: '$amount' } } }
-        ]);
-        const cashOut = await CashbankTransaction.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(userId), fromAccount: 'cash' } },
+        ]).toArray();
+        const cashOut = await this.transactions.aggregate([
+            { $match: { userId: _userId, fromAccount: 'cash' } },
             { $group: { _id: null, total: { $sum: '$amount' } } }
-        ]);
+        ]).toArray();
         return (cashIn[0]?.total || 0) - (cashOut[0]?.total || 0);
     }
 
-    async queryTransactions(query: any, sort: any = { date: 1, createdAt: 1 }): Promise<ICashbankTransaction[]> {
-        return CashbankTransaction.find(query).sort(sort).lean() as unknown as ICashbankTransaction[];
+    async queryTransactions(query: any, sortQuery: any = { date: 1, createdAt: 1 }): Promise<ICashbankTransaction[]> {
+        if (query.userId && typeof query.userId === 'string') query.userId = new ObjectId(query.userId);
+        return this.transactions.find(query).sort(sortQuery).toArray();
     }
 
     // Cheque Methods
-    async queryCheques(query: any, sort: any = { date: 1 }): Promise<ICheque[]> {
-        return Cheque.find(query).sort(sort);
+    async queryCheques(query: any, sortQuery: any = { date: 1 }): Promise<ICheque[]> {
+        if (query.userId && typeof query.userId === 'string') query.userId = new ObjectId(query.userId);
+        return this.cheques.find(query).sort(sortQuery).toArray();
     }
 
     async findChequeById(id: string, userId: string): Promise<ICheque | null> {
-        return Cheque.findOne({ _id: id, userId });
+        return this.cheques.findOne({ _id: new ObjectId(id), userId: new ObjectId(userId) });
     }
 
     async createCheque(data: Partial<ICheque>): Promise<ICheque> {
-        return Cheque.create(data);
+        data.createdAt = new Date();
+        data.updatedAt = new Date();
+        if (data.tenantId && typeof data.tenantId === 'string') data.tenantId = new ObjectId(data.tenantId);
+        if (data.userId && typeof data.userId === 'string') data.userId = new ObjectId(data.userId);
+
+        const result = await this.cheques.insertOne(data as ICheque);
+        return { ...data, _id: result.insertedId } as ICheque;
     }
 
     async updateCheque(id: string, userId: string, updates: Partial<ICheque>): Promise<ICheque | null> {
-        return Cheque.findOneAndUpdate(
-            { _id: id, userId },
-            updates,
-            { new: true }
+        updates.updatedAt = new Date();
+        const result = await this.cheques.findOneAndUpdate(
+            { _id: new ObjectId(id), userId: new ObjectId(userId) },
+            { $set: updates },
+            { returnDocument: 'after' }
         );
+        return result;
     }
 }

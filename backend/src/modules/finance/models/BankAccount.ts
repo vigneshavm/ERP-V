@@ -13,8 +13,8 @@ const bankAccountSchema = new Schema<IBankAccount>(
         },
         accountType: {
             type: String,
-            enum: ["Savings", "Current", "Overdraft", "Loan", "Cash"],
-            default: "Savings",
+            enum: ["Current", "Savings", "OD", "CC", "Loan", "Other"],
+            default: "Current",
         },
         branch: {
             type: String,
@@ -32,13 +32,12 @@ const bankAccountSchema = new Schema<IBankAccount>(
             type: Number,
             default: 0,
         },
-        status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "active",
+        isActive: {
+            type: Boolean,
+            default: true,
         },
         userId: {
-            type: String, // Keeping as String for consistency, can be ObjectId
+            type: Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
@@ -47,11 +46,7 @@ const bankAccountSchema = new Schema<IBankAccount>(
             ref: "Tenant",
             required: true,
             index: true
-        },
-        transactions: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "CashbankTransaction",
-        }],
+        }
     },
     { timestamps: true }
 );

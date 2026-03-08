@@ -1,18 +1,17 @@
-import { Document, Types } from "mongoose";
+import { ObjectId } from 'mongodb';
 
-export interface IBankAccount extends Document {
+export interface IBankAccount {
+    _id?: ObjectId | string;
     bankName: string;
-    accountNumber: string;
-    accountType: "Savings" | "Current" | "Overdraft" | "Loan" | "Cash";
-    branch: string;
-    ifsc: string;
+    accountNumber: string; // The encrypted string
+    accountType: 'Current' | 'Savings' | 'OD' | 'CC' | 'Loan' | 'Other';
+    branch?: string;
+    ifsc?: string;
     openingBalance: number;
     currentBalance: number;
-    status: "active" | "inactive";
-    userId: string; // ObjectId
-    tenantId: Types.ObjectId;
-    transactions: Types.ObjectId[];
-
-    createdAt: Date;
-    updatedAt: Date;
+    isActive: boolean;
+    tenantId: ObjectId | string;
+    userId: ObjectId | string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

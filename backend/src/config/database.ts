@@ -10,6 +10,8 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 5000; // 5 seconds
 
+export let mongoClient: any = null;
+
 const connectDB = async (retryCount = 0): Promise<void> => {
     try {
         // Clean the connection string to remove any BOM or encoding issues
@@ -35,6 +37,8 @@ const connectDB = async (retryCount = 0): Promise<void> => {
         };
 
         const conn = await mongoose.connect(mongoUri, options);
+        // Expose Native Client
+        mongoClient = conn.connection.getClient();
 
         info(`📦 MongoDB Connected: ${conn.connection.host}`, {
             database: conn.connection.name,

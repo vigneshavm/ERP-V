@@ -81,3 +81,12 @@ export const BulkReconcileSchema = z.object({
         reconciled: z.boolean(),
     })
 });
+
+export type CreateAccountDTO = z.infer<typeof CreateAccountSchema>['body'];
+export type UpdateAccountDTO = z.infer<typeof UpdateAccountSchema>['body'];
+export type CreateTransferDTO = z.infer<typeof CreateTransferSchema>['body'];
+export type CreateCashTransactionDTO = z.infer<typeof CreateCashTransactionSchema>['body'];
+export type CreateChequeDTO = z.infer<typeof CreateChequeSchema>['body'];
+export type UpdateChequeStatusDTO = z.infer<typeof UpdateChequeStatusSchema>['body'];
+export type ValidatePaymentsDTO = z.infer<typeof ValidatePaymentsSchema>['body'];
+export type BulkReconcileDTO = z.infer<typeof BulkReconcileSchema>['body'];
