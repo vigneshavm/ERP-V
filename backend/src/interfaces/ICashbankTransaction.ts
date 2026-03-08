@@ -1,18 +1,18 @@
-import { Document } from "mongoose";
+import { ObjectId } from "mongodb";
 
-export interface ICashbankTransaction extends Document {
+export interface ICashbankTransaction {
+    _id?: ObjectId | string;
     type: "transfer" | "in" | "out";
     amount: number;
-    fromAccount: string; // ObjectId or 'cash'
-    toAccount: string; // ObjectId or 'cash'
-    description: string;
+    fromAccount: string; // ObjectId string or 'cash'
+    toAccount: string; // ObjectId string or 'cash'
+    description?: string;
     date: Date;
     reconciled: boolean;
     reconciledDate?: Date;
-    reconciledBy?: string; // ObjectId
+    reconciledBy?: string; // ObjectId string
     reference?: string;
-    userId: string; // ObjectId
-
-    createdAt: Date;
-    updatedAt: Date;
+    userId: ObjectId | string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

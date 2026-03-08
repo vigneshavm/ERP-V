@@ -79,7 +79,7 @@ const startServer = (port: number | string) => {
     return serverInstance;
 };
 
-const finalServer = startServer(PORT);
+startServer(PORT);
 
 // =======================
 // Graceful Shutdown
