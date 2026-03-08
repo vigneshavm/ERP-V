@@ -28,7 +28,7 @@ const DataManager: React.FC = () => {
         switch (activeTab) {
             case 'GROW_DATA_IMPORT': return 'import';
             case 'GROW_DATA_EXPORT': return 'export';
-            case 'GROW_DATA_CLEANUP': return 'export'; // Or a cleanup tab if it existed
+            case 'GROW_DATA_CLEANUP': return 'export'; 
             case 'GROW_DATA_DUPLICATES': return 'export';
             case 'GROW_DATA_HEALTH': return 'export';
             case 'BARCODE_GENERATOR': return 'labels';
@@ -51,38 +51,44 @@ const DataManager: React.FC = () => {
     };
 
     const tabs = [
-        { id: 'export', label: 'Data Export', icon: Download },
-        { id: 'import', label: 'Bulk Import', icon: Upload },
-        { id: 'labels', label: 'Label Engine', icon: QrCode },
-        { id: 'series', label: 'Number Series', icon: Hash },
+        { id: 'export', label: 'Data Extractions', icon: Download },
+        { id: 'import', label: 'Bulk Ingestion', icon: Upload },
+        { id: 'labels', label: 'Label Synthesis', icon: QrCode },
+        { id: 'series', label: 'Governed Series', icon: Hash },
     ];
 
     return (
-        <div className="space-y-8 animate-fade-in">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase underline decoration-indigo-500 decoration-4 underline-offset-8">Data Operations Hub</h1>
-                    <p className="text-slate-500 mt-2 font-medium">Wings-grade data control, migration, and numbering intelligence.</p>
+        <div className="space-y-12 animate-in fade-in duration-700">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 border-b border-slate-100 dark:border-slate-800 pb-10">
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+                        Data <span className="text-indigo-600">Operations</span> Hub
+                    </h1>
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-indigo-500 rounded-full"></div>
+                        <p className="text-slate-500 font-bold text-xs uppercase tracking-widest">Wings-grade portability & ledger governance</p>
+                    </div>
                 </div>
-            </div>
 
-            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-fit shadow-inner">
-                {tabs.map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => handleTabChange(tab.id as DataTab)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeDataTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-xl scale-105'
-                                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50 dark:hover:bg-white/5'
-                                }`}
-                        >
-                            <Icon className="w-4 h-4" />
-                            {tab.label}
-                        </button>
-                    );
-                })}
+                <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-[1.5rem] shadow-inner border border-slate-200/50 dark:border-slate-800/50">
+                    {tabs.map((tab) => {
+                        const Icon = tab.icon;
+                        const isSelected = activeDataTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => handleTabChange(tab.id as DataTab)}
+                                className={`flex items-center gap-3 px-6 py-3.5 rounded-[1.1rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${isSelected
+                                    ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-xl shadow-indigo-500/10 scale-105'
+                                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                                    }`}
+                            >
+                                <Icon className={`w-4 h-4 ${isSelected ? 'animate-pulse' : ''}`} />
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             <div className="min-h-[500px]">
