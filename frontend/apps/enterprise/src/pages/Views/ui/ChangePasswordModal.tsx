@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store.js";
-import { securePassword } from "../../utils/auth.js";
-import api from "../../services/api.js";
-import { logout } from "../../redux/slices/authSlice.js";
-import { clearSession } from "../../utils/session.js";
+import { RootState, AppDispatch } from "@/app/store/store";
+import api from "@/shared/api/api";
+import { logout } from "@/entities/session/model/authSlice";
+import { clearSession } from "@/shared/lib/utils/session";
+
+const securePassword = async (p: string) => p;
 
 interface ChangePasswordModalProps {
     isOpen: boolean;

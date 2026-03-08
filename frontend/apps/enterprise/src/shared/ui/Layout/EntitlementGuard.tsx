@@ -1,6 +1,6 @@
 import React from 'react';
-import { usePermissions } from "../../../hooks/usePermissions";
-import { AppView, ModuleType } from "../../../types/common";
+import { usePermissions } from "@/hooks/usePermissions";
+import { AppView, ModuleType } from "@repo/shared-kernel";
 import UpgradeUpsell from './UpgradeUpsell';
 
 interface EntitlementGuardProps {

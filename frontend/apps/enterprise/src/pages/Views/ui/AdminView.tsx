@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, useState } from 'react';
 import { LogOut, Loader2 } from 'lucide-react';
-import { Tenant } from "@/types/tenant";
+import { Tenant } from "@/entities/session/model/core";
 
 // Lazy load heavy components
 // const TenantManager = ({ onLoginAs }: { onLoginAs: any }) => <div className="p-4 bg-white rounded-lg">Tenant Manager Module Not Found</div>; // Missing file
 const TenantManager = ({ onLoginAs }: { onLoginAs: any }) => <div className="p-4 bg-white rounded-lg">Tenant Manager Module Not Found</div>;
-const SuperAdminGrowthConsole = lazy(() => import("../System/Architecture/SuperAdminGrowthConsole"));
+const SuperAdminGrowthConsole = lazy(() => import("../../System/Architecture/SuperAdminGrowthConsole"));
 
 interface AdminViewProps {
     onLogout: () => void;

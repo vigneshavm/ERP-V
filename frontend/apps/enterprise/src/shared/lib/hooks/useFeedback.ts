@@ -2,4 +2,4 @@
  * Re-export useFeedback hook from FeedbackContext.
  * This provides a cleaner import path from the hooks directory.
  */
-export { useFeedback } from "../components/core/Feedback/FeedbackContext";
+export { useFeedback } from "@/shared/ui/Feedback/FeedbackContext";

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { setActiveTab } from '@/redux/slices/uiSlice';
+import { RootState } from '@/app/store/store';
+import { useUiStore } from '@/shared/lib/store/uiStore';
 import {
     Smartphone, Monitor, Laptop, Tablet, RefreshCw, CheckCircle, AlertCircle, Clock,
     Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Archive, Cloud, XCircle,
     Cpu, Zap, Activity, Globe, Share2, Layers, ShieldCheck, ChevronRight, Sparkles, Server, Network
 } from 'lucide-react';
-import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
+import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from "@/entities/session/model/sync";
 
 // Components
 import DevicesSection from './DevicesSection';
@@ -108,9 +108,9 @@ const Sync: React.FC = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state: RootState) => state.auth);
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { activeTab } = useSelector((state: RootState) => state.ui);
+    const { activeTab, setActiveTab } = useUiStore();
 
-    const activeTenant = tenants.find(t => t.id === user?.tenantId);
+    const activeTenant = tenants.find((t: any) => t.id === user?.tenantId);
     const isOwnerOrAdmin = user?.systemRole === 'Owner' || (user?.role as string).toLowerCase() === 'admin';
 
     const [localSection, setLocalSection] = useState<SyncSection | null>(null);
@@ -153,7 +153,7 @@ const Sync: React.FC = () => {
         };
 
         if (tabMap[newSection]) {
-            dispatch(setActiveTab(tabMap[newSection] as any));
+            setActiveTab(tabMap[newSection] as any);
             setLocalSection(null);
         } else {
             setLocalSection(newSection);
@@ -352,7 +352,7 @@ const Sync: React.FC = () => {
                                 </div>
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Devices</span>
                             </div>
-                            <p className="text-2xl font-black text-slate-800 dark:text-white">{syncConfig.devices.filter(d => d.isOnline).length} / {syncConfig.devices.length} <span className="text-[10px] font-black text-slate-400 uppercase ml-1">Live</span></p>
+                            <p className="text-2xl font-black text-slate-800 dark:text-white">{syncConfig.devices.filter((d: any) => d.isOnline).length} / {syncConfig.devices.length} <span className="text-[10px] font-black text-slate-400 uppercase ml-1">Live</span></p>
                         </div>
                     </div>
 

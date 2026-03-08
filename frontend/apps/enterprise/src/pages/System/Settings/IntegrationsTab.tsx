@@ -5,7 +5,7 @@ import {
     Activity, ShieldCheck, Mail, Loader2
 } from 'lucide-react';
 
-import { WhatsAppService } from "../../../services/whatsappService";
+import { WhatsAppService } from "@/shared/api/whatsappService";
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);

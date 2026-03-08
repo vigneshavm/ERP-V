@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import { BranchConfig, Counter } from '../../../types/tenant/core';
+import { RootState } from "@/app/store/store";
+import { BranchConfig, Counter } from "@/entities/session/model/core";
 
 const BranchSettingsTab: React.FC = () => {
     const { branches } = useSelector((state: RootState) => state.tenant || { branches: [] });

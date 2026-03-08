@@ -101,7 +101,7 @@ export interface MISControlsTabProps {
     setMaxDiscountPercent: (value: number) => void;
 }
 
-import { AppView } from '../../../types/common';
+import { AppView } from '@repo/shared-kernel';
 
 export interface SecurityTabProps {
     roles: any[]; // Using any for now, ideally strictly typed with Role

@@ -6,7 +6,7 @@ import {
     History, Users, Calendar, ShieldCheck, ShieldAlert,
     ChevronRight, Sparkles, Filter, Search, ArrowRight, Archive
 } from 'lucide-react';
-import { BackupEntry, BackupStatus, BackupDestination } from "../../../types/tenant";
+import { BackupEntry, BackupStatus, BackupDestination } from "@/entities/session/model/sync";
 
 interface RestoreLog {
     id: string;
@@ -201,7 +201,7 @@ const RestoreSection: React.FC = () => {
 
                                 <div className="space-y-6">
                                     <div className="flex flex-wrap gap-2">
-                                        {backup.modules.map(mod => (
+                                        {backup.modules.map((mod: any) => (
                                             <span key={mod} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-100 dark:border-slate-700">{mod}</span>
                                         ))}
                                     </div>

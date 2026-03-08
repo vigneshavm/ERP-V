@@ -22,8 +22,8 @@ import {
     Power,
     Map
 } from 'lucide-react';
-import { SyncIntelligenceService } from "../../../services/SyncIntelligenceService";
-import { DeviceRegistryEntry, SyncLedgerEntry } from "../../../types/tenant";
+import { SyncIntelligenceService } from "@/features/ai-intelligence/lib/SyncIntelligenceService";
+import { DeviceRegistryEntry, SyncLedgerEntry } from "@/entities/session/model/sync";
 
 const SyncIntelligence: React.FC = () => {
     const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);

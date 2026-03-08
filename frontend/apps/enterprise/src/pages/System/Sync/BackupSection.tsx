@@ -1,10 +1,11 @@
 import React from 'react';
+import { AppView } from '@repo/shared-kernel';
 import { 
     Upload, Loader2, CheckCircle, HardDrive, AlertTriangle, 
     Download, Archive, Trash2, RotateCw, Eye, ShieldCheck, 
     Database, Clock, ChevronRight, Lock, History, Settings 
 } from 'lucide-react';
-import { BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
+import { BackupConfig, BackupStatus, BackupDestination } from "@/entities/session/model/sync";
 
 interface BackupSectionProps {
     backupConfig: BackupConfig;
@@ -164,7 +165,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                                         <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isIncluded ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>{key}</span>
                                     </div>
                                     <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${isIncluded ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700'}`}>
-                                        {isIncluded && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                                        {Boolean(isIncluded) && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                     </div>
                                 </button>
                             );
@@ -194,7 +195,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
-                            {backupConfig.history.map((backup) => {
+                            {backupConfig.history.map((backup: any) => {
                                 const DestIcon = getDestinationIcon(backup.destination);
                                 return (
                                     <tr key={backup.id} className="group hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">

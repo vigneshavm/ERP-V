@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { RootState } from '@/app/store/store';
 import { ArrowRight, Shield, Store, UserPlus, ChevronDown, Search } from 'lucide-react';
-import { Tenant } from "../../types/tenant";
+import { Tenant } from "@/entities/session/model/core";
 
 interface LandingPageProps {
     onSelectAdmin: () => void;
@@ -16,7 +16,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
     const [showTenantList, setShowTenantList] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const filteredTenants = tenants.filter(tenant =>
+    const filteredTenants = (tenants as any[]).filter((tenant: any) =>
         tenant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (tenant.businessType && tenant.businessType.toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -104,7 +104,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                             {/* List */}
                             <div className="overflow-y-auto custom-scrollbar max-h-60 p-2">
                                 {filteredTenants.length > 0 ? (
-                                    filteredTenants.map(tenant => (
+                                    filteredTenants.map((tenant: any) => (
                                         <button
                                             key={tenant.id}
                                             onClick={() => onSelectTenant(tenant)}

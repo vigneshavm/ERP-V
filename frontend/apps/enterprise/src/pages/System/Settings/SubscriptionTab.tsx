@@ -5,9 +5,9 @@ import {
     CreditCard, Sparkles,
     Database, Users as UsersIcon, Smartphone
 } from 'lucide-react';
-import api from "../../../services/api";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 
 interface Plan {
     code: string;

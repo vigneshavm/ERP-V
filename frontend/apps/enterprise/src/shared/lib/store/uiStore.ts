@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppView } from '../../types/common';
+import { AppView } from '@repo/shared-kernel';
 
 interface UiState {
     activeTab: AppView;
@@ -24,8 +24,8 @@ interface UiState {
     toggleSidebar: () => void;
 }
 
-export const useUiStore = create<UiState>((set) => ({
-    activeTab: 'DASHBOARD',
+export const useUiStore = create<UiState>((set: any) => ({
+    activeTab: 'DASHBOARD' as AppView,
     sidebarOpen: false,
     desktopCollapsed: false,
     isSyncing: false,
@@ -37,13 +37,13 @@ export const useUiStore = create<UiState>((set) => ({
         onConfirm: () => { },
     },
 
-    setActiveTab: (tab) => set({ activeTab: tab }),
-    setSidebarOpen: (open) => set({ sidebarOpen: open }),
-    setDesktopCollapsed: (collapsed) => set({ desktopCollapsed: collapsed }),
-    setSyncing: (syncing) => set({ isSyncing: syncing }),
-    setIsChangePasswordOpen: (open) => set({ isChangePasswordOpen: open }),
-    setConfirmDialog: (dialog) => set((state) => ({
+    setActiveTab: (tab: AppView) => set({ activeTab: tab }),
+    setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
+    setDesktopCollapsed: (collapsed: boolean) => set({ desktopCollapsed: collapsed }),
+    setSyncing: (syncing: boolean) => set({ isSyncing: syncing }),
+    setIsChangePasswordOpen: (open: boolean) => set({ isChangePasswordOpen: open }),
+    setConfirmDialog: (dialog: Partial<UiState['confirmDialog']>) => set((state: UiState) => ({
         confirmDialog: { ...state.confirmDialog, ...dialog }
     })),
-    toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+    toggleSidebar: () => set((state: UiState) => ({ sidebarOpen: !state.sidebarOpen })),
 }));

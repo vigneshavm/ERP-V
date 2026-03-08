@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { updateSettings, resetSettings } from "../../../redux/slices/settingsSlice";
-import { updateTenantDetails } from "../../../redux/slices/tenantSlice";
-import { updateProfile } from "../../../redux/slices/authSlice";
-import { SettingsState } from "../../../types/settings";
-import { Tenant } from "../../../types/tenant";
-import { TaxMode, AppView } from "../../../types/common";
-import { setStoredTheme } from "../../../utils/theme";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { updateSettings, resetSettings } from "@/app/store/slices/settingsSlice";
+import { updateTenantDetails } from "@/entities/session/model/tenantSlice";
+import { updateProfile } from "@/entities/session/model/authSlice";
+import { SettingsState } from "@/entities/session/model/settings";
+import { Tenant } from "@/entities/session/model/core";
+import { TaxMode, AppView } from "@repo/shared-kernel";
+import { setStoredTheme } from "@/shared/lib/utils/theme";
 import {
     Settings as SettingsIcon,
     Building,
@@ -67,7 +67,7 @@ const Settings: React.FC = () => {
     const { user, role } = useSelector((state: RootState) => state.auth);
     const settings = useSelector((state: RootState) => state.settings);
 
-    const activeTenant = tenants.find(t => t.id === user?.tenantId);
+    const activeTenant = tenants.find((t: any) => t.id === user?.tenantId);
 
     // -- Local State Initialized from Redux --
 
@@ -213,7 +213,7 @@ const Settings: React.FC = () => {
                 handlePermissionToggle: (roleCode: string, view: string | AppView) => {
                     const viewId = view as AppView;
                     const current = permissions[roleCode] || [];
-                    const updated = current.includes(viewId) ? current.filter(v => v !== viewId) : [...current, viewId];
+                    const updated = current.includes(viewId) ? current.filter((v: any) => v !== viewId) : [...current, viewId];
                     setPermissions({ ...permissions, [roleCode]: updated });
                 }
             },

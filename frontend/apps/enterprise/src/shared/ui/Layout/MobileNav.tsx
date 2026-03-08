@@ -1,8 +1,5 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { LayoutDashboard, ShoppingCart, Menu } from 'lucide-react';
-import { RootState } from '../../../redux/store';
-import { useUiStore } from '../../../shared/lib/store/uiStore';
+import { useUiStore } from '@/shared/lib/store/uiStore';
 
 const MobileNav: React.FC = () => {
     const { activeTab, setActiveTab, setSidebarOpen } = useUiStore();

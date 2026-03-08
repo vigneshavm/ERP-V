@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ConflictEntry } from "../../../types/tenant";
+import { ConflictEntry } from "@/entities/session/model/sync";
 import {
     CheckCircle2, AlertTriangle, Clock, GitMerge, Edit3, Check,
     Shield, ArrowRight, ArrowLeft, Zap, Sparkles, ChevronDown, ChevronUp

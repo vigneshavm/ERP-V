@@ -18,7 +18,7 @@ interface GlobalModalsProps {
     }>>;
 }
 
-import { useUiStore } from '../lib/store/uiStore';
+import { useUiStore } from '@/shared/lib/store/uiStore';
 
 const GlobalModals: React.FC = () => {
     const {
@@ -30,7 +30,7 @@ const GlobalModals: React.FC = () => {
 
     const handleConfirm = () => {
         confirmDialog.onConfirm();
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        setConfirmDialog({ isOpen: false });
     };
 
     return (
@@ -48,7 +48,7 @@ const GlobalModals: React.FC = () => {
                         <p className="text-secondary mb-6">{confirmDialog.message}</p>
                         <div className="flex gap-3 justify-end">
                             <button
-                                onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                                onClick={() => setConfirmDialog({ isOpen: false })}
                                 className="px-4 py-2 text-secondary hover:bg-white/5 rounded-lg font-bold transition-colors"
                             >
                                 Cancel

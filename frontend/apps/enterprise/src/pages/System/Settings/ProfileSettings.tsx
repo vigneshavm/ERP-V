@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile, resetAuthState } from "../../../redux/slices/authSlice";
-import Layout from "../../../components/shared/Layout/Layout";
+import { updateProfile, resetAuthState } from "@/entities/session/model/authSlice";
+import Layout from "@/shared/ui/Layout/Layout";
 import { toast } from 'react-toastify';
-import { RootState } from '../../../redux/store';
-import { AppDispatch } from '../../../redux/store';
+import { RootState, AppDispatch } from "@/app/store/store";
 
 interface FormData {
     name: string;

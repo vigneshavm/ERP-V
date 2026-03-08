@@ -4,7 +4,7 @@ import {
     Wifi, WifiOff, Activity, Cpu, Monitor, Laptop, 
     Smartphone, Tablet, ChevronRight, MoreVertical, Clock 
 } from 'lucide-react';
-import { DeviceRegistryEntry, DeviceStatus } from "../../../types/tenant";
+import { DeviceRegistryEntry, DeviceStatus } from "@/entities/session/model/sync";
 
 interface DevicesSectionProps {
     devices: DeviceRegistryEntry[];

@@ -4,7 +4,7 @@ import {
     Database, Clock, ChevronRight, ShieldCheck, 
     RefreshCw, Layers, Cpu, Network 
 } from 'lucide-react';
-import { SyncSettings } from "../../../types/tenant";
+import { SyncSettings } from "@/entities/session/model/sync";
 
 interface SyncSettingsSectionProps {
     settings: SyncSettings;
@@ -69,7 +69,7 @@ const SyncSettingsSection: React.FC<SyncSettingsSectionProps> = ({
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => setSettings(s => ({ ...s, [item.id]: !item.value }))}
+                                    onClick={() => setSettings((s: any) => ({ ...s, [item.id]: !item.value }))}
                                     className={`w-12 h-7 rounded-full transition-all ${item.value ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'} p-1 shadow-inner`}
                                 >
                                     <div className={`w-5 h-5 bg-white rounded-full transition-transform ${item.value ? 'translate-x-5' : ''} shadow-sm`} />
@@ -89,7 +89,7 @@ const SyncSettingsSection: React.FC<SyncSettingsSectionProps> = ({
                             </div>
                             <select
                                 value={settings.syncInterval}
-                                onChange={(e) => setSettings(s => ({ ...s, syncInterval: Number(e.target.value) as any }))}
+                                onChange={(e) => setSettings((s: any) => ({ ...s, syncInterval: Number(e.target.value) as any }))}
                                 className="bg-white dark:bg-slate-800 border border-indigo-100 dark:border-indigo-700/50 rounded-xl px-4 py-2 font-black text-[10px] text-slate-900 dark:text-white uppercase tracking-widest shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
                             >
                                 <option value={5}>05 MIN</option>
@@ -116,7 +116,7 @@ const SyncSettingsSection: React.FC<SyncSettingsSectionProps> = ({
                             return (
                                 <button
                                     key={key}
-                                    onClick={() => setSettings(s => ({ ...s, syncDomains: { ...s.syncDomains, [key]: !value } }))}
+                                    onClick={() => setSettings((s: any) => ({ ...s, syncDomains: { ...s.syncDomains, [key]: !value } }))}
                                     className={`flex items-center justify-between p-4 rounded-3xl border transition-all duration-300 ${isSyncing ? 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-900/50 shadow-md translate-y-[-2px]' : 'bg-slate-50/50 dark:bg-slate-800/10 border-slate-100 dark:border-slate-800 opacity-60'}`}
                                 >
                                     <div className="flex items-center gap-3">

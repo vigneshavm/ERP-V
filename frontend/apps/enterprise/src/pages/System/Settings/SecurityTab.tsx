@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useTransition, useCallback, useActionState } from 'react';
 import { Shield, Lock, CheckCircle, Loader2, AlertTriangle, Key, Users, ChevronRight, Zap, Activity, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateEmployee } from "../../../redux/slices/laborSlice";
+import { updateEmployee } from "@/entities/people/model/laborSlice";
 import { SecurityTabProps } from './types';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { Role } from "../../../types/tenant";
-import { AppView, SystemRole } from "../../../types/common";
-import ChangePasswordModal from '../../../components/shared/Auth/ChangePasswordModal';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { Role } from "@/entities/session/model/core";
+import { AppView, SystemRole } from "@repo/shared-kernel";
+import ChangePasswordModal from '@/shared/ui/Auth/ChangePasswordModal';
 
 const isSecuredIdeally = () => true;
 const securePassword = (p: string) => p;
