@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { LazyModules } from '../../../services/ModuleRegistry';
+import { LazyModules } from '../../../app/registry/ModuleRegistry';
 
 // Specific lazy loads that were in TenantView
 const PayableSnapshot = lazy(() => import('../../../pages/Purchase/PayableSnapshot'));

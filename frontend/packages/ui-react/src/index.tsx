@@ -3,3 +3,4 @@ export * from "./Button";
 export * from "./Card";
 export * from "./LoadingSpinner";
 export * from "./UI/Modal";
+export * from "./Form/Input";

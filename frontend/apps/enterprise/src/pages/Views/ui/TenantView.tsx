@@ -1,17 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Sidebar from '../../components/shared/Layout/Sidebar';
+import Sidebar from '../../shared/ui/Layout/Sidebar';
 import { RootState } from "../../redux/store";
 import { ConfigProvider } from "../../contexts/ConfigProvider";
 import { Tenant } from "../../types/tenant";
-import { LazyModules } from "../../services/ModuleRegistry";
+import { LazyModules } from "../../app/registry/ModuleRegistry";
 import { useUiStore } from "../../shared/lib/store/uiStore";
 
 // Extracted Components & Hooks
-import MobileNav from '../../components/shared/Layout/MobileNav';
-import ModuleRenderer from '../../components/shared/Layout/ModuleRenderer';
-import RouteDefinitions from '../../components/shared/Layout/RouteDefinitions';
-import GlobalModals from '../../components/shared/Layout/GlobalModals';
+import MobileNav from '../../shared/ui/Layout/MobileNav';
+import ModuleRenderer from '../../shared/ui/Layout/ModuleRenderer';
+import RouteDefinitions from '../../shared/ui/Layout/RouteDefinitions';
+import GlobalModals from '../../shared/ui/Layout/GlobalModals';
 import { useTabSync } from '../../hooks/useTabSync';
 
 interface TenantViewProps {

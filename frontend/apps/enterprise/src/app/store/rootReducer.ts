@@ -1,14 +1,15 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import inventoryReducer from './slices/inventorySlice';
-import posReducer from './slices/posSlice';
-import financeReducer from './slices/financeSlice';
-import laborReducer from './slices/laborSlice';
-import purchaseReducer from './slices/purchaseSlice';
-import tenantReducer from './slices/tenantSlice';
-import authReducer from './slices/authSlice';
+import inventoryReducer from '@/entities/inventory/model/inventorySlice';
+import posReducer from '@/entities/sales/model/posSlice';
+import financeReducer from '@/entities/finance/model/financeSlice';
+import laborReducer from '@/entities/people/model/laborSlice';
+import purchaseReducer from '@/entities/purchase/model/purchaseSlice';
+import tenantReducer from '@/entities/session/model/tenantSlice';
+import authReducer from '@/entities/session/model/authSlice';
 import settingsReducer from './slices/settingsSlice';
-import vendorReducer from './slices/supplierSlice';
-import uiReducer from './slices/uiSlice';
+import vendorReducer from '@/entities/contact/model/supplierSlice';
+import systemReducer from '@/entities/system/model/systemSlice';
+// uiReducer is omitted as it's being migrated to Zustand
 
 const appReducer = combineReducers({
     inventory: inventoryReducer,
@@ -20,7 +21,7 @@ const appReducer = combineReducers({
     auth: authReducer,
     settings: settingsReducer,
     vendor: vendorReducer,
-    ui: uiReducer,
+    system: systemReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

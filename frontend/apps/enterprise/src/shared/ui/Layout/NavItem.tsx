@@ -6,7 +6,7 @@ import { RootState } from "../../../redux/store";
 import { AppView } from "../../../types/common";
 import { useUiStore } from "../../../shared/lib/store/uiStore";
 import { usePermissions } from "../../../hooks/usePermissions";
-import { preloadByViewId } from "../../../services/ModuleRegistry";
+import { preloadByViewId } from "../../../app/registry/ModuleRegistry";
 
 interface NavItemProps {
     id: AppView;
