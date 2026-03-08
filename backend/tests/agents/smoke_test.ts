@@ -1,4 +1,4 @@
-import { AgentOrchestrator } from '../src/modules/agents/services/AgentOrchestrator.js';
+import { AgentOrchestrator } from '../../src/modules/agents/services/AgentOrchestrator.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs';

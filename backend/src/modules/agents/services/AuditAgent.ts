@@ -60,7 +60,7 @@ export class AuditAgent {
         dateEnd.setDate(dateEnd.getDate() + 1);
 
         const potentialMatch = await Expense.findOne({
-            createdBy: tenantId, // Assuming tenantId maps to createdBy for now, or use tenant specific field
+            tenantId, 
             amount: data.amount,
             date: { $gte: dateStart, $lte: dateEnd }
         });
@@ -77,7 +77,7 @@ export class AuditAgent {
 
     private static async analyzeVendorFuzzy(vendorName: string, tenantId: string): Promise<string | null> {
         // Pull recent vendors for this tenant to check for "creative" spelling differences
-        const recentExpenses = await Expense.find({ createdBy: tenantId })
+        const recentExpenses = await Expense.find({ tenantId })
             .select('description')
             .limit(100);
 

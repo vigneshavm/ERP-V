@@ -13,7 +13,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
  */
 const ReceiptSchema = z.object({
     vendor: z.string().min(1, "Vendor name is required"),
-    date: z.preprocess((val) => val, z.coerce.date()), // Coerces string to Date
+    date: z.string().pipe(z.coerce.date()), // Gracefully handles AI string dates
     amount: z.coerce.number().positive("Amount must be positive"),
     currency: z.string().default('INR'),
     category: z.string().optional(),
