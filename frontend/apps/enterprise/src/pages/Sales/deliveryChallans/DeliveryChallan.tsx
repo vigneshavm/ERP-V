@@ -1,16 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Truck, 
+  Package, 
+  User, 
+  Calendar, 
+  Plus, 
+  Trash2, 
+  CheckCircle, 
+  AlertCircle, 
+  ArrowLeft,
+  Zap,
+  Clock,
+  Navigation,
+  ShieldCheck,
+  Search,
+  FileText,
+  X,
+  Container,
+  Activity,
+  ChevronRight,
+  Box,
+  Layers,
+  MapPin,
+  Anchor,
+  Plane,
+  Train,
+  Printer
+} from 'lucide-react';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import FormInput from "../../../components/core/Form/Input";
-import CustomerSelectionModal from "../../../components/shared/Modals/CustomerSelectionModal";
-import ItemSelectionModal from "../../../components/shared/Modals/ItemSelectionModal";
-import SalesOrderSelectionModal from "../../../components/shared/Modals/SalesOrderSelectionModal";
-import { createDeliveryChallan, reset } from "../../../redux/slices/deliveryChallanSlice";
-
-import { RootState } from '../../../redux/store';
+import Layout from "@/components/shared/Layout/Layout";
+import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
+import ItemSelectionModal from "@/components/shared/Modals/ItemSelectionModal";
+import SalesOrderSelectionModal from "@/components/shared/Modals/SalesOrderSelectionModal";
+import { createDeliveryChallan, reset } from "@/redux/slices/deliveryChallanSlice";
+import { RootState } from '@/redux/store';
 
 interface ChallanItem {
     item: string;
@@ -24,19 +50,6 @@ interface ChallanItem {
     sellingPrice: number;
 }
 
-interface ChallanFormData {
-    challanNo: string;
-    challanDate: string;
-    deliveryDate: string;
-    customer: any;
-    salesOrder: any;
-    items: ChallanItem[];
-    vehicleNo: string;
-    driverName: string;
-    transportMode: string;
-    notes: string;
-}
-
 const DeliveryChallan = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<any>();
@@ -45,13 +58,14 @@ const DeliveryChallan = () => {
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showSalesOrderModal, setShowSalesOrderModal] = useState(false);
-    const [formData, setFormData] = useState<ChallanFormData>({
-        challanNo: 'DC-' + Date.now(),
+
+    const [formData, setFormData] = useState({
+        challanNo: 'LOG-' + Date.now().toString().slice(-6),
         challanDate: new Date().toISOString().split('T')[0],
         deliveryDate: '',
-        customer: null,
-        salesOrder: null,
-        items: [],
+        customer: null as any,
+        salesOrder: null as any,
+        items: [] as ChallanItem[],
         vehicleNo: '',
         driverName: '',
         transportMode: 'road',
@@ -60,43 +74,23 @@ const DeliveryChallan = () => {
 
     useEffect(() => {
         if (isError) {
-            toast.error(message);
+            toast.error(message || 'Logistics synchronization failure');
             dispatch(reset());
         }
-
         if (isSuccess && challan) {
-            toast.success('Delivery Challan created successfully!');
-
-            // Reset Redux state BEFORE navigation
+            toast.success('Logistics hub: Fulfillment manifest locked');
             dispatch(reset());
-
-            // Reset form state
-            setFormData({
-                challanNo: 'DC-' + Date.now(),
-                challanDate: new Date().toISOString().split('T')[0],
-                deliveryDate: '',
-                customer: null,
-                salesOrder: null,
-                items: [],
-                vehicleNo: '',
-                driverName: '',
-                transportMode: 'road',
-                notes: ''
-            });
-
-            // Navigate to detail page
             navigate(`/sales/delivery-challan/${challan._id}`);
         }
     }, [isError, isSuccess, message, challan, navigate, dispatch]);
 
     const handleSalesOrderSelect = (order: any) => {
-        // Auto-populate customer and items from sales order
         const orderItems = order.items.map((item: any) => ({
             item: item.item._id || item.item,
-            name: item.item.name || 'Unknown',
+            name: item.item.name || 'Unknown Asset',
             sku: item.item.sku || '',
             quantity: item.quantity,
-            deliveredQty: item.quantity - (item.deliveredQty || 0), // Remaining quantity
+            deliveredQty: item.quantity - (item.deliveredQty || 0),
             unit: item.item.unit || 'pcs',
             description: '',
             availableStock: item.item.stock || 0,
@@ -110,42 +104,31 @@ const DeliveryChallan = () => {
             items: orderItems,
             deliveryDate: order.expectedDeliveryDate ? new Date(order.expectedDeliveryDate).toISOString().split('T')[0] : ''
         });
-
-        toast.success(`Loaded ${orderItems.length} items from Sales Order ${order.orderNumber}`);
+        toast.success(`Protocol Linked: Loaded ${orderItems.length} assets from Resolution Engine`);
     };
 
     const handleItemSelect = (item: any) => {
-        const newItem = {
+        const newItem: ChallanItem = {
             item: item._id,
             name: item.name,
             sku: item.sku,
-            quantity: item.quantity,
-            deliveredQty: item.quantity,
+            quantity: 1,
+            deliveredQty: 1,
             unit: item.unit || 'pcs',
             description: '',
-            availableStock: item.stockQty - (item.reservedStock || 0),
-            sellingPrice: item.sellingPrice
+            availableStock: (item.stockQty || 0) - (item.reservedStock || 0),
+            sellingPrice: item.sellingPrice || 0
         };
-
-        setFormData({
-            ...formData,
-            items: [...formData.items, newItem]
-        });
+        setFormData({ ...formData, items: [...formData.items, newItem] });
     };
 
-    const updateItem = (index: number, field: string, value: any) => {
+    const updateItem = (index: number, field: keyof ChallanItem, value: any) => {
         const newItems = [...formData.items];
         (newItems[index] as any)[field] = value;
-
-        // Validate deliveredQty doesn't exceed available stock
-        if (field === 'deliveredQty') {
-            const maxQty = newItems[index].availableStock;
-            if (value > maxQty) {
-                toast.warning(`Cannot deliver more than available stock (${maxQty})`);
-                (newItems[index] as any)[field] = maxQty;
-            }
+        if (field === 'deliveredQty' && value > newItems[index].availableStock) {
+            toast.warning(`Stock disruption: Insufficient assets (${newItems[index].availableStock} available)`);
+            newItems[index].deliveredQty = newItems[index].availableStock;
         }
-
         setFormData({ ...formData, items: newItems });
     };
 
@@ -155,27 +138,11 @@ const DeliveryChallan = () => {
     };
 
     const handleSave = () => {
-        // Validation
-        if (!formData.customer) {
-            toast.error('Please select a customer');
-            return;
-        }
-
-        if (formData.items.length === 0) {
-            toast.error('Please add at least one item');
-            return;
-        }
-
-        // Check all items have deliveredQty > 0
-        const invalidItems = formData.items.filter(item => !item.deliveredQty || item.deliveredQty <= 0);
-        if (invalidItems.length > 0) {
-            toast.error('All items must have a delivered quantity greater than 0');
-            return;
-        }
-
-        // Prepare data for API
+        if (!formData.customer) { toast.error('Entity identification required'); return; }
+        if (formData.items.length === 0) { toast.error('Fulfillment matrix is empty'); return; }
+        
         const challanData = {
-            customerId: formData.customer._id,
+            customerId: formData.customer._id || formData.customer.id,
             challanDate: formData.challanDate,
             deliveryDate: formData.deliveryDate || undefined,
             salesOrderId: formData.salesOrder || undefined,
@@ -191,316 +158,393 @@ const DeliveryChallan = () => {
             transportMode: formData.transportMode,
             notes: formData.notes
         };
-
-        dispatch(createDeliveryChallan(challanData) as any);
+        dispatch(createDeliveryChallan(challanData));
     };
 
-    const totalItems = formData.items.length;
-    const totalQuantity = formData.items.reduce((sum: number, item: any) => sum + (item.deliveredQty || 0), 0);
+    const totalAssetQuantity = useMemo(() => formData.items.reduce((sum, item) => sum + (item.deliveredQty || 0), 0), [formData.items]);
+
+    const GlassPanel = ({ children, title, icon: Icon, className = "" }: any) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`glass-panel border border-white/5 shadow-2xl overflow-hidden ${className}`}
+        >
+            {title && (
+                <div className="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] flex items-center gap-3">
+                        {Icon && <Icon className="w-4 h-4" />}
+                        {title}
+                    </h3>
+                    <div className="flex gap-1">
+                        <div className="w-1 h-1 bg-emerald-500/40 rounded-full"></div>
+                        <div className="w-1 h-1 bg-emerald-500/20 rounded-full"></div>
+                    </div>
+                </div>
+            )}
+            <div className="p-6">{children}</div>
+        </motion.div>
+    );
+
+    const TransportIcon = () => {
+        switch(formData.transportMode) {
+            case 'ship': return <Anchor className="w-4 h-4" />;
+            case 'air': return <Plane className="w-4 h-4" />;
+            case 'rail': return <Train className="w-4 h-4" />;
+            default: return <Truck className="w-4 h-4" />;
+        }
+    }
 
     return (
         <Layout>
-            <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] bg-app">
-                {/* ERP Header Action Bar */}
-                <div className="bg-card border-b border-default px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
-                    <div>
-                        <h1 className="text-xl font-bold text-main">Delivery Challan</h1>
-                        <p className="text-xs text-secondary">Create and manage delivery documents</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => navigate('/sales/delivery-challan-list')}
-                            className="px-4 py-1.5 text-sm font-bold text-secondary bg-card border border-default rounded-lg hover:bg-surface transition-all btn-interactive"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={isLoading}
-                            className="px-6 py-1.5 text-sm font-bold text-white bg-primary border border-transparent rounded-lg shadow-lg shadow-primary/25 hover:bg-primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 transition-all btn-interactive"
-                        >
-                            {isLoading && (
-                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            )}
-                            {isLoading ? 'Saving...' : 'Save Challan'}
-                        </button>
-                    </div>
-                </div>
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-20">
+                {/* Visual Accents */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none -mr-48 -mt-48"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none -ml-32 -mb-32"></div>
 
-                {/* Main Content Scrollable Area */}
-                <div className="flex-1 overflow-auto p-6">
-                    <div className="max-w-7xl mx-auto space-y-6">
-                        {/* Top Section: Basic Info & Customer - ERP Grid Style */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden">
-                            <div className="bg-surface px-4 py-2 border-b border-default flex justify-between items-center">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Document Details</h2>
-                                <div className="text-xs text-secondary font-medium">
-                                    {formData.salesOrder && <span className="bg-primary-soft text-primary px-2 py-0.5 rounded border border-primary/20">Linked to SO</span>}
-                                </div>
+                <div className="max-w-7xl mx-auto relative z-10 space-y-8">
+                    {/* Logistics Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-emerald-500 font-black text-[10px] uppercase tracking-[0.4em]">
+                                <Navigation className="w-4 h-4" />
+                                Protocol: Logistics Hub / 2036
                             </div>
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-                                {/* Column 1: Challan Info */}
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Challan No.</label>
-                                        <input
-                                            type="text"
-                                            value={formData.challanNo}
-                                            disabled
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-bold text-main focus:outline-none opacity-80"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Challan Date <span className="text-rose-500">*</span></label>
-                                        <input
-                                            value={formData.challanDate}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, challanDate: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        />
-                                    </div>
-                                </div>
+                            <h1 className="text-4xl md:text-5xl font-display font-black text-main tracking-tighter uppercase">
+                                Logistics <span className="text-emerald-500 italic">Dispatch</span>
+                            </h1>
+                            <p className="text-secondary text-sm font-medium opacity-60">Physical asset orchestration and jurisdictional fulfillment dispatching.</p>
+                        </div>
 
-                                {/* Column 2: Logistics Date */}
-                                <div>
-                                    <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Delivery Expected</label>
-                                    <input
-                                        type="date"
-                                        value={formData.deliveryDate}
-                                        onChange={(e) => setFormData({ ...formData, deliveryDate: e.target.value })}
-                                        className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    />
-                                </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => navigate('/sales/delivery-challan-list')}
+                                className="group px-6 py-4 glass-panel border border-white/10 hover:border-white/20 transition-all font-black text-[10px] uppercase tracking-widest text-secondary group-hover:text-main"
+                            >
+                                Registry
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isLoading}
+                                className="px-10 py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-emerald-900/40 hover:bg-emerald-500 disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-4 focus:ring-4 focus:ring-emerald-500/20"
+                            >
+                                {isLoading ? <Clock className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
+                                {isLoading ? 'Synchronizing...' : 'Lock Manifest'}
+                            </button>
+                        </div>
+                    </div>
 
-                                {/* Column 3 & 4: Customer Panel */}
-                                <div className="md:col-span-2 border border-default rounded-xl bg-surface/30 p-4 relative group transition-all hover:bg-surface/50">
-                                    <label className="block text-xs font-bold text-primary mb-3 uppercase tracking-wider">Customer</label>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* LEFT: Configuration */}
+                        <div className="lg:col-span-8 space-y-8">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                {/* Document Identifiers */}
+                                <GlassPanel title="Protocol Markers" icon={FileText} className="h-full">
+                                    <div className="space-y-6">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] opacity-40">Manifest Index</label>
+                                            <div className="text-3xl font-display font-black text-emerald-500 tracking-tighter uppercase italic">{formData.challanNo}</div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4 pt-2">
+                                            <div className="space-y-2">
+                                                <label className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Dispatch Date</label>
+                                                <input 
+                                                    type="date" 
+                                                    value={formData.challanDate}
+                                                    onChange={(e) => setFormData({ ...formData, challanDate: e.target.value })}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-main focus:outline-none focus:border-emerald-500/40 transition-all"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Arrival Projection</label>
+                                                <input 
+                                                    type="date" 
+                                                    value={formData.deliveryDate}
+                                                    onChange={(e) => setFormData({ ...formData, deliveryDate: e.target.value })}
+                                                    className="w-full bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3 text-xs font-black text-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </GlassPanel>
+
+                                {/* Entity Identification */}
+                                <GlassPanel title="Counterparty Identification" icon={User} className="h-full">
                                     {formData.customer ? (
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="font-bold text-main text-base">{formData.customer.name}</p>
-                                                <p className="text-xs text-secondary mt-1 font-medium">{formData.customer.address?.line1}, {formData.customer.address?.city}</p>
-                                                <div className="flex gap-3 mt-3 text-xs text-secondary font-medium">
-                                                    <span>Ph: {formData.customer.phone}</span>
-                                                    {formData.customer.email && <span>• {formData.customer.email}</span>}
+                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-500 font-black text-2xl shadow-inner uppercase font-display">
+                                                        {formData.customer.name?.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xl font-display font-black text-main uppercase tracking-tight leading-none">{formData.customer.name}</div>
+                                                        <div className="flex items-center gap-2 text-[9px] font-bold text-emerald-500 uppercase tracking-[0.2em] mt-2 bg-emerald-500/5 px-2 py-0.5 rounded-full border border-emerald-500/10">
+                                                            <Activity className="w-3 h-3" /> Jurisdiction Verified
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
+                                                    className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-secondary hover:text-rose-500 transition-all"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                            <div className="p-5 bg-white/5 border border-white/5 rounded-2xl space-y-2 group hover:bg-white/10 transition-colors">
+                                                <div className="flex items-center gap-2 text-[8px] font-black text-secondary/40 uppercase tracking-widest">
+                                                    <MapPin className="w-3 h-3 text-emerald-500" /> Destination Protocol
+                                                </div>
+                                                <div className="text-xs font-bold text-main leading-relaxed italic">{formData.customer.address?.line1 || 'Primary Sector HQ'}</div>
+                                                <div className="text-[9px] font-bold text-secondary/40 uppercase tracking-tight">{formData.customer.address?.city || 'Central Hub'} • {formData.customer.phone}</div>
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 gap-4 pt-2">
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => setShowCustomerModal(true)}
+                                                className="w-full h-16 border border-dashed border-white/10 rounded-2xl flex items-center justify-center gap-4 group hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-secondary"
+                                            >
+                                                <User className="w-5 h-5 opacity-40 group-hover:opacity-100 group-hover:text-emerald-500" />
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em]">Manual Entity ID</span>
+                                            </motion.button>
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => setShowSalesOrderModal(true)}
+                                                className="w-full h-16 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl flex items-center justify-center gap-4 group hover:bg-emerald-500/10 transition-all text-emerald-500"
+                                            >
+                                                <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em]">Sync Order Protocol</span>
+                                            </motion.button>
+                                        </div>
+                                    )}
+                                </GlassPanel>
+                            </div>
+
+                            {/* Fulfillment Matrix */}
+                            <GlassPanel title="Asset Fulfillment Matrix" icon={Container}>
+                                <div className="space-y-8">
+                                    <div className="flex justify-between items-center px-2">
+                                        <div className="text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40">Core Dispatch Registry</div>
+                                        <button 
+                                            onClick={() => setShowItemModal(true)}
+                                            className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-xl transition-all flex items-center gap-3 group"
+                                        >
+                                            <Plus className="w-4 h-4 text-emerald-500 group-hover:rotate-90 transition-transform" />
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Inject Asset</span>
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto custom-scrollbar -mx-2 px-2">
+                                        <table className="w-full border-separate border-spacing-y-3">
+                                            <thead>
+                                                <tr className="text-[8px] font-black text-secondary/40 uppercase tracking-[0.4em] text-left">
+                                                    <th className="px-6 pb-2">Operational Asset</th>
+                                                    <th className="px-6 pb-2 text-right">Magnitude</th>
+                                                    <th className="px-6 pb-2 text-right w-32">Dispatch</th>
+                                                    <th className="px-6 pb-2">Condition Protocol</th>
+                                                    <th className="px-6 pb-2 w-12 text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <AnimatePresence mode="popLayout">
+                                                    {formData.items.length === 0 ? (
+                                                        <tr className="opacity-10">
+                                                            <td colSpan={5} className="py-24 text-center">
+                                                                <Box className="w-16 h-16 mx-auto mb-6" />
+                                                                <div className="text-[10px] font-black uppercase tracking-[0.4em]">Fulfillment Protocol Void</div>
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        formData.items.map((item, index) => (
+                                                            <motion.tr 
+                                                                layout
+                                                                key={index}
+                                                                initial={{ opacity: 0, scale: 0.98 }}
+                                                                animate={{ opacity: 1, scale: 1 }}
+                                                                exit={{ opacity: 0, scale: 0.98 }}
+                                                                className="bg-white/5 rounded-3xl border border-white/5 group hover:bg-white/10 transition-all"
+                                                            >
+                                                                <td className="px-6 py-5 rounded-l-3xl">
+                                                                    <div className="text-sm font-black text-main uppercase tracking-tight">{item.name}</div>
+                                                                    <div className="text-[8px] font-black text-secondary/40 uppercase mt-2 bg-white/5 inline-block px-2 py-0.5 rounded tracking-widest">ID: {item.sku || 'UNRECORDED'}</div>
+                                                                </td>
+                                                                <td className="px-6 py-5 text-right">
+                                                                    <div className={`text-[9px] font-black px-3 py-1 rounded-full border inline-block ${item.availableStock > 5 ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' : 'text-rose-500 border-rose-500/20 bg-rose-500/5'} uppercase tracking-widest`}>
+                                                                        {item.availableStock} in Reserve
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-5">
+                                                                    <div className="relative group/input">
+                                                                        <input 
+                                                                            type="number"
+                                                                            value={item.deliveredQty}
+                                                                            onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
+                                                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-right text-sm font-black text-emerald-500 focus:outline-none focus:border-emerald-500/40 focus:ring-4 focus:ring-emerald-500/10 transition-all font-mono"
+                                                                        />
+                                                                        <div className="absolute right-0 top-0 bottom-0 pr-3 flex items-center pointer-events-none opacity-0 group-focus-within/input:opacity-100 transition-opacity">
+                                                                            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">{item.unit}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-5">
+                                                                    <input 
+                                                                        type="text" 
+                                                                        value={item.description}
+                                                                        onChange={(e) => updateItem(index, 'description', e.target.value)}
+                                                                        placeholder="State condition marks..."
+                                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-[10px] font-medium text-secondary/40 italic placeholder:opacity-20"
+                                                                    />
+                                                                </td>
+                                                                <td className="px-6 py-5 text-center rounded-r-3xl">
+                                                                    <button 
+                                                                        onClick={() => removeItem(index)}
+                                                                        className="w-8 h-8 rounded-xl bg-rose-500/5 hover:bg-rose-500 text-rose-500/40 hover:text-white flex items-center justify-center transition-all"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </td>
+                                                            </motion.tr>
+                                                        ))
+                                                    )}
+                                                </AnimatePresence>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    {formData.items.length > 0 && (
+                                        <div className="flex justify-end pr-6 pt-4">
+                                            <div className="flex items-center gap-12 border-t border-white/5 pt-8 w-full justify-end">
+                                                <div className="space-y-1 text-right">
+                                                    <div className="text-[9px] font-black text-secondary/40 uppercase tracking-[0.2em]">Asset Magnitude</div>
+                                                    <div className="text-4xl font-display font-black text-emerald-500 tracking-tighter tabular-nums">{totalAssetQuantity} <span className="text-[10px] uppercase font-bold text-secondary/40 ml-2 tracking-[0.3em]">Units</span></div>
                                                 </div>
                                             </div>
-                                            <button
-                                                onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
-                                                className="text-rose-600 hover:text-rose-700 text-xs font-bold border border-rose-200 bg-card px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-all btn-interactive"
-                                            >
-                                                Change
-                                            </button>
                                         </div>
-                                    ) : (
-                                        <div className="h-full flex flex-col items-center justify-center gap-3 py-2">
-                                            <p className="text-sm text-secondary font-medium">No customer selected</p>
-                                            <div className="flex gap-3">
-                                                <button
-                                                    onClick={() => setShowCustomerModal(true)}
-                                                    className="px-4 py-2 bg-card border border-primary text-primary text-xs font-bold rounded-lg hover:bg-primary-soft shadow-sm transition-all btn-interactive"
+                                    )}
+                                </div>
+                            </GlassPanel>
+                        </div>
+
+                        {/* RIGHT: Logistics Intelligence */}
+                        <div className="lg:col-span-4 space-y-8">
+                            <GlassPanel title="Logistics Configuration" icon={Truck} className="sticky top-8">
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-40">Transport Protocol</label>
+                                            <div className="relative group">
+                                                <select 
+                                                    value={formData.transportMode}
+                                                    onChange={(e) => setFormData({ ...formData, transportMode: e.target.value })}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-[10px] font-black text-main uppercase tracking-widest focus:outline-none focus:border-emerald-500/40 appearance-none cursor-pointer"
                                                 >
-                                                    Find Customer
-                                                </button>
-                                                <span className="text-muted text-xs flex items-center font-bold">OR</span>
-                                                <button
-                                                    onClick={() => setShowSalesOrderModal(true)}
-                                                    className="px-4 py-2 bg-primary border border-transparent text-white text-xs font-bold rounded-lg hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all btn-interactive"
-                                                >
-                                                    Select from Sales Order
-                                                </button>
+                                                    <option value="road" className="bg-neutral-900">Road Carrier</option>
+                                                    <option value="rail" className="bg-neutral-900">Rail Network</option>
+                                                    <option value="air" className="bg-neutral-900">Air Shipment</option>
+                                                    <option value="ship" className="bg-neutral-900">Maritime</option>
+                                                    <option value="courier" className="bg-neutral-900">Elite Courier</option>
+                                                </select>
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500"><TransportIcon /></div>
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Items Section - Dense Table */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[300px]">
-                            <div className="px-4 py-2 border-b border-default bg-surface flex justify-between items-center">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Items & Quantities</h2>
-                                <button
-                                    onClick={() => setShowItemModal(true)}
-                                    className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all btn-interactive"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    Add Item
-                                </button>
-                            </div>
-
-                            <div className="flex-1 overflow-x-auto">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-surface border-b border-default">
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-12 text-center tracking-wider">#</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default tracking-wider">Item Details</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-24 text-right tracking-wider">Stock</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-32 text-right tracking-wider">Delivery Qty</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-20 tracking-wider">Unit</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default tracking-wider">Description</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase w-16 text-center tracking-wider">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-default">
-                                        {formData.items.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={7} className="px-4 py-16 text-center text-muted font-medium italic">
-                                                    Start adding items to create the challan
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            formData.items.map((item, index) => (
-                                                <tr key={index} className="hover:bg-surface transition-colors group">
-                                                    <td className="px-4 py-3 text-xs text-secondary font-bold text-center border-r border-default bg-surface/30">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="px-4 py-3 border-r border-default font-medium">
-                                                        <p className="text-sm font-bold text-main">{item.name}</p>
-                                                        {item.sku && <p className="text-[10px] text-muted font-bold mt-0.5 tracking-tight">SKU: {item.sku}</p>}
-                                                    </td>
-                                                    <td className="px-4 py-3 border-r border-default text-right">
-                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.availableStock > 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20' : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20'
-                                                            }`}>
-                                                            {item.availableStock} in stock
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-4 text-right border-r border-default p-2">
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            max={item.availableStock}
-                                                            value={item.deliveredQty}
-                                                            onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
-                                                            className={`w-full text-right px-3 py-1.5 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all ${!item.deliveredQty || item.deliveredQty <= 0 ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-default bg-input'}`}
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-3 text-xs text-secondary font-bold border-r border-default">
-                                                        {item.unit}
-                                                    </td>
-                                                    <td className="px-4 p-2 border-r border-default">
-                                                        <input
-                                                            type="text"
-                                                            value={item.description}
-                                                            onChange={(e) => updateItem(index, 'description', e.target.value)}
-                                                            placeholder="Add remarks..."
-                                                            className="w-full px-3 py-1.5 text-xs font-medium border border-transparent hover:border-default focus:border-primary rounded-lg focus:outline-none transition-all bg-transparent focus:bg-input text-main"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-3 text-center">
-                                                        <button
-                                                            onClick={() => removeItem(index)}
-                                                            className="text-muted hover:text-rose-600 transition-all p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg"
-                                                            title="Remove Item"
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                    {formData.items.length > 0 && (
-                                        <tfoot className="bg-surface border-t border-default">
-                                            <tr>
-                                                <td colSpan={3} className="px-4 py-3 text-xs font-bold text-right text-secondary uppercase border-r border-default tracking-wider">Totals:</td>
-                                                <td className="px-4 py-3 text-sm text-right text-primary font-bold border-r border-default">{totalQuantity}</td>
-                                                <td className="px-4 py-3 text-xs font-bold text-secondary border-r border-default" colSpan={3}>
-                                                    {totalItems} Item(s)
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    )}
-                                </table>
-                            </div>
-                        </div>
-
-                        {/* Bottom Section: Transport & Logistics */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden">
-                            <div className="bg-surface px-4 py-2 border-b border-default">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Transport & Notes</h2>
-                            </div>
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="col-span-1">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Transport Mode</label>
-                                        <select
-                                            value={formData.transportMode}
-                                            onChange={(e) => setFormData({ ...formData, transportMode: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        >
-                                            <option value="road">Road</option>
-                                            <option value="rail">Rail</option>
-                                            <option value="air">Air</option>
-                                            <option value="ship">Ship</option>
-                                            <option value="courier">Courier</option>
-                                        </select>
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-40">Asset Carrier ID</label>
+                                            <input 
+                                                type="text" 
+                                                value={formData.vehicleNo}
+                                                onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
+                                                placeholder="TAG-772"
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[10px] font-black text-main uppercase tracking-widest focus:outline-none focus:border-emerald-500/40 placeholder:opacity-20"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="col-span-1">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Vehicle No.</label>
-                                        <input
-                                            type="text"
-                                            value={formData.vehicleNo}
-                                            onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
-                                            placeholder="MH-01-AB-1234"
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-40">Designated Pilot</label>
+                                        <div className="relative">
+                                            <input 
+                                                type="text" 
+                                                value={formData.driverName}
+                                                onChange={(e) => setFormData({ ...formData, driverName: e.target.value })}
+                                                placeholder="OPERATOR IDENTIFIER..."
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black text-main uppercase tracking-widest focus:outline-none focus:border-emerald-500/40"
+                                            />
+                                            <Layers className="w-4 h-4 text-emerald-500 absolute left-4 top-1/2 -translate-y-1/2" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <label className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-40">Strategic Annotations</label>
+                                        <textarea 
+                                            value={formData.notes}
+                                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                            placeholder="Specify tactical delivery constraints..."
+                                            className="w-full bg-white/5 border border-white/10 rounded-[2rem] p-6 text-[10px] font-medium text-main resize-none h-44 placeholder:text-secondary/20 focus:outline-none focus:border-emerald-500/40 transition-all custom-scrollbar"
                                         />
                                     </div>
-                                    <div className="col-span-2">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Driver Name / Carrier</label>
-                                        <input
-                                            type="text"
-                                            value={formData.driverName}
-                                            onChange={(e) => setFormData({ ...formData, driverName: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        />
+
+                                    <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-[2rem] flex items-center justify-between group cursor-help hover:bg-emerald-500/10 transition-all">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 shadow-inner">
+                                                <Activity className="w-6 h-6 animate-pulse" />
+                                            </div>
+                                            <div>
+                                                <div className="text-[10px] font-black text-main uppercase tracking-widest">Global Telemetry</div>
+                                                <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-1">Satellite Link: Secure</div>
+                                            </div>
+                                        </div>
+                                        <ChevronRight className="w-5 h-5 text-emerald-500 opacity-40 group-hover:translate-x-1 group-hover:opacity-100 transition-all" />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 mt-auto">
+                                        <button className="py-4 glass-panel border border-white/5 text-secondary hover:text-main text-[9px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3">
+                                            <Printer className="w-4 h-4" /> Draft
+                                        </button>
+                                        <button className="py-4 glass-panel border border-white/5 text-secondary hover:text-main text-[9px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3">
+                                            <Search className="w-4 h-4" /> Trace
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="col-span-1">
-                                    <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Additional Notes</label>
-                                    <textarea
-                                        value={formData.notes}
-                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        rows={4}
-                                        className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-                                        placeholder="Enter any special instructions or remarks..."
-                                    />
-                                </div>
-                            </div>
+                            </GlassPanel>
                         </div>
                     </div>
                 </div>
-
-                <CustomerSelectionModal
-                    isOpen={showCustomerModal}
-                    onClose={() => setShowCustomerModal(false)}
-                    onSelect={(customer: any) => {
-                        setFormData({ ...formData, customer });
-                        setShowCustomerModal(false);
-                    }}
-                />
-
-                <ItemSelectionModal
-                    isOpen={showItemModal}
-                    onClose={() => setShowItemModal(false)}
-                    onSelect={handleItemSelect}
-                />
-
-                <SalesOrderSelectionModal
-                    isOpen={showSalesOrderModal}
-                    onClose={() => setShowSalesOrderModal(false)}
-                    onSelect={handleSalesOrderSelect}
-                />
             </div>
+
+            <CustomerSelectionModal
+                isOpen={showCustomerModal}
+                onClose={() => setShowCustomerModal(false)}
+                onSelect={(customer: any) => {
+                    setFormData({ ...formData, customer });
+                    setShowCustomerModal(false);
+                }}
+            />
+
+            <ItemSelectionModal
+                isOpen={showItemModal}
+                onClose={() => setShowItemModal(false)}
+                onSelect={handleItemSelect}
+            />
+
+            <SalesOrderSelectionModal
+                isOpen={showSalesOrderModal}
+                onClose={() => setShowSalesOrderModal(false)}
+                onSelect={handleSalesOrderSelect}
+            />
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.01); }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 20px; }
+                select option { background-color: #0c0a09; color: white; padding: 20px; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 2.5rem; }
+            `}</style>
         </Layout>
     );
 };
 
 export default DeliveryChallan;
-

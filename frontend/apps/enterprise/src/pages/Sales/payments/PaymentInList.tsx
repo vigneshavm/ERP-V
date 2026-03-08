@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, Plus, Filter, Download, Printer, Eye,
     MoreHorizontal, Calendar, IndianRupee, History,
-    CreditCard, X
+    CreditCard, X, Activity, Zap, ShieldCheck, 
+    ArrowUpRight, Layers, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { setActiveTab } from "../../../redux/slices/uiSlice";
-import { RootState } from "../../../redux/store";
-import { getTable } from "../../../services/dataSource";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import StatsCard from "../../../components/shared/Display/StatsCard";
+import { setActiveTab } from "@/redux/slices/uiSlice";
+import { RootState } from "@/redux/store";
+import { getTable } from "@/services/dataSource";
+import Layout from "@/components/shared/Layout/Layout";
 
-// Demo Data Interface
+// Enhanced interface for the 2036 Settlement Registry
 interface PaymentRecord {
     id: string;
     receiptNo: string;
@@ -33,9 +33,10 @@ const PaymentInList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [payments, setPayments] = useState<PaymentRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-    // Fetch payments on mount
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchPayments = async () => {
             try {
                 setLoading(true);
@@ -43,9 +44,9 @@ const PaymentInList: React.FC = () => {
                 if (data) {
                     setPayments(data.map((p: any) => ({
                         id: p.id || p._id,
-                        receiptNo: p.receiptNumber || `RCP-${p.id?.slice(-5) || '00000'}`,
+                        receiptNo: p.receiptNumber || `RCP-${(p.id || p._id || '').slice(-5)}`,
                         date: p.paymentDate || p.date,
-                        customerName: p.customer?.name || p.customer_name || 'Customer',
+                        customerName: p.customer?.name || p.customer_name || 'Walk-in Proxy',
                         customerPhone: p.customer?.phone || p.customer_phone || '',
                         amount: p.totalAmount || p.amount || 0,
                         modes: p.paymentMethods?.map((pm: any) => pm.method) || [p.mode || 'Cash'],
@@ -55,7 +56,7 @@ const PaymentInList: React.FC = () => {
                     })));
                 }
             } catch (error) {
-                console.error('Error fetching payments:', error);
+                console.error('Lattice Sync Error:', error);
             } finally {
                 setLoading(false);
             }
@@ -63,7 +64,6 @@ const PaymentInList: React.FC = () => {
         fetchPayments();
     }, []);
 
-    // Filter payments
     const filteredPayments = useMemo(() => {
         if (!searchQuery) return payments;
         const q = searchQuery.toLowerCase();
@@ -74,271 +74,245 @@ const PaymentInList: React.FC = () => {
         );
     }, [searchQuery, payments]);
 
-    // Dashboard Metrics
-    const metrics = useMemo(() => {
-        const totalValue = payments.reduce((sum, p) => sum + p.amount, 0);
-        const creditCount = payments.filter(p => (p.excessAmount || 0) > 0).length;
-        return {
-            totalValue,
-            count: payments.length,
-            creditCount
-        };
-    }, [payments]);
+    const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+    const paginatedPayments = filteredPayments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    // Format currency
+    const metrics = useMemo(() => ({
+        totalValue: payments.reduce((sum, p) => sum + p.amount, 0),
+        count: payments.length,
+        creditCount: payments.filter(p => (p.excessAmount || 0) > 0).length
+    }), [payments]);
+
     const formatCurrency = (amount: number) =>
         new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
 
+    const MetricPanel = ({ title, value, icon: Icon, colorClass, subtext }: any) => (
+        <motion.div 
+            whileHover={{ y: -5 }}
+            className="glass-panel p-6 border border-white/5 relative overflow-hidden"
+        >
+            <div className={`absolute top-0 right-0 w-24 h-24 ${colorClass.replace('text', 'bg')}/5 rounded-full blur-[40px] -mr-8 -mt-8`}></div>
+            <div className="flex justify-between items-start relative z-10">
+                <div>
+                    <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-1">{title}</p>
+                    <h3 className="text-3xl font-display font-black text-main tracking-tighter">{value}</h3>
+                    {subtext && <p className="text-[9px] font-bold mt-2 text-secondary uppercase tracking-widest opacity-60 font-mono">{subtext}</p>}
+                </div>
+                <div className={`p-3 rounded-xl ${colorClass.replace('text', 'bg')}/10 ${colorClass}`}>
+                    <Icon className="w-5 h-5" />
+                </div>
+            </div>
+        </motion.div>
+    );
+
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                <PageHeader
-                    title="Payment In"
-                    description="Track and manage customer payment records"
-                    actions={
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => window.print()}
-                                className="btn btn-secondary bg-white"
-                                title="Print List"
-                            >
-                                <Printer className="w-4 h-4" />
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden">
+                {/* Abstract Visual Elements */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none -mr-48 -mt-48"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -ml-32 -mb-32"></div>
+
+                <div className="max-w-7xl mx-auto relative z-10 space-y-8 pb-20">
+                    {/* Header Block */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-emerald-500 font-black text-[10px] uppercase tracking-[0.4em]">
+                                <ShieldCheck className="w-4 h-4" />
+                                Secured Settlement Registry / 2036
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-display font-black text-main tracking-tighter uppercase">
+                                Liquidity <span className="text-emerald-500 italic font-medium">Capture</span>
+                            </h1>
+                            <p className="text-secondary text-sm font-medium opacity-60">High-fidelity capital allocation and historical settlement tracking.</p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button onClick={() => window.print()} className="p-3 glass-panel border border-white/10 hover:border-white/20 transition-all text-secondary hover:text-main">
+                                <Printer className="w-5 h-5" />
                             </button>
                             <button
                                 onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
-                                className="btn btn-primary"
+                                className="px-8 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-emerald-900/40 hover:bg-emerald-500 transition-all flex items-center gap-3 group"
                             >
-                                <Plus className="w-4 h-4" />
-                                Record Payment
-                            </button>
-                        </div>
-                    }
-                />
-
-                {/* Dashboard Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatsCard
-                        title="Total Collections"
-                        value={formatCurrency(metrics.totalValue)}
-                        icon={<IndianRupee className="w-full h-full" />}
-                        trend="Total received"
-                        trendUp={true}
-                        iconBgColor="bg-emerald-100"
-                        iconColor="text-emerald-600"
-                    />
-                    <StatsCard
-                        title="Transactions"
-                        value={metrics.count}
-                        icon={<History className="w-full h-full" />}
-                        iconBgColor="bg-blue-100"
-                        iconColor="text-blue-600"
-                    />
-                    <StatsCard
-                        title="With Credit/Excess"
-                        value={metrics.creditCount}
-                        icon={<CreditCard className="w-full h-full" />}
-                        trend="Carry-forward balance"
-                        trendUp={true}
-                        iconBgColor="bg-amber-100"
-                        iconColor="text-amber-600"
-                    />
-                </div>
-
-                <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col">
-                    {/* Controls */}
-                    <div className="p-4 bg-neutral-50/50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative flex-1 max-w-md group w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search receipt #, customer name..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="input pl-10 w-full"
-                            />
-                        </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="btn btn-ghost text-neutral-500"
-                                >
-                                    <X className="w-4 h-4 mr-2" /> Clear
-                                </button>
-                            )}
-                            <button className="btn btn-secondary">
-                                <Filter className="w-4 h-4" /> Filter
-                            </button>
-                            <button className="btn btn-secondary">
-                                <Download className="w-4 h-4" /> Export
+                                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" />
+                                Record Inflow
                             </button>
                         </div>
                     </div>
 
-                    {/* Data Display */}
-                    <div className="flex-1 overflow-auto">
-                        {loading ? (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600 mb-4"></div>
-                                <p className="text-neutral-500 font-medium font-outfit">Loading payments...</p>
+                    {/* Metrics Dashboard */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <MetricPanel title="Global Inflow" value={formatCurrency(metrics.totalValue)} icon={IndianRupee} colorClass="text-emerald-500" subtext="Aggregated settlement volume" />
+                        <MetricPanel title="Resolved Nodes" value={metrics.count} icon={Activity} colorClass="text-primary" subtext="Total transaction indices" />
+                        <MetricPanel title="Credit Exposure" value={metrics.creditCount} icon={CreditCard} colorClass="text-amber-500" subtext="Unallocated capital fragments" />
+                    </div>
+
+                    {/* Registry Controller */}
+                    <div className="space-y-4">
+                        <div className="glass-panel p-2 border border-white/5 flex flex-wrap items-center gap-4">
+                            <div className="flex-1 min-w-[300px] relative">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500/40" />
+                                <input 
+                                    type="text"
+                                    placeholder="Search registry indices or entity signatures..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/5 rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-main focus:outline-none focus:border-emerald-500/40 transition-all placeholder:text-secondary/20"
+                                />
                             </div>
-                        ) : filteredPayments.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-center px-4 font-outfit">
-                                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
-                                    <Search className="w-8 h-8 opacity-50" />
-                                </div>
-                                <p className="text-lg font-bold text-neutral-800 dark:text-neutral-200">No records found</p>
-                                <p className="text-sm text-neutral-500 mt-1 max-w-xs">
-                                    Try adjusting your search or record a new payment.
-                                </p>
-                                <button
-                                    onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
-                                    className="btn btn-primary mt-6"
-                                >
-                                    Record Payment
+                            
+                            <div className="flex gap-2">
+                                <button className="px-6 py-3 bg-white/5 border border-white/5 rounded-xl flex items-center gap-3 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
+                                    <Filter className="w-4 h-4" /> Filter Temporal
                                 </button>
+                                <button className="px-6 py-3 bg-white/5 border border-white/5 rounded-xl flex items-center gap-3 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
+                                    <Download className="w-4 h-4" /> Export Lattice
+                                </button>
+                                {searchQuery && (
+                                    <button onClick={() => setSearchQuery('')} className="p-3 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
-                        ) : (
-                            <>
-                                {/* Desktop Table View */}
-                                <div className="hidden md:block">
-                                    <table className="w-full text-left font-outfit">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
-                                            <tr>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Receipt No</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Date</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Customer</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Allocation</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Mode</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider text-right">Amount</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider text-right">Actions</th>
+                        </div>
+
+                        {/* List Partition */}
+                        <div className="glass-panel border border-white/5 overflow-hidden">
+                            {loading ? (
+                                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                                    <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+                                    <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Querying Settlement Lattice...</p>
+                                </div>
+                            ) : filteredPayments.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-40 text-center space-y-6">
+                                    <div className="w-20 h-20 bg-white/5 border border-white/5 rounded-3xl flex items-center justify-center opacity-20 text-emerald-500">
+                                        <History className="w-10 h-10" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-display font-black text-main uppercase tracking-tight">Registry Silence</h3>
+                                        <p className="text-secondary text-sm font-medium opacity-40 mt-1">No liquidity capture events recorded in the current filter space.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-white/5 border-b border-white/5">
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Signature</th>
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Entity</th>
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Allocation Mapping</th>
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Protocol</th>
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em] text-right">Magnitude</th>
+                                                <th className="px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-[0.3em] text-right">Observation</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
-                                            {filteredPayments.map((payment) => (
-                                                <tr
-                                                    key={payment.id}
-                                                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer group"
-                                                    onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                                >
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-brand-600 dark:text-brand-400">
-                                                        {payment.receiptNo}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 dark:text-neutral-400">
-                                                        <div className="flex items-center gap-2">
-                                                            <Calendar className="w-3 h-3" />
-                                                            {new Date(payment.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center">
-                                                            <div className="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xs mr-3">
-                                                                {payment.customerName.charAt(0)}
+                                        <tbody className="divide-y divide-white/5">
+                                            <AnimatePresence mode="popLayout">
+                                                {paginatedPayments.map((payment, idx) => (
+                                                    <motion.tr 
+                                                        layout
+                                                        key={payment.id}
+                                                        initial={{ opacity: 0, x: -20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.03 }}
+                                                        onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
+                                                        className="group hover:bg-white/5 transition-all cursor-pointer"
+                                                    >
+                                                        <td className="px-6 py-5">
+                                                            <div className="font-display font-black text-emerald-500 tracking-tighter uppercase">{payment.receiptNo}</div>
+                                                            <div className="text-[9px] font-bold text-secondary/40 uppercase tracking-[0.2em] mt-1">{new Date(payment.date).toLocaleDateString("en-IN")}</div>
+                                                        </td>
+                                                        <td className="px-6 py-5">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[10px] font-black text-emerald-500">
+                                                                    {payment.customerName.charAt(0)}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="text-xs font-black text-main uppercase tracking-tight">{payment.customerName}</div>
+                                                                    <div className="text-[9px] font-bold text-secondary/40 uppercase tracking-widest mt-0.5 font-mono">{payment.customerPhone}</div>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100 font-outfit">{payment.customerName}</div>
-                                                                <div className="text-xs text-neutral-500">{payment.customerPhone}</div>
+                                                        </td>
+                                                        <td className="px-6 py-5">
+                                                            <div className="flex items-center gap-2">
+                                                                {payment.allocatedCount && payment.allocatedCount > 0 ? (
+                                                                    <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[9px] font-black uppercase tracking-widest">
+                                                                        {payment.allocatedCount} Target{payment.allocatedCount > 1 ? 's' : ''}
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[9px] font-black uppercase tracking-widest">
+                                                                        Advance Lock
+                                                                    </div>
+                                                                )}
+                                                                {(payment.excessAmount || 0) > 0 && (
+                                                                    <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest">
+                                                                        Overflow +
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-2">
-                                                            {payment.allocatedCount && payment.allocatedCount > 0 ? (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                                                    {payment.allocatedCount} Inv
-                                                                </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                                                    Advance
-                                                                </span>
-                                                            )}
-                                                            {(payment.excessAmount || 0) > 0 && (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                                                                    +Credit
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {payment.modes.map((mode, idx) => (
-                                                                <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
-                                                                    {mode}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                                                        {formatCurrency(payment.amount)}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
-                                                                title="View"
-                                                            >
-                                                                <Eye className="w-4 h-4" />
-                                                            </button>
-                                                            <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
-                                                                title="Print"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    window.print();
-                                                                }}
-                                                            >
-                                                                <Printer className="w-4 h-4" />
-                                                            </button>
-                                                            <button className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-neutral-900 transition-colors" title="More">
-                                                                <MoreHorizontal className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                        </td>
+                                                        <td className="px-6 py-5">
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {payment.modes.map((mode, mIdx) => (
+                                                                    <span key={mIdx} className="px-2 py-1 bg-white/5 border border-white/5 text-secondary/60 text-[8px] font-black uppercase tracking-widest rounded-md">
+                                                                        {mode}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-5 text-right font-display font-black text-main tracking-tighter text-xl">
+                                                            {formatCurrency(payment.amount)}
+                                                        </td>
+                                                        <td className="px-6 py-5 text-right">
+                                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                                <button className="w-10 h-10 rounded-xl bg-white/5 hover:bg-emerald-500 transition-all flex items-center justify-center hover:shadow-lg hover:shadow-emerald-900/40">
+                                                                    <ArrowUpRight className="w-5 h-5 text-white" />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </motion.tr>
+                                                ))}
+                                            </AnimatePresence>
                                         </tbody>
                                     </table>
                                 </div>
+                            )}
 
-                                {/* Mobile Card View */}
-                                <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-800">
-                                    {filteredPayments.map((payment) => (
-                                        <div
-                                            key={payment.id}
-                                            onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                            className="p-4 active:bg-neutral-50 dark:active:bg-neutral-800 transition-colors"
+                            {/* Pagination Logic */}
+                            {totalPages > 1 && (
+                                <div className="px-6 py-6 border-t border-white/5 bg-white/5 flex items-center justify-between">
+                                    <div className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] opacity-40 font-mono">
+                                        Frame <span className="text-main">{currentPage}</span> / {totalPages} — Range [{ (currentPage - 1) * itemsPerPage + 1 }...{ Math.min(currentPage * itemsPerPage, filteredPayments.length) }]
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button 
+                                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                            disabled={currentPage === 1}
+                                            className="w-10 h-10 glass-panel border border-white/10 flex items-center justify-center disabled:opacity-20 hover:bg-white/10 transition-all"
                                         >
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div>
-                                                    <div className="font-bold text-brand-600 dark:text-brand-400">{payment.receiptNo}</div>
-                                                    <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{payment.customerName}</div>
-                                                </div>
-                                                <div className="font-bold text-neutral-900 dark:text-neutral-100">{formatCurrency(payment.amount)}</div>
-                                            </div>
-                                            <div className="flex justify-between items-center mt-3">
-                                                <div className="text-xs text-neutral-500">
-                                                    {new Date(payment.date).toLocaleDateString()}
-                                                </div>
-                                                <div className="flex gap-1">
-                                                    {payment.modes.map((mode, idx) => (
-                                                        <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
-                                                            {mode}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                            <ChevronLeft className="w-4 h-4" />
+                                        </button>
+                                        <button 
+                                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={currentPage === totalPages}
+                                            className="w-10 h-10 glass-panel border border-white/10 flex items-center justify-center disabled:opacity-20 hover:bg-white/10 transition-all"
+                                        >
+                                            <ChevronRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
-                            </>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 1.5rem; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+            `}</style>
         </Layout>
     );
 };
 
 export default PaymentInList;
-
-

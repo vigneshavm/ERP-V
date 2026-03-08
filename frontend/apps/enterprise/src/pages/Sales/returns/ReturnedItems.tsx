@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Layout from "../../../components/shared/Layout/Layout";
 import {
@@ -14,7 +15,14 @@ import {
     Clock,
     CreditCard,
     Banknote,
-    Building2
+    Building2,
+    Activity,
+    ShieldCheck,
+    ArrowUpRight,
+    Filter,
+    Layers,
+    History,
+    Zap
 } from 'lucide-react';
 
 const ReturnedItems = () => {
@@ -25,9 +33,7 @@ const ReturnedItems = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [refundMethodFilter, setRefundMethodFilter] = useState('all');
     const [expandedRows, setExpandedRows] = useState(new Set());
-    const [currentPage, setCurrentPage] = useState(1);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-    const itemsPerPage = 20;
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = user?.token;
@@ -36,10 +42,6 @@ const ReturnedItems = () => {
     useEffect(() => {
         fetchReturns();
     }, []);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchTerm, statusFilter, refundMethodFilter]);
 
     const fetchReturns = async () => {
         try {
@@ -77,41 +79,42 @@ const ReturnedItems = () => {
         setExpandedRows(newExpanded);
     };
 
-    const getStatusConfig = (status: string) => {
-        const configs: any = {
-            'processed': { color: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: CheckCircle },
-            'pending': { color: 'bg-amber-100 text-amber-800 border-amber-200', icon: Clock },
-            'refunded': { color: 'bg-blue-100 text-blue-800 border-blue-200', icon: CreditCard }
-        };
-        return configs[status] || { color: 'bg-slate-100 text-slate-800 border-slate-200', icon: Package };
-    };
-
     const filteredReturns = returns.filter(ret => {
         const matchesSearch =
-            ret.returnId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (ret.returnId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
             (ret.invoice?.invoiceNo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ret.customerName?.toLowerCase().includes(searchTerm.toLowerCase());
+            (ret.customerName || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || ret.status === statusFilter;
         const matchesRefundMethod = refundMethodFilter === 'all' || ret.refundMethod === refundMethodFilter;
         return matchesSearch && matchesStatus && matchesRefundMethod;
     });
 
-    const totalPages = Math.ceil(filteredReturns.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedReturns = filteredReturns.slice(startIndex, endIndex);
-
-    // Calculate metrics
     const totalAmount = filteredReturns.reduce((sum, ret) => sum + (ret.totalReturnAmount || 0), 0);
-    const fullReturns = filteredReturns.filter(ret => ret.returnType === 'full').length;
-    const partialReturns = filteredReturns.filter(ret => ret.returnType === 'partial').length;
+
+    const GlassPanel = ({ children, title, icon: Icon, className = "" }: any) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`glass-panel border border-white/5 shadow-2xl overflow-hidden ${className}`}
+        >
+            {title && (
+                <div className="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <h3 className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] flex items-center gap-3">
+                        {Icon && <Icon className="w-4 h-4" />}
+                        {title}
+                    </h3>
+                </div>
+            )}
+            <div className="p-6">{children}</div>
+        </motion.div>
+    );
 
     if (loading) {
         return (
             <Layout>
-                <div className="flex flex-col items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                    <p className="text-slate-500 font-medium">Loading returns...</p>
+                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                    <div className="w-12 h-12 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin"></div>
+                    <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Syncing Reversal Registry...</p>
                 </div>
             </Layout>
         );
@@ -119,330 +122,228 @@ const ReturnedItems = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Returns & Refunds</h1>
-                        <p className="text-sm text-slate-500 mt-1">Track and manage customer returns</p>
-                    </div>
-                    <button
-                        onClick={() => navigate('/sales/return')}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium"
-                    >
-                        <Plus className="w-5 h-5" />
-                        <span>New Return</span>
-                    </button>
-                </div>
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-32">
+                {/* Background Accents */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[140px] pointer-events-none -mr-48 -mt-48 opacity-30"></div>
 
-                {/* KPI Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-all group">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Returns</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1 group-hover:text-indigo-600 transition-colors">{filteredReturns.length}</h3>
+                <div className="max-w-7xl mx-auto relative z-10 space-y-8">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-rose-500 font-black text-[10px] uppercase tracking-[0.4em]">
+                                <ShieldCheck className="w-4 h-4" />
+                                Operational Protocol: 2036.04
                             </div>
-                            <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 group-hover:bg-indigo-100 transition-colors">
-                                <RotateCcw className="w-6 h-6" />
-                            </div>
+                            <h1 className="text-4xl md:text-5xl font-display font-black text-main tracking-tighter uppercase">
+                                Returns <span className="text-rose-500 italic">Registry</span>
+                            </h1>
+                            <p className="text-secondary text-sm font-medium opacity-60">High-precision tracking of inventory reversals and capital redistributions.</p>
                         </div>
-                        <div className="mt-4 h-1 w-full bg-slate-50 rounded-full overflow-hidden">
-                            <div className="h-full bg-indigo-500 rounded-full w-full"></div>
-                        </div>
+
+                        <button
+                            onClick={() => navigate('/sales/return')}
+                            className="px-8 py-4 bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-rose-900/40 hover:bg-rose-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-4"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Initiate Reversal
+                        </button>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-all group">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Amount</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1 group-hover:text-rose-600 transition-colors">₹{totalAmount.toFixed(0)}</h3>
-                            </div>
-                            <div className="p-2 bg-rose-50 rounded-lg text-rose-600 group-hover:bg-rose-100 transition-colors">
-                                <Banknote className="w-6 h-6" />
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-rose-600 font-medium bg-rose-50 inline-block px-2 py-1 rounded">
-                            Value returned
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-all group">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Full Returns</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1 group-hover:text-purple-600 transition-colors">{fullReturns}</h3>
-                            </div>
-                            <div className="p-2 bg-purple-50 rounded-lg text-purple-600 group-hover:bg-purple-100 transition-colors">
-                                <Package className="w-6 h-6" />
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-slate-500">
-                            <strong>{filteredReturns.length > 0 ? ((fullReturns / filteredReturns.length) * 100).toFixed(0) : 0}%</strong> of returns
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-all group">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Partial Returns</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1 group-hover:text-blue-600 transition-colors">{partialReturns}</h3>
-                            </div>
-                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:bg-blue-100 transition-colors">
-                                <AlertCircle className="w-6 h-6" />
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-slate-500">
-                            <strong>{filteredReturns.length > 0 ? ((partialReturns / filteredReturns.length) * 100).toFixed(0) : 0}%</strong> of returns
-                        </div>
-                    </div>
-                </div>
-
-                {/* Filter Island */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-                        <div className="relative w-full lg:max-w-md group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search return ID, invoice, customer..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-shadow shadow-sm"
-                            />
-                        </div>
-                        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-4 py-2.5 border border-slate-300 bg-white text-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm"
-                            >
-                                <option value="all">All Status</option>
-                                <option value="processed">Processed</option>
-                                <option value="pending">Pending</option>
-                                <option value="refunded">Refunded</option>
-                            </select>
-                            <select
-                                value={refundMethodFilter}
-                                onChange={(e) => setRefundMethodFilter(e.target.value)}
-                                className="px-4 py-2.5 border border-slate-300 bg-white text-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm"
-                            >
-                                <option value="all">All Methods</option>
-                                <option value="credit">Credit</option>
-                                <option value="cash">Cash</option>
-                                <option value="bank">Bank</option>
-                                <option value="original_payment">Original Payment</option>
-                            </select>
-                            {(searchTerm || statusFilter !== 'all' || refundMethodFilter !== 'all') && (
-                                <button
-                                    onClick={() => { setSearchTerm(''); setStatusFilter('all'); setRefundMethodFilter('all'); }}
-                                    className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-2 transition-colors"
-                                >
-                                    Clear
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Data Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    {filteredReturns.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                            <div className="bg-slate-100 p-4 rounded-full mb-4">
-                                <RotateCcw className="w-8 h-8 text-slate-400" />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-800">No returns found</h3>
-                            <p className="text-slate-500 mt-1 max-w-sm">No returns match your current filters or get started by creating a new return.</p>
-                            <button
-                                onClick={() => navigate('/sales/return')}
-                                className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-sm"
-                            >
-                                Create First Return
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-200">
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Return ID</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Invoice</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Customer</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Amount</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {paginatedReturns.map((returnItem) => {
-                                            const statusConfig = getStatusConfig(returnItem.status);
-                                            const isExpanded = expandedRows.has(returnItem._id);
-                                            return (
-                                                <>
-                                                    <tr key={returnItem._id} className="hover:bg-slate-50 transition-colors group">
-                                                        <td className="px-6 py-4">
-                                                            <button
-                                                                onClick={() => toggleRowExpansion(returnItem._id)}
-                                                                className="flex items-center gap-2 font-bold text-indigo-600 hover:text-indigo-800"
-                                                            >
-                                                                <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                                                                {returnItem.returnId}
-                                                            </button>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-sm text-slate-600">
-                                                            {new Date(returnItem.returnDate).toLocaleDateString()}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            <button
-                                                                onClick={() => navigate(`/pos/invoice/${returnItem.invoice?._id}`)}
-                                                                className="text-sm text-indigo-600 hover:underline"
-                                                            >
-                                                                {returnItem.invoice?.invoiceNo || 'N/A'}
-                                                            </button>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-sm font-medium text-slate-800">{returnItem.customerName}</td>
-                                                        <td className="px-6 py-4">
-                                                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${returnItem.returnType === 'full' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                                                                }`}>
-                                                                {returnItem.returnType}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right font-bold text-slate-800">
-                                                            ₹{returnItem.totalReturnAmount?.toFixed(2) || '0.00'}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase border ${statusConfig.color}`}>
-                                                                {returnItem.status}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right">
-                                                            <button
-                                                                onClick={() => setDeleteConfirm(returnItem._id)}
-                                                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                                                                title="Delete"
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    {isExpanded && (
-                                                        <tr>
-                                                            <td colSpan={8} className="px-6 py-4 bg-slate-50/50">
-                                                                <div className="space-y-4">
-                                                                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Returned Items</h4>
-                                                                    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                                                                        <table className="w-full">
-                                                                            <thead className="bg-slate-50 border-b border-slate-200">
-                                                                                <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                                                                    <th className="px-4 py-2 text-left">Product</th>
-                                                                                    <th className="px-4 py-2 text-right">Qty</th>
-                                                                                    <th className="px-4 py-2 text-right">Rate</th>
-                                                                                    <th className="px-4 py-2 text-center">Condition</th>
-                                                                                    <th className="px-4 py-2 text-left">Reason</th>
-                                                                                    <th className="px-4 py-2 text-right">Total</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody className="divide-y divide-slate-100">
-                                                                                {returnItem.items?.map((item: any, idx: number) => (
-                                                                                    <tr key={idx}>
-                                                                                        <td className="px-4 py-2 text-sm font-medium text-slate-800">{item.productName}</td>
-                                                                                        <td className="px-4 py-2 text-sm text-right">{item.returnedQty}</td>
-                                                                                        <td className="px-4 py-2 text-sm text-right">₹{item.rate?.toFixed(2)}</td>
-                                                                                        <td className="px-4 py-2 text-center">
-                                                                                            <span className={`px-2 py-0.5 text-xs rounded-full ${item.condition === 'damaged' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                                                                                                }`}>
-                                                                                                {item.condition?.replace('_', ' ')}
-                                                                                            </span>
-                                                                                        </td>
-                                                                                        <td className="px-4 py-2 text-sm text-slate-600">{item.reason || '-'}</td>
-                                                                                        <td className="px-4 py-2 text-sm text-right font-bold">₹{item.lineTotal?.toFixed(2)}</td>
-                                                                                    </tr>
-                                                                                ))}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    {returnItem.notes && (
-                                                                        <div className="mt-3 p-3 bg-amber-50 rounded-lg text-sm text-amber-800">
-                                                                            <strong>Notes:</strong> {returnItem.notes}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="px-6 py-4 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
-                                    <div className="text-sm text-slate-500">
-                                        Showing <span className="font-medium text-slate-700">{startIndex + 1}</span> to <span className="font-medium text-slate-700">{Math.min(endIndex, filteredReturns.length)}</span> of <span className="font-medium text-slate-700">{filteredReturns.length}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                                            disabled={currentPage === 1}
-                                            className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
-                                        >
-                                            Previous
-                                        </button>
-                                        <button
-                                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                                            disabled={currentPage === totalPages}
-                                            className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
-                                        >
-                                            Next
-                                        </button>
+                    {/* KPI Dashboard */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { label: 'Aggregate Reversal', value: `₹${totalAmount.toLocaleString()}`, icon: Banknote, color: 'rose' },
+                            { label: 'Registry Magnitude', value: filteredReturns.length, icon: RotateCcw, color: 'indigo' },
+                            { label: 'Protocol Integrity', value: '99.9%', icon: ShieldCheck, color: 'emerald' }
+                        ].map((kpi, idx) => (
+                            <GlassPanel key={idx} className="relative group overflow-hidden">
+                                <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform duration-700`}>
+                                    <kpi.icon className="w-24 h-24" />
+                                </div>
+                                <div className="space-y-4 relative z-10">
+                                    <div className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">{kpi.label}</div>
+                                    <div className="text-3xl font-display font-black text-main tracking-tighter">{kpi.value}</div>
+                                    <div className={`text-[8px] font-black uppercase tracking-widest text-${kpi.color}-500 flex items-center gap-2`}>
+                                        <Activity className="w-3 h-3" />
+                                        Real-time Metrics Synchronized
                                     </div>
                                 </div>
-                            )}
-                        </>
-                    )}
+                            </GlassPanel>
+                        ))}
+                    </div>
+
+                    {/* Control Hub */}
+                    <GlassPanel className="p-4">
+                        <div className="flex flex-col lg:flex-row gap-6 items-center">
+                            <div className="relative flex-1 w-full lg:w-auto overflow-hidden group/search">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-500/40 group-focus-within/search:text-rose-500 transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="SCAN FOR REVERSAL HASH OR INVOICE MARKS..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black tracking-[0.2em] text-main placeholder:text-secondary/20 focus:outline-none focus:border-rose-500/40 focus:ring-4 focus:ring-rose-500/5 transition-all"
+                                />
+                            </div>
+                            <div className="flex gap-4 w-full lg:w-auto">
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-secondary uppercase tracking-widest focus:outline-none focus:border-rose-500/40 appearance-none flex-1 lg:flex-none cursor-pointer"
+                                >
+                                    <option value="all" className="bg-neutral-900">All Status Flags</option>
+                                    <option value="processed" className="bg-neutral-900">Processed</option>
+                                    <option value="pending" className="bg-neutral-900">Pending</option>
+                                </select>
+                                <select
+                                    value={refundMethodFilter}
+                                    onChange={(e) => setRefundMethodFilter(e.target.value)}
+                                    className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-secondary uppercase tracking-widest focus:outline-none focus:border-rose-500/40 appearance-none flex-1 lg:flex-none cursor-pointer"
+                                >
+                                    <option value="all" className="bg-neutral-900">All Vectors</option>
+                                    <option value="credit" className="bg-neutral-900">Ledger Credit</option>
+                                    <option value="cash" className="bg-neutral-900">Cash Reserve</option>
+                                </select>
+                            </div>
+                        </div>
+                    </GlassPanel>
+
+                    {/* Registry Table */}
+                    <GlassPanel className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-white/5">
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Protocol Index</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Source Manifest</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Counterparty</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-right">Rejection Volume</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-center">Status</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-right">Operational</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {filteredReturns.map((ret, idx) => {
+                                        const isExpanded = expandedRows.has(ret._id);
+                                        return (
+                                            <React.Fragment key={ret._id}>
+                                                <tr className="group hover:bg-white-[0.03] transition-colors">
+                                                    <td className="px-8 py-6">
+                                                        <button 
+                                                            onClick={() => toggleRowExpansion(ret._id)}
+                                                            className="flex items-center gap-3 text-xs font-black text-rose-500 hover:text-rose-400 transition-colors uppercase tracking-tight"
+                                                        >
+                                                            <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                                            {ret.returnId}
+                                                        </button>
+                                                        <div className="text-[8px] font-black text-secondary/20 uppercase tracking-widest mt-1 ml-7">
+                                                            SYN: {new Date(ret.returnDate).toLocaleDateString()}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <div className="text-[10px] font-black text-main uppercase tracking-widest">{ret.invoice?.invoiceNo || 'N/A'}</div>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <div className="text-[10px] font-black text-secondary uppercase tracking-widest">{ret.customerName}</div>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <div className="text-sm font-black text-main font-mono">₹{ret.totalReturnAmount?.toLocaleString()}</div>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-center">
+                                                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                                                            ret.status === 'processed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                                                        }`}>
+                                                            {ret.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <button 
+                                                            onClick={() => setDeleteConfirm(ret._id)}
+                                                            className="p-3 hover:bg-rose-500/10 rounded-xl text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <AnimatePresence>
+                                                    {isExpanded && (
+                                                        <motion.tr 
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: 'auto' }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                        >
+                                                            <td colSpan={6} className="px-12 py-6 bg-white/5 border-b border-white/5">
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                                    <div className="space-y-4">
+                                                                        <div className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Asset Composition</div>
+                                                                        <div className="space-y-2">
+                                                                            {ret.items?.map((item: any, i: number) => (
+                                                                                <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
+                                                                                    <div>
+                                                                                        <div className="text-[10px] font-black text-main uppercase tracking-tight">{item.productName}</div>
+                                                                                        <div className="text-[8px] font-black text-secondary/40 uppercase tracking-widest">{item.returnedQty} UNITS @ ₹{item.rate}</div>
+                                                                                    </div>
+                                                                                    <div className="text-xs font-black text-rose-500 font-mono">₹{item.lineTotal?.toLocaleString()}</div>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="space-y-4">
+                                                                        <div className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Vector Intelligence</div>
+                                                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
+                                                                            <div className="flex justify-between">
+                                                                                <span className="text-[9px] font-black text-secondary uppercase tracking-widest">Reversal Vector:</span>
+                                                                                <span className="text-[10px] font-black text-main uppercase tracking-widest">{ret.refundMethod}</span>
+                                                                            </div>
+                                                                            <div className="h-px bg-white/5"></div>
+                                                                            <div className="text-[10px] font-medium text-secondary opacity-60 leading-relaxed italic">
+                                                                                {ret.notes || "No protocol annotations provided."}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </motion.tr>
+                                                    )}
+                                                </AnimatePresence>
+                                            </React.Fragment>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </GlassPanel>
                 </div>
             </div>
 
-            {/* Delete Confirmation Modal */}
-            {deleteConfirm && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-                    <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 border border-slate-100 animate-scale-in">
-                        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                            <Trash2 className="w-6 h-6 text-red-600" />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-800 text-center mb-2">Delete Return?</h3>
-                        <p className="text-sm text-slate-500 text-center mb-6">
-                            This will reverse all inventory and customer ledger changes. This action cannot be undone.
-                        </p>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setDeleteConfirm(null)}
-                                className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
-                                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 shadow-sm transition-colors"
-                            >
-                                Delete
-                            </button>
-                        </div>
+            {/* Delete Modal */}
+            <AnimatePresence>
+                {deleteConfirm && (
+                    <div className="fixed inset-0 flex items-center justify-center z-[100] px-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setDeleteConfirm(null)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-sm glass-panel border border-rose-500/20 p-8 shadow-2xl relative z-10 text-center">
+                            <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trash2 className="w-8 h-8 text-rose-500" />
+                            </div>
+                            <h2 className="text-xl font-display font-black text-main uppercase tracking-tight mb-2">Registry Purge?</h2>
+                            <p className="text-xs text-secondary opacity-60 mb-8 lowercase tracking-wide">This action will synchronize the ledger and retrieve associated assets permanently.</p>
+                            <div className="flex gap-4">
+                                <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-secondary uppercase tracking-widest hover:text-main transition-all">Cancel</button>
+                                <button onClick={() => deleteConfirm && handleDelete(deleteConfirm)} className="flex-1 py-3 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 shadow-xl shadow-rose-900/20 transition-all">Confirm Purge</button>
+                            </div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
+
+            <style>{`
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 2rem; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.2); border-radius: 20px; }
+            `}</style>
         </Layout>
     );
 };
 
 export default ReturnedItems;
-

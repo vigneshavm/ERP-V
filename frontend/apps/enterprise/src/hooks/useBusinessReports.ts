@@ -90,6 +90,8 @@ export interface BusinessReportData {
             amount: number;
             type: string;
         }[];
+        total_income: number;
+        total_expenses: number;
         opening_cash: number;
         closing_cash: number;
     };
@@ -111,6 +113,7 @@ export interface BusinessReportData {
         cogs: number;
         gross_profit: number;
         operating_expenses: number;
+        indirect_expenses: number;
         other_income: number;
         net_profit: number;
         margin: string;
@@ -261,6 +264,8 @@ export const useBusinessReports = (type: ReportType, filters: { branch_id?: stri
                         { id: 'v3', timestamp: '2026-01-11 14:20', voucher_no: 'REC-221', reference: 'Invoice #998', party: 'Mahesh Kumar', debit_account: 'Sbi Bank', credit_account: 'Sundry Debtors', amount: 25000, type: 'PAYMENT' },
                         { id: 'v4', timestamp: '2026-01-11 16:45', voucher_no: 'BILL-102', reference: 'Stock Purchase', party: 'ABC Textiles', debit_account: 'Purchase A/c', credit_account: 'Sundry Creditors', amount: 85000, type: 'PURCHASE' }
                     ],
+                    total_income: 29500,
+                    total_expenses: 12400,
                     opening_cash: 25000,
                     closing_cash: 29500
                 };
@@ -282,7 +287,8 @@ export const useBusinessReports = (type: ReportType, filters: { branch_id?: stri
                     net_sales: 3250000,
                     cogs: 1850000,
                     gross_profit: 1400000,
-                    operating_expenses: 650000,
+                    operating_expenses: 450000,
+                    indirect_expenses: 200000,
                     other_income: 45000,
                     net_profit: 795000,
                     margin: '24.4%',

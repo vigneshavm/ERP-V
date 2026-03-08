@@ -1,9 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from 'framer-motion';
+import api from "@/services/api";
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import { SalesOrder } from '../../../types/sales';
+import Layout from "@/components/shared/Layout/Layout";
+import { SalesOrder } from '@/types/sales';
+import { 
+  Package, 
+  Search, 
+  Filter, 
+  Printer, 
+  Plus, 
+  TrendingUp, 
+  Clock, 
+  AlertCircle, 
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Activity,
+  Layers,
+  ArrowUpRight,
+  Zap,
+  ShieldCheck,
+  MoreVertical,
+  X,
+  CreditCard,
+  Target,
+  BarChart3,
+  Calendar,
+  Navigation
+} from 'lucide-react';
 
 const SalesOrderList = () => {
     const navigate = useNavigate();
@@ -17,12 +43,13 @@ const SalesOrderList = () => {
 
     const isOverdue = (order: SalesOrder) => {
         if (!order.expectedDeliveryDate) return false;
-        return new Date(order.expectedDeliveryDate) < new Date() && order.status !== 'Delivered' && order.status !== 'Invoiced' && order.status !== 'Cancelled';
+        return new Date(order.expectedDeliveryDate) < new Date() && 
+               !['Delivered', 'Invoiced', 'Cancelled'].includes(order.status);
     };
 
     useEffect(() => {
         fetchOrders();
-    }, [filters]);
+    }, [filters.status, filters.overdue]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -38,344 +65,278 @@ const SalesOrderList = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            let fetchedOrders = response.data;
-
-            // Apply search filter on frontend
-            if (filters.search) {
-                const searchLower = filters.search.toLowerCase();
-                fetchedOrders = fetchedOrders.filter((order: SalesOrder) =>
-                    order.orderNumber.toLowerCase().includes(searchLower) ||
-                    order.customer?.name.toLowerCase().includes(searchLower)
-                );
-            }
-
-            setOrders(fetchedOrders);
+            setOrders(response.data);
         } catch (error: any) {
-            console.error('Error fetching orders:', error);
-            toast.error('Failed to fetch sales orders');
+            toast.error('Registry Sync Failure: Cannot retrieve fulfillment manifests');
         } finally {
             setLoading(false);
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const filteredOrders = useMemo(() => {
+        if (!filters.search) return orders;
+        const q = filters.search.toLowerCase();
+        return orders.filter(o => 
+            o.orderNumber.toLowerCase().includes(q) || 
+            o.customer?.name.toLowerCase().includes(q)
+        );
+    }, [orders, filters.search]);
+
+    const metrics = useMemo(() => ({
+        totalRevenue: orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+        activeVolume: orders.length,
+        conversionRate: orders.length ? (orders.filter(o => ['Confirmed', 'Delivered'].includes(o.status)).length / orders.length) * 100 : 0,
+        overdueCount: orders.filter(isOverdue).length
+    }), [orders]);
+
+    const getStatusConfig = (status: string) => {
         switch (status) {
             case 'Delivered':
-            case 'Invoiced':
-                return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
-            case 'Confirmed':
-                return 'bg-blue-100 text-blue-800 border border-blue-200';
+            case 'Invoiced': return { color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/20", icon: CheckCircle, text: "Fulfilled" };
+            case 'Confirmed': return { color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20", icon: Activity, text: "Resolved" };
             case 'Partially Delivered':
-            case 'Partially Invoiced':
-                return 'bg-amber-100 text-amber-800 border border-amber-200';
-            case 'Cancelled':
-                return 'bg-red-100 text-red-800 border border-red-200';
-            default: // Draft
-                return 'bg-slate-100 text-slate-800 border border-slate-200';
+            case 'Partially Invoiced': return { color: "text-amber-400", bg: "bg-amber-400/10", border: "border-amber-400/20", icon: Clock, text: "Fragmented" };
+            case 'Cancelled': return { color: "text-rose-400", bg: "bg-rose-400/10", border: "border-rose-400/20", icon: X, text: "Terminated" };
+            default: return { color: "text-slate-400", bg: "bg-slate-400/10", border: "border-slate-400/20", icon: Layers, text: "Projection" };
         }
     };
 
-    // Calculate Dashboard Metrics
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-    const confirmedOrders = orders.filter((o) => ['Confirmed', 'Partially Delivered', 'Delivered'].includes(o.status)).length;
-    const overdueOrders = orders.filter((o) => isOverdue(o)).length;
+    const MetricPanel = ({ title, value, icon: Icon, colorClass, gradient, subtext }: any) => (
+        <motion.div 
+            whileHover={{ y: -5, scale: 1.02 }}
+            className="glass-panel p-8 border border-white/5 relative overflow-hidden group shadow-2xl transition-all"
+        >
+            <div className={`absolute top-0 right-0 w-32 h-32 ${gradient} opacity-5 rounded-full blur-[40px] -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700`}></div>
+            <div className="flex justify-between items-start relative z-10">
+                <div className="space-y-4">
+                    <p className="text-[10px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 transition-opacity">{title}</p>
+                    <div className="space-y-1">
+                        <h3 className="text-3xl font-display font-black text-main tracking-tighter">{value}</h3>
+                        {subtext && <p className={`text-[9px] font-black mt-2 uppercase tracking-widest ${colorClass} italic`}>{subtext}</p>}
+                    </div>
+                </div>
+                <div className={`p-4 rounded-2xl ${colorClass.replace('text', 'bg')}/10 border border-white/5 ${colorClass} shadow-inner`}>
+                    <Icon className="w-6 h-6" />
+                </div>
+            </div>
+        </motion.div>
+    );
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sales Orders</h1>
-                        <p className="text-sm text-slate-500 mt-1">Manage, track, and fulfill customer orders</p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => window.print()}
-                            className="p-2 bg-white border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 shadow-sm transition-all"
-                            title="Print List"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => navigate('/sales/sales-order')}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>Create Order</span>
-                        </button>
-                    </div>
-                </div>
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-32">
+                {/* Visual Background Accents */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[140px] pointer-events-none -mr-48 -mt-48 opacity-20"></div>
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none -ml-32 -mb-32 opacity-10"></div>
 
-                {/* Dashboard / Metrics Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Revenue</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">₹{totalRevenue.toLocaleString()}</h3>
+                <div className="max-w-7xl mx-auto relative z-10 space-y-10">
+                    {/* Integrated Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 text-primary font-black text-[10px] uppercase tracking-[0.5em]">
+                                <ShieldCheck className="w-4 h-4" />
+                                Operational Protocol: Fulfillment 2036
                             </div>
-                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
+                            <h1 className="text-5xl md:text-6xl font-display font-black text-main tracking-tighter uppercase leading-none">
+                                Resolution <span className="text-primary italic">Registry</span>
+                            </h1>
+                            <p className="text-secondary text-base font-medium opacity-60 max-w-xl">Centralized manifest orchestration and real-time fulfillment intelligence.</p>
                         </div>
-                        <div className="mt-4 flex items-center text-xs text-emerald-600 font-medium">
-                            <span className="flex items-center">
-                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                                +12% from last month
-                            </span>
+
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => window.print()} className="w-14 h-14 glass-panel border border-white/10 hover:border-primary/40 transition-all text-secondary hover:text-primary flex items-center justify-center shadow-xl">
+                                <Printer className="w-6 h-6" />
+                            </button>
+                            <button
+                                onClick={() => navigate('/sales/sales-order')}
+                                className="px-10 py-5 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-primary/40 hover:bg-primary-hover hover:scale-[1.05] active:scale-[0.98] transition-all flex items-center gap-4 group"
+                            >
+                                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
+                                Initialize Manifest
+                            </button>
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{totalOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-indigo-500 rounded-full" style={{ width: '70%' }}></div>
-                        </div>
+                    {/* Operational Intelligence Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <MetricPanel title="Revenue Projection" value={`₹${metrics.totalRevenue.toLocaleString()}`} icon={TrendingUp} colorClass="text-emerald-400" gradient="bg-emerald-500" subtext="+14.8% CAPITAL GROWTH" />
+                        <MetricPanel title="Active Manifests" value={metrics.activeVolume} icon={Layers} colorClass="text-primary" gradient="bg-primary" subtext="OPERATIONAL THREADS" />
+                        <MetricPanel title="Resolution Index" value={`${metrics.conversionRate.toFixed(1)}%`} icon={Target} colorClass="text-blue-400" gradient="bg-blue-500" subtext="FIDELITY QUOTIENT" />
+                        <MetricPanel title="SLA Breaches" value={metrics.overdueCount} icon={AlertCircle} colorClass="text-rose-400" gradient="bg-rose-500" subtext={metrics.overdueCount > 0 ? "CRITICAL INTERVENTION" : "REGISTRY STABLE"} />
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Confirmed</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{confirmedOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-slate-500">
-                            <strong>{((confirmedOrders / (totalOrders || 1)) * 100).toFixed(0)}%</strong> conversion rate
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Attention Needed</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{overdueOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-rose-50 rounded-lg text-rose-600">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-rose-600 font-medium">
-                            {overdueOrders > 0 ? "Requires immediate action" : "All clear"}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content Island */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                    {/* Advanced Filter Bar */}
-                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                            {/* Search */}
-                            <div className="relative w-full md:max-w-md group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
-                                <input
+                    {/* Control Hub */}
+                    <div className="space-y-6">
+                        <div className="glass-panel p-4 border border-white/5 flex flex-col lg:flex-row items-center gap-6 shadow-2xl">
+                            <div className="flex-1 w-full relative group/search">
+                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40 group-focus-within/search:text-primary transition-colors" />
+                                <input 
                                     type="text"
-                                    placeholder="Search order #, customer name..."
+                                    placeholder="SCAN REGISTRY FOR MANIFEST HASH OR ENTITY MARKS..."
                                     value={filters.search}
                                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-all shadow-sm"
+                                    className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] pl-16 pr-6 py-5 text-[11px] font-black text-main uppercase tracking-[0.2em] focus:outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-secondary/20"
                                 />
                             </div>
-
-                            {/* Filters & Actions */}
-                            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                                <select
+                            
+                            <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+                                <select 
                                     value={filters.status}
                                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                                    className="block w-full md:w-40 py-2 px-3 border border-slate-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-slate-700 font-medium"
+                                    className="bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-[10px] font-black text-secondary uppercase tracking-widest focus:outline-none focus:border-primary/40 appearance-none min-w-[180px] cursor-pointer"
                                 >
-                                    <option value="">All Statuses</option>
-                                    <option value="Draft">Draft</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Delivered">Delivered</option>
-                                    <option value="Invoiced">Invoiced</option>
-                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="" className="bg-neutral-900">All Lifecycle Phases</option>
+                                    <option value="Draft" className="bg-neutral-900">Projection (Draft)</option>
+                                    <option value="Confirmed" className="bg-neutral-900">Resolved (Confirmed)</option>
+                                    <option value="Delivered" className="bg-neutral-900">Fulfilled (Delivered)</option>
+                                    <option value="Invoiced" className="bg-neutral-900">Settled (Invoiced)</option>
+                                    <option value="Cancelled" className="bg-neutral-900">Terminated (Cancelled)</option>
                                 </select>
 
-                                <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 transition-colors select-none">
+                                <label className={`flex items-center gap-4 px-6 py-5 rounded-2xl border cursor-pointer transition-all group ${filters.overdue ? 'bg-rose-500/10 border-rose-500/40 text-rose-400' : 'bg-white/5 border-white/10 text-secondary hover:bg-white/10'}`}>
                                     <input
                                         type="checkbox"
                                         checked={filters.overdue}
                                         onChange={(e) => setFilters({ ...filters, overdue: e.target.checked })}
-                                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                                        className="hidden"
                                     />
-                                    <span className="text-sm font-medium text-slate-700">Overdue</span>
+                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${filters.overdue ? 'bg-rose-500 border-rose-500' : 'border-white/20'}`}>
+                                        {filters.overdue && <X className="w-3 h-3 text-white" />}
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest">SLA Alert</span>
                                 </label>
 
-                                {(filters.status || filters.search || filters.overdue) && (
-                                    <button
+                                {Object.values(filters).some(v => v) && (
+                                    <button 
                                         onClick={() => setFilters({ status: '', search: '', overdue: false })}
-                                        className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-2 transition-colors"
+                                        className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-rose-500/40 hover:text-rose-500 hover:border-rose-500/40 transition-all hover:rotate-90"
                                     >
-                                        Clear
+                                        <X className="w-6 h-6" />
                                     </button>
                                 )}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Data Display */}
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                            <p className="text-slate-500 font-medium">Loading sales orders...</p>
-                        </div>
-                    ) : orders.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-                            <div className="bg-slate-100 p-4 rounded-full mb-4">
-                                <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-800">No orders found</h3>
-                            <p className="text-slate-500 mt-1 max-w-sm">
-                                Try adjusting your filters or create a new sales order to get started.
-                            </p>
-                            <button
-                                onClick={() => navigate('/sales/sales-order')}
-                                className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-sm"
-                            >
-                                Create First Order
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Desktop Table View */}
-                            <div className="hidden md:block overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className="bg-slate-50 border-b border-slate-200">
-                                        <tr>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Order</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Customer</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Amount</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 bg-white">
-                                        {orders.map((order: SalesOrder) => (
-                                            <tr
-                                                key={order._id}
-                                                onClick={() => navigate(`/sales/sales-order/${order._id}`)}
-                                                className="hover:bg-slate-50 transition-colors cursor-pointer group"
-                                            >
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="font-bold text-slate-800">{order.orderNumber}</div>
-                                                    {isOverdue(order) && (
-                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 mt-1">
-                                                            OVERDUE
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="font-medium text-slate-900">{order.customer?.name || 'Unknown'}</div>
-                                                    <div className="text-xs text-slate-500">{order.customer?.phone || '-'}</div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                                    {new Date(order.orderDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                                        {order.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                    <div className="font-bold text-slate-800">₹{order.totalAmount.toLocaleString()}</div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigate(`/sales/sales-order/${order._id}`);
-                                                        }}
-                                                        className="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-50 transition-colors opacity-0 group-hover:opacity-100"
-                                                    >
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Mobile Card Stack View */}
-                            <div className="md:hidden divide-y divide-slate-100">
-                                {orders.map((order: SalesOrder) => (
-                                    <div
-                                        key={order._id}
-                                        onClick={() => navigate(`/sales/sales-order/${order._id}`)}
-                                        className="p-4 active:bg-slate-50 transition-colors"
-                                    >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div>
-                                                <div className="font-bold text-slate-800">{order.orderNumber}</div>
-                                                <div className="text-sm text-slate-600">{order.customer?.name}</div>
-                                            </div>
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                                {order.status}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between items-center mt-3">
-                                            <div className="text-xs text-slate-500">
-                                                {new Date(order.orderDate).toLocaleDateString()}
-                                            </div>
-                                            <div className="font-bold text-slate-800">₹{order.totalAmount.toLocaleString()}</div>
-                                        </div>
-                                        <div className="mt-3">
-                                            <button className="w-full py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">
-                                                View Details
-                                            </button>
-                                        </div>
-                                        {isOverdue(order) && (
-                                            <div className="mt-2 text-xs font-bold text-red-600 flex items-center">
-                                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                Overdue Delivery
-                                            </div>
-                                        )}
+                        {/* Registry Latticework */}
+                        <div className="glass-panel border border-white/5 overflow-hidden shadow-2xl">
+                            {loading ? (
+                                <div className="flex flex-col items-center justify-center py-48 space-y-6">
+                                    <div className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full animate-spin shadow-2xl shadow-primary/20"></div>
+                                    <div className="text-center space-y-2">
+                                        <p className="text-[10px] font-black text-secondary uppercase tracking-[0.5em] animate-pulse">Syncing Registry lattice...</p>
+                                        <p className="text-[8px] font-bold text-primary/40 uppercase tracking-widest">Protocol 2036.04 Secure Link</p>
                                     </div>
-                                ))}
-                            </div>
-                        </>
-                    )}
+                                </div>
+                            ) : filteredOrders.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-48 text-center space-y-8">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full"></div>
+                                        <div className="w-24 h-24 bg-white/5 border border-white/5 rounded-[2.5rem] flex items-center justify-center relative z-10">
+                                            <Package className="w-12 h-12 text-primary opacity-20" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-2xl font-display font-black text-main uppercase tracking-tight">Queue Void Detected</h3>
+                                        <p className="text-secondary text-sm font-medium opacity-40 max-w-xs mx-auto leading-relaxed italic">No operational manifests match the current control parameters in the synchronized lattice.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto custom-scrollbar">
+                                    <table className="w-full text-left border-separate border-spacing-0">
+                                        <thead>
+                                            <tr className="bg-white/5 border-b border-white/5">
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic">Protocol Index</th>
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic">Commercial Entity</th>
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic">Temporal Delta</th>
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic text-center">Lifecycle state</th>
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic text-right">Magnitude</th>
+                                                <th className="px-8 py-6 text-[9px] font-black text-secondary uppercase tracking-[0.4em] opacity-40 italic text-right w-32">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5">
+                                            <AnimatePresence mode="popLayout">
+                                                {filteredOrders.map((order, idx) => {
+                                                    const status = getStatusConfig(order.status);
+                                                    const StatusIcon = status.icon;
+                                                    const overdue = isOverdue(order);
+                                                    return (
+                                                        <motion.tr 
+                                                            layout
+                                                            key={order._id}
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, scale: 0.98 }}
+                                                            transition={{ delay: idx * 0.03 }}
+                                                            className="group hover:bg-white/[0.02] transition-colors cursor-default"
+                                                        >
+                                                            <td className="px-8 py-6">
+                                                                <div 
+                                                                    onClick={() => navigate(`/sales/sales-order/${order._id}`)}
+                                                                    className="text-sm font-display font-black text-primary tracking-tighter cursor-pointer hover:text-primary-hover uppercase flex items-center gap-2 group/id transition-colors"
+                                                                >
+                                                                    {order.orderNumber}
+                                                                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 group-hover/id:translate-x-0.5 group-hover/id:-translate-y-0.5 transition-all text-primary/40" />
+                                                                </div>
+                                                                {overdue && (
+                                                                    <div className="text-[8px] font-black text-rose-500 uppercase tracking-widest mt-1.5 flex items-center gap-1.5 bg-rose-500/5 px-2 py-0.5 rounded-full border border-rose-500/10 w-fit">
+                                                                        <AlertCircle className="w-2.5 h-2.5" /> SLA BREACH
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <div className="text-[11px] font-black text-main uppercase tracking-widest leading-none">{order.customer?.name || 'Unknown Proxy'}</div>
+                                                                <div className="text-[9px] font-bold text-secondary/40 uppercase tracking-[0.1em] mt-2 flex items-center gap-2 italic">
+                                                                    <Activity className="w-2.5 h-2.5 text-emerald-500/40" />
+                                                                    {order.customer?.phone || 'NO_HASH_LINK'}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <div className="text-[11px] font-bold text-main uppercase tracking-tight">{new Date(order.orderDate).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                                                                <div className="text-[9px] font-black text-secondary/30 uppercase tracking-widest mt-1.5">Manifest Locked / 2036</div>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <div className="flex justify-center">
+                                                                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${status.bg} ${status.border} ${status.color} shadow-sm group-hover:scale-105 transition-transform`}>
+                                                                        <StatusIcon className="w-3 h-3" />
+                                                                        <span className="text-[8px] font-black uppercase tracking-[0.2em] leading-none">{status.text}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6 text-right">
+                                                                <div className="font-display font-black text-main tracking-tighter text-xl tabular-nums leading-none">₹{order.totalAmount.toLocaleString()}</div>
+                                                                <div className="text-[8px] font-black text-primary/40 uppercase tracking-[0.2em] mt-2 italic">authorized Magnitude</div>
+                                                            </td>
+                                                            <td className="px-8 py-6 text-right">
+                                                                <button 
+                                                                    onClick={() => navigate(`/sales/sales-order/${order._id}`)}
+                                                                    className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/40 flex items-center justify-center transition-all group/btn shadow-xl ml-auto"
+                                                                >
+                                                                    <Navigation className="w-5 h-5 text-secondary group-hover/btn:text-primary group-hover/btn:rotate-45 transition-all" />
+                                                                </button>
+                                                            </td>
+                                                        </motion.tr>
+                                                    );
+                                                })}
+                                            </AnimatePresence>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <style>{`
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border-radius: 2.5rem; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+                .custom-scrollbar::-webkit-scrollbar { height: 4px; width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.01); }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-rgb), 0.2); border-radius: 20px; }
+                select option { background-color: #0c0a09; color: white; padding: 20px; }
+            `}</style>
         </Layout>
     );
 };
 
 export default SalesOrderList;
-

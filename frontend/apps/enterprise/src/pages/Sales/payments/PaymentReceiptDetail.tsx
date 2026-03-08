@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "framer-motion";
+import api from "@/services/api";
 import { toast } from "react-toastify";
-import Layout from "../../../components/shared/Layout/Layout";
+import Layout from "@/components/shared/Layout/Layout";
 import {
   ArrowLeft,
   Printer,
@@ -16,7 +17,17 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-  Clock
+  Clock,
+  ChevronLeft,
+  Activity,
+  ShieldCheck,
+  Layers,
+  History,
+  Zap,
+  ArrowUpRight,
+  BadgeCheck,
+  MapPin,
+  Wallet
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -43,623 +54,250 @@ const PaymentReceiptDetail = () => {
       });
       setPayment(response.data);
     } catch (error) {
-      console.error("Error fetching payment:", error);
-      toast.error("Failed to fetch payment details");
+      toast.error("Settlement Sync Failure: Cannot retrieve receipt manifest");
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   if (loading || !payment) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mb-4"></div>
-          <p className="text-slate-500 font-medium">Loading receipt...</p>
+        <div className="flex flex-col items-center justify-center py-32 space-y-4">
+          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+          <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Decoding Settlement Manifest...</p>
         </div>
       </Layout>
     );
   }
 
+  const effectivePayment = payment.totalAmount + (payment.creditApplied || 0);
+
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto animate-fade-in pb-10">
-        {/* Header - Hidden on print */}
-        <div className="mb-8 print:hidden">
-          <button
-            onClick={() => navigate("/sales/payment-in-list")}
-            className="flex items-center text-slate-600 hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
+      <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-32">
+        {/* Backdrop Accents */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[160px] pointer-events-none -mr-48 -mt-48 opacity-30"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none -ml-32 -mb-32 opacity-20"></div>
+
+        <div className="max-w-6xl mx-auto relative z-10 space-y-8">
+          {/* Navigation & Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Payment List
-          </button>
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                <Receipt className="w-6 h-6 text-emerald-600" />
-                Payment Receipt
-              </h1>
-              <p className="text-sm text-slate-500 mt-1">
-                View and print payment receipt
-              </p>
-            </div>
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm font-medium"
+            <button 
+              onClick={() => navigate("/sales/payment-in-list")}
+              className="flex items-center gap-3 text-[10px] font-black text-secondary uppercase tracking-[0.3em] hover:text-emerald-500 transition-colors group"
+            >
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Settlement Registry
+            </button>
+
+            <button 
               onClick={handlePrint}
+              className="px-8 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-emerald-900/40 hover:bg-emerald-500 transition-all flex items-center gap-3"
             >
               <Printer className="w-4 h-4" />
-              Print Receipt
+              Generate Physical Manifest
             </button>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Receipt Container - Optimized for Print */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:bg-white print:border-0">
-          {/* Receipt Header Section */}
-          <div className="px-8 py-6 border-b-2 border-slate-200 print:px-6 print:py-4 print:border-gray-300">
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex-1">
-                <h2 className="text-3xl font-bold text-emerald-600 mb-1 print:text-green-700 tracking-tight">
-                  PAYMENT RECEIPT
-                </h2>
-                <div className="text-base font-mono font-bold text-slate-800 print:text-black">
-                  Receipt #: {payment.receiptNumber}
-                </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <div className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-1 tracking-wider">
-                  Receipt Date & Time
-                </div>
-                <div className="font-bold text-base text-slate-800 print:text-black">
-                  {new Date(payment.paymentDate).toLocaleDateString("en-IN", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </div>
-                <div className="text-xs text-slate-500 print:text-gray-700">
-                  {new Date(payment.paymentDate).toLocaleTimeString("en-IN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-              </div>
+          {/* Master Receipt Header */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-panel p-10 border border-white/5 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+              <Receipt className="w-64 h-64" />
             </div>
-          </div>
-
-          {/* Customer and Payment Summary Section */}
-          <div className="grid grid-cols-2 gap-6 px-8 py-6 print:grid-cols-2 print:gap-4 print:px-6 print:py-4">
-            {/* Customer Info */}
-            <div>
-              <h3 className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-3 pb-2 border-b border-slate-200 print:border-gray-300 tracking-wider">
-                Received From
-              </h3>
-              <div className="space-y-2">
-                <div className="font-bold text-lg text-slate-800 print:text-black">
-                  {payment.customer.name}
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
+                  <CheckCircle className="w-3 h-3" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Protocol: Verified Settlement</span>
                 </div>
-                <div className="text-sm text-slate-600 print:text-gray-900 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-slate-400 print:hidden" />
-                  {payment.customer.phone}
-                </div>
-                {payment.customer.email && (
-                  <div className="text-sm text-slate-600 print:text-gray-900 flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-slate-400 print:hidden" />
-                    {payment.customer.email}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Summary */}
-            <div className="text-right">
-              <h3 className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-3 pb-2 border-b border-slate-200 print:border-gray-300 tracking-wider">
-                Payment Summary
-              </h3>
-              <div className="space-y-2">
                 <div>
-                  <div className="text-xs text-slate-500 print:text-gray-900 mb-1">
-                    Amount Received
-                  </div>
-                  <div className="font-bold text-2xl text-emerald-600 print:text-green-700">
-                    ₹{payment.totalAmount.toFixed(2)}
-                  </div>
+                  <h1 className="text-4xl md:text-6xl font-display font-black text-main tracking-tighter uppercase line-clamp-1">
+                    {payment.receiptNumber}
+                  </h1>
+                  <p className="text-secondary text-sm font-medium opacity-60 mt-1">
+                    Established {new Date(payment.paymentDate).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' })} — System Authenticated
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end">
+                <div className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] mb-1">Liquid Capital Capture</div>
+                <div className="text-4xl md:text-5xl font-display font-black text-main tracking-tighter">
+                  ₹{payment.totalAmount.toLocaleString()}
                 </div>
                 {payment.creditApplied > 0 && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 print:border-gray-300">
-                    <div className="text-xs text-slate-500 print:text-gray-700 mb-1">
-                      + Credit Applied
-                    </div>
-                    <div className="font-bold text-lg text-orange-600 print:text-orange-700">
-                      ₹{payment.creditApplied.toFixed(2)}
-                    </div>
+                  <div className="text-[10px] font-black text-amber-500 uppercase tracking-widest mt-2 flex items-center gap-2">
+                    <Zap className="w-3 h-3" />
+                    + ₹{payment.creditApplied.toLocaleString()} Applied Credit
                   </div>
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Payment Methods Section */}
-          <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-            <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-4 flex items-center">
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              {/* Counterparty Intelligence */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="glass-panel p-8 border border-white/5 flex flex-col md:flex-row gap-8 items-start"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              Payment Method(s)
-            </h3>
-            <div className="space-y-2">
-              {payment.paymentMethods.map((pm: { method: string; reference?: string; amount: number; chequeNumber?: string; chequeDate?: string; chequeBank?: string; cardType?: string }, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex justify-between items-start py-3 px-4 bg-surface print:bg-white print:border print:border-gray-300 rounded border border-default"
-                >
-                  <div className="flex items-start flex-1">
-                    <div className="w-8 h-8 bg-card print:bg-white rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg
-                        className="w-4 h-4 text-blue-600 dark:text-blue-400 print:text-blue-700"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        {pm.method === "cash" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                          />
-                        )}
-                        {pm.method === "card" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                          />
-                        )}
-                        {pm.method === "upi" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                          />
-                        )}
-                        {pm.method === "cheque" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        )}
-                        {!["cash", "card", "upi", "cheque"].includes(
-                          pm.method
-                        ) && (
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                            />
-                          )}
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-bold text-main print:text-black capitalize">
-                        {pm.method}
-                      </div>
-                      {pm.reference && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-0.5">
-                          Ref: {pm.reference}
-                        </div>
-                      )}
-                      {pm.chequeNumber && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-1 space-y-0.5">
-                          <div>Cheque #{pm.chequeNumber}</div>
-                          {pm.chequeDate && (
-                            <div>
-                              Date:{" "}
-                              {new Date(pm.chequeDate).toLocaleDateString(
-                                "en-IN"
-                              )}
-                            </div>
-                          )}
-                          {pm.chequeBank && <div>Bank: {pm.chequeBank}</div>}
-                        </div>
-                      )}
-                      {pm.cardType && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-0.5">
-                          {pm.cardType}
-                        </div>
-                      )}
-                    </div>
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-emerald-500/20">
+                  {payment.customer?.name?.charAt(0).toUpperCase() || <User />}
+                </div>
+                <div className="space-y-6 flex-1">
+                  <div>
+                    <h2 className="text-2xl font-display font-black text-main uppercase tracking-tight">{payment.customer.name}</h2>
+                    <div className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] opacity-40 mt-1">Authorized Remitter Profile</div>
                   </div>
-                  <div className="font-bold text-blue-600 dark:text-blue-400 print:text-blue-700 text-base ml-4 flex-shrink-0">
-                    ₹{pm.amount.toFixed(2)}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 text-secondary">
+                      <div className="p-2 bg-white/5 rounded-lg"><Phone className="w-3.5 h-3.5" /></div>
+                      <span className="text-xs font-bold font-mono tracking-tight">{payment.customer.phone}</span>
+                    </div>
+                    {payment.customer.email && (
+                      <div className="flex items-center gap-3 text-secondary">
+                        <div className="p-2 bg-white/5 rounded-lg"><Mail className="w-3.5 h-3.5" /></div>
+                        <span className="text-xs font-bold font-mono tracking-tight">{payment.customer.email}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </motion.div>
 
-          {/* Allocated Invoices */}
-          {payment.allocatedInvoices &&
-            payment.allocatedInvoices.length > 0 && (
-              <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-                <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-4">
-                  Payment Allocated To
-                </h3>
+              {/* Settlement Allocation Manifest */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-panel border border-white/5 overflow-hidden"
+              >
+                <div className="px-8 py-6 border-b border-white/5 bg-white/5 text-[10px] font-black text-secondary uppercase tracking-[0.3em]">
+                  Revenue Allocation Matrix
+                </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-left">
                     <thead>
-                      <tr className="border-b-2 border-default print:border-gray-300">
-                        <th className="text-left py-2 px-2 font-bold text-main print:text-black">
-                          #
-                        </th>
-                        <th className="text-left py-2 px-2 font-bold text-main print:text-black">
-                          Invoice No
-                        </th>
-                        <th className="text-right py-2 px-2 font-bold text-main print:text-black">
-                          Invoice Total
-                        </th>
-                        <th className="text-right py-2 px-2 font-bold text-main print:text-black">
-                          Amount Paid
-                        </th>
+                      <tr className="border-b border-white/5">
+                        <th className="px-8 py-4 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Index</th>
+                        <th className="px-8 py-4 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Target Invoice</th>
+                        <th className="px-8 py-4 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-right">Invoice Magnitude</th>
+                        <th className="px-8 py-4 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-right">Settled Volume</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {payment.allocatedInvoices.map((allocation: { invoice?: { invoiceNo: string; totalAmount: number }; allocatedAmount: number }, index: number) => (
-                        <tr
-                          key={index}
-                          className="border-b border-default print:border-gray-300"
-                        >
-                          <td className="py-2 px-2 text-main print:text-gray-900">
-                            {index + 1}
+                    <tbody className="divide-y divide-white/5">
+                      {payment.allocatedInvoices?.map((allocation: any, idx: number) => (
+                        <tr key={idx} className="group hover:bg-white/5 transition-colors">
+                          <td className="px-8 py-5 text-[10px] font-black text-secondary/20 font-mono italic">{String(idx + 1).padStart(2, '0')}</td>
+                          <td className="px-8 py-5">
+                            <div className="text-xs font-black text-main uppercase tracking-tight">{allocation.invoice?.invoiceNo || 'N/A'}</div>
+                            <div className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mt-0.5">Allocation Verified</div>
                           </td>
-                          <td className="py-2 px-2 text-main print:text-black font-medium">
-                            {allocation.invoice?.invoiceNo || "N/A"}
-                          </td>
-                          <td className="py-2 px-2 text-right text-main print:text-black">
-                            ₹
-                            {allocation.invoice?.totalAmount?.toFixed(2) ||
-                              "0.00"}
-                          </td>
-                          <td className="py-2 px-2 text-right font-bold text-green-600 dark:text-green-400 print:text-green-700">
-                            ₹{allocation.allocatedAmount.toFixed(2)}
-                          </td>
+                          <td className="px-8 py-5 text-right font-bold text-secondary/60 font-mono text-xs">₹{allocation.invoice?.totalAmount?.toLocaleString() || '0.00'}</td>
+                          <td className="px-8 py-5 text-right font-display font-black text-emerald-500 tracking-tighter text-lg">₹{allocation.allocatedAmount.toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
-            )}
+              </motion.div>
+            </div>
 
-          {/* Summary and Status Section */}
-          <div className="px-8 py-6 border-t border-default bg-card print:px-6 print:py-4 print:bg-white print:border-gray-300">
-            <div className="flex justify-center">
-              <div className="w-full md:w-144">
-                <div className="space-y-6 bg-surface print:bg-white p-8 rounded-lg shadow-sm border border-default print:border print:border-gray-300 text-xl">
-                  <div className="flex justify-between py-3 text-base">
-                    <span className="text-main print:text-black">
-                      Total Payment Received:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹{payment.totalAmount.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* <div className="flex justify-between py-2 text-sm">
-                                        <span className="text-gray-900 dark:text-gray-900 print:text-black">Allocated to Invoices:</span>
-                                        <span className="font-bold text-gray-900 dark:text-gray-200 print:text-black">
-                                            ₹{(payment.allocatedInvoices?.reduce((sum, inv) => sum + inv.allocatedAmount, 0) || 0).toFixed(2)}
-                                        </span>
-                                    </div> */}
-
-                  {payment.creditApplied > 0 && (
-                    <div className="flex justify-between py-2 text-sm border-b border-default print:border-gray-200">
-                      <span className="text-main print:text-black">
-                        Customer Credit Applied:
-                      </span>
-                      <span className="font-bold text-main print:text-black">
-                        ₹{payment.creditApplied.toFixed(2)}
-                      </span>
+            {/* Terminal Analytics Sidebar */}
+            <div className="space-y-8">
+              {/* Aggregate Position */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="glass-panel border-2 border-emerald-500/20 overflow-hidden sticky top-8"
+              >
+                <div className="p-8 space-y-6">
+                  <div className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Settlement Aggregate</div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center opacity-40 hover:opacity-100 transition-all">
+                      <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Gross Remittance</span>
+                      <span className="text-sm font-black text-main font-mono">₹{payment.totalAmount.toLocaleString()}</span>
                     </div>
-                  )}
-
-                  <div className="flex justify-between py-0 text-sm border-t-1 border-default print:border-gray-200 pt-2">
-                    <span className="text-main print:text-black">
-                      Effective Payment:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹
-                      {(payment.totalAmount + payment.creditApplied).toFixed(2)}
-                    </span>
+                    {payment.creditApplied > 0 && (
+                      <div className="flex justify-between items-center opacity-40 hover:opacity-100 transition-all">
+                        <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Credit Injection</span>
+                        <span className="text-sm font-black text-amber-500 font-mono">+₹{payment.creditApplied.toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="h-px bg-white/5 my-2"></div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black text-main uppercase tracking-widest">Effective Settlement</span>
+                      <span className="text-2xl font-display font-black text-emerald-500 tracking-tighter">₹{effectivePayment.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[10px] font-black text-secondary uppercase tracking-widest opacity-40">Allocated Flux</span>
+                      <span className="font-black text-main opacity-60">₹{payment.allocatedInvoices.reduce((sum: number, inv: any) => sum + inv.allocatedAmount, 0).toLocaleString()}</span>
+                    </div>
                   </div>
-
-                  <div className="flex justify-between -mt-1 text-sm">
-                    <span className="text-main print:text-black">
-                      Allocated to Invoices:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹
-                      {payment.allocatedInvoices
-                        .reduce((sum: number, inv: { allocatedAmount: number }) => sum + inv.allocatedAmount, 0)
-                        .toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Status Box */}
-                  {(() => {
-                    const currentDues = payment.customerCurrentDues || 0;
-                    const effectivePayment =
-                      payment.totalAmount + payment.creditApplied;
-                    const duesBeforePayment = currentDues + effectivePayment;
-
-                    if (
-                      effectivePayment > duesBeforePayment &&
-                      duesBeforePayment > 0
-                    ) {
-                      const excessAmount = effectivePayment - duesBeforePayment;
-                      return (
-                        <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 print:border-emerald-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-emerald-600 dark:text-emerald-400 print:text-emerald-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-emerald-900 dark:text-emerald-300 print:text-emerald-900 text-sm mb-1">
-                                Excess Amount Credited
-                              </div>
-                              <p className="text-xs text-emerald-700 dark:text-emerald-400 print:text-emerald-800 leading-relaxed">
-                                ₹{excessAmount.toFixed(2)} added to customer
-                                credit
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (
-                      Math.abs(effectivePayment - duesBeforePayment) < 0.01 &&
-                      duesBeforePayment > 0
-                    ) {
-                      return (
-                        <div className="mt-4 p-3 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700 print:border-teal-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-teal-600 dark:text-teal-400 print:text-teal-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-teal-900 dark:text-teal-300 print:text-teal-900 text-sm mb-1">
-                                Dues Fully Repaid
-                              </div>
-                              <p className="text-xs text-teal-700 dark:text-teal-400 print:text-teal-800 leading-relaxed">
-                                All pending dues have been cleared
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (
-                      effectivePayment < duesBeforePayment &&
-                      duesBeforePayment > 0
-                    ) {
-                      const remainingDues =
-                        duesBeforePayment - effectivePayment;
-                      return (
-                        <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 print:border-amber-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-amber-600 dark:text-amber-400 print:text-amber-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-amber-900 dark:text-amber-300 print:text-amber-900 text-sm mb-1">
-                                Partial Payment
-                              </div>
-                              <p className="text-xs text-amber-700 dark:text-amber-400 print:text-amber-800 leading-relaxed">
-                                Remaining balance: ₹{remainingDues.toFixed(2)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (duesBeforePayment <= 0) {
-                      return (
-                        <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 print:border-indigo-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-indigo-600 dark:text-indigo-400 print:text-indigo-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.018a1 1 0 01-.999 1H3.455a1 1 0 01-.999-1V6.517a3.066 3.066 0 012.812-3.062p"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-indigo-900 dark:text-indigo-300 print:text-indigo-900 text-sm mb-1">
-                                Advance Payment
-                              </div>
-                              <p className="text-xs text-indigo-700 dark:text-indigo-400 print:text-indigo-800 leading-relaxed">
-                                ₹
-                                {(
-                                  payment.totalAmount + payment.creditApplied
-                                ).toFixed(2)}{" "}
-                                credited for future invoices
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
                 </div>
-              </div>
-            </div>
-          </div>
+                <div className="bg-emerald-500/10 p-6 flex items-center gap-4 text-emerald-500 backdrop-blur-md border-t border-emerald-500/20">
+                  <ShieldCheck className="w-5 h-5 animate-pulse" />
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em]">Ledger Integrity Confirmed</div>
+                </div>
+              </motion.div>
 
-          {/* Notes Section */}
-          {payment.notes && (
-            <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-              <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-3 pb-2 border-b border-default print:border-gray-300">
-                Notes
-              </h3>
-              <p className="text-sm text-secondary print:text-gray-800 leading-relaxed">
-                {payment.notes}
-              </p>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300 text-center">
-            <p className="text-sm text-main print:text-gray-900 font-medium">
-              Thank you for your payment!
-            </p>
-            <p className="text-xs text-muted print:text-gray-700 mt-2">
-              This is a computer-generated receipt.
-            </p>
-            {payment.createdAt && (
-              <p className="text-xs text-muted print:text-gray-700 mt-2">
-                Created on {new Date(payment.createdAt).toLocaleString("en-IN")}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Additional Info - Hidden on print */}
-        <div className="mt-6 bg-card border border-default rounded-lg p-4 print:hidden">
-          <div className="flex items-start gap-3">
-            <svg
-              className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div className="flex-1">
-              <h4 className="text-sm font-semibold text-main mb-1">
-                Receipt Information
-              </h4>
-              <p className="text-sm text-secondary">
-                Deposited to:{" "}
-                {payment.depositAccount === "cash"
-                  ? "Cash in Hand"
-                  : "Bank Account"}
-              </p>
+              {/* Payment Methods Traceability */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="glass-panel p-8 border border-white/5 space-y-6"
+              >
+                <div className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Capture Vectors</div>
+                <div className="space-y-4">
+                  {payment.paymentMethods.map((pm: any, idx: number) => (
+                    <div key={idx} className="p-4 bg-white/5 rounded-2xl border border-white/5 group hover:border-emerald-500/40 transition-all">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
+                             {pm.method === "cash" && <Banknote className="w-4 h-4" />}
+                             {pm.method === "card" && <CreditCard className="w-4 h-4" />}
+                             {pm.method === "upi" && <Smartphone className="w-4 h-4" />}
+                             {pm.method === "cheque" && <FileText className="w-4 h-4" />}
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-main">{pm.method}</span>
+                        </div>
+                        <span className="text-sm font-black text-emerald-500 font-mono">₹{pm.amount.toLocaleString()}</span>
+                      </div>
+                      {pm.reference && <div className="text-[8px] font-black text-secondary/40 uppercase tracking-widest mt-1">REF: {pm.reference}</div>}
+                      {pm.chequeNumber && (
+                        <div className="mt-2 pt-2 border-t border-white/5 space-y-1">
+                          <div className="text-[8px] font-black text-secondary/60 uppercase tracking-widest">CHEQUE #{pm.chequeNumber}</div>
+                          <div className="text-[8px] font-black text-secondary/40 uppercase tracking-widest">{pm.chequeBank} | {new Date(pm.chequeDate).toLocaleDateString()}</div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Print Styles */}
       <style>{`
-                @media print {
-                    * {
-                        -webkit-print-color-adjust: exact !important;
-                        color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                    }
-                    
-                    body {
-                        background: white !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                    }
-                    
-                    nav, aside, .print\\:hidden, button:not(.print\\:block) {
-                        display: none !important;
-                    }
-                    
-                    .max-w-5xl {
-                        max-width: 100% !important;
-                    }
-                    
-                    .bg-white {
-                        background: white !important;
-                        box-shadow: none !important;
-                    }
-                    
-                    .border-gray-300 {
-                        border-color: #d1d5db !important;
-                    }
-                    
-                    .text-green-600,
-                    .text-green-700,
-                    .dark\\:text-green-500 {
-                        color: #16a34a !important;
-                    }
-                    
-                    .text-gray-800,
-                    .text-gray-900,
-                    .dark\\:text-gray-200,
-                    .dark\\:text-gray-300 {
-                        color: #000 !important;
-                    }
-                    
-                    .text-gray-600,
-                    .text-gray-700 {
-                        color: #374151 !important;
-                    }
-                    
-                    table {
-                        width: 100% !important;
-                    }
-                    
-                    th, td {
-                        border-color: #d1d5db !important;
-                    }
-                }
-            `}</style>
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 2rem; }
+        .font-display { font-family: 'Outfit', sans-serif; }
+        @media print {
+          .print\\:hidden { display: none !important; }
+        }
+      `}</style>
     </Layout>
   );
 };

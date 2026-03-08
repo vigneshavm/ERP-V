@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import Layout from "../../../components/shared/Layout/Layout";
 import { getAllDeliveryChallans, deleteDeliveryChallan, convertToInvoice, reset } from "../../../redux/slices/deliveryChallanSlice";
@@ -15,7 +16,15 @@ import {
     CheckCircle,
     Clock,
     ArrowRightCircle,
-    Package
+    Package,
+    ShieldCheck,
+    Activity,
+    Zap,
+    ArrowUpRight,
+    TrendingUp,
+    Navigation,
+    Layers,
+    History
 } from 'lucide-react';
 
 const DeliveryChallanList = () => {
@@ -34,7 +43,7 @@ const DeliveryChallanList = () => {
 
     useEffect(() => {
         if (isError) {
-            toast.error(message);
+            toast.error(message || "Protocol decryption failure");
         }
         return () => {
             dispatch(reset());
@@ -44,7 +53,7 @@ const DeliveryChallanList = () => {
     const handleDelete = async (id: string) => {
         await dispatch(deleteDeliveryChallan(id) as any);
         setDeleteConfirm(null);
-        toast.success('Delivery Challan deleted successfully');
+        toast.success('Protocol Purged: Manifest alignment successful');
         dispatch(getAllDeliveryChallans() as any);
     };
 
@@ -53,7 +62,7 @@ const DeliveryChallanList = () => {
         setConvertConfirm(null);
 
         if (result.type.includes('fulfilled')) {
-            toast.success('Converted to Invoice successfully!');
+            toast.success('Protocol Success: Revenue Certificate Generated');
             const payload = result.payload as any;
             if (payload?.invoice?._id) {
                 navigate(`/sales/invoice/${payload.invoice._id}`);
@@ -61,218 +70,186 @@ const DeliveryChallanList = () => {
         }
     };
 
-    // KPI calculations
     const challanArray = Array.isArray(challans) ? challans : [];
-    const totalChallans = challanArray.length;
-    const deliveredCount = challanArray.filter(c => c.status === 'Delivered').length;
-    const convertedCount = challanArray.filter(c => c.status === 'Converted').length;
-    const draftCount = challanArray.filter(c => c.status === 'Draft').length;
+    const totalItems = challanArray.reduce((sum, c) => sum + (c.items?.length || 0), 0);
 
     const filteredChallans = challanArray.filter(challan => {
-        const matchesSearch = challan.challanNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const matchesSearch = (challan.challanNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
             (challan.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || challan.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
 
-    const getStatusBadge = (status: string) => {
-        const badges: Record<string, { bg: string, text: string, icon: any }> = {
-            Draft: { bg: 'bg-slate-100', text: 'text-slate-700', icon: Clock },
-            Delivered: { bg: 'bg-blue-50', text: 'text-blue-700', icon: Truck },
-            Converted: { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: CheckCircle }
-        };
-        const badge = badges[status] || badges.Draft;
-        const Icon = badge.icon;
+    const GlassPanel = ({ children, className = "" }: any) => (
+        <div className={`glass-panel border border-white/5 shadow-2xl overflow-hidden ${className}`}>
+            {children}
+        </div>
+    );
+
+    if (isLoading) {
         return (
-            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${badge.bg} ${badge.text}`}>
-                <Icon className="w-3 h-3" />
-                {status}
-            </span>
+            <Layout>
+                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                    <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+                    <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Syncing Logistics Registry...</p>
+                </div>
+            </Layout>
         );
-    };
+    }
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                            <Truck className="w-6 h-6 text-blue-600" />
-                            Delivery Challans
-                        </h1>
-                        <p className="text-sm text-slate-500 mt-1">View and manage delivery challans</p>
-                    </div>
-                    <button
-                        onClick={() => {
-                            dispatch(reset());
-                            navigate('/sales/delivery-challan');
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium"
-                    >
-                        <Plus className="w-4 h-4" /> Create Challan
-                    </button>
-                </div>
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-32">
+                {/* Background Accents */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none -mr-48 -mt-48 opacity-30"></div>
 
-                {/* KPI Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Challans</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{totalChallans}</h3>
+                <div className="max-w-7xl mx-auto relative z-10 space-y-8">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-emerald-500 font-black text-[10px] uppercase tracking-[0.4em]">
+                                <ShieldCheck className="w-4 h-4" />
+                                Operational Protocol: 2036.04
                             </div>
-                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                                <Package className="w-5 h-5" />
-                            </div>
+                            <h1 className="text-4xl md:text-5xl font-display font-black text-main tracking-tighter uppercase">
+                                Logistics <span className="text-emerald-500 italic">Registry</span>
+                            </h1>
+                            <p className="text-secondary text-sm font-medium opacity-60">Real-time centralized registry for all fulfillment manifests and asset movement protocols.</p>
                         </div>
+
+                        <button
+                            onClick={() => {
+                                dispatch(reset());
+                                navigate('/sales/delivery-challan');
+                            }}
+                            className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-emerald-900/40 hover:bg-emerald-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-4"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Initiate Fulfillment
+                        </button>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Delivered</p>
-                                <h3 className="text-2xl font-bold text-blue-600 mt-1">{deliveredCount}</h3>
-                            </div>
-                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                                <Truck className="w-5 h-5" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Converted</p>
-                                <h3 className="text-2xl font-bold text-emerald-600 mt-1">{convertedCount}</h3>
-                            </div>
-                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
-                                <CheckCircle className="w-5 h-5" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Drafts</p>
-                                <h3 className="text-2xl font-bold text-slate-600 mt-1">{draftCount}</h3>
-                            </div>
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
-                                <Clock className="w-5 h-5" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Filter Island + Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    {/* Filter Bar */}
-                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                            <div className="relative w-full md:max-w-md group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    {/* KPI Dashboard */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { label: 'Asset Magnitude', value: totalItems, icon: Box, color: 'emerald' },
+                            { label: 'Manifest registry', value: challanArray.length, icon: History, color: 'slate' },
+                            { label: 'Logistics Integrity', value: '98.4%', icon: Navigation, color: 'emerald' }
+                        ].map((kpi, idx) => (
+                            <GlassPanel key={idx} className="relative group overflow-hidden p-8">
+                                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform duration-700">
+                                    <kpi.icon className="w-24 h-24 text-emerald-500" />
                                 </div>
+                                <div className="space-y-4 relative z-10">
+                                    <div className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">{kpi.label}</div>
+                                    <div className="text-3xl font-display font-black text-main tracking-tighter">{kpi.value}</div>
+                                    <div className="text-[8px] font-black uppercase tracking-widest text-emerald-500 flex items-center gap-2">
+                                        <Activity className="w-3 h-3" />
+                                        Protocol Synchronized
+                                    </div>
+                                </div>
+                            </GlassPanel>
+                        ))}
+                    </div>
+
+                    {/* Control Hub */}
+                    <GlassPanel className="p-4">
+                        <div className="flex flex-col lg:flex-row gap-6 items-center">
+                            <div className="relative flex-1 w-full lg:w-auto overflow-hidden group/search">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500/40 group-focus-within/search:text-emerald-500 transition-colors" />
                                 <input
                                     type="text"
-                                    placeholder="Search challan # or customer..."
+                                    placeholder="SCAN FOR MANIFEST HASH OR COUNTERPARTY MARKS..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg bg-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-all shadow-sm"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black tracking-[0.2em] text-main placeholder:text-secondary/20 focus:outline-none focus:border-emerald-500/40 focus:ring-4 focus:ring-emerald-500/5 transition-all"
                                 />
                             </div>
-
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                            >
-                                <option value="all">All Status</option>
-                                <option value="Draft">Draft</option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Converted">Converted</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Table */}
-                    {isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                            <p className="text-slate-500 font-medium">Loading challans...</p>
-                        </div>
-                    ) : filteredChallans.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <div className="bg-slate-100 p-3 rounded-full mb-3">
-                                <FileText className="w-6 h-6 text-slate-400" />
+                            <div className="flex gap-4 w-full lg:w-auto">
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-secondary uppercase tracking-widest focus:outline-none focus:border-emerald-500/40 appearance-none flex-1 lg:flex-none cursor-pointer min-w-[180px]"
+                                >
+                                    <option value="all" className="bg-neutral-900">All Status Flags</option>
+                                    <option value="Draft" className="bg-neutral-900">Draft Status</option>
+                                    <option value="Delivered" className="bg-neutral-900">Delivered</option>
+                                    <option value="Converted" className="bg-neutral-900">Converted</option>
+                                </select>
                             </div>
-                            <p className="text-slate-600 font-medium">No delivery challans found</p>
-                            <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters</p>
                         </div>
-                    ) : (
+                    </GlassPanel>
+
+                    {/* Registry Table */}
+                    <GlassPanel className="p-0 overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50 border-b border-slate-200">
-                                    <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                        <th className="px-6 py-3">Challan No</th>
-                                        <th className="px-6 py-3">Date</th>
-                                        <th className="px-6 py-3">Customer</th>
-                                        <th className="px-6 py-3 text-center">Items</th>
-                                        <th className="px-6 py-3">Status</th>
-                                        <th className="px-6 py-3 text-right">Actions</th>
+                                <thead>
+                                    <tr className="border-b border-white/5">
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Protocol Index</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Date Marker</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest">Counterparty</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-center">Asset Magnitude</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-center">Status</th>
+                                        <th className="px-8 py-5 text-[9px] font-black text-secondary/40 uppercase tracking-widest text-right">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 bg-white">
+                                <tbody className="divide-y divide-white/5">
                                     {filteredChallans.map((challan) => (
-                                        <tr key={challan._id} className="hover:bg-slate-50 transition-colors group">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <button
+                                        <tr key={challan._id} className="group hover:bg-white/[0.02] transition-colors">
+                                            <td className="px-8 py-6">
+                                                <button 
                                                     onClick={() => navigate(`/sales/delivery-challan/${challan._id}`)}
-                                                    className="font-bold text-indigo-600 hover:text-indigo-800"
+                                                    className="text-xs font-black text-emerald-500 hover:text-emerald-400 transition-colors uppercase tracking-tight flex items-center gap-2"
                                                 >
                                                     {challan.challanNumber}
+                                                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                                 </button>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                                {new Date(challan.challanDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                            <td className="px-8 py-6">
+                                                <div className="text-[10px] font-bold text-secondary uppercase tracking-tight">
+                                                    {new Date(challan.challanDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm font-medium text-slate-800">{challan.customer?.name || 'N/A'}</div>
-                                                {challan.customer?.phone && (
-                                                    <div className="text-xs text-slate-500">{challan.customer.phone}</div>
-                                                )}
+                                            <td className="px-8 py-6">
+                                                <div className="text-[10px] font-black text-main uppercase tracking-widest">
+                                                    {challan.customer?.name || 'Walk-in Counterparty'}
+                                                </div>
+                                                {challan.customer?.phone && <div className="text-[8px] font-bold text-secondary/40 mt-1 uppercase italic">{challan.customer.phone}</div>}
                                             </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
-                                                    {(challan.items || []).length} items
+                                            <td className="px-8 py-6 text-center">
+                                                <span className="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-[9px] font-black text-main">
+                                                    {(challan.items || []).length} ASSETS
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {getStatusBadge(challan.status)}
+                                            <td className="px-8 py-6 text-center">
+                                                <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                                                    challan.status === 'Converted' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 
+                                                    challan.status === 'Delivered' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
+                                                    'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                                                }`}>
+                                                    {challan.status}
+                                                </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button
+                                            <td className="px-8 py-6 text-right">
+                                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <button 
                                                         onClick={() => navigate(`/sales/delivery-challan/${challan._id}`)}
-                                                        className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg"
-                                                        title="View"
+                                                        className="p-3 hover:bg-white/10 rounded-xl text-secondary hover:text-main transition-colors"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                     {challan.status !== 'Converted' && (
                                                         <>
-                                                            <button
+                                                            <button 
                                                                 onClick={() => setConvertConfirm(challan._id)}
-                                                                className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg"
-                                                                title="Convert to Invoice"
+                                                                className="p-3 hover:bg-emerald-500/10 rounded-xl text-emerald-500 transition-colors"
                                                             >
                                                                 <ArrowRightCircle className="w-4 h-4" />
                                                             </button>
-                                                            <button
+                                                            <button 
                                                                 onClick={() => setDeleteConfirm(challan._id)}
-                                                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
-                                                                title="Delete"
+                                                                className="p-3 hover:bg-rose-500/10 rounded-xl text-rose-500 transition-colors"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
@@ -285,62 +262,52 @@ const DeliveryChallanList = () => {
                                 </tbody>
                             </table>
                         </div>
-                    )}
+                    </GlassPanel>
                 </div>
-
-                {/* Delete Confirmation Modal */}
-                {deleteConfirm && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                        <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4">Confirm Delete</h3>
-                            <p className="text-slate-600 mb-6">
-                                Are you sure you want to delete this delivery challan? Stock will be restored.
-                            </p>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setDeleteConfirm(null)}
-                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(deleteConfirm)}
-                                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Convert Confirmation Modal */}
-                {convertConfirm && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                        <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4">Convert to Invoice</h3>
-                            <p className="text-slate-600 mb-6">
-                                Are you sure you want to convert this challan to an invoice? This action cannot be undone.
-                            </p>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setConvertConfirm(null)}
-                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => handleConvert(convertConfirm)}
-                                    className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium"
-                                >
-                                    Convert
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
-        </Layout>
+
+            {/* Modals */}
+             <AnimatePresence>
+                {deleteConfirm && (
+                    <div className="fixed inset-0 flex items-center justify-center z-[100] px-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setDeleteConfirm(null)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-sm glass-panel border border-rose-500/20 p-8 shadow-2xl relative z-10 text-center">
+                            <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trash2 className="w-8 h-8 text-rose-500" />
+                            </div>
+                            <h2 className="text-xl font-display font-black text-main uppercase tracking-tight mb-2">Registry Purge?</h2>
+                            <p className="text-xs text-secondary opacity-60 mb-8 lowercase tracking-wide">This action will restore associated assets and retrieve this manifest permanently.</p>
+                            <div className="flex gap-4">
+                                <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-secondary uppercase tracking-widest hover:text-main transition-all">Abort</button>
+                                <button onClick={() => deleteConfirm && handleDelete(deleteConfirm)} className="flex-1 py-3 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 shadow-xl shadow-rose-900/20 transition-all">Purge</button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+
+                {convertConfirm && (
+                    <div className="fixed inset-0 flex items-center justify-center z-[100] px-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setConvertConfirm(null)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-sm glass-panel border border-emerald-500/20 p-8 shadow-2xl relative z-10 text-center">
+                            <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <ArrowRightCircle className="w-8 h-8 text-emerald-500" />
+                            </div>
+                            <h2 className="text-xl font-display font-black text-main uppercase tracking-tight mb-2">Revenue Sync?</h2>
+                            <p className="text-xs text-secondary opacity-60 mb-8 lowercase tracking-wide">Are you prepared to convert this fulfillment protocol into a finalized revenue certificate?</p>
+                            <div className="flex gap-4">
+                                <button onClick={() => setConvertConfirm(null)} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-secondary uppercase tracking-widest hover:text-main transition-all">Abort</button>
+                                <button onClick={() => convertConfirm && handleConvert(convertConfirm)} className="flex-1 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 shadow-xl shadow-emerald-900/20 transition-all">Synchronize</button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <style>{`
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 2rem; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+            `}</style>
+        </div>
     );
 };
 

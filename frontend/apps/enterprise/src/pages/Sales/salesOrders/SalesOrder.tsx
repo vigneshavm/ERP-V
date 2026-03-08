@@ -1,10 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Package, 
+  User, 
+  Calendar, 
+  Trash2, 
+  Plus, 
+  Minus, 
+  CheckCircle, 
+  AlertCircle, 
+  ChevronRight, 
+  Search, 
+  ArrowLeft,
+  ShieldCheck,
+  Zap,
+  Clock,
+  Printer,
+  FileText,
+  X,
+  Layers,
+  TrendingUp,
+  Activity,
+  ArrowUpRight,
+  ClipboardList,
+  Target
+} from 'lucide-react';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
 import Layout from "@/components/shared/Layout/Layout";
-import PageHeader from "@/components/shared/Layout/PageHeader";
-import FormInput from "@/components/core/Form/Input";
 import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
 import ItemSelectionModal from "@/components/shared/Modals/ItemSelectionModal";
 import type { SalesOrder, SalesOrderItem, Customer } from '@/types/sales';
@@ -15,7 +39,6 @@ const SalesOrderPage = () => {
     const [showItemModal, setShowItemModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // Using a shape compatible with SalesOrder but allowing for form state
     interface SalesOrderFormData {
         orderDate: string;
         expectedDeliveryDate: string;
@@ -34,16 +57,23 @@ const SalesOrderPage = () => {
         notes: ''
     });
 
+    // Calculations
+    const subtotal = useMemo(() => formData.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0), [formData.items]);
+    const totalTax = useMemo(() => formData.items.reduce((sum, item) => {
+        const sub = item.quantity * item.rate;
+        return sum + (sub * (item.tax || 0) / 100);
+    }, 0), [formData.items]);
+    const itemDiscounts = useMemo(() => formData.items.reduce((sum, item) => sum + (item.discount || 0), 0), [formData.items]);
+    const finalTotal = useMemo(() => Math.max(0, subtotal + totalTax - itemDiscounts - formData.discount), [subtotal, totalTax, itemDiscounts, formData.discount]);
+
     const addItemFromModal = (item: any) => {
         const existingIndex = formData.items.findIndex((i) => i.item === item._id);
 
         if (existingIndex >= 0) {
-            // Update quantity if item already exists
             const newItems = [...formData.items];
             newItems[existingIndex].quantity += item.quantity || 1;
             setFormData({ ...formData, items: newItems });
         } else {
-            // Add new item
             const newItem: SalesOrderItem = {
                 item: item._id,
                 name: item.name,
@@ -53,18 +83,13 @@ const SalesOrderPage = () => {
                 discount: 0,
                 availableStock: item.stockQty - (item.reservedStock || 0)
             };
-
-            setFormData({
-                ...formData,
-                items: [...formData.items, newItem]
-            });
+            setFormData({ ...formData, items: [...formData.items, newItem] });
         }
     };
 
-    const updateItem = (index: number, field: keyof SalesOrderItem, value: number) => {
+    const updateItem = (index: number, field: keyof SalesOrderItem, value: any) => {
         const newItems = [...formData.items];
-        // @ts-ignore - Dynamic key assignment
-        newItems[index][field] = value;
+        (newItems[index] as any)[field] = value;
         setFormData({ ...formData, items: newItems });
     };
 
@@ -73,70 +98,27 @@ const SalesOrderPage = () => {
         setFormData({ ...formData, items: newItems });
     };
 
-    const calculateItemTotal = (item: SalesOrderItem) => {
-        const subtotal = item.quantity * item.rate;
-        const taxAmount = (subtotal * item.tax) / 100;
-        return subtotal + taxAmount - item.discount;
-    };
-
-    const calculateSubtotal = () => {
-        return formData.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
-    };
-
-    const calculateTax = () => {
-        return formData.items.reduce((sum, item) => {
-            const subtotal = item.quantity * item.rate;
-            return sum + (subtotal * item.tax / 100);
-        }, 0);
-    };
-
-    const calculateItemDiscount = () => {
-        return formData.items.reduce((sum, item) => sum + (item.discount || 0), 0);
-    };
-
-    const calculateTotal = () => {
-        return calculateSubtotal() + calculateTax() - calculateItemDiscount() - formData.discount;
-    };
-
     const validateForm = () => {
-        if (!formData.customer) {
-            toast.error('Please select a customer');
-            return false;
-        }
-
-        if (formData.items.length === 0) {
-            toast.error('Please add at least one item');
-            return false;
-        }
-
-        if (!formData.expectedDeliveryDate) {
-            toast.error('Please select expected delivery date');
-            return false;
-        }
-
-        // Validate stock availability
+        if (!formData.customer) { toast.error('Entity identification required'); return false; }
+        if (formData.items.length === 0) { toast.error('Fulfillment matrix is empty'); return false; }
+        if (!formData.expectedDeliveryDate) { toast.error('Resolution timeline undefined'); return false; }
+        
         for (const item of formData.items) {
             if (item.availableStock !== undefined && item.quantity > item.availableStock) {
-                toast.error(`Insufficient available stock for ${item.name}. Available: ${item.availableStock}`);
+                toast.error(`Stock disruption for ${item.name}. Available: ${item.availableStock}`);
                 return false;
             }
         }
-
         return true;
     };
 
     const handleSaveDraft = async () => {
         if (!validateForm()) return;
-
         setLoading(true);
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const token = user?.token;
-            // Ensure customer is not null (validated in validateForm)
-            if (!formData.customer) return;
-
             const payload = {
-                customerId: formData.customer.id || formData.customer._id,
+                customerId: formData.customer?.id || formData.customer?._id,
                 orderDate: formData.orderDate,
                 expectedDeliveryDate: formData.expectedDeliveryDate,
                 items: formData.items.map((item) => ({
@@ -149,36 +131,22 @@ const SalesOrderPage = () => {
                 discount: formData.discount,
                 notes: formData.notes
             };
-
-            const response = await api.post(
-                `/api/sales-orders`,
-                payload,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            toast.success('Sales Order saved as draft successfully!');
+            await api.post(`/api/sales-orders`, payload, { headers: { Authorization: `Bearer ${user?.token}` } });
+            toast.success('Fulfillment manifest saved as draft');
             navigate('/sales/sales-order-list');
         } catch (error: any) {
-            console.error('Error saving sales order:', error);
-            toast.error(error.response?.data?.message || 'Failed to save sales order');
-        } finally {
-            setLoading(false);
-        }
+            toast.error(error.response?.data?.message || 'Sync disruption');
+        } finally { setLoading(false); }
     };
 
     const handleConfirmOrder = async () => {
         if (!validateForm()) return;
-
         setLoading(true);
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const token = user?.token;
-
-            if (!formData.customer) return;
-
-            // First create the order
             const payload = {
-                customerId: formData.customer.id || formData.customer._id,
+                customerId: formData.customer?.id || formData.customer?._id,
                 orderDate: formData.orderDate,
                 expectedDeliveryDate: formData.expectedDeliveryDate,
                 items: formData.items.map((item) => ({
@@ -191,374 +159,404 @@ const SalesOrderPage = () => {
                 discount: formData.discount,
                 notes: formData.notes
             };
-
-            const createResponse = await api.post(
-                `/api/sales-orders`,
-                payload,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
+            const createResponse = await api.post(`/api/sales-orders`, payload, { headers: { Authorization: `Bearer ${token}` } });
             const orderId = createResponse.data.salesOrder._id;
-
-            // Then confirm it
-            await api.post(
-                `/api/sales-orders/${orderId}/confirm`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            toast.success('Sales Order confirmed successfully! Stock reserved.');
+            await api.post(`/api/sales-orders/${orderId}/confirm`, {}, { headers: { Authorization: `Bearer ${token}` } });
+            toast.success('Resolution confirmed. Inventory locked.');
             navigate('/sales/sales-order-list');
         } catch (error: any) {
-            console.error('Error confirming sales order:', error);
-            toast.error(error.response?.data?.message || 'Failed to confirm sales order');
-        } finally {
-            setLoading(false);
-        }
+            toast.error(error.response?.data?.message || 'Protocol failure');
+        } finally { setLoading(false); }
     };
 
-    const statusOptions = [
-        { value: 'Draft', label: 'Draft', color: 'bg-gray-100 text-gray-800' },
-        { value: 'Confirmed', label: 'Confirmed', color: 'bg-blue-100 text-blue-800' },
-        { value: 'Partially Delivered', label: 'Partially Delivered', color: 'bg-purple-100 text-purple-800' },
-        { value: 'Delivered', label: 'Delivered', color: 'bg-indigo-100 text-indigo-800' },
-        { value: 'Partially Invoiced', label: 'Partially Invoiced', color: 'bg-yellow-100 text-yellow-800' },
-        { value: 'Invoiced', label: 'Invoiced', color: 'bg-green-100 text-green-800' },
-        { value: 'Cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800' }
-    ];
-
-    // Helper to calculate total tax amount for display
-    const totalTaxAmount = calculateTax();
-    const subTotalAmount = calculateSubtotal();
-    const totalDiscountAmount = calculateItemDiscount();
-    const finalTotalAmount = calculateTotal();
+    // UI Components
+    const GlassPanel = ({ children, title, icon: Icon, className = "" }: any) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`glass-panel border border-white/5 shadow-2xl overflow-hidden ${className}`}
+        >
+            {title && (
+                <div className="px-10 py-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+                    <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                            {Icon && <Icon className="w-4 h-4" />}
+                        </div>
+                        {title}
+                    </h3>
+                    <div className="flex gap-2">
+                        <div className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-pulse"></div>
+                        <div className="w-1.5 h-1.5 bg-primary/20 rounded-full"></div>
+                    </div>
+                </div>
+            )}
+            <div className="p-10">{children}</div>
+        </motion.div>
+    );
 
     return (
         <Layout>
-            <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] bg-slate-50 animate-fade-in">
-                {/* ERP Header Action Bar */}
-                <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm shrink-0 z-10">
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sales Order</h1>
-                        <p className="text-sm text-slate-500 mt-0.5">Manage customer orders and reservations</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => navigate('/sales/sales-order-list')}
-                            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSaveDraft}
-                            disabled={loading}
-                            className="px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors shadow-sm"
-                        >
-                            {loading ? 'Saving...' : 'Save Draft'}
-                        </button>
-                        <button
-                            onClick={handleConfirmOrder}
-                            disabled={loading}
-                            className="px-6 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-lg shadow-sm hover:bg-emerald-700 focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 flex items-center gap-2 transition-all"
-                        >
-                            {loading ? (
-                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            ) : (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            )}
-                            {loading ? 'Processing...' : 'Confirm Order'}
-                        </button>
-                    </div>
-                </div>
+            <div className="min-h-screen bg-app p-4 lg:p-8 relative overflow-hidden pb-32">
+                {/* Visual Background Accents */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[160px] pointer-events-none -mr-48 -mt-48 opacity-20"></div>
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none -ml-32 -mb-32 opacity-10"></div>
 
-                {/* Main Content Scrollable Area */}
-                <div className="flex-1 overflow-auto p-6">
-                    <div className="max-w-7xl mx-auto space-y-6 pb-10">
-                        {/* Top Section: Order Info & Customer */}
-                        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                            <div className="bg-slate-50/50 px-6 py-3 border-b border-slate-100 flex justify-between items-center">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Order Information</h2>
-                                <div className="text-xs font-bold text-slate-500 bg-white px-2.5 py-1 rounded-md border border-slate-200 shadow-sm">
-                                    DRAFT MODE
-                                </div>
+                <div className="max-w-7xl mx-auto relative z-10 space-y-10">
+                    {/* Resolution Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 text-primary font-black text-[10px] uppercase tracking-[0.5em]">
+                                <ShieldCheck className="w-4 h-4" />
+                                Operational Protocol: Resolution Engine / 2036
                             </div>
-                            <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-8">
-                                {/* Column 1: Dates */}
-                                <div className="space-y-5">
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Order Date <span className="text-red-500">*</span></label>
-                                        <input
-                                            type="date"
-                                            value={formData.orderDate}
-                                            onChange={(e) => setFormData({ ...formData, orderDate: e.target.value })}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Expected Delivery <span className="text-red-500">*</span></label>
-                                        <input
-                                            type="date"
-                                            value={formData.expectedDeliveryDate}
-                                            onChange={(e) => setFormData({ ...formData, expectedDeliveryDate: e.target.value })}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                                        />
-                                    </div>
-                                </div>
+                            <h1 className="text-5xl md:text-6xl font-display font-black text-main tracking-tighter uppercase leading-none">
+                                Commercial <span className="text-primary italic">Engine</span>
+                            </h1>
+                            <p className="text-secondary text-base font-medium opacity-60 max-w-xl">High-fidelity fulfillment orchestration and synchronized asset locking.</p>
+                        </div>
 
-                                {/* Column 2: Empty Spacer or Additional Meta */}
-                                <div className="hidden md:block"></div>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => navigate('/sales/sales-order-list')}
+                                className="group w-14 h-14 glass-panel border border-white/10 hover:border-rose-500/40 transition-all flex items-center justify-center shadow-xl text-secondary hover:text-rose-500"
+                            >
+                                <X className="w-6 h-6 transition-transform group-hover:rotate-90" />
+                            </button>
+                            <button
+                                onClick={handleSaveDraft}
+                                disabled={loading}
+                                className="px-8 py-5 glass-panel border border-white/10 text-primary hover:bg-primary/5 transition-all flex items-center gap-4 shadow-xl"
+                            >
+                                <Zap className="w-5 h-5" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em]">{loading ? 'SYNCING...' : 'CACHE DRAFT'}</span>
+                            </button>
+                            <button
+                                onClick={handleConfirmOrder}
+                                disabled={loading}
+                                className="px-10 py-5 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl shadow-primary/40 hover:bg-primary-hover hover:scale-[1.05] active:scale-[0.98] transition-all flex items-center gap-4 group"
+                            >
+                                {loading ? <Clock className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+                                {loading ? 'PROCESSING...' : 'AUTHORIZE RESOLUTION'}
+                            </button>
+                        </div>
+                    </div>
 
-                                {/* Column 3 & 4: Customer Panel */}
-                                <div className="md:col-span-2 border border-slate-200 rounded-xl bg-slate-50/50 p-4 relative group hover:border-indigo-300 transition-colors">
-                                    <label className="block text-xs font-bold text-indigo-600 mb-3 uppercase tracking-wider">Customer Details</label>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Primary Configuration Compartment */}
+                        <div className="lg:col-span-8 space-y-8">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                {/* Entity Details */}
+                                <GlassPanel title="Protocol Entity" icon={User} className="h-full">
                                     {formData.customer ? (
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="font-bold text-slate-800 text-base">{formData.customer.name}</p>
-                                                {/* @ts-ignore - address might be string or object */}
-                                                <p className="text-sm text-slate-600 mt-1">{formData.customer.address?.line1 || typeof formData.customer.address === 'string' ? formData.customer.address : ''}, {formData.customer.address?.city}</p>
-                                                <div className="flex gap-4 mt-3 text-xs font-medium text-slate-500">
-                                                    <span className="flex items-center gap-1">
-                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                                        {formData.customer.phone}
-                                                    </span>
-                                                    {formData.customer.email && (
-                                                        <span className="flex items-center gap-1">
-                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                                            {formData.customer.email}
-                                                        </span>
-                                                    )}
+                                        <div className="space-y-6">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-center gap-5">
+                                                    <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-indigo-500/10 border border-primary/30 rounded-3xl flex items-center justify-center text-primary font-black text-3xl font-display shadow-inner">
+                                                        {formData.customer.name?.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <div className="text-2xl font-display font-black text-main uppercase tracking-tight leading-none">{formData.customer.name}</div>
+                                                        <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.2em] opacity-60">
+                                                            <Activity className="w-3.5 h-3.5" /> 
+                                                            FIDELITY PROFILE: HIGH-PRECISION
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    onClick={() => setFormData({ ...formData, customer: null })}
+                                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-rose-500/10 hover:border-rose-500/40 flex items-center justify-center transition-all group"
+                                                >
+                                                    <Trash2 className="w-5 h-5 text-rose-500/40 group-hover:text-rose-500 transition-colors" />
+                                                </button>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="p-5 bg-white/5 border border-white/5 rounded-2xl space-y-3 hover:bg-white/[0.08] transition-colors">
+                                                    <div className="text-[9px] font-black text-secondary/40 uppercase tracking-[0.3em]">Temporal Marker</div>
+                                                    <div className="text-xs font-black text-main tracking-widest">{formData.customer.phone || 'NONE_DETECTED'}</div>
+                                                </div>
+                                                <div className="p-5 bg-white/5 border border-white/5 rounded-2xl space-y-3 hover:bg-white/[0.08] transition-colors overflow-hidden">
+                                                    <div className="text-[9px] font-black text-secondary/40 uppercase tracking-[0.3em]">Communication Hash</div>
+                                                    <div className="text-xs font-black text-main truncate hover:text-primary transition-colors">{formData.customer.email || 'REDACTED'}</div>
                                                 </div>
                                             </div>
-                                            <button
-                                                onClick={() => setFormData({ ...formData, customer: null })}
-                                                className="text-red-600 hover:text-red-700 text-xs font-medium border border-red-200 bg-white px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors shadow-sm"
-                                            >
-                                                Change
-                                            </button>
                                         </div>
                                     ) : (
-                                        <div className="h-full flex flex-col items-center justify-center gap-3 py-4">
-                                            <div className="p-3 bg-white rounded-full shadow-sm">
-                                                <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        <motion.button
+                                            whileHover={{ scale: 1.01, border: '2px solid rgba(var(--color-primary-rgb), 0.4)' }}
+                                            whileTap={{ scale: 0.99 }}
+                                            onClick={() => setShowCustomerModal(true)}
+                                            className="w-full h-48 border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center gap-4 group transition-all bg-white/[0.02] hover:bg-primary/[0.02]"
+                                        >
+                                            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/20 transition-all">
+                                                <User className="w-8 h-8 text-secondary group-hover:text-primary transition-colors" />
                                             </div>
-                                            <p className="text-sm font-medium text-slate-500">No customer selected</p>
-                                            <button
-                                                onClick={() => setShowCustomerModal(true)}
-                                                className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-indigo-700 shadow-sm flex items-center gap-2 transition-all"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                                Find Customer
-                                            </button>
-                                        </div>
+                                            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-secondary group-hover:text-primary transition-colors">IDENTIFY COMMERCIAL ENTITY</span>
+                                        </motion.button>
                                     )}
-                                </div>
-                            </div>
-                        </div>
+                                </GlassPanel>
 
-                        {/* Items Section - Dense Table with Calculations */}
-                        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[300px]">
-                            <div className="px-6 py-3 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Line Items</h2>
-                                <button
-                                    onClick={() => setShowItemModal(true)}
-                                    className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-emerald-700 flex items-center gap-2 shadow-sm transition-all"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                                    Add Product
-                                </button>
+                                {/* Timeline Precision */}
+                                <GlassPanel title="Temporal Resolution" icon={Calendar} className="h-full">
+                                    <div className="space-y-6">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-secondary uppercase tracking-[0.4em] opacity-40">Establishment Date</label>
+                                            <div className="relative group">
+                                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40" />
+                                                <input 
+                                                    type="date" 
+                                                    value={formData.orderDate}
+                                                    onChange={(e) => setFormData({ ...formData, orderDate: e.target.value })}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-5 text-[11px] font-black text-main uppercase tracking-widest focus:outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Target Resolution Date</label>
+                                            <div className="relative group">
+                                                <Target className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                                <input 
+                                                    type="date" 
+                                                    value={formData.expectedDeliveryDate}
+                                                    onChange={(e) => setFormData({ ...formData, expectedDeliveryDate: e.target.value })}
+                                                    className="w-full bg-primary/5 border border-primary/20 rounded-2xl pl-12 pr-4 py-5 text-[11px] font-black text-primary uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                                />
+                                            </div>
+                                            <p className="text-[8px] font-black text-primary/40 uppercase tracking-widest italic flex items-center gap-2">
+                                                <Activity className="w-3 h-3" /> SLA Synchronization Active
+                                            </p>
+                                        </div>
+                                    </div>
+                                </GlassPanel>
                             </div>
 
-                            <div className="flex-1 overflow-x-auto">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                            <th className="px-4 py-3 border-r border-slate-200 w-12 text-center">#</th>
-                                            <th className="px-4 py-3 border-r border-slate-200">Product</th>
-                                            <th className="px-4 py-3 border-r border-slate-200 w-28 text-right">Qty</th>
-                                            <th className="px-4 py-3 border-r border-slate-200 w-32 text-right">Rate</th>
-                                            <th className="px-4 py-3 border-r border-slate-200 w-24 text-right">Tax %</th>
-                                            <th className="px-4 py-3 border-r border-slate-200 w-28 text-right">Disc</th>
-                                            <th className="px-4 py-3 border-r border-slate-200 w-32 text-right">Total</th>
-                                            <th className="px-4 py-3 w-12 text-center"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {formData.items.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={8} className="px-4 py-16 text-center text-slate-400">
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                                                        <p className="text-sm font-medium">No items added yet</p>
-                                                        <p className="text-xs">Select products to build your order</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            formData.items.map((item, index) => (
-                                                <tr key={index} className="hover:bg-slate-50/80 group transition-colors">
-                                                    <td className="px-4 py-2 text-xs text-slate-500 text-center border-r border-slate-100 bg-slate-50/30">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 max-w-xs">
-                                                        <p className="text-sm font-semibold text-slate-800 truncate">{item.name}</p>
-                                                        <p className="text-[10px] uppercase font-bold text-slate-400 mt-0.5">Stock: {item.availableStock}</p>
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 text-right p-1.5">
-                                                        <input
-                                                            type="number"
-                                                            min="1"
-                                                            max={item.availableStock}
-                                                            value={item.quantity}
-                                                            onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                                                            className="w-full text-right px-2 py-1.5 text-sm border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 text-right p-1.5">
-                                                        <input
-                                                            type="number"
-                                                            value={item.rate}
-                                                            onChange={(e) => updateItem(index, 'rate', parseFloat(e.target.value) || 0)}
-                                                            className="w-full text-right px-2 py-1.5 text-sm border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 text-right p-1.5">
-                                                        <select
-                                                            value={item.tax}
-                                                            onChange={(e) => updateItem(index, 'tax', parseFloat(e.target.value))}
-                                                            className="w-full text-right px-1 py-1.5 text-sm border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white"
-                                                        >
-                                                            <option value="0">0%</option>
-                                                            <option value="5">5%</option>
-                                                            <option value="12">12%</option>
-                                                            <option value="18">18%</option>
-                                                            <option value="28">28%</option>
-                                                        </select>
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 text-right p-1.5">
-                                                        <input
-                                                            type="number"
-                                                            value={item.discount}
-                                                            onChange={(e) => updateItem(index, 'discount', parseFloat(e.target.value) || 0)}
-                                                            className="w-full text-right px-2 py-1.5 text-sm border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-2 border-r border-slate-100 text-right font-bold text-slate-700">
-                                                        ₹{calculateItemTotal(item).toFixed(2)}
-                                                    </td>
-                                                    <td className="px-4 py-2 text-center">
-                                                        <button
-                                                            onClick={() => removeItem(index)}
-                                                            className="text-slate-400 hover:text-red-600 transition-colors p-1.5 hover:bg-red-50 rounded-lg"
-                                                            title="Remove Item"
-                                                        >
-                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
-                                                        </button>
-                                                    </td>
+                            {/* Fulfillment Matrix */}
+                            <GlassPanel title="Fulfillment Matrix" icon={Package}>
+                                <div className="space-y-8">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                            <div className="text-[10px] font-black text-secondary uppercase tracking-[0.4em]">Integrated Asset Registry</div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setShowItemModal(true)}
+                                            className="px-8 py-3 bg-white/5 border border-white/10 hover:border-primary/40 hover:bg-primary/5 rounded-xl transition-all flex items-center gap-3 group"
+                                        >
+                                            <Plus className="w-5 h-5 text-primary group-hover:rotate-90 transition-transform duration-500" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary group-hover:text-main">Inject Asset</span>
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto custom-scrollbar">
+                                        <table className="w-full border-separate border-spacing-y-4">
+                                            <thead>
+                                                <tr className="text-[9px] font-black text-secondary/40 uppercase tracking-[0.5em] text-left">
+                                                    <th className="px-6 pb-2">Operational Asset</th>
+                                                    <th className="px-6 pb-2 text-right">Magnitude</th>
+                                                    <th className="px-6 pb-2 text-right">Unit Rate</th>
+                                                    <th className="px-6 pb-2 text-right">Net Resolution</th>
+                                                    <th className="px-6 pb-2 w-16 text-center"></th>
                                                 </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                    {formData.items.length > 0 && (
-                                        <tfoot className="bg-slate-50/50 border-t border-slate-200">
-                                            <tr>
-                                                <td colSpan={6} className="px-4 py-3 text-xs text-right text-slate-500 uppercase font-bold border-r border-slate-200">Subtotal</td>
-                                                <td className="px-4 py-3 text-sm text-right font-bold text-slate-700 border-r border-slate-200">₹{subTotalAmount.toFixed(2)}</td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan={6} className="px-4 py-3 text-xs text-right text-slate-500 uppercase font-bold border-r border-slate-200">Total Tax</td>
-                                                <td className="px-4 py-3 text-sm text-right font-bold text-slate-700 border-r border-slate-200">₹{totalTaxAmount.toFixed(2)}</td>
-                                                <td></td>
-                                            </tr>
-                                        </tfoot>
-                                    )}
-                                </table>
-                            </div>
+                                            </thead>
+                                            <tbody>
+                                                <AnimatePresence mode="popLayout">
+                                                    {formData.items.length === 0 ? (
+                                                        <tr className="group">
+                                                            <td colSpan={5} className="py-24 text-center">
+                                                                <div className="relative inline-block">
+                                                                    <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full scale-150 opacity-20"></div>
+                                                                    <ClipboardList className="w-16 h-16 mx-auto mb-6 text-primary/20 relative z-10" />
+                                                                </div>
+                                                                <div className="text-[11px] font-black uppercase tracking-[0.5em] text-secondary opacity-40">Matrix Status: Offline / Awaiting Asset Injection</div>
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        formData.items.map((item, index) => (
+                                                            <motion.tr 
+                                                                layout
+                                                                key={index}
+                                                                initial={{ opacity: 0, x: -20 }}
+                                                                animate={{ opacity: 1, x: 0 }}
+                                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                                className="bg-white/5 rounded-3xl border border-white/5 group hover:bg-white/[0.08] transition-all"
+                                                            >
+                                                                <td className="px-6 py-6 rounded-l-[1.5rem]">
+                                                                    <div className="text-sm font-display font-black text-main uppercase tracking-tight group-hover:text-primary transition-colors leading-none">{item.name}</div>
+                                                                    <div className="flex items-center gap-3 mt-3">
+                                                                        <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${item.availableStock && item.availableStock > 0 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}`}>
+                                                                            Stock: {item.availableStock || '0'}
+                                                                        </div>
+                                                                        <div className="text-[8px] font-black text-primary/40 uppercase tracking-widest italic">Authorized Unit</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-6">
+                                                                    <div className="flex items-center justify-end gap-3">
+                                                                        <button 
+                                                                            onClick={() => updateItem(index, 'quantity', Math.max(1, (item.quantity || 1) - 1))}
+                                                                            className="w-10 h-10 bg-white/5 border border-white/5 rounded-xl flex items-center justify-center hover:bg-primary/10 hover:border-primary/20 hover:text-primary transition-all shadow-inner"
+                                                                        >
+                                                                            <Minus className="w-4 h-4" />
+                                                                        </button>
+                                                                        <div className="w-12 text-center">
+                                                                            <span className="text-lg font-display font-black text-main leading-none tabular-nums">{item.quantity}</span>
+                                                                            <div className="text-[7px] font-black text-secondary/40 uppercase tracking-widest mt-1">VOL</div>
+                                                                        </div>
+                                                                        <button 
+                                                                            onClick={() => updateItem(index, 'quantity', (item.quantity || 1) + 1)}
+                                                                            className="w-10 h-10 bg-white/5 border border-white/5 rounded-xl flex items-center justify-center hover:bg-primary/10 hover:border-primary/20 hover:text-primary transition-all shadow-inner"
+                                                                        >
+                                                                            <Plus className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-6 text-right">
+                                                                    <div className="text-sm font-black text-main tabular-nums">₹{item.rate?.toLocaleString()}</div>
+                                                                    <div className="text-[8px] font-black text-secondary/40 uppercase tracking-widest mt-1">VALUE_INDEX</div>
+                                                                </td>
+                                                                <td className="px-6 py-6 text-right">
+                                                                    <div className="text-lg font-display font-black text-main tracking-tighter tabular-nums">₹{(item.quantity * (item.rate || 0)).toLocaleString()}</div>
+                                                                    <div className="text-[8px] font-black text-primary/40 uppercase tracking-widest mt-1 italic">Authorized NET</div>
+                                                                </td>
+                                                                <td className="px-6 py-6 text-center rounded-r-[1.5rem]">
+                                                                    <button 
+                                                                        onClick={() => removeItem(index)}
+                                                                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 text-rose-500/40 hover:text-rose-500 transition-all flex items-center justify-center group/del shadow-xl"
+                                                                    >
+                                                                        <Trash2 className="w-5 h-5 group-hover/del:scale-110 transition-transform" />
+                                                                    </button>
+                                                                </td>
+                                                            </motion.tr>
+                                                        ))
+                                                    )}
+                                                </AnimatePresence>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </GlassPanel>
                         </div>
 
-                        {/* Bottom Section: Notes & Final Totals */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {/* Notes Panel */}
-                            <div className="md:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
-                                <div className="bg-slate-50/50 px-6 py-3 border-b border-slate-100">
-                                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Terms & Notes</h2>
-                                </div>
-                                <div className="p-4 flex-1">
-                                    <textarea
-                                        value={formData.notes}
-                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        rows={4}
-                                        className="w-full h-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none placeholder:text-slate-400"
-                                        placeholder="Add payment terms, delivery instructions, or general remarks..."
-                                    />
-                                </div>
-                            </div>
+                        {/* Intelligence Hub Partition */}
+                        <div className="lg:col-span-4 space-y-8">
+                            <GlassPanel title="Resolution Intelligence" icon={TrendingUp} className="sticky top-8">
+                                <div className="space-y-8">
+                                    {/* Calculations */}
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-end border-b border-white/5 pb-6 group">
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.4em] group-hover:text-secondary transition-colors">Operational Base</span>
+                                                <div className="text-[9px] font-black text-primary/40 uppercase tracking-widest italic">SUM_MANIFEST</div>
+                                            </div>
+                                            <span className="text-xl font-display font-black text-main tabular-nums tracking-tighter">₹{subtotal.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-end border-b border-white/5 pb-6 group">
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.4em] group-hover:text-secondary transition-colors">Protocol Value Transfer (18%)</span>
+                                                <div className="text-[9px] font-black text-primary/40 uppercase tracking-widest italic">VAT_SYNC</div>
+                                            </div>
+                                            <span className="text-xl font-display font-black text-main tabular-nums tracking-tighter">₹{totalTax.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-end group">
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-black text-rose-500/40 uppercase tracking-[0.4em] group-hover:text-rose-500 transition-colors">Aggregated Asset Rebates</span>
+                                                <div className="text-[9px] font-black text-rose-500/20 uppercase tracking-widest italic font-mono">-REBATE_LOCKED</div>
+                                            </div>
+                                            <span className="text-xl font-display font-black text-rose-500 tabular-nums tracking-tighter">-₹{itemDiscounts.toLocaleString()}</span>
+                                        </div>
 
-                            {/* Final Calculations Panel */}
-                            <div className="bg-white border border-indigo-100 rounded-xl shadow-sm overflow-hidden flex flex-col">
-                                <div className="bg-indigo-50/50 px-6 py-3 border-b border-indigo-100">
-                                    <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Order Summary</h2>
-                                </div>
-                                <div className="p-6 space-y-4 flex-1">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Subtotal</span>
-                                        <span className="font-bold text-slate-800">₹{subTotalAmount.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Item Discounts</span>
-                                        <span className="font-bold text-rose-600">-₹{totalDiscountAmount.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Tax</span>
-                                        <span className="font-bold text-slate-800">₹{totalTaxAmount.toFixed(2)}</span>
-                                    </div>
-                                    <div className="border-t border-slate-100 pt-4 mt-2">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="text-sm font-bold text-slate-600">Additional Discount</span>
-                                            <input
-                                                type="number"
-                                                value={formData.discount}
-                                                onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
-                                                className="w-24 text-right px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium"
-                                            />
+                                        <div className="space-y-3 pt-4 border-t border-primary/20">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Resolution Incentive Override</label>
+                                                <Zap className="w-3.5 h-3.5 text-primary animate-pulse" />
+                                            </div>
+                                            <div className="relative group">
+                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-rose-400 opacity-40 group-focus-within:opacity-100 transition-opacity">₹</div>
+                                                <input 
+                                                    type="number" 
+                                                    value={formData.discount}
+                                                    onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
+                                                    className="w-full bg-rose-500/5 border border-rose-500/20 rounded-2xl px-6 py-5 text-xl font-display font-black text-rose-500 focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all text-right tabular-nums tracking-tighter"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* Final Resolution Magnitude */}
+                                    <div className="p-8 bg-gradient-to-br from-primary/10 to-indigo-500/5 border border-primary/20 rounded-3xl relative overflow-hidden group shadow-2xl">
+                                         <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-[60px] -mr-24 -mt-24 pointer-events-none group-hover:scale-150 transition-transform duration-1000"></div>
+                                         <div className="space-y-6 relative z-10">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[11px] font-black text-primary uppercase tracking-[0.5em] italic">Net Contract Magnitude</span>
+                                                <ShieldCheck className="w-5 h-5 text-primary" />
+                                            </div>
+                                            <div className="flex items-baseline justify-end gap-3">
+                                                <span className="text-2xl text-primary font-black mb-1">₹</span>
+                                                <span className="text-6xl font-display font-black text-main tracking-tighter leading-none tabular-nums">
+                                                    {finalTotal.toLocaleString()}
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="pt-4">
+                                                <button 
+                                                    onClick={handleConfirmOrder}
+                                                    disabled={loading || formData.items.length === 0}
+                                                    className="w-full py-6 bg-primary text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.5em] shadow-2xl shadow-primary/40 hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 transition-all flex items-center justify-center gap-4 group/btn"
+                                                >
+                                                    {loading ? (
+                                                        <Clock className="w-5 h-5 animate-spin" />
+                                                    ) : (
+                                                        <ShieldCheck className="w-6 h-6 group-hover/btn:scale-110 transition-transform" />
+                                                    )}
+                                                    {loading ? 'INITIALIZING PROTOCOL...' : 'AUTHORIZE RESOLUTION'}
+                                                </button>
+                                                <p className="text-center text-[8px] font-black text-primary/40 uppercase tracking-widest mt-4 italic">Confirming will lock inventory and establish commercial obligation.</p>
+                                            </div>
+                                         </div>
+                                    </div>
+
+                                    {/* Conflict Annotations */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                            <ClipboardList className="w-4 h-4 text-secondary/40" />
+                                            <label className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.4em]">Protocol Annotations</label>
+                                        </div>
+                                        <textarea 
+                                            value={formData.notes}
+                                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                            placeholder="SPECIFY LOGISTICS CONSTRAINTS OR RESOLUTION OVERRIDES..."
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-[11px] font-black text-main uppercase tracking-widest resize-none h-40 placeholder:text-secondary/10 focus:outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all scrollbar-hide"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="bg-slate-800 px-6 py-5 flex justify-between items-center text-white">
-                                    <span className="text-lg font-bold tracking-tight">Net Total</span>
-                                    <span className="text-2xl font-bold tracking-tight">₹{finalTotalAmount.toFixed(2)}</span>
-                                </div>
-                            </div>
+                            </GlassPanel>
                         </div>
                     </div>
                 </div>
-
-                <CustomerSelectionModal
-                    isOpen={showCustomerModal}
-                    onClose={() => setShowCustomerModal(false)}
-                    onSelect={(customer: any) => {
-                        setFormData({ ...formData, customer });
-                        setShowCustomerModal(false);
-                    }}
-                />
-
-                <ItemSelectionModal
-                    isOpen={showItemModal}
-                    onClose={() => setShowItemModal(false)}
-                    onSelect={addItemFromModal}
-                />
             </div>
+
+            <CustomerSelectionModal
+                isOpen={showCustomerModal}
+                onClose={() => setShowCustomerModal(false)}
+                onSelect={(customer: any) => {
+                    setFormData({ ...formData, customer });
+                    setShowCustomerModal(false);
+                }}
+            />
+
+            <ItemSelectionModal
+                isOpen={showItemModal}
+                onClose={() => setShowItemModal(false)}
+                onSelect={addItemFromModal}
+            />
+
+            <style>{`
+                .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border-radius: 2.5rem; }
+                .font-display { font-family: 'Outfit', sans-serif; }
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.01); }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-rgb), 0.2); border-radius: 20px; }
+            `}</style>
         </Layout>
     );
 };
 
 export default SalesOrderPage;
-

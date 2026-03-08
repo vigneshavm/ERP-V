@@ -42,6 +42,36 @@ const SECTOR_METADATA: Record<Sector, { image: string, label: string, accent: st
         image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
         label: 'Enterprise Management',
         accent: 'slate'
+    },
+    'Electronics': {
+        image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80',
+        label: 'Logic & Circuitry',
+        accent: 'blue'
+    },
+    'Grocery': {
+        image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80',
+        label: 'Essential Logistics',
+        accent: 'lime'
+    },
+    'Supermarket': {
+        image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80',
+        label: 'Aggregate Retail',
+        accent: 'cyan'
+    },
+    'Textile': {
+        image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&q=80',
+        label: 'Woven Infrastructure',
+        accent: 'violet'
+    },
+    'Mobile Shop': {
+        image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80',
+        label: 'Telemetric Hub',
+        accent: 'amber'
+    },
+    'FMCG': {
+        image: 'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?auto=format&fit=crop&q=80',
+        label: 'Fast-Velocity Assets',
+        accent: 'orange'
     }
 };
 
