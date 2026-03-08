@@ -1,0 +1,65 @@
+# Phase 3: The Native Driver Switch - CashBank Slice
+
+This plan focuses on Phase 3 of the Mongoose migration for the `finance` module: completely replacing Mongoose queries with the native `mongodb` driver in the Repository layer, and linking native TypeScript interfaces directly to our Zod schemas.
+
+## Proposed Changes
+
+### Dependencies
+#### [MODIFY] [package.json](file:///c:/Users/vigne/Project/30/ERP/backend/package.json)
+- Add the official MongoDB native driver via `npm install mongodb`.
+
+### Database Connection Management
+#### [NEW] [db.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/config/db.ts) (or modify existing connection)
+- Ensure we export a shared `mongodb` [Db](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts#9-13) instance or `MongoClient` instance to be injected or retrieved by the Repositories, replacing `mongoose.connection`. If an existing `db.ts` file manages the connection, it will be augmented to export the native DB instance alongside Mongoose (temporarily, until Mongoose is fully uninstalled from other modules).
+
+### Finance Domain
+- Refactor the data access layer and model interfaces to sever ties with Mongoose `Document`.
+
+#### [MODIFY] [CashBankSchemas.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/schemas/CashBankSchemas.ts)
+- Export Zod inferred types to be used across the application:
+  ```typescript
+  export type CreateAccountDTO = z.infer<typeof CreateAccountSchema>['body'];
+  ```
+
+#### [MODIFY] [IBankAccount.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/interfaces/IBankAccount.ts), [ICheque.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/interfaces/ICheque.ts), [ICashbankTransaction.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/interfaces/ICashbankTransaction.ts)
+- Remove `extends Document` from Mongoose.
+- Convert `_id` and other relational fields from `mongoose.Types.ObjectId` to native `ObjectId` imported from `mongodb`.
+
+#### [MODIFY] [CashBankRepository.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts)
+- Switch all queries from Mongoose Model methods (`BankAccount.find()`, `Cheque.create()`) to Native Collection methods (`db.collection('bank_accounts').find()`, `db.collection('cheques').insertOne()`).
+- Explicitly cast string IDs to native `new ObjectId(id)` where necessary for MongoDB queries.
+- Update `$lookup` aggregations if any `.populate()` calls existed (none currently observed in Phase 1 for this slice, but we will ensure joins are handled natively if needed).
+- Map MongoDB's `_id` securely to string representations when returning to the Service layer to prevent serialization issues.
+
+#### [MODIFY] [CashBankService.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts)
+- Remove any lingering `.toObject()` calls, as the native driver returns plain JavaScript objects directly.
+- Ensure all returned data matches the expected boundaries without Mongoose wrapping.
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run build` to verify the new native interfaces align with the Services and Repositories.
+
+### Manual Verification
+- Manually test the `GET /api/finance/accounts` and `POST /api/finance/accounts` to ensure the Native MongoDB driver connects, reads, and writes perfectly without Mongoose acting as the middleman.
+
+## Phase 4: ACID Transactions (Native MongoDB)
+
+Once the native driver is in place, multi-step operations like Transfers and Cash Transactions need to be wrapped in native MongoDB transactions to ensure atomic consistency.
+
+### Proposed Architecture for Transactions
+#### [MODIFY] [CashBankRepository.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts)
+- Add a helper method `executeInTransaction<T>(callback: (session: ClientSession) => Promise<T>): Promise<T>` to manage the lifecycle of a native `ClientSession`.
+- Update all existing data mutation methods ([createTransaction](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts#108-118), [updateBalance](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts#96-102), [createCheque](file:///c:/Users/vigne/Project/30/ERP/backend/src/repositories/CashBankRepository.ts#184-193), etc.) to accept an optional `session?: ClientSession` argument.
+- Pass this `session` directly to the underlying `collection.insertOne(..., { session })` or `collection.updateOne(..., { session })` methods.
+
+#### [MODIFY] [CashBankService.ts](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts)
+- Identify all methods that write to multiple documents or collections:
+  - [createTransfer](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts#82-109) (creates transaction, updates two account balances)
+  - [createCashTransaction](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts#110-149) (creates transaction, updates one account balance)
+  - [updateChequeStatus](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts#349-374) (creates transaction, updates account balance, updates cheque)
+- Wrap these operations inside `this.cashBankRepository.executeInTransaction(async (session) => { ... })`.
+- Pass the `session` object to all subsequent repository calls made within the callback.
+
+### Verification Plan
+- Write tests or use Postman to trigger a [createTransfer](file:///c:/Users/vigne/Project/30/ERP/backend/src/modules/finance/services/CashBankService.ts#82-109) with an intentional failure (e.g. failing validation right before the second balance update) and verify that the first balance update and transaction insertion are rolled back cleanly.
