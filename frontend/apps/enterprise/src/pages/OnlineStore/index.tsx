@@ -5,74 +5,16 @@ import { RootState, AppDispatch } from '../../redux/store';
 import { addToCart } from '../../redux/slices/posSlice';
 import { activateEcommerce } from '../../redux/thunks/tenantThunks';
 import {
-    Search, Filter, Star, Heart, ShoppingCart,
-    Sparkles, Send, X, Bot, RotateCcw, Image as ImageIcon,
-    Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
-    Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
+    Search, Filter, Sparkles, Send, Image as ImageIcon,
+    Check, ShoppingCart
 } from 'lucide-react';
 import { Product } from "../../types/product";
 import { getProductRecommendations, searchProductsByImage } from "../../services/geminiService";
-import GrowHero from '../../pages/Commercial/OnlineStore/components/GrowHero';
-import FeatureMatrix from "../../pages/Commercial/OnlineStore/components/FeatureMatrix";
-import PricingTiers from "../../pages/Commercial/OnlineStore/components/PricingTiers";
-import { EcommercePlan, Tenant } from "../../types/tenant";
+import { Tenant } from "../../types/tenant";
 
-// --- Hero / Setup Component Inline (Refactor of GrowHero) ---
-const OnlineStoreSetup: React.FC<{
-    isLoading: boolean,
-    onActivate: () => void,
-    currentPlan: string
-}> = ({ isLoading, onActivate, currentPlan }) => {
-    return (
-        <div className="space-y-12 pb-20">
-            <header className="relative overflow-hidden bg-[#020617] border-b border-slate-800 pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4F46E5]/10 blur-[120px] rounded-full -mr-48 -mt-48 motion-safe:animate-pulse transition-opacity duration-300" aria-hidden="true" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#22C55E]/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-opacity duration-300" aria-hidden="true" />
-
-                <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
-                    <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#4F46E5]/10 rounded-full border border-[#4F46E5]/20 text-[#4F46E5] dark:text-indigo-300 text-xs font-black uppercase tracking-widest mb-8">
-                            <Rocket className="w-4 h-4" aria-hidden="true" />
-                            Used by Global Stores
-                        </div>
-
-                        <h1 className="text-5xl lg:text-[4.5rem] font-black text-[#F8FAFC] tracking-tight leading-[1.1] mb-8">
-                            Launch Your <br />
-                            <span className="text-[#4F46E5]">Digital Empire</span>
-                        </h1>
-
-                        <p className="text-[#64748B] text-xl lg:text-2xl font-medium leading-relaxed max-w-xl mb-12">
-                            Turn your store into a 24×7 online business in minutes. Reach global customers with integrated POS and inventory management.
-                        </p>
-
-                        <button
-                            onClick={onActivate}
-                            disabled={isLoading}
-                            className="w-full sm:w-auto px-10 py-5 bg-[#4F46E5] text-white rounded-xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-200 focus:ring-4 focus:ring-[#4F46E5]/40 focus:outline-none flex items-center justify-center gap-4 group"
-                        >
-                            {isLoading ? 'Activating...' : 'Start Free Trial'}
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
-                        </button>
-                    </div>
-
-                    <div className="hidden xl:block w-full max-w-md">
-                        <div className="relative aspect-square bg-[#020617] rounded-[3rem] border border-slate-800 p-8 shadow-inner overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5]/20 to-transparent" />
-                            <div className="relative h-full flex flex-col justify-center items-center text-center">
-                                <ShoppingBag className="w-24 h-24 text-[#F8FAFC] mb-8" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <div className="max-w-7xl mx-auto px-6">
-                <FeatureMatrix />
-                <PricingTiers currentPlan={currentPlan} onUpgrade={() => { }} />
-            </div>
-        </div>
-    );
-};
+// Components
+import OnlineStoreSetup from './OnlineStoreSetup';
+import ProductCard from './ProductCard';
 
 
 const OnlineStore: React.FC = () => {
@@ -98,8 +40,6 @@ const OnlineStore: React.FC = () => {
     };
 
     // --- Storefront State ---
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showAi, setShowAi] = useState(false);
     const [aiQuery, setAiQuery] = useState('');
@@ -160,13 +100,6 @@ const OnlineStore: React.FC = () => {
         }
     };
 
-    const clearAi = () => {
-        setAiResult(null);
-        setAiQuery('');
-        setVisualSearchImage(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-    };
-
     const toggleCategory = (cat: string) => {
         setSelectedCategories(prev =>
             prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
@@ -199,11 +132,6 @@ const OnlineStore: React.FC = () => {
             }
         });
     }, [baseProducts, aiResult, searchTerm, selectedCategories, priceRange, inStockOnly, sortBy]);
-
-    const getProductImage = (product: Product) => {
-        if (product.image) return product.image;
-        return `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80`;
-    };
 
     // --- Render ---
 
@@ -251,7 +179,7 @@ const OnlineStore: React.FC = () => {
                     <div className="flex items-center gap-2 mb-8 text-slate-900 dark:text-white font-black text-lg">
                         <Filter className="w-5 h-5" /> Filters
                     </div>
-                    {/* Filter Controls (Categories, Price, etc) - Copied from Storefront.tsx */}
+
                     <div className="space-y-8">
                         <div>
                             <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Categories</h4>
@@ -272,10 +200,8 @@ const OnlineStore: React.FC = () => {
 
                 {/* --- Main Content Area --- */}
                 <main className="flex-1 overflow-y-auto p-6 md:p-10">
-                    {/* ... (AI Feedback Area - same as Storefront.tsx) ... */}
                     {(showAi || aiResult || visualSearchImage) && (
                         <div className="mb-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
-                            {/* ... Content ... */}
                             <div className="p-6">
                                 {showAi && !visualSearchImage && !aiResult && !aiThinking && (
                                     <div className="relative">
@@ -299,24 +225,18 @@ const OnlineStore: React.FC = () => {
                     {/* Product Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {filteredProducts.map((product: Product) => (
-                            <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
-                                <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
-                                    <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute top-4 right-4 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-red-500 transition-colors">
-                                        <Heart className="w-5 h-5 text-slate-400 hover:text-red-500" />
-                                    </div>
-                                </div>
-                                <div className="p-6 flex flex-col flex-1">
-                                    <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
-                                    <div className="mt-auto flex items-center justify-between">
-                                        <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
-                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
-                                            <ShoppingCart className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                onAddToCart={(p) => dispatch(addToCart({ ...p, qty: 1, price: p.sellingPrice }))}
+                            />
                         ))}
+                        {filteredProducts.length === 0 && (
+                            <div className="col-span-full py-20 text-center">
+                                <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4 opacity-20" />
+                                <p className="text-slate-500 font-medium text-lg">No products found matching your search.</p>
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>
