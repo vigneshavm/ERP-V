@@ -1,0 +1,32 @@
+export interface Supplier {
+    _id: string;
+    supplierId: string;
+    businessName: string;
+    contactPersonName: string;
+    contactNo: string;
+    email?: string;
+    physicalAddress?: string;
+    gstNo?: string;
+    supplierType: 'manufacturer' | 'wholesaler' | 'retailer' | string;
+    openingBalance?: number;
+    balanceType?: 'payable' | 'receivable' | string;
+    creditPeriod?: number;
+    status: 'active' | 'inactive' | string;
+    supplierGroup?: string;
+    groupId?: any;
+    itemsSupplied?: string[];
+    createdAt?: string;
+    updatedAt?: string;
+    totalAmount?: number;
+    totalPaid?: number;
+    netBalance?: number;
+    manualTotalInvoiced?: number;
+    manualTotalPaid?: number;
+    lastPaymentDate?: string;
+    pendingAmount?: number;
+    billCount?: number;
+    paymentStatus?: 'Good' | 'Overdue' | 'Due Soon';
+    state?: string;
+    shortCode?: string;
+    [key: string]: any;
+}

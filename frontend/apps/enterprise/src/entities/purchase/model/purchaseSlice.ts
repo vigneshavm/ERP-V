@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder, PurchasePayment } from "../../types/purchase";
-import api from "../../services/api";
-import { RootState } from '../store';
-
-const getConfig = (token: string) => ({
-    headers: {
-        Authorization: `Bearer ${token}`,
-    },
-});
+import { PurchaseState, PurchaseOrder, PurchasePayment, GRN, GRNItem, PurchaseOrderItem } from "@vignesh-erp/shared-kernel";
+import api from "@/shared/api/api";
+import { RootState } from '@/app/store/store';
 
 const loadState = <T>(key: string, initialState: T): T => {
     const saved = localStorage.getItem(key);
@@ -29,10 +23,7 @@ export const fetchPurchaseOrders = createAsyncThunk(
     'purchase/fetchOrders',
     async (_, thunkAPI) => {
         try {
-            const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
-            const response = await api.get('/api/purchases', getConfig(token));
+            const response = await api.get('/api/purchases');
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -45,10 +36,7 @@ export const fetchPurchasePayments = createAsyncThunk(
     'purchase/fetchPayments',
     async (_, thunkAPI) => {
         try {
-            const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
-            const response = await api.get('/api/purchase-payments', getConfig(token));
+            const response = await api.get('/api/purchase-payments');
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -61,10 +49,7 @@ export const fetchPurchaseById = createAsyncThunk(
     'purchase/fetchById',
     async (id: string, thunkAPI) => {
         try {
-            const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
-            const response = await api.get(`/api/purchases/${id}`, getConfig(token));
+            const response = await api.get(`/api/purchases/${id}`);
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -100,23 +85,21 @@ const purchaseSlice = createSlice({
         setOrders: (state, action: PayloadAction<PurchaseOrder[]>) => {
             state.orders = action.payload;
         },
-        addGRN: (state, action: PayloadAction<any>) => {
+        addGRN: (state, action: PayloadAction<GRN>) => {
             state.grns.unshift(action.payload);
 
             // Update associated order status and received quantities
-            const order = state.orders.find(o => o.id === action.payload.poId);
+            const order = state.orders.find((o: PurchaseOrder) => o.id === action.payload.poId);
             if (order) {
-                // Logic to update order based on GRN acceptance
-                // This would normally be handled by the backend, but we'll simulate it
-                action.payload.items.forEach((grnItem: any) => {
-                    const poItem = order.items.find(pi => pi.product_id === grnItem.productId || pi.sku === grnItem.sku);
+                action.payload.items.forEach((grnItem: GRNItem) => {
+                    const poItem = order.items.find((pi: PurchaseOrderItem) => pi.product_id === grnItem.productId || pi.sku === grnItem.sku);
                     if (poItem) {
                         poItem.received_quantity = (poItem.received_quantity || 0) + grnItem.acceptedQty;
                     }
                 });
 
-                const totalOrdered = order.items.reduce((sum, i) => sum + i.quantity, 0);
-                const totalReceived = order.items.reduce((sum, i) => sum + (i.received_quantity || 0), 0);
+                const totalOrdered = order.items.reduce((sum: number, i: PurchaseOrderItem) => sum + i.quantity, 0);
+                const totalReceived = order.items.reduce((sum: number, i: PurchaseOrderItem) => sum + (i.received_quantity || 0), 0);
 
                 if (totalReceived >= totalOrdered) {
                     order.status = 'Fully Received';
@@ -125,14 +108,14 @@ const purchaseSlice = createSlice({
                 }
             }
         },
-        updateGRN: (state, action: PayloadAction<{ id: string; updates: Partial<any> }>) => {
-            const index = state.grns.findIndex(g => g.id === action.payload.id);
+        updateGRN: (state, action: PayloadAction<{ id: string; updates: Partial<GRN> }>) => {
+            const index = state.grns.findIndex((g: GRN) => g.id === action.payload.id);
             if (index !== -1) {
-                state.grns[index] = { ...state.grns[index], ...action.payload.updates };
+                state.grns[index] = { ...state.grns[index], ...action.payload.updates } as GRN;
             }
         },
         deleteGRN: (state, action: PayloadAction<string>) => {
-            state.grns = state.grns.filter(g => g.id !== action.payload);
+            state.grns = state.grns.filter((g: GRN) => g.id !== action.payload);
         },
         resetSelectedOrder: (state) => {
             state.selectedOrder = null;

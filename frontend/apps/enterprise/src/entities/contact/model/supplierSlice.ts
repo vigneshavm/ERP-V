@@ -1,41 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "../../services/api.js";
-import { RootState } from '../store';
+import api from "@/shared/api/api";
+import { RootState } from '@/app/store/store';
+import { Supplier } from "@vignesh-erp/shared-kernel";
 
 const API_URL = "/api/purchases/suppliers";
-
-export interface Supplier {
-    _id: string;
-    supplierId: string;
-    businessName: string;
-    contactPersonName: string;
-    contactNo: string;
-    email?: string;
-    physicalAddress?: string;
-    gstNo?: string;
-    supplierType: 'manufacturer' | 'wholesaler' | 'retailer' | string;
-    openingBalance?: number;
-    balanceType?: 'payable' | 'receivable' | string;
-    creditPeriod?: number;
-    status: 'active' | 'inactive' | string;
-    supplierGroup?: string;
-    groupId?: any;
-    itemsSupplied?: string[];
-    createdAt?: string;
-    updatedAt?: string;
-    // Analytics
-    totalAmount?: number;
-    totalPaid?: number;
-    netBalance?: number;
-    // Manual Overrides
-    manualTotalInvoiced?: number;
-    manualTotalPaid?: number;
-    lastPaymentDate?: string;
-    pendingAmount?: number;
-    billCount?: number;
-    paymentStatus?: 'Good' | 'Overdue' | 'Due Soon';
-    [key: string]: any;
-}
 
 interface SupplierState {
     suppliers: Supplier[];
@@ -47,12 +15,7 @@ interface SupplierState {
     stats: { _id: string, supplierName: string, totalAmount: number, billCount: number }[];
 }
 
-// Get token from state
-const getConfig = (token: string) => ({
-    headers: {
-        Authorization: `Bearer ${token}`,
-    },
-});
+// Redux State Interface
 
 const initialState: SupplierState = {
     suppliers: [],
@@ -69,16 +32,10 @@ export const getAllSuppliers = createAsyncThunk<Supplier[], void, { state: RootS
     'suppliers/getAll',
     async (_, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get(API_URL, getConfig(token));
+            const response = await api.get(API_URL);
             return response.data.data || response.data; // Handle wrapped response
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = error.response?.data?.message || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -89,10 +46,6 @@ export const getSupplierById = createAsyncThunk<Supplier, string | { id: string,
     'suppliers/getById',
     async (arg, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-
             const id = typeof arg === 'string' ? arg : arg.id;
             const branchId = typeof arg === 'object' ? arg.branchId : undefined;
 
@@ -102,13 +55,10 @@ export const getSupplierById = createAsyncThunk<Supplier, string | { id: string,
                 url += `?branchId=${branchId}`;
             }
 
-            const response = await api.get(url, getConfig(token));
+            const response = await api.get(url);
             return response.data.data || response.data;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = error.response?.data?.message || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -119,16 +69,10 @@ export const addSupplier = createAsyncThunk<Supplier, Partial<Supplier>, { state
     'suppliers/add',
     async (supplierData, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.post(API_URL, supplierData, getConfig(token));
+            const response = await api.post(API_URL, supplierData);
             return response.data.data || response.data;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = error.response?.data?.message || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -139,20 +83,10 @@ export const updateSupplier = createAsyncThunk<Supplier, { id: string, supplierD
     'suppliers/update',
     async ({ id, supplierData }, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.put(
-                `${API_URL}/${id}`,
-                supplierData,
-                getConfig(token)
-            );
+            const response = await api.put(`${API_URL}/${id}`, supplierData);
             return response.data.data || response.data;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = error.response?.data?.message || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -163,16 +97,10 @@ export const deleteSupplier = createAsyncThunk<string, string, { state: RootStat
     'suppliers/delete',
     async (id, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            await api.delete(`${API_URL}/${id}`, getConfig(token));
+            await api.delete(`${API_URL}/${id}`);
             return id;
         } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = error.response?.data?.message || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -183,10 +111,7 @@ export const getSupplierAnalytics = createAsyncThunk<Supplier[], void, { state: 
     'suppliers/getAnalytics',
     async (_, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get(`${API_URL}/analytics`, getConfig(token));
+            const response = await api.get(`${API_URL}/analytics`);
             return response.data.data;
         } catch (error: any) {
             const message = (error.response?.data?.message) || error.message || error.toString();
@@ -200,10 +125,7 @@ export const getSupplierStats = createAsyncThunk<{ _id: string, supplierName: st
     'suppliers/getStats',
     async (_, thunkAPI) => {
         try {
-            const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
-            if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get('/api/purchases/stats/supplier-totals', getConfig(token));
+            const response = await api.get('/api/purchases/stats/supplier-totals');
             return response.data;
         } catch (error: any) {
             const message = (error.response?.data?.message) || error.message || error.toString();
