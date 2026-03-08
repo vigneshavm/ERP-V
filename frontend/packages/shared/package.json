@@ -1,0 +1,13 @@
+{
+  "name": "@repo/shared",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/config-typescript": "*",
+    "@repo/config-eslint": "*",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+@theme {
+  --color-brand-primary: hsl(220 100% 50%);
+  --color-brand-secondary: hsl(215 20% 15%);
+  --color-success: hsl(150 100% 30%);
+  --color-warning: hsl(45 100% 50%);
+  --color-danger: hsl(0 100% 50%);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+}

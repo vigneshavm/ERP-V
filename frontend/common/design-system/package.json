@@ -1,0 +1,15 @@
+{
+  "name": "@yourcompany/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/tokens.css"
+  },
+  "scripts": {
+    "lint": "stylelint '**/*.css'"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.0.0"
+  }
+}

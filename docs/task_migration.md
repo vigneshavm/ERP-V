@@ -1,0 +1,23 @@
+# Task: Migrate Expence-Manager to Personal MFE
+
+- [x] Analyze Expence-Manager Structure [/]
+    - [x] List `src` directory
+    - [x] Review `features` and `core` logic
+- [x] Port Shared Infrastructure [x]
+    - [x] Move types to `packages/shared`
+    - [x] Move utils to `packages/shared`
+    - [x] Port Context Providers to `apps/personal` (Client Components)
+    - [x] Port i18n logic and locales.
+- [/] Migrate Features [/]
+    - [x] Port `dashboard` feature
+    - [x] Port `expenses` feature
+    - [x] Port `income` feature
+    - [x] Port `cards-and-loans` feature
+    - [x] Port `budgets` feature
+    - [/] Port `auth` feature
+- [ ] Update Navigation and Routing [ ]
+    - [ ] Convert React Router paths to Next.js pages
+    - [ ] Update links and redirects
+- [ ] Verify Integrated App [ ]
+    - [ ] Test build and runtime
+    - [ ] Verify Tailwind v4 styling

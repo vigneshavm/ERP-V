@@ -1,0 +1,15 @@
+@theme {
+  --color-income: #10b981; /* Green-500 */
+  --color-expense: #ef4444; /* Red-500 */
+  --color-budget: #3b82f6; /* Blue-500 */
+  
+  --font-brand: "Inter", system-ui, sans-serif;
+  
+  --spacing-safe: 1.5rem;
+}
+
+/* Custom Utilities */
+.text-income { color: var(--color-income); }
+.text-expense { color: var(--color-expense); }
+.bg-income { background-color: var(--color-income); }
+.bg-expense { background-color: var(--color-expense); }

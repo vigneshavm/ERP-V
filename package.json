@@ -5,7 +5,12 @@
     "description": "Unified orchestration for BizzAI ERP",
     "workspaces": [
         "backend",
-        "frontend"
+        "frontend",
+        "frontend/apps/*",
+        "frontend/packages/*",
+        "frontend/common/*",
+        "frontend/mfe/personal/*",
+        "frontend/mfe/business/*"
     ],
     "scripts": {
         "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
