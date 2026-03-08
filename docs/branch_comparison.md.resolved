@@ -1,0 +1,61 @@
+# Comparison Report: MFE vs MFE-2 Branches
+
+This report outlines the structural, architectural, and feature-level differences between the `MFE` and `MFE-2` branches.
+
+## Executive Summary
+
+| Feature | MFE Branch | MFE-2 Branch |
+| :--- | :--- | :--- |
+| **Architecture** | Flat / Legacy Structure | **Feature-Sliced Design (FSD)** |
+| **Structure** | Basic Monorepo | **Advanced Monorepo (Ecosystem)** |
+| **Shared Logic** | `frontend/packages/shared` | **`frontend/packages/shared-kernel`** |
+| **UI Kit** | `frontend/packages/ui` | **`frontend/packages/ui-react`** |
+| **Aesthetics** | Experimental / Neon-Dark | **Standard / Professional-Clean** |
+| **MFE Strategy** | Static/Linked Remotes | **Dynamic Runtime Remotes** |
+
+---
+
+## 1. Features Achieved in MFE-2
+
+### 🏗️ Architectural Evolution (FSD)
+`MFE-2` completes the transition to **Feature-Sliced Design**. This is visible in the root application (`apps/enterprise`), which now organizes code into:
+- **Entities**: Business-specific logic (e.g., `entities/sales`, `entities/inventory`).
+- **Shared**: Non-business UI and utilities.
+- **Pages**: Pure composition of features and entities.
+
+### 🧩 Shared Kernel & Centralized Logic
+The `shared` package has been upgraded to `shared-kernel`. 
+- **Zod Schemas**: Centralized validation for `Invoice`, `Product`, and `User`.
+- **Domain Modules**: Clearly separated folders for `sales`, `inventory`, `finance`, and `auth`.
+
+### 🎨 UI Kit Revamp (`ui-react`)
+The UI library has been renamed to `ui-react` and components have been refactored for:
+- **Accessibility**: Better focus on standard HTML structures.
+- **Consistency**: Unified styling for Modals, Inputs, and Buttons.
+- **Pagination**: Implementation of standard pagination across list views (e.g., Sales Invoices).
+
+### 🚀 Dynamic Module Federation
+The `budget-planner` MFE has been restructured to support truly independent deployments. It now includes its own `vite.config.ts` configured for remote exposure, aligned with the dynamic federation strategy outlined in the roadmap.
+
+---
+
+## 2. "Behins" (Missing/Behind) in MFE
+
+The `MFE` branch is functionally rich but architecturally "behind" in several critical ways:
+
+1. **Scalability Bottleneck**: The flat structure in `src/pages` makes it difficult to manage complex cross-feature logic.
+2. **Type Safety**: Lacks a centralized "Shared Kernel," leading to duplicated TypeScript interfaces and potential runtime data mismatches.
+3. **UI Technical Debt**: Uses highly custom CSS and animations (e.g., "registry purge" modals) that are difficult to theme consistently or migrate to a headless UI system.
+4. **Maintenance Overhead**: Without FSD boundaries, imports are often tangled, making it risky to modify shared components.
+
+---
+
+## 3. Critical Divergence Note
+
+While `MFE-2` is superior in architecture, **`MFE` contains newer feature-specific commits** that might not have been "properly" integrated or refactored into `MFE-2`'s architecture yet:
+- **System Data Hub**: implementation in `da8379a`.
+- **Advanced Auth Flows**: implementation in `5df398f`.
+- **Latest Sales Logic**: functional tweaks in `0b23f29`.
+
+> [!IMPORTANT]
+> Merging `MFE` into `MFE-2` will require significant manual refactoring to port the new features from `MFE` into the FSD slices of `MFE-2`.
