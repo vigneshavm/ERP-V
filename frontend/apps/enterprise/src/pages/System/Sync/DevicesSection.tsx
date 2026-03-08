@@ -1,5 +1,9 @@
 import React from 'react';
-import { Plus, RotateCw, Power, Trash2 } from 'lucide-react';
+import { 
+    Plus, RotateCw, Power, Trash2, Shield, Signal, 
+    Wifi, WifiOff, Activity, Cpu, Monitor, Laptop, 
+    Smartphone, Tablet, ChevronRight, MoreVertical, Clock 
+} from 'lucide-react';
 import { DeviceRegistryEntry, DeviceStatus } from "../../../types/tenant";
 
 interface DevicesSectionProps {
@@ -15,70 +19,143 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
     devices, isOwnerOrAdmin, onAddDevice, getPlatformIcon, getStatusBadge, formatTimeAgo
 }) => {
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-black text-slate-900 dark:text-white">Connected Devices</h2>
+                <div>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight">Active <span className="text-indigo-600">Nodes</span></h2>
+                    <p className="text-slate-500 text-xs font-medium">Manage authorized terminals within your enterprise perimeter.</p>
+                </div>
                 {isOwnerOrAdmin && (
                     <button
                         onClick={onAddDevice}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2"
+                        className="group px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-3"
                     >
-                        <Plus className="w-4 h-4" /> Add New Device
+                        <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+                        Authorize New Node
                     </button>
                 )}
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-                <table className="w-full">
-                    <thead>
-                        <tr className="border-b border-slate-100 dark:border-slate-800 text-left">
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Device</th>
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Platform</th>
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Version</th>
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Last Sync</th>
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
-                            <th className="p-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {devices.map((device) => {
-                            const PlatformIcon = getPlatformIcon(device.platform);
-                            return (
-                                <tr key={device.id} className="border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                                    <td className="p-5">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${device.isOnline ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
-                                                <PlatformIcon className="w-5 h-5" />
-                                            </div>
-                                            <span className="font-bold text-slate-900 dark:text-white">{device.name}</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-5 text-sm font-medium text-slate-600 dark:text-slate-400">{device.platform}</td>
-                                    <td className="p-5 text-sm font-medium text-slate-600 dark:text-slate-400">v{device.appVersion}</td>
-                                    <td className="p-5 text-sm font-medium text-slate-600 dark:text-slate-400">{formatTimeAgo(device.lastSyncAt)}</td>
-                                    <td className="p-5">{getStatusBadge(device.status, device.isOnline)}</td>
-                                    <td className="p-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {devices.map((device) => {
+                    const PlatformIcon = getPlatformIcon(device.platform);
+                    const isOnline = device.isOnline;
+                    
+                    return (
+                        <div 
+                            key={device.id} 
+                            className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
+                                isOnline 
+                                    ? 'border-slate-200 dark:border-slate-800' 
+                                    : 'border-slate-100 dark:border-slate-800/50 opacity-80'
+                            }`}
+                        >
+                            {/* Header Status Bar */}
+                            <div className="flex items-center justify-between px-8 pt-8">
+                                <div className={`px-3 py-1.5 rounded-full flex items-center gap-2 border ${
+                                    isOnline 
+                                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+                                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400'
+                                }`}>
+                                    <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest">{isOnline ? 'Live Node' : 'Disconnected'}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 tabular-nums">
+                                        v{device.appVersion}
+                                    </div>
+                                    <button className="p-2 text-slate-300 hover:text-indigo-500 transition-colors">
+                                        <MoreVertical className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="p-8 space-y-6">
+                                {/* Device Identity */}
+                                <div className="flex items-center gap-5">
+                                    <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 group-hover:rotate-6 ${
+                                        isOnline 
+                                            ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' 
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                    }`}>
+                                        <PlatformIcon className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-xl font-black text-slate-900 dark:text-white leading-tight">{device.name}</h4>
+                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 opacity-60">
+                                            {device.platform} {device.osVersion} • {device.ipAddress}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Health & Activity */}
+                                <div className="space-y-4 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                                    <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors" title="Force Resync">
-                                                <RotateCw className="w-4 h-4" />
-                                            </button>
-                                            {isOwnerOrAdmin && (
-                                                <>
-                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-yellow-600 transition-colors" title="Deactivate">
-                                                        <Power className="w-4 h-4" />
-                                                    </button>
-                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-red-600 transition-colors" title="Remove">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </>
-                                            )}
+                                            <Activity className="w-3.5 h-3.5 text-indigo-500" />
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sync Health</span>
                                         </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                        <span className={`text-sm font-black tabular-nums ${
+                                            device.syncHealth > 90 ? 'text-emerald-500' : 'text-amber-500'
+                                        }`}>{device.syncHealth}%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                        <div 
+                                            className={`h-full transition-all duration-1000 ${
+                                                device.syncHealth > 90 ? 'bg-indigo-500' : 'bg-amber-500'
+                                            }`} 
+                                            style={{ width: `${device.syncHealth}%` }} 
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Last Activity Footer */}
+                                <div className="flex items-center justify-between pt-2">
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5 text-slate-300" />
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                            {isOnline ? `Synced ${formatTimeAgo(device.lastSyncAt)}` : `Last seen ${formatTimeAgo(device.lastOnlineAt)}`}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button className="p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-400 hover:text-indigo-600 rounded-xl transition-all" title="Force Synchronize">
+                                            <RotateCw className="w-4 h-4" />
+                                        </button>
+                                        {isOwnerOrAdmin && (
+                                            <button className="p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500 rounded-xl transition-all" title="Revoke Authorization">
+                                                <Power className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Decorative Signal Wave for Online Devices */}
+                            {isOnline && (
+                                <div className="absolute -bottom-8 -left-8 pointer-events-none opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+                                    <Signal className="w-48 h-48 rotate-45" />
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+
+                {/* Secure Empty Slot */}
+                {isOwnerOrAdmin && (
+                    <button 
+                        onClick={onAddDevice}
+                        className="relative group bg-slate-50/50 dark:bg-slate-900/30 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 p-12 flex flex-col items-center justify-center gap-6 transition-all hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 hover:border-indigo-200 dark:hover:border-indigo-800/50"
+                    >
+                        <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-[2rem] shadow-sm flex items-center justify-center text-slate-300 group-hover:text-indigo-500 transition-all group-hover:scale-110">
+                            <Plus className="w-10 h-10" />
+                        </div>
+                        <div className="text-center">
+                            <h4 className="text-xl font-black text-slate-400 group-hover:text-indigo-600 transition-colors italic uppercase">Add Node</h4>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Expansion slot available</p>
+                        </div>
+                        <Shield className="absolute top-8 right-8 w-6 h-6 text-slate-200 dark:text-slate-800" />
+                    </button>
+                )}
             </div>
         </div>
     );

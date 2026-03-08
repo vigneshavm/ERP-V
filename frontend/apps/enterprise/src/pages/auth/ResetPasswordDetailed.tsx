@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
 import { logout, setAuthError, setAuthSuccess } from "../../redux/slices/authSlice";
 import api from "../../services/api.js";
 import { clearSession } from "../../utils/session";
-import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
 
 const ResetPassword = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading, isSuccess, isError } = useSelector((state: RootState) => state.auth);
+    const [isPending, startTransition] = useTransition();
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,20 +22,15 @@ const ResetPassword = () => {
     const [localError, setLocalError] = useState('');
 
     const [validation, setValidation] = useState({
-        length: false,
-        upper: false,
-        lower: false,
-        number: false,
-        special: false
+        length: false, upper: false, lower: false, number: false, special: false
     });
 
     useEffect(() => {
         const checkSession = async () => {
             try {
-                // Use backend to verify reset token/session
                 setSessionChecked(true);
             } catch (e) {
-                dispatch(setAuthError("Session invalid or link expired. Please request a new security link."));
+                dispatch(setAuthError("Session invalid or link expired. Please request a new link."));
                 setSessionChecked(true);
             }
         };
@@ -56,33 +54,17 @@ const ResetPassword = () => {
     const strengthScore = Object.values(validation).filter(Boolean).length;
     const isPasswordStrong = validation.length && strengthScore >= 4;
 
-    const getStrengthColor = () => {
-        if (strengthScore <= 2) return 'bg-red-500';
-        if (strengthScore <= 3) return 'bg-orange-500';
-        if (strengthScore <= 4) return 'bg-amber-500';
-        return 'bg-emerald-500';
-    };
-
-    const getStrengthLabel = () => {
-        if (strengthScore === 0) return 'Very Weak';
-        if (strengthScore <= 2) return 'Weak';
-        if (strengthScore <= 3) return 'Fair';
-        if (strengthScore <= 4) return 'Good';
-        return 'Strong';
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLocalError('');
         dispatch(setAuthError(null));
 
         if (password !== confirmPassword) {
-            setLocalError("Passwords do not match. Please verify.");
+            setLocalError("Passwords do not match.");
             return;
         }
-
         if (!isPasswordStrong) {
-            setLocalError("Security standards not met. Follow the checklist below.");
+            setLocalError("Password does not meet security requirements.");
             return;
         }
 
@@ -96,184 +78,185 @@ const ResetPassword = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            dispatch(logout());
-            clearSession();
+            startTransition(() => {
+                dispatch(logout());
+                clearSession();
+            });
             const timer = setTimeout(() => navigate('/'), 2500);
             return () => clearTimeout(timer);
         }
-    }, [isSuccess, navigate, dispatch]);
+    }, [isSuccess, navigate, dispatch, startTransition]);
+
+    const loading = isLoading || isPending;
 
     if (!sessionChecked) {
         return (
-            <div className="h-screen bg-slate-900 flex items-center justify-center p-4">
-                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+            <div className="h-screen bg-[#06080F] flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden bg-[#0F172A]">
-            {/* Professional Background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-indigo-500/10 blur-[120px] rounded-full" />
-                <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
+        <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#06080F]">
+            {/* Ambient Background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-[25%] -left-[10%] w-[55%] h-[55%] bg-indigo-600/[0.06] blur-[150px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className="absolute -bottom-[25%] -right-[10%] w-[50%] h-[50%] bg-violet-600/[0.05] blur-[130px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
+                <div className="absolute inset-0 opacity-[0.012]" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                    backgroundSize: '64px 64px'
+                }} />
             </div>
 
-            <div className="relative z-10 w-full max-w-[480px] animate-in fade-in zoom-in-95 duration-700">
-                <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/5 rounded-3xl md:rounded-[2.5rem] shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-h-[90dvh] overflow-y-auto scrollbar-none">
-
-                    {/* Enterprise Identity */}
-                    <div className="mb-6 md:mb-8">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
-                                <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            <motion.div
+                className="relative z-10 w-full max-w-[460px]"
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+                {/* Glass Card */}
+                <div className="bg-white/[0.025] backdrop-blur-2xl border border-white/[0.06] rounded-3xl shadow-2xl shadow-black/20 p-7 sm:p-9 max-h-[90dvh] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                    {/* Header */}
+                    <div className="mb-7">
+                        <div className="flex justify-between items-start mb-5">
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                <ShieldCheck className="w-5 h-5 text-white" />
                             </div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">Security Node</span>
+                                <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-white/25">Secure</span>
                             </div>
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">Set New Password</h1>
-                        <p className="text-slate-400 text-xs sm:text-sm font-medium">Resetting access for your Enterprise Account</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-1.5">Set New Password</h1>
+                        <p className="text-white/25 text-sm font-medium">Reset access for your Enterprise Account</p>
                     </div>
 
                     {isSuccess ? (
-                        <div className="text-center py-4 animate-in fade-in slide-in-from-bottom-8">
-                            <div className="w-24 h-24 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-500/20">
-                                <CheckCircle2 className="w-12 h-12" />
+                        /* Success State */
+                        <motion.div
+                            className="text-center py-4"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                        >
+                            <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-500/15">
+                                <CheckCircle2 className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-bold text-white mb-3">Update Successful</h2>
-                            <p className="text-slate-400 mb-8 max-w-[280px] mx-auto text-sm leading-relaxed">
-                                Your security credentials have been synchronized. Redirecting for authentication...
+                            <h2 className="text-xl font-bold text-white mb-2">Password Updated</h2>
+                            <p className="text-white/30 mb-6 text-sm">
+                                Credentials synchronized. Redirecting...
                             </p>
-                            <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-500 animate-[progress_2s_ease-in-out]" style={{ width: '100%' }} />
+                            <div className="w-full bg-white/[0.04] h-1 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+                                    style={{ animation: 'progressBar 2.5s ease-in-out forwards', width: '0%' }}
+                                />
                             </div>
-                        </div>
+                        </motion.div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-                            <div className="space-y-4 md:space-y-5">
-                                <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 ml-1">New Password</label>
-                                    <div className="relative">
-                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Min 8 characters"
-                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
-                                            disabled={isLoading}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-4 text-slate-500 hover:text-white transition-colors"
-                                        >
-                                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 ml-1">Confirm Identity</label>
-                                    <div className="relative">
-                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="Repeat password"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
-                                            disabled={isLoading}
-                                        />
-                                    </div>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* New Password */}
+                            <div className="group">
+                                <label className="block text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2.5 ml-0.5 transition-colors group-focus-within:text-indigo-400">
+                                    New Password
+                                </label>
+                                <div className="relative">
+                                    <Lock className="w-[18px] h-[18px] text-white/20 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-indigo-400 transition-colors duration-300" />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Min 8 characters"
+                                        className="w-full h-13 pl-11 pr-11 bg-white/[0.04] border border-white/[0.07] rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 text-white/90 font-mono text-sm tracking-wider transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                    <div className="absolute inset-0 rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-indigo-500/[0.03] to-violet-500/[0.03]" />
                                 </div>
                             </div>
 
-                            {/* Professional Strength Meter */}
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-end px-0.5">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Strength</span>
-                                    <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${getStrengthColor().replace('bg-', 'text-')}`}>
-                                        {getStrengthLabel()}
-                                    </span>
-                                </div>
-                                <div className="flex gap-1 h-1">
-                                    {[1, 2, 3, 4, 5].map((lvl) => (
-                                        <div
-                                            key={lvl}
-                                            className={`flex-1 rounded-full transition-all duration-500 ${lvl <= strengthScore ? getStrengthColor() : 'bg-white/5'}`}
-                                        />
-                                    ))}
-                                </div>
-                                <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 pt-1">
-                                    <Requirement label="Length" met={validation.length} />
-                                    <Requirement label="Uppercase" met={validation.upper} />
-                                    <Requirement label="Lowercase" met={validation.lower} />
-                                    <Requirement label="Special" met={validation.special} />
+                            {/* Confirm Password */}
+                            <div className="group">
+                                <label className="block text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2.5 ml-0.5 transition-colors group-focus-within:text-indigo-400">
+                                    Confirm Password
+                                </label>
+                                <div className="relative">
+                                    <Lock className="w-[18px] h-[18px] text-white/20 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-indigo-400 transition-colors duration-300" />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="Repeat password"
+                                        className="w-full h-13 pl-11 pr-4 bg-white/[0.04] border border-white/[0.07] rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 text-white/90 font-mono text-sm tracking-wider transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
+                                        disabled={loading}
+                                    />
+                                    <div className="absolute inset-0 rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-indigo-500/[0.03] to-violet-500/[0.03]" />
                                 </div>
                             </div>
 
+                            {/* Strength Meter */}
+                            <PasswordStrengthMeter password={password} />
+
+                            {/* Error */}
                             {(isError || localError) && (
-                                <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl animate-in zoom-in-95">
-                                    <AlertCircle className="w-5 h-5 shrink-0" />
-                                    <span>{isError || localError}</span>
+                                <div
+                                    className="flex items-center gap-3 text-[11px] font-medium p-3.5 bg-red-500/[0.06] border border-red-500/15 text-red-400/80 rounded-xl"
+                                    style={{ animation: 'alertIn 0.3s ease-out' }}
+                                >
+                                    <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                                    <span>{localError || (typeof isError === 'string' ? isError : 'An error occurred')}</span>
                                 </div>
                             )}
 
+                            {/* Submit */}
                             <button
                                 type="submit"
-                                disabled={isLoading || !isPasswordStrong}
-                                className="w-full h-16 bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.99] rounded-[1.25rem] font-black text-base flex items-center justify-center gap-3 transition-all shadow-xl shadow-white/5 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                disabled={loading || !isPasswordStrong}
+                                className="w-full h-13 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20 group"
                             >
-                                {isLoading ? (
-                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                    <>Verify & Set New Key <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
+                                    <>Set New Password <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" /></>
                                 )}
                             </button>
-                            <div className="pt-4 md:pt-6 border-t border-white/5 flex items-center justify-center gap-3 grayscale opacity-40">
+
+                            {/* Footer */}
+                            <div className="pt-5 border-t border-white/[0.04] flex items-center justify-center gap-3">
                                 <div className="flex -space-x-1">
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-800 border border-slate-700" />
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-800 border border-slate-700" />
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-800 border border-slate-700" />
+                                    {[1,2,3].map(i => (
+                                        <div key={i} className="w-4 h-4 rounded-full bg-white/[0.04] border border-white/[0.06]" />
+                                    ))}
                                 </div>
-                                <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-slate-400">Enterprise Grade Encryption</span>
+                                <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/12">Enterprise Encryption</span>
                             </div>
                         </form>
                     )}
                 </div>
 
-                <p className="mt-4 md:mt-8 text-center text-slate-600 font-bold text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2">
-                    <ShieldCheck className="w-4 h-4" /> Secure Transmission Active
+                <p className="mt-6 text-center text-white/10 font-bold text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Secure Transmission
                 </p>
-            </div>
+            </motion.div>
 
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                @keyframes progress {
+            <style>{`
+                @keyframes progressBar {
                     from { width: 0%; }
                     to { width: 100%; }
                 }
-                .scrollbar-none::-webkit-scrollbar {
-                    display: none;
+                @keyframes alertIn {
+                    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
                 }
-                .scrollbar-none {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            ` }} />
-        </div >
+            `}</style>
+        </div>
     );
 };
-
-const Requirement = ({ label, met }: { label: string, met: boolean }) => (
-    <div className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider transition-all duration-300 ${met ? 'text-emerald-400' : 'text-slate-600'}`}>
-        <div className={`w-1 h-1 rounded-full ${met ? 'bg-emerald-400' : 'bg-slate-800'}`} />
-        {label}
-    </div>
-);
 
 export default ResetPassword;

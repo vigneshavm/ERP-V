@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useTransition } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Lock, ArrowRight, ShieldAlert } from 'lucide-react';
+import { ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import SecurePasswordInput from './SecurePasswordInput';
+import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';
 import { useResetPasswordForm } from '../../hooks/auth/useResetPasswordForm';
@@ -9,37 +11,59 @@ import { useResetPasswordForm } from '../../hooks/auth/useResetPasswordForm';
 const ResetPassword: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [isPending, startTransition] = useTransition();
 
     const params = new URLSearchParams(location.search);
     const email = params.get('email') || '';
     const token = params.get('token') || '';
 
     const { form, onSubmit, isLoading } = useResetPasswordForm(email, token);
-    const { register, formState: { errors } } = form;
+    const { register, formState: { errors }, watch } = form;
     const { isError, isSuccess, message, validationError } = form as any;
+
+    const passwordValue = watch('password') || '';
+    const loading = isLoading || isPending;
 
     useEffect(() => {
         if (isSuccess) {
-            const t = setTimeout(() => navigate('/login'), 2000);
+            const t = setTimeout(() => navigate('/login'), 2500);
             return () => clearTimeout(t);
         }
     }, [isSuccess, navigate]);
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        startTransition(() => {
+            onSubmit(e);
+        });
+    };
+
+    // Invalid / expired link
     if (!token || !email) {
         return (
             <AuthLayout
                 title="Access Denied"
-                subtitle="Invalid Reset Protocol"
-                secondarySubtitle="The request could not be verified"
-                description="This reset link is either invalid or has expired. For security reasons, please request a new one."
+                subtitle="Invalid Reset Link"
+                secondarySubtitle="This request could not be verified"
+                description="This reset link is either invalid or has expired. Please request a new one for security."
             >
-                <div className="mt-8 bg-red-500/10 border border-red-500/20 p-6 rounded-3xl flex flex-col gap-4 text-center">
-                    <ShieldAlert className="w-12 h-12 text-red-400 mx-auto" />
-                    <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Security Link Compromised</p>
-                    <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 transition-all">
-                        Request New Key
-                    </Link>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="space-y-6"
+                >
+                    <div className="bg-red-500/[0.06] border border-red-500/10 p-6 rounded-xl flex flex-col items-center gap-4 text-center">
+                        <ShieldAlert className="w-10 h-10 text-red-400/80" />
+                        <p className="text-[10px] font-bold text-red-400/60 uppercase tracking-[0.2em]">Security Link Invalid</p>
+                        <Link
+                            to="/forgot-password"
+                            className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+                        >
+                            Request New Link <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                    </div>
+                </motion.div>
             </AuthLayout>
         );
     }
@@ -47,58 +71,107 @@ const ResetPassword: React.FC = () => {
     return (
         <AuthLayout
             title="System Security"
-            subtitle="Reset your Key"
+            subtitle="Reset your Password"
             secondarySubtitle={`Updating credentials for ${email}`}
-            description="Create a strong, unique security key to protect your enterprise workspace and professional data."
+            description="Create a strong, unique password to protect your enterprise workspace and data."
         >
-            {/* Alerts: Validation / Error / Success */}
-            {(validationError || isError || isSuccess) && (
-                <AuthAlert
-                    type={isSuccess ? 'success' : 'error'}
-                    title={isSuccess ? 'Frequency Updated' : 'Reset Error'}
-                    message={validationError || message || 'Security key successfully updated! Redirecting to secure login...'}
-                />
-            )}
-
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-                <div className="space-y-5">
-                    <SecurePasswordInput
-                        id="password"
-                        label="New Security Key"
-                        placeholder="Min 8+ characters"
-                        registration={register('password')}
-                        error={errors.password?.message}
-                    />
-
-                    <SecurePasswordInput
-                        id="confirmPassword"
-                        label="Re-Verify New Key"
-                        placeholder="Re-enter security key"
-                        registration={register('confirmPassword')}
-                        error={errors.confirmPassword?.message}
-                    />
-                </div>
-
-                <div>
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="btn-cyber-primary w-full h-14 !rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+                {/* Success state */}
+                {isSuccess ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center space-y-6"
                     >
-                        {isLoading ? (
-                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <>Update Security Key <ArrowRight className="w-4 h-4" /></>
+                        <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/15 rounded-2xl flex items-center justify-center mx-auto">
+                            <svg className="w-8 h-8 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-lg font-bold text-white">Password Updated</h3>
+                            <p className="text-white/30 text-sm">
+                                Your credentials have been updated. Redirecting to login...
+                            </p>
+                        </div>
+                        {/* Progress indicator */}
+                        <div className="w-full bg-white/[0.04] h-1 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+                                style={{
+                                    animation: 'progressBar 2.5s ease-in-out forwards',
+                                    width: '0%'
+                                }}
+                            />
+                        </div>
+                        <style>{`
+                            @keyframes progressBar {
+                                from { width: 0%; }
+                                to { width: 100%; }
+                            }
+                        `}</style>
+                    </motion.div>
+                ) : (
+                    <>
+                        {/* Alerts */}
+                        {(validationError || isError) && (
+                            <div className="mb-6">
+                                <AuthAlert
+                                    type="error"
+                                    title="Reset Error"
+                                    message={validationError || message}
+                                />
+                            </div>
                         )}
-                    </button>
-                </div>
-            </form>
 
-            <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
-                <Link to="/login" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
-                    <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Abort and Return to Login
-                </Link>
-            </div>
+                        <form className="space-y-5" onSubmit={handleSubmit}>
+                            <SecurePasswordInput
+                                id="reset-password"
+                                label="New Password"
+                                placeholder="Min 8+ characters"
+                                registration={register('password')}
+                                error={errors.password?.message}
+                            />
+
+                            <PasswordStrengthMeter password={passwordValue} />
+
+                            <SecurePasswordInput
+                                id="reset-confirmPassword"
+                                label="Confirm New Password"
+                                placeholder="Re-enter your password"
+                                registration={register('confirmPassword')}
+                                error={errors.confirmPassword?.message}
+                            />
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:scale-100 shadow-lg shadow-indigo-600/20"
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <>Update Password <ArrowRight className="w-3.5 h-3.5" /></>
+                                )}
+                            </button>
+                        </form>
+
+                        {/* Back to login */}
+                        <div className="mt-8 pt-7 border-t border-white/[0.05] text-center">
+                            <Link
+                                to="/login"
+                                className="text-[10px] font-bold text-white/20 hover:text-white/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+                            >
+                                <ArrowRight className="w-3 h-3 rotate-180" /> Abort & Return to Login
+                            </Link>
+                        </div>
+                    </>
+                )}
+            </motion.div>
         </AuthLayout>
     );
 };
