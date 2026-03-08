@@ -31,9 +31,9 @@ export const getProductRecommendations = async (query: string, products: Product
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // Simplify product context for the model
+  // Simplify product context for the model - Pipe-delimited for token efficiency
   const inventoryList = products.map(p =>
-    `ID: ${p.id} | Name: ${p.name} | Type: ${p.productType} | Category: ${p.category} | Price: ${p.sellingPrice} | Stock: ${p.stockQty}`
+    `${p.id}|${p.name}|${p.category}|${p.sellingPrice}|${p.stockQty}`
   ).join('\n');
 
   const prompt = `
