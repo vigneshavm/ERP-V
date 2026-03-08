@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import ClearingParameter from '../models/ClearingParameter.js';
-import { info, error } from '../../../config/logger.js';
+import asyncHandler from 'express-async-handler';
+import { container } from 'tsyringe';
+import { ClearingParameterService } from '../services/ClearingParameterService.js';
 
 interface AuthenticatedRequest extends Request {
     user?: {
@@ -11,86 +12,28 @@ interface AuthenticatedRequest extends Request {
     tenantId?: string;
 }
 
-export const initializeUnit = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { sector } = req.body;
-        const tenantId = (req as any).tenantId;
+export const initializeUnit = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(ClearingParameterService);
+    const tenantId = (req as any).tenantId;
+    const result = await service.initializeUnit(req.body.sector, tenantId, req.user?._id as string, req.user?.name);
+    const status = result.message === 'Unit already initialized' ? 200 : 201;
+    res.status(status).json(result);
+});
 
-        if (!sector) {
-            res.status(400).json({ message: 'Sector is required' });
-            return;
-        }
+export const getParameters = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(ClearingParameterService);
+    const tenantId = (req as any).tenantId;
+    const sector = typeof req.query.sector === 'string' ? req.query.sector : undefined;
+    const params = await service.getParameters(tenantId, sector);
+    res.status(200).json(params);
+});
 
-        const existing = await ClearingParameter.find({ tenantId, sector });
-        if (existing.length > 0) {
-            res.status(200).json({ message: 'Unit already initialized', parameters: existing });
-            return;
-        }
+export const updateParameter = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(ClearingParameterService);
+    const tenantId = (req as any).tenantId;
+    const param = await service.updateParameter(req.params.id as string, tenantId, req.body, req.user?.name);
+    res.status(200).json(param);
+});
 
-        const defaults = [
-            { type: 'Local', clearingDays: 2, holidaysIncluded: false },
-            { type: 'Outstation', clearingDays: 5, holidaysIncluded: true },
-            { type: 'HighValue', clearingDays: 1, holidaysIncluded: false }
-        ];
-
-        const created = await ClearingParameter.insertMany(defaults.map(d => ({
-            ...d,
-            sector,
-            tenantId,
-            userId: req.user?._id
-        })));
-
-        info(`Unit ${sector} initialized by ${req.user?.name}`);
-        res.status(201).json({ message: 'Unit Initialized Successfully', parameters: created });
-    } catch (err) {
-        error(`Init Unit Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-export const getParameters = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { sector } = req.query;
-        const tenantId = (req as any).tenantId;
-        const query: any = { tenantId };
-        if (sector) query.sector = sector;
-
-        const params = await ClearingParameter.find(query);
-        res.status(200).json(params);
-    } catch (err) {
-        error(`Get Params Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-export const updateParameter = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { id } = req.params;
-        const updates = req.body;
-
-        const param = await ClearingParameter.findOneAndUpdate(
-            { _id: id, tenantId: (req as any).tenantId },
-            updates,
-            { new: true }
-        );
-
-        if (!param) {
-            res.status(404).json({ message: 'Parameter not found' });
-            return;
-        }
-
-        info(`Clearing parameter updated by ${req.user?.name}`);
-        res.status(200).json(param);
-    } catch (err) {
-        error(`Update Param Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-const ClearingParameterController = {
-    initializeUnit,
-    getParameters,
-    updateParameter
-};
-
+const ClearingParameterController = { initializeUnit, getParameters, updateParameter };
 export default ClearingParameterController;
