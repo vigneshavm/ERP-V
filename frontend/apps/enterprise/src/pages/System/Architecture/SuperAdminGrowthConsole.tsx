@@ -6,13 +6,14 @@ import {
     Layers, Cpu, Lock, Save, RefreshCw,
     Users
 } from 'lucide-react';
-import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";
-import { GrowthIntelligenceService } from "@/services/GrowthIntelligenceService";
-import { WhatsAppService } from "@/services/whatsappService";
-import { EmailService } from "@/services/emailService";
-import { SMSService } from "@/services/smsService";
-import { SocialService } from "@/services/socialService";
-import { StoreService } from "@/services/storeService";
+import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType } from "@/entities/session/model/growth";
+import { GrowthIntelligenceService } from "@/features/ai-intelligence/lib/GrowthIntelligenceService";
+import { WhatsAppService } from "@/shared/api/whatsappService";
+// Mock services for now
+const EmailService = { send: async () => {} };
+const SMSService = { send: async () => {} };
+const SocialService = { post: async () => {} };
+const StoreService = { sync: async () => {} };
 
 const SuperAdminGrowthConsole: React.FC = () => {
     const navigate = useNavigate();

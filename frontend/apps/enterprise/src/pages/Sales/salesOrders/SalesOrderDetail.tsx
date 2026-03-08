@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from "../../../services/api";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
     Package,
     Truck,
@@ -20,7 +20,7 @@ import {
     Receipt,
     LucideIcon
 } from 'lucide-react';
-import { SalesOrder, SalesOrderItem } from '../../../types/sales';
+import { SalesOrder, SalesOrderItem } from '@repo/shared-kernel';
 
 interface StatusConfig {
     color: string;
@@ -135,7 +135,7 @@ const SalesOrderDetail = () => {
 
     const statusConfig = getStatusConfig(order.status);
     const StatusIcon = statusConfig.icon;
-    const hasItemsToDeliver = order.items.some((item) => ((item.reservedQty || 0) - (item.deliveredQty || 0)) > 0);
+    const hasItemsToDeliver = order.items.some((item: SalesOrderItem) => ((item.reservedQty || 0) - (item.deliveredQty || 0)) > 0);
     const canConvertToDC = hasItemsToDeliver && (order.status === 'Confirmed' || order.status === 'Partially Delivered');
     const canCancel = order.status !== 'Cancelled' && order.status !== 'Invoiced';
 

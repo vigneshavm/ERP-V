@@ -8,8 +8,8 @@ import {
     BarChart2, X, Info, Phone, Key, Globe2, HelpCircle, XCircle, CheckCircle2,
     ArrowLeft
 } from 'lucide-react';
-import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";
-import { GrowthIntelligenceService } from "@/services/GrowthIntelligenceService";
+import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/entities/session/model/growth";
+import { GrowthIntelligenceService } from "@/features/ai-intelligence/lib/GrowthIntelligenceService";
 
 const TenantArchitect: React.FC = () => {
     const { tenantId } = useParams<{ tenantId: string }>();

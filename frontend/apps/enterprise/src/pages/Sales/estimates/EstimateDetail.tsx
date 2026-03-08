@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Layout from "../../../components/shared/Layout/Layout";
-import api from "../../../services/api";
+import Layout from "@/shared/ui/Layout/Layout";
+import api from "@/shared/api/api";
 import { toast } from "react-toastify";
-import EstimateTemplate from "@/components/sales/EstimateTemplate";
+import EstimateTemplate from "@/features/pos-checkout/ui/EstimateTemplate";
 import { ArrowLeft, Printer, FileText } from 'lucide-react';
 
 const EstimateDetail = () => {

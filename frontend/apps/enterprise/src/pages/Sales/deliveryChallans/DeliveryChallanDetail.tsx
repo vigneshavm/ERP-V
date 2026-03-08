@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import { getDeliveryChallanById, convertToInvoice, reset } from "../../../redux/slices/deliveryChallanSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import { getDeliveryChallanById, convertToInvoice, reset } from "@/app/store/slices/deliveryChallanSlice";
 import { ArrowLeft, Printer, Truck, ArrowRightCircle, Phone, Mail } from 'lucide-react';
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 
 const DeliveryChallanDetail = () => {
     const { id } = useParams();

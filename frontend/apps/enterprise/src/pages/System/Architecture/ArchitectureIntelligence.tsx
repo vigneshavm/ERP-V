@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "@/redux/store";
+import { RootState } from "@/app/store/store";
 import {
     Activity, ShieldCheck, Zap, Layers, AlertTriangle,
     CheckCircle2, Server, Database, Cpu, PieChart,

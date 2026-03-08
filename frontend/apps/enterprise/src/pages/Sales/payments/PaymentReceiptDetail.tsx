@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../../services/api";
+import api from "@/shared/api/api";
 import { toast } from "react-toastify";
-import Layout from "../../../components/shared/Layout/Layout";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
   ArrowLeft,
   Printer,

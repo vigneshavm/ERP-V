@@ -6,12 +6,11 @@ import {
     MoreHorizontal, Calendar, IndianRupee, History,
     CreditCard, X
 } from 'lucide-react';
-import { setActiveTab } from "../../../redux/slices/uiSlice";
-import { RootState } from "../../../redux/store";
-import { getTable } from "../../../services/dataSource";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import StatsCard from "../../../components/shared/Display/StatsCard";
+import { RootState } from "@/app/store/store";
+import { getTable } from "@/shared/api/dataSource";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import MetricCard from "@/shared/ui/Feedback/MetricCard";
 
 // Demo Data Interface
 interface PaymentRecord {
@@ -105,7 +104,7 @@ const PaymentInList: React.FC = () => {
                                 <Printer className="w-4 h-4" />
                             </button>
                             <button
-                                onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
+                                onClick={() => navigate('/sales/payment-in')}
                                 className="btn btn-primary"
                             >
                                 <Plus className="w-4 h-4" />
@@ -117,30 +116,23 @@ const PaymentInList: React.FC = () => {
 
                 {/* Dashboard Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatsCard
+                    <MetricCard
                         title="Total Collections"
                         value={formatCurrency(metrics.totalValue)}
-                        icon={<IndianRupee className="w-full h-full" />}
-                        trend="Total received"
-                        trendUp={true}
-                        iconBgColor="bg-emerald-100"
-                        iconColor="text-emerald-600"
+                        icon={IndianRupee}
+                        color="emerald"
                     />
-                    <StatsCard
+                    <MetricCard
                         title="Transactions"
                         value={metrics.count}
-                        icon={<History className="w-full h-full" />}
-                        iconBgColor="bg-blue-100"
-                        iconColor="text-blue-600"
+                        icon={History}
+                        color="blue"
                     />
-                    <StatsCard
+                    <MetricCard
                         title="With Credit/Excess"
                         value={metrics.creditCount}
-                        icon={<CreditCard className="w-full h-full" />}
-                        trend="Carry-forward balance"
-                        trendUp={true}
-                        iconBgColor="bg-amber-100"
-                        iconColor="text-amber-600"
+                        icon={CreditCard}
+                        color="amber"
                     />
                 </div>
 
@@ -192,7 +184,7 @@ const PaymentInList: React.FC = () => {
                                     Try adjusting your search or record a new payment.
                                 </p>
                                 <button
-                                    onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
+                                    onClick={() => navigate('/sales/payment-in')}
                                     className="btn btn-primary mt-6"
                                 >
                                     Record Payment

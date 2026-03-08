@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid } from "@/redux/slices/salesInvoiceSlice";
-import Layout from "@/components/shared/Layout/Layout";
-import PaymentModal from "../../../components/shared/Modals/PaymentModal";
-import { AppDispatch, RootState } from "@/redux/store";
-import { Customer, PopulatedInvoice } from "@/types/sales";
+import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid } from "@/entities/sales/model/salesInvoiceSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import PaymentModal from "@/shared/ui/Modals/PaymentModal";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { Customer, PopulatedInvoice } from '@repo/shared-kernel';
 import {
     FileText,
     CheckCircle,
@@ -214,7 +214,7 @@ const SalesInvoiceDetail = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
-                                        {invoice.items?.map((item, index) => (
+                                        {invoice.items?.map((item: any, index: number) => (
                                             <tr key={index} className="hover:bg-slate-50/80 transition-colors">
                                                 <td className="px-4 py-3 text-center text-xs text-slate-400 font-bold">{index + 1}</td>
                                                 <td className="px-4 py-3 font-medium text-slate-800">{item.name || 'Item'}</td>

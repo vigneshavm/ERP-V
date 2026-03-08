@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "../../services/api";
-import { Invoice } from "../../types/sales";
+import api from "@/shared/api/api";
+import { Invoice } from '@repo/shared-kernel';
 
 const API_URL = "/api/sales-invoice";
 

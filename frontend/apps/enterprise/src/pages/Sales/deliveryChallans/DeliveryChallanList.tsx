@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import { getAllDeliveryChallans, deleteDeliveryChallan, convertToInvoice, reset } from "../../../redux/slices/deliveryChallanSlice";
-import { RootState } from "../../../redux/store";
+import Layout from "@/shared/ui/Layout/Layout";
+import { getAllDeliveryChallans, deleteDeliveryChallan, convertToInvoice, reset } from "@/app/store/slices/deliveryChallanSlice";
+import { RootState } from "@/app/store/store";
 import {
     Truck,
     Plus,

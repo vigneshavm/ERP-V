@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllItems } from "../../../redux/slices/inventorySlice";
-import { getAllCustomers } from "../../../redux/slices/customerSlice";
-import Layout from "../../../components/shared/Layout/Layout";
-import api from "../../../services/api";
+import { getAllItems } from "@/entities/inventory/model/inventorySlice";
+import { getAllCustomers } from "@/entities/contact/model/customerSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import api from "@/shared/api/api";
 import { toast } from "react-toastify";
-import EstimateTemplate from "../../../components/sales/EstimateTemplate";
-import { RootState } from "../../../redux/store";
+import EstimateTemplate from "@/features/pos-checkout/ui/EstimateTemplate";
+import { RootState } from "@/app/store/store";
 import {
   Calculator,
   FileText,
@@ -18,8 +18,8 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { Customer } from "../../../types/sales";
-import { Product } from "../../../types/product";
+import { Customer } from '@repo/shared-kernel';
+import { Product } from '@repo/shared-kernel';
 
 interface CartItem {
   itemId: string;

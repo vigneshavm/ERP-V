@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "@/services/api";
+import api from "@/shared/api/api";
 import { toast } from "react-toastify";
-import Layout from "@/components/shared/Layout/Layout";
-import PageHeader from "@/components/shared/Layout/PageHeader";
-import FormInput from "@/components/core/Form/Input";
-import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import FormInput from "@/shared/ui/Form/Input";
+import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 

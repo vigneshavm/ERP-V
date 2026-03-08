@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../components/shared/Layout/Layout";
-import api from "../../../services/api";
+import Layout from "@/shared/ui/Layout/Layout";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 import {
     FileText,
@@ -14,7 +14,7 @@ import {
     Clock,
     XCircle
 } from 'lucide-react';
-import { Estimate } from '../../../types/sales';
+import { Estimate } from '@repo/shared-kernel';
 
 const EstimateList = () => {
     const navigate = useNavigate();

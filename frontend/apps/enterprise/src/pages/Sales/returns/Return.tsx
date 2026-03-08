@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../../services/api";
+import api from "@/shared/api/api";
 import { toast } from "react-toastify";
-import Layout from "../../../components/shared/Layout/Layout";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
   RotateCcw,
   FileText,

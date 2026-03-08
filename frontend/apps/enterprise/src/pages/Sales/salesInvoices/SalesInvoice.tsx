@@ -6,14 +6,14 @@ import {
   getSalesInvoiceSummary,
   deleteSalesInvoice,
   reset,
-} from "@/redux/slices/salesInvoiceSlice";
-import Layout from "@/components/shared/Layout/Layout";
-import PageHeader from "@/components/shared/Layout/PageHeader";
-import MetricCard from "@/components/shared/UI/MetricCard";
-import FormInput from "@/components/core/Form/Input";
-import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
-import { AppDispatch, RootState } from "@/redux/store";
-import { Customer, Invoice } from "@/types/sales";
+} from "@/entities/sales/model/salesInvoiceSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import MetricCard from "@/shared/ui/Feedback/MetricCard";
+import FormInput from "@/shared/ui/Form/Input";
+import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { Customer, Invoice } from '@repo/shared-kernel';
 import {
   FileText,
   Plus,

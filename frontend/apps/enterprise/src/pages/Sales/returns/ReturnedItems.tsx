@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from "../../../services/api";
-import Layout from "../../../components/shared/Layout/Layout";
+import api from "@/shared/api/api";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
     RotateCcw,
     Plus,

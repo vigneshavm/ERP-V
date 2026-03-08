@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import FormInput from "../../../components/core/Form/Input";
-import CustomerSelectionModal from "../../../components/shared/Modals/CustomerSelectionModal";
-import ItemSelectionModal from "../../../components/shared/Modals/ItemSelectionModal";
-import SalesOrderSelectionModal from "../../../components/shared/Modals/SalesOrderSelectionModal";
-import { createDeliveryChallan, reset } from "../../../redux/slices/deliveryChallanSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import FormInput from "@/shared/ui/Form/Input";
+import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
+import ItemSelectionModal from "@/shared/ui/Modals/ItemSelectionModal";
+import SalesOrderSelectionModal from "@/shared/ui/Modals/SalesOrderSelectionModal";
+import { createDeliveryChallan, reset } from "@/app/store/slices/deliveryChallanSlice";
 
-import { RootState } from '../../../redux/store';
+import { RootState } from '@/app/store/store';
 
 interface ChallanItem {
     item: string;

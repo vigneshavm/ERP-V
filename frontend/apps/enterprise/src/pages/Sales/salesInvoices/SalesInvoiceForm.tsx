@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createSalesInvoice, reset } from "@/redux/slices/salesInvoiceSlice";
-import Layout from "@/components/shared/Layout/Layout";
-import PageHeader from "@/components/shared/Layout/PageHeader";
-import FormInput from "@/components/core/Form/Input";
-import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal"; // Assuming this exists or similar
-import { AppDispatch, RootState } from "@/redux/store";
+import { createSalesInvoice, reset } from "@/entities/sales/model/salesInvoiceSlice";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import FormInput from "@/shared/ui/Form/Input";
+import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
+import { AppDispatch, RootState } from "@/app/store/store";
 import { Plus, Trash2, Save, User, Calendar, Receipt, Percent, Truck, FileText, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -159,7 +159,7 @@ const SalesInvoiceForm = () => {
                                 label="Invoice Number"
                                 name="invoiceNo"
                                 value={formData.invoiceNo}
-                                onChange={(e) => setFormData({ ...formData, invoiceNo: e.target.value })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, invoiceNo: e.target.value })}
                                 icon={<Receipt className="w-4 h-4" />}
                                 required
                                 disabled // Auto-generated usually
@@ -169,7 +169,7 @@ const SalesInvoiceForm = () => {
                                 type="date"
                                 name="invoiceDate"
                                 value={formData.invoiceDate}
-                                onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, invoiceDate: e.target.value })}
                                 icon={<Calendar className="w-4 h-4" />}
                                 required
                             />
@@ -178,7 +178,7 @@ const SalesInvoiceForm = () => {
                                 type="date"
                                 name="dueDate"
                                 value={formData.dueDate}
-                                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, dueDate: e.target.value })}
                                 icon={<Calendar className="w-4 h-4" />}
                             />
                         </div>

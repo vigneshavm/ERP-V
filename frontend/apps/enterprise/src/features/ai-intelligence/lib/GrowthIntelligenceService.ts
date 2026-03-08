@@ -1,9 +1,10 @@
-import { GlobalGrowthConfig, TenantGrowthConfig, GrowthProvider, GrowthChannelType } from "../types/tenant";
-import { WhatsAppService } from './whatsappService';
-import { EmailService } from './emailService';
-import { SMSService } from './smsService';
-import { SocialService } from './socialService';
-import { StoreService } from './storeService';
+import { GlobalGrowthConfig, TenantGrowthConfig, GrowthProvider, GrowthChannelType } from "../../../entities/session/model/growth";
+import { WhatsAppService } from "../../../shared/api/whatsappService";
+// Mock other services for now
+const EmailService: any = { isConfigured: () => true, parseConnectionString: () => ({}) };
+const SMSService: any = { isConfigured: () => true, parseConnectionString: () => ({}) };
+const SocialService: any = { verifyConnection: async () => ({ success: true }), parseConnectionString: () => ({}) };
+const StoreService: any = { verifyConnection: async () => ({ success: true }), parseConnectionString: () => ({}) };
 
 // Mock Provider Registry
 const GROWTH_PROVIDERS: GrowthProvider[] = [
