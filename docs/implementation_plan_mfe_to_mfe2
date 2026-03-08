@@ -1,0 +1,76 @@
+# Porting Premium Features to MFE-2 (FSD)
+
+This plan outlines the migration of high-fidelity features and "Neon-Dark" aesthetics from the `MFE` branch into the `MFE-2` branch, while strictly adhering to the **Feature-Sliced Design (FSD)** architecture.
+
+## User Review Required
+
+> [!IMPORTANT]
+> Merging these changes requires significant manual refactoring to fit the "flat" logic of `MFE` into the "sliced" architecture of `MFE-2`.
+> The "Experimental / Neon-Dark" aesthetic will replace the "Standard / Professional-Clean" look currently in `MFE-2`.
+
+## Proposed Changes
+
+### 1. System Data Hub (System / Infrastructure)
+Port the Data Operations Hub into the FSD `features` layer and `pages` layer.
+
+#### [MODIFY] [Data index.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/System/Data/index.tsx)
+- Update page composition to use new feature-sliced components.
+- Apply high-fidelity glassmorphism styles.
+
+#### [NEW] [BarcodeGenerator.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system-data-operations/ui/BarcodeGenerator.tsx)
+#### [NEW] [BulkImport.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system-data-operations/ui/BulkImport.tsx)
+#### [NEW] [DataExport.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system-data-operations/ui/DataExport.tsx)
+#### [NEW] [SequenceControl.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system-data-operations/ui/SequenceControl.tsx)
+- Port from `pages/System/Data/components/*` in `MFE` branch.
+
+---
+
+### 2. Advanced Auth Flows (Session / Auth)
+Refactor authentication logic and UI into `entities/session` and `features/auth-*`.
+
+#### [MODIFY] [authSlice.ts](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/entities/session/model/authSlice.ts)
+- Integrate auth logic from `MFE`'s [useAuthActions.ts](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/hooks/auth/useAuthActions.ts).
+
+#### [NEW] [AuthInput.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/auth-flows/ui/AuthInput.tsx)
+#### [NEW] [PasswordStrengthMeter.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/auth-flows/ui/PasswordStrengthMeter.tsx)
+- Port premium UI components from `MFE`.
+
+#### [NEW] [AuthLayout.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/app/layouts/AuthLayout.tsx)
+- Centralize the premium auth layout.
+
+#### [MODIFY] [Login/Register Pages](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/auth/)
+- Update `Login.tsx`, `Register.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx`, and `TenantLogin.tsx` with high-fidelity visuals.
+
+---
+
+### 3. Latest Sales Logic & High-Fidelity UI (Sales / Reports)
+Port the "Quotation Synthesis Center" and advanced sales features.
+
+#### [MODIFY] [Sales APIs](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/entities/sales/api/)
+- Update `estimates.ts` and `sales_invoices.ts` with new functional tweaks.
+
+#### [NEW] [EstimateTemplate.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/entities/sales/ui/EstimateTemplate.tsx)
+#### [NEW] [SalesOrderTemplate.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/entities/sales/ui/SalesOrderTemplate.tsx)
+- Port document generation templates.
+
+#### [MODIFY] [Sales Pages](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/Sales/)
+- Update `estimates`, `salesInvoices`, `salesOrders`, `returns`, `deliveryChallans`, and `payments` with the "Synth-Dark" aesthetic.
+
+#### [NEW] [Business Reports](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/Reports/)
+- Port [BrandWiseSalesReport.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/Reports/BrandWiseSalesReport.tsx), `BusinessReportsHub.tsx`, etc.
+
+## Verification Plan
+
+### Automated Tests
+- Run existing tests to ensure no regressions:
+  ```powershell
+  cd frontend/apps/enterprise
+  npm run test
+  ```
+- Verify [Login.test.tsx](file:///C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/pages/auth/ui/Login.test.tsx) passes with the new UI (may need minor updates for selector changes).
+
+### Manual Verification
+1. **Auth Flow**: Navigate to `/auth/login` and verify the premium layout and transitions.
+2. **Sales Estimates**: Navigate to `/sales/estimates` and verify the high-fidelity center UI.
+3. **Data Hub**: Navigate to `/system/data` and verify Barcode and Export/Import functionality.
+4. **Reports**: Verify the new Business Reports Hub resolves and displays data correctly.
