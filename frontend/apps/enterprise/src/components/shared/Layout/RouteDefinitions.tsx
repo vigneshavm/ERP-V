@@ -111,6 +111,9 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/purchase/rate-revisions/new" element={
                 <Suspense fallback={<div>Loading Form...</div>}><RateRevisionForm /></Suspense>
             } />
+            <Route path="/purchase/new" element={
+                <Suspense fallback={<div>Loading Purchase Entry...</div>}><LazyModules.PurchaseEntry /></Suspense>
+            } />
             <Route path="/growth/tenant-architect/:tenantId" element={
                 <Suspense fallback={<div>Loading Tenant Architect...</div>}><LazyModules.TenantArchitect /></Suspense>
             } />

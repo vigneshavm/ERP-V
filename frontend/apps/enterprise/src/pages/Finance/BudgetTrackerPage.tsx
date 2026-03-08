@@ -55,6 +55,14 @@ interface ReportData {
     monthly_trends: MonthlyTrend[];
 }
 
+const MoreVerticalIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="12" cy="5" r="1" />
+        <circle cx="12" cy="19" r="1" />
+    </svg>
+);
+
 const BudgetTrackerPage: React.FC = () => {
     const [report, setReport] = useState<ReportData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -69,7 +77,7 @@ const BudgetTrackerPage: React.FC = () => {
     const fetchReport = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('/api/expense-report');
+            const res = await axios.get('/api/expense-reports');
             setReport(res.data);
         } catch (err) {
             toast.error('Failed to fetch budget report');
@@ -135,7 +143,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div className="flex items-start gap-1">
                                         <span className="text-3xl font-medium text-neutral-500 mt-2">₹</span>
                                         <h2 className="text-6xl md:text-8xl font-medium tracking-tight tabular-nums expanager-text-gradient">
-                                            {report?.total_expense.toLocaleString('en-IN')}
+                                            {(report?.total_expense ?? 0).toLocaleString('en-IN')}
                                         </h2>
                                     </div>
                                 </div>
@@ -199,7 +207,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 </div>
 
                                 {/* Monthly Trend Card (Legacy feel preserved but updated) */}
-                                {report?.monthly_trends.slice(0, 1).map((m, idx) => (
+                                {report?.monthly_trends?.slice(0, 1).map((m, idx) => (
                                     <div key={idx} className="bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl mt-12">
                                         <div className="flex items-center justify-between mb-8">
                                             <h3 className="text-xl font-bold tracking-tight">Summary: {m.month}</h3>
@@ -232,7 +240,7 @@ const BudgetTrackerPage: React.FC = () => {
                                         <Zap className="w-4 h-4 fill-emerald-500" /> Intelligence
                                     </p>
                                     <div className="space-y-6">
-                                        {report?.audit_flags.slice(0, 2).map((flag, i) => (
+                                        {report?.audit_flags?.slice(0, 2).map((flag, i) => (
                                             <div key={i} className="flex gap-3">
                                                 <div className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500" />
                                                 <p className="text-xs font-bold leading-relaxed text-neutral-300">"{flag}"</p>
@@ -244,7 +252,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 <div className="bg-neutral-900 border border-white/5 rounded-[2rem] p-8">
                                     <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500 mb-8">Categories</h3>
                                     <div className="space-y-6">
-                                        {report?.by_category.slice(0, 5).map((cat, i) => (
+                                        {report?.by_category?.slice(0, 5).map((cat, i) => (
                                             <div key={i} className="space-y-3">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-[11px] font-black tracking-tight uppercase text-neutral-400">{cat.category}</span>
@@ -324,13 +332,5 @@ const BudgetTrackerPage: React.FC = () => {
             </div>
     );
 };
-
-const MoreVerticalIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="12" cy="5" r="1" />
-        <circle cx="12" cy="19" r="1" />
-    </svg>
-);
 
 export default BudgetTrackerPage;

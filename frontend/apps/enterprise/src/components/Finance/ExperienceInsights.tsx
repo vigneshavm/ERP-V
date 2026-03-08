@@ -154,14 +154,14 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                             <div className="flex-1 space-y-2">
                                 <div className="flex items-center justify-between">
                                     <h4 className="text-sm font-bold text-neutral-300">
-                                        {cat.category} <span className="text-neutral-500 font-medium ml-1">₹{cat.amount.toLocaleString()}</span>
+                                        {cat.category} <span className="text-neutral-500 font-medium ml-1">₹{(cat.amount ?? 0).toLocaleString()}</span>
                                     </h4>
-                                    <span className="text-lg font-bold text-neutral-200">{cat.percentage}%</span>
+                                    <span className="text-lg font-bold text-neutral-200">{cat.percentage ?? '0'}%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div
                                         className="h-full bg-emerald-500/50 rounded-full"
-                                        style={{ width: `${percentage}%` }}
+                                        style={{ width: `${percentage ?? 0}%` }}
                                     />
                                 </div>
                             </div>

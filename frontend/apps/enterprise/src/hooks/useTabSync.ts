@@ -40,6 +40,8 @@ export const useTabSync = () => {
             if (activeTab !== 'SMS_TRACKER') dispatch(setActiveTab('SMS_TRACKER'));
         } else if (path.startsWith('/finance/budget-tracker')) {
             if (activeTab !== 'BUDGET_TRACKER') dispatch(setActiveTab('BUDGET_TRACKER'));
+        } else if (path.startsWith('/purchase/new')) {
+            if (activeTab !== 'PURCHASE_ENTRY') dispatch(setActiveTab('PURCHASE_ENTRY'));
         }
     }, [location.pathname, location.search, dispatch, activeTab]);
 };
