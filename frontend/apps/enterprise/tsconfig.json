@@ -18,6 +18,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@vignesh-erp/shared-kernel": [
+        "../../packages/shared-kernel/src/index"
       ]
     },
     "allowImportingTsExtensions": true,

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { AppView } from '../../../types/common';
-import { LazyModules } from '../../../services/ModuleRegistry';
+import { LazyModules } from '../../../app/registry/ModuleRegistry';
 import EntitlementGuard from '../../shared/Layout/EntitlementGuard';
 import {
     DashboardSkeleton,

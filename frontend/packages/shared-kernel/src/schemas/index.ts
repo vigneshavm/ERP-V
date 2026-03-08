@@ -93,3 +93,27 @@ export const BudgetSchema = z.object({
         rollover: z.number().optional(),
     })),
 });
+
+export const SystemConfigSchema = z.object({
+    id: z.string(),
+    key: z.string(),
+    value: z.union([z.string(), z.number(), z.boolean(), z.record(z.string(), z.any())]),
+    lastUpdated: z.string(),
+    updatedBy: z.string(),
+});
+
+export const RegistryAuditSchema = z.object({
+    id: z.string(),
+    action: z.enum(['PURGE', 'UPDATE', 'CREATE', 'REPAIR']),
+    timestamp: z.string(),
+    executor: z.string(),
+    details: z.string(),
+    status: z.enum(['SUCCESS', 'FAILED', 'WARNING']),
+});
+
+export const SyncStatusSchema = z.object({
+    mfeId: z.string(),
+    lastSync: z.string(),
+    status: z.enum(['HEALTHY', 'DELAYED', 'CRITICAL']),
+    version: z.string(),
+});

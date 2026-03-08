@@ -1,25 +1,26 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import customerReducer from './slices/customerSlice';
-import inventoryReducer from './slices/inventorySlice';
-import posReducer from './slices/posSlice';
-import salesInvoiceReducer from './slices/salesInvoiceSlice';
-import reportsReducer from './slices/reportsSlice';
-import supplierReducer from './slices/supplierSlice';
-import expenseReducer from './slices/expenseSlice';
-import billReducer from './slices/billSlice';
-import cashbankReducer from './slices/cashbankSlice';
-import dueReducer from './slices/dueSlice';
+import authReducer from '@/entities/session/model/authSlice';
+import customerReducer from '@/entities/contact/model/customerSlice';
+import inventoryReducer from '@/entities/inventory/model/inventorySlice';
+import posReducer from '@/entities/sales/model/posSlice';
+import salesInvoiceReducer from '@/entities/sales/model/salesInvoiceSlice';
+import reportsReducer from '@/widgets/stats-dashboard/model/reportsSlice';
+import supplierReducer from '@/entities/contact/model/supplierSlice';
+import expenseReducer from '@/features/expense-tracking/model/expenseSlice';
+import billReducer from '@/entities/finance/model/billSlice';
+import cashbankReducer from '@/entities/finance/model/cashbankSlice';
+import dueReducer from '@/features/expense-tracking/model/dueSlice';
 import deliveryChallanReducer from './slices/deliveryChallanSlice';
-import laborReducer from './slices/laborSlice';
-import financeReducer from './slices/financeSlice';
-import purchaseReducer from './slices/purchaseSlice';
-import tenantReducer from './slices/tenantSlice';
+import laborReducer from '@/entities/people/model/laborSlice';
+import financeReducer from '@/entities/finance/model/financeSlice';
+import purchaseReducer from '@/entities/purchase/model/purchaseSlice';
+import tenantReducer from '@/entities/session/model/tenantSlice';
 import { settingsReducer } from './slices/settingsSlice';
-import supplierGroupReducer from './slices/supplierGroupSlice';
+import supplierGroupReducer from '@/entities/contact/model/supplierGroupSlice';
 import paymentOutReducer from './slices/paymentOutSlice';
 import journalEntryReducer from './slices/journalEntrySlice';
-import payrollReducer from './slices/payrollSlice';
+import payrollReducer from '@/entities/people/model/payrollSlice';
+import systemReducer from '@/entities/system/model/systemSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     paymentOut: paymentOutReducer,
     journalEntry: journalEntryReducer,
     payroll: payrollReducer,
+    system: systemReducer,
   },
 });
 
