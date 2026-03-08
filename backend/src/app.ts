@@ -201,6 +201,10 @@ app.use("/api/hr", hrRoutes); // Employees
 import metaRoutes from "./modules/marketing/routes/meta.routes.js";
 app.use("/api/marketing/meta", metaRoutes);
 
+// AI AGENT Module (Extraction, Audit, Communication)
+import agentRoutes from "./modules/agents/routes/agentRoutes.js";
+app.use("/api/v1/agents", agentRoutes);
+
 
 // MISC / LEGACY (To be modularized)
 import returnRoutes from "./modules/sales/routes/return.routes.js";
