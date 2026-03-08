@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo} from 'react';
-import Layout from '../../../components/shared/Layout/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import {
     Search, Filter, Download, Shield, Eye, Calendar, Clock,
     ChevronLeft, ChevronRight, AlertTriangle, Check, X,
     Database, User, FileText, CreditCard, ShoppingCart,
     Hash, Globe, Fingerprint, ArrowUpDown, RotateCcw
 } from 'lucide-react';
-import api from '../../../services/api';
-import { formatDateISO } from '../../../utils/helpers';
+import api from '@/shared/api/api';
+import { formatDateISO } from '@/shared/lib/utils/helpers';
 
 /* ─── Action Badge ─────────────────────────────────────────── */
 const ActionBadge: React.FC<{ action: string }> = ({ action }) => {
