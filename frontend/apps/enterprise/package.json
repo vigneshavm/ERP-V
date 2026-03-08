@@ -41,6 +41,7 @@
     "recharts": "^2.13.3",
     "xlsx": "^0.18.5",
     "zod": "^4.3.6",
+    "@repo/shared-kernel": "*",
     "@yourcompany/ui-react": "*",
     "@yourcompany/finance-lib": "*",
     "@yourcompany/utils": "*"

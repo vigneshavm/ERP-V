@@ -10,8 +10,7 @@ import {
     Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
     Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
 } from 'lucide-react';
-import { Product } from "../../../types/product";
-import { getProductRecommendations, searchProductsByImage } from "../../../services/geminiService";
+import { Product, getProductRecommendations, searchProductsByImage } from "@repo/shared-kernel";
 import GrowHero from './components/GrowHero';
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
