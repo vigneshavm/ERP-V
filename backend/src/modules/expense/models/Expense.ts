@@ -56,12 +56,18 @@ const expenseSchema = new Schema<IExpense>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true,
+        },
     },
     { timestamps: true }
 );
 
-// Create compound unique index: expenseNo must be unique per user
-expenseSchema.index({ expenseNo: 1, createdBy: 1 }, { unique: true });
+// Create compound unique index: expenseNo must be unique per tenant
+expenseSchema.index({ expenseNo: 1, tenantId: 1 }, { unique: true });
 
 const Expense = mongoose.model<IExpense>("Expense", expenseSchema);
 export default Expense;

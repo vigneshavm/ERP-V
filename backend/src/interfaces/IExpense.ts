@@ -10,6 +10,7 @@ export interface IExpense extends Document {
     description?: string;
     receipt?: string;
     createdBy: string | Types.ObjectId; // ObjectId ref to User
+    tenantId: string | Types.ObjectId; // ObjectId ref to Tenant
 
     createdAt: Date;
     updatedAt: Date;
