@@ -1,7 +1,7 @@
 import React, { useTransition } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mail, ArrowRight, ShieldCheck, Loader2, Key, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import DeviceConflictModal from '../System/Sync/DeviceConflictModal';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
@@ -30,50 +30,66 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
 
     return (
         <AuthLayout
-            title={isAdmin ? "Super Admin Console" : "Enterprise Access"}
-            subtitle={isAdmin ? "Admin Authentication" : "Welcome back"}
-            secondarySubtitle={isAdmin ? "Restricted access • All actions audited" : "Sign in to your workspace"}
+            title={isAdmin ? "Nexus Control" : "Identity Gateway"}
+            subtitle={isAdmin ? "Omni-Sovereign Access" : "Secure Entry Sequence"}
+            secondarySubtitle={isAdmin ? "Phase: Restricted Core Auth" : "Phase: Credential Validation"}
             description={isAdmin
-                ? "Secure access for system administration. All actions are logged and audited for compliance."
-                : "Manage your business operations, inventory, and analytics in a secure and professional environment."}
+                ? "Accessing the enterprise nerve center. All neural pathways are monitored and logged for regulatory compliance."
+                : "Initialising your digital workspace. Converging business intelligence and operational excellence."}
         >
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="space-y-10"
             >
-                {/* Error Alert */}
-                {isError && (
-                    <div className="mb-6">
+                {/* Status HUD */}
+                <div className="flex items-center justify-between border-b border-white/[0.05] pb-6">
+                    <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${loading ? 'bg-indigo-500 animate-ping' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.25em]">
+                            {loading ? "Decrypting..." : "Ready for Auth"}
+                        </span>
+                    </div>
+                    {isAdmin && (
+                        <div className="px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center gap-2">
+                            <ShieldCheck className="w-3 h-3 text-rose-500" />
+                            <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Admin Mode</span>
+                        </div>
+                    )}
+                </div>
+
+                <AnimatePresence mode="wait">
+                    {isError && (
                         <AuthAlert
                             type="error"
-                            title="Authentication Failed"
+                            title="Breach Detected / Invalid Credentials"
                             message={message}
                         />
-                    </div>
-                )}
+                    )}
+                </AnimatePresence>
 
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div className="space-y-5">
+                <form className="space-y-8" onSubmit={handleSubmit}>
+                    <div className="space-y-6">
                         <AuthInput
                             id="login-email"
-                            label="Identity (Email)"
+                            label="Neural Identity (Email)"
                             type="email"
                             autoComplete="email"
-                            placeholder="you@company.com"
+                            placeholder="user@enterprise.nexus"
                             icon={Mail}
                             registration={register('email')}
                             error={errors.email?.message}
                         />
 
-                        <div>
-                            <div className="flex justify-between items-center mb-2.5">
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Security Key</span>
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center px-1 mb-1">
+                                <label className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] italic">Security Protocol</label>
                                 <Link
                                     to="/forgot-password"
-                                    className="text-[10px] font-bold text-indigo-400/70 hover:text-indigo-400 uppercase tracking-[0.15em] transition-colors"
+                                    className="text-[10px] font-black text-indigo-400/60 hover:text-indigo-400 uppercase tracking-[0.15em] transition-colors italic border-b border-indigo-500/0 hover:border-indigo-500/50"
                                 >
-                                    Recover
+                                    Recovery Flow
                                 </Link>
                             </div>
                             <SecurePasswordInput
@@ -85,57 +101,67 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                         </div>
                     </div>
 
-                    {/* Remember Me */}
-                    <div className="flex items-center gap-3 group cursor-pointer px-0.5">
-                        <div className="relative flex items-center">
-                            <input
-                                id="rememberMe"
-                                type="checkbox"
-                                {...register('rememberMe')}
-                                className="peer h-4 w-4 rounded-md border-white/10 bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
-                            />
-                            <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3 h-3 text-white left-0.5" />
+                    {/* Tactical Switch - Remember Me */}
+                    <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-3 group cursor-pointer">
+                            <div className="relative flex items-center">
+                                <input
+                                    id="rememberMe"
+                                    type="checkbox"
+                                    {...register('rememberMe')}
+                                    className="peer h-5 w-5 rounded-lg border-white/10 bg-white/[0.03] text-indigo-600 focus:ring-indigo-500/20 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
+                                />
+                                <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5 top-0.5" />
+                            </div>
+                            <label htmlFor="rememberMe" className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] group-hover:text-white/40 transition-colors cursor-pointer italic">
+                                Institutional Trust
+                            </label>
                         </div>
-                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-white/25 uppercase tracking-[0.18em] group-hover:text-white/40 transition-colors cursor-pointer">
-                            Remember this device
-                        </label>
+                        
+                        <div className="flex items-center gap-2">
+                             <Zap className="w-3 h-3 text-amber-500/30" />
+                             <span className="text-[9px] font-black text-white/10 uppercase tracking-widest">v4.0.2</span>
+                        </div>
                     </div>
 
-                    {/* Submit */}
+                    {/* Submit - The Vault Handle */}
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:scale-100 shadow-lg shadow-indigo-600/20 hover:shadow-indigo-500/30"
+                        className="group relative w-full h-14 overflow-hidden rounded-[1.5rem] bg-indigo-600 font-black text-[13px] uppercase tracking-[0.2em] italic text-white shadow-[0_20px_40px_-12px_rgba(79,70,229,0.3)] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:scale-100"
                     >
-                        {loading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <>Authenticate <ArrowRight className="w-3.5 h-3.5" /></>
-                        )}
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                        <span className="relative z-10 flex items-center justify-center gap-3">
+                            {loading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <>Verify Identity <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
+                            )}
+                        </span>
                     </button>
                 </form>
 
-                {/* Footer links */}
-                <div className="mt-8 pt-7 border-t border-white/[0.05]">
+                {/* Secure Footer Nodes */}
+                <div className="mt-12 pt-8 border-t border-white/[0.05]">
                     {!isAdmin && (
-                        <div className="text-center space-y-3">
-                            <p className="text-[10px] font-bold text-white/15 uppercase tracking-[0.2em]">
-                                New to the Platform?
+                        <div className="text-center space-y-4">
+                            <p className="text-[10px] font-black text-white/15 uppercase tracking-[0.3em] italic">
+                                No Clearance?
                             </p>
                             <Link
                                 to="/signup"
-                                className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400/80 hover:text-indigo-300 transition-colors"
+                                className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.04] text-[11px] font-black text-indigo-400 hover:text-indigo-300 hover:bg-white/[0.05] transition-all group"
                             >
-                                Start 14-day Enterprise Trial <ArrowRight className="w-3.5 h-3.5" />
+                                REQUEST ACCESS <Key className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
                             </Link>
                         </div>
                     )}
                     {isAdmin && (
                         <Link
                             to="/"
-                            className="text-[10px] font-bold text-white/20 hover:text-white/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+                            className="text-[10px] font-black text-white/20 hover:text-white/40 uppercase tracking-[0.3em] transition-colors flex items-center justify-center gap-3 italic group"
                         >
-                            <ArrowRight className="w-3 h-3 rotate-180" /> Back to System Login
+                            <ArrowRight className="w-3.5 h-3.5 rotate-180 group-hover:-translate-x-1 transition-transform" /> TERMINATE ADMIN SESSION
                         </Link>
                     )}
                 </div>

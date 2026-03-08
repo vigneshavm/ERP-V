@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AuthAlertProps {
     type: 'error' | 'success' | 'info';
@@ -9,31 +10,31 @@ interface AuthAlertProps {
 
 const config = {
     error: {
-        bg: 'bg-red-500/[0.06]',
-        border: 'border-red-500/15',
-        icon: AlertCircle,
-        iconColor: 'text-red-400',
-        titleColor: 'text-red-300',
-        textColor: 'text-red-300/80',
-        dot: 'bg-red-400',
+        bg: 'bg-rose-500/[0.03]',
+        border: 'border-rose-500/20',
+        icon: XCircle,
+        iconColor: 'text-rose-500',
+        titleColor: 'text-rose-400',
+        textColor: 'text-rose-400/80',
+        glow: 'shadow-[0_0_20px_rgba(244,63,94,0.1)]',
     },
     success: {
-        bg: 'bg-emerald-500/[0.06]',
-        border: 'border-emerald-500/15',
+        bg: 'bg-emerald-500/[0.03]',
+        border: 'border-emerald-500/20',
         icon: CheckCircle2,
-        iconColor: 'text-emerald-400',
-        titleColor: 'text-emerald-300',
-        textColor: 'text-emerald-300/80',
-        dot: 'bg-emerald-400',
+        iconColor: 'text-emerald-500',
+        titleColor: 'text-emerald-400',
+        textColor: 'text-emerald-400/80',
+        glow: 'shadow-[0_0_20px_rgba(16,185,129,0.1)]',
     },
     info: {
-        bg: 'bg-sky-500/[0.06]',
-        border: 'border-sky-500/15',
+        bg: 'bg-indigo-500/[0.03]',
+        border: 'border-indigo-500/20',
         icon: Info,
-        iconColor: 'text-sky-400',
-        titleColor: 'text-sky-300',
-        textColor: 'text-sky-300/80',
-        dot: 'bg-sky-400',
+        iconColor: 'text-indigo-400',
+        titleColor: 'text-indigo-300',
+        textColor: 'text-indigo-300/80',
+        glow: 'shadow-[0_0_20px_rgba(99,102,241,0.1)]',
     },
 };
 
@@ -44,28 +45,31 @@ const AuthAlert: React.FC<AuthAlertProps> = ({ type, title, message }) => {
     const Icon = c.icon;
 
     return (
-        <div
-            className={`${c.bg} border ${c.border} rounded-xl p-4 flex items-start gap-3`}
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className={`${c.bg} border ${c.border} ${c.glow} rounded-2xl p-4 flex items-start gap-4 backdrop-blur-xl relative overflow-hidden group`}
             role="alert"
-            style={{ animation: 'alertIn 0.35s ease-out' }}
         >
-            <div className="shrink-0 mt-0.5">
-                <Icon className={`w-4 h-4 ${c.iconColor}`} />
+            {/* Ambient inner glow */}
+            <div className={`absolute top-0 left-0 w-1 h-full ${c.iconColor.replace('text-', 'bg-')} opacity-40`} />
+            
+            <div className="shrink-0 mt-0.5 relative">
+                <Icon className={`w-5 h-5 ${c.iconColor} group-hover:scale-110 transition-transform duration-500`} />
+                <Icon className={`w-5 h-5 ${c.iconColor} absolute inset-0 blur-sm opacity-50`} />
             </div>
-            <div className="flex-1 min-w-0">
+            
+            <div className="flex-1 min-w-0 space-y-1">
                 {title && (
-                    <p className={`text-xs font-bold ${c.titleColor} mb-0.5`}>{title}</p>
+                    <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${c.titleColor} italic`}>
+                        {title}
+                    </p>
                 )}
-                <p className={`text-[11px] font-medium ${c.textColor} leading-relaxed`}>{message}</p>
+                <p className={`text-[12px] font-bold ${c.textColor} leading-tight italic`}>
+                    {message}
+                </p>
             </div>
-
-            <style>{`
-                @keyframes alertIn {
-                    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-                    to { opacity: 1; transform: translateY(0) scale(1); }
-                }
-            `}</style>
-        </div>
+        </motion.div>
     );
 };
 

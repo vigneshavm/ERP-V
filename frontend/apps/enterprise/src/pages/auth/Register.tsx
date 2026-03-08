@@ -1,6 +1,6 @@
 import React, { useState, useTransition } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Mail, Store, Phone, ArrowRight, ArrowLeft, ShieldCheck, Loader2, ChevronRight } from 'lucide-react';
+import { User, Mail, Store, Phone, ArrowRight, ArrowLeft, ShieldCheck, Loader2, ChevronRight, Zap, Target, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
@@ -10,9 +10,9 @@ import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
 import { useRegisterForm } from '../../hooks/auth/useRegisterForm';
 
 const STEPS = [
-    { id: 1, label: 'Identity', fields: ['name', 'email'] as const },
-    { id: 2, label: 'Business', fields: ['shopName', 'phone'] as const },
-    { id: 3, label: 'Security', fields: ['password', 'confirmPassword', 'terms'] as const },
+    { id: 1, label: 'Identity', fields: ['name', 'email'] as const, icon: User },
+    { id: 2, label: 'Enterprise', fields: ['shopName', 'phone'] as const, icon: Store },
+    { id: 3, label: 'Security', fields: ['password', 'confirmPassword', 'terms'] as const, icon: Lock },
 ];
 
 const Register: React.FC = () => {
@@ -54,66 +54,96 @@ const Register: React.FC = () => {
     const loading = isLoading || isPending;
 
     const slideVariants = {
-        enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
-        center: { x: 0, opacity: 1 },
-        exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
+        enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0, filter: 'blur(8px)' }),
+        center: { x: 0, opacity: 1, filter: 'blur(0px)' },
+        exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0, filter: 'blur(8px)' }),
     };
 
     return (
         <AuthLayout
-            title="Enterprise Registration"
-            subtitle="Create your workspace"
-            secondarySubtitle="Start your 14-day free trial"
-            description="Join thousands of retailers using our platform to scale their business. Professional tools for professional growth."
+            title="Entity Initialisation"
+            subtitle="Architect Your Workspace"
+            secondarySubtitle="Phase: Rapid Enterprise Provisioning"
+            description="Joining the global network of high-performance enterprises. Deploying sovereign business intelligence and scalable operational frameworks."
         >
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="space-y-10"
             >
-                {/* Error Alert */}
-                {(isError || validationError) && (
-                    <div className="mb-6">
+                {/* Error Pulse */}
+                <AnimatePresence mode="wait">
+                    {(isError || validationError) && (
                         <AuthAlert
                             type="error"
-                            title="Registration Error"
+                            title="Infrastructure Refinement Required"
                             message={validationError || message}
                         />
-                    </div>
-                )}
+                    )}
+                </AnimatePresence>
 
-                {/* Step Indicator */}
-                <div className="flex items-center gap-2 mb-8">
-                    {STEPS.map((s, i) => (
-                        <React.Fragment key={s.id}>
-                            <div className="flex items-center gap-2">
-                                <div
-                                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${
-                                        step > s.id
-                                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-                                            : step === s.id
-                                                ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/25'
-                                                : 'bg-white/[0.03] text-white/15 border border-white/[0.05]'
-                                    }`}
-                                >
-                                    {step > s.id ? '✓' : s.id}
-                                </div>
-                                <span className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-300 hidden sm:block ${
-                                    step >= s.id ? 'text-white/40' : 'text-white/10'
-                                }`}>
-                                    {s.label}
-                                </span>
-                            </div>
-                            {i < STEPS.length - 1 && (
-                                <div className={`flex-1 h-px transition-colors duration-500 ${
-                                    step > s.id ? 'bg-emerald-500/20' : 'bg-white/[0.04]'
-                                }`} />
-                            )}
-                        </React.Fragment>
-                    ))}
+                {/* Business Blueprint HUD (Step Indicator) */}
+                <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/[0.06] backdrop-blur-3xl space-y-6 relative overflow-hidden group/hud">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover/hud:scale-110 transition-all duration-1000">
+                        <Target className="w-20 h-20 text-indigo-500" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] italic">Deployment Phase</span>
+                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] italic flex items-center gap-2">
+                             0{step} / 03 <Zap className="w-3 h-3 animate-pulse" />
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {STEPS.map((s, i) => {
+                            const isActive = step === s.id;
+                            const isCompleted = step > s.id;
+                            const Icon = s.icon;
+                            return (
+                                <React.Fragment key={s.id}>
+                                    <div className="flex flex-col items-center gap-2 group/step cursor-help">
+                                        <div
+                                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 relative overflow-hidden ${
+                                                isCompleted
+                                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                                    : isActive
+                                                        ? 'bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)]'
+                                                        : 'bg-white/[0.03] text-white/10 border border-white/[0.05]'
+                                            }`}
+                                        >
+                                            <Icon className={`w-4 h-4 ${isActive ? 'animate-pulse' : ''}`} />
+                                            {isCompleted && (
+                                                <div className="absolute inset-0 bg-emerald-500/10 flex items-center justify-center">
+                                                    <ShieldCheck className="w-5 h-5" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {i < STEPS.length - 1 && (
+                                        <div className="flex-1 h-[2px] rounded-full overflow-hidden bg-white/[0.03]">
+                                            <motion.div 
+                                                className="h-full bg-indigo-500/40"
+                                                initial={{ width: '0%' }}
+                                                animate={{ width: isCompleted ? '100%' : '0%' }}
+                                                transition={{ duration: 0.8 }}
+                                            />
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
+                    
+                    <div className="px-1">
+                        <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] italic">
+                            Current: <span className="text-white/80">{STEPS[step-1].label} Validation</span>
+                        </p>
+                    </div>
                 </div>
 
-                <form onSubmit={handleFinalSubmit}>
+                <form onSubmit={handleFinalSubmit} className="space-y-8">
                     <AnimatePresence mode="wait" custom={direction}>
                         {/* STEP 1: Identity */}
                         {step === 1 && (
@@ -124,22 +154,22 @@ const Register: React.FC = () => {
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                                className="space-y-5"
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                className="space-y-6"
                             >
                                 <AuthInput
                                     id="register-name"
-                                    label="Full Name"
-                                    placeholder="John Doe"
+                                    label="Legal Identity"
+                                    placeholder="Full Name"
                                     icon={User}
                                     registration={register('name')}
                                     error={errors.name?.message}
                                 />
                                 <AuthInput
                                     id="register-email"
-                                    label="Email Address"
+                                    label="Communications Node (Email)"
                                     type="email"
-                                    placeholder="name@company.com"
+                                    placeholder="node@enterprise.network"
                                     icon={Mail}
                                     registration={register('email')}
                                     error={errors.email?.message}
@@ -156,24 +186,24 @@ const Register: React.FC = () => {
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                                className="space-y-5"
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                className="space-y-6"
                             >
                                 <AuthInput
                                     id="register-shopName"
-                                    label="Business Name"
-                                    placeholder="Acme Corporation"
+                                    label="Enterprise Designation"
+                                    placeholder="Organization Name"
                                     icon={Store}
                                     registration={register('shopName')}
                                     error={errors.shopName?.message}
                                 />
                                 <AuthInput
                                     id="register-phone"
-                                    label="Contact Number"
+                                    label="Operational Contact"
                                     type="tel"
                                     placeholder="9876543210"
                                     leftElement={
-                                        <span className="h-full rounded-l-xl border-r border-white/[0.06] bg-white/[0.03] px-3 flex items-center text-white/25 text-[10px] font-bold tracking-[0.15em] transition-colors group-focus-within:text-indigo-400/60">
+                                        <span className="h-full px-5 flex items-center text-white/20 text-[10px] font-black tracking-widest italic border-r border-white/5">
                                             +91
                                         </span>
                                     }
@@ -192,45 +222,46 @@ const Register: React.FC = () => {
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                                className="space-y-5"
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                className="space-y-8"
                             >
-                                <SecurePasswordInput
-                                    id="register-password"
-                                    label="Create Password"
-                                    placeholder="Min 8 characters"
-                                    registration={register('password')}
-                                    error={errors.password?.message}
-                                />
-
-                                <PasswordStrengthMeter password={passwordValue} />
+                                <div className="space-y-2">
+                                     <SecurePasswordInput
+                                        id="register-password"
+                                        label="Access Secret"
+                                        placeholder="Min 8 Complex Units"
+                                        registration={register('password')}
+                                        error={errors.password?.message}
+                                    />
+                                    <PasswordStrengthMeter password={passwordValue} />
+                                </div>
 
                                 <SecurePasswordInput
                                     id="register-confirmPassword"
-                                    label="Confirm Password"
-                                    placeholder="Re-enter password"
+                                    label="Verify Secret"
+                                    placeholder="Re-initialise Secret"
                                     registration={register('confirmPassword')}
                                     error={errors.confirmPassword?.message}
                                 />
 
-                                {/* Terms */}
-                                <div className="flex items-start gap-3 pt-1 group cursor-pointer">
-                                    <div className="relative flex items-center mt-0.5">
+                                {/* Tactical Switch - Terms */}
+                                <div className="flex items-start gap-4 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/[0.05] group cursor-pointer transition-colors hover:bg-white/[0.04]">
+                                    <div className="relative flex items-center mt-1">
                                         <input
                                             id="register-terms"
                                             type="checkbox"
                                             {...register('terms')}
-                                            className="peer h-4 w-4 rounded-md border-white/10 bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
+                                            className="peer h-5 w-5 rounded-lg border-white/10 bg-white/[0.03] text-indigo-600 focus:ring-indigo-500/20 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
                                         />
-                                        <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3 h-3 text-white left-0.5" />
+                                        <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5" />
                                     </div>
-                                    <label htmlFor="register-terms" className="text-[10px] font-medium text-white/25 leading-relaxed cursor-pointer group-hover:text-white/35 transition-colors">
-                                        I agree to the <a href="#" className="text-indigo-400/70 hover:text-indigo-400 underline underline-offset-2">Terms of Service</a> and <a href="#" className="text-indigo-400/70 hover:text-indigo-400 underline underline-offset-2">Privacy Policy</a>
+                                    <label htmlFor="register-terms" className="text-[10px] font-bold text-white/30 leading-relaxed cursor-pointer group-hover:text-white/50 transition-colors uppercase tracking-widest italic">
+                                        I accept the <a href="#" className="text-indigo-400 border-b border-indigo-400/20 hover:border-indigo-400">Terms of Operation</a> and <a href="#" className="text-indigo-400 border-b border-indigo-400/20 hover:border-indigo-400">Privacy Protocols</a>
                                     </label>
                                 </div>
                                 {errors.terms && (
-                                    <p className="text-[11px] text-red-400/90 font-medium flex items-center gap-1.5">
-                                        <span className="w-1 h-1 rounded-full bg-red-400 shrink-0" />
+                                    <p className="text-[10px] text-rose-500 font-black uppercase tracking-widest italic flex items-center gap-2 px-1">
+                                        <div className="w-1 h-1 rounded-full bg-rose-500" />
                                         {errors.terms?.message}
                                     </p>
                                 )}
@@ -238,16 +269,16 @@ const Register: React.FC = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* Navigation Buttons */}
-                    <div className="flex items-center gap-3 mt-8">
+                    {/* Industrial Navigation Controls */}
+                    <div className="flex items-center gap-4">
                         {step > 1 && (
                             <button
                                 type="button"
                                 onClick={prevStep}
-                                className="h-12 px-5 bg-white/[0.04] border border-white/[0.06] text-white/50 hover:text-white/80 hover:bg-white/[0.06] rounded-xl font-bold text-sm flex items-center gap-2 transition-all"
+                                className="h-14 px-8 bg-white/[0.03] border border-white/[0.06] text-white/30 hover:text-white/80 hover:bg-white/[0.06] rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] italic flex items-center gap-3 transition-all"
                             >
-                                <ArrowLeft className="w-3.5 h-3.5" />
-                                Back
+                                <ArrowLeft className="w-4 h-4" />
+                                REVERT
                             </button>
                         )}
 
@@ -255,36 +286,39 @@ const Register: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={nextStep}
-                                className="flex-1 h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20"
+                                className="flex-1 h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.2em] italic flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-[0_20px_40px_-12px_rgba(79,70,229,0.3)]"
                             >
-                                Continue <ChevronRight className="w-4 h-4" />
+                                PROCEED PHASE <ChevronRight className="w-5 h-5" />
                             </button>
                         ) : (
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-1 h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40 disabled:scale-100 shadow-lg shadow-indigo-600/20"
+                                className="group relative flex-1 h-14 overflow-hidden rounded-[1.5rem] bg-indigo-600 font-black text-[12px] uppercase tracking-[0.2em] italic text-white shadow-[0_20px_40px_-12px_rgba(79,70,229,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40"
                             >
-                                {loading ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <>Initialize Enterprise <ArrowRight className="w-3.5 h-3.5" /></>
-                                )}
+                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 group-hover:translate-x-full transition-transform duration-1000" />
+                                <span className="relative z-10 flex items-center justify-center gap-3">
+                                    {loading ? (
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                    ) : (
+                                        <>INITIALISE INSTANCE <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
+                                    )}
+                                </span>
                             </button>
                         )}
                     </div>
                 </form>
 
-                {/* Footer */}
-                <div className="mt-8 pt-7 border-t border-white/[0.05] text-center">
-                    <p className="text-[10px] font-bold text-white/15 uppercase tracking-[0.2em] mb-3">
-                        Already have access?
+                {/* Vault Linker Footer */}
+                <div className="mt-12 pt-8 border-t border-white/[0.05] text-center space-y-4">
+                    <p className="text-[10px] font-black text-white/15 uppercase tracking-[0.3em] italic">
+                        Established Identity?
                     </p>
                     <Link
                         to="/login"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400/80 hover:text-indigo-300 transition-colors"
+                        className="inline-flex items-center gap-3 px-8 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.04] text-[11px] font-black text-indigo-400 hover:text-indigo-300 transition-all uppercase tracking-widest italic group"
                     >
-                        Sign In to Workspace <ArrowRight className="w-3.5 h-3.5" />
+                        INITIALISE SIGN_IN <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
             </motion.div>
