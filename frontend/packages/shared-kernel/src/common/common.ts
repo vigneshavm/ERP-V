@@ -39,7 +39,7 @@ export type ModuleType =
     | 'MULTI_BRANCH'
     | 'GROW';
 export type BranchId = string;
-export { TaxMode } from './product/enums';
+export { TaxMode } from '../inventory/enums';
 export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
 export type AppView =
     // --- MAIN ERP ---

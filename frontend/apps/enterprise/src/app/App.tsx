@@ -2,30 +2,30 @@ import React, { useState } from 'react';
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './redux/store';
-import { setUser, getProfile } from './redux/slices/authSlice';
-import { useUiStore } from '../shared/lib/store/uiStore';
+import { RootState } from '@/app/store/store';
+import { setUser, getProfile } from '@/entities/session/model/authSlice';
+import { useUiStore } from '@/shared/lib/store/uiStore';
 import { APP_CONFIG } from './config';
 
-import Login from './pages/auth/Login';
-import AdminLogin from './components/AdminLogin';
-import ResetPassword from './pages/auth/ResetPassword';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import Register from './pages/auth/Register';
-import TenantManager from './pages/People/Tenants/TenantManager';
-import TenantSignUp from './pages/People/Tenants/TenantSignUp';
-import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
+import Login from '@/pages/auth/ui/Login';
+import AdminLogin from '@/features/auth-by-email/ui/AdminLogin';
+import ResetPassword from '@/pages/auth/ui/ResetPassword';
+import ForgotPassword from '@/pages/auth/ui/ForgotPassword';
+import Register from '@/pages/auth/ui/Register';
+import TenantManager from '@/pages/People/Tenants/TenantManager';
+import TenantSignUp from '@/pages/People/Tenants/TenantSignUp';
+import { POSCustomerDisplay } from '@/pages/Pos/ui/POSCustomerDisplay';
 
 // Config
-import { ConfigProvider } from './contexts/ConfigProvider';
-import { useDBDataSync } from './hooks/useDBDataSync';
-import { getSession, clearSession } from './utils/session';
+import { ConfigProvider } from '@/app/providers/ConfigProvider';
+import { useDBDataSync } from '@/widgets/sync-manager/lib/useDBDataSync';
+import { getSession, clearSession } from '@/shared/lib/utils/session';
 
-import { Tenant } from './types/tenant';
+import { Tenant } from '@/entities/session/model/core';
 import { Routes, Route } from 'react-router-dom';
 
 // NEW: Imported TenantView
-import TenantView from './pages/Views/TenantView';
+import TenantView from '@/pages/Views/ui/TenantView';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 

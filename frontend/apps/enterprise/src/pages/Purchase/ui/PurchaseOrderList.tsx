@@ -27,7 +27,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     const vendors = useMemo(() => Array.from(new Set(orders.map((o: PurchaseOrder) => o.vendor_name || 'Unknown'))).sort(), [orders]);
 
     const filteredOrders = useMemo(() => {
-        let result = orders.filter((o: PurchaseOrder) => {
+        const result = orders.filter((o: PurchaseOrder) => {
             const matchesSearch = o.po_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 o.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesStatus = statusFilter === 'All' || o.status === statusFilter;

@@ -1,9 +1,7 @@
 import { AppDispatch, RootState } from "../store";
-import { db } from '../../services/db';
-import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '../slices/financeSlice';
-// import { supabase } from '../../lib/supabase'; // Removed
-
-import api from "../../services/api.js";
+import { db } from '@/shared/lib/db';
+import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '@/entities/finance/model/financeSlice';
+import api from "@/shared/api/api";
 
 export const saveDailyFinanceRecord = (record: any) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();

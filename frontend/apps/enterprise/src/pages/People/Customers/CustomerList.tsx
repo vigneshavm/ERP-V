@@ -65,7 +65,7 @@ const CustomerList: React.FC = () => {
 
     // Filter and sort
     const filteredCustomers = useMemo(() => {
-        let result = enrichedCustomers.filter(customer => {
+        const result = enrichedCustomers.filter(customer => {
             if (searchTerm) {
                 const search = searchTerm.toLowerCase();
                 if (!customer.name.toLowerCase().includes(search) &&

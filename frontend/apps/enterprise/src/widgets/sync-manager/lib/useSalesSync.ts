@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
-import { setCustomersList, setSalesHistory } from "../redux/slices/posSlice";
-import { Sale, Customer } from "../types/sales";
-import { SyncManager } from "../services/SyncManager";
-import { getTable } from "../services/dataSource";
+import { setCustomersList, setSalesHistory } from "@/entities/sales/model/posSlice";
+import { Sale, Customer } from "@repo/shared-kernel";
+import { SyncManager } from "./SyncManager";
+import { getTable } from "@/shared/api/dataSource";
 
 export const useSalesSync = (tenantId: string | undefined) => {
     const dispatch = useDispatch();

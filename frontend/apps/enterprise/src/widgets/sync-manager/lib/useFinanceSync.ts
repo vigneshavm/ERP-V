@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-import { setTransactions, setCheques, setDailyRecords } from '../redux/slices/financeSlice';
-import { Transaction, Cheque } from "../types/finance";
-import { SyncManager } from "../services/SyncManager";
+import { setTransactions, setCheques, setDailyRecords } from '@/entities/finance/model/financeSlice';
+import { Transaction, Cheque } from "@repo/shared-kernel"; // Check shared-kernel for finance types
+import { SyncManager } from "./SyncManager";
 import { fetchTransactionsRaw, fetchChequesRaw, fetchDailyFinanceRaw } from './financeQueries';
 
 export const useFinanceSync = (tenantId: string | undefined) => {

@@ -4,3 +4,4 @@ export * from "./Card";
 export * from "./LoadingSpinner";
 export * from "./UI/Modal";
 export * from "./Form/Input";
+export * from "./Display/ThemeToggle";

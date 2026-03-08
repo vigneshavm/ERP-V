@@ -33,7 +33,7 @@ const PurchaseEntry: React.FC = () => {
             <div className="flex flex-col h-full bg-slate-50/30 dark:bg-slate-950/30">
                 <PageHeader 
                     title="Purchase Strategy & Inwarding" 
-                    subtitle="Orchestrate inventory replenishment and fiscal commitments"
+                    description="Orchestrate inventory replenishment and fiscal commitments"
                 />
                 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">

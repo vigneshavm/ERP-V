@@ -2,17 +2,17 @@ import React, { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Ban } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { usePermissions } from '../../../hooks/usePermissions';
-import { AppView } from '../../../types/common';
-import { LazyModules } from '../../../app/registry/ModuleRegistry';
-import EntitlementGuard from '../../shared/Layout/EntitlementGuard';
+import { RootState } from '@/app/store/store';
+import { usePermissions } from '@/hooks/usePermissions';
+import { AppView } from '@repo/shared-kernel';
+import { LazyModules } from '@/app/registry/ModuleRegistry';
+import EntitlementGuard from './EntitlementGuard';
 import {
     DashboardSkeleton,
     GridSkeleton,
     TableSkeleton,
     FormSkeleton
-} from '../../core/Feedback/Skeleton';
+} from '@/shared/ui/Feedback/Skeleton';
 
 interface ModuleRendererProps {
     activeTab: string;

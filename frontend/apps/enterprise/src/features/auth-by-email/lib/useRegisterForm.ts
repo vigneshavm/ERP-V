@@ -22,7 +22,7 @@ export const useRegisterForm = () => {
     });
 
     const onSubmit = (data: RegisterInput) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         const { confirmPassword, terms, ...userData } = data;
         dispatch(register(userData));
     };

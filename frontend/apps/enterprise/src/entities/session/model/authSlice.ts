@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "../../services/api.js";
-import { RootState } from '../store';
-import { Sector } from "../../types/common";
-import { clearSession } from "../../utils/session";
+import api from "@/shared/api/api";
+import { Sector } from "@repo/shared-kernel";
+import { clearSession } from "@/shared/lib/utils/session";
+import { RootState } from "@/app/store/store";
 
 
 const API_URL = "/api/auth";

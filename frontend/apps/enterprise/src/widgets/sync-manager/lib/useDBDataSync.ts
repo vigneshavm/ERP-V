@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import { useTenantData } from './useTenantData';
+import { RootState } from '@/app/store/store';
+import { useTenantData } from '@/features/tenant-onboarding/lib/useTenantData';
 import { useProductSync } from './useProductSync';
 import { useFinanceSync } from './useFinanceSync';
 import { useSalesSync } from './useSalesSync';
 import { usePurchaseSync } from './usePurchaseSync';
-import { useHRData } from './useHRData';
-import { useVisualPreferences } from './useVisualPreferences';
+// import { useHRData } from './useHRData'; // File is missing in whole codebase
+import { useVisualPreferences } from '@/features/tenant-onboarding/lib/useVisualPreferences';
 
 /**
  * Orchestrator Hook for MongoDB/REST data synchronization.
@@ -30,7 +30,7 @@ export const useDBDataSync = () => {
     useProductSync(tenantId);
     useSalesSync(tenantId);
     useFinanceSync(tenantId);
-    useHRData(tenantId);
+    // useHRData(tenantId);
     usePurchaseSync(tenantId);
     useVisualPreferences(tenantId, user?.id);
 

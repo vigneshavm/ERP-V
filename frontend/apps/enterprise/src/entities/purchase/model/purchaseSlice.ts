@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder, PurchasePayment, GRN, GRNItem, PurchaseOrderItem } from "@vignesh-erp/shared-kernel";
+import { PurchaseState, PurchaseOrder, PurchasePayment, GRN, GRNItem, PurchaseOrderItem } from "@repo/shared-kernel";
 import api from "@/shared/api/api";
 import { RootState } from '@/app/store/store';
 
@@ -50,6 +50,19 @@ export const fetchPurchaseById = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const response = await api.get(`/api/purchases/${id}`);
+            return response.data;
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+export const createPurchaseOrder = createAsyncThunk(
+    'purchase/createOrder',
+    async (orderData: Partial<PurchaseOrder>, thunkAPI) => {
+        try {
+            const response = await api.post('/api/purchases', orderData);
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || error.toString();
@@ -151,6 +164,18 @@ const purchaseSlice = createSlice({
                 state.selectedOrder = action.payload;
             })
             .addCase(fetchPurchaseById.rejected, (state) => {
+                state.isProcessing = false;
+            })
+            .addCase(createPurchaseOrder.pending, (state) => {
+                state.isProcessing = true;
+            })
+            .addCase(createPurchaseOrder.fulfilled, (state, action) => {
+                state.isProcessing = false;
+                if (action.payload.success && action.payload.data) {
+                    state.orders.unshift(action.payload.data);
+                }
+            })
+            .addCase(createPurchaseOrder.rejected, (state) => {
                 state.isProcessing = false;
             });
     },

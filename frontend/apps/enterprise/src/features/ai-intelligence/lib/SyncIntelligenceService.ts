@@ -1,5 +1,5 @@
-import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from "../types/tenant";
-import { db } from './db';
+import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from "@/entities/session/model/sync";
+import { db } from '@/shared/lib/db';
 
 
 export class SyncIntelligenceService {

@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
-import { setProducts, upsertProduct, setCategories, setHydrating } from '../redux/slices/inventorySlice';
-import { Product } from "../types/product";
-import { SyncManager } from "../services/SyncManager";
-import { getTable } from "../services/dataSource";
-import { setSyncing } from '../redux/slices/uiSlice';
+import { setProducts, setCategories, setHydrating } from '@/entities/inventory/model/inventorySlice';
+import { Product } from "@repo/shared-kernel"; 
+import { SyncManager } from "./SyncManager";
+import { getTable } from "@/shared/api/dataSource";
+import { useUiStore } from '@/shared/lib/store/uiStore';
 
 export const useProductSync = (tenantId: string | undefined) => {
     const dispatch = useDispatch();
@@ -14,7 +14,8 @@ export const useProductSync = (tenantId: string | undefined) => {
         if (!tenantId) return;
 
         const fetchProducts = async () => {
-            dispatch(setSyncing(true));
+            const setSyncStatus = useUiStore.getState().setSyncing;
+        setSyncStatus(true);
             try {
                 // 1. Immediate Hydration (SWR) - only if DB mode
                 const cached = await SyncManager.getOfflineProducts(tenantId);
@@ -67,7 +68,8 @@ export const useProductSync = (tenantId: string | undefined) => {
                 console.error("Failed to sync products:", err);
             } finally {
                 dispatch(setHydrating(false));
-                dispatch(setSyncing(false));
+                const setSyncStatus = useUiStore.getState().setSyncing;
+            setSyncStatus(false);
             }
         };
 

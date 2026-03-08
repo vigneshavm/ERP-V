@@ -1,8 +1,8 @@
-import { db } from './db';
-import api from './api';
-import { store } from "../redux/store";
-import { setDailyRecordSynced } from "../redux/slices/financeSlice";
-import { SyncIntelligenceService } from './SyncIntelligenceService';
+import { db } from '@/shared/lib/db';
+import api from '@/shared/api/api';
+import { store } from "@/app/store/store";
+import { setDailyRecordSynced } from "@/entities/finance/model/financeSlice";
+import { SyncIntelligenceService } from '@/features/ai-intelligence/lib/SyncIntelligenceService';
 
 export class SyncManager {
     private static isSyncingSelection = false;

@@ -1,4 +1,4 @@
-import { Sector } from '../common';
+import { Sector } from '../common/common';
 import { ProductUnit, TaxMode } from './enums';
 
 export interface BaseProduct {

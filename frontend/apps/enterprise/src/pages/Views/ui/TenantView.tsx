@@ -1,18 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Sidebar from '../../shared/ui/Layout/Sidebar';
-import { RootState } from "../../redux/store";
-import { ConfigProvider } from "../../contexts/ConfigProvider";
-import { Tenant } from "../../types/tenant";
-import { LazyModules } from "../../app/registry/ModuleRegistry";
-import { useUiStore } from "../../shared/lib/store/uiStore";
+import Sidebar from '@/shared/ui/Layout/Sidebar';
+import { RootState } from "@/app/store/store";
+import { ConfigProvider } from "@/app/providers/ConfigProvider";
+import { Tenant } from "@/entities/session/model/core";
+import { LazyModules } from "@/app/registry/ModuleRegistry";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 
 // Extracted Components & Hooks
-import MobileNav from '../../shared/ui/Layout/MobileNav';
-import ModuleRenderer from '../../shared/ui/Layout/ModuleRenderer';
-import RouteDefinitions from '../../shared/ui/Layout/RouteDefinitions';
-import GlobalModals from '../../shared/ui/Layout/GlobalModals';
-import { useTabSync } from '../../hooks/useTabSync';
+import MobileNav from '@/shared/ui/Layout/MobileNav';
+import ModuleRenderer from '@/shared/ui/Layout/ModuleRenderer';
+import RouteDefinitions from '@/shared/ui/Layout/RouteDefinitions';
+import GlobalModals from '@/shared/ui/Layout/GlobalModals';
+import { useTabSync } from '@/widgets/sync-manager/lib/useTabSync';
 
 interface TenantViewProps {
     currentTenant: Tenant | null;
@@ -40,7 +40,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     const effectiveTenant = useMemo(() => {
         if (user?.tenantId) {
-            return tenants.find(t => t.id === user.tenantId) || currentTenant;
+            return tenants.find((t: any) => t.id === user.tenantId) || currentTenant;
         }
         return currentTenant;
     }, [user?.tenantId, tenants, currentTenant]);
@@ -84,12 +84,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 )}
 
                 {/* Modals & Dialogs */}
-                <GlobalModals
-                    isChangePasswordOpen={isChangePasswordOpen}
-                    setIsChangePasswordOpen={setIsChangePasswordOpen}
-                    confirmDialog={confirmDialog}
-                    setConfirmDialog={setConfirmDialog}
-                />
+                <GlobalModals />
             </div>
         </ConfigProvider>
     );

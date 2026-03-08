@@ -8,17 +8,18 @@ import {
     MessageCircle, RefreshCw, Database, PieChart, UserCheck, Truck, Box, AlertTriangle,
     Layers, Calendar, Briefcase, Building, Save, Palette, LayoutGrid, Shield
 } from 'lucide-react';
-import { useUiStore } from '../../../shared/lib/store/uiStore';
-import { setBranch } from "../../../redux/slices/authSlice";
-import { useConfig } from "../../../contexts/ConfigProvider";
-import { useBranchResolver } from "../../../hooks/useBranchResolver";
-import { usePermissions } from "../../../hooks/usePermissions";
-import { AppView, ModuleType } from "../../../types/common";
+import { useUiStore } from '@/shared/lib/store/uiStore';
+import { setBranch, setTheme } from "@/entities/session/model/authSlice";
+import { useConfig } from "@/app/providers/ConfigProvider";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
+import { usePermissions } from "@/hooks/usePermissions";
+import { AppView, ModuleType } from "@repo/shared-kernel";
+import { RootState } from '@/app/store/store';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
-import { ThemeToggle } from '../../core/Display/ThemeToggle';
+import { ThemeToggle } from '@repo/ui-react';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
-import { MENU_ITEMS, MenuItem } from '../../../config/menu.config';
+import { MENU_ITEMS, MenuItem } from '@/app/config/menu.config';
 
 
 
@@ -28,7 +29,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     const dispatch = useDispatch();
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const { user, role, theme } = useSelector((state: RootState) => state.auth);
     const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
     const {
         sidebarOpen,
@@ -40,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     } = useUiStore();
     const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
     const { tenantId } = useConfig();
-    const currentTenant = useMemo(() => tenants.find(t => t.id === tenantId), [tenants, tenantId]);
+    const currentTenant = useMemo(() => tenants.find((t: any) => t.id === tenantId), [tenants, tenantId]);
     const { getBranchName } = useBranchResolver();
     const { checkAccess, checkModuleAccess } = usePermissions();
 
@@ -151,7 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         // Collect all potential branches for this tenant
         const rawBranches = [
             ...(currentTenant?.locations?.flatMap((l: any) => l.branches) || []),
-            ...branchesFromDB.filter(b => (b as any).tenantId === tenantId || (b as any).tenant_id === tenantId)
+            ...branchesFromDB.filter((b: any) => (b as any).tenantId === tenantId || (b as any).tenant_id === tenantId)
         ].filter(Boolean);
 
         // Deduplicate by branch ID
@@ -183,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 ) : (
                     <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
-                        {getBranchName(selectedBranch)}
+                        {getBranchName(selectedBranch || 'All')}
                         {isSyncing && (
                             <RefreshCcw className="w-3 h-3 text-primary animate-spin ml-1" />
                         )}
@@ -300,18 +301,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             {!desktopCollapsed && (
                 <div className="pt-2 px-4 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
                     <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Appearance</span>
-                    <ThemeToggle />
+                    <ThemeToggle theme={theme || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
                 </div>
             )}
             {desktopCollapsed && (
                 <div className="pt-2 px-2 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-center">
-                    <ThemeToggle />
+                    <ThemeToggle theme={theme || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
                 </div>
             )}
 
             <ChangePasswordModal
                 isOpen={isChangePasswordOpen}
-                onClick={() => setSidebarOpen(false)}
+                onClose={() => setIsChangePasswordOpen(false)}
             />
         </aside>
     );

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ChevronRight, LucideIcon } from 'lucide-react';
-import { RootState } from "../../../redux/store";
+import { useUiStore } from '@/shared/lib/store/uiStore';
 
 interface NavSubmenuProps {
     icon: LucideIcon;
@@ -21,7 +20,7 @@ const NavSubmenu: React.FC<NavSubmenuProps> = ({
     defaultOpen = false
 }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
-    const { desktopCollapsed } = useSelector((state: RootState) => state.ui);
+    const { desktopCollapsed } = useUiStore();
 
     if (desktopCollapsed) return null;
 

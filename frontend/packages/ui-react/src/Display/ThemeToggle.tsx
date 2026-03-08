@@ -1,10 +1,12 @@
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { useTheme } from "../../../contexts/ThemeContext";
 
-export const ThemeToggle: React.FC = () => {
-    const { theme, toggleTheme } = useTheme();
+interface ThemeToggleProps {
+    theme: 'light' | 'dark' | 'system';
+    toggleTheme: () => void;
+}
 
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => {
     return (
         <button
             onClick={toggleTheme}

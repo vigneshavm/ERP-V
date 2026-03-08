@@ -8,6 +8,7 @@ interface Breadcrumb {
 interface PageHeaderProps {
     title: string;
     description?: string | null;
+    subtitle?: string | null;
     actions?: React.ReactNode;
     backButton?: React.ReactNode;
     breadcrumbs?: Breadcrumb[] | null;
@@ -16,10 +17,12 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({
     title,
     description,
+    subtitle,
     actions = null,
     backButton = null,
     breadcrumbs = null
 }) => {
+    const displayDescription = description || subtitle;
     return (
         <div className="mb-8">
             {backButton && (
@@ -54,7 +57,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">{title}</h1>
-                    {description && <p className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">{description}</p>}
+                    {displayDescription && <p className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">{displayDescription}</p>}
                 </div>
                 {actions && (
                     <div className="flex flex-wrap gap-3">
