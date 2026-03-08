@@ -85,26 +85,28 @@ export class CashBankService {
         if (!fromAccount || !toAccount || !amount) throw new AppError("Invalid transfer data", 400);
         if (fromAccount === toAccount) throw new AppError("Source and destination cannot be same", 400);
 
-        // Validation
-        if (fromAccount !== 'cash') {
-            const acc = await this.cashBankRepository.findAccountById(fromAccount, userId);
-            if (!acc) throw new AppError("Source account not found", 404);
-            if (acc.currentBalance < amount) throw new AppError("Insufficient balance in source account", 400);
-        } else {
-            const cashBal = await this.cashBankRepository.getCashBalance(userId);
-            if (cashBal < amount) throw new AppError(`Insufficient cash. Available: ${cashBal}`, 400);
-        }
+        return this.cashBankRepository.executeInTransaction(async (session) => {
+            // Validation
+            if (fromAccount !== 'cash') {
+                const acc = await this.cashBankRepository.findAccountById(fromAccount, userId, session);
+                if (!acc) throw new AppError("Source account not found", 404);
+                if (acc.currentBalance < amount) throw new AppError("Insufficient balance in source account", 400);
+            } else {
+                const cashBal = await this.cashBankRepository.getCashBalance(userId, session);
+                if (cashBal < amount) throw new AppError(`Insufficient cash. Available: ${cashBal}`, 400);
+            }
 
-        const txn = await this.cashBankRepository.createTransaction({
-            type: 'transfer', amount, fromAccount, toAccount, description, userId, date: new Date()
+            const txn = await this.cashBankRepository.createTransaction({
+                type: 'transfer', amount, fromAccount, toAccount, description, userId, date: new Date()
+            }, session);
+
+            // Update Balances
+            if (fromAccount !== 'cash') await this.cashBankRepository.updateBalance(fromAccount, -amount, session);
+            if (toAccount !== 'cash') await this.cashBankRepository.updateBalance(toAccount, amount, session);
+
+            info(`Transfer by ${userName}: ${amount} from ${fromAccount} to ${toAccount}`);
+            return txn;
         });
-
-        // Update Balances
-        if (fromAccount !== 'cash') await this.cashBankRepository.updateBalance(fromAccount, -amount);
-        if (toAccount !== 'cash') await this.cashBankRepository.updateBalance(toAccount, amount);
-
-        info(`Transfer by ${userName}: ${amount} from ${fromAccount} to ${toAccount}`);
-        return txn;
     }
 
     async createCashTransaction(data: any, userId: string, userName: string): Promise<ICashbankTransaction> {
@@ -122,29 +124,31 @@ export class CashBankService {
 
         const isBankTransfer = ObjectId.isValid(otherAccount);
 
-        if (isBankTransfer) {
-            if (type === 'in') { // Bank -> Cash
-                const bank = await this.cashBankRepository.findAccountById(otherAccount, userId);
-                if (!bank) throw new AppError("Bank not found", 404);
-                if (bank.currentBalance < amount) throw new AppError("Insufficient bank balance", 400);
-            } else { // Cash -> Bank
-                const cashBal = await this.cashBankRepository.getCashBalance(userId);
-                if (cashBal < amount) throw new AppError("Insufficient cash", 400);
+        return this.cashBankRepository.executeInTransaction(async (session) => {
+            if (isBankTransfer) {
+                if (type === 'in') { // Bank -> Cash
+                    const bank = await this.cashBankRepository.findAccountById(otherAccount, userId, session);
+                    if (!bank) throw new AppError("Bank not found", 404);
+                    if (bank.currentBalance < amount) throw new AppError("Insufficient bank balance", 400);
+                } else { // Cash -> Bank
+                    const cashBal = await this.cashBankRepository.getCashBalance(userId, session);
+                    if (cashBal < amount) throw new AppError("Insufficient cash", 400);
+                }
             }
-        }
 
-        const txn = await this.cashBankRepository.createTransaction({
-            type: isBankTransfer ? 'transfer' : type,
-            amount, fromAccount, toAccount, description, reference, date: date || new Date(), userId
+            const txn = await this.cashBankRepository.createTransaction({
+                type: isBankTransfer ? 'transfer' : type,
+                amount, fromAccount, toAccount, description, reference, date: date || new Date(), userId
+            }, session);
+
+            if (isBankTransfer) {
+                if (type === 'in') await this.cashBankRepository.updateBalance(otherAccount, -amount, session);
+                else await this.cashBankRepository.updateBalance(otherAccount, amount, session);
+            }
+
+            info(`Cash ${type} by ${userName}: ${amount}`);
+            return txn;
         });
-
-        if (isBankTransfer) {
-            if (type === 'in') await this.cashBankRepository.updateBalance(otherAccount, -amount);
-            else await this.cashBankRepository.updateBalance(otherAccount, amount);
-        }
-
-        info(`Cash ${type} by ${userName}: ${amount}`);
-        return txn;
     }
 
     // Ledger & Reports
@@ -347,29 +351,31 @@ export class CashBankService {
     }
 
     async updateChequeStatus(id: string, status: string, userId: string, userName: string): Promise<any> {
-        const cheque = await this.cashBankRepository.findChequeById(id, userId);
-        if (!cheque) throw new AppError('Cheque not found', 404);
+        return this.cashBankRepository.executeInTransaction(async (session) => {
+            const cheque = await this.cashBankRepository.findChequeById(id, userId, session);
+            if (!cheque) throw new AppError('Cheque not found', 404);
 
-        const oldStatus = cheque.status;
-        const updatedCheque = await this.cashBankRepository.updateCheque(id, userId, { status: status as any });
-        if (!updatedCheque) throw new AppError('Update failed', 500);
+            const oldStatus = cheque.status;
+            const updatedCheque = await this.cashBankRepository.updateCheque(id, userId, { status: status as any }, session);
+            if (!updatedCheque) throw new AppError('Update failed', 500);
 
-        if (status === 'CLEARED' && oldStatus !== 'CLEARED') {
-            await this.cashBankRepository.createTransaction({
-                type: cheque.type === 'RECEIVED' ? 'in' : 'out',
-                amount: cheque.amount,
-                fromAccount: cheque.type === 'RECEIVED' ? 'External' : cheque.accountId.toString(),
-                toAccount: cheque.type === 'RECEIVED' ? cheque.accountId.toString() : 'External',
-                description: `Cheque ${status}: ${cheque.number}`,
-                reference: cheque.number,
-                date: new Date(),
-                userId,
-            });
-            await this.cashBankRepository.updateBalance(cheque.accountId.toString(), cheque.type === 'RECEIVED' ? cheque.amount : -cheque.amount);
-        }
+            if (status === 'CLEARED' && oldStatus !== 'CLEARED') {
+                await this.cashBankRepository.createTransaction({
+                    type: cheque.type === 'RECEIVED' ? 'in' : 'out',
+                    amount: cheque.amount,
+                    fromAccount: cheque.type === 'RECEIVED' ? 'External' : cheque.accountId.toString(),
+                    toAccount: cheque.type === 'RECEIVED' ? cheque.accountId.toString() : 'External',
+                    description: `Cheque ${status}: ${cheque.number}`,
+                    reference: cheque.number,
+                    date: new Date(),
+                    userId,
+                }, session);
+                await this.cashBankRepository.updateBalance(cheque.accountId.toString(), cheque.type === 'RECEIVED' ? cheque.amount : -cheque.amount, session);
+            }
 
-        info(`Cheque ${id} status updated to ${status} by ${userName}`);
-        return updatedCheque;
+            info(`Cheque ${id} status updated to ${status} by ${userName}`);
+            return updatedCheque;
+        });
     }
 
     async getEffectiveBalance(id: string, userId: string, dateString?: string): Promise<any> {
