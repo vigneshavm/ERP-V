@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+import federation from '@originjs/vite-plugin-federation';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
@@ -30,6 +31,14 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      federation({
+        name: 'enterprise_host',
+        remotes: {
+          mfe_budget_planner: 'http://localhost:5001/assets/remoteEntry.js',
+          mfe_online_store: 'http://localhost:5002/assets/remoteEntry.js',
+        },
+        shared: ['react', 'react-dom']
+      }),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],

@@ -1,0 +1,24 @@
+{
+  "name": "@repo/ui-react",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-label": "^2.1.2"
+  },
+  "devDependencies": {
+    "@repo/config-typescript": "*",
+    "@repo/config-eslint": "*",
+    "@repo/config-tailwind": "*",
+    "@types/react": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "@yourcompany/finance-lib",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Pure functional math logic for ERP finance",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "devDependencies": {
+        "@repo/config-typescript": "*",
+        "@repo/config-eslint": "*",
+        "typescript": "^5.0.0"
+    }
+}

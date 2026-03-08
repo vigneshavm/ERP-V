@@ -17,7 +17,7 @@
     "@yourcompany/finance-lib": "*",
     "@yourcompany/ui-react": "*",
     "@yourcompany/utils": "*",
-    "@repo/mfe-budget-planner": "workspace:*",
+    "@repo/mfe-budget-planner": "*",
     "clsx": "^2.1.1",
     "framer-motion": "^12.0.0-alpha.0",
     "lucide-react": "^0.400.0",
