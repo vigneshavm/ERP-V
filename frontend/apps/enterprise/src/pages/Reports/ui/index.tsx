@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setActiveTab } from '@/redux/slices/uiSlice';
-import { RootState, AppDispatch } from '@/redux/store';
+import { RootState, AppDispatch } from '@/app/store/store';
 import {
     Search,
     ArrowRight,
@@ -14,15 +13,16 @@ import {
     Sparkles,
     Lock
 } from 'lucide-react';
-import { REPORT_CATALOG, ReportItem } from './ReportData';
+import { REPORT_CATALOG, ReportItem } from '../ReportData';
 
 import BusinessReportsHub from './BusinessReportsHub';
-import { ReportType } from "../../hooks/useBusinessReports";
+import { ReportType } from "@/widgets/stats-dashboard/lib/useBusinessReports";
 
 const ReportsModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user, role } = useSelector((state: RootState) => state.auth);
-    const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui);
+    // const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui); // Removed as uiSlice is missing
+    const globalActiveTab: any = 'REPORTS'; // Default value since uiSlice is missing
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTabLocal] = useState<string>('transactions');
     const [selectedReportSlug, setSelectedReportSlug] = useState<string | null>(null);
@@ -94,7 +94,7 @@ const ReportsModule: React.FC = () => {
     // Access Control: Owner, Admin, and specific Finance roles
     const canAccessFinanceReports = role === 'Owner' || role === 'Manager' || user?.systemRole === 'Owner' || user?.systemRole === 'Manager';
 
-    const currentReport = selectedReportSlug ? REPORT_CATALOG.flatMap(c => c.reports).find(r => r.slug === selectedReportSlug) : null;
+    const currentReport = selectedReportSlug ? REPORT_CATALOG.flatMap((c: any) => c.reports).find((r: any) => r.slug === selectedReportSlug) : null;
 
     const getMappedReportType = (slug: string): ReportType | null => {
         if (slug === 'sales') return 'REPORT_SALES';
@@ -168,7 +168,7 @@ const ReportsModule: React.FC = () => {
     }
 
     const TABS = [
-        ...REPORT_CATALOG.map(c => ({ id: c.id, title: c.title, count: c.reports.length })),
+        ...REPORT_CATALOG.map((c: any) => ({ id: c.id, title: c.title, count: c.reports.length })),
         { id: 'custom', title: 'Custom Reports', count: 1 }
     ];
 
@@ -176,7 +176,7 @@ const ReportsModule: React.FC = () => {
 
     // Filter reports within the active category
     const filteredReports = activeCategoryData
-        ? activeCategoryData.reports.filter(report => {
+        ? activeCategoryData.reports.filter((report: any) => {
             const matchesSearch = report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 report.description.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -329,7 +329,7 @@ const ReportsModule: React.FC = () => {
                     </div>
                 ) : filteredReports.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500">
-                        {filteredReports.map((report) => (
+                        {filteredReports.map((report: any) => (
                             <ReportCard key={report.id} report={report} categoryId={activeTab} />
                         ))}
                     </div>

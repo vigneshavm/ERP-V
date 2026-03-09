@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../redux/store';
-import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice'; // We need to ensure this action exists and calls the patch endpoint
-import api from '../../services/api';
-import Layout from '../../components/shared/Layout/Layout';
-import PageHeader from '../../components/shared/Layout/PageHeader';
+import { RootState, AppDispatch } from '@/app/store/store';
+import { updatePaymentStatus } from '@/app/store/slices/paymentOutSlice'; // We need to ensure this action exists and calls the patch endpoint
+import api from '@/shared/api/api';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
 

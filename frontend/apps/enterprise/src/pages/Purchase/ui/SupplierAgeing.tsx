@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
     Calendar,
     Search,
@@ -13,8 +13,8 @@ import {
     Filter,
     ArrowUpRight
 } from 'lucide-react';
-import api from "../../services/api";
-import { RootState } from "../../redux/store";
+import api from "@/shared/api/api";
+import { RootState } from "@/app/store/store";
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 

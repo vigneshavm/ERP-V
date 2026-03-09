@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import StatsCard from "../../components/shared/Display/StatsCard";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import MetricCard from "@/shared/ui/Feedback/MetricCard";
 import {
     CreditCard, Plus, Search, Filter, ArrowRight, Clock,
     CheckCircle, AlertCircle, DollarSign, FileText, ChevronRight,
     Search as SearchIcon, Calendar, ArrowUpRight, ArrowDownLeft
 } from 'lucide-react';
-import api from "../../services/api";
-import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "../../types/purchase";
+import api from "@/shared/api/api";
+import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "@repo/shared-kernel";
 import { toast } from 'react-toastify';
 
 const SupplierPayments: React.FC = () => {
@@ -162,33 +162,29 @@ const SupplierPayments: React.FC = () => {
 
                 {/* KPI Section */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatsCard
+                    <MetricCard
                         title="Total Outflow"
-                        value={formatCurrency(stats.totalSettled + stats.pendingAmount)}
-                        icon={<ArrowUpRight className="w-full h-full text-red-500" />}
-                        iconBgColor="bg-red-50"
-                        iconColor="text-red-600"
+                        value={stats.totalSettled + stats.pendingAmount}
+                        icon={ArrowUpRight}
+                        color="rose"
                     />
-                    <StatsCard
+                    <MetricCard
                         title="Cleared (MTD)"
-                        value={formatCurrency(stats.totalSettled)}
-                        icon={<CheckCircle className="w-full h-full" />}
-                        iconBgColor="bg-emerald-50"
-                        iconColor="text-emerald-600"
+                        value={stats.totalSettled}
+                        icon={CheckCircle}
+                        color="emerald"
                     />
-                    <StatsCard
+                    <MetricCard
                         title="Pending Clearance"
-                        value={formatCurrency(stats.pendingAmount)}
-                        icon={<Clock className="w-full h-full" />}
-                        iconBgColor="bg-amber-50"
-                        iconColor="text-amber-600"
+                        value={stats.pendingAmount}
+                        icon={Clock}
+                        color="amber"
                     />
-                    <StatsCard
+                    <MetricCard
                         title="Payment Success"
                         value={`${Math.round((stats.clearedCount / (stats.totalCount || 1)) * 100)}%`}
-                        icon={<DollarSign className="w-full h-full" />}
-                        iconBgColor="bg-indigo-50"
-                        iconColor="text-indigo-600"
+                        icon={DollarSign}
+                        color="primary"
                     />
                 </div>
 

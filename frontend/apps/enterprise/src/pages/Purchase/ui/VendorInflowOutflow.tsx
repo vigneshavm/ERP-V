@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import api from '../../services/api';
+import { RootState } from '@/app/store/store';
+import api from '@/shared/api/api';
 import {
     RefreshCw,
     Users,
@@ -19,11 +19,11 @@ import {
     ArrowUpDown,
     Filter
 } from 'lucide-react';
-import Layout from '../../components/shared/Layout';
-import PageHeader from '../../components/shared/Layout/PageHeader';
-import SupplierSubNav from '../People/Suppliers/SupplierSubNav';
-import SupplierStatsCards from '../People/Suppliers/components/SupplierStatsCards';
-import SupplierFilterBar from '../People/Suppliers/components/SupplierFilterBar';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
+import SupplierSubNav from '../../People/Suppliers/SupplierSubNav';
+import SupplierStatsCards from '../../People/Suppliers/components/SupplierStatsCards';
+import SupplierFilterBar from '../../People/Suppliers/components/SupplierFilterBar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { useBusinessReports, ReportType, BusinessReportData } from "../../hooks/useBusinessReports";
+import { RootState } from '@/app/store/store';
+import { useBusinessReports, ReportType, BusinessReportData } from "@/widgets/stats-dashboard/lib/useBusinessReports";
 import {
     TrendingUp,
     TrendingDown,

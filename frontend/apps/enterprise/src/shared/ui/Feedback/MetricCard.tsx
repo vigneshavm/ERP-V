@@ -6,7 +6,7 @@ interface MetricCardProps {
     value: string | number;
     icon: LucideIcon;
     color?: string;
-    variant?: 'default' | 'highlight';
+    variant?: 'default' | 'highlight' | 'rose' | 'emerald' | 'amber' | 'indigo';
     progress?: number;
     subtext?: string;
     trend?: 'up' | 'down' | 'neutral';

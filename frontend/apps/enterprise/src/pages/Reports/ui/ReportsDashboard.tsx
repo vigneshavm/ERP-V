@@ -1,5 +1,5 @@
-import Layout from "../../components/shared/Layout/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { useNavigate } from 'react-router-dom';
 
 const ReportsDashboard = () => {
