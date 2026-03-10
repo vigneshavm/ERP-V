@@ -4,8 +4,8 @@ import { AppDispatch, RootState } from "@/app/store/store";
 import { getPayments, updatePaymentStatus } from "@/app/store/slices/paymentOutSlice";
 import { useNavigate } from 'react-router-dom';
 import { Plus, Eye, MoreVertical, Filter, Download } from 'lucide-react';
-import Layout from '../../components/shared/Layout/Layout';
-import PageHeader from '../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { toast } from 'react-toastify';
 
 const PaymentOutList: React.FC = () => {

@@ -23,10 +23,10 @@ import {
 
 
 
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
-import SupplierGroupModal from "../../../components/suppliers/SupplierGroupModal";
+import SupplierGroupModal from "./components/SupplierGroupModal";
 
 const SupplierGroups: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

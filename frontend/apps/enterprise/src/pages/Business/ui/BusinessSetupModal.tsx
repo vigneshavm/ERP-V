@@ -61,7 +61,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
                 setIsLoading(true);
                 try {
                     // 1. Fetch Setup Status first
-                    const setupResponse = await api.get<ApiResponse<BusinessSetupData>>('/api/business/setup');
+                    const setupResponse = await api.get<ApiResponse<BusinessSetupData>>('/business/setup');
                     if (setupResponse.data && setupResponse.data.success) {
                         const setup = setupResponse.data.data;
                         setFormData({
@@ -73,8 +73,8 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
                         // 2. Fetch Master Data (Sectors and Types) after setup check
                         const [sectorsRes, typesRes] = await Promise.all([
-                            api.get<ApiResponse<Sector[]>>('/api/business/sectors'),
-                            api.get<ApiResponse<BusinessType[]>>('/api/business/types')
+                            api.get<ApiResponse<Sector[]>>('/business/sectors'),
+                            api.get<ApiResponse<BusinessType[]>>('/business/types')
                         ]);
 
                         if (sectorsRes.data?.success) setSectors(sectorsRes.data.data);
@@ -117,7 +117,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
 
         setIsLoading(true);
         try {
-            const response = await api.post<ApiResponse<any>>('/api/business/setup', formData);
+            const response = await api.post<ApiResponse<any>>('/business/setup', formData);
             if (response.data && response.data.success) {
                 toast.success('Business setup completed!');
                 onClose();

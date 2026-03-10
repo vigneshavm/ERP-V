@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCustomerById, getCustomerTransactions, reset } from "@/entities/contact/model/customerSlice";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { Layout, PageHeader } from "@/shared/ui";
 import {
     Phone,
     Mail,
@@ -120,7 +119,7 @@ const CustomerDetail = () => {
                             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Buying Intent</h3>
                             <span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 text-[10px] font-black rounded-lg">High Growth</span>
                         </div>
-                        
+
                         <div className="flex items-center gap-6">
                             <div className="relative w-24 h-24 flex items-center justify-center">
                                 <svg className="w-full h-full -rotate-90">

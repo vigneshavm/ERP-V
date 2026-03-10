@@ -24,7 +24,7 @@ const SupplierPayments: React.FC = () => {
         const fetchPayments = async () => {
             setIsLoading(true);
             try {
-                const { data } = await api.get('/api/purchase-payments');
+                const { data } = await api.get('/purchase-payments');
                 setPayments(data || []);
             } catch (err) {
                 console.error("Failed to fetch payments", err);

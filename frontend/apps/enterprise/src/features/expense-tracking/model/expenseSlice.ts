@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 import { RootState } from '../store';
 
-const API_URL = "/api/expenses";
+const API_URL = "/expenses";
 
 export interface Expense {
     _id: string;

@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import StatsCard from "../../components/shared/Display/StatsCard";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { StatsCard } from "@repo/ui-react";
 import {
     RotateCcw, Plus, Search, Filter, ArrowRight, Clock,
     CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,
     Search as SearchIcon
 } from 'lucide-react';
 import api from "@/shared/api/api";
-import { PurchaseReturn, PurchaseReturnStatus } from "@repo/shared-kernel";
+import { PurchaseReturn, PurchaseReturnStatus } from "@/entities/purchase/model/purchase";
 import { toast } from 'react-toastify';
 
 const PurchaseReturns: React.FC = () => {
@@ -24,7 +24,7 @@ const PurchaseReturns: React.FC = () => {
         const fetchReturns = async () => {
             setIsLoading(true);
             try {
-                const { data } = await api.get('/api/purchase-returns');
+                const { data } = await api.get('/purchase-returns');
                 setReturns(data || []);
             } catch (err) {
                 console.error("Failed to fetch returns", err);

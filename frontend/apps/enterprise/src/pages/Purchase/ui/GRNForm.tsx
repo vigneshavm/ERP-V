@@ -1,11 +1,11 @@
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import { useGRNForm } from './hooks/useGRNForm';
-import GRNGeneralInfo from './Components/GRNGeneralInfo';
-import GRNItemsTable from './Components/GRNItemsTable';
-import GRNSummary from './Components/GRNSummary';
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { useGRNForm } from '../hooks/useGRNForm';
+import GRNGeneralInfo from '../Components/GRNGeneralInfo';
+import GRNItemsTable from '../Components/GRNItemsTable';
+import GRNSummary from '../Components/GRNSummary';
 
 const GRNForm: React.FC = () => {
     const {

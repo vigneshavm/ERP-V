@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2, LucideIcon } from 'lucide-react';
-import { DailyLog } from "@/entities/people/model/laborSlice";
+import { DailyLog } from "@/entities/people/model/hr";
 import { AttendanceStatus } from "@repo/shared-kernel";
 
 interface TimeEntryModalProps {

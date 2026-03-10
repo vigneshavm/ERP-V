@@ -14,8 +14,7 @@ import {
     ChevronRight,
     Filter
 } from 'lucide-react';
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { Layout, PageHeader } from "@/shared/ui";
 import api from "@/shared/api/api";
 import { AttendanceStatus } from "@repo/shared-kernel";
 
@@ -37,7 +36,7 @@ const DailyAttendanceBoard: React.FC = () => {
         setIsLoading(true);
         try {
             // Fetch employees
-            const empRes = await api.get('/api/hr/employees');
+            const empRes = await api.get('/hr/employees');
             const emps = empRes.data.data || [];
             setEmployees(emps);
 
@@ -94,7 +93,7 @@ const DailyAttendanceBoard: React.FC = () => {
                 return;
             }
 
-            await api.post('/api/attendance/mark', {
+            await api.post('/attendance/mark', {
                 date: selectedDate,
                 attendance: records
             });
@@ -176,8 +175,8 @@ const DailyAttendanceBoard: React.FC = () => {
                     <div className="flex items-center gap-3">
                         {message.text && (
                             <span className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all animate-in fade-in zoom-in ${message.type === 'success' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                    message.type === 'error' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
-                                        'bg-blue-50 text-blue-600 border border-blue-100'
+                                message.type === 'error' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
+                                    'bg-blue-50 text-blue-600 border border-blue-100'
                                 }`}>
                                 {message.text}
                             </span>
@@ -240,8 +239,8 @@ const DailyAttendanceBoard: React.FC = () => {
                                                                 key={s.id}
                                                                 onClick={() => handleStatusChange(id, s.id as AttendanceStatus)}
                                                                 className={`flex flex-col items-center gap-1 p-2 rounded-xl border transition-all ${att.status === s.id
-                                                                        ? `bg-${s.color}-50 dark:bg-${s.color}-900/20 border-${s.color}-200 dark:border-${s.color}-800 text-${s.color}-600`
-                                                                        : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-50'
+                                                                    ? `bg-${s.color}-50 dark:bg-${s.color}-900/20 border-${s.color}-200 dark:border-${s.color}-800 text-${s.color}-600`
+                                                                    : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-50'
                                                                     }`}
                                                             >
                                                                 <s.icon size={20} />
@@ -266,7 +265,7 @@ const DailyAttendanceBoard: React.FC = () => {
                                                 <td className="px-6 py-4 text-right">
                                                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800">
                                                         <span className={`w-2 h-2 rounded-full ${att.status === 'PRESENT' ? 'bg-emerald-500' :
-                                                                att.status === 'HALF' ? 'bg-amber-500' : 'bg-rose-500'
+                                                            att.status === 'HALF' ? 'bg-amber-500' : 'bg-rose-500'
                                                             }`} />
                                                         <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">
                                                             {att.status} {att.overtimeHours > 0 ? `+ ${att.overtimeHours}H OT` : ''}

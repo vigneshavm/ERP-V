@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import {
     Search,
     FileText,
@@ -22,8 +22,8 @@ import { AppDispatch } from "@/app/store/store";
 import { useDispatch } from 'react-redux';
 import { debitNoteService, DebitNote } from "@/entities/finance/api/debitNoteService";
 import { toast } from 'react-toastify';
-import CreateDebitNoteModal from './Modals/CreateDebitNoteModal';
-import DebitNoteStats from './Components/DebitNoteStats';
+import CreateDebitNoteModal from '../Modals/CreateDebitNoteModal';
+import DebitNoteStats from '../Components/DebitNoteStats';
 
 
 const REASON_LABELS: Record<string, string> = {
@@ -48,7 +48,7 @@ const DebitNotes: React.FC = () => {
     const { bills } = useSelector((state: RootState) => state.bill);
     const { suppliers: vendors } = useSelector((state: RootState) => state.suppliers);
     const { currentBranch } = useSelector((state: RootState) => state.auth);
-    const { getBranchName } = useBranchResolver();
+    const { currentBranchId, getBranchName } = useBranchResolver();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -135,7 +135,7 @@ const DebitNotes: React.FC = () => {
             <div className="space-y-6 animate-fade-in">
                 <PageHeader
                     title="Debit Notes"
-                    description={`Track returns and claims against suppliers • ${getBranchName(currentBranch)}`}
+                    description={`Track returns and claims against suppliers • ${getBranchName(currentBranchId)}`}
                     actions={
                         <>
                             <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">

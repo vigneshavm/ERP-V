@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Users, AlertTriangle } from 'lucide-react';
 import api from "@/shared/api/api";
-import { useBranchResolver } from '../../hooks/useBranchResolver';
+import { useBranchResolver } from '@/hooks/useBranchResolver';
 
 const PayableSnapshot: React.FC = () => {
     const { currentBranchId } = useBranchResolver();

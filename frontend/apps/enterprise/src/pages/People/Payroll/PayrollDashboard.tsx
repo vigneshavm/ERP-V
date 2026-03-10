@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { 
-    Calendar, 
-    DollarSign, 
-    Users, 
-    FileText, 
-    PlayCircle, 
-    Clock, 
-    TrendingUp, 
+import {
+    Calendar,
+    DollarSign,
+    Users,
+    FileText,
+    PlayCircle,
+    Clock,
+    TrendingUp,
     ArrowUpRight,
     ChevronRight,
     Loader2,
@@ -16,14 +16,14 @@ import {
     History as HistoryIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Layout from '../../../components/shared/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { fetchPayrollRuns } from "@/entities/people/model/payrollSlice";
 import { formatDateISO, formatCurrency } from "@/shared/lib/utils/helpers";
 
 const StatCard = ({ title, value, subtext, icon: Icon, color }: any) => (
-    <motion.div 
+    <motion.div
         whileHover={{ y: -5 }}
         className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group"
     >
@@ -125,8 +125,8 @@ const PayrollDashboard = () => {
                             </div>
                             <h3 className="font-black text-slate-800 dark:text-white uppercase tracking-widest text-sm">Recent Temporal Cycles</h3>
                         </div>
-                        <button 
-                            onClick={() => navigate('/people/payroll/history')} 
+                        <button
+                            onClick={() => navigate('/people/payroll/history')}
                             className="text-xs font-black text-blue-600 hover:text-blue-700 uppercase tracking-[0.2em] flex items-center gap-2"
                         >
                             Log History <ArrowUpRight size={14} />

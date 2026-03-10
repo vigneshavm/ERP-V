@@ -2,7 +2,7 @@ import api from '@/shared/api/api';
 import { DueAdjustment } from "@/features/expense-tracking/model/dueSlice";
 import { AxiosRequestConfig } from 'axios';
 
-const API_URL = "/api/due/";
+const API_URL = "/due/";
 
 // Create due adjustment
 const createDueAdjustment = async (adjustmentData: Partial<DueAdjustment>, token: string): Promise<DueAdjustment> => {

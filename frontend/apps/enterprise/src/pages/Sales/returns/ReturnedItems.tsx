@@ -31,7 +31,7 @@ const ReturnedItems = () => {
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = user?.token;
-    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 
     useEffect(() => {
         fetchReturns();
@@ -44,7 +44,7 @@ const ReturnedItems = () => {
     const fetchReturns = async () => {
         try {
             setLoading(true);
-            const response = await api.get(`${API_URL}/api/returns`, {
+            const response = await api.get(`/returns`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setReturns(response.data || []);
@@ -57,7 +57,7 @@ const ReturnedItems = () => {
 
     const handleDelete = async (returnId: string) => {
         try {
-            await api.delete(`${API_URL}/api/returns/${returnId}`, {
+            await api.delete(`/returns/${returnId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setDeleteConfirm(null);

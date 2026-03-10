@@ -2,7 +2,7 @@
 import React from 'react';
 import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X } from 'lucide-react';
 import { Session } from "@repo/shared-kernel";
-import { useNetworkStatus } from "../../hooks/useNetworkStatus";
+import { useNetworkStatus } from '@/shared/lib/hooks/useNetworkStatus';
 
 interface POSHeaderProps {
     sessions: Session[];

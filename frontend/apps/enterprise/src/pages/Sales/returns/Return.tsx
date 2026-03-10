@@ -50,7 +50,7 @@ const Return = () => {
   // Get token from user object in localStorage
   const user = JSON.parse(localStorage.getItem("user") || '{}');
   const token = user?.token;
-  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 
   // Debug: Check if token exists
   if (!token) {
@@ -78,7 +78,7 @@ const Return = () => {
       return;
     }
     try {
-      const response = await api.get(`${API_URL}/api/pos/invoices`, {
+      const response = await api.get(`/pos/invoices`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setInvoices(response.data);
@@ -98,7 +98,7 @@ const Return = () => {
     try {
       // Fetch full invoice details with populated items
       const response = await api.get(
-        `${API_URL}/api/pos/invoice/${invoice._id}`,
+        `/pos/invoice/${invoice._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -111,7 +111,7 @@ const Return = () => {
       // Fetch existing returns for this invoice
       let existingReturns: any[] = [];
       try {
-        const returnsResponse = await api.get(`${API_URL}/api/returns`, {
+        const returnsResponse = await api.get(`/returns`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         existingReturns = returnsResponse.data.filter(
@@ -287,7 +287,7 @@ const Return = () => {
         notes: formData.notes,
       };
 
-      const response = await api.post(`${API_URL}/api/returns`, returnData, {
+      const response = await api.post(`/returns`, returnData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

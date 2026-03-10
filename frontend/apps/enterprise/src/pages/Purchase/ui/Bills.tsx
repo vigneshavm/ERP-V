@@ -1,14 +1,14 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-import Layout from "../../components/shared/Layout/index.js";
-import PageHeader from "../../components/shared/Layout/PageHeader.js";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import BillForm from "./BillForm";
-import BillsStats from './Components/BillsStats';
-import BillsFilters from './Components/BillsFilters';
-import BillsTable from './Components/BillsTable';
-import DeleteBillModal from './Components/DeleteBillModal';
-import PaymentModal from "../../components/shared/Modals/PaymentModal.js";
-import { useBills } from './hooks/useBills';
+import BillsStats from '../Components/BillsStats';
+import BillsFilters from '../Components/BillsFilters';
+import BillsTable from '../Components/BillsTable';
+import DeleteBillModal from '../Components/DeleteBillModal';
+import PaymentModal from "@/shared/ui/Modals/PaymentModal";
+import { useBills } from '../hooks/useBills';
 
 const Bills: React.FC = () => {
     const {

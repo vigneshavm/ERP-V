@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2 } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
-import { usePurchaseItems } from "../../hooks/usePurchaseItems";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
+import { usePurchaseItems } from "@/hooks/usePurchaseItems";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
 
 import api from "@/shared/api/api";
 
@@ -500,7 +500,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                                    {items.map((item, idx) => (
+                                    {items.map((item: PurchaseOrderItem, idx: number) => (
                                         <tr key={idx}>
                                             <td className="px-4 py-2 font-medium">{item.product_name}</td>
                                             <td className="px-4 py-2">
@@ -508,7 +508,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     type="text"
                                                     placeholder="Lot #"
                                                     value={item.lot_number || ''}
-                                                    onChange={e => updateItem(idx, 'lot_number', e.target.value)}
+                                                    onChange={e => updateItem(idx, { lot_number: e.target.value })}
                                                     className="w-24 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1 text-xs"
                                                 />
                                             </td>
@@ -517,7 +517,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     type="number"
                                                     min="1"
                                                     value={item.quantity}
-                                                    onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)}
+                                                    onChange={e => updateItem(idx, { quantity: parseFloat(e.target.value) || 0 })}
                                                     className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
                                                 />
                                             </td>
@@ -525,7 +525,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                 <input
                                                     type="text"
                                                     value={item.unit || 'pcs'}
-                                                    onChange={e => updateItem(idx, 'unit', e.target.value)}
+                                                    onChange={e => updateItem(idx, { unit: e.target.value })}
                                                     className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
                                                 />
                                             </td>
@@ -534,7 +534,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     type="number"
                                                     min="0"
                                                     value={item.rate}
-                                                    onChange={e => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
+                                                    onChange={e => updateItem(idx, { rate: parseFloat(e.target.value) || 0 })}
                                                     className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
                                                 />
                                             </td>
@@ -543,7 +543,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     type="number"
                                                     min="0"
                                                     value={item.tax_percent}
-                                                    onChange={e => updateItem(idx, 'tax_percent', parseFloat(e.target.value) || 0)}
+                                                    onChange={e => updateItem(idx, { tax_percent: parseFloat(e.target.value) || 0 })}
                                                     className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
                                                 />
                                             </td>
@@ -553,7 +553,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     min="0"
                                                     max="100"
                                                     value={item.discount_percent || 0}
-                                                    onChange={e => updateItem(idx, 'discount_percent', parseFloat(e.target.value) || 0)}
+                                                    onChange={e => updateItem(idx, { discount_percent: parseFloat(e.target.value) || 0 })}
                                                     className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
                                                 />
                                             </td>

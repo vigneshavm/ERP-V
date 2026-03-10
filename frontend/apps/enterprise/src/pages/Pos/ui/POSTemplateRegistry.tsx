@@ -2,8 +2,8 @@ import React from 'react';
 import { POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
 import { Skeleton } from "@/shared/ui/Feedback/Skeleton";
 
-const StandardPOSTemplate = React.lazy(() => import('./templates/StandardPOSTemplate'));
-const TextilePOSTemplate = React.lazy(() => import('./templates/TextilePOSTemplate'));
+const StandardPOSTemplate = React.lazy(() => import('../templates/StandardPOSTemplate'));
+const TextilePOSTemplate = React.lazy(() => import('../templates/TextilePOSTemplate'));
 
 interface POSTemplateRegistryProps {
     logic: POSLogic;

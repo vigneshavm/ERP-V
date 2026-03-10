@@ -9,7 +9,7 @@ interface LayoutProps {
  * Note: Sidebar is NOT included here since App.tsx TenantView already provides the main layout with sidebar.
  * This component is a simple content wrapper for consistency across pages.
  */
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <div className="w-full">
             {children}

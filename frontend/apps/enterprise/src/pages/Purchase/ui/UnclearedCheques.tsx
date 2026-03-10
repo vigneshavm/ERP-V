@@ -19,7 +19,7 @@ const UnclearedCheques: React.FC = () => {
         try {
             // Fetch all payments and filter for pending cheques
             // Ideally backend should support ?status=pending&mode=Cheque filtering
-            const { data } = await api.get('/api/purchase-payments');
+            const { data } = await api.get('/purchase-payments');
             if (data && data.success) {
                 const pending = data.data.filter((p: any) =>
                     p.paymentMode === 'Cheque' && p.status === 'pending'

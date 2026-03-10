@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 import { Invoice } from '@repo/shared-kernel';
 
-const API_URL = "/api/sales-invoice";
+const API_URL = "/sales-invoice";
 
 // Get token from state
 const getConfig = (token: string) => ({

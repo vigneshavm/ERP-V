@@ -10,9 +10,9 @@ import {
 import { getAllExpenses } from "@/features/expense-tracking/model/expenseSlice";
 import { fetchEffectiveBalance, fetchCheques } from "@/entities/finance/model/financeSlice";
 import { getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
-import MetricCard from "../../components/shared/UI/MetricCard";
-import Layout from "../../components/shared/Layout";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
+import MetricCard from "@/shared/ui/Feedback/MetricCard";
+import Layout from "@/shared/ui/Layout/Layout";
 import {
   User,
   RotateCcw,

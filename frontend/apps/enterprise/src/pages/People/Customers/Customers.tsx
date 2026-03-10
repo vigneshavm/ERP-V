@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getAllCustomers, deleteCustomer, reset } from "@/entities/contact/model/customerSlice";
-import Layout from "../../../components/shared/Layout";
-import Modal from "../../../components/shared/Overlay/Modal";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { Layout, PageHeader, Modal } from "@/shared/ui";
 import {
     Users,
     UserPlus,

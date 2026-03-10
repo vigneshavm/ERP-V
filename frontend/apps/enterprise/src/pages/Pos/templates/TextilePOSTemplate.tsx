@@ -1,15 +1,15 @@
 import React from 'react';
 import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Scissors, Printer, Download } from 'lucide-react';
-import { POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
-import { POSHeader } from '../POSHeader';
-import { POSSidebar } from '../POSSidebar';
-import { POSProductBrowser } from '../POSProductBrowser';
-import { POSCartGrid } from '../POSCartGrid';
-import { POSCustomerPanel } from '../POSCustomerPanel';
-import { POSFooter } from '../POSFooter';
-import { POSHeldBillsModal } from '../POSHeldBillsModal';
-import { POSTerminalInfo } from '../POSTerminalInfo';
-import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
+import { usePOSLogic, POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
+import { POSHeader } from '../ui/POSHeader';
+import { POSSidebar } from '../ui/POSSidebar';
+import { POSProductBrowser } from '../ui/POSProductBrowser';
+import { POSCartGrid } from '../ui/POSCartGrid';
+import { POSCustomerPanel } from '../ui/POSCustomerPanel';
+import { POSFooter } from '../ui/POSFooter';
+import { POSHeldBillsModal } from '../ui/POSHeldBillsModal';
+import { POSTerminalInfo } from '../ui/POSTerminalInfo';
+import { POSCategoryBrowserModal } from '../ui/POSCategoryBrowserModal';
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -182,14 +182,14 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         <POSProductBrowser
                             products={products}
                             currentBranch={currentBranch || 'All'}
-                            currentSector={currentSector || 'Retail'}
+                            currentSector={(currentSector as any) || 'Retail'}
                             onAddToCart={(product: any) => onAddToCart(product)}
                         />
                     ) : (
                         <POSCartGrid
                             cart={cart}
                             products={products}
-                            currentSector={currentSector || 'Retail'}
+                            currentSector={(currentSector as any) || 'Retail'}
                             currentBranch={currentBranch || 'All'}
                             isProcessing={isProcessing}
                             onAddToCart={onAddToCart}
@@ -274,7 +274,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 isPreOrder={isPreOrder}
                                 activeCustomer={activeCustomer}
                                 loyaltyConfig={loyaltyConfig}
-                                onSetTaxMode={onSetTaxMode}
+                                onSetTaxMode={(mode: any) => onSetTaxMode(mode)}
                                 onSetPaymentMethod={onSetPaymentMethod}
                                 onSetRedeemedPoints={onSetRedeemedPoints}
                                 onSetIsPreOrder={setIsPreOrder}

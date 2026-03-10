@@ -43,7 +43,7 @@ const SupplierAgeing: React.FC = () => {
     const fetchAgeing = async () => {
         setLoading(true);
         try {
-            const response = await api.get('/api/purchases/suppliers/ageing-analysis');
+            const response = await api.get('/purchases/suppliers/ageing-analysis');
             if (response.data.success) {
                 setData(response.data.data);
             }

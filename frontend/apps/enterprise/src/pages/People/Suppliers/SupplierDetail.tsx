@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSupplierById, reset, Supplier } from "@/entities/contact/model/supplierSlice";
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { AppDispatch, RootState } from "@/app/store/store";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { getSupplierById, reset, updateSupplier } from "@/entities/contact/model/supplierSlice";
+import { Supplier } from "@repo/shared-kernel";
 import {
   Building2,
   User,
@@ -75,10 +76,10 @@ const SupplierDetail: React.FC = () => {
       updatePayload.openingBalance = newValue - activityBalance;
     }
 
-    dispatch(import('../../../redux/slices/supplierSlice').then(mod => mod.updateSupplier({
+    dispatch(updateSupplier({
       id: supplier._id,
       supplierData: updatePayload
-    })) as any).then(() => {
+    }) as any).then(() => {
       setEditingField(null);
       // Refresh to see updated calculation
       dispatch(getSupplierById({ id: supplier._id, branchId: selectedBranch }) as any);
@@ -240,12 +241,12 @@ const SupplierDetail: React.FC = () => {
               <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mt-1">On-Time</p>
             </div>
           </div>
-          
+
           <div className="flex items-end gap-1 h-24 mb-4 mt-2">
             {[45, 60, 55, 80, 75, 90, 85, 95, 88, 100].map((h, i) => (
               <div key={i} className="flex-1 bg-indigo-50 dark:bg-indigo-900/10 rounded-t-lg relative group/bar">
-                <div 
-                  className="absolute bottom-0 left-0 right-0 bg-indigo-500 rounded-t-lg transition-all duration-1000 delay-[i*100ms] group-hover/bar:bg-indigo-400" 
+                <div
+                  className="absolute bottom-0 left-0 right-0 bg-indigo-500 rounded-t-lg transition-all duration-1000 delay-[i*100ms] group-hover/bar:bg-indigo-400"
                   style={{ height: `${h}%` }}
                 />
               </div>
@@ -264,7 +265,7 @@ const SupplierDetail: React.FC = () => {
             </div>
             <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Operational Reliability</h3>
           </div>
-          
+
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">

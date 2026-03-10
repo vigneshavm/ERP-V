@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wallet, IndianRupee } from 'lucide-react';
-import { Card } from "../../../components/core/Display/Card";
-import { LaborPayment } from "@/entities/people/model/laborSlice";
+import { Card } from "@/shared/ui";
+import { LaborPayment } from "@/entities/people/model/hr";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface PaymentHistoryProps {

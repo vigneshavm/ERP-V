@@ -1,12 +1,12 @@
 import React from 'react';
 import { FileSpreadsheet, Printer, Search } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import { useOutstandingPayables } from './hooks/useOutstandingPayables';
-import PayablesStats from './Components/PayablesStats';
-import PayablesAgingProfile from './Components/PayablesAgingProfile';
-import PayablesFilters from './Components/PayablesFilters';
-import PayablesTable from './Components/PayablesTable';
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { useOutstandingPayables } from '../hooks/useOutstandingPayables';
+import PayablesStats from '../Components/PayablesStats';
+import PayablesAgingProfile from '../Components/PayablesAgingProfile';
+import PayablesFilters from '../Components/PayablesFilters';
+import PayablesTable from '../Components/PayablesTable';
 
 const OutstandingPayables: React.FC = () => {
     const {

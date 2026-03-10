@@ -15,8 +15,8 @@ import {
     RefreshCw,
     Book
 } from 'lucide-react';
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
 import { toast } from 'react-toastify';
 
@@ -326,8 +326,8 @@ const SupplierStatements: React.FC = () => {
                                                 </td>
                                                 <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
                                                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
-                                                            t.type === 'PAYMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                                                'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                                        t.type === 'PAYMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                                                         }`}>
                                                         {t.type === 'DEBIT_NOTE' ? 'D.NOTE' : t.type}
                                                     </span>

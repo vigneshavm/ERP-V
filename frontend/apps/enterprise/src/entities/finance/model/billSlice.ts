@@ -4,7 +4,7 @@ import { RootState } from '../store';
 import { Supplier } from './supplierSlice';
 import { PurchaseBill, BillStatus, TaxBreakdown } from "@repo/shared-kernel";
 
-const API_URL = "/api/bills";
+const API_URL = "/bills";
 
 export interface Bill extends PurchaseBill {
     // Extending PurchaseBill for full compatibility

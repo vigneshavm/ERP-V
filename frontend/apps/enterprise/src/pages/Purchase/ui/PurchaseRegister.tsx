@@ -6,7 +6,7 @@ import { RootState, AppDispatch } from "@/app/store/store";
 import { getAllPurchases } from "@/entities/purchase/model/purchaseSlice";
 import { useUiStore } from "@/shared/lib/store/uiStore";
 import { PurchaseOrder, PurchaseOrderStatus } from "@repo/shared-kernel";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
 import {
     Search,
     Calendar,
@@ -31,9 +31,9 @@ import {
     CheckSquare,
     ArrowDown
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import StatsCard from "../../components/shared/Display/StatsCard";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { StatsCard } from "@repo/ui-react";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -42,6 +42,7 @@ const PurchaseRegister: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { orders, isProcessing } = useSelector((state: RootState) => state.purchase);
     const { getBranchName } = useBranchResolver();
+    const { setActiveTab } = useUiStore();
 
     // Filter State
     const [searchTerm, setSearchTerm] = useState('');

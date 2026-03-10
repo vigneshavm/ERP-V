@@ -14,7 +14,7 @@ interface PageHeaderProps {
     breadcrumbs?: Breadcrumb[] | null;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({
+export const PageHeader: React.FC<PageHeaderProps> = ({
     title,
     description,
     subtitle,

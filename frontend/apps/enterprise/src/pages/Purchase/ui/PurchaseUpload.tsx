@@ -13,7 +13,7 @@ import {
     downloadPurchaseTemplate,
     ValidationResult,
     RawPurchaseRow
-} from '../../utils/purchaseUpload.utils';
+} from '../utils/purchaseUpload.utils';
 import { toast } from 'react-toastify';
 import api from "@/shared/api/api";
 import { useNavigate } from 'react-router-dom';

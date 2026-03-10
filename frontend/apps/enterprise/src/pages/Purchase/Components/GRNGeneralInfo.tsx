@@ -1,6 +1,6 @@
 import React from 'react';
 import { Truck } from 'lucide-react';
-import FormField from "../../../components/shared/Form/FormField";
+import FormField from "@/shared/ui/Form/FormField";
 import { PurchaseOrder } from "@repo/shared-kernel";
 
 interface GRNGeneralInfoProps {

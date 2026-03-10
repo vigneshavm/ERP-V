@@ -3,7 +3,7 @@ import { Product } from "@repo/shared-kernel";
 import { Sector } from "@repo/shared-kernel";
 import { Search, Package, Check, Keyboard } from 'lucide-react';
 
-import { useFuzzySearch } from "../../hooks/useFuzzySearch";
+import { useFuzzySearch } from "@/shared/lib/hooks/useFuzzySearch";
 
 interface ProductCardProps {
     product: Product;

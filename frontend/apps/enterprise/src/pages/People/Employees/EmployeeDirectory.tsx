@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { 
-    Search, 
-    Filter, 
-    Plus, 
-    Grid, 
-    List, 
-    MoreHorizontal, 
-    Mail, 
-    Phone, 
-    MapPin, 
+import {
+    Search,
+    Filter,
+    Plus,
+    Grid,
+    List,
+    MoreHorizontal,
+    Mail,
+    Phone,
+    MapPin,
     Calendar,
     ChevronRight,
     Loader2,
@@ -22,9 +22,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RootState } from "@/app/store/store";
 import { setEmployees } from "@/entities/people/model/laborSlice";
 import api from "@/shared/api/api";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { Employee } from "@/entities/people/model/laborSlice";
+import { Layout, PageHeader } from "@/shared/ui";
+import { Employee } from "@/entities/people/model/hr";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 const EmployeeDirectory: React.FC = () => {
@@ -50,7 +49,7 @@ const EmployeeDirectory: React.FC = () => {
     const fetchEmployees = async () => {
         setIsLoading(true);
         try {
-            const response = await api.get('/api/hr/employees');
+            const response = await api.get('/hr/employees');
             if (response.data?.success) {
                 dispatch(setEmployees(response.data.data));
             }
@@ -68,8 +67,8 @@ const EmployeeDirectory: React.FC = () => {
 
     const filteredEmployees = useMemo(() => {
         return employees.filter(emp => {
-            const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                 emp.role.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                emp.role.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesRole = filterRole === 'ALL' || emp.role === filterRole;
             const matchesBranch = filterBranch === 'ALL' || emp.branchId === filterBranch;
             return matchesSearch && matchesRole && matchesBranch;
@@ -89,7 +88,7 @@ const EmployeeDirectory: React.FC = () => {
             <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-5 h-5 text-blue-500" />
             </div>
-            
+
             <div className="flex items-start gap-4">
                 <div className="relative">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-blue-500/20">
@@ -99,7 +98,7 @@ const EmployeeDirectory: React.FC = () => {
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full" />
                     )}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-slate-800 dark:text-white truncate group-hover:text-blue-600 transition-colors uppercase tracking-tight">
                         {emp.name}
@@ -128,11 +127,11 @@ const EmployeeDirectory: React.FC = () => {
 
             <div className="mt-6 pt-4 border-t border-slate-50 dark:border-slate-700/50 flex items-center justify-between">
                 <div>
-                   <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Base Payout</p>
-                   <p className="text-lg font-black text-slate-800 dark:text-white">
+                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Base Payout</p>
+                    <p className="text-lg font-black text-slate-800 dark:text-white">
                         {formatCurrency(emp.baseSalary || emp.dailyRate || 0)}
                         <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1">/{emp.wageType?.toLowerCase()}</span>
-                   </p>
+                    </p>
                 </div>
                 <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-black uppercase tracking-widest border border-blue-100/50 dark:border-blue-800/50">
                     {emp.systemRole || 'Staff'}
@@ -144,19 +143,19 @@ const EmployeeDirectory: React.FC = () => {
     return (
         <Layout>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <PageHeader 
+                <PageHeader
                     title="Neural Human Capital"
                     description="Unified directory for managing employees, performance, and cross-functional teams."
                     actions={
                         <div className="flex items-center gap-3">
                             <div className="flex bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <button 
+                                <button
                                     onClick={() => setViewMode('GRID')}
                                     className={`p-2 rounded-lg transition-all ${viewMode === 'GRID' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     <Grid size={18} />
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => setViewMode('LIST')}
                                     className={`p-2 rounded-lg transition-all ${viewMode === 'LIST' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
@@ -179,7 +178,7 @@ const EmployeeDirectory: React.FC = () => {
                 <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-4 bg-white/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 backdrop-blur-xl">
                     <div className="lg:col-span-2 relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input 
+                        <input
                             type="text"
                             placeholder="Universal search (Name, Role, Dept...)"
                             value={searchTerm}
@@ -189,7 +188,7 @@ const EmployeeDirectory: React.FC = () => {
                     </div>
                     <div className="relative">
                         <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <select 
+                        <select
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
                             className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/50 text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 appearance-none"
@@ -201,7 +200,7 @@ const EmployeeDirectory: React.FC = () => {
                     </div>
                     <div className="relative">
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <select 
+                        <select
                             value={filterBranch}
                             onChange={(e) => setFilterBranch(e.target.value)}
                             className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/50 text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 appearance-none"
@@ -227,7 +226,7 @@ const EmployeeDirectory: React.FC = () => {
                     ) : (
                         <AnimatePresence mode="popLayout">
                             {filteredEmployees.length === 0 ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className="py-40 flex flex-col items-center justify-center text-center bg-white/30 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700"
@@ -237,9 +236,9 @@ const EmployeeDirectory: React.FC = () => {
                                     <p className="text-slate-500 dark:text-slate-400 max-w-xs mt-2 text-sm leading-relaxed">No agents matched your current neural search criteria. Try broadening your parameters.</p>
                                 </motion.div>
                             ) : (
-                                <motion.div 
-                                    className={viewMode === 'GRID' 
-                                        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+                                <motion.div
+                                    className={viewMode === 'GRID'
+                                        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                                         : "flex flex-col gap-3"}
                                 >
                                     {filteredEmployees.map(emp => (

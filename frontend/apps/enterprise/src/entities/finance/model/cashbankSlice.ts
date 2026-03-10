@@ -3,7 +3,7 @@ import api from "@/shared/api/api";
 import { RootState } from '../store';
 import { Account, Transaction, CashBankPosition, BankSummary, LedgerData } from "../../pages/Financial/Cashbank/types";
 
-const API_URL = "/api/cashbank";
+const API_URL = "/cashbank";
 
 const getConfig = (token: string) => ({
     headers: {

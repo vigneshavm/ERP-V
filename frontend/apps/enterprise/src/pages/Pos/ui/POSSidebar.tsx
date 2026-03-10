@@ -4,7 +4,7 @@ import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
 import { POSCustomerPanel } from './POSCustomerPanel';
 import { POSFooter } from './POSFooter';
 import { Trash2 } from 'lucide-react';
-import { LoyaltyConfig } from "@/entities/session/model/core";
+import { LoyaltyConfig } from '@/entities/session/model/loyalty';
 
 interface POSSidebarProps {
     activeCustomer: Customer;

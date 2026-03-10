@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { LaborState, Employee, Attendance, LaborPayment } from "@/entities/people/model/laborSlice";
+import { LaborState, Employee, Attendance, LaborPayment } from "./hr";
 import api from "@/shared/api/api";
-import { RootState } from '../store';
+import { RootState } from '@/app/store/store';
 
 // Simple storage mock (since we are removing dependency on root storage.ts)
 const loadState = (key: string, initialState: any) => {

@@ -69,7 +69,7 @@ const AllowanceManager: React.FC = () => {
         // Load employees locally
         const loadEmployees = async () => {
             try {
-                const res = await api.get('/api/hr/employees');
+                const res = await api.get('/hr/employees');
                 if (res.data.success) setEmployees(res.data.data);
             } catch (e) {
                 console.error("Failed to load employees");

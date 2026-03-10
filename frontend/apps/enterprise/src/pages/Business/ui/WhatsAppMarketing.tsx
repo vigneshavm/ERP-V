@@ -74,9 +74,9 @@ const WhatsAppMarketing: React.FC = () => {
         setLoading(true);
         try {
             const [templatesRes, campaignsRes, statsRes] = await Promise.all([
-                api.get('/api/whatsapp/templates'),
-                api.get('/api/whatsapp/campaigns'),
-                api.get('/api/whatsapp/stats')
+                api.get('/whatsapp/templates'),
+                api.get('/whatsapp/campaigns'),
+                api.get('/whatsapp/stats')
             ]);
 
             if (templatesRes.data.success) setTemplates(templatesRes.data.data);
@@ -104,7 +104,7 @@ const WhatsAppMarketing: React.FC = () => {
                 .map(g => g.name)
                 .join(', ');
 
-            const response = await api.post('/api/whatsapp/campaigns', {
+            const response = await api.post('/whatsapp/campaigns', {
                 name: selectedTemplate ? templates.find(t => t.id === parseInt(selectedTemplate))?.name : 'Custom Broadcast',
                 message: formData.message || messagePreview,
                 targetGroups: selectedGroups,

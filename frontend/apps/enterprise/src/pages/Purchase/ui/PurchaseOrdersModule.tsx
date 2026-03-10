@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePurchaseOrders } from "../../hooks/usePurchaseOrders";
+import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
 import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
 import PurchaseOrderList from './PurchaseOrderList';
 import PurchaseOrderForm from './PurchaseOrderForm';
@@ -7,19 +7,36 @@ import PurchaseOrderDetails from './PurchaseOrderDetails';
 import { useDispatch, useSelector } from 'react-redux';
 import { useUiStore } from "@/shared/lib/store/uiStore";
 import { RootState } from "@/app/store/store";
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import StatsCard from "../../components/shared/Display/StatsCard";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { StatsCard } from "@repo/ui-react";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
 import { ClipboardList, Clock, CheckCircle, Lock, Plus } from 'lucide-react';
 
 const PurchaseOrdersModule: React.FC = () => {
-    const { orders, fetchOrders, fetchOrderDetails, saveOrder, updateStatus, loading, stats } = usePurchaseOrders();
+    const {
+        orders,
+        currentOrder,
+        isLoading: loading,
+        loadOrders: fetchOrders,
+        loadOrderDetails: fetchOrderDetails,
+        createOrder: saveOrder,
+        updateOrderStatus: updateStatus
+    } = usePurchaseOrders();
+
+    // Stats for the module
+    const stats = {
+        total: orders.length,
+        pending: orders.filter((o: any) => o.status === 'Pending').length,
+        approved: orders.filter((o: any) => o.status === 'Approved').length,
+        converted: orders.filter((o: any) => o.status === 'Converted').length,
+    };
     const [view, setView] = useState<'LIST' | 'FORM' | 'DETAILS'>('LIST');
     const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null);
     const [selectedItems, setSelectedItems] = useState<PurchaseOrderItem[]>([]);
 
     const dispatch = useDispatch();
-    const activeTab = useSelector((state: RootState) => state.ui.activeTab);
+    const { activeTab, setActiveTab } = useUiStore();
 
     // Sync view with activeTab
     useEffect(() => {

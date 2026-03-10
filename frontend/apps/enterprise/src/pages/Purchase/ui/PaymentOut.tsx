@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import {
     CreditCard, ArrowLeft, Save, Search, DollarSign,
     Calendar, Building, Tag, FileText, CheckCircle2,
     Calculator, Info, Download, Send, Percent
 } from 'lucide-react';
 import api from "@/shared/api/api";
-import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "@repo/shared-kernel";
+import { PurchasePayment, PurchasePaymentMethodType as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "@repo/shared-kernel";
 import { toast } from 'react-toastify';
 
 const PaymentOut: React.FC = () => {
@@ -34,7 +34,7 @@ const PaymentOut: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data: vendorData } = await api.get('/api/vendors');
+                const { data: vendorData } = await api.get('/vendors');
                 setVendors(vendorData || []);
 
                 if (vendorId) {

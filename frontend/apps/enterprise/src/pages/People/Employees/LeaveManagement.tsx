@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-    Calendar, 
-    Clock, 
-    CheckCircle2, 
-    XCircle, 
-    AlertCircle, 
-    Plus, 
+import {
+    Calendar,
+    Clock,
+    CheckCircle2,
+    XCircle,
+    AlertCircle,
+    Plus,
     Filter,
     ArrowRight,
     User,
@@ -16,9 +16,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { RootState } from "@/app/store/store";
 import { fetchLeaves, createLeaveRequest } from "@/entities/people/model/laborSlice";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { LeaveRequest, LeaveType } from "@/entities/people/model/laborSlice";
+import { Layout, PageHeader } from "@/shared/ui";
+import { LeaveRequest, LeaveType } from "@/entities/people/model/hr";
 
 const LeaveManagement: React.FC = () => {
     const dispatch = useDispatch();
@@ -39,7 +38,7 @@ const LeaveManagement: React.FC = () => {
 
     const LeaveCard = ({ leave }: { leave: LeaveRequest }) => {
         const employee = employees.find(e => e.id === leave.employeeId || e._id === leave.employeeId);
-        
+
         const statusColors = {
             'PENDING': 'bg-amber-500/10 text-amber-600 border-amber-200/50',
             'APPROVED': 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50',
@@ -75,9 +74,9 @@ const LeaveManagement: React.FC = () => {
                             <CalendarDays size={12} className="text-blue-500" /> Duration
                         </p>
                         <div className="flex items-center gap-2">
-                           <span className="text-xs font-black text-slate-700 dark:text-slate-200">{new Date(leave.startDate).toLocaleDateString()}</span>
-                           <ArrowRight size={12} className="text-slate-400" />
-                           <span className="text-xs font-black text-slate-700 dark:text-slate-200">{new Date(leave.endDate).toLocaleDateString()}</span>
+                            <span className="text-xs font-black text-slate-700 dark:text-slate-200">{new Date(leave.startDate).toLocaleDateString()}</span>
+                            <ArrowRight size={12} className="text-slate-400" />
+                            <span className="text-xs font-black text-slate-700 dark:text-slate-200">{new Date(leave.endDate).toLocaleDateString()}</span>
                         </div>
                         <p className="text-[10px] font-bold text-blue-600 mt-1 uppercase tracking-widest">{leave.totalDays} Work Days</p>
                     </div>
@@ -107,11 +106,11 @@ const LeaveManagement: React.FC = () => {
     return (
         <Layout>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <PageHeader 
+                <PageHeader
                     title="Vortex Leave System"
                     description="Advanced leave lifecycle management with neural approval workflows."
                     actions={
-                        <button 
+                        <button
                             onClick={() => setIsRequestModalOpen(true)}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95"
                         >
@@ -129,11 +128,11 @@ const LeaveManagement: React.FC = () => {
                     {/* Lateral Column - Stats */}
                     <div className="lg:col-span-1 space-y-6">
                         <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden group">
-                           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
-                           <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                                 <Info size={14} /> Leave Inventory
-                           </h4>
-                           <div className="space-y-4">
+                            </h4>
+                            <div className="space-y-4">
                                 {[
                                     { label: 'Sick Leave', used: 2, total: 12, color: 'rose' },
                                     { label: 'Casual Leave', used: 5, total: 10, color: 'blue' },
@@ -145,33 +144,33 @@ const LeaveManagement: React.FC = () => {
                                             <span className="opacity-60">{type.used}/{type.total}</span>
                                         </div>
                                         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                            <div 
-                                                className={`h-full bg-${type.color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]`} 
+                                            <div
+                                                className={`h-full bg-${type.color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]`}
                                                 style={{ width: `${(type.used / type.total) * 100}%` }}
                                             />
                                         </div>
                                     </div>
                                 ))}
-                           </div>
+                            </div>
                         </div>
 
                         <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                                 <Filter size={14} /> Filter Portal
-                           </h4>
-                           <div className="space-y-2">
+                            </h4>
+                            <div className="space-y-2">
                                 {['ALL', 'PENDING', 'APPROVED', 'REJECTED'].map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setFilterStatus(status as any)}
-                                        className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterStatus === status 
-                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                                        className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterStatus === status
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                                             : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900'}`}
                                     >
                                         {status} REQUESTS
                                     </button>
                                 ))}
-                           </div>
+                            </div>
                         </div>
                     </div>
 
@@ -179,7 +178,7 @@ const LeaveManagement: React.FC = () => {
                     <div className="lg:col-span-3">
                         <AnimatePresence mode="popLayout">
                             {filteredLeaves.length === 0 ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className="py-40 flex flex-col items-center justify-center text-center bg-white/30 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700"

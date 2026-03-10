@@ -3,7 +3,7 @@ import api from "@/shared/api/api";
 import { RootState } from '@/app/store/store';
 import { Supplier } from "@vignesh-erp/shared-kernel";
 
-const API_URL = "/api/purchases/suppliers";
+const API_URL = "/purchases/suppliers";
 
 interface SupplierState {
     suppliers: Supplier[];

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 
-const API_URL = "/api/reports";
+const API_URL = "/reports";
 
 // Get token from state
 const getConfig = (token: string) => ({

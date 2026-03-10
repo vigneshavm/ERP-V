@@ -36,6 +36,7 @@ export interface PurchaseOrderItem {
     tax_percent: number;
     tax_type?: 'GST' | 'IGST' | 'VAT' | 'None';
     discount_amount: number;
+    discount_percent: number;
     line_total: number;
     received_quantity?: number;
     lot_number?: string;

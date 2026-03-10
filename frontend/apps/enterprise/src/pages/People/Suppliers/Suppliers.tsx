@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteSupplier, getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
-import Layout from "../../../components/shared/Layout";
-import Modal from "../../../components/shared/Overlay/Modal";
+import Layout from '@/shared/ui/Layout/Layout';
+import Modal from '@/shared/ui/Overlay/Modal';
 import {
   Users,
   UserPlus,
@@ -21,7 +21,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
 import SupplierStatsCards from './components/SupplierStatsCards';
 import SupplierFilterBar from './components/SupplierFilterBar';

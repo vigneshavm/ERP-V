@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/store/store";
 
-import CreateBillModal from './Modals/CreateBillModal';
-import ReceiveGoodsModal from './Modals/ReceiveGoodsModal';
+import CreateBillModal from '../Modals/CreateBillModal';
+import ReceiveGoodsModal from '../Modals/ReceiveGoodsModal';
 import { useParams, useNavigate } from 'react-router-dom'; // Ensure useParams is imported
 import { AppDispatch } from "@/app/store/store";
 import { fetchPurchaseById, resetSelectedOrder, updateOrder } from "@/entities/purchase/model/purchaseSlice";

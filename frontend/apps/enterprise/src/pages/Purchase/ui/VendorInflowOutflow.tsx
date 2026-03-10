@@ -137,7 +137,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
         setCurrentPage(1);
         // Fetch with no filters
         setIsLoading(true);
-        api.get('/api/purchases/suppliers/inflow-outflow', getConfig())
+        api.get('/purchases/suppliers/inflow-outflow', getConfig())
             .then(res => setData(res.data.data))
             .catch(() => { })
             .finally(() => setIsLoading(false));

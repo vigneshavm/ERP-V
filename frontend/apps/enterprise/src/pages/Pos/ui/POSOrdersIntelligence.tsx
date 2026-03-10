@@ -35,7 +35,7 @@ import {
     Users,
     Percent,
 } from 'lucide-react';
-import Layout from "@/shared/ui/Layout/Layout";
+import { Layout } from "@/shared/ui/Layout/Layout";
 import MetricCard from "@/shared/ui/Feedback/MetricCard";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 
@@ -195,7 +195,7 @@ const POSOrdersIntelligence: React.FC = () => {
                         subtext="Real-time sync"
                         icon={Clock}
                         color="indigo"
-                        trend="flat"
+                        trend="neutral"
                     />
                     <MetricCard
                         title="Audit Risk Score"
@@ -211,7 +211,7 @@ const POSOrdersIntelligence: React.FC = () => {
                         subtext="Audit Term-02 at Coimbatore"
                         icon={Zap}
                         color="primary"
-                        variant="dark"
+                        variant="indigo"
                     />
                 </div>
 

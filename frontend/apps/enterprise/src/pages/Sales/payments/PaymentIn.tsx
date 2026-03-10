@@ -7,7 +7,7 @@ import PageHeader from "@/shared/ui/Layout/PageHeader";
 import FormInput from "@/shared/ui/Form/Input";
 import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 
 const PaymentIn = () => {
   const navigate = useNavigate();
@@ -99,7 +99,7 @@ const PaymentIn = () => {
 
   const fetchBankAccounts = async () => {
     try {
-      const response = await api.get(`${API_URL}/api/cashbank/accounts`, {
+      const response = await api.get(`/cashbank/accounts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBankAccounts(response.data);
@@ -111,7 +111,7 @@ const PaymentIn = () => {
   const fetchCustomerInfo = async (customerId: string) => {
     try {
       const response = await api.get(
-        `${API_URL}/api/payment-in/customer/${customerId}/info`,
+        `/payment-in/customer/${customerId}/info`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -263,7 +263,7 @@ const PaymentIn = () => {
 
     try {
       setLoading(true);
-      const response = await api.post(`${API_URL}/api/payment-in`, payload, {
+      const response = await api.post(`/payment-in`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -377,7 +377,7 @@ const PaymentIn = () => {
         notes: formData.notes,
       };
 
-      const response = await api.post(`${API_URL}/api/payment-in`, payload, {
+      const response = await api.post(`/payment-in`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

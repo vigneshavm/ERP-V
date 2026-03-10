@@ -55,7 +55,7 @@ const MarketingTools: React.FC = () => {
 
     const fetchAccounts = async () => {
         try {
-            const response = await api.get('/api/marketing/meta/pages');
+            const response = await api.get('/marketing/meta/pages');
             if (response.data.success) {
                 const accounts = response.data.data.filter((p: any) => p.instagramBusinessAccountId);
                 setInstagramAccounts(accounts);
@@ -81,7 +81,7 @@ const MarketingTools: React.FC = () => {
 
     const handleAuthCallback = async (code: string) => {
         try {
-            const response = await api.post('/api/marketing/meta/auth/callback', { code });
+            const response = await api.post('/marketing/meta/auth/callback', { code });
             if (response.data.success) {
                 // Clear query params
                 window.history.replaceState({}, document.title, window.location.pathname);
@@ -107,7 +107,7 @@ const MarketingTools: React.FC = () => {
 
         setIsPublishing(true);
         try {
-            const response = await api.post('/api/marketing/meta/publish/instagram', {
+            const response = await api.post('/marketing/meta/publish/instagram', {
                 instagramAccountId: selectedAccount,
                 imageUrl: publicImageUrl,
                 caption: customMessage || selectedTemplate?.name || "Check this out!"
@@ -178,7 +178,7 @@ const MarketingTools: React.FC = () => {
 
     const handleConnect = async () => {
         try {
-            const response = await api.get('/api/marketing/meta/auth/url');
+            const response = await api.get('/marketing/meta/auth/url');
             if (response.data.success && response.data.url) {
                 window.location.href = response.data.url;
             } else {

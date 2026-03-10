@@ -5,10 +5,10 @@ import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle
 import { PurchaseBill, PurchaseBillItem, BillStatus } from "@repo/shared-kernel";
 import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
-import BillBasicInfo from './Components/BillBasicInfo';
-import BillItemsTable from './Components/BillItemsTable';
-import BillFinancialSummary from './Components/BillFinancialSummary';
-import { useBillData } from './hooks/useBillData';
+import BillBasicInfo from '../Components/BillBasicInfo';
+import BillItemsTable from '../Components/BillItemsTable';
+import BillFinancialSummary from '../Components/BillFinancialSummary';
+import { useBillData } from '../hooks/useBillData';
 
 interface Props {
     onBack?: () => void;

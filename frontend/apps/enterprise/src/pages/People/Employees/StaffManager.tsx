@@ -43,12 +43,12 @@ const StaffManager: React.FC = () => {
     const fetchTenantEmployees = async (tenantId: string) => {
         setIsLoadingEmployees(true);
         try {
-            const response = await api.get('/api/hr/employees');
+            const response = await api.get('/hr/employees');
             const data = response.data.data;
 
             // Fetch roles
             try {
-                const rolesResponse = await api.get('/api/roles'); // Fetches all system & tenant roles
+                const rolesResponse = await api.get('/roles'); // Fetches all system & tenant roles
                 if (rolesResponse.data) {
                     setRoles(rolesResponse.data);
                 }
@@ -94,7 +94,7 @@ const StaffManager: React.FC = () => {
                     handleCancelEditEmp();
                 }
             } else {
-                const response = await api.post('/api/hr/employees', empData);
+                const response = await api.post('/hr/employees', empData);
                 const data = response.data.data;
 
                 if (data) {

@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getSupplierById, reset } from "@/entities/contact/model/supplierSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import SupplierForm from "../../../components/suppliers/SupplierForm";
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
+import SupplierForm from "./components/SupplierForm";
 import SupplierSubNav from "./SupplierSubNav";
 import { ArrowLeft } from 'lucide-react';
 

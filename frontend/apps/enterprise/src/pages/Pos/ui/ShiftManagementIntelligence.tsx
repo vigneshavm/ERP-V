@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 
 import MetricCard from '@/shared/ui/Feedback/MetricCard';
-import Layout from '@/shared/ui/Layout/Layout';
+import { Layout } from '@/shared/ui/Layout/Layout';
 
 // --- Types ---
 
@@ -186,7 +186,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         subtext="Unsecured Cash"
                         icon={Wallet}
                         color="amber"
-                        trend="flat"
+                        trend="neutral"
                     />
                     <MetricCard
                         title="Critical Alerts"
@@ -194,7 +194,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         subtext="Shortages Detected"
                         icon={ShieldAlert}
                         color="rose"
-                        trend={summary.critical_shortage > 0 ? "down" : "flat"}
+                        trend={summary.critical_shortage > 0 ? "down" : "neutral"}
                     />
                     <div className="bg-neutral-900 text-white p-6 rounded-[2rem] shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-neutral-800 flex flex-col justify-between">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700 w-24 h-24" />

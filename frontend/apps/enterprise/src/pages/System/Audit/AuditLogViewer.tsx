@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo} from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Layout from '@/shared/ui/Layout/Layout';
 import PageHeader from '@/shared/ui/Layout/PageHeader';
 import {
@@ -59,17 +59,15 @@ const DiffViewer: React.FC<{ before: any; after: any }> = ({ before, after }) =>
     return (
         <div className="space-y-2">
             {changes.map((change) => (
-                <div key={change.field} className={`rounded-2xl p-4 border transition-all ${
-                    change.type === 'added' ? 'bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' :
-                    change.type === 'removed' ? 'bg-red-50/50 dark:bg-red-900/10 border-red-200 dark:border-red-800' :
-                    'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
-                }`}>
+                <div key={change.field} className={`rounded-2xl p-4 border transition-all ${change.type === 'added' ? 'bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' :
+                        change.type === 'removed' ? 'bg-red-50/50 dark:bg-red-900/10 border-red-200 dark:border-red-800' :
+                            'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
+                    }`}>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                            change.type === 'added' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                            change.type === 'removed' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
-                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                        }`}>
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${change.type === 'added' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                change.type === 'removed' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                            }`}>
                             {change.type}
                         </span>
                         <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">{change.field}</span>
@@ -112,7 +110,7 @@ const AuditLogViewer = () => {
         try {
             const params: any = { page: pagination.page, limit: pagination.limit, ...filters };
             Object.keys(params).forEach(key => !params[key] && delete params[key]);
-            const response = await api.get('/api/core/audit-logs', { params });
+            const response = await api.get('/core/audit-logs', { params });
             if (response.data.success) {
                 setLogs(response.data.data);
                 setPagination(response.data.pagination);

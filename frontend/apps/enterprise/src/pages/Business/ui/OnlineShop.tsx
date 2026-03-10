@@ -38,7 +38,7 @@ const OnlineShop: React.FC = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await api.get('/api/shop/settings');
+            const response = await api.get('/shop/settings');
             if (response.data.success) {
                 setSettings(response.data.data);
             }
@@ -50,7 +50,7 @@ const OnlineShop: React.FC = () => {
 
     const fetchPlans = async () => {
         try {
-            const response = await api.get('/api/subscription-plans');
+            const response = await api.get('/subscription-plans');
             if (response.data.success) {
                 const mappedPlans = response.data.data.map((p: any) => ({
                     name: p.name,
@@ -110,7 +110,7 @@ const OnlineShop: React.FC = () => {
     const handleUpdatePlan = async (planName: string) => {
         try {
             setUpdatingPlan(planName);
-            const response = await api.put('/api/shop/settings', {
+            const response = await api.put('/shop/settings', {
                 plan: planName,
                 shopEnabled: true // Enable shop when a plan is selected
             });

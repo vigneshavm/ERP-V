@@ -131,7 +131,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
         try {
             // Add to Backend
-            const response = await api.post('/api/auth/register', {
+            const response = await api.post('/auth/register', {
                 name: ownerName,
                 email: ownerEmail,
                 password: ownerPassword,

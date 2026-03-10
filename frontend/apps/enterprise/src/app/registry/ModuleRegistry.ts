@@ -92,7 +92,7 @@ export const LazyModules = {
     CashDrawerIntelligence: lazy(() => import('@/pages/Pos/ui/CashDrawerIntelligence')),
 
     // Expenses
-    ExpensesModuleFeature: lazy(() => import('@/pages/Expenses/ui/ExpenseList')),
+    ExpensesModuleFeature: lazy(() => import('@/pages/Expenses/ui/ExpensesModule')),
     ExpenseIntelligence: lazy(() => import('@/pages/Expenses/ui/ExpenseIntelligence')),
     ExpenseCategoriesManager: lazy(() => import('@/pages/Expenses/ui/ExpenseCategoriesManager')),
     RecurringExpensesIntelligence: lazy(() => import('@/pages/Expenses/ui/RecurringExpensesIntelligence')),

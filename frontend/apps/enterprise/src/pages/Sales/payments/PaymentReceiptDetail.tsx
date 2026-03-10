@@ -19,7 +19,7 @@ import {
   Clock
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 
 const PaymentReceiptDetail = () => {
   const { id } = useParams();
@@ -38,7 +38,7 @@ const PaymentReceiptDetail = () => {
   const fetchPaymentDetail = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`${API_URL}/api/payment-in/${id}`, {
+      const response = await api.get(`/payment-in/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPayment(response.data);

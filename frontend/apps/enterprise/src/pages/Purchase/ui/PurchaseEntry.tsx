@@ -6,7 +6,7 @@ import { PurchaseForm } from '@/widgets/purchase/purchase-form';
 import { createPurchaseOrder } from '@/entities/purchase/model/purchaseSlice';
 import Layout from '@/shared/ui/Layout/Layout';
 import PageHeader from '@/shared/ui/Layout/PageHeader';
-import { PurchaseOrder } from "@vignesh-erp/shared-kernel";
+import { PurchaseOrder } from "@repo/shared-kernel";
 
 const PurchaseEntry: React.FC = () => {
     const dispatch = useDispatch<any>();
@@ -31,15 +31,15 @@ const PurchaseEntry: React.FC = () => {
     return (
         <Layout>
             <div className="flex flex-col h-full bg-slate-50/30 dark:bg-slate-950/30">
-                <PageHeader 
-                    title="Purchase Strategy & Inwarding" 
+                <PageHeader
+                    title="Purchase Strategy & Inwarding"
                     description="Orchestrate inventory replenishment and fiscal commitments"
                 />
-                
+
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
-                    <PurchaseForm 
-                        onSave={handleSave} 
-                        isSubmitting={isSubmitting} 
+                    <PurchaseForm
+                        onSave={handleSave}
+                        isSubmitting={isSubmitting}
                     />
                 </div>
             </div>

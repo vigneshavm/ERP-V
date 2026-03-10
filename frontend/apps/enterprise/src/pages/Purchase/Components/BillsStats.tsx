@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText, IndianRupee, CheckCircle, AlertCircle } from 'lucide-react';
-import StatsCard from '../../../components/shared/Display/StatsCard';
+import { StatsCard } from "@repo/ui-react";
 
 interface Props {
     billsCount: number;

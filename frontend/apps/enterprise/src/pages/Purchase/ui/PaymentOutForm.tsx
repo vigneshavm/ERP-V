@@ -5,11 +5,11 @@ import { createPayment, PaymentOut } from "@/app/store/slices/paymentOutSlice";
 import { getAllSuppliers } from "@/entities/contact/model/supplierSlice";
 import { getAccounts } from "@/entities/finance/model/cashbankSlice";
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../components/shared/Layout/Layout';
-import PageHeader from '../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { User, CreditCard, Banknote, CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import BillSelectionModal from './Modals/BillSelectionModal';
+import BillSelectionModal from '../Modals/BillSelectionModal';
 import { Bill } from "@/entities/finance/model/billSlice";
 
 const PaymentOutForm: React.FC = () => {

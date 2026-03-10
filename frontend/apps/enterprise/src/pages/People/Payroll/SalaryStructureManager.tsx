@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../../components/shared/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, createSalaryComponent, bulkUpdateSalaryStructure } from "@/entities/people/model/payrollSlice";
 import { Plus, Save, User, DollarSign, Users } from 'lucide-react';
@@ -30,7 +30,7 @@ const SalaryStructureManager = () => {
         // Load employees
         const loadEmployees = async () => {
             try {
-                const res = await api.get('/api/employees');
+                const res = await api.get('/employees');
                 if (res.data.success) setEmployees(res.data.data);
             } catch (e) {
                 console.error("Failed to load employees");

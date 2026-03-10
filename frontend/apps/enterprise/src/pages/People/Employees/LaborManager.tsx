@@ -100,7 +100,7 @@ export const LaborManager = () => {
   React.useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await api.get('/api/hr/employees');
+        const response = await api.get('/hr/employees');
         if (response.data && response.data.success) {
           // Adapt to Redux format
           const emps = response.data.data.map((e: any) => ({
@@ -183,7 +183,7 @@ export const LaborManager = () => {
     };
 
     try {
-      const response = await api.post('/api/hr/employees', payload);
+      const response = await api.post('/hr/employees', payload);
       if (response.data && response.data.success) {
         const insertedUser = response.data.data;
 

@@ -5,7 +5,7 @@ import { clearSession } from "@/shared/lib/utils/session";
 import { RootState } from "@/app/store/store";
 
 
-const API_URL = "/api/auth";
+const API_URL = "/auth";
 
 export interface User {
     _id: string;
@@ -187,7 +187,7 @@ export const updateProfile = createAsyncThunk<any, any, { state: RootState, reje
             const token = state.auth.user?.token;
             const userId = state.auth.user?._id;
             const response = await api.put(
-                `/api/users/${userId}`,
+                `/users/${userId}`,
                 userData,
                 {
                     headers: {

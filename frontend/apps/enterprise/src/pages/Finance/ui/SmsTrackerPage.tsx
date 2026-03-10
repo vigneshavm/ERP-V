@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
+import api from '@/shared/api/api';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import SmsTransactionCard from '../../components/Finance/SmsTransactionCard';
@@ -21,7 +22,7 @@ const SmsTrackerPage: React.FC = () => {
     const fetchTransactions = async () => {
         setIsRefreshing(true);
         try {
-            const res = await axios.get('/api/sms-tracker');
+            const res = await api.get('/sms-tracker');
             setTransactions(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             toast.error('Failed to fetch SMS transactions');
@@ -38,7 +39,7 @@ const SmsTrackerPage: React.FC = () => {
 
     const handleConvert = async (id: string, data: any) => {
         try {
-            await axios.post(`/api/sms-tracker/${id}/convert`, data);
+            await api.post(`/sms-tracker/${id}/convert`, data);
             toast.success('SMS converted to expense successfully');
             fetchTransactions();
         } catch (err: any) {
@@ -48,7 +49,7 @@ const SmsTrackerPage: React.FC = () => {
 
     const handleIgnore = async (id: string) => {
         try {
-            await axios.patch(`/api/sms-tracker/${id}/ignore`);
+            await api.patch(`/sms-tracker/${id}/ignore`);
             toast.info('SMS ignored');
             fetchTransactions();
         } catch (err) {
@@ -59,7 +60,7 @@ const SmsTrackerPage: React.FC = () => {
     const handleTestSubmit = async () => {
         if (!testSms) return;
         try {
-            await axios.post('/api/sms-tracker/receive', { text: testSms, sender: testSender });
+            await api.post('/sms-tracker/receive', { text: testSms, sender: testSender });
             toast.success('Test SMS parsed and added');
             setTestSms('');
             setShowTestInput(false);

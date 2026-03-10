@@ -7,7 +7,7 @@ import api from '@/shared/api/api';
 
 export const fetchTenantsRaw = async () => {
     try {
-        const { data } = await api.get('/api/business/profile');
+        const { data } = await api.get('/business/profile');
         if (data && data.success && data.data) {
             const profile = data.data;
             const tenant = {
@@ -33,7 +33,7 @@ export const fetchTenantsRaw = async () => {
 
 export const fetchBranchesRaw = async (tenantId: string | null) => {
     try {
-        const { data } = await api.get('/api/branches');
+        const { data } = await api.get('/branches');
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }
@@ -46,7 +46,7 @@ export const fetchBranchesRaw = async (tenantId: string | null) => {
 
 export const fetchEmployeesRaw = async (tenantId: string | null) => {
     try {
-        const { data } = await api.get('/api/users');
+        const { data } = await api.get('/users');
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }

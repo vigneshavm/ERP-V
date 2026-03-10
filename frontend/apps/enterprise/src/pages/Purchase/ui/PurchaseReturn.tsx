@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Layout from "../../components/shared/Layout/index.js";
-import FormInput from "../../components/core/Form/Input.js";
-import SupplierSelectionModal from "../../components/shared/Modals/SupplierSelectionModal.js";
+import Layout from "@/shared/ui/Layout/Layout";
+import FormInput from "@/shared/ui/Form/Input";
+import SupplierSelectionModal from "@/shared/ui/Modals/SupplierSelectionModal";
 import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import {
     RotateCcw, Save, Printer, FileText, User, Phone, X,
-    Plus, Trash2, Package, Calculator, CreditCard, Banknote,
-    Building2, RefreshCw, FileEdit, AlertTriangle
+    Trash2, Package, Calculator, CreditCard, Banknote,
+    Building2, RefreshCw, FileEdit, AlertTriangle, Plus
 } from 'lucide-react';
-import PageHeader from "../../components/shared/Layout/PageHeader.js";
-import { Supplier } from "@/entities/contact/model/supplierSlice";
+import { Supplier } from "@repo/shared-kernel";
 
 interface ReturnItem {
     name: string;
@@ -25,7 +25,7 @@ interface ReturnItem {
 interface PurchaseReturnFormData {
     debitNoteNo: string;
     debitNoteDate: string;
-    originalPurchase: any; // Could be typed if needed
+    originalPurchase: any;
     supplier: Supplier | null;
     items: ReturnItem[];
     refundMethod: 'credit' | 'cash' | 'bank_transfer' | 'adjust_next_bill' | string;
@@ -68,7 +68,7 @@ const PurchaseReturn: React.FC = () => {
                 const userData = JSON.parse(userDataString);
                 const token = userData?.token;
                 const response = await api.get(
-                    `/api/cashbank/accounts`,
+                    '/api/cashbank/accounts',
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setBankAccounts(response.data.filter((acc: any) => acc.status === 'active'));
@@ -114,7 +114,7 @@ const PurchaseReturn: React.FC = () => {
             const token = userData?.token;
 
             await api.post(
-                `/api/purchase-returns`,
+                '/api/purchase-returns',
                 {
                     supplierId: formData.supplier._id,
                     items: formData.items,
@@ -128,7 +128,7 @@ const PurchaseReturn: React.FC = () => {
             );
 
             toast.success('Purchase return processed successfully');
-            navigate('/purchase/return'); // Updated path for consistency
+            navigate('/purchase/returns');
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Failed to process return');
         } finally {
@@ -171,45 +171,43 @@ const PurchaseReturn: React.FC = () => {
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Debit Note Details Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-900 rounded-lg flex items-center justify-center">
                                     <FileText className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Debit Note Details</h2>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormInput
-                                    label="Debit Note Number"
+                                    label="Reference Number"
                                     name="debitNoteNo"
+                                    placeholder="e.g. RET-001"
                                     value={formData.debitNoteNo}
-                                    onChange={(e) => setFormData({ ...formData, debitNoteNo: e.target.value })}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, debitNoteNo: e.target.value })}
                                     required
                                 />
                                 <FormInput
-                                    label="Debit Note Date"
+                                    label="Return Date"
                                     name="debitNoteDate"
                                     type="date"
                                     value={formData.debitNoteDate}
-                                    onChange={(e) => setFormData({ ...formData, debitNoteDate: e.target.value })}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, debitNoteDate: e.target.value })}
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Supplier Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-900 rounded-lg flex items-center justify-center">
                                     <User className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Supplier</h2>
                             </div>
                             {formData.supplier ? (
-                                <div className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/10 dark:to-red-900/10 border border-rose-200 dark:border-rose-800 rounded-xl">
+                                <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-800 rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-white dark:bg-neutral-800 rounded-xl flex items-center justify-center shadow-sm">
@@ -249,18 +247,17 @@ const PurchaseReturn: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Items Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm overflow-hidden">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                                    <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-900 rounded-lg flex items-center justify-center">
                                         <AlertTriangle className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
                                     </div>
                                     <h2 className="text-base font-semibold text-slate-900 dark:text-white">Return Items</h2>
                                 </div>
                                 <button
                                     onClick={addItem}
-                                    className="btn btn-secondary py-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                    className="btn border border-emerald-200 text-emerald-600 hover:bg-emerald-50 py-2"
                                 >
                                     <Plus className="w-4 h-4" />
                                     Add Item
@@ -268,7 +265,7 @@ const PurchaseReturn: React.FC = () => {
                             </div>
                             <div className="overflow-x-auto -mx-6">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
-                                    <thead className="bg-slate-50 dark:bg-neutral-900/50 border-y dark:border-neutral-700">
+                                    <thead className="bg-slate-50 dark:bg-neutral-900 border-y border-neutral-200 dark:border-neutral-700">
                                         <tr>
                                             <th className="px-6 py-3 font-semibold text-slate-500">Item</th>
                                             <th className="px-6 py-3 font-semibold text-slate-500 w-20 text-right">Qty</th>
@@ -351,10 +348,9 @@ const PurchaseReturn: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Refund Details Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-900 rounded-lg flex items-center justify-center">
                                     <CreditCard className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Refund Details</h2>
@@ -372,7 +368,7 @@ const PurchaseReturn: React.FC = () => {
                                                     onClick={() => setFormData({ ...formData, refundMethod: method.value, bankAccount: '' })}
                                                     className={`group p-4 border-2 rounded-2xl transition-all text-center ${getMethodColorClasses(method.color, isSelected)}`}
                                                 >
-                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${method.color}-100 dark:bg-${method.color}-900/30` : 'bg-slate-50 dark:bg-neutral-800'}`}>
+                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${method.color}-100 dark:bg-${method.color}-900/30` : 'bg-slate-50 dark:bg-neutral-700'}`}>
                                                         <IconComponent className={`w-6 h-6 transition-colors ${isSelected ? `text-${method.color}-600 dark:text-${method.color}-400` : 'text-slate-400'}`} />
                                                     </div>
                                                     <div className={`text-xs font-bold uppercase tracking-wider transition-colors ${isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
@@ -416,9 +412,8 @@ const PurchaseReturn: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Summary Sidebar */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl overflow-hidden shadow-lg sticky top-6">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl overflow-hidden shadow-lg sticky top-6">
                             <div className="bg-gradient-to-r from-rose-500 to-red-600 p-6">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white">
@@ -455,7 +450,7 @@ const PurchaseReturn: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="border-t dark:border-neutral-800 pt-6 mb-8 text-center">
+                                <div className="border-t border-neutral-100 dark:border-neutral-800 pt-6 mb-8 text-center">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Refund / Credit</p>
                                     <p className="text-4xl font-black text-emerald-600">₹{calculateTotal().toLocaleString()}</p>
                                 </div>
@@ -490,4 +485,3 @@ const PurchaseReturn: React.FC = () => {
 };
 
 export default PurchaseReturn;
-

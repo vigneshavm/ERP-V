@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import Layout from '../../../components/shared/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { fetchPayrollRuns, generatePayrollRun } from "@/entities/people/model/payrollSlice";
 import { PlayCircle, Eye, Printer, Trash2 } from 'lucide-react';

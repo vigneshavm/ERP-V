@@ -1,7 +1,7 @@
 import React, { useTransition } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-    Check, Zap, Shield, Crown, Building, Activity, 
+import {
+    Check, Zap, Shield, Crown, Building, Activity,
     CreditCard, Sparkles,
     Database, Users as UsersIcon, Smartphone
 } from 'lucide-react';
@@ -25,14 +25,14 @@ const SubscriptionTab: React.FC = () => {
     const [isPending, startTransition] = useTransition();
     const { user } = useSelector((state: RootState) => state.auth);
     const { tenants } = useSelector((state: RootState) => state.tenant || { tenants: [] });
-    
+
     const currentTenant = (tenants || []).find((t: any) => (t.id || t._id) === user?.tenantId);
     const currentPlanCode = currentTenant?.planCode || 'FREE';
 
     const handleSwitchPlan = (planCode: string) => {
         startTransition(async () => {
             try {
-                const response = await api.put('/api/shop/settings', {
+                const response = await api.put('/shop/settings', {
                     plan: planCode,
                 });
                 if (response.data.success) {
@@ -112,8 +112,8 @@ const SubscriptionTab: React.FC = () => {
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
                         <span className="px-4 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] font-black tracking-[0.2em] border border-emerald-500/20">VALID SESSION ACTIVE</span>
                         <div className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </div>
                     </div>
                     <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase mb-2">
@@ -150,9 +150,9 @@ const SubscriptionTab: React.FC = () => {
                                 <span className="text-[10px] font-black text-slate-400 uppercase">{item.unit}</span>
                             </div>
                             <div className="w-full h-2 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-indigo-500 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
-                                    style={{ width: `${(item.value / item.total) * 100}%` }} 
+                                <div
+                                    className="h-full bg-indigo-500 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+                                    style={{ width: `${(item.value / item.total) * 100}%` }}
                                 />
                             </div>
                         </div>
@@ -172,8 +172,7 @@ const SubscriptionTab: React.FC = () => {
                         const Icon = plan.icon;
                         const isCurrent = currentPlanCode === plan.code;
                         return (
-                            <div key={plan.code} className={`group relative p-8 rounded-[3rem] border transition-all duration-500 flex flex-col ${
-                                plan.popular
+                            <div key={plan.code} className={`group relative p-8 rounded-[3rem] border transition-all duration-500 flex flex-col ${plan.popular
                                     ? 'bg-indigo-600 border-indigo-500 shadow-2xl scale-105 z-10'
                                     : 'bg-white dark:bg-slate-950 border-slate-100 dark:border-slate-800 hover:border-indigo-300'
                                 }`}>
@@ -184,8 +183,7 @@ const SubscriptionTab: React.FC = () => {
                                 )}
 
                                 <div className="mb-8">
-                                    <div className={`w-16 h-16 rounded-[1.5rem] mb-6 flex items-center justify-center transition-transform group-hover:rotate-6 duration-500 shadow-lg ${
-                                        plan.popular ? 'bg-white text-indigo-600' : 'bg-slate-50 dark:bg-slate-900 text-slate-400'
+                                    <div className={`w-16 h-16 rounded-[1.5rem] mb-6 flex items-center justify-center transition-transform group-hover:rotate-6 duration-500 shadow-lg ${plan.popular ? 'bg-white text-indigo-600' : 'bg-slate-50 dark:bg-slate-900 text-slate-400'
                                         }`}>
                                         <Icon className="w-8 h-8" />
                                     </div>
@@ -203,9 +201,8 @@ const SubscriptionTab: React.FC = () => {
                                 <div className="space-y-4 mb-12 flex-1">
                                     {plan.features.map(f => (
                                         <div key={f} className={`flex items-center gap-4 text-xs font-bold ${plan.popular ? 'text-indigo-50' : 'text-slate-600 dark:text-slate-400'}`}>
-                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${
-                                                plan.popular ? 'bg-indigo-500/30 border-indigo-400/30 text-white' : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800 text-emerald-600'
-                                            }`}>
+                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${plan.popular ? 'bg-indigo-500/30 border-indigo-400/30 text-white' : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800 text-emerald-600'
+                                                }`}>
                                                 <Check className="w-3 h-3" />
                                             </div>
                                             {f}
@@ -216,8 +213,7 @@ const SubscriptionTab: React.FC = () => {
                                 <button
                                     onClick={() => !isCurrent && handleSwitchPlan(plan.code)}
                                     disabled={isPending}
-                                    className={`w-full py-5 rounded-[1.5rem] text-[11px] font-black tracking-[0.2em] transition-all relative overflow-hidden active:scale-95 ${
-                                        isCurrent
+                                    className={`w-full py-5 rounded-[1.5rem] text-[11px] font-black tracking-[0.2em] transition-all relative overflow-hidden active:scale-95 ${isCurrent
                                             ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-500/20'
                                             : plan.popular
                                                 ? 'bg-white text-indigo-600 hover:bg-slate-50'

@@ -4,7 +4,7 @@ import { Product } from "@repo/shared-kernel";
 import { CartItem } from "@repo/shared-kernel";
 import { Sector } from "@repo/shared-kernel";
 import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
-import { productTypes, ProductType } from '../../data/productTypes';
+import { productTypes, ProductType } from '@/entities/inventory/api/productTypes';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 
@@ -22,7 +22,7 @@ interface POSCartGridProps {
     allProductTypes: string[];
 }
 
-import { useFuzzySearch } from "../../hooks/useFuzzySearch";
+import { useFuzzySearch } from "@/shared/lib/hooks/useFuzzySearch";
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 

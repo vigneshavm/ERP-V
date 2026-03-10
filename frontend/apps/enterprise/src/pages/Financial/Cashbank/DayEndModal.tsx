@@ -36,7 +36,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
 
     const fetchSummary = async () => {
         try {
-            const response = await api.get('/api/cashbank/day-end/summary');
+            const response = await api.get('/cashbank/day-end/summary');
             setSummary(response.data);
         } catch (error) {
             console.error('Failed to fetch day end summary:', error);
@@ -49,7 +49,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
         if (!summary) return;
         setSaving(true);
         try {
-            await api.post('/api/cashbank/day-end/save', {
+            await api.post('/cashbank/day-end/save', {
                 date: new Date().toISOString(),
                 openingCash: summary.openingCash,
                 cashSales: summary.cashSales,

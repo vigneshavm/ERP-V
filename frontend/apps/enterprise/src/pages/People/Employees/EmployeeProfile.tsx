@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-    User, 
-    Mail, 
-    Phone, 
-    MapPin, 
-    Calendar, 
-    CreditCard, 
-    Clock, 
-    FileText, 
+import {
+    User,
+    Mail,
+    Phone,
+    MapPin,
+    Calendar,
+    CreditCard,
+    Clock,
+    FileText,
     ChevronLeft,
     Edit3,
     Shield,
@@ -21,8 +21,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { RootState } from "@/app/store/store";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { Layout, PageHeader } from "@/shared/ui";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 import AttendanceCalendar from "./AttendanceCalendar";
 import PaymentHistory from "./PaymentHistory";
@@ -47,7 +46,7 @@ const EmployeeProfile: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Agent Not Found</h2>
                     <p className="text-slate-500 mt-2">The requested neural profile does not exist or has been archived.</p>
-                    <button 
+                    <button
                         onClick={() => navigate('/people/employees')}
                         className="mt-8 text-blue-600 font-bold flex items-center gap-2 hover:underline"
                     >
@@ -72,11 +71,11 @@ const EmployeeProfile: React.FC = () => {
     return (
         <Layout>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <PageHeader 
+                <PageHeader
                     title={employee.name}
                     description={`Universal Agent Profile // Sector: ${employee.sector || 'N/A'}`}
                     backButton={
-                        <button 
+                        <button
                             onClick={() => navigate('/people/employees')}
                             className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-widest"
                         >
@@ -102,7 +101,7 @@ const EmployeeProfile: React.FC = () => {
                                 </div>
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{employee.name}</h3>
                                 <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1">{employee.role}</p>
-                                
+
                                 <div className="mt-8 space-y-4 px-2">
                                     <div className="flex items-center gap-3 text-sm text-slate-500 group">
                                         <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-900 flex items-center justify-center border border-slate-100 dark:border-slate-800 group-hover:text-blue-500 transition-colors">
@@ -128,11 +127,11 @@ const EmployeeProfile: React.FC = () => {
 
                         {/* Quick Actions / Status */}
                         <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden group">
-                           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
-                           <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                                 <Shield size={12} /> Security Matrix
-                           </h4>
-                           <div className="space-y-4">
+                            </h4>
+                            <div className="space-y-4">
                                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/10">
                                     <span className="text-xs font-bold opacity-70">Access Level</span>
                                     <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{employee.systemRole || 'Staff'}</span>
@@ -141,7 +140,7 @@ const EmployeeProfile: React.FC = () => {
                                     <span className="text-xs font-bold opacity-70">PIN Code</span>
                                     <span className="text-xs font-mono font-black tracking-widest">{employee.pin || '****'}</span>
                                 </div>
-                           </div>
+                            </div>
                         </div>
                     </div>
 
@@ -158,8 +157,8 @@ const EmployeeProfile: React.FC = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
-                                    className={`flex-1 flex items-center justify-center gap-2 min-w-[140px] px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id 
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                                    className={`flex-1 flex items-center justify-center gap-2 min-w-[140px] px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                                         : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
                                 >
                                     <tab.icon size={16} />
@@ -183,7 +182,7 @@ const EmployeeProfile: React.FC = () => {
                                         <StatCard icon={CreditCard} label="Earned Value" value={formatCurrency(employee.baseSalary || employee.dailyRate * 22)} color="indigo" />
                                         <StatCard icon={History} label="Pending Due" value={formatCurrency(500)} color="rose" />
                                     </div>
-                                    
+
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <h4 className="font-bold text-slate-800 dark:text-white mb-6 uppercase tracking-widest text-xs flex items-center gap-2">
@@ -230,32 +229,32 @@ const EmployeeProfile: React.FC = () => {
 
                             {activeTab === 'ATTENDANCE' && (
                                 <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                                    <AttendanceCalendar 
+                                    <AttendanceCalendar
                                         currentMonth={new Date().getMonth()}
                                         currentYear={new Date().getFullYear()}
                                         attendance={attendance}
                                         selectedLaborerId={(employee.id || employee._id) as string}
                                         isSelectionMode={false}
-                                        onToggleSelectionMode={() => {}}
+                                        onToggleSelectionMode={() => { }}
                                         selectedDates={new Set()}
-                                        onDateClick={() => {}}
-                                        onBulkAction={() => {}}
+                                        onDateClick={() => { }}
+                                        onBulkAction={() => { }}
                                     />
                                 </div>
                             )}
 
                             {activeTab === 'PAYROLL' && (
                                 <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                                    <PaymentHistory 
+                                    <PaymentHistory
                                         payments={payments}
                                         selectedLaborerId={(employee.id || employee._id) as string}
                                         paymentAmount=""
-                                        setPaymentAmount={() => {}}
+                                        setPaymentAmount={() => { }}
                                         paymentType="ADVANCE"
-                                        setPaymentType={() => {}}
+                                        setPaymentType={() => { }}
                                         paymentNote=""
-                                        setPaymentNote={() => {}}
-                                        onAddPayment={() => {}}
+                                        setPaymentNote={() => { }}
+                                        onAddPayment={() => { }}
                                     />
                                 </div>
                             )}

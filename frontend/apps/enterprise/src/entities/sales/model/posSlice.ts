@@ -3,7 +3,7 @@ import api from "@/shared/api/api";
 import { Sale, Customer, Session, SaleStatus, CartItem, Invoice } from "@repo/shared-kernel";
 import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
 
-const API_URL = "/api/pos";
+const API_URL = "/pos";
 
 // Get token from state
 const getConfig = (token: string) => ({

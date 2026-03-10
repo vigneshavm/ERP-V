@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-    Printer, 
-    Download, 
-    Mail, 
+import {
+    Printer,
+    Download,
+    Mail,
     ChevronLeft,
     Shield,
     DollarSign,
@@ -17,8 +17,8 @@ import {
     History as HistoryIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Layout from '../../../components/shared/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from '@/shared/ui/Layout/Layout';
+import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { formatDateISO, formatCurrency } from "@/shared/lib/utils/helpers";
 import api from "@/shared/api/api";
 
@@ -40,7 +40,7 @@ const PayslipView = () => {
                     </div>
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Quantum Data Missing</h2>
                     <p className="text-slate-500 mt-2">The requested payslip record is not available in the current temporal slice.</p>
-                    <button 
+                    <button
                         onClick={() => navigate('/people/payroll')}
                         className="mt-8 text-blue-600 font-bold flex items-center gap-2 hover:underline uppercase tracking-widest text-xs"
                     >
@@ -72,7 +72,7 @@ const PayslipView = () => {
                         title={`Agent Payslip: ${payslip.employeeId?.name || 'Unknown'}`}
                         description={`Vortex Cycle: ${new Date(0, payslip.month).toLocaleString('default', { month: 'long' })} ${payslip.year}`}
                         backButton={
-                            <button 
+                            <button
                                 onClick={() => navigate(-1)}
                                 className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-widest"
                             >
@@ -92,7 +92,7 @@ const PayslipView = () => {
                     />
                 </div>
 
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white dark:bg-slate-900 shadow-2xl rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 print:shadow-none print:border print:rounded-none"
@@ -228,11 +228,10 @@ const PayslipView = () => {
                                 </h2>
                             </div>
                             <div className="text-center md:text-right space-y-4">
-                                <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-2xl font-black text-xs uppercase tracking-widest border ${
-                                    payslip.paymentStatus === 'PAID' 
-                                    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
-                                    : 'bg-amber-500/10 text-amber-600 border-amber-500/20'
-                                }`}>
+                                <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-2xl font-black text-xs uppercase tracking-widest border ${payslip.paymentStatus === 'PAID'
+                                        ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                        : 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                                    }`}>
                                     {payslip.paymentStatus === 'PAID' ? <CheckCircle2 size={16} /> : <Clock size={16} />}
                                     {payslip.paymentStatus === 'PAID' ? 'Nexus Verification: PAID' : 'Nexus Status: PENDING'}
                                 </div>
@@ -250,7 +249,7 @@ const PayslipView = () => {
                         </p>
                     </div>
                 </motion.div>
-                
+
                 <div className="mt-8 text-center text-[10px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-widest flex items-center justify-center gap-4">
                     <span>Generated: {new Date().toISOString()}</span>
                     <div className="w-1 h-1 bg-slate-200 dark:bg-slate-800 rounded-full" />

@@ -33,7 +33,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
     const handleInitialize = async () => {
         try {
             setInitializing(true);
-            await api.post('/api/finance/clearing/init', { sector: currentSector });
+            await api.post('/finance/clearing/init', { sector: currentSector });
             await fetchParameters();
         } catch (err) {
             console.error(err);

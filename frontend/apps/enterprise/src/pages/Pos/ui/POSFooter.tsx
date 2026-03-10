@@ -3,7 +3,7 @@ import React from 'react';
 import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck } from 'lucide-react';
 import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
 import { Customer } from "@repo/shared-kernel";
-import { LoyaltyConfig } from "@/entities/session/model/core";
+import { LoyaltyConfig } from '@/entities/session/model/loyalty';
 
 interface POSFooterProps {
     cartSubtotal: number;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Calculator, CalendarDays, Wallet, AlertCircle } from 'lucide-react';
-import { Card } from "../../../components/core/Display/Card";
+import { Card } from "@/shared/ui";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
-import { Employee } from "@/entities/people/model/laborSlice";
+import { Employee } from "@/entities/people/model/hr";
 
 interface LaborStatsProps {
     selectedLaborer: Employee;
@@ -87,8 +87,8 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
 
                 {/* Net Payable */}
                 <div className={`p-4 rounded-xl border transition-all group relative overflow-hidden ${stats.balance < 0
-                        ? 'bg-rose-50/50 border-rose-100'
-                        : 'bg-indigo-50/50 border-indigo-100'
+                    ? 'bg-rose-50/50 border-rose-100'
+                    : 'bg-indigo-50/50 border-indigo-100'
                     }`}>
                     <div className="flex justify-between items-start mb-2 relative z-10">
                         <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-indigo-600'

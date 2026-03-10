@@ -1,20 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, Plus } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
-import { useGRNData } from './hooks/useGRNData';
-import GRNStats from './Components/GRNStats';
-import GRNFilters from './Components/GRNFilters';
-import GRNTable from './Components/GRNTable';
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
+import { useGRNData } from '../hooks/useGRNData';
+import GRNStats from '../Components/GRNStats';
+import GRNFilters from '../Components/GRNFilters';
+import GRNTable from '../Components/GRNTable';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 
 const GoodsReceived: React.FC = () => {
     const navigate = useNavigate();
-    const { currentBranch } = useSelector((state: RootState) => state.auth);
-    const { getBranchName } = useBranchResolver();
+    const { currentBranchId, getBranchName } = useBranchResolver();
     const { filteredRecords, filters, stats } = useGRNData();
 
     return (
@@ -22,7 +21,7 @@ const GoodsReceived: React.FC = () => {
             <div className="space-y-6 animate-fade-in">
                 <PageHeader
                     title="Goods Received Notes"
-                    description={`Track incoming shipments and receiving verification • ${getBranchName(currentBranch)}`}
+                    description={`Track incoming shipments and receiving verification • ${getBranchName(currentBranchId)}`}
                     actions={
                         <>
                             <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">

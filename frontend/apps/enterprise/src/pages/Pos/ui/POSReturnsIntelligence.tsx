@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { 
-    RotateCcw, 
-    AlertCircle, 
-    TrendingDown, 
-    TrendingUp, 
-    Box, 
-    Search, 
-    Filter, 
-    Download, 
+import {
+    RotateCcw,
+    AlertCircle,
+    TrendingDown,
+    TrendingUp,
+    Box,
+    Search,
+    Filter,
+    Download,
     Calendar,
     ArrowRight,
     Tag,
@@ -16,7 +16,7 @@ import {
     ShieldAlert,
     BarChart3
 } from 'lucide-react';
-import Layout from '@/shared/ui/Layout/Layout';
+import { Layout } from '@/shared/ui/Layout/Layout';
 import MetricCard from '@/shared/ui/Feedback/MetricCard';
 
 interface ReturnRecord {
@@ -124,7 +124,7 @@ const POSReturnsIntelligence: React.FC = () => {
                         subtext="Inventory Recovery"
                         icon={Box}
                         color="emerald"
-                        trend="flat"
+                        trend="neutral"
                     />
                     <div className="bg-rose-600 text-white p-6 rounded-[2rem] shadow-xl shadow-rose-600/20 relative group overflow-hidden border border-rose-500/50 flex flex-col justify-between">
                         <ShieldAlert className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform duration-700 w-24 h-24" />
@@ -153,8 +153,8 @@ const POSReturnsIntelligence: React.FC = () => {
                             />
                         </div>
                         <div className="flex bg-neutral-100 dark:bg-neutral-900 p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-700">
-                             <button className="px-4 py-1.5 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm border border-neutral-100 dark:border-neutral-700">All Returns</button>
-                             <button className="px-4 py-1.5 text-neutral-500 hover:text-neutral-700 rounded-xl text-[9px] font-black uppercase tracking-widest">Defect Only</button>
+                            <button className="px-4 py-1.5 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm border border-neutral-100 dark:border-neutral-700">All Returns</button>
+                            <button className="px-4 py-1.5 text-neutral-500 hover:text-neutral-700 rounded-xl text-[9px] font-black uppercase tracking-widest">Defect Only</button>
                         </div>
                     </div>
 
@@ -194,11 +194,10 @@ const POSReturnsIntelligence: React.FC = () => {
                                         </td>
                                         <td className="py-5 px-4">
                                             <div className="flex flex-col gap-1">
-                                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest w-fit border ${
-                                                    ret.defectCategory === 'MANUFACTURING' ? 'bg-rose-50 border-rose-100 text-rose-600' :
+                                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest w-fit border ${ret.defectCategory === 'MANUFACTURING' ? 'bg-rose-50 border-rose-100 text-rose-600' :
                                                     ret.defectCategory === 'LOGISTICS' ? 'bg-amber-50 border-amber-100 text-amber-600' :
-                                                    'bg-neutral-50 border-neutral-100 text-neutral-500'
-                                                }`}>
+                                                        'bg-neutral-50 border-neutral-100 text-neutral-500'
+                                                    }`}>
                                                     {ret.defectCategory}
                                                 </span>
                                                 <span className="text-[11px] text-neutral-500 font-medium truncate max-w-[180px]">"{ret.reason}"</span>
