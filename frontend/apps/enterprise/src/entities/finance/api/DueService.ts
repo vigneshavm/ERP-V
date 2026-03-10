@@ -1,5 +1,5 @@
-import api from './api';
-import { DueAdjustment } from '../redux/slices/dueSlice';
+import api from '@/shared/api/api';
+import { DueAdjustment } from "@/features/expense-tracking/model/dueSlice";
 import { AxiosRequestConfig } from 'axios';
 
 const API_URL = "/api/due/";

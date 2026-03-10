@@ -1,7 +1,7 @@
 import React from 'react';
 import { Users, Plus, Search, ChevronRight } from 'lucide-react';
-import { Employee } from "../../../types/hr";
-import { formatCurrency } from "../../../utils/helpers";
+import { Employee } from "@/entities/people/model/laborSlice";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface LaborSidebarProps {
     employees: Employee[];

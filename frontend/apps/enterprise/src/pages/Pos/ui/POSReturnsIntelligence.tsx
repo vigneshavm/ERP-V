@@ -16,8 +16,8 @@ import {
     ShieldAlert,
     BarChart3
 } from 'lucide-react';
-import Layout from '../../components/shared/Layout';
-import MetricCard from '../../components/shared/UI/MetricCard';
+import Layout from '@/shared/ui/Layout/Layout';
+import MetricCard from '@/shared/ui/Feedback/MetricCard';
 
 interface ReturnRecord {
     id: string;

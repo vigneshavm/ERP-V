@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteSupplier, getSupplierAnalytics } from "../../../redux/slices/supplierSlice";
-import { AppDispatch, RootState } from "../../../redux/store";
+import { deleteSupplier, getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
+import { AppDispatch, RootState } from "@/app/store/store";
 import Layout from "../../../components/shared/Layout";
 import Modal from "../../../components/shared/Overlay/Modal";
 import {

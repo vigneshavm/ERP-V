@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import dueService from "../../services/DueService";
+import dueService from "@/entities/finance/api/DueService";
 
 export interface DueAdjustment {
     _id: string;

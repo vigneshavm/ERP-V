@@ -1,6 +1,6 @@
 
-import { Product } from "../types/product";
-import { Sector } from "../types/common";
+import { Product } from "@repo/shared-kernel";
+import { Sector } from "@repo/shared-kernel";
 import { ProductUnit } from './constants';
 
 export type ShirtInput = Omit<Partial<Product>, 'sector' | 'hsnCode' | 'gstPercentage'> & {

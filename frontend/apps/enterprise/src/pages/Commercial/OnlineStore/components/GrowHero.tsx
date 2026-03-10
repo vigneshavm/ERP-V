@@ -1,6 +1,6 @@
 import React from 'react';
 import { Rocket, ArrowRight, ShoppingBag, ShoppingCart } from 'lucide-react';
-import { EcommercePlan } from "../../../../types/tenant"; // Adjust import if needed, assuming types exist
+import { EcommercePlan } from "@/entities/session/model/core"; // Adjust import if needed, assuming types exist
 
 interface GrowHeroProps {
     isLoading: boolean;

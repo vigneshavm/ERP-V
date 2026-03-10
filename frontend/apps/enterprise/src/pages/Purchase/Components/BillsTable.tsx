@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Eye, CreditCard, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import { Bill } from '../../../redux/slices/billSlice';
+import { Bill } from "@/entities/finance/model/billSlice";
 
 interface Props {
     bills: Bill[];

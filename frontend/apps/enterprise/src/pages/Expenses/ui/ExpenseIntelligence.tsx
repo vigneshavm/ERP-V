@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 import {
     PieChart,
     Search,

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X } from 'lucide-react';
-import { Session } from "../../types/sales";
+import { Session } from "@repo/shared-kernel";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 
 interface POSHeaderProps {

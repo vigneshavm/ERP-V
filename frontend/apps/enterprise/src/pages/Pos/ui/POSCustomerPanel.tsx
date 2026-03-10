@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Smartphone, Mail, CreditCard, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
-import { Customer } from "../../types/sales";
+import { Customer } from "@repo/shared-kernel";
 import Customer360Modal from '../People/Customers/Customer360Modal';
 
 interface POSCustomerPanelProps {

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema, ForgotPasswordInput } from '../../validations/auth.schema';
-import { requestPasswordReset } from '../../redux/slices/authSlice';
+import { forgotPasswordSchema, ForgotPasswordInput } from '@repo/shared-kernel';
+import { requestPasswordReset } from "@/entities/session/model/authSlice";
 import { useAuthActions } from './useAuthActions';
 import { useEffect } from 'react';
 

@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { User, Mail, Store, Phone, ArrowRight, ArrowLeft, ShieldCheck, Loader2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SecurePasswordInput from './SecurePasswordInput';
-import AuthLayout from '../Views/AuthLayout';
-import AuthAlert from '../Views/AuthAlert';
-import AuthInput from '../../components/Auth/AuthInput';
-import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
-import { useRegisterForm } from '../../hooks/auth/useRegisterForm';
+import AuthLayout from '../../Views/ui/AuthLayout';
+import AuthAlert from '../../Views/ui/AuthAlert';
+import AuthInput from '@/features/auth-by-email/ui/AuthInput';
+import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
+import { useRegisterForm } from '@/features/auth-by-email/lib/useRegisterForm';
 
 const STEPS = [
     { id: 1, label: 'Identity', fields: ['name', 'email'] as const },
@@ -88,26 +88,23 @@ const Register: React.FC = () => {
                         <React.Fragment key={s.id}>
                             <div className="flex items-center gap-2">
                                 <div
-                                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${
-                                        step > s.id
-                                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-                                            : step === s.id
-                                                ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/25'
-                                                : 'bg-white/[0.03] text-white/15 border border-white/[0.05]'
-                                    }`}
+                                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${step > s.id
+                                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                                        : step === s.id
+                                            ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/25'
+                                            : 'bg-white/[0.03] text-white/15 border border-white/[0.05]'
+                                        }`}
                                 >
                                     {step > s.id ? '✓' : s.id}
                                 </div>
-                                <span className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-300 hidden sm:block ${
-                                    step >= s.id ? 'text-white/40' : 'text-white/10'
-                                }`}>
+                                <span className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-300 hidden sm:block ${step >= s.id ? 'text-white/40' : 'text-white/10'
+                                    }`}>
                                     {s.label}
                                 </span>
                             </div>
                             {i < STEPS.length - 1 && (
-                                <div className={`flex-1 h-px transition-colors duration-500 ${
-                                    step > s.id ? 'bg-emerald-500/20' : 'bg-white/[0.04]'
-                                }`} />
+                                <div className={`flex-1 h-px transition-colors duration-500 ${step > s.id ? 'bg-emerald-500/20' : 'bg-white/[0.04]'
+                                    }`} />
                             )}
                         </React.Fragment>
                     ))}

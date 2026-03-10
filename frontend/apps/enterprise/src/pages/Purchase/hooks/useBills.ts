@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import api from '../../../services/api';
-import { getAllBills, createBill, updateBill, deleteBill, reset, Bill } from '../../../redux/slices/billSlice';
-import { getAllSuppliers } from '../../../redux/slices/supplierSlice';
-import { RootState, AppDispatch } from '../../../redux/store';
+import api from "@/shared/api/api";
+import { getAllBills, createBill, updateBill, deleteBill, reset, Bill } from "@/entities/finance/model/billSlice";
+import { getAllSuppliers } from "@/entities/contact/model/supplierSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
 
 export const useBills = () => {
     const dispatch = useDispatch<AppDispatch>();

@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { getAllBills } from "../../../redux/slices/billSlice";
-import { getAllSuppliers } from "../../../redux/slices/supplierSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { getAllBills } from "@/entities/finance/model/billSlice";
+import { getAllSuppliers } from "@/entities/contact/model/supplierSlice";
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';

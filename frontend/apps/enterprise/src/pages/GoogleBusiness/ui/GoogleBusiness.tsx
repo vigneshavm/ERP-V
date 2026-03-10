@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../redux/store';
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     Globe, Phone, MapPin, Camera, Plus, Trash2, CheckCircle,
     AlertCircle, RefreshCw, ExternalLink, Share2, QrCode, Save,
@@ -9,7 +9,7 @@ import {
     TrendingUp, Filter, Calendar, Layout, ArrowUpRight
 } from 'lucide-react';
 import { syncGoogleProfile } from '../../redux';
-import { GoogleReview, GooglePost, GooglePhoto, BusinessHour, Tenant } from "../../types/tenant";
+import { GoogleReview, GooglePost, GooglePhoto, BusinessHour, Tenant } from "@/entities/session/model/core";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 

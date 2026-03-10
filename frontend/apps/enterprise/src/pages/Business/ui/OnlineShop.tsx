@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from "../../components/shared/Layout/index.js";
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import BusinessSubNav from './BusinessSubNav.js';
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 
 interface Feature {

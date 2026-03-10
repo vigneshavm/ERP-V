@@ -1,15 +1,15 @@
 import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
-import { setActiveTab } from "../../redux/slices/uiSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 import {
   getDashboardStats,
   getStockReport,
   getCustomerReport
-} from "../../redux/slices/reportsSlice";
-import { getAllExpenses } from "../../redux/slices/expenseSlice";
-import { fetchEffectiveBalance, fetchCheques } from "../../redux/slices/financeSlice";
-import { getSupplierAnalytics } from "../../redux/slices/supplierSlice";
+} from "@/widgets/stats-dashboard/model/reportsSlice";
+import { getAllExpenses } from "@/features/expense-tracking/model/expenseSlice";
+import { fetchEffectiveBalance, fetchCheques } from "@/entities/finance/model/financeSlice";
+import { getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import MetricCard from "../../components/shared/UI/MetricCard";
 import Layout from "../../components/shared/Layout";
@@ -48,8 +48,8 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Product } from "../../types/product";
-import { Customer } from "../../types/sales";
+import { Product } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared-kernel";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

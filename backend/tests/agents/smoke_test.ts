@@ -11,11 +11,11 @@ dotenv.config();
  */
 async function runSmokeTest() {
     console.log('--- Starting Agent Workflow Smoke Test ---');
-    
+
     try {
         // 1. Connect to DB (Mocking or using test DB)
         if (mongoose.connection.readyState === 0) {
-            await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smarterp_test');
+            await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/smarterp_test');
         }
 
         const dummyReceipt = Buffer.from('dummy image data');

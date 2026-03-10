@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { addToCart } from '../../../redux/slices/posSlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { addToCart } from "@/entities/sales/model/posSlice";
 import { activateEcommerce } from '../../../redux/thunks/tenantThunks';
 import {
     Search, Filter, Star, Heart, ShoppingCart,
@@ -14,7 +14,7 @@ import { Product, getProductRecommendations, searchProductsByImage } from "@repo
 import GrowHero from './components/GrowHero';
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
-import { EcommercePlan } from "../../../types/tenant";
+import { EcommercePlan } from "@/entities/session/model/core";
 
 // --- Hero / Setup Component Inline (Refactor of GrowHero) ---
 const OnlineStoreSetup: React.FC<{

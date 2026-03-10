@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import { SystemRole } from "../../../types/common";
+import { RootState } from "@/app/store/store";
+import { SystemRole } from "@repo/shared-kernel";
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { APP_CONFIG } from "../../../config";
-import api from "../../../services/api.js";
+import { APP_CONFIG } from "@/app/config";
+import api from "@/shared/api/api";
 
-import { securePassword } from "../../../utils/auth";
-import { TenantUser, DbRoleCode, Tenant } from "../../../types/tenant";
+import { TenantUser, DbRoleCode, Tenant } from "@/entities/session/model/core";
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle, Search, Filter } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../../redux/store';
-import { getAllBills } from '../../../redux/slices/billSlice';
-import { Bill } from '../../../redux/slices/billSlice';
+import { AppDispatch } from "@/app/store/store";
+import { getAllBills } from "@/entities/finance/model/billSlice";
+import { Bill } from "@/entities/finance/model/billSlice";
 
 interface BillSelectionModalProps {
     isOpen: boolean;

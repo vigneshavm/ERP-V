@@ -4,7 +4,7 @@ import { useExpenses, Expense } from "../../hooks/useExpenses";
 import { useExpenseCategories } from "../../hooks/useExpenseCategories";
 import PremiumExpenseDashboard from './PremiumExpenseDashboard';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 import ExpenseForm from '../../components/Finance/ExpenseForm';
 
 interface AuthState {

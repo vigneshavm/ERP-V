@@ -15,7 +15,7 @@ import {
     Settings,
     MoreHorizontal
 } from 'lucide-react';
-import { POSLogic } from "../../hooks/usePOSLogic";
+import { POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
 
 interface POSMobileMenuProps {
     isOpen: boolean;

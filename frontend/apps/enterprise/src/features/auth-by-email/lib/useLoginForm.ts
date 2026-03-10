@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, LoginInput } from '../../validations/auth.schema';
-import { login } from '../../redux/slices/authSlice';
+import { loginSchema, LoginInput } from '@repo/shared-kernel';
+import { login } from "@/entities/session/model/authSlice";
 import { useAuthActions } from './useAuthActions';
 import { useEffect } from 'react';
 

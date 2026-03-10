@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2, LucideIcon } from 'lucide-react';
-import { DailyLog } from "../../../types/hr";
-import { AttendanceStatus } from "../../../types/common";
+import { DailyLog } from "@/entities/people/model/laborSlice";
+import { AttendanceStatus } from "@repo/shared-kernel";
 
 interface TimeEntryModalProps {
     isOpen: boolean;

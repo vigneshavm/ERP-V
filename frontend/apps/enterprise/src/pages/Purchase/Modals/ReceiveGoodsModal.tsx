@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, Package } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderItem } from "../../../types/purchase";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
 
 interface ReceiveGoodsModalProps {
     isOpen: boolean;

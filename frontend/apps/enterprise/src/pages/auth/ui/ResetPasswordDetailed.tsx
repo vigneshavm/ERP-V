@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
-import { logout, setAuthError, setAuthSuccess } from "../../redux/slices/authSlice";
-import api from "../../services/api.js";
-import { clearSession } from "../../utils/session";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { logout, setAuthError, setAuthSuccess } from "@/entities/session/model/authSlice";
+import api from "@/shared/api/api";
+import { clearSession } from "@/shared/lib/utils/session";
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';

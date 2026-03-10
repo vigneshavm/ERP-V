@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown, Grid3X3, List as ListIcon, Star, Heart, ShoppingCart } from 'lucide-react';
-import { Product } from "../../types/product";
+import { Product } from "@repo/shared-kernel";
 
 interface StorefrontProductDisplayProps {
     filteredProducts: Product[];

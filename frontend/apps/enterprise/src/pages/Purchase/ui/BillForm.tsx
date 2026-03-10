@@ -2,8 +2,8 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban } from 'lucide-react';
-import { PurchaseBill, PurchaseBillItem, BillStatus } from "../../types/purchase";
-import api from "../../services/api";
+import { PurchaseBill, PurchaseBillItem, BillStatus } from "@repo/shared-kernel";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 import BillBasicInfo from './Components/BillBasicInfo';
 import BillItemsTable from './Components/BillItemsTable';

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import api from "../../../services/api";
+import { RootState } from "@/app/store/store";
+import api from "@/shared/api/api";
 import {
     Search,
     FileText,

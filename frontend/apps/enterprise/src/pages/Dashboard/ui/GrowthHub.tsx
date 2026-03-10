@@ -2,7 +2,7 @@
 import React from 'react';
 import { Rocket, Globe, Zap, Database, ArrowRight, BarChart, LayoutDashboard } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from "../../redux/slices/uiSlice";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 
 const GrowthHub: React.FC = () => {
     const dispatch = useDispatch();
@@ -66,7 +66,7 @@ const GrowthHub: React.FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Select a tool to scale and manage your business presence.</p>
                 </div>
                 <button
-                    onClick={() => dispatch(setActiveTab('GROW_DASHBOARD' as any))}
+                    onClick={() => setActiveTab('GROW_DASHBOARD' as any)}
                     className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all text-sm font-bold"
                 >
                     <LayoutDashboard className="w-4 h-4" />
@@ -78,7 +78,7 @@ const GrowthHub: React.FC = () => {
                 {cards.map((card) => (
                     <div
                         key={card.path}
-                        onClick={() => dispatch(setActiveTab(card.path as any))}
+                        onClick={() => setActiveTab(card.path as any)}
                         className="group bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:border-indigo-500 dark:hover:border-indigo-500 transition-all cursor-pointer"
                     >
                         <div className={`w-14 h-14 ${card.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>

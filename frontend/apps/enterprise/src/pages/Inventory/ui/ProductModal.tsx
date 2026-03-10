@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Box, Tag, DollarSign, Package, AlertCircle, Zap } from 'lucide-react';
-import { Product } from '../../types/product';
+import { Product } from "@repo/shared-kernel";
 
 interface ProductModalProps {
     isOpen: boolean;

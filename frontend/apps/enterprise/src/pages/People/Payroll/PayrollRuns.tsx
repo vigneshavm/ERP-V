@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchPayrollRuns, generatePayrollRun } from '../../../redux/slices/payrollSlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { fetchPayrollRuns, generatePayrollRun } from "@/entities/people/model/payrollSlice";
 import { PlayCircle, Eye, Printer, Trash2 } from 'lucide-react';
-import { formatDateISO } from '../../../utils/helpers';
-import api from '../../../services/api';
+import { formatDateISO } from "@/shared/lib/utils/helpers";
+import api from "@/shared/api/api";
 
 const PayrollRuns = () => {
     const dispatch = useDispatch<AppDispatch>();

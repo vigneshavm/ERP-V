@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { FinanceState, Transaction, Cheque, DayEndSummary } from "../../types/finance";
-import { TransactionType } from "../../types/common";
-import api from "../../services/api.js";
+import { TransactionType } from "@repo/shared-kernel";
+import api from "@/shared/api/api";
 import { RootState } from '../store';
 
 const API_URL = '/api/cashbank';

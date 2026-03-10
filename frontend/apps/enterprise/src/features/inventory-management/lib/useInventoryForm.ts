@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product } from "../types/product";
+import { Product } from "@repo/shared-kernel";
 
 export interface ProductFormRow {
     id?: string;

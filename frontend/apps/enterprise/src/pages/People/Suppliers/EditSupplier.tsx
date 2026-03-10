@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSupplierById, reset } from "../../../redux/slices/supplierSlice";
-import { AppDispatch, RootState } from "../../../redux/store";
+import { getSupplierById, reset } from "@/entities/contact/model/supplierSlice";
+import { AppDispatch, RootState } from "@/app/store/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import SupplierForm from "../../../components/suppliers/SupplierForm";

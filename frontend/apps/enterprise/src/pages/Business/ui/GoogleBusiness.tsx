@@ -9,7 +9,7 @@ import {
     TrendingUp, Filter, Calendar, Layout, ArrowUpRight
 } from 'lucide-react';
 import { syncGoogleProfile } from '@/redux/thunks/tenantThunks';
-import { GoogleReview, GooglePost, GooglePhoto, BusinessHour } from "../../types/tenant";
+import { GoogleReview, GooglePost, GooglePhoto, BusinessHour } from "@/entities/session/model/core";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 

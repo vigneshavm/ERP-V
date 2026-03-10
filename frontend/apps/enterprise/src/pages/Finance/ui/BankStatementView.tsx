@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Upload, FileText, TrendingUp, TrendingDown, Activity, RefreshCw, CheckCircle2, Clock3, ChevronUp, ChevronDown } from 'lucide-react';
-import { bankStatementService, BankStatementTransaction } from '../../services/bankStatementService';
+import { bankStatementService, BankStatementTransaction } from "@/entities/finance/api/bankStatementService";
 import { toast } from 'react-toastify';
 
 /* ─── Summary card ─────────────────────────────────────────────────────────── */

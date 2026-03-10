@@ -1,14 +1,14 @@
 import React, { useState, useTransition } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
-import { setUser, setAuthError } from "../../redux/slices/authSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { setUser, setAuthError } from "@/entities/session/model/authSlice";
 import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, Eye, EyeOff, Loader2, Mail, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import { Sector, SystemRole } from "../../types/common";
-import { Tenant, TenantUser, DbRoleCode } from "../../types/tenant";
-import api from "../../services/api.js";
-import { setSession } from "../../utils/session";
+import { Sector, SystemRole } from "@repo/shared-kernel";
+import { Tenant, TenantUser, DbRoleCode } from "@/entities/session/model/core";
+import api from "@/shared/api/api";
+import { setSession } from "@/shared/lib/utils/session";
 
 interface LoginProps {
     tenant: Tenant | null;

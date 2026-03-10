@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
-import { getPayments, updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
+import { AppDispatch, RootState } from "@/app/store/store";
+import { getPayments, updatePaymentStatus } from "@/app/store/slices/paymentOutSlice";
 import { useNavigate } from 'react-router-dom';
 import { Plus, Eye, MoreVertical, Filter, Download } from 'lucide-react';
 import Layout from '../../components/shared/Layout/Layout';

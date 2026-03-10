@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Rocket, TrendingUp, Users, ShoppingCart, ArrowRight, LayoutGrid, Sparkles, MessageSquare, Bell, Clock, Target as TargetIcon } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveTab } from "../../redux/slices/uiSlice";
-import { RootState, AppDispatch } from "../../redux/store";
-import { getDashboardStats } from "../../redux/slices/reportsSlice";
-import { getAllItems } from "../../redux/slices/inventorySlice";
-import { googleBusinessService, GoogleBusinessProfileData } from "../../services/googleBusinessService";
-import { StoreService } from "../../services/storeService";
-import { WhatsAppService } from "../../services/whatsappService";
+import { useUiStore } from "@/shared/lib/store/uiStore";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { getDashboardStats } from "@/widgets/stats-dashboard/model/reportsSlice";
+import { getAllItems } from "@/entities/inventory/model/inventorySlice";
+import { googleBusinessService, GoogleBusinessProfileData } from "@/features/google-business/api/googleBusinessService";
+import { StoreService } from "@/features/online-store/api/storeService";
+import { WhatsAppService } from "@/shared/api/whatsappService";
 
 const GrowDashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -131,13 +131,13 @@ const GrowDashboard: React.FC = () => {
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <button
-                                onClick={() => dispatch(setActiveTab('GROW_HUB'))}
+                                onClick={() => setActiveTab('GROW_HUB')}
                                 className="px-10 py-5 bg-white text-black rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
                             >
                                 <LayoutGrid className="w-4 h-4" /> Growth Hub
                             </button>
                             <button
-                                onClick={() => dispatch(setActiveTab('GROW_PERFORMANCE'))}
+                                onClick={() => setActiveTab('GROW_PERFORMANCE')}
                                 className="px-10 py-5 bg-slate-800 text-white border border-slate-700 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-slate-700 transition-all flex items-center gap-3 active:scale-95"
                             >
                                 Performance <ArrowRight className="w-4 h-4" />

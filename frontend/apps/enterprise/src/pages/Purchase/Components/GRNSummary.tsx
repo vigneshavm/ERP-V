@@ -1,6 +1,6 @@
 import React from 'react';
 import { Info, Camera, Plus, FileText, Trash2 } from 'lucide-react';
-import { GRNItem } from "../../../types/purchase";
+import { GRNItem } from "@repo/shared-kernel";
 
 interface GRNSummaryProps {
     items?: GRNItem[];

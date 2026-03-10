@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '../../redux/store';
-import { resetAuthState } from '../../redux/slices/authSlice';
+import { AppDispatch, RootState } from "@/app/store/store";
+import { resetAuthState } from "@/entities/session/model/authSlice";
 
 export const useAuthActions = () => {
     const navigate = useNavigate();

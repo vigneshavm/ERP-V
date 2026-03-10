@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
-import { PurchaseBill } from "../../../types/purchase";
+import { PurchaseBill } from "@repo/shared-kernel";
 
 interface BillBasicInfoProps {
     bill: Partial<PurchaseBill>;

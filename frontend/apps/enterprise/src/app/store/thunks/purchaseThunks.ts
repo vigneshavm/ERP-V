@@ -1,8 +1,8 @@
 import { AppDispatch, RootState } from "../store";
-import { PurchaseOrder } from "../../types/purchase";
+import { PurchaseOrder } from "@repo/shared-kernel";
 import { approveOrder } from '../slices/purchaseSlice';
 import { addStockBulk } from '../slices/inventorySlice';
-import { TransactionType } from "../../types/common";
+import { TransactionType } from "@repo/shared-kernel";
 import { addTransaction } from '../slices/financeSlice';
 // import { recordVendorTransaction } from '../vendorSlice'; // Missing
 

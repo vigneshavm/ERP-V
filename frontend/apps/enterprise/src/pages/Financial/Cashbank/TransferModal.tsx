@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from "../../../redux/store";
-import { createTransfer } from "../../../redux/slices/cashbankSlice";
+import { AppDispatch } from "@/app/store/store";
+import { createTransfer } from "@/entities/finance/model/cashbankSlice";
 import { X, ArrowRightLeft, ShieldCheck } from 'lucide-react';
 
 interface TransferModalProps {

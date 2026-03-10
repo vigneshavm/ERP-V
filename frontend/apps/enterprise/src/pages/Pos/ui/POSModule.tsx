@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePOSLogic } from "../../hooks/usePOSLogic";
+import { usePOSLogic, POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
 import { POSTemplateRegistry } from './POSTemplateRegistry';
 
 const POSModule: React.FC = () => {

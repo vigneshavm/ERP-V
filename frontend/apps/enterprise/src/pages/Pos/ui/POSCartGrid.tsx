@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Product } from "../../types/product";
-import { CartItem } from "../../types/sales";
-import { Sector } from "../../types/common";
+import { Product } from "@repo/shared-kernel";
+import { CartItem } from "@repo/shared-kernel";
+import { Sector } from "@repo/shared-kernel";
 import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
 import { productTypes, ProductType } from '../../data/productTypes';
 // import { CameraScanner } from '../CameraScanner';
-// import { searchProductsByImage } from "../../../services/GeminiService";
+// import { searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 
 interface POSCartGridProps {
     cart: CartItem[];

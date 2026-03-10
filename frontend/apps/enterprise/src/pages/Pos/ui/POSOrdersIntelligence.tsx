@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
-import { getAllInvoices } from "../../redux/slices/posSlice";
-import { getDashboardStats } from "../../redux/slices/reportsSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { getAllInvoices } from "@/entities/sales/model/posSlice";
+import { getDashboardStats } from "@/widgets/stats-dashboard/model/reportsSlice";
 import {
     ShoppingCart,
     Search,
@@ -35,9 +35,9 @@ import {
     Users,
     Percent,
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
-import MetricCard from "../../components/shared/UI/MetricCard";
-import { formatCurrency } from "../../utils/helpers";
+import Layout from "@/shared/ui/Layout/Layout";
+import MetricCard from "@/shared/ui/Feedback/MetricCard";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 // --- Types ---
 

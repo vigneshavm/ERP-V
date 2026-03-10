@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { reset } from "../../../redux/slices/supplierSlice";
-import { AppDispatch } from "../../../redux/store";
+import { reset } from "@/entities/contact/model/supplierSlice";
+import { AppDispatch } from "@/app/store/store";
 import Layout from "../../../components/shared/Layout";
 import SupplierForm from "../../../components/suppliers/SupplierForm";
 import { ArrowLeft } from 'lucide-react';

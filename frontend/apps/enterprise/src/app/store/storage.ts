@@ -1,4 +1,4 @@
-import { APP_CONFIG } from "../config";
+import { APP_CONFIG } from "@/app/config";
 
 export const loadState = <T>(key: string, defaultState: T, tenantId?: string): T => {
     try {

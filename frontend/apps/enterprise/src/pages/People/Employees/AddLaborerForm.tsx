@@ -1,8 +1,8 @@
 import React from 'react';
 import { IndianRupee, Calculator } from 'lucide-react';
-import { Card } from "../../../components/core/Display/Card";
-import { formatCurrency } from "../../../utils/helpers";
-import { convertMonthlyToDailyWage } from "../../../utils/laborUtils";
+import { Card } from "@repo/ui-react";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
+import { convertMonthlyToDailyWage } from "@/entities/people/lib/laborUtils";
 
 interface AddLaborerFormProps {
     newEmp: { name: string; role: string; roleId: string; dailyRate: string; mobile: string; branch: string };

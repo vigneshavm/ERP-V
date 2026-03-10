@@ -1,8 +1,8 @@
 import React from 'react';
 import { MessageCircle, Mail, Gift, MessageSquare } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from "../../redux/store";
-import { setActiveTab } from "../../redux/slices/uiSlice";
+import { RootState } from "@/app/store/store";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 
 // Import components from Marketing folder where they currently reside
 import WhatsAppEngagement from './WhatsAppEngagement';

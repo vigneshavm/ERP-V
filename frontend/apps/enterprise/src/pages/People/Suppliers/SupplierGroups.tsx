@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { getSupplierGroups, deleteSupplierGroup, SupplierGroup } from "../../../redux/slices/supplierGroupSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { getSupplierGroups, deleteSupplierGroup, SupplierGroup } from "@/entities/contact/model/supplierGroupSlice";
 import {
     Search,
     Truck,

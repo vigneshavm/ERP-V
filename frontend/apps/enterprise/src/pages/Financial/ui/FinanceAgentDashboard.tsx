@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../redux/slices/uiSlice';
-import { AppView } from '../../types/common';
+import { useUiStore } from "@/shared/lib/store/uiStore";
+import { AppView } from "@repo/shared-kernel";
 import {
     TrendingUp, TrendingDown, Zap, RefreshCw, AlertTriangle,
     CheckCircle2, CreditCard, Building2, Landmark, FileText,
@@ -347,7 +347,7 @@ const FinanceAgentDashboard: React.FC = () => {
         setTimeout(() => { setRefreshing(false); setLastRefreshed(new Date()); }, 1200);
     };
 
-    const navigateTo = (tab: AppView) => dispatch(setActiveTab(tab));
+    const navigateTo = (tab: AppView) => setActiveTab(tab);
 
     return (
         <div className="min-h-screen bg-[#09090f] text-white" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>

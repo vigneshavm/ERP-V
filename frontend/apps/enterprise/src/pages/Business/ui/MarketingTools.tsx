@@ -23,7 +23,7 @@ import Layout from "../../components/shared/Layout/index.js";
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import BusinessSubNav from './BusinessSubNav.js';
 
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 
 interface Template {
     id: number;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from "../../components/shared/Layout/index.js";
 import FormInput from "../../components/core/Form/Input.js";
 import SupplierSelectionModal from "../../components/shared/Modals/SupplierSelectionModal.js";
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,7 +11,7 @@ import {
     Building2, RefreshCw, FileEdit, AlertTriangle
 } from 'lucide-react';
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
-import { Supplier } from "../../redux/slices/supplierSlice.js";
+import { Supplier } from "@/entities/contact/model/supplierSlice";
 
 interface ReturnItem {
     name: string;

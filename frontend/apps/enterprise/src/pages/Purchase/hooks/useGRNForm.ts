@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import { addGRN } from "../../../redux/slices/purchaseSlice";
-import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "../../../types/purchase";
+import { RootState } from "@/app/store/store";
+import { addGRN } from "@/entities/purchase/model/purchaseSlice";
+import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "@repo/shared-kernel";
 
 export const useGRNForm = () => {
     const { poId } = useParams<{ poId: string }>();

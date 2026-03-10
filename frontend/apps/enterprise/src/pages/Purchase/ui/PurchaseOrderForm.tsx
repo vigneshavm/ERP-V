@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2 } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 
-import api from "../../services/api";
+import api from "@/shared/api/api";
 
 interface Props {
     onBack?: () => void;

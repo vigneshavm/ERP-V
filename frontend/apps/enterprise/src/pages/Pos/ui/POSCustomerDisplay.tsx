@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
-import { CartItem } from "../../types/sales";
+import { CartItem } from "@repo/shared-kernel";
 
 interface DisplayState {
     cart: CartItem[];

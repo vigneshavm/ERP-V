@@ -1,9 +1,9 @@
 import React from 'react';
 import { Calendar as CalendarIcon, CheckSquare, ListChecks, X, CheckCircle2, Clock, PieChart, XCircle } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
-import { Attendance } from "../../../types/hr";
-import { AttendanceStatus } from "../../../types/common";
-import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from "../../../utils/helpers";
+import { Attendance } from "@/entities/people/model/laborSlice";
+import { AttendanceStatus } from "@repo/shared-kernel";
+import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from "@/shared/lib/utils/helpers";
 
 interface AttendanceCalendarProps {
     currentYear: number;

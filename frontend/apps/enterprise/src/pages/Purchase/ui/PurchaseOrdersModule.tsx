@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { usePurchaseOrders } from "../../hooks/usePurchaseOrders";
-import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
 import PurchaseOrderList from './PurchaseOrderList';
 import PurchaseOrderForm from './PurchaseOrderForm';
 import PurchaseOrderDetails from './PurchaseOrderDetails';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveTab } from "../../redux/slices/uiSlice";
-import { RootState } from "../../redux/store";
+import { useUiStore } from "@/shared/lib/store/uiStore";
+import { RootState } from "@/app/store/store";
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import StatsCard from "../../components/shared/Display/StatsCard";
@@ -80,7 +80,7 @@ const PurchaseOrdersModule: React.FC = () => {
                 }))
             };
             localStorage.setItem('pending_po_conversion', JSON.stringify(conversionData));
-            dispatch(setActiveTab('PURCHASE_ENTRY'));
+            setActiveTab('PURCHASE_ENTRY');
         }
     };
 

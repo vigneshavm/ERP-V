@@ -6,7 +6,7 @@
  * product search (10,000+ items) which exceeds the context window limits of standard LLM prompts.
  */
 
-import { Product } from "../types/product";
+import { Product } from "@repo/shared-kernel";
 
 export interface VectorSearchResult {
     productId: string;

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 import { useRecurringExpenses } from "../../hooks/useRecurringExpenses";
 import {
     Calendar,

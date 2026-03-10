@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModuleType, Sector } from "../../../../types/common";
+import { ModuleType, Sector } from "@repo/shared-kernel";
 
 interface BusinessTabProps {
     formData: any;

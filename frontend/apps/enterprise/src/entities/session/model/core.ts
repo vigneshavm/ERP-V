@@ -1,6 +1,6 @@
 // Core Tenant Types
-import { Sector, ModuleType, SystemRole } from '../common';
-import { SettingsState } from '../settings';
+import { Sector, ModuleType, SystemRole } from '@repo/shared-kernel';
+import { SettingsState } from './settings';
 
 export enum DbRoleCode {
     OWNER = SystemRole.OWNER,

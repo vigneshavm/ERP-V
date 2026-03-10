@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { XCircle, Plus, Trash2, Percent } from 'lucide-react';
-import { debitNoteService, DebitNote } from "../../../services/debitNoteService";
+import { debitNoteService, DebitNote } from "@/entities/finance/api/debitNoteService";
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from "../../../redux/store";
+import { AppDispatch } from "@/app/store/store";
 
 interface CreateDebitNoteModalProps {
     isOpen: boolean;

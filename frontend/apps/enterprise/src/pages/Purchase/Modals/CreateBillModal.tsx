@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { X, CheckCircle, FileText } from 'lucide-react';
-import { PurchaseOrder } from "../../../types/purchase";
+import { PurchaseOrder } from "@repo/shared-kernel";
 import { useDispatch } from 'react-redux';
 // We assume we can import these. If not, we might need to verify paths.
 // Based on Bills.tsx imports:
-import { createBill } from "../../../redux/slices/billSlice";
-import { AppDispatch } from "../../../redux/store";
+import { createBill } from "@/entities/finance/model/billSlice";
+import { AppDispatch } from "@/app/store/store";
 import { toast } from 'react-toastify';
 
 interface CreateBillModalProps {

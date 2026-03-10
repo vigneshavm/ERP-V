@@ -2,10 +2,10 @@ import React, { useState, useEffect, useTransition } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, LifeBuoy, Loader2, CheckCircle2, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AuthLayout from '../Views/AuthLayout';
-import AuthAlert from '../Views/AuthAlert';
-import AuthInput from '../../components/Auth/AuthInput';
-import { useForgotPasswordForm } from '../../hooks/auth/useForgotPasswordForm';
+import AuthLayout from '../../Views/ui/AuthLayout';
+import AuthAlert from '../../Views/ui/AuthAlert';
+import AuthInput from '@/features/auth-by-email/ui/AuthInput';
+import { useForgotPasswordForm } from '@/features/auth-by-email/lib/useForgotPasswordForm';
 
 const ForgotPassword: React.FC = () => {
     const { form, onSubmit, isLoading } = useForgotPasswordForm();

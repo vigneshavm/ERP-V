@@ -2,9 +2,9 @@ import { AppDispatch, RootState } from "../store";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { setAuthLoading, setAuthError, setAuthSuccess } from '../slices/authSlice';
 import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '../slices/tenantSlice';
-import { GoogleBusinessConfig } from "../../types/tenant";
+import { GoogleBusinessConfig } from "@/entities/session/model/core";
 
-import api from "../../services/api";
+import api from "@/shared/api/api";
 
 const getConfig = (token: string) => ({
     headers: {

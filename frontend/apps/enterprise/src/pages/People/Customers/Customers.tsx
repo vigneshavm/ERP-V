@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllCustomers, deleteCustomer, reset } from "../../../redux/slices/customerSlice";
+import { getAllCustomers, deleteCustomer, reset } from "@/entities/contact/model/customerSlice";
 import Layout from "../../../components/shared/Layout";
 import Modal from "../../../components/shared/Overlay/Modal";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
@@ -21,7 +21,7 @@ import {
     Mail,
     ArrowUpRight
 } from 'lucide-react';
-import { RootState, AppDispatch } from "../../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { Customer } from './types';
 
 const Customers = () => {

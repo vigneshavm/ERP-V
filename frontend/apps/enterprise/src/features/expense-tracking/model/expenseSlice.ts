@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 import { RootState } from '../store';
 
 const API_URL = "/api/expenses";

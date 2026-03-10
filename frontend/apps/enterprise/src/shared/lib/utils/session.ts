@@ -11,6 +11,11 @@ export const getSession = (): User | null => {
     }
 };
 
+export const setSession = (user: User) => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('user', JSON.stringify(user));
+};
+
 export const clearSession = () => {
     if (typeof window === 'undefined') return;
     localStorage.removeItem('user');

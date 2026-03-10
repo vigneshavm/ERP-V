@@ -4,7 +4,7 @@ import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import FormInput from "../../components/core/Form/Input.js";
 import DataTable from "../../components/shared/Table/DataTable.js";
 import BusinessSubNav from './BusinessSubNav.js';
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 
 interface Template {

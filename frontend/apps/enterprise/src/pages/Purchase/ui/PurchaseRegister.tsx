@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { RootState, AppDispatch } from "../../redux/store";
-import { getAllPurchases } from "../../redux/slices/purchaseSlice";
-import { setActiveTab } from "../../redux/slices/uiSlice";
-import { PurchaseOrder, PurchaseOrderStatus } from "../../types/purchase";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { getAllPurchases } from "@/entities/purchase/model/purchaseSlice";
+import { useUiStore } from "@/shared/lib/store/uiStore";
+import { PurchaseOrder, PurchaseOrderStatus } from "@repo/shared-kernel";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import {
     Search,
@@ -330,7 +330,7 @@ const PurchaseRegister: React.FC = () => {
                                 <option value="DRAFT">Drafts</option>
                             </select>
                             <button
-                                onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
+                                onClick={() => setActiveTab('PURCHASE_ENTRY')}
                                 className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
                             >
                                 <Plus className="w-4 h-4" /> New Purchase

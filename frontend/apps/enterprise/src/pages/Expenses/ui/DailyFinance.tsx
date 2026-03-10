@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     addDailyRecord,
     updateDailyRecord,
     deleteDailyRecord,
     setDailyRecordSynced
-} from "../../redux/slices/financeSlice";
-import { SyncManager } from "../../services/SyncManager";
+} from "@/entities/finance/model/financeSlice";
+import { SyncManager } from "@/widgets/sync-manager/lib/SyncManager";
 import Layout from "../../components/shared/Layout";
 import {
     IndianRupee, Plus, CheckCircle2, History,
@@ -16,7 +16,7 @@ import {
     TrendingUp, TrendingDown, Calendar, Download,
     Filter, Layers, RotateCcw
 } from 'lucide-react';
-import { formatCurrency } from "../../utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import {
     AreaChart, Area, CartesianGrid, Legend,

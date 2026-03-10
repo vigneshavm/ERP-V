@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SettingsState } from "../../types/settings";
-import { DbRoleCode } from "../../types/tenant";
-import { SystemRole, AppView } from "../../types/common";
+import { DbRoleCode } from "@/entities/session/model/core";
+import { SystemRole, AppView } from "@repo/shared-kernel";
 
 const initialSettingsState: SettingsState = {
     appName: 'Enterprise Manager',

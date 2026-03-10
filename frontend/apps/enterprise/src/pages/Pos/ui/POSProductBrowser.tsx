@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Product } from "../../types/product";
-import { Sector } from "../../types/common";
+import { Product } from "@repo/shared-kernel";
+import { Sector } from "@repo/shared-kernel";
 import { Search, Package, Check, Keyboard } from 'lucide-react';
 
 import { useFuzzySearch } from "../../hooks/useFuzzySearch";

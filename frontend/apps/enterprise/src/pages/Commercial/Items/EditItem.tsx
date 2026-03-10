@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addItem, resetInventoryState, getItemById, updateItem } from "../../../redux/slices/inventorySlice";
+import { addItem, resetInventoryState, getItemById, updateItem } from "@/entities/inventory/model/inventorySlice";
 import Layout from "../../../components/shared/Layout/Layout";
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 
 const EditItem = () => {
   const { id } = useParams();

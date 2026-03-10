@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../redux/store';
-import { addItem as addProduct, updateItem as editProduct } from '../redux/slices/inventorySlice';
-import { Product } from "../types/product";
+import { AppDispatch } from "@/app/store/store";
+import { addItem as addProduct, updateItem as editProduct } from "@/entities/inventory/model/inventorySlice";
+import { Product } from "@repo/shared-kernel";
 import { ProductFormRow } from './useInventoryForm';
-import { Sector, BranchId } from "../types/common";
+import { Sector, BranchId } from "@repo/shared-kernel";
 
 interface UseInventoryActionsProps {
     products: Product[];

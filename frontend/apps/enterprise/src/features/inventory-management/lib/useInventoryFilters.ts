@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Product } from "../types/product";
+import { Product } from "@repo/shared-kernel";
 
 export const useInventoryFilters = (products: Product[]) => {
     const [searchTerm, setSearchTerm] = useState('');

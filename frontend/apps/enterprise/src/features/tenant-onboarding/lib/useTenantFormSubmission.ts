@@ -1,8 +1,8 @@
 import React, { FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import api from "../services/api.js";
-import { updateTenantDetails, addTenant } from "../redux/slices/tenantSlice";
-import { Tenant } from "../types/tenant";
+import api from "@/shared/api/api";
+import { updateTenantDetails, addTenant } from "@/entities/session/model/tenantSlice";
+import { Tenant } from "@/entities/session/model/core";
 import { CURRENCIES } from '../constants/common';
 
 // Local mapper function (kept for reference, mostly handling API response mapping now)

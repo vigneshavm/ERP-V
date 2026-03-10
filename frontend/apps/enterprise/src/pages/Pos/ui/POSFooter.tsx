@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck } from 'lucide-react';
-import { TaxMode, PaymentMethod } from "../../types/common";
-import { Customer } from "../../types/sales";
-import { LoyaltyConfig } from "../../types/tenant";
+import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared-kernel";
+import { LoyaltyConfig } from "@/entities/session/model/core";
 
 interface POSFooterProps {
     cartSubtotal: number;

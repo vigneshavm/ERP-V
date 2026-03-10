@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 import {
     Calendar,
     CheckCircle2,
@@ -16,8 +16,8 @@ import {
 } from 'lucide-react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import api from "../../../services/api.js";
-import { AttendanceStatus } from "../../../types/common";
+import api from "@/shared/api/api";
+import { AttendanceStatus } from "@repo/shared-kernel";
 
 const DailyAttendanceBoard: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);

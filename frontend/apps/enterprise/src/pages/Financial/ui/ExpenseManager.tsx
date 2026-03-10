@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { TransactionType } from "../../types/common";
-import { formatCurrency } from "../../utils/helpers";
+import { TransactionType } from "@repo/shared-kernel";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface ExpenseManagerProps {
     pieData: { name: string; value: number }[];

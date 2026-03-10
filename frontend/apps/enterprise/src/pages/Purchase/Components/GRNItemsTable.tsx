@@ -1,6 +1,6 @@
 import React from 'react';
 import { Package, Search, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
-import { GRNItem, InspectionStatus } from "../../../types/purchase";
+import { GRNItem, InspectionStatus } from "@repo/shared-kernel";
 
 interface GRNItemsTableProps {
     items?: GRNItem[];

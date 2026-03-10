@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Scissors, Printer, Download } from 'lucide-react';
-import { POSLogic } from "../../../hooks/usePOSLogic";
+import { POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
 import { POSHeader } from '../POSHeader';
 import { POSSidebar } from '../POSSidebar';
 import { POSProductBrowser } from '../POSProductBrowser';

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 import {
     Clock,
     Search,
@@ -34,8 +34,8 @@ import {
     TrendingDown,
 } from 'lucide-react';
 
-import MetricCard from '../../components/shared/UI/MetricCard';
-import Layout from '../../components/shared/Layout';
+import MetricCard from '@/shared/ui/Feedback/MetricCard';
+import Layout from '@/shared/ui/Layout/Layout';
 
 // --- Types ---
 

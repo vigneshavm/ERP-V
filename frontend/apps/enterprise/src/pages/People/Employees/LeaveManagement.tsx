@@ -14,11 +14,11 @@ import {
     CalendarDays
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RootState } from "../../../redux/store";
-import { fetchLeaves, createLeaveRequest } from "../../../redux/slices/laborSlice";
+import { RootState } from "@/app/store/store";
+import { fetchLeaves, createLeaveRequest } from "@/entities/people/model/laborSlice";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { LeaveRequest, LeaveType } from "../../../types/hr";
+import { LeaveRequest, LeaveType } from "@/entities/people/model/laborSlice";
 
 const LeaveManagement: React.FC = () => {
     const dispatch = useDispatch();

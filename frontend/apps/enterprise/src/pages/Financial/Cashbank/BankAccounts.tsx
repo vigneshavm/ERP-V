@@ -5,8 +5,8 @@ import Layout from "../../../components/shared/Layout";
 import CashBankModal from './components/CashBankModal';
 import CashBankInput from './components/CashBankInput';
 import CashBankFormSection from './components/CashBankFormSection';
-import { getAccounts, createAccount, deleteAccount, reset } from "../../../redux/slices/cashbankSlice";
-import { RootState, AppDispatch } from "../../../redux/store";
+import { getAccounts, createAccount, deleteAccount, reset } from "@/entities/finance/model/cashbankSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { Account } from './types';
 import {
     Plus,

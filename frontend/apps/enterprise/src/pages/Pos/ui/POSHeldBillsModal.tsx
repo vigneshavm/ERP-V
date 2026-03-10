@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeldBill } from '../../redux/slices/posSlice';
+import { HeldBill } from "@/entities/sales/model/posSlice";
 import { Clock, User, Trash2, ArrowRightCircle, ShoppingCart } from 'lucide-react';
 
 interface POSHeldBillsModalProps {

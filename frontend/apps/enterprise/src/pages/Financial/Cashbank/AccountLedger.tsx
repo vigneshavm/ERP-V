@@ -10,8 +10,8 @@ import {
     toggleReconciliation,
     bulkReconcile as bulkReconcileThunk,
     reset
-} from "../../../redux/slices/cashbankSlice";
-import { RootState, AppDispatch } from "../../../redux/store";
+} from "@/entities/finance/model/cashbankSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { LedgerData, Transaction } from './types';
 import { ArrowLeft, Download, RefreshCw, CheckCircle2, X } from 'lucide-react';
 

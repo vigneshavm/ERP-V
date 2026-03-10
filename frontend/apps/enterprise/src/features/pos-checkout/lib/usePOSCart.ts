@@ -6,9 +6,9 @@ import {
     updateCartQty,
     updateCartLength,
     clearCart
-} from "../../redux/slices/posSlice";
-import { CartItem } from "../../types/sales";
-import { RootState } from "../../redux/store";
+} from "@/entities/sales/model/posSlice";
+import { CartItem } from "@repo/shared-kernel";
+import { RootState } from "@/app/store/store";
 
 export const usePOSCart = (activeSessionIndex: number) => {
     const dispatch = useDispatch();

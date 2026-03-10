@@ -1,5 +1,5 @@
 import React from 'react';
-import { SalesReturn } from "../../../types/salesReturn";
+import { SalesReturn } from "@repo/shared-kernel";
 import { RefreshCw, Wallet, User, Calendar } from 'lucide-react';
 
 interface ReturnedItemsListProps {

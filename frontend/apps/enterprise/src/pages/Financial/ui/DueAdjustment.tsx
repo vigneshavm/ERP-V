@@ -6,14 +6,14 @@ import {
     getCustomerById,
     clearCustomer,
     reset as resetCustomer,
-} from "../../redux/slices/customerSlice";
+} from "@/entities/contact/model/customerSlice";
 import {
     createDueAdjustment,
     reset as resetDue,
-} from "../../redux/slices/dueSlice";
+} from "@/features/expense-tracking/model/dueSlice";
 import Layout from "../../components/shared/Layout";
 
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 
 const DueAdjustment = () => {
     const { id } = useParams<{ id: string }>();

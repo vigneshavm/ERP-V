@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, IndianRupee, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
-import api from "../../../services/api.js";
-import { formatCurrency } from "../../../utils/helpers";
+import api from "@/shared/api/api";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface DayEndModalProps {
     onClose: () => void;

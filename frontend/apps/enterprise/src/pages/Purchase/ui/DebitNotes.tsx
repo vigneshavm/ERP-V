@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/store/store";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
@@ -16,11 +16,11 @@ import {
     Clock,
     Loader2,
 } from 'lucide-react';
-import { getAllBills } from "../../redux/slices/billSlice";
-import { fetchPurchaseOrders } from "../../redux/slices/purchaseSlice";
-import { AppDispatch } from "../../redux/store";
+import { getAllBills } from "@/entities/finance/model/billSlice";
+import { fetchPurchaseOrders } from "@/entities/purchase/model/purchaseSlice";
+import { AppDispatch } from "@/app/store/store";
 import { useDispatch } from 'react-redux';
-import { debitNoteService, DebitNote } from "../../services/debitNoteService";
+import { debitNoteService, DebitNote } from "@/entities/finance/api/debitNoteService";
 import { toast } from 'react-toastify';
 import CreateDebitNoteModal from './Modals/CreateDebitNoteModal';
 import DebitNoteStats from './Components/DebitNoteStats';

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 
 export interface GoodsReceivedNote {

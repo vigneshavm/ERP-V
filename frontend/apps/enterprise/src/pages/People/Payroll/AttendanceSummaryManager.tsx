@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchAttendanceSummary, saveAttendanceSummary } from '../../../redux/slices/payrollSlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { fetchAttendanceSummary, saveAttendanceSummary } from "@/entities/people/model/payrollSlice";
 import { Save, Calendar, Filter, Download } from 'lucide-react';
-import api from '../../../services/api';
+import api from "@/shared/api/api";
 
 const AttendanceSummaryManager = () => {
     const dispatch = useDispatch<AppDispatch>();

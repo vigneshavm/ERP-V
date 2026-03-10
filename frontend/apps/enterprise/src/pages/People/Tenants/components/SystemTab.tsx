@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings, Check } from 'lucide-react';
-import { ModuleType } from "../../../../types/common";
+import { ModuleType } from "@repo/shared-kernel";
 
 const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'REPORTS', 'GROW'];
 

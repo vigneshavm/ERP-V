@@ -12,8 +12,8 @@ import {
     getAccounts,
     createCashTransaction,
     reset
-} from "../../../redux/slices/cashbankSlice";
-import { RootState, AppDispatch } from "../../../redux/store";
+} from "@/entities/finance/model/cashbankSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { Transaction } from './types';
 import { toast } from 'react-toastify';
 import {

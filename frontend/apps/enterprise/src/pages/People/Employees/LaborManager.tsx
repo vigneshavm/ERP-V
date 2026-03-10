@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { addEmployee, markAttendance, addLaborPayment, setEmployees, createAdvanceAction, fetchAdvances } from "../../../redux/slices/laborSlice";
-import { ensureBranchRecorded } from "../../../redux/slices/tenantSlice";
-import api from "../../../services/api.js";
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { addEmployee, markAttendance, addLaborPayment, setEmployees, createAdvanceAction, fetchAdvances } from "@/entities/people/model/laborSlice";
+import { ensureBranchRecorded } from "@/entities/session/model/tenantSlice";
+import api from "@/shared/api/api";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { TimeEntryModal } from "./TimeEntryModal.js";
 import { Users, Calendar, CreditCard, UserPlus } from 'lucide-react';
-import { getDaysInMonth, formatDateISO } from "../../../utils/helpers";
-import { securePassword } from "../../../utils/auth";
-import { AttendanceStatus, Sector, SystemRole } from "../../../types/common";
-import { DailyLog } from "../../../types/hr";
-import { calculateLaborStats, convertMonthlyToDailyWage, generateLaborerPayload, mapDbUserToEmployee } from "../../../utils/laborUtils";
+import { getDaysInMonth, formatDateISO } from "@/shared/lib/utils/helpers";
+
+import { AttendanceStatus, Sector, SystemRole } from "@repo/shared-kernel";
+
+import { calculateLaborStats, convertMonthlyToDailyWage, generateLaborerPayload, mapDbUserToEmployee } from "@/entities/people/lib/laborUtils";
 
 // Sub-components
 import LaborSidebar from './LaborSidebar';
@@ -233,7 +233,7 @@ export const LaborManager = () => {
     setIsSelectionMode(false); setSelectedDates(new Set());
   };
 
-  const handleSaveAttendance = (log: DailyLog | null) => {
+  const handleSaveAttendance = (log: any | null) => {
     if (!selectedLaborer || !editingDate) return;
     const existing = attendance.find((a: any) => a.employeeId === selectedLaborer.id && a.date === editingDate);
     if (log) {

@@ -20,10 +20,10 @@ import {
     MoreHorizontal
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { RootState } from "../../../redux/store";
+import { RootState } from "@/app/store/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { formatCurrency } from "../../../utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 import AttendanceCalendar from "./AttendanceCalendar";
 import PaymentHistory from "./PaymentHistory";
 

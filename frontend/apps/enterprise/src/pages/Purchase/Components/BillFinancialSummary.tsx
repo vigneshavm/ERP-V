@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
-import { TaxBreakdown, BillStatus } from "../../../types/purchase";
+import { TaxBreakdown, BillStatus } from "@repo/shared-kernel";
 
 interface FinancialTotals {
     subtotal: number;

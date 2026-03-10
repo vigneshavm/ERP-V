@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
-import { createPayment, PaymentOut } from '../../redux/slices/paymentOutSlice';
-import { getAllSuppliers } from '../../redux/slices/supplierSlice';
-import { getAccounts } from '../../redux/slices/cashbankSlice';
+import { AppDispatch, RootState } from "@/app/store/store";
+import { createPayment, PaymentOut } from "@/app/store/slices/paymentOutSlice";
+import { getAllSuppliers } from "@/entities/contact/model/supplierSlice";
+import { getAccounts } from "@/entities/finance/model/cashbankSlice";
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 import { User, CreditCard, Banknote, CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import BillSelectionModal from './Modals/BillSelectionModal';
-import { Bill } from '../../redux/slices/billSlice';
+import { Bill } from "@/entities/finance/model/billSlice";
 
 const PaymentOutForm: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

@@ -1,16 +1,16 @@
 
 import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../redux/store';
-import { addToCart } from '../../redux/slices/posSlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { addToCart } from "@/entities/sales/model/posSlice";
 import { activateEcommerce } from '../../redux/thunks/tenantThunks';
 import {
     Search, Filter, Sparkles, Send, Image as ImageIcon,
     Check, ShoppingCart
 } from 'lucide-react';
-import { Product } from "../../types/product";
-import { getProductRecommendations, searchProductsByImage } from "../../services/geminiService";
-import { Tenant } from "../../types/tenant";
+import { Product } from "@repo/shared-kernel";
+import { getProductRecommendations, searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
+import { Tenant } from "@/entities/session/model/core";
 
 // Components
 import OnlineStoreSetup from './OnlineStoreSetup';

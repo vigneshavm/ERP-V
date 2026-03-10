@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import CashBankHero from './components/CashBankHero';
-import { getCashBankPosition } from "../../../redux/slices/cashbankSlice";
-import { RootState, AppDispatch } from "../../../redux/store";
+import { getCashBankPosition } from "@/entities/finance/model/cashbankSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     TrendingUp,
     PiggyBank,

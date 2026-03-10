@@ -4,8 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 /**
  * Zod Schema for Receipt Data
@@ -52,32 +51,37 @@ export class ExtractionAgent {
         `;
 
         try {
-            const result = await model.generateContent([
-                prompt,
-                {
-                    inlineData: {
-                        data: buffer.toString('base64'),
-                        mimeType
-                    }
-                }
-            ]);
+            const result = await ai.models.generateContent({
+                model: "gemini-1.5-flash",
+                contents: [{
+                    role: 'user',
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                data: buffer.toString('base64'),
+                                mimeType
+                            }
+                        }
+                    ]
+                }]
+            });
 
-            const response = await result.response;
-            let text = response.text();
+            let text = result.text || '';
 
             // Clean up possible markdown code blocks
             text = text.replace(/```json/g, '').replace(/```/g, '').trim();
 
             const rawJson = JSON.parse(text);
-            
+
             // Validate and transform with Zod
             const parsedData = ReceiptSchema.parse(rawJson);
-            
+
             return parsedData;
         } catch (error) {
             console.error('ExtractionAgent Error:', error);
             if (error instanceof z.ZodError) {
-                throw new Error(`Data validation failed: ${error.errors.map(e => e.message).join(', ')}`);
+                throw new Error(`Data validation failed: ${error.issues.map((e: any) => e.message).join(', ')}`);
             }
             throw new Error('Failed to extract data from receipt image.');
         }

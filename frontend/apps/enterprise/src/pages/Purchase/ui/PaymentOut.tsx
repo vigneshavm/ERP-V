@@ -8,8 +8,8 @@ import {
     Calendar, Building, Tag, FileText, CheckCircle2,
     Calculator, Info, Download, Send, Percent
 } from 'lucide-react';
-import api from "../../services/api";
-import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "../../types/purchase";
+import api from "@/shared/api/api";
+import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "@repo/shared-kernel";
 import { toast } from 'react-toastify';
 
 const PaymentOut: React.FC = () => {

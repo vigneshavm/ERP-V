@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { Product } from '../../types/product';
+import { Product } from "@repo/shared-kernel";
 
 interface ProductCardProps {
     product: Product;

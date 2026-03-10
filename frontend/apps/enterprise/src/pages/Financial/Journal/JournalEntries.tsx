@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { fetchJournalEntries, clearCurrentEntry } from '../../../redux/slices/journalEntrySlice';
+import { RootState } from "@/app/store/store";
+import { fetchJournalEntries, clearCurrentEntry } from "@/app/store/slices/journalEntrySlice";
 import Layout from '../../../components/shared/Layout/Layout';
 import { Plus, Search, Filter, Calendar as CalendarIcon, FileText, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

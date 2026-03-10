@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     Save,
     Plus,
@@ -31,9 +31,9 @@ import {
     fetchAttendanceSummary,
     processIndividualPayout,
     SalaryComponent
-} from "../../../redux/slices/payrollSlice";
-import { getAccounts } from '../../../redux/slices/cashbankSlice';
-import api from "../../../services/api";
+} from "@/entities/people/model/payrollSlice";
+import { getAccounts } from "@/entities/finance/model/cashbankSlice";
+import api from "@/shared/api/api";
 
 const AllowanceManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

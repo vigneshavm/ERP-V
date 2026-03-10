@@ -2,8 +2,8 @@ import { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { addToCart } from '@/redux/slices/posSlice';
-import { Product } from "../../types/product";
-import { getProductRecommendations, searchProductsByImage } from "../../services/geminiService";
+import { Product } from "@repo/shared-kernel";
+import { getProductRecommendations, searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 
 export const useStorefrontLogic = () => {
     const dispatch = useDispatch();

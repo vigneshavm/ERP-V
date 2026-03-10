@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { ArrowLeft, Save, Plus, Trash2, AlertCircle } from 'lucide-react';
-import { RootState } from '../../../redux/store';
-import { createJournalEntry } from '../../../redux/slices/journalEntrySlice';
+import { RootState } from "@/app/store/store";
+import { createJournalEntry } from "@/app/store/slices/journalEntrySlice";
 // import { toast } from 'react-hot-toast';
 
 // Temporary Toast Replacement

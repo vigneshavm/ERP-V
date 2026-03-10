@@ -1,9 +1,9 @@
 import { AppDispatch, RootState } from "../store";
-import { Customer } from "../../types/sales";
-import { APP_CONFIG } from "../../config";
+import { Customer } from "@repo/shared-kernel";
+import { APP_CONFIG } from "@/app/config";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { setCustomer, addCustomer } from '../slices/posSlice';
-import api from "../../services/api.js";
+import api from "@/shared/api/api";
 
 const calculateTier = (points: number): 'Silver' | 'Gold' | 'Platinum' | 'General' => {
     if (points >= 5000) return 'Platinum';

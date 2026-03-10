@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Printer, Download, Activity } from 'lucide-react';
-import { POSLogic } from "../../../hooks/usePOSLogic";
+import { POSLogic } from "@/features/pos-checkout/lib/usePOSLogic";
 import { POSHeader } from '../POSHeader';
 import { POSSidebar } from '../POSSidebar';
 import { POSProductBrowser } from '../POSProductBrowser';
@@ -186,14 +186,14 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 onClick={() => setViewMode('SCANNER')}
                                 className={`px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${viewMode === 'SCANNER' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                <TableIcon className="w-3.5 h-3.5" /> 
+                                <TableIcon className="w-3.5 h-3.5" />
                                 <span className="hidden xl:inline">Scanner</span>
                             </button>
                             <button
                                 onClick={() => setViewMode('VISUAL')}
                                 className={`px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${viewMode === 'VISUAL' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                <LayoutGrid className="w-3.5 h-3.5" /> 
+                                <LayoutGrid className="w-3.5 h-3.5" />
                                 <span className="hidden xl:inline">Visual</span>
                             </button>
                         </div>

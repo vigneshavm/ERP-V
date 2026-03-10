@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Product } from "../../types/product";
+import { Product } from "@repo/shared-kernel";
 import { X, ShoppingCart } from 'lucide-react';
 
 interface POSVariantSelectionModalProps {

@@ -13,17 +13,17 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/redux/slices/authSlice';
-import { registrationUtil } from "../../utils/registrationUtil";
-import { setSession } from "../../utils/session";
+import { setUser } from '@/entities/session/model/authSlice';
+import { setSession } from "@/shared/lib/utils/session";
+import { registrationUtil } from "@/features/tenant-onboarding/lib/registrationUtil";
 import {
     Building2, Users, Package, Zap, CreditCard, CheckCircle, ChevronRight,
     ChevronLeft, Sparkles, ArrowRight, Globe, Shield, Crown, Info,
     Check, X, Gift, HelpCircle, Lightbulb, PlayCircle, Settings, Clock,
     Edit3, Plus, Minus, Calculator
 } from 'lucide-react';
-import { SECTORS, BUSINESS_TYPES, MODULES, PLANS, FEATURE_MATRIX, Plan } from '../../data/plans';
-import { recommendPlan, BusinessProfile, getRecommendedModules, calculateCustomPricing } from "../../utils/planRecommendationEngine";
+import { SECTORS, BUSINESS_TYPES, MODULES, PLANS, FEATURE_MATRIX, Plan } from '@/entities/session/api/plans';
+import { recommendPlan, BusinessProfile, getRecommendedModules, calculateCustomPricing } from "@/features/tenant-onboarding/lib/planRecommendationEngine";
 
 // Step definitions
 const STEPS = [
@@ -605,7 +605,7 @@ const TenantOnboarding: React.FC = () => {
 
         // Auto-login the user
         dispatch(setUser(admin));
-        setSession(admin, true); // Persist session correctly
+        setSession(admin); // Persist session correctly
 
         // Mark session as active for demo purposes
         localStorage.setItem('isAuthenticated', 'true');
@@ -813,7 +813,7 @@ const TenantOnboarding: React.FC = () => {
                             <div className="glass-card p-6 rounded-3xl border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
                                 <div className="space-y-1">
                                     <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Estimated Monthly</div>
-                                    <div className="text-3xl font-black text-brand-600">₹{recommendation.monthlyEstimate.toLocaleString()}</div>
+                                    <div className="text-3xl font-black text-brand-600">₹{(recommendation.monthlyEstimate ?? 0).toLocaleString()}</div>
                                 </div>
                                 {recommendation.savings && (
                                     <div className="text-right">
@@ -999,7 +999,7 @@ const TenantOnboarding: React.FC = () => {
                             </div>
 
                             <div className="space-y-4">
-                                {plan.features.slice(0, 4).map((f, i) => (
+                                {plan.features.slice(0, 4).map((f: string, i: number) => (
                                     <div key={i} className="flex items-center gap-3">
                                         <div className="w-5 h-5 rounded-full bg-brand-600/20 flex items-center justify-center">
                                             <Check className="w-3 h-3 text-brand-400" />

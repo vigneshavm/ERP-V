@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllCustomers, reset } from "../../../redux/slices/customerSlice";
+import { getAllCustomers, reset } from "@/entities/contact/model/customerSlice";
 import Layout from "../../../components/shared/Layout";
-import { RootState, AppDispatch } from "../../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { Customer } from "./types";
 
 const CustomersWithDues = () => {

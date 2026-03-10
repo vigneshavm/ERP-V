@@ -44,7 +44,7 @@ import {
     TrendingUp,
     CreditCard
 } from 'lucide-react';
-import { AppView, ModuleType } from '../types/common';
+import { AppView, ModuleType } from "@repo/shared-kernel";
 
 export interface MenuItem {
     id: AppView;

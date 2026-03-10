@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Tenant } from "../types/tenant";
+import { Tenant } from "@/entities/session/model/core";
 // Mock logic for form handling
 export const useTenantForm = () => {
     const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);

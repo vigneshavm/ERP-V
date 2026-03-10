@@ -1,6 +1,6 @@
 import React from 'react';
-import { ModuleType, Sector } from "../types/common";
-import { Tenant } from "../types/tenant";
+import { ModuleType, Sector } from "@repo/shared-kernel";
+import { Tenant } from "@/entities/session/model/core";
 
 interface UseTenantFormActionsProps {
     newTenant: any;

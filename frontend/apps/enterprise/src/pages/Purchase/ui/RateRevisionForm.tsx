@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 import { Save, Calculator, Search, AlertCircle, Info } from 'lucide-react';
-import api from '../../services/api';
+import api from "@/shared/api/api";
 import { toast } from 'react-toastify';
 
 interface Supplier {

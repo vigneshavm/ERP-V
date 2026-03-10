@@ -4,8 +4,8 @@ import {
     FileSpreadsheet, Download, Table, Trash2, Save, FileText, AlertTriangle,
     ArrowRight
 } from 'lucide-react';
-import { BranchId } from "../../types/common";
-import { Tenant } from "../../types/tenant";
+import { BranchId } from "@repo/shared-kernel";
+import { Tenant } from "@/entities/session/model/core";
 import {
     parsePurchaseFile,
     validatePurchaseData,
@@ -15,7 +15,7 @@ import {
     RawPurchaseRow
 } from '../../utils/purchaseUpload.utils';
 import { toast } from 'react-toastify';
-import api from '../../services/api';
+import api from "@/shared/api/api";
 import { useNavigate } from 'react-router-dom';
 
 interface PurchaseUploadProps {

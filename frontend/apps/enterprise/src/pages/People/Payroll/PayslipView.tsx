@@ -19,8 +19,8 @@ import {
 import { motion } from 'framer-motion';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { formatDateISO, formatCurrency } from '../../../utils/helpers';
-import api from '../../../services/api';
+import { formatDateISO, formatCurrency } from "@/shared/lib/utils/helpers";
+import api from "@/shared/api/api";
 
 const PayslipView = () => {
     const location = useLocation();

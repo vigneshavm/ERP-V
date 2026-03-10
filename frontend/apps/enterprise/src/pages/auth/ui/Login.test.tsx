@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from "../../redux/slices/authSlice";
+import authReducer from "@/entities/session/model/authSlice";
 import Login from './Login';
-import { RootState } from '../../redux/store';
+import { RootState } from "@/app/store/store";
 
 // Create a mock store for testing
 const createMockStore = (preloadedState?: any) => configureStore({

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     getAgingReport,
     applyAgingAction,
@@ -15,12 +15,12 @@ import {
     toggleItemStatus,
     getStockHistory,
     getInventoryStats
-} from "../../redux/slices/inventorySlice";
+} from "@/entities/inventory/model/inventorySlice";
 import ProductModal from "./ProductModal";
 import { BulkCategoryModal, BulkAdjustmentModal } from "./BulkActionModals";
 import { StockHistoryDrawer } from "./StockHistoryPanel";
 import StockTransferModal from "./StockTransferModal";
-import { Product } from "../../types/product";
+import { Product } from "@repo/shared-kernel";
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import {

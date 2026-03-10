@@ -9,8 +9,8 @@ import {
     CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,
     Search as SearchIcon
 } from 'lucide-react';
-import api from "../../services/api";
-import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
+import api from "@/shared/api/api";
+import { PurchaseReturn, PurchaseReturnStatus } from "@repo/shared-kernel";
 import { toast } from 'react-toastify';
 
 const PurchaseReturns: React.FC = () => {

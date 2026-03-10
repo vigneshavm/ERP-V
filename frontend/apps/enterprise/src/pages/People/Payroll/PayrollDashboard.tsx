@@ -18,9 +18,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchPayrollRuns } from '../../../redux/slices/payrollSlice';
-import { formatDateISO, formatCurrency } from '../../../utils/helpers';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { fetchPayrollRuns } from "@/entities/people/model/payrollSlice";
+import { formatDateISO, formatCurrency } from "@/shared/lib/utils/helpers";
 
 const StatCard = ({ title, value, subtext, icon: Icon, color }: any) => (
     <motion.div 

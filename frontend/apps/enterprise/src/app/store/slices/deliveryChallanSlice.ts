@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "../../services/api";
+import api from "@/shared/api/api";
 
 const API_URL = "/api/delivery-challan";
 

@@ -16,7 +16,7 @@ import {
     LayoutDashboard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from "../../redux/slices/uiSlice";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 const OnlinePerformance: React.FC = () => {
     const dispatch = useDispatch();
 
@@ -48,7 +48,7 @@ const OnlinePerformance: React.FC = () => {
                         <Download className="w-4 h-4" /> Export Report
                     </button>
                     <button
-                        onClick={() => dispatch(setActiveTab('GROW_DASHBOARD'))}
+                        onClick={() => setActiveTab('GROW_DASHBOARD')}
                         className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all text-sm font-bold ml-2"
                     >
                         <LayoutDashboard className="w-4 h-4" />

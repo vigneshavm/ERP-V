@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Tag, CheckSquare, Upload, AlertTriangle, Box, Save } from 'lucide-react';
-import { Product } from '../../types/product';
+import { Product } from "@repo/shared-kernel";
 
 interface BulkCategoryModalProps {
     isOpen: boolean;

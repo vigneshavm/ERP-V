@@ -7,8 +7,8 @@ import {
     holdCurrentBill,
     resumeBill,
     discardHeldBill
-} from "../../redux/slices/posSlice";
-import { RootState } from "../../redux/store";
+} from "@/entities/sales/model/posSlice";
+import { RootState } from "@/app/store/store";
 
 export const usePOSSession = () => {
     const dispatch = useDispatch();

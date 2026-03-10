@@ -1,7 +1,7 @@
 import React from 'react';
 import { Settings, Globe, ShieldCheck, Paintbrush } from 'lucide-react';
 
-import { CURRENCIES, DATE_FORMATS, THEMES, LAYOUT_DENSITIES } from '../../../../constants/common';
+import { CURRENCIES, DATE_FORMATS, THEMES, LAYOUT_DENSITIES } from '@/shared/config/common';
 
 export const BrandingTab: React.FC<{
     newTenant: any, setNewTenant: any,
@@ -113,13 +113,13 @@ export const BrandingTab: React.FC<{
                         <div className="space-y-4">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Button States</p>
                             <div className="flex gap-2">
-                                <button 
+                                <button
                                     className="px-4 py-2 rounded-lg text-white text-xs font-bold shadow-lg shadow-indigo-500/10"
                                     style={{ backgroundColor: newTenant.primaryColor || '#4f46e5' }}
                                 >
                                     Primary Action
                                 </button>
-                                <button 
+                                <button
                                     className="px-4 py-2 rounded-lg border text-xs font-bold"
                                     style={{ borderColor: newTenant.primaryColor || '#4f46e5', color: newTenant.primaryColor || '#4f46e5' }}
                                 >
@@ -130,7 +130,7 @@ export const BrandingTab: React.FC<{
                         <div className="space-y-4">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand Accents</p>
                             <div className="flex gap-2">
-                                <span 
+                                <span
                                     className="px-2 py-0.5 rounded text-[10px] font-black"
                                     style={{ backgroundColor: `${newTenant.primaryColor || '#4f46e5'}15`, color: newTenant.primaryColor || '#4f46e5' }}
                                 >

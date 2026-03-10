@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { Tenant } from "../types/tenant";
+import { Tenant } from "@/entities/session/model/core";
 
-import { generatePalette } from "../utils/colorUtils";
-import { getStoredTheme, setStoredTheme, applyTheme, Theme } from "../utils/theme";
+import { generatePalette } from "@/shared/lib/utils/colorUtils";
+import { getStoredTheme, setStoredTheme, applyTheme, Theme } from "@/shared/lib/utils/theme";
 import { ConfigContext, useConfig } from './ConfigContext';
 export { useConfig };
 

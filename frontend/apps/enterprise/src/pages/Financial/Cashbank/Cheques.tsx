@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from "../../../redux/store";
-import { fetchCheques, registerCheque, updateChequeStatusBackend, fetchEffectiveBalance } from "../../../redux/slices/financeSlice";
-import { getAccounts, validatePayments, createTransfer } from "../../../redux/slices/cashbankSlice";
-import { fetchPurchaseOrders } from "../../../redux/slices/purchaseSlice";
+import { RootState, AppDispatch } from "@/app/store/store";
+import { fetchCheques, registerCheque, updateChequeStatusBackend, fetchEffectiveBalance } from "@/entities/finance/model/financeSlice";
+import { getAccounts, validatePayments, createTransfer } from "@/entities/finance/model/cashbankSlice";
+import { fetchPurchaseOrders } from "@/entities/purchase/model/purchaseSlice";
 import Layout from "../../../components/shared/Layout";
 import {
     FileCheck,
@@ -31,7 +31,7 @@ import {
     Layers,
     AlertTriangle
 } from 'lucide-react';
-import { formatCurrency } from "../../../utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 import TransferModal from './TransferModal';
 import DayEndModal from './DayEndModal';
 import ClearingParameters from './ClearingParameters';

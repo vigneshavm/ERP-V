@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Tenant } from "../types/tenant";
-import { Sector, ModuleType } from "../types/common";
-import { TenantLocation } from "../types/tenant";
+import { Tenant } from "@/entities/session/model/core";
+import { Sector, ModuleType } from "@repo/shared-kernel";
+import { TenantLocation } from "@/entities/session/model/core";
 
 export const INITIAL_TENANT_STATE = {
     name: '',

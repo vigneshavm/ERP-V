@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from "../../../redux/store";
-import { fetchDayEndSummary, saveDayEndReconciliation } from "../../../redux/slices/financeSlice";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { fetchDayEndSummary, saveDayEndReconciliation } from "@/entities/finance/model/financeSlice";
 import Layout from "../../../components/shared/Layout";
 import { DollarSign, Save, Calendar, CheckSquare, AlertTriangle, Calculator, FileText, CheckCircle2, TrendingUp, AlertCircle } from 'lucide-react';
-import { formatCurrency } from "../../../utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 import { toast } from 'react-toastify';
 
 const DayEndReconciliation: React.FC = () => {

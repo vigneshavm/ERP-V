@@ -3,10 +3,10 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SecurePasswordInput from './SecurePasswordInput';
-import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
-import AuthLayout from '../Views/AuthLayout';
-import AuthAlert from '../Views/AuthAlert';
-import { useResetPasswordForm } from '../../hooks/auth/useResetPasswordForm';
+import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
+import AuthLayout from '../../Views/ui/AuthLayout';
+import AuthAlert from '../../Views/ui/AuthAlert';
+import { useResetPasswordForm } from '@/features/auth-by-email/lib/useResetPasswordForm';
 
 const ResetPassword: React.FC = () => {
     const location = useLocation();

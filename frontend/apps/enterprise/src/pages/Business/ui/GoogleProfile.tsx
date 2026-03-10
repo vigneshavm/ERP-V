@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
-import FormInput from "../../components/core/Form/Input";
-import StatsCard from "../../components/shared/Display/StatsCard";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import FormInput from "@/shared/ui/Form/Input";
+import { StatsCard } from "@repo/ui-react";
 import BusinessSubNav from './BusinessSubNav';
-import { googleBusinessService, GoogleBusinessProfileData, GoogleReview, GooglePost } from "../../services/googleBusinessService";
+import { googleBusinessService, GoogleBusinessProfileData, GoogleReview, GooglePost } from "@/features/google-business/api/googleBusinessService";
 import { toast } from 'react-toastify';
 
 type ProfileData = GoogleBusinessProfileData;

@@ -1,13 +1,13 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from "../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import {
     getAllExpenses,
     createExpense as createExpenseThunk,
     updateExpense as updateExpenseThunk,
     deleteExpense as deleteExpenseThunk,
     Expense as ReduxExpense
-} from "../redux/slices/expenseSlice";
+} from "@/features/expense-tracking/model/expenseSlice";
 
 export interface Expense {
     id: string;

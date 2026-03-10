@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../../redux/slices/authSlice';
+import { setUser } from '@/entities/session/model/authSlice';
 import {
     Building2,
     User,
@@ -20,11 +20,9 @@ import {
     EyeOff,
     AlertCircle
 } from 'lucide-react';
-import { Sector } from "../../../types/common";
-import { APP_CONFIG } from "../../../config";
-import api from "../../../services/api.js";
-import { securePassword } from "../../../utils/auth";
-import { registrationUtil } from "../../../utils/registrationUtil";
+import { Sector } from '@repo/shared-kernel';
+import { APP_CONFIG } from '@/app/config';
+import api from '@/shared/api/api';
 
 // Use native crypto.randomUUID() for generating UUIDs
 const generateId = () => crypto.randomUUID();

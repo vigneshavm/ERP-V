@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { X, ChevronLeft, Search, Package, LayoutGrid, Check } from 'lucide-react';
-import { Product } from "../../types/product";
+import { Product } from "@repo/shared-kernel";
 
 interface POSCategoryBrowserModalProps {
     isOpen: boolean;

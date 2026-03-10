@@ -1,6 +1,6 @@
 import React from 'react';
 import { Eye, Check, Lock } from 'lucide-react';
-import { PurchaseOrder } from "../../types/purchase";
+import { PurchaseOrder } from "@repo/shared-kernel";
 
 interface PurchaseHistoryProps {
     sectorOrders?: PurchaseOrder[];

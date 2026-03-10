@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import api from "../services/api.js";
-import { RootState } from "../redux/store";
+import api from "@/shared/api/api";
+import { RootState } from "@/app/store/store";
 
 export interface ExpenseReportStats {
     total_expense: number;

@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../redux/store';
-import { addItem as addProduct, updateItem as editProduct } from '../redux/slices/inventorySlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { addItem as addProduct, updateItem as editProduct } from "@/entities/inventory/model/inventorySlice";
 import { useConfig } from '../contexts/ConfigProvider';
 import { useBranchResolver } from './useBranchResolver'; // Assuming this exists or will be moved/kept
-import { Sector, BranchId } from "../types/common";
-import { Product } from "../types/product";
+import { Sector, BranchId } from "@repo/shared-kernel";
+import { Product } from "@repo/shared-kernel";
 
 export interface ProductFormRow {
     id?: string;

@@ -9,7 +9,7 @@ import GRNStats from './Components/GRNStats';
 import GRNFilters from './Components/GRNFilters';
 import GRNTable from './Components/GRNTable';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { RootState } from "@/app/store/store";
 
 const GoodsReceived: React.FC = () => {
     const navigate = useNavigate();

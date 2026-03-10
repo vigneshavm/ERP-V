@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, createSalaryComponent, bulkUpdateSalaryStructure } from '../../../redux/slices/payrollSlice';
+import { RootState, AppDispatch } from "@/app/store/store";
+import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, createSalaryComponent, bulkUpdateSalaryStructure } from "@/entities/people/model/payrollSlice";
 import { Plus, Save, User, DollarSign, Users } from 'lucide-react';
-import api from '../../../services/api';
+import api from "@/shared/api/api";
 
 const SalaryStructureManager = () => {
     const dispatch = useDispatch<AppDispatch>();

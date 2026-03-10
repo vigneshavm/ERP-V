@@ -18,7 +18,7 @@ import {
     MapPin,
     ArrowRight
 } from 'lucide-react';
-import { Customer } from "../../../types/sales";
+import { Customer } from "@repo/shared-kernel";
 
 interface Customer360ModalProps {
     isOpen: boolean;

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getCustomerById, getCustomerTransactions, reset } from "../../../redux/slices/customerSlice";
+import { getCustomerById, getCustomerTransactions, reset } from "@/entities/contact/model/customerSlice";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
@@ -17,7 +17,7 @@ import {
     Zap,
     Download
 } from 'lucide-react';
-import { RootState, AppDispatch } from "../../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import { DetailCard, DataPoint } from './components/CustomerUI';
 
 const CustomerDetail = () => {

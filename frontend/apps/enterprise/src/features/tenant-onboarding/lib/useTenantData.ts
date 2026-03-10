@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-import { APP_CONFIG } from "../config";
-import { setTenants, setBranches } from '../redux/slices/tenantSlice';
-import { setEmployees } from '../redux/slices/laborSlice';
-import { setUser } from '../redux/slices/authSlice';
-import { TenantUser } from "../types/tenant";
+import { APP_CONFIG } from "@/app/config";
+import { setTenants, setBranches } from "@/entities/session/model/tenantSlice";
+import { setEmployees } from "@/entities/people/model/laborSlice";
+import { setUser } from "@/entities/session/model/authSlice";
+import { TenantUser } from "@/entities/session/model/core";
 import { useTenantDataMappers } from './useTenantDataMappers';
 import { fetchTenantsRaw, fetchBranchesRaw, fetchEmployeesRaw } from './tenantQueries';
 

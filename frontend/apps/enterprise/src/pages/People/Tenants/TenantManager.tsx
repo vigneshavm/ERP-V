@@ -48,12 +48,12 @@ import {
     Paintbrush
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import { toggleTenantStatus } from "../../../redux/slices/tenantSlice";
-import { setActiveTab } from "../../../redux/slices/uiSlice";
-import { Tenant } from "../../../types/tenant";
-import { APP_CONFIG } from "../../../config";
-import { useTenantForm } from "../../../hooks/useTenantForm";
+import { RootState } from "@/app/store/store";
+import { toggleTenantStatus } from "@/entities/session/model/tenantSlice";
+import { useUiStore } from "@/shared/lib/store/uiStore";
+import { Tenant } from "@/entities/session/model/core";
+import { APP_CONFIG } from "@/app/config";
+import { useTenantForm } from "@/features/tenant-onboarding";
 import { BusinessTab } from "./components/BusinessTab";
 import { CompanyTab } from "./components/CompanyTab";
 import { TaxTab } from "./components/TaxTab";
@@ -73,6 +73,7 @@ type TabType = 'fleet' | 'control';
 const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
     const { tenants } = useSelector((state: RootState) => state.tenant);
+    const setActiveTab = useUiStore(state => state.setActiveTab);
 
     // Tab state
     const [activeTab, setActiveTabLocal] = useState<TabType>('fleet');
@@ -393,7 +394,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
                 <div className="flex items-center gap-3">
                     <button
-                        onClick={() => dispatch(setActiveTab('DASHBOARD'))}
+                        onClick={() => setActiveTab('DASHBOARD')}
                         className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl transition-all border border-slate-200 dark:border-slate-700"
                         title="Return to Dashboard"
                     >

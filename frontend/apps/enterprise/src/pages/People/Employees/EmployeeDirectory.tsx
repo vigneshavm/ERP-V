@@ -19,13 +19,13 @@ import {
     Briefcase
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RootState } from "../../../redux/store";
-import { setEmployees } from "../../../redux/slices/laborSlice";
-import api from "../../../services/api";
+import { RootState } from "@/app/store/store";
+import { setEmployees } from "@/entities/people/model/laborSlice";
+import api from "@/shared/api/api";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import { Employee } from "../../../types/hr";
-import { formatCurrency } from "../../../utils/helpers";
+import { Employee } from "@/entities/people/model/laborSlice";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 const EmployeeDirectory: React.FC = () => {
     const dispatch = useDispatch();

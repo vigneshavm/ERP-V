@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Sale, CartItem } from "../../../types/sales";
-import { SalesReturnItem } from "../../../types/salesReturn";
+import { Sale, CartItem } from "@repo/shared-kernel";
+import { SalesReturnItem } from "@repo/shared-kernel";
 import { Trash2, AlertCircle } from 'lucide-react';
 
 interface ReturnItemGridProps {

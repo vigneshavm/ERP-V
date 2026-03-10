@@ -1,10 +1,10 @@
 import React from 'react';
-import { Customer, CartItem } from "../../types/sales";
-import { TaxMode, PaymentMethod } from "../../types/common";
+import { Customer, CartItem } from "@repo/shared-kernel";
+import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
 import { POSCustomerPanel } from './POSCustomerPanel';
 import { POSFooter } from './POSFooter';
 import { Trash2 } from 'lucide-react';
-import { LoyaltyConfig } from "../../types/tenant";
+import { LoyaltyConfig } from "@/entities/session/model/core";
 
 interface POSSidebarProps {
     activeCustomer: Customer;

@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { addCustomer, reset, getAllCustomers } from "../../../redux/slices/customerSlice";
+import { addCustomer, reset, getAllCustomers } from "@/entities/contact/model/customerSlice";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { Info } from 'lucide-react';
 import CustomerForm from "./components/CustomerForm";
-import { RootState, AppDispatch } from "../../../redux/store";
+import { RootState, AppDispatch } from "@/app/store/store";
 import "react-toastify/dist/ReactToastify.css";
 
 const AddCustomer = () => {
