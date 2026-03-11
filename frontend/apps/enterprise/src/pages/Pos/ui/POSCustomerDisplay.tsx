@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
-import { CartItem } from "@repo/shared-kernel";
+import { CartItem } from "@repo/shared";
 
 interface DisplayState {
     cart: CartItem[];
@@ -109,3 +109,4 @@ export const POSCustomerDisplay: React.FC = () => {
         </div>
     );
 };
+

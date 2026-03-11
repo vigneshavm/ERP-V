@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
-import { Invoice } from '@repo/shared-kernel';
+import { Invoice } from '@repo/shared';
 
 const API_URL = "/sales-invoice";
 
@@ -269,4 +269,5 @@ export const salesInvoiceSlice = createSlice({
 
 export const { reset, clearSalesInvoice } = salesInvoiceSlice.actions;
 export default salesInvoiceSlice.reducer;
+
 

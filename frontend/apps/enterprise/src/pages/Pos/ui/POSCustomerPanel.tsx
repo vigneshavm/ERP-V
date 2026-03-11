@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Smartphone, Mail, CreditCard, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
-import { Customer } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared";
 import Customer360Modal from '@/pages/People/Customers/Customer360Modal';
 
 interface POSCustomerPanelProps {
@@ -319,3 +319,4 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
         </div>
     );
 };
+

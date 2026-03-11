@@ -1,6 +1,6 @@
 import { Tenant, DbRoleCode } from "@/entities/session/model/core";
 import { Employee } from "@/entities/people/model/laborSlice";
-import { ModuleType, SystemRole } from "@repo/shared-kernel";
+import { ModuleType, SystemRole } from "@repo/shared";
 import { normalizeModules, DEFAULT_TENANT_MODULES } from "../utils/entitlementUtil";
 
 export const useTenantDataMappers = () => {
@@ -135,3 +135,4 @@ export const useTenantDataMappers = () => {
 
     return { mapTenant, mapBranch, mapEmployee };
 };
+

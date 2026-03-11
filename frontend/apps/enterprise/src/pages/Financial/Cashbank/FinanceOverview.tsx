@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/redux/store";
 import { addTransaction, addCheque, updateChequeStatus } from "@/redux/slices/financeSlice";
-import Layout from "@/components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     TrendingUp,
     TrendingDown,

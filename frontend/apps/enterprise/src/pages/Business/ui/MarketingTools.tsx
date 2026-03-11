@@ -19,8 +19,8 @@ import {
     Plus,
     UploadCloud
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout/index.js";
-import PageHeader from "../../components/shared/Layout/PageHeader.js";
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import BusinessSubNav from './BusinessSubNav.js';
 
 import api from "@/shared/api/api";

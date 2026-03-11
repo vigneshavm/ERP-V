@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../../components/shared/Layout/Layout';
-import PageHeader from '../../../components/shared/Layout/PageHeader';
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { ArrowLeft, Save, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { RootState } from "@/app/store/store";
 import { createJournalEntry } from "@/app/store/slices/journalEntrySlice";

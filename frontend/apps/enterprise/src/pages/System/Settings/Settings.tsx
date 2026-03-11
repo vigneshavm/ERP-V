@@ -10,7 +10,7 @@ import { updateTenantDetails } from "@/entities/session/model/tenantSlice";
 import { updateProfile } from "@/entities/session/model/authSlice";
 import { SettingsState } from "@/entities/session/model/settings";
 import { Tenant } from "@/entities/session/model/core";
-import { TaxMode, AppView } from "@repo/shared-kernel";
+import { TaxMode, AppView } from "@repo/shared";
 import { setStoredTheme } from "@/shared/lib/utils/theme";
 import {
     Settings as SettingsIcon,
@@ -305,3 +305,4 @@ const Settings: React.FC = () => {
 };
 
 export default Settings;
+

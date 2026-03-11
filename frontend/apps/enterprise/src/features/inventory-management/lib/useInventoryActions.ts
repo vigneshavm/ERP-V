@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from "@/app/store/store";
 import { addItem as addProduct, updateItem as editProduct } from "@/entities/inventory/model/inventorySlice";
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 import { ProductFormRow } from './useInventoryForm';
-import { Sector, BranchId } from "@repo/shared-kernel";
+import { Sector, BranchId } from "@repo/shared";
 
 interface UseInventoryActionsProps {
     products: Product[];
@@ -117,3 +117,4 @@ export const useInventoryActions = ({
         clearSelection
     };
 };
+

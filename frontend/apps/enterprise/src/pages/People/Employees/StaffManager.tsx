@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
-import { SystemRole } from "@repo/shared-kernel";
+import { SystemRole } from "@repo/shared";
 import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { APP_CONFIG } from "@/app/config";
 import api from "@/shared/api/api";
@@ -406,3 +406,4 @@ const StaffManager: React.FC = () => {
 };
 
 export default StaffManager;
+

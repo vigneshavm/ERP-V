@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import CashBankModal from './components/CashBankModal';
 import CashBankInput from './components/CashBankInput';
 import CashBankFormSection from './components/CashBankFormSection';

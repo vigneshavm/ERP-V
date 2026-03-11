@@ -20,7 +20,7 @@ import {
     Receipt,
     LucideIcon
 } from 'lucide-react';
-import { SalesOrder, SalesOrderItem } from '@repo/shared-kernel';
+import { SalesOrder, SalesOrderItem } from '@repo/shared';
 
 interface StatusConfig {
     color: string;
@@ -416,4 +416,5 @@ const SalesOrderDetail = () => {
 };
 
 export default SalesOrderDetail;
+
 

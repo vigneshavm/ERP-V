@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { fetchJournalEntries, clearCurrentEntry } from "@/app/store/slices/journalEntrySlice";
-import Layout from '../../../components/shared/Layout/Layout';
+import Layout from "@/shared/ui/Layout";
 import { Plus, Search, Filter, Calendar as CalendarIcon, FileText, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/shared/Layout/PageHeader';
+import Header from "@/shared/ui/Layout/PageHeader";
 
 const JournalEntries: React.FC = () => {
     const dispatch = useDispatch<any>();

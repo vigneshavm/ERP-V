@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Box, Tag, DollarSign, Package, AlertCircle, Zap } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -316,3 +316,4 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 };
 
 export default ProductModal;
+

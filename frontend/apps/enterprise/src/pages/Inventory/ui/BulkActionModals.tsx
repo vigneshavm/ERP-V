@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Tag, CheckSquare, Upload, AlertTriangle, Box, Save } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 interface BulkCategoryModalProps {
     isOpen: boolean;
@@ -156,3 +156,4 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
         </div>
     );
 };
+

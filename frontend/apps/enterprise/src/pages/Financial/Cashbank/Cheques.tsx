@@ -4,7 +4,7 @@ import { RootState, AppDispatch } from "@/app/store/store";
 import { fetchCheques, registerCheque, updateChequeStatusBackend, fetchEffectiveBalance } from "@/entities/finance/model/financeSlice";
 import { getAccounts, validatePayments, createTransfer } from "@/entities/finance/model/cashbankSlice";
 import { fetchPurchaseOrders } from "@/entities/purchase/model/purchaseSlice";
-import Layout from "../../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     FileCheck,
     Clock,

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/store/store";
 
@@ -295,3 +295,4 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 };
 
 export default PurchaseOrderDetails;
+

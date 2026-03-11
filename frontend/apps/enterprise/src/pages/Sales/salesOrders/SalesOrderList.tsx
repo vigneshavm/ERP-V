@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@/shared/api/api';
 import { toast } from 'react-toastify';
 import Layout from '@/shared/ui/Layout/Layout';
-import { SalesOrder } from '@repo/shared-kernel';
+import { SalesOrder } from '@repo/shared';
 
 const SalesOrderList = () => {
     const navigate = useNavigate();
@@ -378,4 +378,5 @@ const SalesOrderList = () => {
 };
 
 export default SalesOrderList;
+
 

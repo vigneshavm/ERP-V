@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
-import { Sector } from "@repo/shared-kernel";
+import { Sector } from "@repo/shared";
 import { clearSession } from "@/shared/lib/utils/session";
 import { RootState } from "@/app/store/store";
 
@@ -402,3 +402,4 @@ export const authSlice = createSlice({
 
 export const { resetAuthState, setAuthLoading, setUser, setAuthError, setAuthSuccess, setBranch, setSector, setTheme, setUserPreferences } = authSlice.actions;
 export default authSlice.reducer;
+

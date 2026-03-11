@@ -7,7 +7,7 @@ import PageHeader from "@/shared/ui/Layout/PageHeader";
 import FormInput from "@/shared/ui/Form/Input";
 import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
 import ItemSelectionModal from "@/shared/ui/Modals/ItemSelectionModal";
-import type { SalesOrder, SalesOrderItem, Customer } from '@repo/shared-kernel';
+import type { SalesOrder, SalesOrderItem, Customer } from '@repo/shared';
 
 const SalesOrderPage = () => {
     const navigate = useNavigate();
@@ -561,4 +561,5 @@ const SalesOrderPage = () => {
 };
 
 export default SalesOrderPage;
+
 

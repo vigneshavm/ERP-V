@@ -10,7 +10,7 @@ import {
     Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
     Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
 } from 'lucide-react';
-import { Product, getProductRecommendations, searchProductsByImage } from "@repo/shared-kernel";
+import { Product, getProductRecommendations, searchProductsByImage } from "@repo/shared";
 import GrowHero from './components/GrowHero';
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
@@ -324,3 +324,4 @@ const OnlineStore: React.FC = () => {
 };
 
 export default OnlineStore;
+

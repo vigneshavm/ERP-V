@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppView } from '@repo/shared-kernel';
+import { AppView } from '@repo/shared';
 
 interface UiState {
     activeTab: AppView;
@@ -47,3 +47,4 @@ export const useUiStore = create<UiState>((set: any) => ({
     })),
     toggleSidebar: () => set((state: UiState) => ({ sidebarOpen: !state.sidebarOpen })),
 }));
+

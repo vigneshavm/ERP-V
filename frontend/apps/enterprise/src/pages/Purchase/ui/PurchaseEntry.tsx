@@ -6,7 +6,7 @@ import { PurchaseForm } from '@/widgets/purchase/purchase-form';
 import { createPurchaseOrder } from '@/entities/purchase/model/purchaseSlice';
 import Layout from '@/shared/ui/Layout/Layout';
 import PageHeader from '@/shared/ui/Layout/PageHeader';
-import { PurchaseOrder } from "@repo/shared-kernel";
+import { PurchaseOrder } from "@repo/shared";
 
 const PurchaseEntry: React.FC = () => {
     const dispatch = useDispatch<any>();
@@ -48,3 +48,4 @@ const PurchaseEntry: React.FC = () => {
 };
 
 export default PurchaseEntry;
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SalesReturn } from "@repo/shared-kernel";
+import { SalesReturn } from "@repo/shared";
 import { Wallet, CreditCard, RefreshCw, Banknote } from 'lucide-react';
 
 interface ReturnSummaryProps {
@@ -85,3 +85,4 @@ export const ReturnSummary: React.FC<ReturnSummaryProps> = ({
         </div>
     );
 };
+

@@ -16,12 +16,10 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@vignesh-erp/shared-kernel": [
-        "../../packages/shared-kernel/src/index"
-      ]
+      "@/*": ["./src/*"],
+      "@repo/shared": ["../../packages/shared/src/index.ts"],
+      "@repo/ui": ["../../packages/ui/src/index.tsx"],
+      "@vignesh-erp/shared-kernel": ["../../packages/shared/src/index.ts"]
     },
     "allowImportingTsExtensions": true,
     "strict": true,

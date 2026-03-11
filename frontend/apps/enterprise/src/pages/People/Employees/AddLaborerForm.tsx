@@ -1,6 +1,6 @@
 import React from 'react';
 import { IndianRupee, Calculator } from 'lucide-react';
-import { Card } from "@repo/ui-react";
+import { Card } from "@repo/ui";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 import { convertMonthlyToDailyWage } from "@/entities/people/lib/laborUtils";
 

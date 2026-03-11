@@ -11,7 +11,7 @@ import {
     Trash2, Package, Calculator, CreditCard, Banknote,
     Building2, RefreshCw, FileEdit, AlertTriangle, Plus
 } from 'lucide-react';
-import { Supplier } from "@repo/shared-kernel";
+import { Supplier } from "@repo/shared";
 
 interface ReturnItem {
     name: string;
@@ -485,3 +485,4 @@ const PurchaseReturn: React.FC = () => {
 };
 
 export default PurchaseReturn;
+

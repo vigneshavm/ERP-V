@@ -2,7 +2,7 @@ import { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { addToCart } from '@/redux/slices/posSlice';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 import { getProductRecommendations, searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 
 export const useStorefrontLogic = () => {
@@ -162,3 +162,4 @@ export const useStorefrontLogic = () => {
         addToCartHandler
     };
 };
+

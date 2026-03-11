@@ -12,7 +12,7 @@
         ".": "./src/index.ts"
     },
     "dependencies": {
-        "@repo/shared-kernel": "*",
+        "@repo/shared": "*",
         "@yourcompany/ui-react": "*",
         "@yourcompany/utils": "*",
         "lucide-react": "^0.563.0"

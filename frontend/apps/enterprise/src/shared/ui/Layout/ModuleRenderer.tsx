@@ -4,7 +4,7 @@ import { Ban } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { usePermissions } from '@/hooks/usePermissions';
-import { AppView } from '@repo/shared-kernel';
+import { AppView } from '@repo/shared';
 import { LazyModules } from '@/app/registry/ModuleRegistry';
 import EntitlementGuard from './EntitlementGuard';
 import {
@@ -281,3 +281,4 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
 };
 
 export default ModuleRenderer;
+

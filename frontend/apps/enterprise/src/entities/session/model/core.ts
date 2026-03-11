@@ -1,5 +1,5 @@
 // Core Tenant Types
-import { Sector, ModuleType, SystemRole } from '@repo/shared-kernel';
+import { Sector, ModuleType, SystemRole } from '@repo/shared';
 import { SettingsState } from './settings';
 
 export enum DbRoleCode {
@@ -189,3 +189,4 @@ export interface Role {
     isSystemRole?: boolean;
     tenantId?: string;
 }
+

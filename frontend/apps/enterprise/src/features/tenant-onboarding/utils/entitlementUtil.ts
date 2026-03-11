@@ -1,4 +1,4 @@
-import { ModuleType } from "@repo/shared-kernel";
+import { ModuleType } from "@repo/shared";
 
 /**
  * CANONICAL_MODULE_MAP
@@ -59,3 +59,4 @@ export const normalizeModules = (modules: string[] = []): ModuleType[] => {
 };
 
 export const DEFAULT_TENANT_MODULES: ModuleType[] = ['DASHBOARD', 'POS', 'INVENTORY'];
+

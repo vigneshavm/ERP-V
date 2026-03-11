@@ -1,5 +1,5 @@
 import React from 'react';
-import { SalesReturn } from "@repo/shared-kernel";
+import { SalesReturn } from "@repo/shared";
 import { RefreshCw, Wallet, User, Calendar } from 'lucide-react';
 
 interface ReturnedItemsListProps {
@@ -72,3 +72,4 @@ export const ReturnedItemsList: React.FC<ReturnedItemsListProps> = ({ returns, o
         </div>
     );
 };
+

@@ -101,7 +101,7 @@ export interface MISControlsTabProps {
     setMaxDiscountPercent: (value: number) => void;
 }
 
-import { AppView } from '@repo/shared-kernel';
+import { AppView } from '@repo/shared';
 
 export interface SecurityTabProps {
     roles: any[]; // Using any for now, ideally strictly typed with Role
@@ -117,3 +117,4 @@ export interface PersonalizationTabProps {
     userLogo: string | null;
     handleUserLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
+

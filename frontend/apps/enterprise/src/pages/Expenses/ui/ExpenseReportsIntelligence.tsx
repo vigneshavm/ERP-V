@@ -26,7 +26,7 @@ import {
     ChevronDown,
     Info,
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 
 interface AuthState {
     user: any;

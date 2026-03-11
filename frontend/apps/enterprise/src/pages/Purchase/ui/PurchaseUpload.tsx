@@ -4,7 +4,7 @@ import {
     FileSpreadsheet, Download, Table, Trash2, Save, FileText, AlertTriangle,
     ArrowRight
 } from 'lucide-react';
-import { BranchId } from "@repo/shared-kernel";
+import { BranchId } from "@repo/shared";
 import { Tenant } from "@/entities/session/model/core";
 import {
     parsePurchaseFile,
@@ -439,3 +439,4 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
 };
 
 export default PurchaseUpload;
+

@@ -1,12 +1,12 @@
 import { AppDispatch, RootState } from "../store";
-import { Sale } from "@repo/shared-kernel";
+import { Sale } from "@repo/shared";
 import { calculateLoyaltyPoints } from "../../utils/loyalty";
 import { updateCustomerPoints } from '../slices/posSlice';
 import { recordSale } from '../slices/posSlice';
 import { deductStock } from '../slices/inventorySlice';
 import { APP_CONFIG } from "@/app/config";
 // import { supabase } from '../../lib/supabase'; // Removed
-import { TransactionType, Sector } from "@repo/shared-kernel";
+import { TransactionType, Sector } from "@repo/shared";
 import { addTransaction } from '../slices/financeSlice';
 
 export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -84,3 +84,4 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
         branchId: sale.branchId
     }));
 };
+

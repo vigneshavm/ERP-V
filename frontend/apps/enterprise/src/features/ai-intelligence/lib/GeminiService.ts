@@ -1,5 +1,5 @@
 import api from "./api";
-import { ScannedInvoice, Product, getProductRecommendations as sharedGetRecommendations, searchProductsByImage as sharedSearchByImage } from "@repo/shared-kernel";
+import { ScannedInvoice, Product, getProductRecommendations as sharedGetRecommendations, searchProductsByImage as sharedSearchByImage } from "@repo/shared";
 
 const apiKey = process.env.API_KEY || "";
 
@@ -32,3 +32,4 @@ export const getProductRecommendations = async (query: string, products: Product
 export const searchProductsByImage = async (imageFile: File, products: Product[]) => {
   return sharedSearchByImage(apiKey, imageFile, products);
 };
+

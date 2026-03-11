@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 export interface ProductFormRow {
     id?: string;
@@ -148,3 +148,4 @@ export const useInventoryForm = (currentBranch: string) => {
         removeRow
     };
 };
+

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder, PurchasePayment, GRN, GRNItem, PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseState, PurchaseOrder, PurchasePayment, GRN, GRNItem, PurchaseOrderItem } from "@repo/shared";
 import api from "@/shared/api/api";
 import { RootState } from '@/app/store/store';
 
@@ -195,3 +195,4 @@ export const {
 } = purchaseSlice.actions;
 export { fetchPurchaseOrders as getAllPurchases };
 export default purchaseSlice.reducer;
+

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { X, CheckCircle, FileText } from 'lucide-react';
-import { PurchaseOrder } from "@repo/shared-kernel";
+import { PurchaseOrder } from "@repo/shared";
 import { useDispatch } from 'react-redux';
 // We assume we can import these. If not, we might need to verify paths.
 // Based on Bills.tsx imports:
@@ -135,3 +135,4 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
 };
 
 export default CreateBillModal;
+

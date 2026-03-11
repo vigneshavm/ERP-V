@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown, Grid3X3, List as ListIcon, Star, Heart, ShoppingCart } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 interface StorefrontProductDisplayProps {
     filteredProducts: Product[];
@@ -145,3 +145,4 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
         </>
     );
 };
+

@@ -5,7 +5,7 @@ import { updateEmployee } from "@/entities/people/model/laborSlice";
 import { SecurityTabProps } from './types';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { Role } from "@/entities/session/model/core";
-import { AppView, SystemRole } from "@repo/shared-kernel";
+import { AppView, SystemRole } from "@repo/shared";
 import ChangePasswordModal from '@/shared/ui/Auth/ChangePasswordModal';
 
 const isSecuredIdeally = () => true;
@@ -330,3 +330,4 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
 };
 
 export default SecurityTab;
+

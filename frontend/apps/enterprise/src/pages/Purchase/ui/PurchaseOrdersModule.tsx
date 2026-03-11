@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
-import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared";
 import PurchaseOrderList from './PurchaseOrderList';
 import PurchaseOrderForm from './PurchaseOrderForm';
 import PurchaseOrderDetails from './PurchaseOrderDetails';
@@ -9,7 +9,7 @@ import { useUiStore } from "@/shared/lib/store/uiStore";
 import { RootState } from "@/app/store/store";
 import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
-import { StatsCard } from "@repo/ui-react";
+import { StatsCard } from "@repo/ui";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 import { ClipboardList, Clock, CheckCircle, Lock, Plus } from 'lucide-react';
 
@@ -204,4 +204,5 @@ const PurchaseOrdersModule: React.FC = () => {
 };
 
 export default PurchaseOrdersModule;
+
 

@@ -10,7 +10,7 @@ import {
     Search as SearchIcon, Calendar, ArrowUpRight, ArrowDownLeft
 } from 'lucide-react';
 import api from "@/shared/api/api";
-import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "@repo/shared-kernel";
+import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "@repo/shared";
 import { toast } from 'react-toastify';
 
 const SupplierPayments: React.FC = () => {
@@ -290,3 +290,4 @@ const SupplierPayments: React.FC = () => {
 };
 
 export default SupplierPayments;
+

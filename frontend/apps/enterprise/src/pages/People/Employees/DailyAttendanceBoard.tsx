@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Layout, PageHeader } from "@/shared/ui";
 import api from "@/shared/api/api";
-import { AttendanceStatus } from "@repo/shared-kernel";
+import { AttendanceStatus } from "@repo/shared";
 
 const DailyAttendanceBoard: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -302,3 +302,4 @@ const DailyAttendanceBoard: React.FC = () => {
 };
 
 export default DailyAttendanceBoard;
+

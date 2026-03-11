@@ -14,7 +14,7 @@ import {
     Clock,
     XCircle
 } from 'lucide-react';
-import { Estimate } from '@repo/shared-kernel';
+import { Estimate } from '@repo/shared';
 
 const EstimateList = () => {
     const navigate = useNavigate();
@@ -295,3 +295,4 @@ const EstimateList = () => {
 };
 
 export default EstimateList;
+

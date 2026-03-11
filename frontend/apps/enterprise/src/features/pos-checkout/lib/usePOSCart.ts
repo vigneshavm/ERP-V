@@ -7,7 +7,7 @@ import {
     updateCartLength,
     clearCart
 } from "@/entities/sales/model/posSlice";
-import { CartItem } from "@repo/shared-kernel";
+import { CartItem } from "@repo/shared";
 import { RootState } from "@/app/store/store";
 
 export const usePOSCart = (activeSessionIndex: number) => {
@@ -48,3 +48,4 @@ export const usePOSCart = (activeSessionIndex: number) => {
         clear
     };
 };
+

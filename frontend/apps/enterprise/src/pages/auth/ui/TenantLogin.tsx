@@ -5,7 +5,7 @@ import { setUser, setAuthError } from "@/entities/session/model/authSlice";
 import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, Eye, EyeOff, Loader2, Mail, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import { Sector, SystemRole } from "@repo/shared-kernel";
+import { Sector, SystemRole } from "@repo/shared";
 import { Tenant, TenantUser, DbRoleCode } from "@/entities/session/model/core";
 import api from "@/shared/api/api";
 import { setSession } from "@/shared/lib/utils/session";
@@ -299,3 +299,4 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
 };
 
 export default Login;
+

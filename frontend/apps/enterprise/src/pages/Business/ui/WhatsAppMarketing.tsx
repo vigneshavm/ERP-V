@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Layout from "../../components/shared/Layout/index.js";
-import PageHeader from "../../components/shared/Layout/PageHeader.js";
-import FormInput from "../../components/core/Form/Input.js";
-import DataTable from "../../components/shared/Table/DataTable.js";
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+import FormInput from "@/shared/ui/Form/Input";
+import DataTable from "@/shared/ui/Table/DataTable";
 import BusinessSubNav from './BusinessSubNav.js';
 import api from "@/shared/api/api";
 import { toast } from 'react-toastify';

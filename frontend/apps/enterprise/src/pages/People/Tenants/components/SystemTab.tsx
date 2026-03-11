@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings, Check } from 'lucide-react';
-import { ModuleType } from "@repo/shared-kernel";
+import { ModuleType } from "@repo/shared";
 
 const AVAILABLE_MODULES: ModuleType[] = ['POS', 'INVENTORY', 'HR', 'FINANCE', 'REPORTS', 'GROW'];
 
@@ -120,3 +120,4 @@ export const SystemTab: React.FC<{ newTenant: any, setNewTenant: any, handleModu
         </div>
     );
 };
+

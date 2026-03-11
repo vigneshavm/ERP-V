@@ -4,8 +4,8 @@ import { Mail, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DeviceConflictModal from '@/pages/System/Sync/DeviceConflictModal';
 import SecurePasswordInput from './SecurePasswordInput';
-import AuthLayout from '../../Views/ui/AuthLayout';
-import AuthAlert from '../../Views/ui/AuthAlert';
+import AuthLayout from '@/pages/Views/ui/AuthLayout';
+import AuthAlert from '@/pages/Views/ui/AuthAlert';
 import AuthInput from '@/features/auth-by-email/ui/AuthInput';
 import { useLoginForm } from '@/features/auth-by-email/lib/useLoginForm';
 

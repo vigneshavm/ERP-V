@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { getAllPurchases } from "@/entities/purchase/model/purchaseSlice";
 import { useUiStore } from "@/shared/lib/store/uiStore";
-import { PurchaseOrder, PurchaseOrderStatus } from "@repo/shared-kernel";
+import { PurchaseOrder, PurchaseOrderStatus } from "@repo/shared";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 import {
     Search,
@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
-import { StatsCard } from "@repo/ui-react";
+import { StatsCard } from "@repo/ui";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -542,4 +542,5 @@ const PurchaseRegister: React.FC = () => {
 };
 
 export default PurchaseRegister;
+
 

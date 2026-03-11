@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus, AlertCircle } from 'lucide-react';
-import { PurchaseBillItem } from "@repo/shared-kernel";
+import { PurchaseBillItem } from "@repo/shared";
 
 interface BillItemsTableProps {
     items: PurchaseBillItem[];
@@ -94,3 +94,4 @@ const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) 
 };
 
 export default BillItemsTable;
+

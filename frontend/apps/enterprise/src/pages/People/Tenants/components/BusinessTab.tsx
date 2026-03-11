@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModuleType, Sector } from "@repo/shared-kernel";
+import { ModuleType, Sector } from "@repo/shared";
 
 interface BusinessTabProps {
     formData: any;
@@ -101,3 +101,4 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
         </div>
     );
 };
+

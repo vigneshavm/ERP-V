@@ -20,9 +20,9 @@ import ProductModal from "./ProductModal";
 import { BulkCategoryModal, BulkAdjustmentModal } from "./BulkActionModals";
 import { StockHistoryDrawer } from "./StockHistoryPanel";
 import StockTransferModal from "./StockTransferModal";
-import { Product } from "@repo/shared-kernel";
-import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Product } from "@repo/shared";
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import {
     Box,
     Search,
@@ -718,3 +718,4 @@ const InventoryManager: React.FC = () => {
 };
 
 export default InventoryManager;
+

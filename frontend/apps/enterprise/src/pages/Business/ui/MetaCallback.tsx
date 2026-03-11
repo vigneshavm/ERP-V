@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
+import api from '@/shared/api/api';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 
 const MetaCallback: React.FC = () => {
@@ -27,17 +28,8 @@ const MetaCallback: React.FC = () => {
 
         const connectMeta = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:5000/api/marketing/meta/auth/callback', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ code })
-                });
-
-                const data = await response.json();
+                const response = await api.post('/marketing/meta/auth/callback', { code });
+                const data = response.data;
 
                 if (data.success) {
                     setStatus('success');

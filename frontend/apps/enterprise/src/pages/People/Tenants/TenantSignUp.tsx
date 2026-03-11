@@ -20,7 +20,7 @@ import {
     EyeOff,
     AlertCircle
 } from 'lucide-react';
-import { Sector } from '@repo/shared-kernel';
+import { Sector } from '@repo/shared';
 import { APP_CONFIG } from '@/app/config';
 import api from '@/shared/api/api';
 
@@ -520,3 +520,4 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 };
 
 export default TenantSignUp;
+

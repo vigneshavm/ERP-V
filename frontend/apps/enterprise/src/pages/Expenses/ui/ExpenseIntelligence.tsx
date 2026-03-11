@@ -41,7 +41,7 @@ import {
     Users,
     MousePointer2,
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 
 // --- Wings-Grade Types ---
 

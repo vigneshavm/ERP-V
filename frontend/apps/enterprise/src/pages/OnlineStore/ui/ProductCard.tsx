@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 interface ProductCardProps {
     product: Product;
@@ -46,3 +46,4 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 };
 
 export default ProductCard;
+

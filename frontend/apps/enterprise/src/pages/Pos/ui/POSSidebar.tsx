@@ -1,6 +1,6 @@
 import React from 'react';
-import { Customer, CartItem } from "@repo/shared-kernel";
-import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
+import { Customer, CartItem } from "@repo/shared";
+import { TaxMode, PaymentMethod } from "@repo/shared";
 import { POSCustomerPanel } from './POSCustomerPanel';
 import { POSFooter } from './POSFooter';
 import { Trash2 } from 'lucide-react';
@@ -153,3 +153,4 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
         </div>
     );
 };
+

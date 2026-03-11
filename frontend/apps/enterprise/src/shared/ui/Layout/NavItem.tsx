@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { RootState } from "@/app/store/store";
-import { AppView } from "@repo/shared-kernel";
+import { AppView } from "@repo/shared";
 import { useUiStore } from "@/shared/lib/store/uiStore";
 import { usePermissions } from "@/hooks/usePermissions";
 import { preloadByViewId } from "@/app/registry/ModuleRegistry";
@@ -85,3 +85,4 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = fa
 };
 
 export default NavItem;
+

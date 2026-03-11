@@ -11,7 +11,7 @@ import { TimeEntryModal } from "./TimeEntryModal.js";
 import { Users, Calendar, CreditCard, UserPlus } from 'lucide-react';
 import { getDaysInMonth, formatDateISO } from "@/shared/lib/utils/helpers";
 
-import { AttendanceStatus, Sector, SystemRole } from "@repo/shared-kernel";
+import { AttendanceStatus, Sector, SystemRole } from "@repo/shared";
 
 import { calculateLaborStats, convertMonthlyToDailyWage, generateLaborerPayload, mapDbUserToEmployee } from "@/entities/people/lib/laborUtils";
 
@@ -406,4 +406,5 @@ export const LaborManager = () => {
 };
 
 export default LaborManager;
+
 

@@ -1,5 +1,5 @@
 import { AppDispatch, RootState } from "../store";
-import { Customer } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared";
 import { APP_CONFIG } from "@/app/config";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { setCustomer, addCustomer } from '../slices/posSlice';
@@ -95,3 +95,4 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
     dispatch(setCustomer(tempCustomer.id));
     return tempCustomer;
 };
+

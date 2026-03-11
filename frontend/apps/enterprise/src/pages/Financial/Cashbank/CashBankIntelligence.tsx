@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
-import Layout from "../../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     Wallet,
     Landmark,

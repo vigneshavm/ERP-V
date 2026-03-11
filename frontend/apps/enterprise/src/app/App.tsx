@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AuthGuard } from "@repo/ui";
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -320,7 +321,7 @@ const App: React.FC = () => {
 
   // --- Main Render ---
   return (
-    <>
+    <AuthGuard>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -344,8 +345,8 @@ const App: React.FC = () => {
                 <LandingPage />
         } />
       </Routes>
-    </>
+    </AuthGuard>
   );
-};
+}
 
 export default App;

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
-import { Sale, Customer, Session, SaleStatus, CartItem, Invoice } from "@repo/shared-kernel";
-import { TaxMode, PaymentMethod } from "@repo/shared-kernel";
+import { Sale, Customer, Session, SaleStatus, CartItem, Invoice } from "@repo/shared";
+import { TaxMode, PaymentMethod } from "@repo/shared";
 
 const API_URL = "/pos";
 
@@ -425,3 +425,4 @@ export const {
 } = posSlice.actions;
 
 export default posSlice.reducer;
+

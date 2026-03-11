@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Tenant, TenantState, TenantEcommerceConfig, GoogleBusinessConfig } from "@/entities/session/model/core";
 import { SettingsState } from "../../types/settings";
-import { ModuleType } from "@repo/shared-kernel";
+import { ModuleType } from "@repo/shared";
 
 const initialTenantState: TenantState = {
     tenants: [],
@@ -262,3 +262,4 @@ export const {
 
 export const tenantReducer = tenantSlice.reducer;
 export default tenantSlice.reducer;
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePermissions } from "@/hooks/usePermissions";
-import { AppView, ModuleType } from "@repo/shared-kernel";
+import { AppView, ModuleType } from "@repo/shared";
 import UpgradeUpsell from './UpgradeUpsell';
 
 interface EntitlementGuardProps {
@@ -52,3 +52,4 @@ const EntitlementGuard: React.FC<EntitlementGuardProps> = ({
 };
 
 export default EntitlementGuard;
+

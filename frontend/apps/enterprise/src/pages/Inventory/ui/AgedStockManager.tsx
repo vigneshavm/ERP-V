@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { getAgingReport } from "@/entities/inventory/model/inventorySlice";
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     Clock,
     TrendingDown,

@@ -8,7 +8,7 @@ import {
     setDailyRecordSynced
 } from "@/entities/finance/model/financeSlice";
 import { SyncManager } from "@/widgets/sync-manager/lib/SyncManager";
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     IndianRupee, Plus, CheckCircle2, History,
     AlertCircle, Search,

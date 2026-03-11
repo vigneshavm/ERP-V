@@ -13,7 +13,7 @@ import MetricCard from "@/shared/ui/Feedback/MetricCard";
 import FormInput from "@/shared/ui/Form/Input";
 import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { Customer, Invoice } from '@repo/shared-kernel';
+import { Customer, Invoice } from '@repo/shared';
 import {
   FileText,
   Plus,
@@ -431,4 +431,5 @@ const SalesInvoice = () => {
 };
 
 export default SalesInvoice;
+
 

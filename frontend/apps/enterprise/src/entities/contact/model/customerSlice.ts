@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
-import { Customer } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared";
 
 const API_URL = "/customers";
 

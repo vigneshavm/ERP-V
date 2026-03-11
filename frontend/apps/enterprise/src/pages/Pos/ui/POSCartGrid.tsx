@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Product } from "@repo/shared-kernel";
-import { CartItem } from "@repo/shared-kernel";
-import { Sector } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
+import { CartItem } from "@repo/shared";
+import { Sector } from "@repo/shared";
 import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
 import { productTypes, ProductType } from '@/entities/inventory/api/productTypes';
 // import { CameraScanner } from '../CameraScanner';
@@ -783,3 +783,4 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         </div>
     );
 };
+

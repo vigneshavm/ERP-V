@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
-import { AppView, ModuleType } from '@repo/shared-kernel';
+import { AppView, ModuleType } from '@repo/shared';
 
 export const usePermissions = () => {
     const { user, role } = useSelector((state: RootState) => state.auth);
@@ -27,3 +27,4 @@ export const usePermissions = () => {
 
     return { checkAccess, checkModuleAccess };
 };
+

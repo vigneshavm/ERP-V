@@ -8,7 +8,7 @@ import {
     Search, Filter, Sparkles, Send, Image as ImageIcon,
     Check, ShoppingCart
 } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 import { getProductRecommendations, searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 import { Tenant } from "@/entities/session/model/core";
 
@@ -245,3 +245,4 @@ const OnlineStore: React.FC = () => {
 };
 
 export default OnlineStore;
+

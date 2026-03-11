@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
-import { TaxBreakdown, BillStatus } from "@repo/shared-kernel";
+import { TaxBreakdown, BillStatus } from "@repo/shared";
 
 interface FinancialTotals {
     subtotal: number;
@@ -73,3 +73,4 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
 };
 
 export default BillFinancialSummary;
+

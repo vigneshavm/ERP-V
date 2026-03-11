@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModuleType, Sector } from "@repo/shared-kernel";
+import { ModuleType, Sector } from "@repo/shared";
 import { Tenant } from "@/entities/session/model/core";
 
 interface UseTenantFormActionsProps {
@@ -159,3 +159,4 @@ export const useTenantFormActions = ({
         handleCancelEdit
     };
 };
+

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 export const useInventoryFilters = (products: Product[]) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -77,3 +77,4 @@ export const useInventoryFilters = (products: Product[]) => {
         totalPages
     };
 };
+

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setOrders } from '@/entities/purchase/model/purchaseSlice';
-import { PurchaseOrder } from "@repo/shared-kernel";
+import { PurchaseOrder } from "@repo/shared";
 import { getTable } from "@/shared/api/dataSource";
 
 export const usePurchaseSync = (tenantId: string | undefined) => {
@@ -32,3 +32,4 @@ export const usePurchaseSync = (tenantId: string | undefined) => {
         fetchPurchaseOrders();
     }, [dispatch, tenantId]);
 };
+

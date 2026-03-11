@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description: "Advanced expense manager for personal use",
 };
 
+import { AuthGuard } from "@repo/ui";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,19 +34,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LanguageProvider>
-          <AuthProvider>
-            <SettingsProvider>
-              <ExpenseProvider>
-                <NavigationProvider>
-                  <ClientLayout>
-                    {children}
-                  </ClientLayout>
-                </NavigationProvider>
-              </ExpenseProvider>
-            </SettingsProvider>
-          </AuthProvider>
-        </LanguageProvider>
+        <AuthGuard>
+          <LanguageProvider>
+            <AuthProvider>
+              <SettingsProvider>
+                <ExpenseProvider>
+                  <NavigationProvider>
+                    <ClientLayout>
+                      {children}
+                    </ClientLayout>
+                  </NavigationProvider>
+                </ExpenseProvider>
+              </SettingsProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </AuthGuard>
       </body>
     </html>
   );

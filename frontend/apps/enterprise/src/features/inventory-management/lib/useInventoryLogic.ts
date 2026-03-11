@@ -4,8 +4,8 @@ import { RootState, AppDispatch } from "@/app/store/store";
 import { addItem as addProduct, updateItem as editProduct } from "@/entities/inventory/model/inventorySlice";
 import { useConfig } from '../contexts/ConfigProvider';
 import { useBranchResolver } from './useBranchResolver'; // Assuming this exists or will be moved/kept
-import { Sector, BranchId } from "@repo/shared-kernel";
-import { Product } from "@repo/shared-kernel";
+import { Sector, BranchId } from "@repo/shared";
+import { Product } from "@repo/shared";
 
 export interface ProductFormRow {
     id?: string;
@@ -126,4 +126,5 @@ export const useInventoryLogic = () => {
         clearSelection
     };
 };
+
 

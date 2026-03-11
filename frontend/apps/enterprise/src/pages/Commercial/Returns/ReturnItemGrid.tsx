@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Sale, CartItem } from "@repo/shared-kernel";
-import { SalesReturnItem } from "@repo/shared-kernel";
+import { Sale, CartItem } from "@repo/shared";
+import { SalesReturnItem } from "@repo/shared";
 import { Trash2, AlertCircle } from 'lucide-react';
 
 interface ReturnItemGridProps {
@@ -168,3 +168,4 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
         </div>
     );
 };
+

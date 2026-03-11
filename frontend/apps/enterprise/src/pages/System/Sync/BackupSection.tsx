@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppView } from '@repo/shared-kernel';
+import { AppView } from '@repo/shared';
 import { 
     Upload, Loader2, CheckCircle, HardDrive, AlertTriangle, 
     Download, Archive, Trash2, RotateCw, Eye, ShieldCheck, 
@@ -251,3 +251,4 @@ const BackupSection: React.FC<BackupSectionProps> = ({
 };
 
 export default BackupSection;
+

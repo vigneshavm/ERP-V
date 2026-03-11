@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { FileText, Upload, CheckCircle, AlertTriangle, XCircle, Search, RefreshCw } from 'lucide-react';
 
 const GSTReconciliation: React.FC = () => {

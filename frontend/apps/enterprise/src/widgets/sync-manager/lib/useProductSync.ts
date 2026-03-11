@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
 import { setProducts, setCategories, setHydrating } from '@/entities/inventory/model/inventorySlice';
-import { Product } from "@repo/shared-kernel"; 
+import { Product } from "@repo/shared"; 
 import { SyncManager } from "./SyncManager";
 import { getTable } from "@/shared/api/dataSource";
 import { useUiStore } from '@/shared/lib/store/uiStore';
@@ -80,3 +80,4 @@ export const useProductSync = (tenantId: string | undefined) => {
         };
     }, [dispatch, tenantId]);
 };
+

@@ -9,7 +9,7 @@ import {
     Calculator, Info, Download, Send, Percent
 } from 'lucide-react';
 import api from "@/shared/api/api";
-import { PurchasePayment, PurchasePaymentMethodType as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "@repo/shared-kernel";
+import { PurchasePayment, PurchasePaymentMethodType as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "@repo/shared";
 import { toast } from 'react-toastify';
 
 const PaymentOut: React.FC = () => {
@@ -380,3 +380,4 @@ const PaymentOut: React.FC = () => {
 };
 
 export default PaymentOut;
+

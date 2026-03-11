@@ -4,8 +4,8 @@ import { ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SecurePasswordInput from './SecurePasswordInput';
 import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
-import AuthLayout from '../../Views/ui/AuthLayout';
-import AuthAlert from '../../Views/ui/AuthAlert';
+import AuthLayout from '@/pages/Views/ui/AuthLayout';
+import AuthAlert from '@/pages/Views/ui/AuthAlert';
 import { useResetPasswordForm } from '@/features/auth-by-email/lib/useResetPasswordForm';
 
 const ResetPassword: React.FC = () => {

@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, Plus, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, ChevronUp, ChevronDown } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "@repo/shared";
 import { toast } from 'react-toastify';
 
 interface PurchaseOrderListProps {
@@ -275,3 +275,4 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
 };
 
 export default PurchaseOrderList;
+

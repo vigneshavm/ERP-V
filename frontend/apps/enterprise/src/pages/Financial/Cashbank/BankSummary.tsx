@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import CashBankHero from './components/CashBankHero';
 import { getBankSummary } from "@/entities/finance/model/cashbankSlice";
 import { RootState, AppDispatch } from "@/app/store/store";

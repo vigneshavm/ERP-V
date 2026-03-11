@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useUiStore } from "@/shared/lib/store/uiStore";
-import { AppView } from "@repo/shared-kernel";
+import { AppView } from "@repo/shared";
 import {
     TrendingUp, TrendingDown, Zap, RefreshCw, AlertTriangle,
     CheckCircle2, CreditCard, Building2, Landmark, FileText,
@@ -608,3 +608,4 @@ const FinanceAgentDashboard: React.FC = () => {
 };
 
 export default FinanceAgentDashboard;
+

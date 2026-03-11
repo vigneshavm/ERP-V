@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2, LucideIcon } from 'lucide-react';
 import { DailyLog } from "@/entities/people/model/hr";
-import { AttendanceStatus } from "@repo/shared-kernel";
+import { AttendanceStatus } from "@repo/shared";
 
 interface TimeEntryModalProps {
     isOpen: boolean;
@@ -139,3 +139,4 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
         </div>
     );
 };
+

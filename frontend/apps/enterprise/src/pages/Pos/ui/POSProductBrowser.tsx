@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Product } from "@repo/shared-kernel";
-import { Sector } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
+import { Sector } from "@repo/shared";
 import { Search, Package, Check, Keyboard } from 'lucide-react';
 
 import { useFuzzySearch } from "@/shared/lib/hooks/useFuzzySearch";
@@ -280,3 +280,4 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
         </div>
     );
 };
+

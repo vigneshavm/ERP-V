@@ -2,8 +2,8 @@ import React, { useState, useEffect, useTransition } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, LifeBuoy, Loader2, CheckCircle2, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AuthLayout from '../../Views/ui/AuthLayout';
-import AuthAlert from '../../Views/ui/AuthAlert';
+import AuthLayout from '@/pages/Views/ui/AuthLayout';
+import AuthAlert from '@/pages/Views/ui/AuthAlert';
 import AuthInput from '@/features/auth-by-email/ui/AuthInput';
 import { useForgotPasswordForm } from '@/features/auth-by-email/lib/useForgotPasswordForm';
 

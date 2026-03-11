@@ -48,8 +48,8 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Product } from "@repo/shared-kernel";
-import { Customer } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
+import { Customer } from "@repo/shared";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -700,3 +700,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+

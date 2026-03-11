@@ -1,7 +1,7 @@
 import React from 'react';
 import { Truck } from 'lucide-react';
 import FormField from "@/shared/ui/Form/FormField";
-import { PurchaseOrder } from "@repo/shared-kernel";
+import { PurchaseOrder } from "@repo/shared";
 
 interface GRNGeneralInfoProps {
     poId?: string;
@@ -71,3 +71,4 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
 };
 
 export default GRNGeneralInfo;
+

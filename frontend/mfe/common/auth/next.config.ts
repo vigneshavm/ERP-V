@@ -1,0 +1,65 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      // API Proxy
+      {
+        source: "/api/:path*",
+        destination: "http://localhost:5000/api/:path*",
+      },
+
+      // Personal MFE Assets & Pages
+      {
+        source: "/personal/_next/:path*",
+        destination: "http://localhost:3002/personal/_next/:path*",
+      },
+      {
+        source: "/personal/assets/:path*",
+        destination: "http://localhost:3002/personal/assets/:path*",
+      },
+      {
+        source: "/personal",
+        destination: "http://localhost:3002/personal/",
+      },
+      {
+        source: "/personal/:path*",
+        destination: "http://localhost:3002/personal/:path*",
+      },
+
+      // Business MFE Assets & Pages
+      {
+        source: "/business/_next/:path*",
+        destination: "http://localhost:3003/business/_next/:path*",
+      },
+      {
+        source: "/business/assets/:path*",
+        destination: "http://localhost:3003/business/assets/:path*",
+      },
+      {
+        source: "/business",
+        destination: "http://localhost:3003/business/",
+      },
+      {
+        source: "/business/:path*",
+        destination: "http://localhost:3003/business/:path*",
+      },
+
+      // Enterprise MFE Assets & Pages (Vite App)
+      {
+        source: "/enterprise/assets/:path*",
+        destination: "http://localhost:3004/enterprise/assets/:path*",
+      },
+      {
+        source: "/enterprise",
+        destination: "http://localhost:3004/enterprise/",
+      },
+      {
+        source: "/enterprise/:path*",
+        destination: "http://localhost:3004/enterprise/:path*",
+      },
+    ];
+  },
+};
+
+export default nextConfig;

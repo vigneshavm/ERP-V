@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { useExpenseCategories, ExpenseCategory } from "../../hooks/useExpenseCategories";
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import {
     Settings,
     Plus,

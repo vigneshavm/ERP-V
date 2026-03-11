@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
 import FormInput from "@/shared/ui/Form/Input";
-import { StatsCard } from "@repo/ui-react";
+import { StatsCard } from "@repo/ui";
 import BusinessSubNav from './BusinessSubNav';
 import { googleBusinessService, GoogleBusinessProfileData, GoogleReview, GooglePost } from "@/features/google-business/api/googleBusinessService";
 import { toast } from 'react-toastify';

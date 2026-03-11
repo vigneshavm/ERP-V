@@ -1,6 +1,6 @@
 import React from 'react';
 import { Info, Camera, Plus, FileText, Trash2 } from 'lucide-react';
-import { GRNItem } from "@repo/shared-kernel";
+import { GRNItem } from "@repo/shared";
 
 interface GRNSummaryProps {
     items?: GRNItem[];
@@ -77,3 +77,4 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
 };
 
 export default GRNSummary;
+

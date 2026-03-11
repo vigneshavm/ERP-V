@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
 import { setCustomersList, setSalesHistory } from "@/entities/sales/model/posSlice";
-import { Sale, Customer } from "@repo/shared-kernel";
+import { Sale, Customer } from "@repo/shared";
 import { SyncManager } from "./SyncManager";
 import { getTable } from "@/shared/api/dataSource";
 
@@ -52,3 +52,4 @@ export const useSalesSync = (tenantId: string | undefined) => {
         fetchSalesData();
     }, [dispatch, tenantId]);
 };
+

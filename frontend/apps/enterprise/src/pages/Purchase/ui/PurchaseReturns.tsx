@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
-import { StatsCard } from "@repo/ui-react";
+import { StatsCard } from "@repo/ui";
 import {
     RotateCcw, Plus, Search, Filter, ArrowRight, Clock,
     CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SettingsState } from "../../types/settings";
 import { DbRoleCode } from "@/entities/session/model/core";
-import { SystemRole, AppView } from "@repo/shared-kernel";
+import { SystemRole, AppView } from "@repo/shared";
 
 const initialSettingsState: SettingsState = {
     appName: 'Enterprise Manager',
@@ -190,3 +190,4 @@ const settingsSlice = createSlice({
 export const { updateSettings, updateRolePermissions, resetSettings } = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;
 export default settingsSlice.reducer;
+

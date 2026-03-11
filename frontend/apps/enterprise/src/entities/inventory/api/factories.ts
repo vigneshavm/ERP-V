@@ -1,6 +1,6 @@
 
-import { Product } from "@repo/shared-kernel";
-import { Sector } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
+import { Sector } from "@repo/shared";
 import { ProductUnit } from './constants';
 
 export type ShirtInput = Omit<Partial<Product>, 'sector' | 'hsnCode' | 'gstPercentage'> & {
@@ -141,3 +141,4 @@ export const generateProductMatrix = (
     });
     return matrix;
 };
+

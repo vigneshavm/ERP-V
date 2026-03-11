@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { addGRN } from "@/entities/purchase/model/purchaseSlice";
-import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "@repo/shared-kernel";
+import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "@repo/shared";
 
 export const useGRNForm = () => {
     const { poId } = useParams<{ poId: string }>();
@@ -121,3 +121,4 @@ export const useGRNForm = () => {
         navigate
     };
 };
+

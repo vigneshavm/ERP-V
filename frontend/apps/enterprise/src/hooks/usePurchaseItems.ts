@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseOrderItem } from "@repo/shared";
 
 export const usePurchaseItems = (initialItems: PurchaseOrderItem[] = []) => {
     const [items, setItems] = useState<PurchaseOrderItem[]>(initialItems);
@@ -64,3 +64,4 @@ export const usePurchaseItems = (initialItems: PurchaseOrderItem[] = []) => {
         totals
     };
 };
+

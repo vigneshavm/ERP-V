@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X } from 'lucide-react';
-import { Session } from "@repo/shared-kernel";
+import { Session } from "@repo/shared";
 import { useNetworkStatus } from '@/shared/lib/hooks/useNetworkStatus';
 
 interface POSHeaderProps {
@@ -133,3 +133,4 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
         </div>
     );
 };
+

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2 } from 'lucide-react';
-import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared-kernel";
+import { PurchaseOrder, PurchaseOrderItem } from "@repo/shared";
 import { usePurchaseItems } from "@/hooks/usePurchaseItems";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 
@@ -894,3 +894,4 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 };
 
 export default PurchaseOrderForm;
+

@@ -11,7 +11,7 @@ import {
     setActiveCounter,
     createInvoice
 } from "@/entities/sales/model/posSlice";
-import { AppView } from '@repo/shared-kernel';
+import { AppView } from '@repo/shared';
 
 export interface POSLogic {
     user: any;
@@ -242,3 +242,4 @@ export const usePOSLogic = (): POSLogic => {
         allBranches
     };
 };
+

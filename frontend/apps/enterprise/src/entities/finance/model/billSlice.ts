@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 import { RootState } from '../store';
 import { Supplier } from './supplierSlice';
-import { PurchaseBill, BillStatus, TaxBreakdown } from "@repo/shared-kernel";
+import { PurchaseBill, BillStatus, TaxBreakdown } from "@repo/shared";
 
 const API_URL = "/bills";
 
@@ -247,3 +247,4 @@ export const billSlice = createSlice({
 
 export const { reset, clearBill } = billSlice.actions;
 export default billSlice.reducer;
+

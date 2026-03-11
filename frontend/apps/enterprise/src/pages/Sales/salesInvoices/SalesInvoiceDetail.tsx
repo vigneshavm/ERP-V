@@ -5,7 +5,7 @@ import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid }
 import Layout from "@/shared/ui/Layout/Layout";
 import PaymentModal from "@/shared/ui/Modals/PaymentModal";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { Customer, PopulatedInvoice } from '@repo/shared-kernel';
+import { Customer, PopulatedInvoice } from '@repo/shared';
 import {
     FileText,
     CheckCircle,
@@ -372,4 +372,5 @@ const SalesInvoiceDetail = () => {
 };
 
 export default SalesInvoiceDetail;
+
 

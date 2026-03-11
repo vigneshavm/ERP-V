@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 import { X, ShoppingCart } from 'lucide-react';
 
 interface POSVariantSelectionModalProps {
@@ -193,3 +193,4 @@ export const POSVariantSelectionModal: React.FC<POSVariantSelectionModalProps> =
         </div>
     );
 };
+

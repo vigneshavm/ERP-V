@@ -18,8 +18,8 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { Customer } from '@repo/shared-kernel';
-import { Product } from '@repo/shared-kernel';
+import { Customer } from '@repo/shared';
+import { Product } from '@repo/shared';
 
 interface CartItem {
   itemId: string;
@@ -614,3 +614,4 @@ const Estimate = () => {
 };
 
 export default Estimate;
+

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { FinanceState, Transaction, Cheque, DayEndSummary } from "../../types/finance";
-import { TransactionType } from "@repo/shared-kernel";
+import { TransactionType } from "@repo/shared";
 import api from "@/shared/api/api";
 import { RootState } from '../store';
 
@@ -230,3 +230,4 @@ export const {
     setDailyRecordSynced
 } = financeSlice.actions;
 export default financeSlice.reducer;
+

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { X, ChevronLeft, Search, Package, LayoutGrid, Check } from 'lucide-react';
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 interface POSCategoryBrowserModalProps {
     isOpen: boolean;
@@ -198,3 +198,4 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
         </div>
     );
 };
+

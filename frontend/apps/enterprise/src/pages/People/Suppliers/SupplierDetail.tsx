@@ -5,7 +5,7 @@ import Layout from '@/shared/ui/Layout/Layout';
 import PageHeader from '@/shared/ui/Layout/PageHeader';
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getSupplierById, reset, updateSupplier } from "@/entities/contact/model/supplierSlice";
-import { Supplier } from "@repo/shared-kernel";
+import { Supplier } from "@repo/shared";
 import {
   Building2,
   User,
@@ -554,3 +554,4 @@ const SupplierDetail: React.FC = () => {
 };
 
 export default SupplierDetail;
+

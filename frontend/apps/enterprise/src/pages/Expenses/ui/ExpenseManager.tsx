@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Receipt, TrendingDown, ArrowRight, Wallet, History, Search, Filter, Download } from 'lucide-react';
 

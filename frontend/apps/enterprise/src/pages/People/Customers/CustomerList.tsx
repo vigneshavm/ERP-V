@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "@/redux/store";
+import { RootState } from "@/app/store/store";
 import {
     Search,
     Users,
@@ -34,8 +34,8 @@ const CustomerList: React.FC = () => {
         const stats: Record<string, { totalPurchases: number; purchaseCount: number; lastPurchase: string }> = {};
 
         salesHistory
-            .filter(s => s.sector === currentSector)
-            .forEach(sale => {
+            .filter((s: any) => s.sector === currentSector)
+            .forEach((sale: any) => {
                 const customerId = typeof sale.customer === 'string' ? sale.customer : sale.customer?._id || sale.customer?.id;
                 if (customerId) {
                     if (!stats[customerId]) {
@@ -54,7 +54,7 @@ const CustomerList: React.FC = () => {
 
     // Enrich customers with stats
     const enrichedCustomers = useMemo(() => {
-        return customers.map(customer => ({
+        return (customers as any[]).map((customer: any) => ({
             ...customer,
             totalPurchases: customerStats[customer.id]?.totalPurchases || 0,
             purchaseCount: customerStats[customer.id]?.purchaseCount || 0,
@@ -65,7 +65,7 @@ const CustomerList: React.FC = () => {
 
     // Filter and sort
     const filteredCustomers = useMemo(() => {
-        const result = enrichedCustomers.filter(customer => {
+        const result = enrichedCustomers.filter((customer: any) => {
             if (searchTerm) {
                 const search = searchTerm.toLowerCase();
                 if (!customer.name.toLowerCase().includes(search) &&
@@ -79,7 +79,7 @@ const CustomerList: React.FC = () => {
             return true;
         });
 
-        result.sort((a, b) => {
+        result.sort((a: any, b: any) => {
             switch (sortBy) {
                 case 'name': return a.name.localeCompare(b.name);
                 case 'purchases': return b.totalPurchases - a.totalPurchases;
@@ -96,9 +96,9 @@ const CustomerList: React.FC = () => {
 
     // Summary stats
     const totalCustomers = customers.length;
-    const activeCustomers = enrichedCustomers.filter(c => c.isActive).length;
-    const totalRevenue = enrichedCustomers.reduce((acc, c) => acc + c.totalPurchases, 0);
-    const avgPurchaseValue = totalRevenue / Math.max(1, enrichedCustomers.reduce((acc, c) => acc + c.purchaseCount, 0));
+    const activeCustomers = enrichedCustomers.filter((c: any) => c.isActive).length;
+    const totalRevenue = enrichedCustomers.reduce((acc: number, c: any) => acc + c.totalPurchases, 0);
+    const avgPurchaseValue = totalRevenue / Math.max(1, enrichedCustomers.reduce((acc: number, c: any) => acc + c.purchaseCount, 0));
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -239,7 +239,7 @@ const CustomerList: React.FC = () => {
                                     </div>
                                 </td></tr>
                             ) : (
-                                filteredCustomers.map(customer => (
+                                filteredCustomers.map((customer: any) => (
                                     <tr key={customer.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
@@ -313,7 +313,7 @@ const CustomerList: React.FC = () => {
                     {filteredCustomers.length === 0 ? (
                         <div className="p-8 text-center text-neutral-500">No customers found</div>
                     ) : (
-                        filteredCustomers.map(customer => (
+                        filteredCustomers.map((customer: any) => (
                             <div key={customer.id} className="p-4">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex items-center gap-3">

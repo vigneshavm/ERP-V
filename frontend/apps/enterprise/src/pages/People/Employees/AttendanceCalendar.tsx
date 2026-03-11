@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar as CalendarIcon, CheckSquare, ListChecks, X, CheckCircle2, Clock, PieChart, XCircle } from 'lucide-react';
 import { Card } from "@/shared/ui";
 import { Attendance } from "@/entities/people/model/hr";
-import { AttendanceStatus } from "@repo/shared-kernel";
+import { AttendanceStatus } from "@repo/shared";
 import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from "@/shared/lib/utils/helpers";
 
 interface AttendanceCalendarProps {
@@ -127,3 +127,4 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
 };
 
 export default AttendanceCalendar;
+

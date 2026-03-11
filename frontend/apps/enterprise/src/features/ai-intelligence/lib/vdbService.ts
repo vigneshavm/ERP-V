@@ -6,7 +6,7 @@
  * product search (10,000+ items) which exceeds the context window limits of standard LLM prompts.
  */
 
-import { Product } from "@repo/shared-kernel";
+import { Product } from "@repo/shared";
 
 export interface VectorSearchResult {
     productId: string;
@@ -36,3 +36,4 @@ export const searchProductsSemantic = async (query: string, products: Product[])
         }))
         .slice(0, 10);
 };
+

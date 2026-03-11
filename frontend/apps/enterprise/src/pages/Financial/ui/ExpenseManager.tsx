@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { TransactionType } from "@repo/shared-kernel";
+import { TransactionType } from "@repo/shared";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface ExpenseManagerProps {
@@ -69,3 +69,4 @@ const ExpenseManager: React.FC<ExpenseManagerProps> = ({ pieData, sectorTx, them
 };
 
 export default ExpenseManager;
+

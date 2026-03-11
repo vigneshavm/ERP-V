@@ -3,7 +3,7 @@
  * Migrated from utils/laborUtils to FSD: entities/people/lib/laborUtils
  */
 
-import type { Sector, SystemRole } from '@repo/shared-kernel';
+import type { Sector, SystemRole } from '@repo/shared';
 
 // ── Types ───────────────────────────────────────────────────
 export interface Employee {
@@ -125,3 +125,4 @@ export const mapDbUserToEmployee = (dbUser: any, sector: string): Employee => ({
     systemRole: 'Staff' as any,
     pin: '****'
 });
+

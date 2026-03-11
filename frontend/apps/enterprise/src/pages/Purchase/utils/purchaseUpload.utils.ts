@@ -1,5 +1,5 @@
 
-import { BranchId } from "@repo/shared-kernel";
+import { BranchId } from "@repo/shared";
 
 export interface RawPurchaseRow {
     'Invoice No': string;
@@ -104,3 +104,4 @@ export const downloadPurchaseTemplate = () => {
     link.click();
     document.body.removeChild(link);
 };
+

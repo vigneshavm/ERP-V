@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
-import { PurchaseBill } from "@repo/shared-kernel";
+import { PurchaseBill } from "@repo/shared";
 
 interface BillBasicInfoProps {
     bill: Partial<PurchaseBill>;
@@ -61,3 +61,4 @@ const BillBasicInfo: React.FC<BillBasicInfoProps> = ({ bill, vendors, onVendorCh
 };
 
 export default BillBasicInfo;
+

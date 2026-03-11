@@ -13,11 +13,11 @@ import { setBranch, setTheme } from "@/entities/session/model/authSlice";
 import { useConfig } from "@/app/providers/ConfigProvider";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 import { usePermissions } from "@/hooks/usePermissions";
-import { AppView, ModuleType } from "@repo/shared-kernel";
+import { AppView, ModuleType } from "@repo/shared";
 import { RootState } from '@/app/store/store';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
-import { ThemeToggle } from '@repo/ui-react';
+import { ThemeToggle } from '@repo/ui';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
 import { MENU_ITEMS, MenuItem } from '@/app/config/menu.config';
 
@@ -319,3 +319,4 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 };
 
 export default Sidebar;
+

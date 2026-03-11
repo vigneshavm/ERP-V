@@ -11,7 +11,7 @@ import {
     createDueAdjustment,
     reset as resetDue,
 } from "@/features/expense-tracking/model/dueSlice";
-import Layout from "../../components/shared/Layout";
+import Layout from "@/shared/ui/Layout";
 
 import { RootState } from "@/app/store/store";
 

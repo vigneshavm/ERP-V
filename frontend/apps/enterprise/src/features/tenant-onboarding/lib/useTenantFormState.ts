@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tenant } from "@/entities/session/model/core";
-import { Sector, ModuleType } from "@repo/shared-kernel";
+import { Sector, ModuleType } from "@repo/shared";
 import { TenantLocation } from "@/entities/session/model/core";
 
 export const INITIAL_TENANT_STATE = {
@@ -67,3 +67,4 @@ export const useTenantFormState = () => {
         newTenant, setNewTenant
     };
 };
+

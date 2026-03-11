@@ -44,7 +44,7 @@ import {
     TrendingUp,
     CreditCard
 } from 'lucide-react';
-import { AppView, ModuleType } from "@repo/shared-kernel";
+import { AppView, ModuleType } from "@repo/shared";
 
 export interface MenuItem {
     id: AppView;
@@ -270,3 +270,4 @@ export const MENU_ITEMS: MenuItem[] = [
 
 // Helper Imports (to avoid errors if Lucide exports differ)
 import { Clock, Plus, RotateCcw, AlertTriangle, Barcode } from 'lucide-react';
+

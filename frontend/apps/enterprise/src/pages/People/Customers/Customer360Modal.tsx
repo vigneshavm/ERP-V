@@ -18,7 +18,7 @@ import {
     MapPin,
     ArrowRight
 } from 'lucide-react';
-import { Customer } from "@repo/shared-kernel";
+import { Customer } from "@repo/shared";
 
 interface Customer360ModalProps {
     isOpen: boolean;
@@ -162,3 +162,4 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
 };
 
 export default Customer360Modal;
+
