@@ -1,7 +1,12 @@
 "use client";
 
-import DashboardView from "../features/dashboard/views/DashboardView";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  return <DashboardView />;
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/home');
+  }, [router]);
+  return null;
 }

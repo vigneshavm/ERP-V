@@ -93,6 +93,45 @@ export const readinessCheck = async (_req: Request, res: Response): Promise<void
 
 /**
  * @swagger
+ * /api/health/db/ready:
+ *   get:
+ *     summary: Database connection check
+ *     description: Returns 200 if database is connected
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Database is connected
+ *       503:
+ *         description: Database is disconnected
+ */
+export const dbHealthCheck = async (_req: Request, res: Response): Promise<void> => {
+    try {
+        const dbState = mongoose.connection.readyState;
+        const dbReady = dbState === 1;
+
+        if (!dbReady) {
+            res.status(503).json({
+                status: 'disconnected',
+                timestamp: new Date().toISOString(),
+            });
+            return;
+        }
+
+        res.status(200).json({
+            status: 'connected',
+            timestamp: new Date().toISOString(),
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'error',
+            timestamp: new Date().toISOString(),
+            error: (error as Error).message,
+        });
+    }
+};
+
+/**
+ * @swagger
  * /api/health/live:
  *   get:
  *     summary: Liveness check
@@ -113,4 +152,5 @@ export default {
     healthCheck,
     readinessCheck,
     livenessCheck,
+    dbHealthCheck,
 };

@@ -385,7 +385,19 @@ export class AuthController {
             });
         } catch (error) {
             console.error('Login Error:', error);
-            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+            const isDev = process.env.NODE_ENV === 'development';
+            const errorMessage = (error as Error).message || 'Server Error';
+
+            // Check for specific DB connection errors
+            if (errorMessage.includes('ECONNREFUSED') || errorMessage.includes('querySrv ETIMEOUT')) {
+                console.error('🚨 DATABASE CONNECTION FAILURE detected in Login API');
+            }
+
+            res.status(500).json({
+                message: 'Internal Server Error',
+                error: isDev ? errorMessage : undefined,
+                tip: isDev && errorMessage.includes('ECONNREFUSED') ? 'Is your local MongoDB running?' : undefined
+            });
         }
     };
 

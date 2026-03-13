@@ -8,9 +8,21 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const tenantId = user.tenantId || localStorage.getItem('tenantId');
+    let token = localStorage.getItem('token');
+    let tenantId = localStorage.getItem('tenantId');
+
+    // Fallback to auth-storage if direct keys are missing
+    if (!token) {
+        try {
+            const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+            token = authStorage.state?.token;
+            if (authStorage.state?.user?.tenantId) {
+                tenantId = authStorage.state.user.tenantId;
+            }
+        } catch (e) {
+            console.error('Error parsing auth-storage', e);
+        }
+    }
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

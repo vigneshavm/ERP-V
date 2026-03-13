@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { healthCheck, readinessCheck, livenessCheck } from "../controllers/HealthController.js";
+import { healthCheck, readinessCheck, livenessCheck, dbHealthCheck } from "../controllers/HealthController.js";
 
 const router = Router();
 
@@ -15,17 +15,19 @@ const router = Router();
  */
 router.get("/", healthCheck);
 
+router.get("/ready", readinessCheck);
+
 /**
  * @swagger
- * /api/health/ready:
+ * /api/health/db/ready:
  *   get:
- *     summary: Readiness check
+ *     summary: Database connection check
  *     tags: [Health]
  *     responses:
  *       200:
- *         description: Server is ready
+ *         description: Database is connected
  */
-router.get("/ready", readinessCheck);
+router.get("/db/ready", dbHealthCheck);
 
 /**
  * @swagger

@@ -4,7 +4,7 @@ import api from '@/shared/api/api';
  * Raw data fetching for transactions.
  */
 export const fetchTransactionsRaw = async (tenantId: string) => {
-    const response = await api.get('/cashbank/transactions', {
+    const response = await api.get('/cashbank', {
         params: { tenantId }
     });
     return response.data;

@@ -8,7 +8,7 @@ const App: React.FC = () => {
 
   const handleSelection = (type: 'personal' | 'business' | 'enterprise') => {
     if (type === 'personal') {
-      window.location.href = '/personal/budget';
+      window.location.href = '/personal/home';
     } else if (type === 'business') {
       window.location.href = '/business';
     } else {

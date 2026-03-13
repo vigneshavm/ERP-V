@@ -44,6 +44,8 @@ dist/
 dist-ssr/
 build/
 out/
+.next/
+next-env.d.ts
 build/Release
 bin/
 obj/

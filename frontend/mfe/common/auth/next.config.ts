@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/personal",
-        destination: "http://localhost:3002/personal/",
+        destination: "http://localhost:3002/personal",
       },
       {
         source: "/personal/:path*",
@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/business",
-        destination: "http://localhost:3003/business/",
+        destination: "http://localhost:3003/business",
       },
       {
         source: "/business/:path*",
@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/enterprise",
-        destination: "http://localhost:3004/enterprise/",
+        destination: "http://localhost:3004/enterprise",
       },
       {
         source: "/enterprise/:path*",
