@@ -1,0 +1,51 @@
+:root {
+  /* Colors */
+  --color-brand-50: #EFF6FF;
+  --color-brand-500: #3B82F6;
+  --color-brand-900: #1E3A8A;
+
+  --color-surface-default: #FFFFFF;
+  --color-surface-raised: #F9FAFB;
+  --color-surface-deep: rgb(5, 7, 10);
+
+  --color-text-primary: rgb(230, 237, 243);
+  --color-text-secondary: rgb(139, 148, 158);
+  --color-text-muted: rgb(110, 118, 129);
+
+  --color-success: rgb(16, 185, 129);
+  --color-warning: rgb(245, 158, 11);
+  --color-error: rgb(244, 63, 194);
+
+  /* Spacing */
+  --spacing-4xs: 2px;
+  --spacing-3xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui;
+  --font-mono: 'JetBrains Mono', ui-monospace;
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* Radius */
+  --radius-card: 12px;
+  --radius-button: 6px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes aura-float {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10%, 10%) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
