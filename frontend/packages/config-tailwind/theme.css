@@ -1,9 +1,71 @@
 @theme {
+  /* Backgrounds - Refined & Premium Cyber-Carbon */
+  --color-bg: rgb(5 7 10);
+  --color-card: rgb(16 20 24);
+  --color-input: rgb(9 12 16);
+  --color-sidebar: rgb(5 7 10);
+  --color-table-row: rgb(16 20 24);
+  --color-table-header: rgb(22 27 34);
+
+  /* Text - High-Contrast Cyber */
+  --color-text: rgb(230 237 243);
+  --color-text-secondary: rgb(139 148 158);
+  --color-text-muted: rgb(110 118 129);
+  --color-placeholder: rgb(72 82 92);
+
+  /* Borders - Industrial Grip */
+  --color-border: rgb(48 54 61);
+  --color-border-light: rgb(33 38 45);
+
+  /* Primary Accent - Cyber Indigo */
   --color-brand-primary: hsl(220 100% 50%);
   --color-brand-secondary: hsl(215 20% 15%);
-  --color-success: hsl(150 100% 30%);
-  --color-warning: hsl(45 100% 50%);
-  --color-danger: hsl(0 100% 50%);
+  --color-primary: rgb(99 102 241);
+  --color-primary-hover: rgb(79 70 229);
 
+  /* Semantic Colors - High Tech */
+  --color-success: rgb(16 185 129);
+  --color-warning: rgb(245 158 11);
+  --color-error: rgb(244 63 94);
+  --color-danger: hsl(0 100% 50%);
+  --color-info: rgb(56 189 248);
+  --color-accent: rgb(139 92 246);
+
+  /* Glow Tokens */
+  --glow-primary: 0 0 20px rgba(var(--color-primary), 0.3);
+  --glow-success: 0 0 20px rgba(var(--color-success), 0.3);
+  --glow-error: 0 0 20px rgba(var(--color-error), 0.3);
+
+  /* Fonts */
   --font-sans: "Inter", ui-sans-serif, system-ui;
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* Custom animations */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bounce-arrow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+  }
+  @keyframes aura-float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(10%, 10%) scale(1.1); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  --animate-fade-in: fade-in 0.6s ease-out;
+  --animate-slide-down: slide-down 0.5s ease-out;
+  --animate-aura: aura-float 20s ease-in-out infinite;
+  --animate-pulse-slow: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

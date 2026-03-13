@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../../../packages/config-tailwind/theme.css";
+@import "@repo/design-tokens/tokens.css";
 @import "./styles.css";
 
 :root {

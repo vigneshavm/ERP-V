@@ -1,0 +1,12 @@
+{
+  "plugins": ["stylelint-declaration-strict-value"],
+  "rules": {
+    "scale-unlimited/declaration-strict-value": [
+      ["/color$/", "fill", "stroke", "border-radius", "padding", "margin", "gap"],
+      {
+        "ignoreValues": ["transparent", "inherit", "currentColor", "0", "auto", "none", "100%", "50%", "100vh", "100vw"],
+        "message": "Use a design token (e.g. var(--color-brand-500) or var(--spacing-md)) instead of hardcoded values."
+      }
+    ]
+  }
+}

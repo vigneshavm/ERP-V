@@ -1,80 +1,22 @@
 @import "tailwindcss";
+@import "@repo/design-tokens/tokens.css";
 
 @tailwind utilities;
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Custom animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounce-arrow {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(10px);
-  }
-}
-
-@keyframes aura-float {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  50% {
-    transform: translate(10%, 10%) scale(1.1);
-  }
-
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-}
-
-@keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-
-  100% {
-    transform: translateY(100%);
-  }
-}
+/* Shared animations are now in @repo/config-tailwind/theme.css */
 
 .animate-fade-in {
-  animation: fade-in 0.6s ease-out;
+  animation: var(--animate-fade-in);
 }
 
 .animate-slide-down {
-  animation: slide-down 0.5s ease-out;
+  animation: var(--animate-slide-down);
 }
 
 .animate-aura {
-  animation: aura-float 20s ease-in-out infinite;
+  animation: var(--animate-aura);
 }
 
 .group:hover .group-hover\:scale-105 {
@@ -83,95 +25,17 @@
 
 @layer base {
   :root {
-    /* Backgrounds - Refined & Premium Cyber-Carbon */
-    --color-bg: 5 7 10;
-    /* Deep Obsidian */
-    --color-card: 16 20 24;
-    /* Hardware Surface */
-    --color-input: 9 12 16;
-    --color-sidebar: 5 7 10;
-    --color-table-row: 16 20 24;
-    --color-table-header: 22 27 34;
-
-    /* Text - High-Contrast Cyber */
-    --color-text: 230 237 243;
-    --color-text-secondary: 139 148 158;
-    --color-text-muted: 110 118 129;
-    --color-placeholder: 72 82 92;
-
-    /* Borders - Industrial Grip */
-    --color-border: 48 54 61;
-    --color-border-light: 33 38 45;
-
-    /* Primary Accent - Cyber Indigo */
-    --color-primary: 99 102 241;
-    /* indigo-500 */
-    --color-primary-hover: 79 70 229;
-    /* indigo-600 */
-
-    /* Secondary Accent - Emerald Precision */
-    --color-secondary: 16 185 129;
-    /* emerald-500 */
-
-    /* Semantic Colors - High Tech */
-    --color-error: 244 63 94;
-    --color-success: 16 185 129;
-    --color-warning: 245 158 11;
-    --color-info: 56 189 248;
-    --color-accent: 139 92 246;
-
-    /* Glow Tokens */
-    --glow-primary: 0 0 20px rgba(var(--color-primary), 0.3);
-    --glow-success: 0 0 20px rgba(var(--color-success), 0.3);
-    --glow-error: 0 0 20px rgba(var(--color-error), 0.3);
-
-    /* Fonts */
-    --font-display: 'Outfit', sans-serif;
-    --font-body: 'Plus Jakarta Sans', sans-serif;
-  }
-
-  .dark {
-    /* Backgrounds - Deep Space */
-    --color-bg: 10 12 16;
-    --color-card: 16 20 28;
-    --color-input: 11 15 22;
-    --color-sidebar: 10 12 16;
-    --color-table-row: 16 20 28;
-    --color-table-header: 23 29 41;
-
-    /* Text - High Contrast Crystal */
-    --color-text: 241 245 249;
-    /* slate-100 */
-    --color-text-secondary: 148 163 184;
-    /* slate-400 */
-    --color-text-muted: 71 85 105;
-    /* slate-600 */
-    --color-placeholder: 51 65 85;
-    /* slate-700 */
-
-    /* Borders - Stealth */
-    --color-border: 30 41 59;
-    /* slate-800 */
-    --color-border-light: 22 30 46;
-
-    /* Primary Accent - Neon Emerald */
-    --color-primary: 52 211 153;
-    /* emerald-400 */
-    --color-primary-hover: 16 185 129;
-    /* emerald-500 */
-
-    /* Secondary Accent - Cyber Orange */
-    --color-secondary: 245 158 11;
-    /* amber-500 */
-
-    /* Semantic Colors */
-    --color-error: 251 113 133;
-    --color-success: 52 211 153;
-    --color-warning: 251 191 36;
+    /* Local tokens can still be defined here if they are unique to this app */
+    /* But core ones should come from the shared theme */
+    
+    /* Glow Tokens - referencing shared colors if possible, though base variables are simpler for rgba */
+    --glow-primary: 0 0 20px rgba(99, 102, 241, 0.3);
+    --glow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+    --glow-error: 0 0 20px rgba(244, 63, 94, 0.3);
   }
 
   * {
-    border-color: rgb(var(--color-border));
+    border-color: var(--color-border);
     font-family: var(--font-body);
   }
 
@@ -187,18 +51,17 @@
   }
 
   body {
-    background-color: rgb(var(--color-bg));
-    color: rgb(var(--color-text));
+    background-color: var(--color-bg);
+    color: var(--color-text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #05070a;
     background-image:
       /* Atmosphere Auras */
-      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
       /* Blueprint Grid */
-      linear-gradient(rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px);
+      linear-gradient(rgba(48, 54, 61, 0.15) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(48, 54, 61, 0.15) 1.5px, transparent 1.5px);
     background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
     background-attachment: fixed;
     position: relative;
@@ -232,7 +95,7 @@
         rgba(0, 0, 0, 0.05) 50%);
     background-size: 100% 4px;
     /* High Precision Micron Grid */
-    background-image: radial-gradient(rgba(var(--color-primary), 0.1) 0.5px, transparent 0);
+    background-image: radial-gradient(rgba(99, 102, 241, 0.1) 0.5px, transparent 0);
     background-size: 20px 20px;
     pointer-events: none;
     z-index: -1;
