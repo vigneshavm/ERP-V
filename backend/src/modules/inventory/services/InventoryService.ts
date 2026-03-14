@@ -6,12 +6,20 @@ import { info } from "../../../config/logger.js";
 import StockLog from "../models/StockLog.js";
 import Item from "../models/Item.js";
 import mongoose from "mongoose";
+import { invalidateUserCache } from "../../../config/cache.js";
 
 @injectable()
 export class InventoryService {
     constructor(
         @inject(InventoryRepository) private inventoryRepository: InventoryRepository
     ) { }
+    
+    private async invalidateInventoryCache(user: any): Promise<void> {
+        // Invalidate inventory and report caches for this user/tenant
+        // Note: Using user._id as the cache key depends on User ID, matches cacheMiddleware
+        await invalidateUserCache(user._id, '/api/inventory*');
+        await invalidateUserCache(user._id, '/api/reports*');
+    }
 
     async addItem(itemData: any, tenantId: string, user: any): Promise<{ item: IItem, alerts: any[] }> {
         if (!itemData.name || !itemData.costPrice || !itemData.sellingPrice) {
@@ -44,6 +52,8 @@ export class InventoryService {
 
         info(`Item added by ${user.name}: ${item.name}`);
         const alerts = await this.checkStockAlerts(tenantId);
+        
+        await this.invalidateInventoryCache(user);
 
         return { item, alerts };
     }
@@ -122,16 +132,21 @@ export class InventoryService {
 
         info(`Item updated by ${user.name}: ${updated.name}`);
         const alerts = await this.checkStockAlerts(tenantId);
+        
+        await this.invalidateInventoryCache(user);
 
         return { updated, alerts };
     }
 
-    async deleteItem(itemId: string, tenantId: string, userName: string): Promise<IItem> {
+    async deleteItem(itemId: string, tenantId: string, user: any): Promise<IItem> {
         const item = await this.inventoryRepository.delete(itemId, tenantId);
         if (!item) {
             throw new AppError("Item not found or unauthorized", 404);
         }
-        info(`Item deleted by ${userName}: ${item.name}`);
+        info(`Item deleted by ${user.name}: ${item.name}`);
+        
+        await this.invalidateInventoryCache(user);
+        
         return item;
     }
 
@@ -226,6 +241,9 @@ export class InventoryService {
         }
 
         info(`Bulk stock adjustment (${type}: ${adjustment}) by ${user.name}: ${bulkOps.length} items adjusted`);
+        
+        await this.invalidateInventoryCache(user);
+        
         return bulkOps.length;
     }
 
@@ -361,6 +379,8 @@ export class InventoryService {
 
         info(`Items imported by ${user.name}: ${results.imported} created, ${results.updated} updated`);
         const alerts = await this.checkStockAlerts(tenantId);
+        
+        await this.invalidateInventoryCache(user);
 
         return { ...results, alerts };
     }
@@ -415,6 +435,8 @@ export class InventoryService {
             reason: `Purchase Recv: ${batchInfo.batchNumber || 'N/A'}`,
             performedBy: user._id
         });
+
+        await this.invalidateInventoryCache(user);
     }
 
     async reduceStock(
@@ -466,6 +488,8 @@ export class InventoryService {
             reason: reason,
             performedBy: user._id
         });
+        
+        await this.invalidateInventoryCache(user);
     }
     async updateBatchCost(
         itemId: string,
@@ -529,5 +553,33 @@ export class InventoryService {
             reason: `Cost Revision: Batch ${batchNumber} (${oldCost} -> ${newCost})`,
             performedBy: user._id
         });
+
+        await this.invalidateInventoryCache(user);
+    }
+
+    async bulkUpdateCategory(ids: string[], category: string, tenantId: string, user: any): Promise<number> {
+        const result = await Item.updateMany(
+            { _id: { $in: ids }, tenantId },
+            { $set: { category } }
+        );
+        
+        await this.invalidateInventoryCache(user);
+        return result.modifiedCount;
+    }
+
+    async toggleItemStatus(itemId: string, tenantId: string, user: any): Promise<IItem> {
+        const item = await this.getSingleItem(itemId, tenantId);
+        item.isActive = !item.isActive;
+        await item.save();
+        
+        await this.invalidateInventoryCache(user);
+        return item;
+    }
+
+    async deleteItemsBatch(ids: string[], tenantId: string, user: any): Promise<number> {
+        const result = await Item.deleteMany({ _id: { $in: ids }, tenantId });
+        
+        await this.invalidateInventoryCache(user);
+        return result.deletedCount;
     }
 }

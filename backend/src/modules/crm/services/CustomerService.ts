@@ -3,6 +3,7 @@ import { CustomerRepository } from "../../../repositories/CustomerRepository.js"
 import { AppError } from "../../../utils/AppError.js";
 import { ICustomer } from "../../../interfaces/ICustomer.js";
 import { info } from "../../../config/logger.js";
+import { invalidateUserCache } from "../../../config/cache.js"; // Added import for invalidateUserCache
 import Transaction from "../../sales/models/Transaction.js"; // Using Mongoose model directly for mock/simple access
 
 @injectable()
@@ -10,6 +11,11 @@ export class CustomerService {
     constructor(
         @inject(CustomerRepository) private customerRepository: CustomerRepository
     ) { }
+
+    private async invalidateCustomerCache(userId: string): Promise<void> {
+        await invalidateUserCache(userId, '/api/crm/customers*');
+        await invalidateUserCache(userId, '/api/reports*');
+    }
 
     async addCustomer(customerData: any, userId: string, userName: string): Promise<ICustomer> {
         const { name, phone, email, address, referredBy } = customerData;
@@ -42,6 +48,9 @@ export class CustomerService {
         });
 
         info(`New customer added by ${userName}: ${name} (${email || "no email"})`);
+        
+        await this.invalidateCustomerCache(userId);
+        
         return customer;
     }
 
@@ -78,6 +87,9 @@ export class CustomerService {
         if (!updated) throw new AppError("Update failed", 500);
 
         info(`Customer updated by ${userName}: ${updated.name} (${updated.email || "no email"})`);
+        
+        await this.invalidateCustomerCache(userId);
+        
         return updated;
     }
 
@@ -87,6 +99,9 @@ export class CustomerService {
             throw new AppError("Customer not found or unauthorized", 404);
         }
         info(`Customer deleted by ${userName}: ${customer.name}`);
+        
+        await this.invalidateCustomerCache(userId);
+        
         return customer;
     }
 

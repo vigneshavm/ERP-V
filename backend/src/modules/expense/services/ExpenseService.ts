@@ -5,12 +5,19 @@ import { IExpense } from "../../../interfaces/IExpense.js";
 import { info } from "../../../config/logger.js";
 import BankAccount from "../../finance/models/BankAccount.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
+import { invalidateUserCache } from "../../../config/cache.js";
 
 @injectable()
 export class ExpenseService {
     constructor(
         @inject(ExpenseRepository) private expenseRepository: ExpenseRepository
     ) { }
+
+    private async invalidateExpenseCache(userId: string): Promise<void> {
+        await invalidateUserCache(userId, '/api/expense*');
+        await invalidateUserCache(userId, '/api/reports*');
+        await invalidateUserCache(userId, '/api/finance*');
+    }
 
     async createExpense(expenseData: any, userId: string): Promise<IExpense> {
         const { expenseNo, date, category, amount, paymentMethod, description, receipt: _receipt, bankAccount } = expenseData;
@@ -76,6 +83,8 @@ export class ExpenseService {
             info(`Cash payment for expense ${expenseNo}: -₹${amount}`);
         }
 
+        await this.invalidateExpenseCache(userId);
+
         return expense;
     }
 
@@ -112,6 +121,8 @@ export class ExpenseService {
         const updatedExpense = await this.expenseRepository.update(expenseId, userId, updateData);
         if (!updatedExpense) throw new AppError("Update failed", 500);
 
+        await this.invalidateExpenseCache(userId);
+
         return updatedExpense;
     }
 
@@ -122,5 +133,7 @@ export class ExpenseService {
         }
         await this.expenseRepository.delete(expenseId, userId);
         info(`Expense deleted: ${expense.expenseNo}`);
+        
+        await this.invalidateExpenseCache(userId);
     }
 }

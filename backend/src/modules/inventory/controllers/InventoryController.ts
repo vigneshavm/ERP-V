@@ -61,7 +61,7 @@ export class InventoryController {
     public deleteItem = async (req: Request, res: Response): Promise<void> => {
         const authReq = req as any;
         try {
-            await this.inventoryService.deleteItem(authReq.params.id, authReq.tenantId as string, authReq.user?.name as string);
+            await this.inventoryService.deleteItem(authReq.params.id, authReq.tenantId as string, authReq.user);
             res.status(200).json({ message: 'Item deleted' });
         } catch (err: any) {
             error(`Delete Item Error: ${err.message}`);
@@ -107,12 +107,8 @@ export class InventoryController {
         const authReq = req as any;
         try {
             const { ids, category } = authReq.body;
-            const result = await Item.updateMany(
-                { _id: { $in: ids }, tenantId: authReq.tenantId as string },
-                { $set: { category } }
-            );
-            info(`Bulk category update by ${authReq.user?.name}: ${result.modifiedCount} items migrated to ${category}`);
-            res.status(200).json({ message: `${result.modifiedCount} items updated successfully`, modifiedCount: result.modifiedCount });
+            const modifiedCount = await this.inventoryService.bulkUpdateCategory(ids, category, authReq.tenantId as string, authReq.user);
+            res.status(200).json({ message: `${modifiedCount} items updated successfully`, modifiedCount });
         } catch (err: any) {
             error(`Bulk Category Update Error: ${err.message}`);
             res.status(500).json({ message: 'Server Error', error: err.message });
@@ -140,10 +136,7 @@ export class InventoryController {
     public toggleItemStatus = async (req: Request, res: Response): Promise<void> => {
         const authReq = req as any;
         try {
-            const item = await this.inventoryService.getSingleItem(authReq.params.id, authReq.tenantId as string);
-            item.isActive = !item.isActive;
-            await item.save();
-            info(`Item status toggled by ${authReq.user?.name}: ${item.name} is now ${item.isActive ? 'Active' : 'Inactive'}`);
+            const item = await this.inventoryService.toggleItemStatus(authReq.params.id, authReq.tenantId as string, authReq.user);
             res.status(200).json(item);
         } catch (err: any) {
             error(`Toggle Status Error: ${err.message}`);
@@ -259,9 +252,8 @@ export class InventoryController {
                 res.status(400).json({ message: 'No IDs provided for deletion' });
                 return;
             }
-            const items = await Item.deleteMany({ _id: { $in: ids }, tenantId: authReq.tenantId as string });
-            info(`Batch delete by ${authReq.user?.name}: ${items.deletedCount} items removed`);
-            res.status(200).json({ message: `${items.deletedCount} items deleted successfully`, deletedCount: items.deletedCount });
+            const deletedCount = await this.inventoryService.deleteItemsBatch(ids, authReq.tenantId as string, authReq.user);
+            res.status(200).json({ message: `${deletedCount} items deleted successfully`, deletedCount });
         } catch (err: any) {
             error(`Batch Delete Error: ${err.message}`);
             res.status(500).json({ message: 'Server Error', error: err.message });

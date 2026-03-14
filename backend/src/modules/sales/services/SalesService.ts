@@ -7,6 +7,7 @@ import { IInvoice } from "../../../interfaces/IInvoice.js"; // assuming interfac
 import { info } from "../../../config/logger.js";
 import BankAccount from "../../finance/models/BankAccount.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
+import { invalidateUserCache } from "../../../config/cache.js";
 
 @injectable()
 export class SalesService {
@@ -14,6 +15,12 @@ export class SalesService {
         @inject(InvoiceRepository) private invoiceRepository: InvoiceRepository,
         @inject(CustomerRepository) private customerRepository: CustomerRepository
     ) { }
+
+    private async invalidateSalesCache(userId: string): Promise<void> {
+        await invalidateUserCache(userId, '/api/sales*');
+        await invalidateUserCache(userId, '/api/reports*');
+        await invalidateUserCache(userId, '/api/crm/customers*');
+    }
 
     async getSummary(userId: string): Promise<any> {
         const invoices = await this.invoiceRepository.findAll(userId); // findAll already filters isDeleted
@@ -69,6 +76,8 @@ export class SalesService {
 
         await this.invoiceRepository.delete(invoiceId, userId);
         info(`Invoice soft-deleted successfully: ${invoice.invoiceNo}`);
+        
+        await this.invalidateSalesCache(userId);
     }
 
     async markAsPaid(invoiceId: string, userId: string, userName: string, paymentData: { amount: number, bankAccount?: string, paymentMethod?: string }): Promise<{ message: string, invoice: IInvoice }> {
@@ -154,6 +163,8 @@ export class SalesService {
 
         info(`Sales invoice ${invoice.invoiceNo} marked as ${newPaymentStatus} by ${userName}: +₹${amount}`);
 
+        await this.invalidateSalesCache(userId);
+
         return {
             message: `Invoice marked as ${newPaymentStatus}`,
             invoice: updatedInvoice
@@ -176,11 +187,9 @@ export class SalesService {
             paidAmount: 0
         });
 
-        // Update customer dues if applicable (optional, depending on flow)
-        if (invoice.customer && invoice.paymentStatus === 'unpaid') {
-            // Logic to update customer dues could go here or be handled by a separate event/method
-            // For now, we'll keep it simple as per other methods
-        }
+        info(`Invoice created: ${invoice.invoiceNo}`);
+        
+        await this.invalidateSalesCache(userId);
 
         return invoice;
     }

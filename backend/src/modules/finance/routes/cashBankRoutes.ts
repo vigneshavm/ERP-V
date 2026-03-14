@@ -23,6 +23,7 @@ import {
 } from "../controllers/CashBankController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
 import { validate } from "../../../middlewares/validate.js";
+import { cacheMiddleware } from "../../../config/cache.js";
 import {
     CreateAccountSchema,
     UpdateAccountSchema,
@@ -40,7 +41,7 @@ const router = Router();
 router.get("/", protect, getAllTransactions);
 
 // Account Management
-router.get("/accounts", protect, getAccounts);
+router.get("/accounts", protect, cacheMiddleware(300), getAccounts);
 router.post("/accounts", protect, validate(CreateAccountSchema), createAccount);
 router.put("/accounts/:id", protect, validate(UpdateAccountSchema), updateAccount);
 router.delete("/accounts/:id", protect, deleteAccount);
@@ -61,13 +62,13 @@ router.put("/transactions/:id/reconcile", protect, toggleReconciliation);
 router.put("/transactions/bulk-reconcile", protect, validate(BulkReconcileSchema), bulkReconcile);
 
 // Reporting & Analysis
-router.get("/summary", protect, getBankSummary);
-router.get("/position", protect, getCashBankPosition);
+router.get("/summary", protect, cacheMiddleware(300), getBankSummary);
+router.get("/position", protect, cacheMiddleware(300), getCashBankPosition);
 router.post("/validate-payments", protect, validate(ValidatePaymentsSchema), validatePayments);
 router.get("/accounts/:id/effective-balance", protect, getEffectiveBalance);
 
 // Day End Logic
-router.get("/day-end/summary", protect, getDayEndSummary);
+router.get("/day-end/summary", protect, cacheMiddleware(300), getDayEndSummary);
 router.post("/day-end/save", protect, saveDayEndToDB);
 
 export default router;

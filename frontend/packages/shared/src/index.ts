@@ -14,3 +14,5 @@ export * from './i18n/LanguageContext';
 export * from './auth/auth.utils';
 export * from './contexts/ExpenseContext';
 export * from './services/mockState';
+export * from './events/eventTypes';
+export * from './events/eventBus';

@@ -5,12 +5,18 @@ import { AppError } from "../../../utils/AppError.js";
 import { ICashbankTransaction } from "../../../interfaces/ICashbankTransaction.js";
 import { info } from "../../../config/logger.js";
 import { ObjectId } from "mongodb";
+import { invalidateUserCache } from "../../../config/cache.js";
 
 @injectable()
 export class CashBankService {
     constructor(
         @inject(CashBankRepository) private cashBankRepository: CashBankRepository
     ) { }
+
+    private async invalidateFinanceCache(userId: string): Promise<void> {
+        await invalidateUserCache(userId, '/api/finance*');
+        await invalidateUserCache(userId, '/api/reports*');
+    }
 
     // Account Logic
     async getAccounts(userId: string): Promise<any[]> {
@@ -39,6 +45,8 @@ export class CashBankService {
         });
 
         info(`Bank account added by ${userName}: ${account.bankName}`);
+        
+        await this.invalidateFinanceCache(userId);
 
         return {
             ...account,
@@ -56,6 +64,8 @@ export class CashBankService {
         if (!updated) throw new AppError("Update failed", 500);
 
         info(`Bank account updated by ${userName}: ${updated.bankName}`);
+        
+        await this.invalidateFinanceCache(userId);
         return {
             ...updated,
             accountNumber: this.cashBankRepository.decryptAccountNumber(updated.accountNumber)
@@ -72,6 +82,8 @@ export class CashBankService {
         if (!deleted) throw new AppError("Account not found", 404);
 
         info(`Bank account deleted by ${userName}: ${deleted.bankName}`);
+        
+        await this.invalidateFinanceCache(userId);
     }
 
     // Transaction Logic
@@ -105,6 +117,9 @@ export class CashBankService {
             if (toAccount !== 'cash') await this.cashBankRepository.updateBalance(toAccount, amount, session);
 
             info(`Transfer by ${userName}: ${amount} from ${fromAccount} to ${toAccount}`);
+            
+            await this.invalidateFinanceCache(userId);
+            
             return txn;
         });
     }
@@ -147,6 +162,9 @@ export class CashBankService {
             }
 
             info(`Cash ${type} by ${userName}: ${amount}`);
+            
+            await this.invalidateFinanceCache(userId);
+            
             return txn;
         });
     }
@@ -237,6 +255,8 @@ export class CashBankService {
             reconciledBy: newState ? userId : undefined
         });
 
+        await this.invalidateFinanceCache(userId);
+
         return updated;
     }
 
@@ -246,6 +266,7 @@ export class CashBankService {
             reconciledDate: reconciled ? new Date() : undefined,
             reconciledBy: reconciled ? userId : undefined
         });
+        await this.invalidateFinanceCache(userId);
         return result;
     }
 
@@ -347,6 +368,9 @@ export class CashBankService {
         });
 
         info(`Cheque created by ${userName}: ${number} for ${amount}`);
+        
+        await this.invalidateFinanceCache(userId);
+        
         return cheque;
     }
 
@@ -374,6 +398,9 @@ export class CashBankService {
             }
 
             info(`Cheque ${id} status updated to ${status} by ${userName}`);
+            
+            await this.invalidateFinanceCache(userId);
+
             return updatedCheque;
         });
     }
@@ -450,6 +477,8 @@ export class CashBankService {
 
     async saveDayEndToDB(_userId: string, userName: string): Promise<void> {
         info(`Day End Reconciliation saved by ${userName} for date ${new Date().toDateString()}`);
+        
+        await this.invalidateFinanceCache(_userId);
     }
 
     async getAllTransactions(userId: string): Promise<any[]> {
