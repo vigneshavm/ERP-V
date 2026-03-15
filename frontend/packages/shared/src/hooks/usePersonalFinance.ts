@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback } from 'react';
 import { api } from '../services/apiClient';
 import { PersonalTransaction, Category, BankAccount } from '../types';

@@ -10,13 +10,15 @@
   "private": true,
   "type": "module",
   "dependencies": {
-<<<<<<< HEAD
     "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "@repo/config-eslint": "*",
+    "@repo/config-tailwind": "*",
+    "@repo/config-typescript": "*",
+    "@repo/design-tokens": "*",
     "@repo/shared": "*",
     "@repo/ui": "*",
-    "@repo/design-tokens": "*",
     "@yourcompany/finance-lib": "*",
     "@yourcompany/utils": "*",
     "clsx": "^2.1.1",
@@ -24,15 +26,6 @@
     "lucide-react": "^0.400.0",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.5.0"
-=======
-    "@originjs/vite-plugin-federation": "^1.4.1",
-    "@repo/config-eslint": "*",
-    "@repo/config-tailwind": "*",
-    "@repo/config-typescript": "*",
-    "@repo/shared": "*",
-    "@repo/ui": "*",
-    "@yourcompany/utils": "*"
->>>>>>> a01115580024901d47f198c06cb0ceabca262ad9
   },
   "peerDependencies": {
     "react": "^19.0.0",
