@@ -51,6 +51,11 @@ const expenseSchema = new Schema<IExpense>(
         receipt: {
             type: String, // URL to uploaded receipt file
         },
+        status: {
+            type: String,
+            enum: ["draft", "pending", "approved", "rejected", "paid"],
+            default: "draft",
+        },
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

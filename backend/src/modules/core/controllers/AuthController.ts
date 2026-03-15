@@ -664,4 +664,61 @@ export class AuthController {
             res.status(500).json({ message: 'Server Error', error: (error as Error).message });
         }
     };
+
+    /**
+     * @swagger
+     * /api/auth/logout:
+     *   post:
+     *     summary: Logout current user
+     *     tags: [Auth]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [refreshToken]
+     *             properties:
+     *               refreshToken: { type: string }
+     *     responses:
+     *       200:
+     *         description: Logged out successfully
+     */
+    public logout = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const { refreshToken } = req.body;
+            const { clearDeviceIdCookie } = await import('../../../utils/deviceUtils.js');
+
+            if (refreshToken) {
+                const storedToken = await RefreshToken.findOne({
+                    token: refreshToken,
+                    user: req.user?._id
+                });
+
+                if (storedToken) {
+                    storedToken.isRevoked = true;
+                    storedToken.revokedAt = new Date();
+                    await storedToken.save();
+                }
+            }
+
+            // Clear device session fields for the user
+            const user = await User.findById(req.user?._id);
+            if (user) {
+                user.activeDeviceId = null;
+                user.activeSessionCreatedAt = null;
+                await user.save();
+            }
+
+            // Clear deviceId cookie
+            clearDeviceIdCookie(res);
+
+            res.status(200).json({ message: 'Logged out successfully' });
+        } catch (error) {
+            console.error('Logout Error:', error);
+            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+        }
+    };
 }

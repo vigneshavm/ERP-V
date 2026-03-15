@@ -586,4 +586,16 @@ export class InventoryService {
         await this.invalidateInventoryCache(user);
         return result.deletedCount;
     }
+
+    async recordMovement(itemId: string, movementData: any, tenantId: string, user: any): Promise<void> {
+        const { type, quantity, reason, rate, batchInfo } = movementData;
+
+        if (type === 'PURCHASE' || (type === 'ADJUST' && quantity > 0)) {
+            await this.addStock(itemId, Math.abs(quantity), rate || 0, batchInfo || {}, tenantId, user);
+        } else if (type === 'SALE' || type === 'RETURN' || (type === 'ADJUST' && quantity < 0)) {
+            await this.reduceStock(itemId, Math.abs(quantity), tenantId, user, reason || type);
+        } else {
+            throw new AppError("Invalid movement type or quantity", 400);
+        }
+    }
 }

@@ -11,6 +11,7 @@ router.get("/summary", protect, salesController.getSalesInvoiceSummary);
 router.post("/", protect, salesController.createSalesInvoice); // Added create route
 router.get("/invoices", protect, salesController.getAllSalesInvoices);
 router.get("/invoice/:id", protect, salesController.getSalesInvoiceById);
+router.patch("/invoice/:id/status", protect, salesController.updateInvoiceStatus);
 router.put("/invoice/:id/mark-paid", protect, salesController.markSalesInvoiceAsPaid);
 router.delete(
     "/invoice/:id",

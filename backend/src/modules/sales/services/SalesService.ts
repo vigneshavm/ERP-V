@@ -193,4 +193,17 @@ export class SalesService {
 
         return invoice;
     }
+
+    async updateStatus(invoiceId: string, userId: string, status: string): Promise<IInvoice> {
+        const updatedInvoice = await this.invoiceRepository.update(invoiceId, userId, {
+            $set: { paymentStatus: status }
+        });
+
+        if (!updatedInvoice) throw new AppError("Invoice not found or update failed", 404);
+
+        info(`Invoice ${updatedInvoice.invoiceNo} status updated to ${status}`);
+        await this.invalidateSalesCache(userId);
+
+        return updatedInvoice;
+    }
 }

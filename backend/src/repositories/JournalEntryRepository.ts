@@ -56,6 +56,13 @@ export class JournalEntryRepository {
             );
             if (user) entry.createdBy = user;
         }
-        return entry;
+    }
+    
+    async updateStatus(id: string, status: string, session?: ClientSession): Promise<void> {
+        await this.entries.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { status, updatedAt: new Date() } },
+            { session }
+        );
     }
 }

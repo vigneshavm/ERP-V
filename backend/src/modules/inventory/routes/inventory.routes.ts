@@ -25,6 +25,7 @@ router.delete("/reprint-queue", protect, inventoryController.clearReprintQueue);
 router.put("/bulk/category", protect, inventoryController.bulkUpdateCategory);
 router.put("/bulk/stock", protect, inventoryController.bulkAdjustStock);
 router.get("/:id", protect, inventoryController.getSingleItem);
+router.post("/:id/movements", protect, inventoryController.recordMovement);
 router.put(
     "/:id",
     protect,

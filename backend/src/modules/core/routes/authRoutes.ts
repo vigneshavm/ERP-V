@@ -14,6 +14,7 @@ router.post("/login", authLimiter, authController.login);
 router.post("/force-logout", forceLogoutLimiter, authController.forceLogout);
 router.post("/forgot-password", passwordResetLimiter, authController.forgotPassword);
 router.post("/reset-password", passwordResetLimiter, authController.resetPassword);
+router.post("/logout", protect, authController.logout);
 
 // Protected routes
 router.get("/profile", protect, authController.getProfile);
