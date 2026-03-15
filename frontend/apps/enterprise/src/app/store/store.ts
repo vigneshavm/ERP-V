@@ -21,11 +21,13 @@ import paymentOutReducer from './slices/paymentOutSlice';
 import journalEntryReducer from './slices/journalEntrySlice';
 import payrollReducer from '@/entities/people/model/payrollSlice';
 import systemReducer from '@/entities/system/model/systemSlice';
+import authReducer from '@/entities/session/model/authSlice';
+
 
 export const store = configureStore({
   reducer: {
     settings: settingsReducer,
-
+    auth: authReducer,
     customers: customerReducer,
     inventory: inventoryReducer,
     pos: posReducer,
@@ -48,6 +50,7 @@ export const store = configureStore({
     system: systemReducer,
   },
 });
+
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
