@@ -25,6 +25,7 @@ import { useUiStore } from "@/shared/lib/store/uiStore";
 
 const MarketingMetrics: React.FC = () => {
     const dispatch = useDispatch();
+    const { setActiveTab } = useUiStore();
 
     const mainMetrics = [
         { label: 'Total Marketing Spend', value: '₹12,450', change: '+5.2%', trend: 'up', icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },

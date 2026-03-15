@@ -6,6 +6,7 @@ import { useUiStore } from "@/shared/lib/store/uiStore";
 
 const GrowthHub: React.FC = () => {
     const dispatch = useDispatch();
+    const { setActiveTab } = useUiStore();
 
     const cards = [
         {

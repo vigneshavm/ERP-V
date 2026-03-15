@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { useUiStore } from "@/shared/lib/store/uiStore";
 const OnlinePerformance: React.FC = () => {
     const dispatch = useDispatch();
+    const { setActiveTab } = useUiStore();
 
     const metrics = [
         { label: 'Conversion Rate', value: '3.24%', change: '+0.8%', trend: 'up', icon: MousePointer2, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-900/20' },

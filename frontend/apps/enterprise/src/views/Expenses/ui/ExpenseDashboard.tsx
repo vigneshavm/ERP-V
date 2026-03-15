@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { DollarSign, FileText, Calendar, TrendingUp } from 'lucide-react';
-import { Expense } from "../../hooks/useExpenses";
+import { Expense } from "../../../features/expense-tracking/lib/useExpenses";
 
 interface ExpenseDashboardProps {
     expenses: Expense[];

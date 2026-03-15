@@ -25,7 +25,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { Expense } from "../../hooks/useExpenses";
+import { Expense } from "../../../features/expense-tracking/lib/useExpenses";
 
 interface PremiumExpenseDashboardProps {
     expenses: Expense[];
