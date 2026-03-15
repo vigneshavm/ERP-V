@@ -60,3 +60,8 @@ export * from './events/eventTypes';
 export * from './events/eventBus';
 export * from './hooks/usePersonalFinance';
 
+// Query
+export * from './query/queryClient';
+export * from './query/QueryProvider';
+
+
