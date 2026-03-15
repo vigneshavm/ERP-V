@@ -1,0 +1,17 @@
+import express from "express";
+import { getProfile, updateProfile, syncGoogle, getSectors, getBusinessTypes, getSetupStatus, completeSetup, replyToReview, createPost } from "../controllers/BusinessController.js";
+import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
+
+const router = express.Router();
+
+router.get("/profile", protect, getProfile);
+router.get("/sectors", protect, getSectors);
+router.get("/types", protect, getBusinessTypes);
+router.get("/setup", protect, getSetupStatus);
+router.post("/setup", protect, completeSetup);
+router.put("/profile", protect, updateProfile);
+router.post("/google/sync", protect, syncGoogle);
+router.post("/reviews/:reviewId/reply", protect, replyToReview);
+router.post("/posts", protect, createPost);
+
+export default router;
