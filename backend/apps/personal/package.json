@@ -1,0 +1,13 @@
+{
+  "name": "@smarterp/personal-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --watch src --exec tsx src/server.ts"
+  },
+  "dependencies": {
+    "@smarterp/core": "workspace:*",
+    "@smarterp/shared": "workspace:*",
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,68 @@
+# Walkthrough: Backend Restructuring for Microservices
+
+The `backend` has been successfully restructured from a monolithic directory into a modular monorepo using NPM workspaces. This separation allows the Personal and Enterprise features to be developed, scaled, and deployed independently while sharing a common core and set of utilities.
+
+## Refined Directory Structure
+
+The project now follows this hierarchy:
+
+```text
+backend/
+├── apps/
+│   ├── enterprise/         # ERP Service (Port 5000)
+│   │   ├── src/
+│   │   │   ├── modules/    # Finance, Sales, Inventory, CRM, etc.
+│   │   │   ├── app.ts      # Tailored for Enterprise modules
+│   │   │   └── server.ts
+│   │   └── package.json
+│   └── personal/           # Personal Finance Service (Port 5001)
+│       ├── src/
+│       │   ├── modules/    # Expense, SMS Tracker
+│       │   ├── app.ts      # Tailored for Personal modules
+│       │   └── server.ts
+│       └── package.json
+├── packages/
+│   ├── core/               # Shared Business Logic & Auth
+│   │   └── src/modules/core/
+│   └── shared/             # Shared Infrastructure (Config, Utils, Middlewares)
+│       └── src/            # config/, middlewares/, repositories/, etc.
+├── package.json            # Root workspace configuration
+└── tsconfig.base.json      # Shared TS aliases (@smarterp/core, @smarterp/shared)
+```
+
+## Key Changes Made
+
+### 1. Workspace Initialization
+- Configured `"workspaces": ["apps/*", "packages/*"]` in the root [package.json](file:///C:/Users/vigne/Project/30/ERP/backend/package.json).
+- Initialized sub-packages with their own [package.json](file:///C:/Users/vigne/Project/30/ERP/backend/package.json) for name scoping (e.g., `@smarterp/enterprise-api`).
+
+### 2. Module Migration
+- **Enterprise ModulesMoved**: `finance`, `sales`, `inventory`, `purchase`, `crm`, `hr`, `marketing`, `agents`.
+- **Personal Modules Moved**: `expense`, `sms-tracker`.
+- **Architectural Cleanup**: Moved `core` logic to `/packages/core` and plumbings (`middlewares`, `utils`, `config`, `repositories`) to `/packages/shared`.
+
+### 3. Import Refactoring
+- Implemented `@smarterp/shared` and `@smarterp/core` aliases in [tsconfig.base.json](file:///C:/Users/vigne/Project/30/ERP/backend/tsconfig.base.json).
+- Ran a comprehensive refactor script across all modules to update hundreds of relative imports (e.g., `../../../middlewares/` → `@smarterp/shared/middlewares/`).
+
+### 4. Entry Point Independence
+- **Enterprise App**: Configured to run on port 5000 with a dedicated daily cron job for payment reminders.
+- **Personal App**: Configured to run on port 5001, providing a lightweight API for personal expense tracking.
+- Both apps now use a standard [app.ts](file:///C:/Users/vigne/Project/30/ERP/backend/src/app.ts) / [server.ts](file:///C:/Users/vigne/Project/30/ERP/backend/server.ts) pattern tailored to their specific domains.
+
+## How to Run
+
+From the `backend` root, you can now run services individually using npm workspaces:
+
+```bash
+# Start Enterprise API
+npm run dev --workspace=@smarterp/enterprise-api
+
+# Start Personal API
+npm run dev --workspace=@smarterp/personal-api
+```
+
+## Verification Results
+- All legacy `src` files and redundant route files in the root have been removed.
+- TypeScript configurations have been validated to ensure cross-workspace imports resolve correctly.
+- Module boundaries are now enforced by the folder structure.
