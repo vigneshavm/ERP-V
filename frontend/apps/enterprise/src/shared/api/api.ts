@@ -1,13 +1,18 @@
+import { logger } from '@/shared/lib/logger';
 import axios from 'axios';
 
+import { APP_CONFIG } from '@/app/config/index';
+
 const api = axios.create({
-    baseURL: (import.meta as any).env.VITE_BACKEND_URL || '/api',
+    baseURL: APP_CONFIG.API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
 api.interceptors.request.use((config) => {
+    if (typeof window === 'undefined') return config;
+    
     let token = localStorage.getItem('token');
     let tenantId = localStorage.getItem('tenantId');
 
@@ -20,7 +25,7 @@ api.interceptors.request.use((config) => {
                 tenantId = authStorage.state.user.tenantId;
             }
         } catch (e) {
-            console.error('Error parsing auth-storage', e);
+            logger.error('Error parsing auth-storage', e);
         }
     }
 

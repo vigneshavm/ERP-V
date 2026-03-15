@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useMemo, useState, useEffect } from 'react';
 import { Supplier, TaxBreakdown } from "@vignesh-erp/shared-kernel";
 import api from "@/shared/api/api";
@@ -15,7 +16,7 @@ export const useTaxIntelligence = (supplier: Supplier | null, totalTax: number) 
                     setTenantState(data.data.tenantAddress.state);
                 }
             } catch (err) {
-                console.error("Failed to fetch business profile for tax intelligence", err);
+                logger.error("Failed to fetch business profile for tax intelligence", err);
             } finally {
                 setIsLoading(false);
             }

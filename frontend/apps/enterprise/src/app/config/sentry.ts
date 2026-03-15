@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import * as Sentry from "@sentry/react";
 
 /**
@@ -5,16 +6,16 @@ import * as Sentry from "@sentry/react";
  * Only active if VITE_SENTRY_DSN is configured
  */
 export const initSentry = (): void => {
-    const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+    const sentryDsn = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.VITE_SENTRY_DSN : null;
 
     if (!sentryDsn || sentryDsn.trim() === "") {
-        console.log("⚠️  Sentry not configured (VITE_SENTRY_DSN not set)");
+        logger.info("⚠️  Sentry not configured (VITE_SENTRY_DSN not set)");
         return;
     }
 
     Sentry.init({
         dsn: sentryDsn,
-        environment: (import.meta.env.MODE as string) || "development",
+        environment: (typeof process !== 'undefined' ? process.env.NODE_ENV : "development") || "development",
         integrations: [
             Sentry.browserTracingIntegration(),
             Sentry.replayIntegration({
@@ -23,7 +24,7 @@ export const initSentry = (): void => {
             }),
         ],
         // Performance Monitoring
-        tracesSampleRate: import.meta.env.MODE === "production" ? 0.1 : 1.0,
+        tracesSampleRate: (typeof process !== 'undefined' ? process.env.NODE_ENV : "development") === "production" ? 0.1 : 1.0,
         // Session Replay
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
@@ -45,7 +46,7 @@ export const initSentry = (): void => {
         },
     });
 
-    console.log("✅ Sentry initialized for error tracking");
+    logger.info("✅ Sentry initialized for error tracking");
 };
 
 const sentryConfig = { initSentry };

@@ -4,8 +4,11 @@ import api from "@/shared/api/api";
 import { RootState } from '@/app/store/store';
 
 const loadState = <T>(key: string, initialState: T): T => {
-    const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : initialState;
+    if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : initialState;
+    }
+    return initialState;
 };
 
 const initialPurchaseState: PurchaseState = {

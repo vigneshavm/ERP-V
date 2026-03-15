@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import api from "@/shared/api/api";
@@ -45,7 +46,7 @@ export const useExpenseCategories = () => {
             setCategories(response.data?.categories || response.data || []);
             setError(null);
         } catch (err: any) {
-            console.error('Error fetching expense categories:', err);
+            logger.error('Error fetching expense categories:', err);
             setError(err.message);
             setCategories([]);
         } finally {
@@ -73,7 +74,7 @@ export const useExpenseCategories = () => {
             }
             await fetchCategories();
         } catch (err: any) {
-            console.error('Error upserting category:', err);
+            logger.error('Error upserting category:', err);
             throw err;
         }
     };
@@ -86,7 +87,7 @@ export const useExpenseCategories = () => {
             });
             await fetchCategories();
         } catch (err: any) {
-            console.error('Error deleting category:', err);
+            logger.error('Error deleting category:', err);
             throw err;
         }
     };

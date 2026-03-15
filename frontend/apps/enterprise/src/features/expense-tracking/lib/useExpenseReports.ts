@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import api from "@/shared/api/api";
@@ -44,7 +45,7 @@ export const useExpenseReports = () => {
             setReport(response.data);
             setError(null);
         } catch (err: any) {
-            console.error('Error fetching expense reports:', err);
+            logger.error('Error fetching expense reports:', err);
             setError(err.message);
             // Return empty report structure
             setReport({

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
@@ -334,7 +335,7 @@ export const useBusinessReports = (type: ReportType, filters: { branch_id?: stri
             await new Promise((resolve) => setTimeout(resolve, 800));
             setData(reportData);
         } catch (err) {
-            console.error('Error fetching business report:', err);
+            logger.error('Error fetching business report:', err);
         } finally {
             setLoading(false);
         }

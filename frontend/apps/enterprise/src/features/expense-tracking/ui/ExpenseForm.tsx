@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import { Expense } from "../../hooks/useExpenses";
-import { useBranchResolver } from "../../hooks/useBranchResolver";
+import { Expense } from "@/features/expense-tracking/lib/useExpenses";
+import { useBranchResolver } from "@/hooks/useBranchResolver";
 
 interface ExpenseFormProps {
     isOpen: boolean;

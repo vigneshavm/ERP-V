@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState, useRef } from 'react';
 import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
@@ -67,7 +68,7 @@ export const useBarcodeGenerator = () => {
                 margin: 10,
             });
         } catch (e) {
-            console.error('Barcode render error', e);
+            logger.error('Barcode render error', e);
         }
     };
 

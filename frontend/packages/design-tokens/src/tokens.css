@@ -1,47 +1,78 @@
 :root {
-  /* Colors */
-  --color-brand-50: #EFF6FF;
-  --color-brand-500: #3B82F6;
-  --color-brand-900: #1E3A8A;
+  /* Core Colors */
+  --bg-color: #000000;
+  --card-bg: rgba(26, 26, 26, 0.6);
+  --card-border: rgba(255, 255, 255, 0.1);
 
-  --color-surface-default: #FFFFFF;
-  --color-surface-raised: #F9FAFB;
-  --color-surface-deep: rgb(5, 7, 10);
+  --primary-color: #3B82F6;
+  --danger-color: #FF453A;
+  --warning-color: #F1C40F;
+  --info-color: #3498DB;
+  --success-color: #2ECC71;
 
-  --color-text-primary: rgb(230, 237, 243);
-  --color-text-secondary: rgb(139, 148, 158);
-  --color-text-muted: rgb(110, 118, 129);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A5;
+  --label-text: rgba(255, 255, 255, 0.6);
 
-  --color-success: rgb(16, 185, 129);
-  --color-warning: rgb(245, 158, 11);
-  --color-error: rgb(244, 63, 194);
-
-  /* Spacing */
-  --spacing-4xs: 2px;
-  --spacing-3xs: 4px;
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
+  /* Shared Spacing & Typography (from legacy tokens) */
   --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
-  /* Typography */
-  --font-sans: 'Inter', ui-sans-serif, system-ui;
-  --font-mono: 'JetBrains Mono', ui-monospace;
-  --font-display: 'Outfit', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
-
-  /* Radius */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --glass-blur: blur(12px);
   --radius-card: 12px;
-  --radius-button: 6px;
+}
+
+[data-theme="light"] {
+  --bg-color: #F8F9FA;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --primary-color: #218C4D;
+  --text-primary: #121212;
+  --text-secondary: #58585E;
+
+  /* Force theme variables used by Sidebar/MobileNav */
+  --color-sidebar: #FFFFFF;
+  --color-bg: #F8F9FA;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text: #111827;
+  --color-text-secondary: #4B5563;
+  --color-primary: #218C4D;
+}
+
+[data-theme="cyber"] {
+  --bg-color: #050505;
+  --card-bg: rgba(10, 10, 15, 0.8);
+  --card-border: rgba(0, 255, 102, 0.2);
+  --primary-color: #00FF66;
+  --text-primary: #F0F0FF;
+  --text-secondary: #00FF66;
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Orbitron', sans-serif;
+  --bg-pattern: radial-gradient(circle at 20% 30%, rgba(0, 255, 102, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 85, 0.05) 0%, transparent 40%),
+      linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
+  --bg-size: cover, cover, 30px 30px, 30px 30px;
+}
+
+[data-theme="gold"] {
+  --bg-color: #0F0F0F;
+  --card-bg: rgba(30, 30, 30, 0.4);
+  --card-border: rgba(212, 175, 55, 0.2);
+  --primary-color: #D4AF37;
+  --text-primary: #EDE6D6;
+  --text-secondary: rgba(237, 230, 214, 0.7);
+  --font-heading: 'Playfair Display', serif;
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0f0f0f 100%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  --bg-size: cover, cover, cover, 120px 120px;
 }
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes slide-down {
-  from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes aura-float {

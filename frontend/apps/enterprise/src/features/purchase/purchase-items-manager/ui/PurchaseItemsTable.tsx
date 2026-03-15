@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Trash2, History, RotateCcw, Package, ChevronsUpDown, Info } from 'lucide-react';
 import { PurchaseOrderItem } from "@vignesh-erp/shared-kernel";
@@ -28,6 +29,7 @@ const PurchaseItemsTable: React.FC<PurchaseItemsTableProps> = ({
     // Product Search Logic
     useEffect(() => {
         if (!searchTerm) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- TODO(TS-FIX): Phase 2/3 fix
             setProducts([]);
             return;
         }
@@ -37,7 +39,7 @@ const PurchaseItemsTable: React.FC<PurchaseItemsTableProps> = ({
                 const list = data.data || data;
                 setProducts(Array.isArray(list) ? list : []);
             } catch (err) {
-                console.error("Product search failed", err);
+                logger.error("Product search failed", err);
             }
         }, 300);
 

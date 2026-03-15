@@ -1,9 +1,11 @@
+"use client";
+
 import { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { addToCart } from '@/redux/slices/posSlice';
-import { Product } from "../../types/product";
-import { getProductRecommendations, searchProductsByImage } from "../../services/geminiService";
+import { Product, getProductRecommendations as sharedGetRecommendations, searchProductsByImage as sharedSearchByImage } from "@repo/shared";
+const apiKey = ""; // Or process.env.NEXT_PUBLIC_GEMINI_API_KEY
 
 export const useStorefrontLogic = () => {
     const dispatch = useDispatch();
@@ -49,7 +51,7 @@ export const useStorefrontLogic = () => {
         setAiThinking(true);
         setAiResult(null);
         try {
-            const res = await getProductRecommendations(aiQuery, baseProducts);
+            const res = await sharedGetRecommendations(apiKey, aiQuery, baseProducts);
             setAiResult({ text: res.recommendationText, ids: res.recommendedIds });
         } catch (e) {
             console.error(e);
@@ -69,7 +71,7 @@ export const useStorefrontLogic = () => {
         setAiResult(null);
 
         try {
-            const ids = await searchProductsByImage(file, baseProducts);
+            const ids = await sharedSearchByImage(apiKey, file, baseProducts);
             setAiResult({
                 text: `I found ${ids.length} products that look similar to your image.`,
                 ids: ids

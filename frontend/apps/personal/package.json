@@ -16,7 +16,6 @@
     "@repo/config-tailwind": "*",
     "@repo/design-tokens": "*",
     "@yourcompany/finance-lib": "*",
-    "@yourcompany/ui-react": "*",
     "@yourcompany/utils": "*",
     "@repo/mfe-budget-planner": "*",
     "clsx": "^2.1.1",

@@ -148,7 +148,9 @@ export type AppView =
     // Budget Tracker
     | 'BUDGET_TRACKER'
     // Financial Goals
-    | 'FINANCIAL_GOALS';
+    | 'FINANCIAL_GOALS'
+    // Landing
+    | 'LANDING';
 
 export enum SystemRole {
     SUPER_ADMIN = 'superadmin',

@@ -20,6 +20,20 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
 });
 
+// Global error handlers for errors escaping the React tree
+window.onerror = (message, source, lineno, colno, error) => {
+  Sentry.captureException(error || new Error(String(message)), {
+    tags: { level: 'window.onerror' },
+    extra: { source, lineno, colno },
+  });
+};
+
+window.onunhandledrejection = (event) => {
+  Sentry.captureException(event.reason, {
+    tags: { level: 'unhandledrejection' },
+  });
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

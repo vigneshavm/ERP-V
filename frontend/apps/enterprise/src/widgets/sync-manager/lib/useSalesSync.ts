@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
@@ -45,7 +46,7 @@ export const useSalesSync = (tenantId: string | undefined) => {
             }
 
             if (navigator.onLine) {
-                SyncManager.syncOfflineSales().catch((err: any) => console.error('Background sync failed:', err));
+                SyncManager.syncOfflineSales().catch((err: any) => logger.error('Background sync failed:', err));
             }
         };
 

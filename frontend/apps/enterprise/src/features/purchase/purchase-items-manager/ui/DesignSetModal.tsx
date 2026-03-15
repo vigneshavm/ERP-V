@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, LayoutGrid, Check } from 'lucide-react';
 import { DesignSet } from '../model/usePurchaseItemsManager';
@@ -30,7 +31,7 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                     const list = data.data || data;
                     setCategories(Array.isArray(list) ? list : []);
                 } catch (err) {
-                    console.error("Failed to fetch categories", err);
+                    logger.error("Failed to fetch categories", err);
                 }
             };
             fetchCategories();

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -79,7 +80,7 @@ export const useDataExport = () => {
 
             toast.success('Data exported successfully');
         } catch (error) {
-            console.error('Export error:', error);
+            logger.error('Export error:', error);
             toast.error('Failed to export data. Please try again later.');
         } finally {
             setExporting(false);

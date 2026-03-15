@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { Middleware } from '@reduxjs/toolkit';
 import { saveState } from '../storage';
 
@@ -25,7 +26,7 @@ export const persistenceMiddleware: Middleware = (store) => (next) => (action) =
 
         saveTimeout = setTimeout(() => {
             const tenantId = state.auth.user?.tenantId;
-            console.log(`[Persistence] Debounced save for slice: ${sliceName} (Tenant: ${tenantId || 'None'})`);
+            logger.info(`[Persistence] Debounced save for slice: ${sliceName} (Tenant: ${tenantId || 'None'})`);
             saveState(PERSIST_KEYS[sliceName], state[sliceName], tenantId);
         }, 1000); // 1s debounce
     }

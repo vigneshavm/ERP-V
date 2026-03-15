@@ -1,0 +1,1349 @@
+{
+    "profile": {
+        "totalWealth": 2000100.8699999987,
+        "currency": "₹"
+    },
+    "smsTransfers": {
+        "pendingCount": 4,
+        "lastDetected": "2025-06-15T10:30:00Z"
+    },
+    "accounts": [
+        {
+            "id": 1,
+            "name": "HDFC Bank",
+            "type": "Savings",
+            "balance": 142500,
+            "income": 120000,
+            "expense": 38200,
+            "color": "#3498DB",
+            "selected": true
+        },
+        {
+            "id": 2,
+            "name": "Cash Wallet",
+            "type": "Cash",
+            "balance": 8500,
+            "income": 30000,
+            "expense": 21500,
+            "color": "#2ECC71",
+            "selected": false
+        },
+        {
+            "id": 3,
+            "name": "ICICI Credit",
+            "type": "Credit",
+            "balance": -15200,
+            "income": 0,
+            "expense": 15200,
+            "color": "#E74C3C",
+            "selected": false
+        },
+        {
+            "id": 4,
+            "name": "ICICI Bank",
+            "type": "Savings",
+            "balance": -57434.129999999685,
+            "income": 2520909.36,
+            "expense": 2628343.49,
+            "color": "#b335a0",
+            "selected": false
+        },
+        {
+            "id": 5,
+            "name": "Imported Bank",
+            "type": "Savings",
+            "balance": 49500,
+            "income": 0,
+            "expense": 500,
+            "color": "#8e4c70",
+            "selected": false
+        }
+    ],
+    "creditCards": [
+        {
+            "id": "cc-1",
+            "bank": "HDFC Bank",
+            "cardName": "Regalia Credit Card",
+            "last4": "4821",
+            "network": "Visa",
+            "limit": 200000,
+            "spent": 54320,
+            "dueDate": "2026-03-15",
+            "minDue": 2716,
+            "color": "#E74C3C",
+            "gradient": [
+                "#E74C3C",
+                "#C0392B"
+            ]
+        },
+        {
+            "id": "cc-2",
+            "bank": "ICICI Bank",
+            "cardName": "Amazon Pay Card",
+            "last4": "7734",
+            "network": "Mastercard",
+            "limit": 100000,
+            "spent": 22800,
+            "dueDate": "2026-03-22",
+            "minDue": 1140,
+            "color": "#9B59B6",
+            "gradient": [
+                "#9B59B6",
+                "#8E44AD"
+            ]
+        }
+    ],
+    "debitCards": [
+        {
+            "id": "dc-1",
+            "bank": "HDFC Bank",
+            "cardName": "Millenia Debit Card",
+            "last4": "9023",
+            "network": "Visa",
+            "accountId": 1,
+            "balance": 142500,
+            "color": "#3498DB",
+            "gradient": [
+                "#3498DB",
+                "#2980B9"
+            ]
+        },
+        {
+            "id": "dc-2",
+            "bank": "SBI",
+            "cardName": "Yono Debit Card",
+            "last4": "5511",
+            "network": "Rupay",
+            "accountId": 2,
+            "balance": 8500,
+            "color": "#2ECC71",
+            "gradient": [
+                "#2ECC71",
+                "#27AE60"
+            ]
+        }
+    ],
+    "monthlySummaries": [
+        {
+            "month": "March 2026",
+            "expense": 2641293.49,
+            "income": 2965909.3599999994,
+            "budget": 500000,
+            "progress": 28,
+            "showPredictive": true,
+            "isCurrentMonth": true
+        },
+        {
+            "month": "February 2026",
+            "expense": 34200,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 76
+        },
+        {
+            "month": "January 2026",
+            "expense": 28900,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 65
+        },
+        {
+            "month": "December 2025",
+            "expense": 31500,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 71
+        },
+        {
+            "month": "November 2025",
+            "expense": 25600,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 58
+        },
+        {
+            "month": "October 2025",
+            "expense": 22100,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 50
+        },
+        {
+            "month": "September 2025",
+            "expense": 18900,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 43
+        },
+        {
+            "month": "August 2025",
+            "expense": 26700,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 60
+        },
+        {
+            "month": "July 2025",
+            "expense": 29800,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 67
+        },
+        {
+            "month": "June 2025",
+            "expense": 24500,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 55
+        },
+        {
+            "month": "May 2025",
+            "expense": 34200,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 77
+        },
+        {
+            "month": "April 2025",
+            "expense": 18900,
+            "income": 445000,
+            "budget": 500000,
+            "progress": 43
+        }
+    ],
+    "categories": [
+        {
+            "id": "e3a1f2b4-8c6d-4e9f-a0b1-2c3d4e5f6a7b",
+            "name": "Health",
+            "value": 5500,
+            "limit": 6000,
+            "color": "#E74C3C",
+            "icon": "Heart"
+        },
+        {
+            "id": "11111111-2222-3333-4444-555555555555",
+            "name": "Entertainment",
+            "value": 3150,
+            "limit": 4000,
+            "color": "#9B59B6",
+            "icon": "Film"
+        },
+        {
+            "id": "f4b2c3d5-9d7e-4f0a-b1c2-3d4e5f6a7b8c",
+            "name": "Cash Trips",
+            "value": 15279,
+            "limit": 15000,
+            "color": "#3498DB",
+            "icon": "Car",
+            "over": true
+        },
+        {
+            "id": "a5c3d4e6-0e8f-4a1b-c2d3-4e5f6a7b8c9d",
+            "name": "Bills",
+            "value": 3699,
+            "limit": 5000,
+            "color": "#F1C40F",
+            "icon": "Receipt"
+        },
+        {
+            "id": "22222222-3333-4444-5555-666666666666",
+            "name": "Utilities",
+            "value": 9891,
+            "limit": 15000,
+            "color": "#3498DB",
+            "icon": "Zap"
+        },
+        {
+            "id": "b6d4e5f7-1f9a-4b2c-d3e4-5f6a7b8c9d0e",
+            "name": "Food & Drinks",
+            "value": 6350,
+            "limit": 12000,
+            "color": "#2ECC71",
+            "icon": "Utensils"
+        },
+        {
+            "id": "income-category-id",
+            "name": "Income",
+            "value": 445000,
+            "limit": 0,
+            "color": "#2ECC71",
+            "icon": "CreditCard"
+        }
+    ],
+    "goals": [
+        {
+            "id": 1,
+            "name": "Buy A Boat",
+            "target": 50000,
+            "current": 5000,
+            "icon": "Target",
+            "color": "#3498DB",
+            "deadline": "Dec 2026",
+            "dailyNudge": 120
+        },
+        {
+            "id": 2,
+            "name": "Home Renovation",
+            "target": 500000,
+            "current": 150000,
+            "icon": "Home",
+            "color": "#2ECC71",
+            "deadline": "Jun 2027",
+            "dailyNudge": 450
+        },
+        {
+            "id": 3,
+            "name": "New Car",
+            "target": 1200000,
+            "current": 300000,
+            "icon": "Car",
+            "color": "#F1C40F",
+            "deadline": "Mar 2028",
+            "dailyNudge": 890
+        },
+        {
+            "id": 4,
+            "name": "Europe Trip",
+            "target": 250000,
+            "current": 80000,
+            "icon": "Plane",
+            "color": "#9B59B6",
+            "deadline": "Aug 2025",
+            "dailyNudge": 320
+        }
+    ],
+    "stats": {
+        "barData": [
+            {
+                "name": "Jan",
+                "expense": 4000,
+                "limit": 4500
+            },
+            {
+                "name": "Feb",
+                "expense": 3000,
+                "limit": 4500
+            },
+            {
+                "name": "Mar",
+                "expense": 4800,
+                "limit": 4500
+            },
+            {
+                "name": "Apr",
+                "expense": 2780,
+                "limit": 4500
+            },
+            {
+                "name": "May",
+                "expense": 1890,
+                "limit": 4500
+            },
+            {
+                "name": "Jun",
+                "expense": 2390,
+                "limit": 4500
+            }
+        ],
+        "remainingBudget": 12450
+    },
+    "notifications": [
+        {
+            "id": 1,
+            "type": "Reminder",
+            "title": "Airtel Bill Due",
+            "time": "In 2 days",
+            "amount": 1299,
+            "message": "Your Airtel broadband bill of ₹ 1,299 is due on 18th June.",
+            "icon": "Zap",
+            "color": "#F1C40F",
+            "read": false
+        },
+        {
+            "id": 2,
+            "type": "Security",
+            "title": "Cloud Backup Sync",
+            "time": "Today, 10:24 AM",
+            "message": "Last backup was successful. Your data is safe in the cloud.",
+            "icon": "Smartphone",
+            "color": "#3498DB",
+            "read": true
+        },
+        {
+            "id": 3,
+            "type": "Spent",
+            "title": "Starbucks Coffee",
+            "time": "Today, 09:12 AM",
+            "amount": 450,
+            "message": "Transaction of ₹ 450 at Starbucks Coffee was successful.",
+            "icon": "Smartphone",
+            "color": "#FF453A",
+            "read": false
+        }
+    ],
+    "loans": [
+        {
+            "id": 1,
+            "name": "Car Loan",
+            "bank": "Bank Of America",
+            "current": 675000,
+            "total": 1500000,
+            "interestRate": 8.5,
+            "tenureMonths": 60,
+            "type": "Borrowed",
+            "deadline": "01 Jan 2030",
+            "icon": "Landmark",
+            "color": "#FF453A"
+        },
+        {
+            "id": 2,
+            "name": "John Doe",
+            "bank": "Personal",
+            "current": 5500,
+            "total": 10000,
+            "interestRate": 0,
+            "tenureMonths": 6,
+            "type": "Lent",
+            "deadline": "15 Aug 2025",
+            "icon": "UserCircle",
+            "color": "#2ECC71"
+        },
+        {
+            "id": 3,
+            "name": "Home Loan",
+            "bank": "SBI Bank",
+            "current": 2500000,
+            "total": 5000000,
+            "interestRate": 7.2,
+            "tenureMonths": 240,
+            "type": "Borrowed",
+            "deadline": "12 May 2035",
+            "icon": "Landmark",
+            "color": "#3498DB"
+        }
+    ],
+    "budget": {
+        "total": 60000,
+        "items": [
+            {
+                "name": "Health",
+                "spent": 12450,
+                "total": 10000,
+                "icon": "Heart",
+                "color": "#FF453A",
+                "overspent": true
+            },
+            {
+                "name": "Food & Drink",
+                "spent": 8500,
+                "total": 15000,
+                "icon": "Utensils",
+                "color": "#2ECC71",
+                "overspent": false
+            },
+            {
+                "name": "Electricity",
+                "spent": 4500,
+                "total": 5000,
+                "icon": "Zap",
+                "color": "#F1C40F",
+                "overspent": false
+            },
+            {
+                "name": "Transportation",
+                "spent": 12000,
+                "total": 10000,
+                "icon": "Car",
+                "color": "#FF453A",
+                "overspent": true
+            },
+            {
+                "name": "Shopping",
+                "spent": 15600,
+                "total": 20000,
+                "icon": "ShoppingBag",
+                "color": "#9B59B6",
+                "overspent": false
+            }
+        ]
+    },
+    "transactions": {
+        "e3a1f2b4-8c6d-4e9f-a0b1-2c3d4e5f6a7b": [
+            {
+                "id": "bs-1772705637381",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705637379",
+                "name": "ACH-DR-TP ACH ICICI BANK",
+                "amount": 132544,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705637376",
+                "name": "UPI TRANSFER TO VIGNESH A",
+                "amount": 85000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284631",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284629",
+                "name": "ACH-DR-TP ACH ICICI BANK",
+                "amount": 132544,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284626",
+                "name": "UPI TRANSFER TO VIGNESH A",
+                "amount": 85000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179750",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179748",
+                "name": "ACH-DR-TP ACH ICICI BANK",
+                "amount": 132544,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179745",
+                "name": "UPI TRANSFER TO VIGNESH A",
+                "amount": 85000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399716",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399714",
+                "name": "ACH-DR-TP ACH ICICI BANK",
+                "amount": 132544,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399711",
+                "name": "UPI TRANSFER TO VIGNESH A",
+                "amount": 85000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772703817102",
+                "name": "UPI Transaction",
+                "amount": 500,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 5
+            },
+            {
+                "id": "bs-1772697467360",
+                "name": "Closing Balance 2,66,419.35",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697467358",
+                "name": "03-02-2026 UPI TRANSFER FROM VIGNESH A (603436515327) 25,000.00 1,64,514.68",
+                "amount": 132544,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697467355",
+                "name": "Opening Balance 1,99,514.68",
+                "amount": 85000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174759",
+                "name": "CITIN26628623511",
+                "amount": 15040,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174757",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327) 25,000.00 1,64,514.68 05-02-2026 ACH-DR-TP ACH ICICI BANK",
+                "amount": 132544,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174755",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14,514.68 03-02-2026 UPI TRANSFER FROM VIGNESH",
+                "amount": 25000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174752",
+                "name": "Withdrawal Deposits Balance",
+                "amount": 85000,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795233",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD(CITI BANK) (CITIN26628623511) 2,49,488.67 2,81,459.35 27-02-2026 UPI TRANSFER TO PRABAHAR SELVARAJ (642456381050",
+                "amount": 15040,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795231",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327) 25,000.00 1,64,514.68 05-02-2026 ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125",
+                "amount": 132544,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795228",
+                "name": "Scheme Name: SB-PRIORITY CUM SALARY Joint Holder: - Lien amount: 0.00 Nominee: Nomination Registered Average balance maintained: 64,080.44 Date Transaction Details Chq No. Withdrawal Deposits Balance Opening Balance 1,99,514.68 01-02-2026 UPI TRANSFER TO VIGNESH A (639810870670",
+                "amount": 85000,
+                "date": "28-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315670",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125",
+                "amount": 132544,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315667",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670",
+                "amount": 85000,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315666",
+                "name": "0 0   -- 1 of 4 --  Page 2 of 4 Savings Account(s) Summary Account No. Branch IFSC Code MICR Code CRN Balance Type 92301XXXXX42707 TRIPLICANE,CHENNAI [TN] UTIB0001618 600211057 INR  Cr. Total",
+                "amount": 266419.35,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695693334",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ (642456381050",
+                "amount": 15040,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695693333",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125",
+                "amount": 132544,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695693330",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670",
+                "amount": 85000,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695126927",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ (642456381050",
+                "amount": 15040,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695126926",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125",
+                "amount": 132544,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695126925",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695126924",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695126923",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670",
+                "amount": 85000,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791085",
+                "name": "Please note: Revised fees & charges applicable on Axis Bank Savings / Salary Account(s) effective . For details of the new fee structure, kindly",
+                "amount": 2024,
+                "date": "01-04-2024",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791084",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ (642456381050) 15,040.00 2,66",
+                "amount": 419.35,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791083",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD(CITI BANK",
+                "amount": 2026,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791082",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125 1,32,544.00 31",
+                "amount": 970.68,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791081",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327) 25,000.00 1,64",
+                "amount": 514.68,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791080",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040) 25,000.00 1,39",
+                "amount": 514.68,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791079",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14",
+                "amount": 514.68,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791078",
+                "name": "Statement for Account No. 92301XXXXX42707 for the period from  to 28-02",
+                "amount": 2026,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791077",
+                "name": "0 0",
+                "amount": 2026,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694791076",
+                "name": "Relationship Statement for the period from:  to 28-02",
+                "amount": 2026,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407601",
+                "name": "Please note: Revised fees & charges applicable on Axis Bank Savings / Salary Account(s) effective . For details of the new fee structure, kindly",
+                "amount": 2024,
+                "date": "01-04-2024",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407600",
+                "name": "UPI TRANSFER TO PRABAHAR SELVARAJ (642456381050) 15,040.00 2,66",
+                "amount": 419.35,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407599",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD(CITI BANK",
+                "amount": 2026,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407598",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125 1,32,544.00 31",
+                "amount": 970.68,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407597",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327) 25,000.00 1,64",
+                "amount": 514.68,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407596",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040) 25,000.00 1,39",
+                "amount": 514.68,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407595",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14",
+                "amount": 514.68,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407594",
+                "name": "Statement for Account No. 92301XXXXX42707 for the period from  to 28-02",
+                "amount": 2026,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407593",
+                "name": "0 0",
+                "amount": 2026,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772694407592",
+                "name": "Relationship Statement for the period from:  to 28-02",
+                "amount": 2026,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "t1",
+                "name": "Apollo Pharmacy",
+                "amount": 2500,
+                "date": "2026-03-04",
+                "time": "03:45 PM"
+            },
+            {
+                "id": "t2",
+                "name": "Dr. Sharma Clinic",
+                "amount": 3000,
+                "date": "2026-03-03",
+                "time": "10:30 AM"
+            }
+        ],
+        "11111111-2222-3333-4444-555555555555": [
+            {
+                "id": "t3",
+                "name": "Gym Membership",
+                "amount": 1500,
+                "date": "2026-03-02",
+                "time": "08:00 AM"
+            },
+            {
+                "id": "t4",
+                "name": "Spotify Premium",
+                "amount": 199,
+                "date": "2026-03-01",
+                "time": "11:20 AM"
+            },
+            {
+                "id": "t5",
+                "name": "Movie Ticket",
+                "amount": 350,
+                "date": "2026-03-01",
+                "time": "06:15 PM"
+            }
+        ],
+        "f4b2c3d5-9d7e-4f0a-b1c2-3d4e5f6a7b8c": [
+            {
+                "id": "t6",
+                "name": "Uber Ride",
+                "amount": 450,
+                "date": "2026-03-04",
+                "time": "02:30 PM"
+            },
+            {
+                "id": "t7",
+                "name": "Parking Fee",
+                "amount": 200,
+                "date": "2026-03-03",
+                "time": "05:00 PM"
+            },
+            {
+                "id": "t8",
+                "name": "Gas Station",
+                "amount": 3500,
+                "date": "2026-03-03",
+                "time": "07:45 AM"
+            },
+            {
+                "id": "t9",
+                "name": "Car Wash",
+                "amount": 800,
+                "date": "2026-03-02",
+                "time": "09:30 AM"
+            },
+            {
+                "id": "t10",
+                "name": "Toll Fee",
+                "amount": 150,
+                "date": "2026-03-02",
+                "time": "08:15 AM"
+            },
+            {
+                "id": "t11",
+                "name": "Auto Ride",
+                "amount": 250,
+                "date": "2026-03-01",
+                "time": "04:20 PM"
+            }
+        ],
+        "a5c3d4e6-0e8f-4a1b-c2d3-4e5f6a7b8c9d": [
+            {
+                "id": "t12",
+                "name": "Airtel Bill",
+                "amount": 1299,
+                "date": "2026-03-04",
+                "time": "11:00 AM"
+            },
+            {
+                "id": "t15",
+                "name": "Internet Bill",
+                "amount": 2400,
+                "date": "2026-03-02",
+                "time": "02:30 PM"
+            }
+        ],
+        "22222222-3333-4444-5555-666666666666": [
+            {
+                "id": "t13",
+                "name": "Electricity Bill",
+                "amount": 4500,
+                "date": "2026-03-03",
+                "time": "03:00 PM"
+            },
+            {
+                "id": "t14",
+                "name": "Water Bill",
+                "amount": 800,
+                "date": "2026-03-03",
+                "time": "09:00 AM"
+            },
+            {
+                "id": "t16",
+                "name": "Gas Bill",
+                "amount": 4591,
+                "date": "2026-03-01",
+                "time": "10:30 AM"
+            }
+        ],
+        "b6d4e5f7-1f9a-4b2c-d3e4-5f6a7b8c9d0e": [
+            {
+                "id": "t17",
+                "name": "Starbucks Coffee",
+                "amount": 450,
+                "date": "2026-03-04",
+                "time": "09:12 AM"
+            },
+            {
+                "id": "t18",
+                "name": "Domino's Pizza",
+                "amount": 1200,
+                "date": "2026-03-03",
+                "time": "01:00 PM"
+            },
+            {
+                "id": "t19",
+                "name": "Noodle House",
+                "amount": 350,
+                "date": "2026-03-03",
+                "time": "07:30 PM"
+            },
+            {
+                "id": "t20",
+                "name": "Cafe Coffee Day",
+                "amount": 280,
+                "date": "2026-03-02",
+                "time": "04:45 PM"
+            },
+            {
+                "id": "t21",
+                "name": "Swiggy Order",
+                "amount": 1200,
+                "date": "2026-03-02",
+                "time": "06:30 PM"
+            },
+            {
+                "id": "t22",
+                "name": "McDonald's",
+                "amount": 650,
+                "date": "2026-03-01",
+                "time": "12:00 PM"
+            },
+            {
+                "id": "t23",
+                "name": "Ice Cream Shop",
+                "amount": 250,
+                "date": "2026-03-01",
+                "time": "03:00 PM"
+            },
+            {
+                "id": "t24",
+                "name": "Restaurant Dinner",
+                "amount": 1970,
+                "date": "2026-03-01",
+                "time": "08:00 PM"
+            }
+        ],
+        "income-category-id": [
+            {
+                "id": "bs-1772705637380",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD",
+                "amount": 249488.67,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705637378",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705637377",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284630",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD",
+                "amount": 249488.67,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284628",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705284627",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179749",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD",
+                "amount": 249488.67,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179747",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772705179746",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399715",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD",
+                "amount": 249488.67,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399713",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772704399712",
+                "name": "UPI TRANSFER FROM VIGNESH A",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697467359",
+                "name": "CITIN26628623511",
+                "amount": 249488.67,
+                "date": "2026-02-27",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697467357",
+                "name": "2-2026 UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14,514.68",
+                "amount": 25000,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697467356",
+                "name": "01-02-2026 UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14,514.68",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174758",
+                "name": "CITIN26628623511",
+                "amount": 249488.67,
+                "date": "2026-02-05",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174756",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040) 25,000.00 1,39,514.68 03-02-2026 UPI TRANSFER FROM VIGNES",
+                "amount": 25000,
+                "date": "2026-02-03",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174754",
+                "name": "Scheme Name: SB-PRIORITY CUM SALARY Joint Holder: - Lien amount: 0.00 Nominee: Nomination Registered",
+                "amount": 25000,
+                "date": "2026-02-28",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772697174753",
+                "name": "to 28-02-2026 Scheme Name: SB-PRIORITY CUM SALARY Joint Holder: - Lien amount: 0.00 Nominee: Nominat",
+                "amount": 25000,
+                "date": "2026-02-01",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795232",
+                "name": "ACH-DR-TP ACH ICICI BANK-2091820404-UTIB702291125 1,32,544.00 31,970.68 27-02-2026 NEFT TRANSFER FROM HCL TECHNOLOGIES LTD(CITI BANK) (CITIN26628623511",
+                "amount": 249488.67,
+                "date": "05-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795230",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040) 25,000.00 1,39,514.68 03-02-2026 UPI TRANSFER FROM VIGNESH A (603436515327",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696795229",
+                "name": "UPI TRANSFER TO VIGNESH A (639810870670) 85,000.00 1,14,514.68 03-02-2026 UPI TRANSFER FROM VIGNESH A (603445019040",
+                "amount": 25000,
+                "date": "01-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315671",
+                "name": "NEFT TRANSFER FROM HCL TECHNOLOGIES LTD(CITI BANK) (CITIN26628623511",
+                "amount": 249488.67,
+                "date": "27-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315669",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772696315668",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695693332",
+                "name": "UPI TRANSFER FROM VIGNESH A (603436515327",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "bs-1772695693331",
+                "name": "UPI TRANSFER FROM VIGNESH A (603445019040",
+                "amount": 25000,
+                "date": "03-02-2026",
+                "time": "12:00 PM",
+                "accountId": 4
+            },
+            {
+                "id": "inc1",
+                "name": "Monthly Salary",
+                "amount": 120000,
+                "date": "2026-03-01",
+                "time": "10:00 AM"
+            },
+            {
+                "id": "inc2",
+                "name": "Freelance Project",
+                "amount": 25000,
+                "date": "2026-03-03",
+                "time": "02:00 PM"
+            },
+            {
+                "id": "inc3",
+                "name": "Stock Dividend",
+                "amount": 5000,
+                "date": "2026-03-04",
+                "time": "11:30 AM"
+            }
+        ]
+    },
+    "reports": [
+        {
+            "id": "r1",
+            "title": "Monthly Summary – February 2026",
+            "period": "Feb 2026",
+            "type": "Expense Summary"
+        },
+        {
+            "id": "r2",
+            "title": "Monthly Summary – January 2026",
+            "period": "Jan 2026",
+            "type": "Expense Summary"
+        },
+        {
+            "id": "r3",
+            "title": "Q4 2025 Overview",
+            "period": "Oct – Dec 2025",
+            "type": "Quarterly Report"
+        },
+        {
+            "id": "r4",
+            "title": "Annual Report 2025",
+            "period": "Jan – Dec 2025",
+            "type": "Annual Report"
+        }
+    ]
+}

@@ -1,11 +1,8 @@
 @import "tailwindcss";
-@import "@repo/design-tokens/tokens.css";
-
-@tailwind utilities;
-
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Shared animations are now in @repo/config-tailwind/theme.css */
+@theme {
+  @import "../../../../../packages/design-tokens/src/tokens.css";
+}
+@import "@repo/config-tailwind/theme.css";
 
 .animate-fade-in {
   animation: var(--animate-fade-in);
@@ -51,18 +48,12 @@
   }
 
   body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image:
-      /* Atmosphere Auras */
-      radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
-      /* Blueprint Grid */
-      linear-gradient(rgba(48, 54, 61, 0.15) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(48, 54, 61, 0.15) 1.5px, transparent 1.5px);
-    background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
+    background-image: var(--bg-pattern, none);
+    background-size: var(--bg-size, cover);
     background-attachment: fixed;
     position: relative;
     min-height: 100vh;
@@ -92,80 +83,83 @@
     height: 100%;
     /* Scanline Texture Overlay */
     background: linear-gradient(rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.05) 50%);
+        rgba(0, 0, 0, 0.1) 50%);
     background-size: 100% 4px;
-    /* High Precision Micron Grid */
-    background-image: radial-gradient(rgba(99, 102, 241, 0.1) 0.5px, transparent 0);
-    background-size: 20px 20px;
-    pointer-events: none;
     z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Moving Grid Animation */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: perspective(500px) rotateX(60deg);
+    animation: grid-move 20s linear infinite;
+    z-index: -3;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  [data-theme="light"] body::before {
+    opacity: 0.1;
+    background-image: 
+        linear-gradient(rgba(33, 140, 77, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(33, 140, 77, 0.1) 1px, transparent 1px);
+  }
+
+  [data-theme="light"] body::after {
+    display: none;
   }
 }
 
 @layer components {
   .bg-app {
-    background-color: rgb(var(--color-bg));
+    background-color: var(--bg-color);
   }
 
   .bg-card {
-    background-color: rgb(var(--color-card));
-  }
-
-  .bg-surface {
-    background-color: rgb(var(--color-table-header));
-  }
-
-  .bg-input {
-    background-color: rgb(var(--color-input));
-  }
-
-  .bg-sidebar {
-    background-color: rgb(var(--color-sidebar));
+    background-color: var(--card-bg);
   }
 
   .text-main {
-    color: rgb(var(--color-text));
+    color: var(--text-primary);
   }
 
   .text-secondary {
-    color: rgb(var(--color-text-secondary));
-  }
-
-  .text-muted {
-    color: rgb(var(--color-text-muted));
+    color: var(--text-secondary);
   }
 
   .border-default {
-    border-color: rgb(var(--color-border));
-  }
-
-  .border-light {
-    border-color: rgb(var(--color-border-light));
+    border-color: var(--card-border);
   }
 
   .bg-primary {
-    background-color: rgb(var(--color-primary));
-  }
-
-  .bg-primary-hover {
-    background-color: rgb(var(--color-primary-hover));
+    background-color: var(--primary-color);
   }
 
   .text-primary {
-    color: rgb(var(--color-primary));
+    color: var(--primary-color);
   }
 
   /* Premium Glassmorphism */
   .glass-panel {
-    background-color: rgba(var(--color-card), 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    background: rgba(16, 20, 24, 0.4);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
   }
 
-  .dark .glass-panel {
-    background-color: rgba(var(--color-card), 0.6);
-    border-color: rgba(255, 255, 255, 0.05);
+  .glass-panel:hover {
+    border-color: rgba(var(--color-primary), 0.2);
   }
 
   /* EXPANAGER Premium Styles */
@@ -323,11 +317,87 @@
     box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
     border-color: rgb(var(--color-primary));
   }
+
+  /* Shared View Containers from Personal MFE */
+  .view-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-bottom: 6.25rem;
+    width: 100%;
+  }
+
+  .responsive-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .view-container {
+      padding-bottom: 2rem;
+    }
+    .responsive-grid {
+      grid-template-columns: 2fr 1fr;
+      align-items: start;
+    }
+  }
+
+  /* Matrix Glow Text */
+  .matrix-text-glow {
+    text-shadow: 0 0 8px var(--primary-color);
+  }
+
+  @keyframes grid-move {
+    0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+  }
 }
 
-button {
-  cursor: pointer;
-}
+  /* Glassmorphism Card Style from Personal MFE */
+  .glass-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(var(--primary-color), 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Scrollbar Styling from Personal MFE */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+  }
+
+  [data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #ccc;
+  }
+
+  .clickable {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .clickable:active {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
 
 /* Print Styles - Force Light Mode for ALL Prints (Override Dark Mode Completely) */
 @media print {
@@ -358,7 +428,6 @@ button {
     color: black !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    color-adjust: exact !important;
   }
 
   /* Force page background to white */

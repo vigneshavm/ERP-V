@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 import { Customer } from "@repo/shared";
 import { APP_CONFIG } from "@/app/config";
@@ -78,7 +79,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
             return customer;
         }
     } catch (err) {
-        console.error('Customer lookup/creation failed:', err);
+        logger.error('Customer lookup/creation failed:', err);
     }
 
     // Fallback: Create local-only temp customer if Supabase fails or is disabled

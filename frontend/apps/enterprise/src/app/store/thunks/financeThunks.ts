@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 import { db } from '@/shared/lib/db';
 import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '@/entities/finance/model/financeSlice';
@@ -40,14 +41,14 @@ export const saveDailyFinanceRecord = (record: any) => async (dispatch: AppDispa
                 if (data && data.success) {
                     await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'INSERT' }).modify({ synced: true });
                     dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
-                    console.log('Daily finance record synced immediately');
+                    logger.info('Daily finance record synced immediately');
                 }
             } catch (error) {
-                console.error('Immediate sync failed:', error);
+                logger.error('Immediate sync failed:', error);
             }
         }
     } catch (err) {
-        console.error('Failed to queue daily finance record:', err);
+        logger.error('Failed to queue daily finance record:', err);
     }
 };
 
@@ -89,14 +90,14 @@ export const updateDailyFinanceRecord = (record: any) => async (dispatch: AppDis
                 if (data && data.success) {
                     await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'UPDATE' }).modify({ synced: true });
                     dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
-                    console.log('Daily finance update synced immediately');
+                    logger.info('Daily finance update synced immediately');
                 }
             } catch (error) {
-                console.error('Immediate update sync failed:', error);
+                logger.error('Immediate update sync failed:', error);
             }
         }
     } catch (err) {
-        console.error('Failed to queue daily finance update:', err);
+        logger.error('Failed to queue daily finance update:', err);
     }
 };
 
@@ -125,13 +126,13 @@ export const deleteDailyFinanceRecord = (id: string) => async (dispatch: AppDisp
                 const { data } = await api.delete(`/daily-finance/${id}`);
                 if (data && data.success) {
                     await db.dailyFinanceQueue.where({ recordId: id, operation: 'DELETE' }).modify({ synced: true });
-                    console.log('Daily finance deletion synced immediately');
+                    logger.info('Daily finance deletion synced immediately');
                 }
             } catch (error) {
-                console.error('Immediate delete sync failed:', error);
+                logger.error('Immediate delete sync failed:', error);
             }
         }
     } catch (err) {
-        console.error('Failed to queue daily finance deletion:', err);
+        logger.error('Failed to queue daily finance deletion:', err);
     }
 };

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/store/store';
@@ -133,7 +134,7 @@ export const usePOSLogic = (): POSLogic => {
     const toggleFullScreen = useCallback(() => {
         if (!document.fullscreenElement) {
             posContainerRef.current?.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                logger.error(`Error attempting to enable full-screen mode: ${err.message}`);
             });
             setIsFullScreen(true);
         } else {
@@ -237,8 +238,8 @@ export const usePOSLogic = (): POSLogic => {
         posContainerRef,
         onClearCart: clear,
         lastBill,
-        reprintLastBill: () => console.log('Reprint not implemented'), // Mocked
-        downloadLastBill: () => console.log('Download not implemented'), // Mocked
+        reprintLastBill: () => logger.info('Reprint not implemented'), // Mocked
+        downloadLastBill: () => logger.info('Download not implemented'), // Mocked
         allBranches
     };
 };

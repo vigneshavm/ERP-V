@@ -14,16 +14,56 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "allowJs": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "paths": {
-      "@/*": ["./src/*"],
-      "@repo/shared": ["../../packages/shared/src/index.ts"],
-      "@repo/ui": ["../../packages/ui/src/index.tsx"],
-      "@vignesh-erp/shared-kernel": ["../../packages/shared/src/index.ts"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@repo/shared": [
+        "../../packages/shared/src/index.ts"
+      ],
+      "@repo/ui": [
+        "../../packages/ui/src/index.tsx"
+      ],
+      "@repo/b2b-services": [
+        "../../common/b2b-services/src/index.ts"
+      ],
+      "@repo/design-system": [
+        "../../common/design-system/src/index.ts"
+      ],
+      "@repo/finance-lib": [
+        "../../common/finance-lib/src/index.ts"
+      ],
+      "@vignesh-erp/shared-kernel": [
+        "../../packages/shared/src/index.ts"
+      ],
+      "@yourcompany/ui-react": [
+        "../../packages/ui/src/index.tsx"
+      ]
     },
     "allowImportingTsExtensions": true,
     "strict": true,
+    "strictNullChecks": true,
     "noImplicitAny": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -384,7 +384,8 @@ export class AuthController {
                 refreshToken: refreshToken,
             });
         } catch (error) {
-            console.error('Login Error:', error);
+            const { email } = req.body;
+            console.error(`Login Error for ${email}:`, error);
             const isDev = process.env.NODE_ENV === 'development';
             const errorMessage = (error as Error).message || 'Server Error';
 

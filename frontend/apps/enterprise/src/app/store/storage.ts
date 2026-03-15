@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { APP_CONFIG } from "@/app/config";
 
 export const loadState = <T>(key: string, defaultState: T, tenantId?: string): T => {
@@ -23,6 +24,6 @@ export const saveState = <T>(key: string, state: T, tenantId?: string): void => 
         const partitionKey = tenantId ? `${tenantId}_${key}` : key;
         localStorage.setItem(partitionKey, JSON.stringify(state));
     } catch (e) {
-        console.warn("Could not save state", e);
+        logger.warn("Could not save state", e);
     }
 };

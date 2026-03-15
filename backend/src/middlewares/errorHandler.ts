@@ -8,7 +8,7 @@ const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunctio
     const message = err.message || "Internal Server Error";
 
     // Log full error server-side with stack trace
-    console.error(`[Error] ${status} - ${message}`);
+    console.error(`[Error] ${status} - ${message} - [${_req.method}] ${_req.originalUrl}`);
     if (err.stack) {
         console.error(err.stack);
     }

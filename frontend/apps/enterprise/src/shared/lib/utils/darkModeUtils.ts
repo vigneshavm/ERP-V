@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 /**
  * Dark Mode Utilities
  * 
@@ -118,7 +119,7 @@ export function validatePrimaryColorVisibility(primaryColor: string): {
  * Development function to log all dark mode contrast ratios.
  */
 export function validateDarkModeColors(): void {
-    if (!import.meta.env.DEV) return;
+    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'development') return;
 
     const bg = DarkModePalette.background;
     const checks = [
@@ -130,6 +131,7 @@ export function validateDarkModeColors(): void {
         { name: 'iconSecondary', color: DarkModePalette.iconSecondary, min: 3 },
     ];
 
+    // eslint-disable-next-line no-console -- TODO(TS-FIX): Phase 2/3 fix
     console.group('🌙 Dark Mode Contrast Validation');
     let allPass = true;
 
@@ -138,11 +140,12 @@ export function validateDarkModeColors(): void {
         const passes = ratio >= min;
         if (!passes) allPass = false;
 
-        console.log(
+        logger.info(
             `${passes ? '✅' : '❌'} ${name}: ${ratio.toFixed(2)}:1 (min: ${min}:1)`
         );
     });
 
-    console.log(allPass ? '\n✅ All checks passed!' : '\n⚠️ Some checks failed');
+    logger.info(allPass ? '\n✅ All checks passed!' : '\n⚠️ Some checks failed');
+    // eslint-disable-next-line no-console -- TODO(TS-FIX): Phase 2/3 fix
     console.groupEnd();
 }

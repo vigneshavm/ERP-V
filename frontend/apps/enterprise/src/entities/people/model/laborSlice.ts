@@ -5,6 +5,7 @@ import { RootState } from '@/app/store/store';
 
 // Simple storage mock (since we are removing dependency on root storage.ts)
 const loadState = (key: string, initialState: any) => {
+    if (typeof window === 'undefined') return initialState;
     const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : initialState;
 };

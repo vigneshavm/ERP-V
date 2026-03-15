@@ -75,3 +75,45 @@ export interface Notification {
   color: string;
   read: boolean;
 }
+
+export interface CartItem {
+    id: string;
+    name: string;
+    qty: number;
+    price: number;
+    cutLength?: number;
+}
+
+export type SaleStatus = 'PENDING' | 'COMPLETED' | 'CANCELLED';
+
+export interface Sale {
+    id: string;
+    status: SaleStatus;
+    total: number;
+    customerId?: string;
+}
+
+export interface Customer {
+    id: string;
+    name: string;
+    phone: string;
+    points: number;
+}
+
+export interface Session {
+    id: string;
+    label: string;
+    cart: CartItem[];
+    customerId: string | null;
+    taxMode: 'EXCLUSIVE' | 'INCLUSIVE';
+    paymentMethod: 'CASH' | 'CARD' | 'UPI';
+    redeemedPoints: number;
+}
+
+export interface Invoice {
+    _id: string;
+    id: string;
+    status: SaleStatus;
+    items: CartItem[];
+    total: number;
+}

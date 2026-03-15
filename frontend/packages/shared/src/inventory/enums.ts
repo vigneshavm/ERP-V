@@ -18,4 +18,11 @@ export const TaxMode = {
     INCLUSIVE: 'INCLUSIVE'
 } as const;
 
-export type TaxMode = typeof TaxMode[keyof typeof TaxMode];
+
+export const PaymentMethod = {
+    CASH: 'CASH',
+    CARD: 'CARD',
+    UPI: 'UPI'
+} as const;
+
+export type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod];

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { db } from '@/shared/lib/db';
 import api from '@/shared/api/api';
 import { store } from "@/app/store/store";
@@ -29,7 +30,7 @@ export class SyncManager {
 
                     // Assuming API returns success
                     await db.offlineSales.update(sale.localId!, { synced: true });
-                    console.log(`Synced sale: ${sale.id}`);
+                    logger.info(`Synced sale: ${sale.id}`);
 
                     // Log to Sync Intelligence Ledger
                     await SyncIntelligenceService.logEvent({
@@ -43,7 +44,7 @@ export class SyncManager {
                     });
 
                 } catch (err) {
-                    console.error(`Failed to sync sale ${sale.id}:`, err);
+                    logger.error(`Failed to sync sale ${sale.id}:`, err);
                     // Update retry count if needed
                 }
             }
@@ -57,7 +58,7 @@ export class SyncManager {
             await db.products.bulkPut(products);
             await db.syncMetadata.put({ key: 'products_last_sync', lastSynced: new Date().toISOString() });
         } catch (err) {
-            console.error('Failed to cache products:', err);
+            logger.error('Failed to cache products:', err);
         }
     }
 
@@ -66,7 +67,7 @@ export class SyncManager {
             await db.customers.bulkPut(customers);
             await db.syncMetadata.put({ key: 'customers_last_sync', lastSynced: new Date().toISOString() });
         } catch (err) {
-            console.error('Failed to cache customers:', err);
+            logger.error('Failed to cache customers:', err);
         }
     }
 
@@ -111,7 +112,7 @@ export class SyncManager {
                     });
 
                     await db.dailyFinanceQueue.update(item.localId!, { synced: true });
-                    console.log(`Synced ${operation} for ${recordId}`);
+                    logger.info(`Synced ${operation} for ${recordId}`);
 
                     // Update Redux state
                     if (operation !== 'DELETE') {
@@ -130,7 +131,7 @@ export class SyncManager {
                     });
 
                 } catch (err: any) {
-                    console.error(`Unexpected sync error for item ${item.recordId}:`, err);
+                    logger.error(`Unexpected sync error for item ${item.recordId}:`, err);
                     await db.dailyFinanceQueue.update(item.localId!, {
                         error: err.message,
                         retryCount: (item.retryCount || 0) + 1

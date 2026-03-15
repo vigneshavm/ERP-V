@@ -1,23 +1,23 @@
 export const tokens = {
   color: {
+    // Legacy support
     brand: {
       50: '#EFF6FF',
       500: '#3B82F6',
       900: '#1E3A8A',
     },
-    surface: {
-      default: '#FFFFFF',
-      raised: '#F9FAFB',
-      deep: 'rgb(5, 7, 10)',
-    },
+    // New Semantic Tokens
+    primary: 'var(--primary-color)',
+    background: 'var(--bg-color)',
+    card: 'var(--card-bg)',
     text: {
-      primary: 'rgb(230, 237, 243)',
-      secondary: 'rgb(139, 148, 158)',
-      muted: 'rgb(110, 118, 129)',
+      primary: 'var(--text-primary)',
+      secondary: 'var(--text-secondary)',
+      muted: 'var(--color-text-muted)',
     },
-    success: 'rgb(16, 185, 129)',
-    warning: 'rgb(245, 158, 11)',
-    error: 'rgb(244, 63, 194)',
+    success: 'var(--success-color)',
+    warning: 'var(--warning-color)',
+    error: 'var(--danger-color)',
   },
   spacing: {
     '4xs': '2px',
@@ -32,10 +32,11 @@ export const tokens = {
     sans: 'Inter',
     mono: 'JetBrains Mono',
     display: 'Outfit',
-    body: 'Plus Jakarta Sans',
+    heading: 'var(--font-heading)',
+    body: 'var(--font-body)',
   },
   radius: {
-    card: '12px',
+    card: 'var(--radius-card)',
     button: '6px',
   },
   animations: {

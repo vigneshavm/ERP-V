@@ -31,9 +31,6 @@ export const LoginForm: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const emailValue = watch('email');
-  const passwordValue = watch('password');
-
   const onSubmit = (data: LoginFormValues) => {
     // Sanitize email: remove leading/trailing quotes and whitespace
     const sanitizedEmail = data.email.replace(/^["']|["']$/g, '').trim();
@@ -108,6 +105,7 @@ export const LoginForm: React.FC = () => {
                       type="text"
                       id="email_input"
                       placeholder=" "
+                      suppressHydrationWarning
                       className={cn(
                         "peer w-full h-[52px] px-4 pt-[18px] pb-[4px] bg-[#f5f6f7] border border-[#dddfe2] rounded-[6px] text-[17px] focus:outline-none focus:border-[#0866ff] focus:bg-white focus:ring-[2px] focus:ring-[#e7f3ff] transition-all",
                         errors.email && "border-[#ff3b36] focus:border-[#ff3b36] focus:ring-[#ff3b36]/10"
@@ -119,7 +117,7 @@ export const LoginForm: React.FC = () => {
                         "absolute left-4 top-[14px] text-[#8e959f] transition-all duration-200 pointer-events-none select-none origin-left text-[17px]",
                         "peer-focus:-translate-y-2.5 peer-focus:scale-[0.75] peer-focus:text-[#0866ff]",
                         "peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-[0.75]",
-                        emailValue && "-translate-y-2.5 scale-[0.75]"
+                        watch('email') && "-translate-y-2.5 scale-[0.75]"
                       )}
                     >
                       Email address or mobile number
@@ -136,6 +134,7 @@ export const LoginForm: React.FC = () => {
                       type="password"
                       id="pass_input"
                       placeholder=" "
+                      suppressHydrationWarning
                       className={cn(
                         "peer w-full h-[54px] px-4 pt-[18px] pb-[4px] bg-[#f5f6f7] border border-[#dddfe2] rounded-[6px] text-[17px] focus:outline-none focus:border-[#0866ff] focus:bg-white focus:ring-[2px] focus:ring-[#e7f3ff] transition-all",
                         errors.password && "border-[#ff3b36] focus:border-[#ff3b36] focus:ring-[#ff3b36]/10"
@@ -147,7 +146,7 @@ export const LoginForm: React.FC = () => {
                         "absolute left-4 top-[14px] text-[#8e959f] transition-all duration-200 pointer-events-none select-none origin-left text-[17px]",
                         "peer-focus:-translate-y-2.5 peer-focus:scale-[0.75] peer-focus:text-[#0866ff]",
                         "peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-[0.75]",
-                        passwordValue && "-translate-y-2.5 scale-[0.75]"
+                        watch('password') && "-translate-y-2.5 scale-[0.75]"
                       )}
                     >
                       Password

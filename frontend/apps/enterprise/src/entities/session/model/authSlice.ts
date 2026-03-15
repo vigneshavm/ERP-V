@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from "@/shared/api/api";
+import { httpClient, endpoints } from '@repo/b2b-services';
+import api from '@/shared/api/api';
 import { Sector } from "@repo/shared";
 import { clearSession } from "@/shared/lib/utils/session";
 import { RootState } from "@/app/store/store";
 
-
-const API_URL = "/auth";
 
 export interface User {
     _id: string;
@@ -31,9 +30,16 @@ export interface AuthState {
     userPreferences?: any;
 }
 
-// Get user from localStorage
-const storedUser = localStorage.getItem('user');
-const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+// Helper to get stored user
+const getStoredUser = (): User | null => {
+    if (typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+};
+
+const user = getStoredUser();
 
 // Helper to get stored theme
 const getStoredTheme = () => {
@@ -62,16 +68,14 @@ export const register = createAsyncThunk<User, any, { rejectValue: string }>(
     'auth/register',
     async (userData, thunkAPI) => {
         try {
-            const response = await api.post(`${API_URL}/register`, userData);
-            if (response.data) {
-                localStorage.setItem('user', JSON.stringify(response.data));
+            const response = await httpClient.post(endpoints.auth.register, userData);
+            if (response) {
+                localStorage.setItem('user', JSON.stringify(response));
             }
-            return response.data;
+            return response;
         } catch (error: any) {
             const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
+                (error as any)?.message || error?.toString?.() || 'Registration failed';
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -82,17 +86,13 @@ export const login = createAsyncThunk<User, any, { rejectValue: any }>(
     'auth/login',
     async (userData, thunkAPI) => {
         try {
-            const response = await api.post(`${API_URL}/login`, userData);
-            if (response.data) {
-                localStorage.setItem('user', JSON.stringify(response.data));
+            const response = await httpClient.post(endpoints.auth.login, userData);
+            if (response) {
+                localStorage.setItem('user', JSON.stringify(response));
             }
-            return response.data;
+            return response as User;
         } catch (error: any) {
-            // Return full error data if available to handle flags like deviceConflict
-            if (error.response && error.response.data) {
-                return thunkAPI.rejectWithValue(error.response.data);
-            }
-            const message = error.message || error.toString();
+            const message = (error as any)?.message || 'Login failed';
             return thunkAPI.rejectWithValue({ message });
         }
     }
@@ -103,8 +103,8 @@ export const requestPasswordReset = createAsyncThunk<{ message: string }, string
     'auth/forgotPassword',
     async (email, thunkAPI) => {
         try {
-            const response = await api.post(`${API_URL}/forgot-password`, { email });
-            return response.data;
+            const response = await httpClient.post(endpoints.auth.forgotPassword, { email });
+            return response as { message: string };
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -120,8 +120,8 @@ export const performPasswordReset = createAsyncThunk<{ message: string }, any, {
     'auth/resetPassword',
     async (payload, thunkAPI) => {
         try {
-            const response = await api.post(`${API_URL}/reset-password`, payload);
-            return response.data;
+            const response = await httpClient.post(endpoints.auth.resetPassword, payload);
+            return response;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -143,8 +143,8 @@ export const forceLogout = createAsyncThunk<any, any, { rejectValue: string }>(
     'auth/forceLogout',
     async (credentials, thunkAPI) => {
         try {
-            const response = await api.post(`${API_URL}/force-logout`, credentials);
-            return response.data;
+            const response = await httpClient.post(endpoints.auth.forceLogout, credentials);
+            return response;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -162,12 +162,12 @@ export const getProfile = createAsyncThunk<any, void, { state: RootState, reject
         try {
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
-            const response = await api.get(`${API_URL}/profile`, {
+            const response = await httpClient.get(endpoints.auth.profile, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data;
+            return response;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -186,8 +186,8 @@ export const updateProfile = createAsyncThunk<any, any, { state: RootState, reje
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             const userId = state.auth.user?._id;
-            const response = await api.put(
-                `/users/${userId}`,
+            const response = await httpClient.put(
+                endpoints.users.byId(userId as string),
                 userData,
                 {
                     headers: {
@@ -195,13 +195,13 @@ export const updateProfile = createAsyncThunk<any, any, { state: RootState, reje
                     },
                 }
             );
-            if (response.data && response.data.user) {
+            if ((response as any)?.user) {
                 const currentUser = state.auth.user;
-                const updatedUser = { ...currentUser, ...response.data.user };
+                const updatedUser = { ...currentUser, ...(response as any).user };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                return response.data.user;
+                return (response as any).user;
             }
-            return response.data;
+            return response;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

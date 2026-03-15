@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 /**
  * Vector Database Service (2035 Strategy)
  * 
@@ -19,7 +20,7 @@ export interface VectorSearchResult {
  * and perform a cosine similarity search against an indexed vector store.
  */
 export const searchProductsSemantic = async (query: string, products: Product[]): Promise<VectorSearchResult[]> => {
-    console.log(`[VDB] Performing semantic vector search for: "${query}"`);
+    logger.info(`[VDB] Performing semantic vector search for: "${query}"`);
 
     // Simulate latency of vector lookup
     await new Promise(resolve => setTimeout(resolve, 150));

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 /**
  * 8-Point Grid Spacing Utilities
  * 
@@ -98,8 +99,8 @@ export function validateSpacing(value: number | string): {
  * Flags a spacing issue in development mode.
  */
 export function flagSpacingIssue(issue: SpacingIssue): void {
-    if (import.meta.env.DEV) {
-        console.warn(
+    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
+        logger.warn(
             `⚠️ [8pt Grid Issue]`,
             `\n  Element: ${issue.element}`,
             `\n  Property: ${issue.property}`,

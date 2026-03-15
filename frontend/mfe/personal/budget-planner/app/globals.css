@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "@repo/config-tailwind/theme.css";
+@import "@repo/design-tokens/tokens.css";
+@import "./styles.css";
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  appearance: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

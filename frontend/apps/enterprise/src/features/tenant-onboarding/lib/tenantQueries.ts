@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import api from '@/shared/api/api';
 
 /**
@@ -26,7 +27,7 @@ export const fetchTenantsRaw = async () => {
         }
         return [];
     } catch (error) {
-        console.error("Failed to fetch tenants from API", error);
+        logger.error("Failed to fetch tenants from API", error);
         return [];
     }
 };
@@ -39,7 +40,7 @@ export const fetchBranchesRaw = async (tenantId: string | null) => {
         }
         return [];
     } catch (error) {
-        console.error("Failed to fetch branches", error);
+        logger.error("Failed to fetch branches", error);
         return [];
     }
 };
@@ -52,7 +53,7 @@ export const fetchEmployeesRaw = async (tenantId: string | null) => {
         }
         return [];
     } catch (error) {
-        console.error("Failed to fetch employees", error);
+        logger.error("Failed to fetch employees", error);
         return [];
     }
 };

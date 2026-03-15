@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -18,6 +19,7 @@ import { RootState } from '@/app/store/store';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
 import { ThemeToggle } from '@repo/ui';
+import { useNavigation } from '@/app/providers/NavigationContext';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
 import { MENU_ITEMS, MenuItem } from '@/app/config/menu.config';
 
@@ -31,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     const dispatch = useDispatch();
     const { user, role, theme } = useSelector((state: RootState) => state.auth);
     const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
+    const { currentView } = useNavigation();
     const {
         sidebarOpen,
         desktopCollapsed,
@@ -49,9 +52,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     // Helper to check if any child is active to open the group by default
     const isGroupActive = (item: MenuItem): boolean => {
+        if (item.id === currentView || item.id === activeTab) return true;
         if (!item.children) return false;
         return item.children.some((child: MenuItem) =>
-            child.id === activeTab || (child.children && isGroupActive(child))
+            child.id === currentView || child.id === activeTab || (child.children && isGroupActive(child))
         );
     };
 
@@ -100,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             const hasModuleAccess = checkModuleAccess(item.module);
 
             if (item.id === 'PURCHASE' || item.id === 'DASHBOARD' || item.id === 'FINANCE') {
-                console.log(`Sidebar Debug [${item.id}]:`, {
+                logger.info(`Sidebar Debug [${item.id}]:`, {
                     hasRoleAccess,
                     hasModuleAccess,
                     userRole: user?.role,
@@ -123,11 +127,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             if (visibleChildren.length === 0) return null;
 
             return (
-                <div key={item.id}>
+                <div key={item.id} className="w-full">
                     <NavGroup
                         icon={item.icon}
                         label={item.label}
                         defaultOpen={isGroupActive(item) || item.isGrow}
+                        isActive={isGroupActive(item)}
                     >
                         {visibleChildren.map((child: MenuItem) => renderRecursive(child, true))}
                     </NavGroup>
@@ -220,15 +225,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     return (
         <aside className={`
-            fixed lg:static inset-y-0 left-0 z-40 bg-sidebar border-r border-default p-2 flex flex-col transition-all duration-300 transform 
+            fixed lg:static inset-y-0 left-0 z-40 bg-sidebar/80 backdrop-blur-xl border-r border-default p-2 flex flex-col transition-all duration-300 transform 
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
+            expanager-glass
         `}>
             {/* Header */}
             <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
                 <div className="flex items-center space-x-2 overflow-hidden">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-success">
                         {useConfig().logoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={useConfig().logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                         ) : (
                             <span className="font-bold text-white">{user?.name?.charAt(0) || currentTenant?.name?.charAt(0) || 'T'}</span>
@@ -236,8 +243,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     </div>
                     {!desktopCollapsed && (
                         <div className="overflow-hidden">
-                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">{user?.name || 'User'}</span>
-                            <span className="text-[10px] text-secondary uppercase font-bold tracking-widest leading-relaxed">{role}</span>
+                            <span className="text-sm font-display font-black tracking-tight block leading-none truncate text-main uppercase">{user?.name || 'User'}</span>
+                            <span className="text-[9px] text-primary uppercase font-black tracking-[0.2em] leading-relaxed opacity-80 mt-1 block">{role} // Authorized</span>
                         </div>
                     )}
                 </div>

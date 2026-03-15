@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
@@ -65,7 +66,7 @@ export const useProductSync = (tenantId: string | undefined) => {
                     dispatch(setCategories(uniqueCategories as string[]));
                 }
             } catch (err) {
-                console.error("Failed to sync products:", err);
+                logger.error("Failed to sync products:", err);
             } finally {
                 dispatch(setHydrating(false));
                 const setSyncStatus = useUiStore.getState().setSyncing;

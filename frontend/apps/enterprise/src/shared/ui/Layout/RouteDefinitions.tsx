@@ -3,10 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LazyModules } from '../../../app/registry/ModuleRegistry';
 
 // Specific lazy loads that were in TenantView
-const PayableSnapshot = lazy(() => import('../../../pages/Purchase/ui/PayableSnapshot'));
-const UnclearedCheques = lazy(() => import('../../../pages/Purchase/ui/UnclearedCheques'));
-const RateRevisionList = lazy(() => import('../../../pages/Purchase/ui/RateRevisionList'));
-const RateRevisionForm = lazy(() => import('../../../pages/Purchase/ui/RateRevisionForm'));
+const PayableSnapshot = lazy(() => import('../../../views/Purchase/ui/PayableSnapshot'));
+const UnclearedCheques = lazy(() => import('../../../views/Purchase/ui/UnclearedCheques'));
+const RateRevisionList = lazy(() => import('../../../views/Purchase/ui/RateRevisionList'));
+const RateRevisionForm = lazy(() => import("../../../views/Purchase/ui/RateRevisionForm"));
 
 interface RouteDefinitionsProps {
     renderContent: () => React.ReactNode;
@@ -150,7 +150,6 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/finance/goals" element={
                 <Suspense fallback={<div>Loading Goals...</div>}><LazyModules.FinancialGoals /></Suspense>
             } />
-            <Route path="*" element={renderContent()} />
             <Route path="/people/employees" element={
                 <Suspense fallback={<div>Loading Directory...</div>}><LazyModules.EmployeeDirectory /></Suspense>
             } />
@@ -189,7 +188,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             } />
             <Route path="/finance/gst" element={<Suspense fallback={<div>Loading GST...</div>}><LazyModules.GSTReconciliation /></Suspense>} />
             <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
-            <Route path="/settings/audit" element={<Suspense fallback={<div>Loading Audit Logs...</div>}><LazyModules.AuditLogs /></Suspense>} />
+            <Route path="*" element={renderContent()} />
         </Routes>
     );
 };

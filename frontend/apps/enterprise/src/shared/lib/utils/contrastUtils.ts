@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 /**
  * WCAG 2.1 AA Contrast Utilities
  * 
@@ -121,7 +122,7 @@ export function getContrastRatio(color1: string | RGB, color2: string | RGB): nu
     const rgb2 = typeof color2 === 'string' ? parseColor(color2) : color2;
 
     if (!rgb1 || !rgb2) {
-        console.warn('[ContrastUtils] Invalid color provided');
+        logger.warn('[ContrastUtils] Invalid color provided');
         return 1;
     }
 
@@ -163,9 +164,9 @@ export function checkContrast(foreground: string | RGB, background: string | RGB
  * Logs detailed warning to console.
  */
 export function flagContrastIssue(issue: ContrastIssue): void {
-    if (import.meta.env.DEV) {
+    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
         const emoji = issue.ratio < WCAGLevel.DISABLED ? '🔴' : '🟡';
-        console.warn(
+        logger.warn(
             `${emoji} [A11y Contrast Issue]`,
             `\n  Element: ${issue.element}`,
             `\n  Type: ${issue.elementType}`,

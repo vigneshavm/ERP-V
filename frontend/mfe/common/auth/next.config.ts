@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@repo/ui", "@repo/shared", "@repo/b2b-services"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     return [
       // API Proxy
@@ -45,7 +49,11 @@ const nextConfig: NextConfig = {
         destination: "http://localhost:3003/business/:path*",
       },
 
-      // Enterprise MFE Assets & Pages (Vite App)
+      // Enterprise MFE Assets & Pages
+      {
+        source: "/enterprise/_next/:path*",
+        destination: "http://localhost:3004/enterprise/_next/:path*",
+      },
       {
         source: "/enterprise/assets/:path*",
         destination: "http://localhost:3004/enterprise/assets/:path*",

@@ -1,7 +1,6 @@
 {
   "name": "bizzai-erp-monorepo",
   "private": true,
-  "packageManager": "npm@11.9.0",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -21,5 +20,6 @@
     "stylelint": "^17.4.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "turbo": "^2.0.0"
-  }
+  },
+  "packageManager": "npm@10.8.2"
 }

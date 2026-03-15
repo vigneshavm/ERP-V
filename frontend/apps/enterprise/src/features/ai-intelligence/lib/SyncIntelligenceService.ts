@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from "@/entities/session/model/sync";
 import { db } from '@/shared/lib/db';
 
@@ -17,7 +18,7 @@ export class SyncIntelligenceService {
      * Device Registry
      */
     static async registerDevice(device: Partial<DeviceRegistryEntry>): Promise<void> {
-        console.log(`[Sync Intelligence] Registering/Updating device: ${device.id}`);
+        logger.info(`[Sync Intelligence] Registering/Updating device: ${device.id}`);
         // In a real system, this would persist to Supabase 'device_registry'
         // For now, we simulate with local storage logic or just log
     }
@@ -94,7 +95,7 @@ export class SyncIntelligenceService {
             hash
         };
 
-        console.log(`[Sync Intelligence] Ledger Log: ${fullEntry.eventType} on ${fullEntry.deviceId}`);
+        logger.info(`[Sync Intelligence] Ledger Log: ${fullEntry.eventType} on ${fullEntry.deviceId}`);
         // In local DB: await db.syncLedger.add(fullEntry);
     }
 
@@ -155,6 +156,6 @@ export class SyncIntelligenceService {
      * Backup Management
      */
     static async triggerBackup(branchId: string, type: 'SNAPSHOT' | 'FULL'): Promise<void> {
-        console.log(`[Sync Intelligence] Triggering ${type} backup for branch ${branchId}`);
+        logger.info(`[Sync Intelligence] Triggering ${type} backup for branch ${branchId}`);
     }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import api from './api';
 
 /**
@@ -18,7 +19,7 @@ export const getTable = async <T = any>(
         });
         return response.data;
     } catch (error) {
-        console.error(`Error fetching table ${tableName}:`, error);
+        logger.error(`Error fetching table ${tableName}:`, error);
         return null;
     }
 };

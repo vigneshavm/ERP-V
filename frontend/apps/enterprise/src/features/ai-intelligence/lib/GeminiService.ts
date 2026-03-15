@@ -1,5 +1,7 @@
-import api from "./api";
-import { ScannedInvoice, Product, getProductRecommendations as sharedGetRecommendations, searchProductsByImage as sharedSearchByImage } from "@repo/shared";
+import { logger } from '@/shared/lib/logger';
+import api from "@/shared/api/api";
+import { Product, getProductRecommendations as sharedGetRecommendations, searchProductsByImage as sharedSearchByImage } from "@repo/shared";
+type ScannedInvoice = any; // Fallback if missing from @repo/shared
 
 const apiKey = process.env.API_KEY || "";
 
@@ -20,7 +22,7 @@ export const parseInvoiceWithGemini = async (file: File): Promise<ScannedInvoice
       throw new Error(response.data.message || "Failed to parse invoice data.");
     }
   } catch (error: any) {
-    console.error("Failed to parse Gemini response via backend", error);
+    logger.error("Failed to parse Gemini response via backend", error);
     throw new Error(error.response?.data?.message || "Failed to parse invoice data.");
   }
 };

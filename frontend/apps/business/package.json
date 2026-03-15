@@ -14,7 +14,6 @@
     "react-dom": "19.0.0",
     "@repo/ui": "*",
     "@repo/shared": "*",
-    "@yourcompany/ui-react": "*",
     "@yourcompany/finance-lib": "*",
     "@yourcompany/utils": "*"
   },

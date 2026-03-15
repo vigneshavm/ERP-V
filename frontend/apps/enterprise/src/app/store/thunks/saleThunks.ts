@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 import { Sale } from "@repo/shared";
 import { calculateLoyaltyPoints } from "../../utils/loyalty";
@@ -49,10 +50,10 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
                 }
             }).then(({ data }) => {
                 if (data && data.success) {
-                    console.log(`Synced sale atomically via thunk: ${sale.id}`);
+                    logger.info(`Synced sale atomically via thunk: ${sale.id}`);
                 }
             }).catch(err => {
-                console.error('Failed to sync sale atomically to Backend:', err);
+                logger.error('Failed to sync sale atomically to Backend:', err);
             });
         });
     }

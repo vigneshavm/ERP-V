@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { GlobalGrowthConfig, TenantGrowthConfig, GrowthProvider, GrowthChannelType } from "../../../entities/session/model/growth";
 import { WhatsAppService } from "../../../shared/api/whatsappService";
 // Mock other services for now
@@ -99,7 +100,7 @@ export class GrowthIntelligenceService {
 
     // Super Admin: Update Global Config
     static async updateGlobalConfig(config: Partial<GlobalGrowthConfig>): Promise<boolean> {
-        console.log('Super Admin updating global config:', config);
+        logger.info('Super Admin updating global config:', config);
         return true;
     }
 
@@ -116,7 +117,7 @@ export class GrowthIntelligenceService {
 
     // Super Admin: Update specific tenant entitlements
     static async updateTenantGrowthEntitlements(tenantId: string, entitlements: GrowthChannelType[]): Promise<boolean> {
-        console.log(`Super Admin updating entitlements for tenant ${tenantId}:`, entitlements);
+        logger.info(`Super Admin updating entitlements for tenant ${tenantId}:`, entitlements);
         return true;
     }
 
@@ -219,7 +220,7 @@ export class GrowthIntelligenceService {
 
     // Tenant: Update Connection Credentials
     static async updateTenantConnection(tenantId: string, connection: any): Promise<boolean> {
-        console.log(`Tenant ${tenantId} updating connection:`, connection);
+        logger.info(`Tenant ${tenantId} updating connection:`, connection);
 
         try {
             switch (connection.channel) {
@@ -237,7 +238,7 @@ export class GrowthIntelligenceService {
                     return true;
             }
         } catch (error) {
-            console.error('Connection verification failed:', error);
+            logger.error('Connection verification failed:', error);
             return false;
         }
     }

@@ -1,8 +1,9 @@
+import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 // import { supabase } from '../../lib/supabase'; // Removed
-import { setAuthLoading, setAuthError, setAuthSuccess } from '../slices/authSlice';
-import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '../slices/tenantSlice';
-import { GoogleBusinessConfig } from "@/entities/session/model/core";
+import { setAuthLoading, setAuthError, setAuthSuccess } from '@/entities/session/model/authSlice';
+import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '@/entities/session/model/tenantSlice';
+import { GoogleBusinessConfig } from "@/entities/session/model/growth";
 
 import api from "@/shared/api/api";
 
@@ -46,7 +47,7 @@ export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispa
             dispatch(updateGoogleBusinessProfile({ tenantId, config: mapProfileToConfig(data.data) }));
         }
     } catch (err) {
-        console.error('Failed to sync google profile:', err);
+        logger.error('Failed to sync google profile:', err);
     }
 };
 
@@ -61,7 +62,7 @@ export const updateEcommerceSettings = (tenantId: string, settings: any) => asyn
         await api.put('/business/profile', { ecommerceSettings: settings }, getConfig(token));
         dispatch(updateTenantEcommerce(settings));
     } catch (err) {
-        console.error('Failed to update ecommerce settings:', err);
+        logger.error('Failed to update ecommerce settings:', err);
     }
 };
 
@@ -88,6 +89,6 @@ export const activateEcommerce = (tenantId: string) => async (dispatch: AppDispa
         await api.put('/business/profile', { ecommerceConfig }, getConfig(token));
         dispatch(setEcommerceEnabled({ tenantId, config: ecommerceConfig }));
     } catch (err) {
-        console.error('Failed to activate ecommerce:', err);
+        logger.error('Failed to activate ecommerce:', err);
     }
 };

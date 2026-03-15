@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import React, { FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import api from "@/shared/api/api";
@@ -93,7 +94,7 @@ export const useTenantFormSubmission = ({
             }
             return false;
         } catch (error: any) {
-            console.error('Error saving tenant:', error);
+            logger.error('Error saving tenant:', error);
             alert(`Failed to save tenant: ${error.message || 'Unknown API Error'}`);
             return false;
         } finally {

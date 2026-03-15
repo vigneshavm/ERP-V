@@ -23,7 +23,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@repo/b2b-services": ["../../../common/b2b-services/src"]
     },
     "incremental": true,
     "plugins": [
@@ -35,11 +36,6 @@
   "include": [
     "src",
     ".next/types/**/*.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
   ],
   "exclude": [
     "node_modules"
