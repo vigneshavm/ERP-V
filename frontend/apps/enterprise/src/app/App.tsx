@@ -34,63 +34,47 @@ type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const App: React.FC = () => {
+interface AuthenticatedAppProps {
+  currentTenant: Tenant | null;
+  setCurrentTenant: (tenant: Tenant | null) => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  isResolving: boolean;
+  setIsResolving: (isResolving: boolean) => void;
+  viewMode: ViewMode;
+  setViewMode: (viewMode: ViewMode) => void;
+}
+
+const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({
+  currentTenant,
+  setCurrentTenant,
+  isLoggedIn,
+  setIsLoggedIn,
+  isResolving,
+  setIsResolving,
+  viewMode,
+  setViewMode
+}) => {
   const dispatch = useDispatch();
   const { user, role } = useSelector((state: RootState) => state.auth);
+  const { tenants } = useSelector((state: RootState) => state.tenant);
+  const { activeTab, setActiveTab } = useUiStore();
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Check for Customer Display Mode (Standalone)
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-
-  if (mode === 'customer_display') {
-    return <POSCustomerDisplay />;
-  }
-
-  // Initialize MongoDB Data Sync
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   useDBDataSync();
 
-  // Determine initial view mode based on session
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    return getSession() ? 'TENANT' : 'LANDING';
-  });
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const { tenants } = useSelector((state: RootState) => state.tenant);
-
   // Fetch profile on mount if user exists but role might be stale/missing
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
     if (user && user.token) {
-      // Dispatch getProfile to fetch latest role and details
       dispatch(getProfile() as any);
     }
-  }, [dispatch, user?.token]); // Dependency on token ensures run on login/reload
-
-  // Initialize currentTenant from localStorage if available, or null
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(() => {
-    const storedTenantId = localStorage.getItem('erp_current_tenant');
-    // If we have tenants loaded in Redux (unlikely on first render, but possible if persisted), try to find it
-    // Otherwise, we might need to rely on the side-effect below to set it once tenants load
-    // For now, we mainly need the ID to be recognized. 
-    // Ideally, we should reconstruct a partial tenant or wait for tenants to load.
-    // simpler approach: if we have a stored ID, we assume we are in TENANT mode.
-    return null;
-  });
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const [isResolving, setIsResolving] = useState(APP_CONFIG?.REQUIRE_TENANT_ID ?? true);
+  }, [dispatch, user?.token]);
 
   // --- Single Tenant Auto-Selection & Restoration ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
-    // 1. Restore from LocalStorage if tenants are loaded
     const storedTenantId = localStorage.getItem('erp_current_tenant');
 
     if (tenants.length > 0) {
-      // Priority 1: Restore previous session tenant
       if (storedTenantId) {
         const restoredTenant = tenants.find(t => t.id === storedTenantId);
         if (restoredTenant) {
@@ -101,7 +85,6 @@ const App: React.FC = () => {
         }
       }
 
-      // Priority 2: Config-based Single Tenant (Deploy Mode)
       if (APP_CONFIG?.REQUIRE_TENANT_ID && APP_CONFIG?.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
         const tenant = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
         if (tenant) {
@@ -111,27 +94,13 @@ const App: React.FC = () => {
       }
       setIsResolving(false);
     } else {
-      // If no tenants loaded yet, but we have a session, stop resolving after a timeout or let it ride?
-      // Actually, if we are logged in, we might check if we can restore tenant ID even without full tenant list?
-      // For now, let's just ensure isResolving turns false so we don't get stuck.
-      // But giving it a small delay or dependency check is better.
       if (!APP_CONFIG?.REQUIRE_TENANT_ID) {
         setIsResolving(false);
       }
     }
-  }, [tenants, viewMode]);
-
-  // --- Tenant specific state ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const { activeTab, setActiveTab } = useUiStore();
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  }, [tenants, viewMode, setCurrentTenant, setIsResolving, setViewMode]);
 
   // --- Restore Session on Mount ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
     const sessionUser = getSession();
     if (sessionUser && !user) {
@@ -145,18 +114,15 @@ const App: React.FC = () => {
   }, [dispatch, user]);
 
   // --- Sync isLoggedIn with Redux user state ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
-    // When user is set in Redux (after successful login), update isLoggedIn
     if (user && user._id) {
       setIsLoggedIn(true);
     } else if (!user && !getSession()) {
       setIsLoggedIn(false);
     }
-  }, [user]);
+  }, [user, setIsLoggedIn]);
 
   // --- Role-based Default Page ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
     if (isLoggedIn && role) {
       if (role === 'Staff') {
@@ -165,49 +131,21 @@ const App: React.FC = () => {
         }
       }
     }
-  }, [isLoggedIn, role, dispatch]);
+  }, [isLoggedIn, role, activeTab, setActiveTab]);
 
   // --- Global Auth Listener (Handle 401 from API) ---
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- TODO(TS-FIX): Phase 2/3 fix
   React.useEffect(() => {
     const handleUnauthorized = () => {
-      // Immediate cleanup to unmount authenticated components
       clearSession();
       setIsLoggedIn(false);
       dispatch(setUser(null));
-      setViewMode('LANDING'); // Reset view to landing
+      setViewMode('LANDING');
       logger.info("🔒 Force logout triggered by API 401");
     };
 
     window.addEventListener('auth:unauthorized', handleUnauthorized);
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
-  }, [dispatch]);
-
-  // --- Helper for logout ---
-  const handleTenantLogout = () => {
-    // Confirmation is handled in TenantView usually, but if it delegates to here:
-    // However, we want TenantView to handle the UI confirmation using its own state.
-    // We pass a callback that performs the actual session clear.
-
-    // Wait, standard behavior in App.tsx was:
-    // requestConfirm('Lock Terminal'...) -> clearSession(); setIsLoggedIn(false);
-
-    // TenantView now has its own handleLogout that calls onLogout or defaults.
-    // We can pass a simple callback that updates App state.
-    // But TenantView clears session itself in the fallback. 
-    // Let's rely on TenantView to manage the "Lock Terminal" dialog internally?
-    // Yes, I copied the state `confirmDialog` into TenantView.tsx.
-    // So onLogout passed to TenantView should just update the parent state `isLoggedIn`
-    // OR handle the redirect.
-
-    // Actually, TenantView.tsx has:
-    // handleLogout -> requestConfirm -> onConfirm -> clearSession(); localStorage...; setIsLoggedIn(false);
-    // Wait, `setIsLoggedIn` in TenantView.tsx refers to WHICH state?
-    // I did NOT define `isLoggedIn` state in TenantView.tsx. I defined it as a PROP.
-    // So `setIsLoggedIn(false)` inside TenantView.tsx will fail compilation!
-
-    // GOOD CATCH. I need to check TenantView.tsx content I just wrote.
-  };
+  }, [dispatch, setIsLoggedIn, setViewMode]);
 
   const LoadingScreen = () => (
     <div className="min-h-screen bg-app flex flex-col items-center justify-center p-4">
@@ -334,7 +272,47 @@ const App: React.FC = () => {
     );
   };
 
-  // --- Main Render ---
+  return (
+    <>
+      {isResolving ? <LoadingScreen /> :
+        viewMode === 'ADMIN' ? <AdminView /> :
+          viewMode === 'TENANT' ? (
+            <TenantView
+              currentTenant={currentTenant}
+              isLoggedIn={isLoggedIn}
+              onLogout={() => {
+                clearSession();
+                setIsLoggedIn(false);
+              }}
+              onLogin={() => setIsLoggedIn(true)}
+            />
+          ) :
+            <LandingPage />
+      }
+    </>
+  );
+};
+
+const App: React.FC = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+
+  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    return getSession() ? 'TENANT' : 'LANDING';
+  });
+  const [isResolving, setIsResolving] = useState(APP_CONFIG?.REQUIRE_TENANT_ID ?? true);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
+
+  if (mode === 'customer_display') {
+    return (
+      <AuthGuard>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+        <POSCustomerDisplay />
+      </AuthGuard>
+    );
+  }
+
   return (
     <AuthGuard>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
@@ -343,25 +321,20 @@ const App: React.FC = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/signup" element={<TenantSignUp onComplete={() => window.location.href = '/'} onBackToLogin={() => window.location.href = '/login'} />} />
         <Route path="/*" element={
-          isResolving ? <LoadingScreen /> :
-            viewMode === 'ADMIN' ? <AdminView /> :
-              viewMode === 'TENANT' ? (
-                <TenantView
-                  currentTenant={currentTenant}
-                  isLoggedIn={isLoggedIn}
-                  onLogout={() => {
-                    // Callback from TenantView when user confirms logout
-                    clearSession();
-                    setIsLoggedIn(false);
-                  }}
-                  onLogin={() => setIsLoggedIn(true)}
-                />
-              ) :
-                <LandingPage />
+          <AuthenticatedApp
+            currentTenant={currentTenant}
+            setCurrentTenant={setCurrentTenant}
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            isResolving={isResolving}
+            setIsResolving={setIsResolving}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+          />
         } />
       </Routes>
     </AuthGuard>
   );
-}
+};
 
 export default App;
