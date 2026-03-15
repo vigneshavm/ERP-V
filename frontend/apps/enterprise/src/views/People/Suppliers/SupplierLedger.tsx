@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useAuthStore, AuthState } from './store/authStore';
 
 import { LoginPage } from './views/LoginPage';
@@ -13,14 +13,14 @@ const App: React.FC = () => {
     setMounted(true);
   }, []);
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleSelection = (type: 'personal' | 'business' | 'enterprise') => {
     if (type === 'personal') {
       window.location.href = 'http://localhost:3000/personal/home';
     } else if (type === 'business') {
-      navigate('/business');
+      router.push('/business');
     } else {
-      navigate('/enterprise');
+      router.push('/enterprise');
     }
   };
 

@@ -29,7 +29,7 @@ const MonthlyDetailList: React.FC = () => {
 
     const filteredTransactions = useMemo(() => {
         return transactions.filter(t =>
-            t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (t.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
             t.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [transactions, searchQuery]);

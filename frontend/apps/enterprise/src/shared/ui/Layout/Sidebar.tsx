@@ -1,3 +1,5 @@
+import { useAuthStore } from '@repo/shared';
+import { setTheme, setBranch } from '@/entities/session/model/authSlice';
 import { logger } from '@/shared/lib/logger';
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -176,7 +178,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {role === 'Owner' || role === 'Admin' ? (
                     <div className="relative">
                         <select
-                            value={selectedBranch}
+                            value={selectedBranch || "All"}
                             onChange={(e) => dispatch(setBranch(e.target.value))}
                             className="w-full bg-surface border border-default rounded-lg py-1.5 px-2 text-xs font-black text-main focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-all"
                         >
@@ -308,12 +310,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             {!desktopCollapsed && (
                 <div className="pt-2 px-4 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
                     <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Appearance</span>
-                    <ThemeToggle theme={theme || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
+                    <ThemeToggle theme={(theme as any) || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
                 </div>
             )}
             {desktopCollapsed && (
                 <div className="pt-2 px-2 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-center">
-                    <ThemeToggle theme={theme || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
+                    <ThemeToggle theme={(theme as any) || 'light'} toggleTheme={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))} />
                 </div>
             )}
 

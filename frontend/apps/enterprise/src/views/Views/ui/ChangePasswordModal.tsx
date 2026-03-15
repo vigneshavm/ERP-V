@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';

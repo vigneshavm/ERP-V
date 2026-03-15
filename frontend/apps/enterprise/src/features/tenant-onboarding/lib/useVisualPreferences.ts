@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { setUserPreferences } from '@/entities/session/model/authSlice';
 // import { supabase } from '../lib/supabase'; // Removed
 
 import { getTable } from "@/shared/api/dataSource";

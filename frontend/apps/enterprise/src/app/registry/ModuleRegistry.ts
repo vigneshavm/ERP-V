@@ -16,8 +16,8 @@ export const LazyModules = {
     GrowthHub: lazy(() => import('../../views/Dashboard/ui/GrowthHub')),
 
     // === SALES ===
-    SalesInvoiceForm: lazy(() => import('../../views/Sales/ui/SalesInvoiceForm')),
-    SalesInvoiceDetail: lazy(() => import('../../views/Sales/ui/SalesInvoiceDetail')),
+    SalesInvoiceForm: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceForm')),
+    SalesInvoiceDetail: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceDetail')),
     POSCustomerDisplay: lazy(() => import('../../views/Pos/ui/POSCustomerDisplay')),
 
     // === CONTACTS / PEOPLE ===
@@ -29,15 +29,15 @@ export const LazyModules = {
     SupplierStatements: lazy(() => import('../../views/People/Suppliers/SupplierStatements')),
     SupplierLedger: lazy(() => import('../../views/People/Suppliers/SupplierLedger')),
     SupplierAgeing: lazy(() => import('../../views/Purchase/ui/SupplierAgeing')),
-    SupplierPayments: lazy(() => import('../../views/Purchase/ui/SupplierStatements')), // Consolidated
+    SupplierPayments: lazy(() => import('../../views/Purchase/ui/SupplierPayments')), 
     
     // === PURCHASE / INVENTORY ===
-    GRNForm: lazy(() => import('../../views/Purchase/hooks/useGRNForm')), // Or dynamic view if exists
+    GRNForm: lazy(() => import('../../views/Purchase/ui/GRNForm')), 
     PurchaseOrderDetails: lazy(() => import('../../views/Purchase/ui/PurchaseOrderDetails')),
-    BillForm: lazy(() => import('../../views/Finance/ui/BudgetTrackerPage')), // Redirect or map correctly
+    BillForm: lazy(() => import('../../views/Purchase/ui/BillForm')), 
     PurchaseReturns: lazy(() => import('../../views/Commercial/Returns/ReturnedItemsList')),
     PurchaseReturnForm: lazy(() => import('../../views/Commercial/Returns/ReturnItemGrid')),
-    PaymentOut: lazy(() => import('../../app/store/slices/paymentOutSlice')), // This might be a hook/component wrapper
+    PaymentOut: lazy(() => import('../../views/Purchase/ui/PaymentOut')),
     ReprintQueue: lazy(() => import('../../views/Inventory/ui/ReprintQueue')),
     
     // === FINANCE / CASHBANK ===
@@ -46,13 +46,13 @@ export const LazyModules = {
     CashInHand: lazy(() => import('../../views/Financial/Cashbank/BankAccounts')), // Consolidated
     CashBankPosition: lazy(() => import('../../views/Financial/Cashbank/BankIntelligence')),
     AccountLedger: lazy(() => import('../../views/Financial/Cashbank/AccountLedger')),
-    JournalEntries: lazy(() => import('../../app/store/slices/journalEntrySlice')),
-    JournalEntryForm: lazy(() => import('../../app/store/slices/journalEntrySlice')),
+    JournalEntries: lazy(() => import('../../views/Financial/Journal/JournalEntries')),
+    JournalEntryForm: lazy(() => import('../../views/Financial/Journal/JournalEntryForm')),
     BankStatementView: lazy(() => import('../../views/Finance/ui/BankStatementView')),
     SmsTrackerPage: lazy(() => import('../../views/Finance/ui/SmsTrackerPage')),
     BudgetTrackerPage: lazy(() => import('../../views/Finance/ui/BudgetTrackerPage')),
     FinanceAgentDashboard: lazy(() => import('../../views/Dashboard/ui/Dashboard')), // Map to appropriate dashboard
-    FinancialGoals: lazy(() => import('../../views/Dashboard/ui/GrowingGoals')), // Assuming this exists or falls back
+    FinancialGoals: lazy(() => import('../../views/Financial/Cashbank/FinancialGoals')), 
     GSTReconciliation: lazy(() => import('../../views/Finance/GST/GSTReconciliation')),
     
     // === HR / PAYROLL ===
@@ -62,11 +62,11 @@ export const LazyModules = {
     LeaveManagement: lazy(() => import('../../views/People/Employees/LeaveManagement')),
     AllowanceManager: lazy(() => import('../../views/People/Payroll/SalaryStructureManager')), // Placeholder
     DailyAttendanceBoard: lazy(() => import('../../views/People/Employees/DailyAttendanceBoard')),
-    PayrollDashboard: lazy(() => import('../../app/store/slices/payrollSlice')), // Component usually lives in views
+    PayrollDashboard: lazy(() => import('../../views/People/Payroll/PayrollDashboard')), 
     SalaryStructureManager: lazy(() => import('../../views/People/Payroll/SalaryStructureManager')),
     AttendanceSummaryManager: lazy(() => import('../../views/People/Employees/DailyAttendanceBoard')),
-    PayrollRuns: lazy(() => import('../../app/store/slices/payrollSlice')),
-    PayslipView: lazy(() => import('../../app/store/slices/payrollSlice')),
+    PayrollRuns: lazy(() => import('../../views/People/Payroll/PayrollRuns')),
+    PayslipView: lazy(() => import('../../views/People/Payroll/PayslipView')),
 
     // === GROWTH ===
     TenantArchitect: lazy(() => import('../../views/Dashboard/ui/GrowthHub')),

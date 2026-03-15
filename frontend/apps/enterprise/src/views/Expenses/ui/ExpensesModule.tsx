@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React, { useState, useMemo } from 'react';
 import { Plus, Search, Filter, FilterX, Receipt, Clock, CheckCircle2, XCircle, MoreVertical, Building2, UserCircle, CreditCard, Landmark, Wallet, Trash2 } from 'lucide-react';
 import { useExpenses, Expense } from "@/features/expense-tracking/lib/useExpenses";

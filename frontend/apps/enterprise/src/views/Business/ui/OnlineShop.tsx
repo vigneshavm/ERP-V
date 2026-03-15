@@ -43,7 +43,7 @@ const OnlineShop: React.FC = () => {
             if (response.data.success) {
                 setSettings(response.data.data);
             }
-        } catch (error) {
+        } catch (error: any) {
             logger.error('Error fetching shop settings:', error);
             // toast.error('Failed to load shop settings');
         }
@@ -64,7 +64,7 @@ const OnlineShop: React.FC = () => {
                 }));
                 setAvailablePlans(mappedPlans);
             }
-        } catch (error) {
+        } catch (error: any) {
             logger.error('Error fetching plans:', error);
             toast.error('Failed to load subscription plans');
         }
@@ -365,4 +365,3 @@ const OnlineShop: React.FC = () => {
 };
 
 export default OnlineShop;
-

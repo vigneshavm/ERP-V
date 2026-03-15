@@ -8,8 +8,6 @@ export interface UserVisualIdentity {
     visualIdentityConfig?: Record<string, any>;
 }
 
-export 
-
 export interface SettingsState {
     appName: string;
     logoUrl: string;

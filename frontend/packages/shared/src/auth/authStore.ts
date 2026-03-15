@@ -36,9 +36,18 @@ export interface User {
 export interface AuthState {
   user: User | null;
   token: string | null;
+  role: string | null;
+  currentSector: string | null;
+  currentBranch: string | null;
+  theme: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: string | null;
+  message: string | null;
   setAuth: (user: User, token: string) => void;
   updateUser: (updates: Partial<User>) => void;
+  setContext: (sector: string, branch: string) => void;
   logout: () => void;
 }
 
@@ -47,9 +56,17 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       token: null,
+      role: null,
+      currentSector: 'Retail',
+      currentBranch: 'All',
+      theme: 'light',
       isAuthenticated: false,
+      isLoading: false,
+      isSuccess: false,
+      isError: null,
+      message: null,
       setAuth: (user, token) => {
-        set({ user, token, isAuthenticated: true });
+        set({ user, token, role: user.role, isAuthenticated: true });
         
         // Legacy support for older apps expecting plain localStorage items
         if (typeof window !== 'undefined') {
@@ -69,15 +86,18 @@ export const useAuthStore = create<AuthState>()(
         const currentUser = get().user;
         if (currentUser) {
           const updatedUser = { ...currentUser, ...updates };
-          set({ user: updatedUser });
+          set({ user: updatedUser, role: updatedUser.role });
           
           if (typeof window !== 'undefined') {
             localStorage.setItem('user', JSON.stringify(updatedUser));
           }
         }
       },
+      setContext: (sector, branch) => {
+        set({ currentSector: sector, currentBranch: branch });
+      },
       logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ user: null, token: null, role: null, isAuthenticated: false, currentSector: 'Retail', currentBranch: 'All', theme: 'light' });
         
         if (typeof window !== 'undefined') {
           // Legacy support removal

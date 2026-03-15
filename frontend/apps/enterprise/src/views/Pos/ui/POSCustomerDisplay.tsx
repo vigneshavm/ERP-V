@@ -110,3 +110,5 @@ export const POSCustomerDisplay: React.FC = () => {
     );
 };
 
+
+export default POSCustomerDisplay;

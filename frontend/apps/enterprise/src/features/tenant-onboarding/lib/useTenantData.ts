@@ -6,6 +6,7 @@ import { setTenants, setBranches } from "@/entities/session/model/tenantSlice";
 import { setEmployees } from "@/entities/people/model/laborSlice";
 
 import { TenantUser } from "@/entities/session/model/core";
+import { setUser } from "@/entities/session/model/authSlice";
 import { useTenantDataMappers } from './useTenantDataMappers';
 import { fetchTenantsRaw, fetchBranchesRaw, fetchEmployeesRaw } from './tenantQueries';
 

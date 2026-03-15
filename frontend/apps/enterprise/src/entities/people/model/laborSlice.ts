@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { LaborState, Employee, Attendance, LaborPayment } from "./hr";
 import api from "@/shared/api/api";

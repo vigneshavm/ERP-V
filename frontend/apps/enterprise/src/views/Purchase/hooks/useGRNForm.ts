@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';

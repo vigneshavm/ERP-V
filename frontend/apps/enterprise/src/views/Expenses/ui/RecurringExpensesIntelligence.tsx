@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React from 'react';
 import { RootState } from "@/app/store/store";
 import { useRecurringExpenses } from '@/features/expense-tracking/lib/useRecurringExpenses';

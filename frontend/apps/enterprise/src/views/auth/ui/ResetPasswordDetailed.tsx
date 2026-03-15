@@ -1,7 +1,9 @@
+import { useAuthStore } from '@repo/shared';
 import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
+import { setAuthError, setAuthSuccess, logout } from "@/entities/session/model/authSlice";
 
 import api from "@/shared/api/api";
 import { clearSession } from "@/shared/lib/utils/session";

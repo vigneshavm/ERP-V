@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import React, { useMemo, useState, useTransition, useCallback, useActionState } from 'react';
 import { Shield, Lock, CheckCircle, Loader2, AlertTriangle, Key, Users, ChevronRight, Zap, Activity, ShieldCheck, ShieldAlert } from 'lucide-react';

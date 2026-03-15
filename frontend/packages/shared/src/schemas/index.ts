@@ -76,6 +76,7 @@ export const LoanSchema = z.object({
 
 export const TransactionSchema = z.object({
     id: z.string(),
+    name: z.string().optional(),
     type: z.enum(["income", "expense"]),
     amount: z.number(),
     category: z.string(), // categoryId

@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React, { useState } from 'react';
 import { RootState } from '@/app/store/store';
 import { useBusinessReports, ReportType, BusinessReportData } from "@/widgets/stats-dashboard/lib/useBusinessReports";

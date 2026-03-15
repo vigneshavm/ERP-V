@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { RootState } from '@/app/store/store';
 import { AppView, ModuleType } from '@repo/shared';
 

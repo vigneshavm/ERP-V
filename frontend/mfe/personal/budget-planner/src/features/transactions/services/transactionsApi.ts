@@ -15,7 +15,8 @@ export const fetchAllTransactions = async (): Promise<CalendarTransaction[]> => 
                 categoryId: cat.id,
                 categoryName: cat.name,
                 categoryColor: cat.color,
-                categoryIcon: cat.icon,
+                categoryEmoji: cat.emoji || '💰',
+                categoryIcon: cat.icon || 'MoreHorizontal',
             });
         }
     }

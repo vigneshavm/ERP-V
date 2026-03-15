@@ -1,8 +1,9 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import api from "@/shared/api/api";
-import Modal from '../../components/shared/Overlay/Modal';
+import Modal from '@/shared/ui/Overlay/Modal';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { toast } from 'react-toastify';
 
@@ -81,7 +82,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
                         if (sectorsRes.data?.success) setSectors(sectorsRes.data.data);
                         if (typesRes.data?.success) setBusinessTypes(typesRes.data.data);
                     }
-                } catch (error) {
+                } catch (error: any) {
                     logger.error("Failed to fetch setup or master data", error);
                     // Fallback to basic user data
                     if (user) {
@@ -125,7 +126,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
             } else {
                 toast.error('Failed to complete business setup');
             }
-        } catch (error) {
+        } catch (error: any) {
             toast.error('Failed to complete business setup');
             logger.error(error);
         } finally {

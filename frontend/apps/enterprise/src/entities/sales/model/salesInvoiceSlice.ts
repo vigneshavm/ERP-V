@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 import { Invoice } from '@repo/shared';

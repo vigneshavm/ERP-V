@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 // import { supabase } from '../../lib/supabase'; // Removed

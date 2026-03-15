@@ -1,558 +1,237 @@
 import { logger } from '@/shared/lib/logger';
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Megaphone,
-    Rocket,
-    Tag,
-    Calendar,
-    Share2,
-    Mail,
-    Layout as LayoutIcon,
-    Image as ImageIcon,
-    Palette,
-    Download,
-    Send,
-    Zap,
-    ChevronRight,
-    Smartphone,
-    CheckCircle2,
-    Plus,
-    UploadCloud
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import Layout from "@/shared/ui/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
 import BusinessSubNav from './BusinessSubNav.js';
-
 import api from "@/shared/api/api";
+import { toast } from 'react-toastify';
 
-interface Template {
-    id: number;
-    name: string;
-    category: string;
-    icon: React.ReactNode;
-    description: string;
-    color: string;
+interface MarketingStat {
+    label: string;
+    value: string;
+    trend: string;
+    icon: string;
 }
 
-interface Theme {
+interface MarketingChannel {
     id: string;
     name: string;
+    description: string;
+    icon: string;
+    isConnected: boolean;
+    status: 'active' | 'disconnected' | 'pending';
+    metrics: {
+        Reach: string;
+        Conversion: string;
+    };
     color: string;
-    gradient: string;
 }
 
 const MarketingTools: React.FC = () => {
-    const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-    const [customMessage, setCustomMessage] = useState<string>('');
-    const [selectedTheme, setSelectedTheme] = useState<string>('indigo');
-    const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [stats, setStats] = useState<MarketingStat[]>([
+        { label: 'Total Reach', value: '45.2K', trend: '+12.5%', icon: '🚀' },
+        { label: 'Engagement', value: '18.4%', trend: '+4.2%', icon: '📈' },
+        { label: 'Total Leads', value: '1,284', trend: '+8.1%', icon: '👥' },
+        { label: 'Marketing ROI', value: '4.8x', trend: '+0.5%', icon: '💰' }
+    ]);
 
-    const [instagramAccounts, setInstagramAccounts] = useState<any[]>([]);
-    const [selectedAccount, setSelectedAccount] = useState<string>('');
-    const [publicImageUrl, setPublicImageUrl] = useState<string>('');
-    const [isPublishing, setIsPublishing] = useState(false);
-
-    const fetchAccounts = async () => {
-        try {
-            const response = await api.get('/marketing/meta/pages');
-            if (response.data.success) {
-                const accounts = response.data.data.filter((p: any) => p.instagramBusinessAccountId);
-                setInstagramAccounts(accounts);
-                if (accounts.length > 0) {
-                    setSelectedAccount(accounts[0].instagramBusinessAccountId);
-                }
-            }
-        } catch (error) {
-            logger.error("Error fetching accounts", error);
+    const [channels, setChannels] = useState<MarketingChannel[]>([
+        {
+            id: 'meta',
+            name: 'Meta Ads Manager',
+            description: 'Run automated ads across Facebook & Instagram with AI optimization.',
+            icon: '♾️',
+            isConnected: false,
+            status: 'disconnected',
+            metrics: { Reach: '0', Conversion: '0%' },
+            color: 'blue'
+        },
+        {
+            id: 'google',
+            name: 'Google Merchant Center',
+            description: 'Sync your inventory with Google Search and Shopping automatically.',
+            icon: '🔍',
+            isConnected: false,
+            status: 'disconnected',
+            metrics: { Reach: '0', Conversion: '0%' },
+            color: 'red'
+        },
+        {
+            id: 'whatsapp',
+            name: 'WhatsApp Business API',
+            description: 'Direct messaging and high-conversion automated broadcasts.',
+            icon: '💬',
+            isConnected: true,
+            status: 'active',
+            metrics: { Reach: '12.4K', Conversion: '42.8%' },
+            color: 'emerald'
         }
-    };
+    ]);
 
-    React.useEffect(() => {
-        fetchAccounts();
+    const [loading, setLoading] = useState<boolean>(true);
 
-        // Check for OAuth Callback
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        if (code) {
-            handleAuthCallback(code);
-        }
+    useEffect(() => {
+        fetchMarketingData();
     }, []);
 
-    const handleAuthCallback = async (code: string) => {
+    const fetchMarketingData = async () => {
         try {
-            const response = await api.post('/marketing/meta/auth/callback', { code });
+            setLoading(true);
+            const response = await api.get('/marketing/status');
             if (response.data.success) {
-                // Clear query params
-                window.history.replaceState({}, document.title, window.location.pathname);
-                alert("Successfully connected to Meta!");
-                fetchAccounts();
-            } else {
-                alert("Failed to connect: " + response.data.message);
+                // Merge real data with local descriptions
+                const updatedChannels = channels.map(c => {
+                    const serverStatus = response.data.data.find((s: any) => s.id === c.id);
+                    if (serverStatus) {
+                        return {
+                            ...c,
+                            isConnected: serverStatus.isConnected,
+                            status: serverStatus.status as any,
+                            metrics: serverStatus.metrics || c.metrics
+                        };
+                    }
+                    return c;
+                });
+                setChannels(updatedChannels);
             }
-        } catch (error) {
-            logger.error("Error confirming Meta auth", error);
-        }
-    };
-
-    const handlePublish = async () => {
-        if (!selectedAccount) {
-            alert("Please select an Instagram account");
-            return;
-        }
-        if (!publicImageUrl) {
-            alert("Please enter a public Image URL for the API to access");
-            return;
-        }
-
-        setIsPublishing(true);
-        try {
-            const response = await api.post('/marketing/meta/publish/instagram', {
-                instagramAccountId: selectedAccount,
-                imageUrl: publicImageUrl,
-                caption: customMessage || selectedTemplate?.name || "Check this out!"
-            });
-
-            if (response.data.success) {
-                alert("Posted to Instagram successfully!");
-            } else {
-                alert("Failed to post: " + response.data.message);
-            }
-        } catch (error) {
-            logger.error("Error publishing", error);
-            alert("Error publishing post");
+        } catch (error: any) {
+            logger.error('Error fetching marketing status:', error);
+            // Non-critical: Use fallback data if API fails
         } finally {
-            setIsPublishing(false);
+            setLoading(false);
         }
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setUploadedImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+    const handleConnect = async (channelId: string) => {
+        if (channelId === 'meta') {
+            const clientID = '123456789'; // Dummy for now
+            const redirectUri = encodeURIComponent(`${window.location.origin}/business/meta-callback`);
+            window.location.href = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientID}&redirect_uri=${redirectUri}&scope=ads_management,ads_read,business_management`;
+        } else {
+            toast.info(`${channelId} connection coming soon!`);
         }
     };
 
-    const templates: Template[] = [
-        { id: 1, name: 'Sale Announcement', category: 'Flyer', icon: <Megaphone className="w-6 h-6" />, description: 'Announce special sales and offers', color: 'blue' },
-        { id: 2, name: 'Product Launch', category: 'Banner', icon: <Rocket className="w-6 h-6" />, description: 'Promote new premium products', color: 'purple' },
-        { id: 3, name: 'Discount Offer', category: 'Offer', icon: <Tag className="w-6 h-6" />, description: 'Share limited time discount deals', color: 'orange' },
-        { id: 4, name: 'Event Invite', category: 'Events', icon: <Calendar className="w-6 h-6" />, description: 'Professional business event invites', color: 'emerald' },
-        { id: 5, name: 'Social Media', category: 'Social', icon: <Share2 className="w-6 h-6" />, description: 'Viral-ready social media content', color: 'pink' },
-        { id: 6, name: 'Email Campaign', category: 'Email', icon: <Mail className="w-6 h-6" />, description: 'High-conversion email templates', color: 'indigo' }
-    ];
-
-    const themes: Theme[] = [
-        { id: 'indigo', name: 'Royal Indigo', color: 'bg-indigo-600', gradient: 'from-indigo-600 to-violet-700' },
-        { id: 'rose', name: 'Rose Gold', color: 'bg-rose-500', gradient: 'from-rose-500 to-pink-600' },
-        { id: 'emerald', name: 'Deep Emerald', color: 'bg-emerald-600', gradient: 'from-emerald-600 to-teal-700' },
-        { id: 'amber', name: 'Sunset Amber', color: 'bg-amber-500', gradient: 'from-amber-500 to-orange-600' },
-        { id: 'slate', name: 'Midnight', color: 'bg-slate-800', gradient: 'from-slate-800 to-slate-900' }
-    ];
-
-    const suggestions = [
-        'Add customer testimonials to build trust',
-        'Use high-quality product images',
-        'Include clear call-to-action buttons',
-        'Optimize for mobile viewing',
-        'A/B test different headlines'
-    ];
-
-    const containerVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.5, staggerChildren: 0.1 }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0 }
-    };
-
-    const handleConnect = async () => {
-        try {
-            const response = await api.get('/marketing/meta/auth/url');
-            if (response.data.success && response.data.url) {
-                window.location.href = response.data.url;
-            } else {
-                alert("Failed to initiate connection.");
-            }
-        } catch (error) {
-            logger.error("Error connecting", error);
-            alert("Error connecting to Meta.");
-        }
-    };
+    if (loading) {
+        return (
+            <Layout>
+                <div className="flex items-center justify-center min-h-[50vh]">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                </div>
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
-            <div className="min-h-screen bg-[#f8fafc]">
-                {/* <PageHeader
-                    title="Marketing Suite"
-                    description="Professional-grade tools to scale your brand presence"
-                    breadcrumbs={[
-                        { label: 'Dashboard', link: '/' },
-                        { label: 'Business', link: '/business/online-shop' },
-                        { label: 'Marketing' }
-                    ]}
-                /> */}
+            <PageHeader
+                title="Growth Ecosystem"
+                description="Harness the power of AI-driven marketing and global sales channels."
+                breadcrumbs={[
+                    { label: 'Dashboard', link: '/' },
+                    { label: 'Business', link: '/business/online-shop' },
+                    { label: 'Growth Center' }
+                ]}
+            />
+            {/* <BusinessSubNav /> */}
 
-                {/* <BusinessSubNav /> */}
-
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    variants={containerVariants}
-                    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Editor Section */}
-                        <div className="lg:col-span-8 space-y-8">
-                            {/* Template Discovery */}
-                            <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 overflow-hidden relative">
-                                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-50 rounded-full blur-3xl opacity-50" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-8">
-                                        <div>
-                                            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Template Gallery</h2>
-                                            <p className="text-slate-500 text-sm mt-1">Start with a professionally crafted foundation</p>
-                                        </div>
-                                        <div className="flex -space-x-2">
-                                            {[1, 2, 3].map(i => (
-                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
-                                                    <img src={`https://i.pravatar.cc/100?u=${i}`} alt="user" className="w-full h-full object-cover" />
-                                                </div>
-                                            ))}
-                                            <div className="w-8 h-8 rounded-full border-2 border-white bg-indigo-600 flex items-center justify-center text-[10px] text-white font-bold">+12</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        {templates.map((template) => (
-                                            <motion.div
-                                                key={template.id}
-                                                whileHover={{ y: -4 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                onClick={() => setSelectedTemplate(template)}
-                                                className={`group relative p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${selectedTemplate?.id === template.id
-                                                    ? 'border-indigo-600 bg-indigo-50/30'
-                                                    : 'border-slate-100 hover:border-indigo-200 hover:bg-slate-50/50'
-                                                    }`}
-                                            >
-                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-sm ${selectedTemplate?.id === template.id ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600'
-                                                    }`}>
-                                                    {template.icon}
-                                                </div>
-                                                <h3 className="font-bold text-slate-900 mb-1 flex items-center">
-                                                    {template.name}
-                                                    {template.id === 1 && <span className="ml-2 w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />}
-                                                </h3>
-                                                <p className="text-xs text-slate-500 mb-4 line-clamp-2 leading-relaxed">{template.description}</p>
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-[10px] uppercase tracking-wider font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
-                                                        {template.category}
-                                                    </span>
-                                                    <ChevronRight className={`w-4 h-4 transition-transform ${selectedTemplate?.id === template.id ? 'text-indigo-600 translate-x-0' : 'text-slate-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0'}`} />
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* Creative Canvas */}
-                            <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                <div className="border-b border-slate-100 p-6 flex items-center justify-between">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-indigo-50 rounded-lg">
-                                            <Palette className="w-5 h-5 text-indigo-600" />
-                                        </div>
-                                        <h2 className="text-xl font-bold text-slate-900">Creative Editor</h2>
-                                    </div>
-                                    <div className="flex items-center space-x-2 text-xs font-medium text-slate-400">
-                                        <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-                                        <span>Autosaved</span>
-                                    </div>
-                                </div>
-
-                                <div className="p-8 space-y-8">
-                                    {/* Message Input */}
-                                    <div>
-                                        <label className="flex items-center justify-between text-sm font-semibold text-slate-700 mb-3">
-                                            <span>Campaign Message</span>
-                                            <span className="text-xs font-normal text-slate-400">{280 - customMessage.length} characters left</span>
-                                        </label>
-                                        <textarea
-                                            value={customMessage}
-                                            onChange={(e) => setCustomMessage(e.target.value)}
-                                            rows={4}
-                                            className="w-full px-5 py-4 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-700 bg-slate-50/30 placeholder:text-slate-400"
-                                            placeholder="Ex: Flash Sale! 50% OFF on all premium collections. Don't miss out! 🚀"
-                                        ></textarea>
-                                    </div>
-
-                                    {/* Asset Upload */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-4">
-                                            <label className="block text-sm font-semibold text-slate-700">Creative Visual</label>
-
-                                            {/* URL Input for API */}
-                                            <input
-                                                type="text"
-                                                value={publicImageUrl}
-                                                onChange={(e) => setPublicImageUrl(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none"
-                                                placeholder="Public Image URL (Required for API)"
-                                            />
-
-                                            <label className="group relative border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-slate-50 hover:border-indigo-300 transition-all cursor-pointer overflow-hidden">
-                                                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-
-                                                {uploadedImage ? (
-                                                    <div className="absolute inset-0 z-0">
-                                                        <img src={uploadedImage} alt="Preview" className="w-full h-full object-cover opacity-10 blur-[2px]" />
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all">
-                                                        <UploadCloud className="w-6 h-6" />
-                                                    </div>
-                                                )}
-
-                                                <div className="relative z-10 text-center">
-                                                    <p className="text-sm font-bold text-slate-700">
-                                                        {uploadedImage ? "Replace Visual" : "Drop Visual Here"}
-                                                    </p>
-                                                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">PNG, JPG • Max 5MB</p>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        {/* Theme Selection */}
-                                        <div>
-                                            <label className="block text-sm font-semibold text-slate-700 mb-3">Brand Theme</label>
-                                            <div className="grid grid-cols-5 gap-3">
-                                                {themes.map((theme) => (
-                                                    <button
-                                                        key={theme.id}
-                                                        onClick={() => setSelectedTheme(theme.id)}
-                                                        className={`relative group p-1 rounded-xl transition-all ${selectedTheme === theme.id ? 'ring-2 ring-indigo-500 ring-offset-2' : 'hover:scale-105'
-                                                            }`}
-                                                    >
-                                                        <div className={`aspect-square rounded-lg ${theme.color} shadow-sm`} />
-                                                        <AnimatePresence>
-                                                            {selectedTheme === theme.id && (
-                                                                <motion.div
-                                                                    initial={{ scale: 0 }}
-                                                                    animate={{ scale: 1 }}
-                                                                    className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg"
-                                                                >
-                                                                    <CheckCircle2 className="w-3 h-3" />
-                                                                </motion.div>
-                                                            )}
-                                                        </AnimatePresence>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <p className="mt-3 text-[10px] text-slate-400 font-medium italic underline cursor-pointer hover:text-indigo-600">Sync with brand guidelines</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-
-                        {/* Preview Sidebar */}
-                        <div className="lg:col-span-4 space-y-8">
-                            <motion.div variants={itemVariants} className="sticky top-8 space-y-8">
-                                {/* iPhone Mockup */}
-                                <div className="bg-white rounded-[2.5rem] shadow-2xl border-[8px] border-slate-900 p-2 relative overflow-hidden max-w-[320px] mx-auto group">
-                                    {/* Notch */}
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-20 flex items-center justify-center space-x-1">
-                                        <div className="w-8 h-1 bg-slate-800 rounded-full opacity-50" />
-                                        <div className="w-2 h-2 bg-slate-800 rounded-full opacity-50" />
-                                    </div>
-
-                                    <div className="bg-slate-50 rounded-[2rem] overflow-hidden min-h-[520px] flex flex-col">
-                                        {/* Status Bar */}
-                                        <div className="h-6 mt-4 px-6 flex justify-between items-center z-10">
-                                            <span className="text-[10px] font-bold text-slate-800">9:41</span>
-                                            <div className="flex items-center space-x-1">
-                                                <div className="w-3 h-2 border border-slate-800 rounded-sm" />
-                                                <div className="w-3 h-3 bg-slate-800 rounded-full opacity-20" />
-                                            </div>
-                                        </div>
-
-                                        {/* Mock App Header */}
-                                        <div className="px-5 py-4 border-b border-slate-100 flex items-center space-x-3">
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
-                                                <Zap className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold text-slate-900">BizzAI Pro</p>
-                                                <p className="text-[9px] text-slate-500 font-medium">Business Account</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Preview Content Area */}
-                                        <div className="flex-1 p-5 flex flex-col justify-center">
-                                            <AnimatePresence mode="wait">
-                                                {selectedTemplate ? (
-                                                    <motion.div
-                                                        key={selectedTemplate.id}
-                                                        initial={{ opacity: 0, scale: 0.95 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        exit={{ opacity: 0, scale: 0.9 }}
-                                                        className="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-slate-100/50"
-                                                    >
-                                                        {uploadedImage || publicImageUrl ? (
-                                                            <div className="relative h-48 group-hover:scale-105 transition-transform duration-700">
-                                                                <img src={publicImageUrl || uploadedImage || ""} alt="Post" className="w-full h-full object-cover" />
-                                                                <div className={`absolute inset-0 bg-gradient-to-t opacity-40 ${themes.find(t => t.id === selectedTheme)?.gradient}`} />
-                                                            </div>
-                                                        ) : (
-                                                            <div className={`h-48 flex items-center justify-center bg-gradient-to-br transition-all duration-500 ${themes.find(t => t.id === selectedTheme)?.gradient}`}>
-                                                                <div className="p-4 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-white">
-                                                                    {React.cloneElement(selectedTemplate.icon as React.ReactElement<{ className?: string }>, { className: 'w-12 h-12' })}
-                                                                </div>
-                                                            </div>
-                                                        )}
-
-                                                        <div className="p-5">
-                                                            <div className="flex items-center space-x-2 mb-3">
-                                                                <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded">
-                                                                    {selectedTemplate.category}
-                                                                </span>
-                                                            </div>
-                                                            <h3 className="font-bold text-slate-900 text-base mb-2">{selectedTemplate.name}</h3>
-                                                            <p className="text-sm text-slate-500 leading-relaxed min-h-[60px]">
-                                                                {customMessage || "Type your message in the editor to see it come to life..."}
-                                                            </p>
-                                                            <div className={`mt-6 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg transition-all duration-500 bg-gradient-to-r ${themes.find(t => t.id === selectedTheme)?.gradient}`}>
-                                                                Learn More
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                ) : (
-                                                    <div className="text-center p-8 space-y-4">
-                                                        <div className="w-20 h-20 bg-slate-100 rounded-3xl mx-auto flex items-center justify-center animate-pulse">
-                                                            <LayoutIcon className="w-8 h-8 text-slate-300" />
-                                                        </div>
-                                                        <p className="text-sm font-medium text-slate-400">Select a template to<br />begin crafting</p>
-                                                    </div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-
-                                        {/* Mock Home Indicator */}
-                                        <div className="h-1 w-20 bg-slate-300 rounded-full mx-auto mb-4 opacity-50" />
-                                    </div>
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className="space-y-3">
-                                    <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        disabled={isGenerating}
-                                        onClick={() => {
-                                            setIsGenerating(true);
-                                            setTimeout(() => setIsGenerating(false), 2000);
-                                        }}
-                                        className="btn-primary w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 flex items-center justify-center space-x-2 relative overflow-hidden"
-                                    >
-                                        {isGenerating ? (
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        ) : (
-                                            <>
-                                                <Download className="w-5 h-5" />
-                                                <span>Download Ultra HD</span>
-                                            </>
-                                        )}
-                                    </motion.button>
-
-                                    {instagramAccounts.length > 0 ? (
-                                        <div className="mb-2">
-                                            <label className="block text-xs font-bold text-slate-500 mb-1 ml-1">Select Instagram Account</label>
-                                            <select
-                                                value={selectedAccount}
-                                                onChange={(e) => setSelectedAccount(e.target.value)}
-                                                className="w-full px-4 py-2 rounded-xl border border-indigo-100 text-xs font-bold text-slate-700 bg-indigo-50/50 outline-none focus:ring-2 focus:ring-indigo-500 mb-2"
-                                            >
-                                                {instagramAccounts.map(account => (
-                                                    <option key={account.instagramBusinessAccountId} value={account.instagramBusinessAccountId}>
-                                                        {account.name} (Insta)
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    ) : (
-                                        <div className="mb-2 p-3 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-xs font-medium text-center">
-                                            No Instagram accounts connected.
-                                            <button onClick={handleConnect} className="text-indigo-600 font-bold underline ml-1 hover:text-indigo-700">Connect Now</button>
-                                        </div>
-                                    )}
-
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <button
-                                            onClick={handlePublish}
-                                            disabled={isPublishing}
-                                            className="flex items-center justify-center space-x-2 py-3.5 border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all disabled:opacity-50"
-                                        >
-                                            {isPublishing ? <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" /> : <Share2 className="w-4 h-4" />}
-                                            <span className="text-sm">Post to Insta</span>
-                                        </button>
-                                        <button className="flex items-center justify-center space-x-2 py-3.5 border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all">
-                                            <Smartphone className="w-4 h-4" />
-                                            <span className="text-sm">Preview App</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Pro Tips */}
-                                <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-2xl">
-                                    <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-indigo-500 rounded-full blur-[80px] opacity-40" />
-                                    <div className="relative z-10">
-                                        <div className="flex items-center space-x-2 mb-6 text-indigo-300">
-                                            <Zap className="w-5 h-5 fill-current" />
-                                            <span className="text-xs font-bold uppercase tracking-[0.2em]">Strategy Guide</span>
-                                        </div>
-                                        <h4 className="text-lg font-bold mb-6">Master Your Marketing</h4>
-                                        <ul className="space-y-4">
-                                            {suggestions.map((tip, idx) => (
-                                                <motion.li
-                                                    key={idx}
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.5 + idx * 0.1 }}
-                                                    className="flex items-start space-x-4 group cursor-default"
-                                                >
-                                                    <div className="mt-1 p-0.5 bg-indigo-500/20 rounded-full border border-indigo-500/30 group-hover:bg-indigo-500 transition-colors">
-                                                        <CheckCircle2 className="w-3.5 h-3.5" />
-                                                    </div>
-                                                    <span className="text-sm text-indigo-100/80 leading-snug font-medium group-hover:text-white transition-colors">{tip}</span>
-                                                </motion.li>
-                                            ))}
-                                        </ul>
-                                        <button className="mt-8 w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl text-xs font-bold transition-all flex items-center justify-center space-x-2">
-                                            <span>Full Strategy E-Book</span>
-                                            <Plus className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </motion.div>
+            {/* Performance Snapshot */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                {stats.map((stat, i) => (
+                    <div key={i} className="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-bl-full -mr-10 -mt-10 opacity-50 group-hover:scale-150 transition-transform"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="text-2xl">{stat.icon}</div>
+                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{stat.trend}</span>
+                            </div>
+                            <h4 className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-1">{stat.label}</h4>
+                            <p className="text-3xl font-black text-gray-900 tracking-tighter">{stat.value}</p>
                         </div>
                     </div>
-                </motion.div>
+                ))}
+            </div>
+
+            {/* Channels Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                {channels.map((channel) => (
+                    <div key={channel.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-700 flex flex-col group relative overflow-hidden">
+                        {/* Status Ribbon */}
+                        <div className={`absolute top-6 right -6 rotate-45 w-32 text-center text-[8px] font-black uppercase tracking-widest py-1 border shadow-sm z-20 ${channel.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'
+                            }`}>
+                            {channel.status}
+                        </div>
+
+                        <div className="p-8 pb-4">
+                            <div className={`w-16 h-16 rounded-3xl bg-${channel.color}-50 text-3xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 group-hover:bg-${channel.color}-600 group-hover:text-white transition-all duration-500`}>
+                                {channel.icon}
+                            </div>
+                            <h3 className="text-xl font-black text-gray-900 mb-3 tracking-tight italic">{channel.name}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed font-medium mb-6">{channel.description}</p>
+
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100/50">
+                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Reach</p>
+                                    <p className="text-lg font-black text-gray-900">{channel.metrics.Reach}</p>
+                                </div>
+                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100/50">
+                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Conv.</p>
+                                    <p className="text-lg font-black text-gray-900">{channel.metrics.Conversion}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto p-8 pt-0">
+                            {channel.isConnected ? (
+                                <button
+                                    onClick={() => handleConnect(channel.id)}
+                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all shadow-xl shadow-gray-100 active:scale-95`}
+                                >
+                                    Manage Channel ⚙️
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => handleConnect(channel.id)}
+                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-gray-900 text-white hover:bg-black transition-all shadow-2xl shadow-gray-200 active:scale-95`}
+                                >
+                                    Activate Connector 🚀
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Smart Insights Banner */}
+            <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-black rounded-[3rem] p-10 md:p-14 text-white shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500 rounded-full blur-[120px] opacity-10 -mr-48 -mt-48 animate-pulse"></div>
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-12">
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="inline-flex items-center px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-black tracking-[0.2em] uppercase mb-8 border border-white/20">
+                            <span className="flex h-2 w-2 rounded-full bg-indigo-400 mr-2"></span>
+                            AI Business Advisor
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight tracking-tight">
+                            "Connect <span className="text-indigo-400 italic">Meta Marketing</span> to unlock <br className="hidden md:block" /> AI-driven buyer personas."
+                        </h2>
+                        <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-2">
+                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Predictive Analytics</span>
+                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Churn Reduction</span>
+                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Trend Analysis</span>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-auto">
+                        <button
+                            onClick={() => handleConnect('meta')}
+                            className="px-10 py-5 bg-white text-gray-900 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-gray-100 transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:scale-95"
+                        >
+                            Explore AI Insights
+                        </button>
+                    </div>
+                </div>
             </div>
         </Layout>
     );
 };
 
 export default MarketingTools;
-

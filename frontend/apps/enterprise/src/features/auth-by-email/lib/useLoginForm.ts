@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@repo/shared';
 
 import { useAuthActions } from './useAuthActions';
+import { login } from '@/entities/session/model/authSlice';
 import { useEffect } from 'react';
 
 export const useLoginForm = () => {

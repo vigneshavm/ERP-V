@@ -31,11 +31,17 @@ export * from './contact/supplier';
 
 // Sales Types (Explicitly exported to avoid ambiguity with domain types)
 export type {
+    CartItem,
     CartItem as SalesCartItem,
+    Customer,
     Customer as SalesCustomer,
+    Invoice,
     Invoice as SalesInvoice,
+    Sale,
     Sale as SalesSale,
+    SaleStatus,
     SaleStatus as SalesSaleStatus,
+    Session,
     Session as SalesSession
 } from './sales/sales';
 
@@ -44,8 +50,7 @@ export { posSlice, default as posReducer } from './sales/posSlice';
 export * from './auth/auth.schema';
 
 // Auth Store - Export User as the primary 'User' type for authentication context
-export { useAuthStore } from './auth/authStore';
-export type { AuthState, User } from './auth/authStore';
+export * from './auth/authStore';
 
 export { useExpenseStore, ExpenseProvider, useExpenses } from './store/expenseStore';
 

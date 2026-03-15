@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { useState } from 'react';
 import { RootState } from '@/app/store/store';
 import { useTenantData } from '@/features/tenant-onboarding/lib/useTenantData';

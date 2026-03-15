@@ -4,11 +4,12 @@ import { SalesReturnItem } from "@repo/shared";
 import { Trash2, AlertCircle } from 'lucide-react';
 
 interface ReturnItemGridProps {
-    invoice: Sale;
-    onItemsChange: (items: SalesReturnItem[]) => void;
+    invoice?: Sale;
+    onItemsChange?: (items: SalesReturnItem[]) => void;
 }
 
 export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItemsChange }) => {
+    if (!invoice) return <div className="p-8 text-center text-slate-500">No invoice selected.</div>;
     // We map invoice items to potential return items (with 0 quantity initially or pre-filled?)
     // Better to let user add items or list all matches and let them set qty > 0.
     // Let's list all items.
@@ -19,7 +20,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
 
     useEffect(() => {
         // Initialize return items from invoice
-        const initialItems = invoice.items.map(item => ({
+        const initialItems = invoice.items.map((item: any) => ({
             productId: item.id || '', // CartItem maps to Product (id might be _id or id) - assuming id
             productName: item.name,
             variantId: item.variantId,
@@ -68,7 +69,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                 reason: i.reason
             }));
 
-        onItemsChange(validItems as SalesReturnItem[]);
+        onItemsChange?.(validItems as SalesReturnItem[]);
     };
 
     const handleConditionChange = (index: number, condition: SalesReturnItem['condition']) => {
@@ -92,7 +93,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                 condition: i.condition!,
                 reason: i.reason
             }));
-        onItemsChange(validItems as SalesReturnItem[]);
+        onItemsChange?.(validItems as SalesReturnItem[]);
     };
 
     return (
@@ -170,3 +171,5 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
     );
 };
 
+
+export default ReturnItemGrid;

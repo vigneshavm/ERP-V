@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { FinanceState, FinanceTransaction, Cheque, DayEndSummary } from "@repo/shared";
 import { TransactionType } from "@repo/shared";

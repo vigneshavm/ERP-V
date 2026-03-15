@@ -23,13 +23,16 @@ import { RootState } from '@/app/store/store';
 interface AuthState {
   user: User | null;
   role: string | null;
+  currentSector: string | null;
+  currentBranch: string | null;
+  theme: string | null;
   loading: boolean;
   error: string | null;
+  message: string | null;
   // Legacy fields from head if needed
   isLoading?: boolean;
   isSuccess?: boolean;
   isError?: boolean;
-  message?: string;
   deviceConflict?: boolean;
   conflictMessage?: string;
 }
@@ -37,8 +40,12 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   role: null,
+  currentSector: 'Retail',
+  currentBranch: 'All',
+  theme: 'light',
   loading: false,
   error: null,
+  message: null,
 };
 
 // Register user
@@ -47,10 +54,10 @@ export const register = createAsyncThunk<User, any, { rejectValue: string }>(
     async (userData, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.register, userData);
-            if (response) {
-                localStorage.setItem('user', JSON.stringify(response));
+            if (response && response.data) {
+                localStorage.setItem('user', JSON.stringify(response.data));
             }
-            return response as User;
+            return response.data as User;
         } catch (error: any) {
             const message =
                 (error as any)?.message || error?.toString?.() || 'Registration failed';
@@ -65,10 +72,10 @@ export const login = createAsyncThunk<User, any, { rejectValue: any }>(
     async (userData, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.login, userData);
-            if (response) {
-                localStorage.setItem('user', JSON.stringify(response));
+            if (response && response.data) {
+                localStorage.setItem('user', JSON.stringify(response.data));
             }
-            return response as User;
+            return response.data as User;
         } catch (error: any) {
             const message = (error as any)?.message || 'Login failed';
             return thunkAPI.rejectWithValue({ message });
@@ -82,7 +89,7 @@ export const requestPasswordReset = createAsyncThunk<{ message: string }, string
     async (email, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.forgotPassword, { email });
-            return response as { message: string };
+            return response.data as { message: string };
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -99,7 +106,7 @@ export const performPasswordReset = createAsyncThunk<{ message: string }, any, {
     async (payload, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.resetPassword, payload);
-            return response as { message: string };
+            return response.data as { message: string };
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -121,7 +128,7 @@ export const forceLogout = createAsyncThunk<any, any, { rejectValue: string }>(
     async (credentials, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.forceLogout, credentials);
-            return response as any;
+            return response.data as any;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -144,7 +151,7 @@ export const getProfile = createAsyncThunk<any, void, { state: RootState, reject
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response as any;
+            return response.data as any;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -172,13 +179,13 @@ export const updateProfile = createAsyncThunk<any, any, { state: RootState, reje
                     },
                 }
             );
-            if ((response as any)?.user) {
+            if (response.data?.user) {
                 const currentUser = state.auth.user;
-                const updatedUser = { ...currentUser, ...(response as any).user };
+                const updatedUser = { ...currentUser, ...response.data.user };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                return (response as any).user;
+                return response.data.user;
             }
-            return response;
+            return response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -208,6 +215,27 @@ export const authSlice = createSlice({
             state.user = null;
             state.role = null;
             clearSession();
+        },
+        setUserPreferences: (state, action: PayloadAction<any>) => {
+            if (state.user) {
+                state.user.userPreferences = action.payload;
+                localStorage.setItem('user', JSON.stringify(state.user));
+            }
+        },
+        setBranch: (state, action: PayloadAction<string>) => {
+            state.currentBranch = action.payload;
+        },
+        setTheme: (state, action: PayloadAction<string>) => {
+            state.theme = action.payload;
+        },
+        setAuthError: (state, action: PayloadAction<string | null>) => {
+            state.error = action.payload;
+            state.isError = !!action.payload;
+            state.loading = false;
+        },
+        setAuthSuccess: (state, action: PayloadAction<boolean>) => {
+            state.isSuccess = action.payload;
+            state.loading = false;
         },
     },
     extraReducers: (builder) => {
@@ -241,6 +269,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const { setUser, logout, resetAuthState, setAuthLoading } = authSlice.actions;
+export const { setUser, logout, resetAuthState, setAuthLoading, setUserPreferences, setBranch, setTheme, setAuthError, setAuthSuccess } = authSlice.actions;
 export const authReducer = authSlice.reducer;
 export default authSlice.reducer;

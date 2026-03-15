@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React, { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Ban } from 'lucide-react';

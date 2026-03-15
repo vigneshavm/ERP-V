@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterInput } from '@repo/shared';
 
 import { useAuthActions } from './useAuthActions';
+import { register } from '@/entities/session/model/authSlice';
 import { useEffect } from 'react';
 
 export const useRegisterForm = () => {

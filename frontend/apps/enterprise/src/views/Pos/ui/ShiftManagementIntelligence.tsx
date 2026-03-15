@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React, { useState, useMemo } from 'react';
 import { RootState } from "@/app/store/store";
 import {

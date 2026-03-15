@@ -3,11 +3,11 @@ import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, P
 import api from '@/shared/api/api';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import SmsTransactionCard from '@/components/Finance/SmsTransactionCard';
-import ExpenseForm from '@/components/Finance/ExpenseForm';
+import SmsTransactionCard from '@/features/expense-tracking/ui/SmsTransactionCard';
+import ExpenseForm from '@/features/expense-tracking/ui/ExpenseForm';
+import { useExpenses } from '@repo/shared';
 import { useBranchResolver } from "@/hooks/useBranchResolver";
-import { useSmsTracker } from "@/features/finance/lib/useSmsTracker";
-import { TableSkeleton } from '@/components/core/Feedback/Skeleton';
+import { TableSkeleton } from '@/shared/ui/Feedback/Skeleton';
 
 const SmsTrackerPage: React.FC = () => {
     const [transactions, setTransactions] = useState<any[]>([]);

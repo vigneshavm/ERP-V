@@ -1,4 +1,5 @@
 "use client";
+import { useAuthStore } from '@repo/shared';
 
 import { logger } from '@/shared/lib/logger';
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- TODO(TS-FIX): Phase 2/3 fix

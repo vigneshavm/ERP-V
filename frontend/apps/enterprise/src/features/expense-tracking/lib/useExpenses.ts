@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";

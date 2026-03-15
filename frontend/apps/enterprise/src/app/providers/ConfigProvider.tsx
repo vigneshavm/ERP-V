@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
@@ -21,7 +22,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
 
     // Use store tenant if active, otherwise fallback to prop (e.g. for Demo)
     const activeTenant = storeTenant || propTenant;
-    const { userPreferences: userPreferences } = useAuthStore();
+    const user = useAuthStore(state => state.user);
+    const userPreferences = (user as any)?.userPreferences || (user as any)?.preferences;
 
     const config = useMemo(() => activeTenant?.region || {
         currency: 'USD',

@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store/store';
@@ -7,7 +8,6 @@ import { getSession, clearSession } from '@/shared/lib/utils/session';
 import { APP_CONFIG } from '@/app/config';
 import { logger } from '@/shared/lib/logger';
 import type { Tenant } from '@/entities/session/model/core';
-import { useAuthStore } from '@repo/shared';
 import { setUser, getProfile } from '@/entities/session/model/authSlice';
 
 

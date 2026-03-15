@@ -1,3 +1,4 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';

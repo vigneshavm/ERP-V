@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordInput } from '@repo/shared';
 
 import { useAuthActions } from './useAuthActions';
+import { performPasswordReset } from '@/entities/session/model/authSlice';
 import { useEffect } from 'react';
 
 export const useResetPasswordForm = (email: string, token: string) => {

@@ -50,7 +50,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ refreshTrigger = 0, onCateg
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '100px' }}>
             {categories.map((cat, idx) => {
-                const IconComponent = iconMap[cat.icon] || MoreHorizontal;
+                const IconComponent = (cat.icon && iconMap[cat.icon]) || MoreHorizontal;
                 return (
                     <Card
                         key={idx}
@@ -60,7 +60,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ refreshTrigger = 0, onCateg
                             if (onCategoryClick) {
                                 onCategoryClick(cat);
                             } else {
-                                navigateToCategoryDetails(cat.id, cat.name, cat.value, cat.color);
+                                navigateToCategoryDetails(cat.id, cat.name, cat.value || 0, cat.color);
                             }
                         }}
                         style={{
@@ -90,7 +90,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ refreshTrigger = 0, onCateg
                             </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{formatCurrency(cat.value)}</span>
+                            <span style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)' }}>{formatCurrency(cat.value || 0)}</span>
                             <ChevronRight size={16} color="var(--text-secondary)" />
                         </div>
                     </Card>

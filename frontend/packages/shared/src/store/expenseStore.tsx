@@ -4,11 +4,15 @@ import React from 'react';
 interface ExpenseState {
     refreshTrigger: number;
     refreshExpenses: () => void;
+    createExpense: (data: any) => Promise<void>;
 }
 
 export const useExpenseStore = create<ExpenseState>((set) => ({
     refreshTrigger: 0,
     refreshExpenses: () => set((state) => ({ refreshTrigger: state.refreshTrigger + 1 })),
+    createExpense: async (data: any) => {
+        console.log('Dummy createExpense called with:', data);
+    }
 }));
 
 /**
@@ -19,9 +23,10 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
 };
 
 export const useExpenses = () => {
-    const { refreshTrigger, refreshExpenses } = useExpenseStore();
+    const { refreshTrigger, refreshExpenses, createExpense } = useExpenseStore();
     return {
         refreshTrigger,
-        triggerRefresh: refreshExpenses
+        triggerRefresh: refreshExpenses,
+        createExpense
     };
 };

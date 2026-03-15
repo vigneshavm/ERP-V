@@ -1,7 +1,9 @@
+import { useAuthStore } from '@repo/shared';
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useTransition } from 'react';
 import { useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
+import { setUser } from "@/entities/session/model/authSlice";
 
 import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, Eye, EyeOff, Loader2, Mail, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -170,7 +172,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                 )}
 
                 <motion.div
-                    className="w-full max-w-sm sm:max-w-md"
+                    className="w-full max-sm sm:max-w-md"
                     initial={{ opacity: 0, y: 20, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
@@ -291,4 +293,3 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
 };
 
 export default Login;
-

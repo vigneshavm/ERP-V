@@ -85,7 +85,7 @@ const WhatsAppMarketing: React.FC = () => {
             if (statsRes.data.success) setDeliveryStats(statsRes.data.data);
 
             // Fetch customers count if needed, or stick to dummy groups for now as per controller lack of it
-        } catch (error) {
+        } catch (error: any) {
             logger.error('Error fetching WhatsApp data:', error);
             toast.error('Failed to load marketing data');
         } finally {
@@ -534,4 +534,3 @@ const WhatsAppMarketing: React.FC = () => {
 };
 
 export default WhatsAppMarketing;
-

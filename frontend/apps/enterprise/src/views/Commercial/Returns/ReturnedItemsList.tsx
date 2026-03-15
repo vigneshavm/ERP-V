@@ -3,12 +3,12 @@ import { SalesReturn } from "@repo/shared";
 import { RefreshCw, Wallet, User, Calendar } from 'lucide-react';
 
 interface ReturnedItemsListProps {
-    returns: SalesReturn[];
-    onViewDetails: (ret: SalesReturn) => void;
+    returns?: SalesReturn[];
+    onViewDetails?: (ret: SalesReturn) => void;
 }
 
 // Mock data integration point later
-export const ReturnedItemsList: React.FC<ReturnedItemsListProps> = ({ returns, onViewDetails }) => {
+export const ReturnedItemsList: React.FC<ReturnedItemsListProps> = ({ returns = [], onViewDetails }) => {
 
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
@@ -73,3 +73,5 @@ export const ReturnedItemsList: React.FC<ReturnedItemsListProps> = ({ returns, o
     );
 };
 
+
+export default ReturnedItemsList;

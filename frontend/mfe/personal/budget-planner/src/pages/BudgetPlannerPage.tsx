@@ -38,3 +38,4 @@ export const BudgetPlannerPage: React.FC = () => {
     </div>
   );
 };
+export default BudgetPlannerPage;

@@ -1,3 +1,4 @@
+import { TenantUser as User } from '@/entities/session/model/core';
 
 
 export const getSession = (): User | null => {
