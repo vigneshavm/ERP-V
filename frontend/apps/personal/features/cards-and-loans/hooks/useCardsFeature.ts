@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { fetchCreditCards, fetchDebitCards } from '../services/cardsApi';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useCardsFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [creditCards, setCreditCards] = useState<any[]>([]);
     const [debitCards, setDebitCards] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);

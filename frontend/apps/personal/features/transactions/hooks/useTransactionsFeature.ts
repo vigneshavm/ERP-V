@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { fetchAllTransactions, fetchAccounts, createAccount, bulkUpdateTransactions, bulkDeleteTransactions, disputeTransaction } from '../services/transactionsApi';
 import { CalendarTransaction } from '@repo/shared';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useTransactionsFeature = () => {
-    const { refreshTrigger, triggerRefresh } = useExpenses();
+    const { refreshTrigger, refreshExpenses } = useExpenseStore();
+
     const [transactions, setTransactions] = useState<CalendarTransaction[]>([]);
     const [accounts, setAccounts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -35,22 +37,22 @@ export const useTransactionsFeature = () => {
 
     const addAccount = async (account: any) => {
         await createAccount(account);
-        triggerRefresh();
+        refreshExpenses();
     };
 
     const updateTransactionsCategory = async (ids: string[], categoryId: string) => {
         await bulkUpdateTransactions(ids, categoryId);
-        triggerRefresh();
+        refreshExpenses();
     };
 
     const deleteTransactions = async (ids: string[]) => {
         await bulkDeleteTransactions(ids);
-        triggerRefresh();
+        refreshExpenses();
     };
 
     const reverseTransaction = async (id: string) => {
         await disputeTransaction(id);
-        triggerRefresh();
+        refreshExpenses();
     };
 
     return {

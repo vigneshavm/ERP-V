@@ -3,10 +3,12 @@
 import { useState, useEffect, useTransition } from 'react';
 import { fetchExpensesHistory, submitExpenseTransaction, fetchCategories } from '../services/expensesApi';
 import { ExpenseHistory, Category } from '@repo/shared';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useExpensesFeature = () => {
-    const { refreshTrigger, triggerRefresh } = useExpenses();
+    const { refreshTrigger, refreshExpenses } = useExpenseStore();
+
     const [data, setData] = useState<ExpenseHistory | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export const useExpensesFeature = () => {
         startTransition(async () => {
             try {
                 await submitExpenseTransaction(amount, categoryName, notes);
-                triggerRefresh();
+                refreshExpenses();
             } catch (err) {
                 console.error("Failed to add expense:", err);
             }

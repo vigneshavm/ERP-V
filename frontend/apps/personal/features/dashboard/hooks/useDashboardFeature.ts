@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { fetchDashboardData } from '../services/dashboardApi';
 import { DashboardData } from '@repo/shared';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useDashboardFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);

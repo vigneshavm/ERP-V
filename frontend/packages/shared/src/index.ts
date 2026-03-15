@@ -48,13 +48,15 @@ export * from './auth/auth.schema';
 export { useAuthStore } from './auth/authStore';
 export type { AuthState, User } from './auth/authStore';
 
+export { useExpenseStore } from './store/expenseStore';
+
 export * from './common/common';
 export { api } from './services/apiClient';
 export * from './i18n/LanguageContext';
 export * from './auth/auth.utils';
-export * from './contexts/ExpenseContext';
 export * from './services/mockState';
 export * from './services/gemini';
 export * from './events/eventTypes';
 export * from './events/eventBus';
 export * from './hooks/usePersonalFinance';
+

@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { fetchNotifications } from '../services/notificationsApi';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useNotificationsFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);

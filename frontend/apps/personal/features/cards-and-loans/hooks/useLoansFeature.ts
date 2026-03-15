@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { fetchLoans, createLoan, updateLoan, deleteLoan, recordLoanPayment } from '../services/loansApi';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 import { Loan } from '@repo/shared';
 
 export const useLoansFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [loans, setLoans] = useState<Loan[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);

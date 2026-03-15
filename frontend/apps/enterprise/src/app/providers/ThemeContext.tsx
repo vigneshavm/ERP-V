@@ -19,20 +19,26 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- TODO(TS-FIX): Phase 2/3 fix
         setIsMounted(true);
         const saved = getStoredTheme();
-        if (saved) {
-            setThemeState(saved);
-            applyTheme(saved);
-        } else {
-            applyTheme('dark');
-        }
+        const initialTheme = saved || 'dark';
+        setThemeState(initialTheme);
+        applyTheme(initialTheme);
+        
+        // Apply theme class to root element
+        const root = window.document.documentElement;
+        root.classList.remove('light', 'dark', 'cyber', 'gold');
+        root.classList.add(initialTheme);
     }, []);
 
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
         setStoredTheme(newTheme);
+        applyTheme(newTheme);
+        
+        const root = window.document.documentElement;
+        root.classList.remove('light', 'dark', 'cyber', 'gold');
+        root.classList.add(newTheme);
     };
 
     const toggleTheme = () => {
@@ -49,17 +55,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         isDark: isDarkTheme,
     };
 
-    // Prevent hydration mismatch by always rendering initial light/dark state
-    // but applying classes only after mount if needed.
-    // For Matrix, we often want dark anyway.
     return (
         <ThemeContext.Provider value={value}>
-            <div className={isMounted ? '' : 'dark'}>
-                {children}
-            </div>
+            {children}
         </ThemeContext.Provider>
     );
 };
+
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = (): ThemeContextType => {
