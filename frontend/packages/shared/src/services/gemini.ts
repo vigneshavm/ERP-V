@@ -1,4 +1,4 @@
-import { Product } from "../types";
+import { Product } from "../inventory";
 
 export const getProductRecommendations = async (apiKey: string, query: string, products: Product[]) => {
     // Basic mock implementation for now to unblock build
