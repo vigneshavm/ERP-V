@@ -35,5 +35,19 @@ export const getJournalEntryById = asyncHandler(async (req: AuthenticatedRequest
     res.status(200).json(entry);
 });
 
-const JournalEntryController = { getJournalEntries, createJournalEntry, getJournalEntryById };
+export const postJournalEntry = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(JournalEntryService);
+    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const entry = await service.postEntry(req.params.id as string, tenantId as string, req.user?._id as string);
+    res.status(200).json(entry);
+});
+
+export const voidJournalEntry = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(JournalEntryService);
+    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const entry = await service.voidEntry(req.params.id as string, tenantId as string, req.user?._id as string);
+    res.status(200).json(entry);
+});
+
+const JournalEntryController = { getJournalEntries, createJournalEntry, getJournalEntryById, postJournalEntry, voidJournalEntry };
 export default JournalEntryController;

@@ -9,6 +9,7 @@ export interface IExpense extends Document {
     bankAccount?: string | Types.ObjectId; // ObjectId ref to BankAccount
     description?: string;
     receipt?: string;
+    status: "draft" | "pending" | "approved" | "rejected" | "paid";
     createdBy: string | Types.ObjectId; // ObjectId ref to User
     tenantId: string | Types.ObjectId; // ObjectId ref to Tenant
 

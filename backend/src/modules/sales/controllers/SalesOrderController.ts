@@ -1063,13 +1063,47 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
     }
 };
 
+/**
+ * @desc Generic status update for sales order
+ * @route PATCH /api/sales-orders/:id/status
+ */
+export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!status) {
+            res.status(400).json({ message: 'Status is required' });
+            return;
+        }
+
+        const order = await SalesOrder.findOneAndUpdate(
+            { _id: id, tenantId: req.tenantId },
+            { status: status },
+            { new: true }
+        );
+
+        if (!order) {
+            res.status(404).json({ message: 'Sales Order not found' });
+            return;
+        }
+
+        info(`Sales Order ${order.orderNumber} status updated to ${status}`);
+        res.status(200).json(order);
+    } catch (err) {
+        error(`Update Order Status failed: ${(err as Error).message}`);
+        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+    }
+};
+
 export default {
-    createSalesOrder,
-    updateSalesOrder,
-    confirmSalesOrder,
-    getSalesOrderById,
-    listSalesOrders,
-    cancelSalesOrder,
-    convertToDeliveryChallan,
-    convertToInvoice,
+    createSalesOrder: createSalesOrder as any,
+    updateSalesOrder: updateSalesOrder as any,
+    confirmSalesOrder: confirmSalesOrder as any,
+    getSalesOrderById: getSalesOrderById as any,
+    listSalesOrders: listSalesOrders as any,
+    cancelSalesOrder: cancelSalesOrder as any,
+    updateOrderStatus: updateOrderStatus as any,
+    convertToDeliveryChallan: convertToDeliveryChallan as any,
+    convertToInvoice: convertToInvoice as any,
 };

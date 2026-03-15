@@ -60,9 +60,24 @@ export class SalesController {
     createSalesInvoice = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = (req as any).user._id;
-            const tenantId = (req as any).tenantId; // Assuming middleware sets this
+            const tenantId = (req as any).tenantId; 
             const invoice = await this.salesService.createInvoice(req.body, userId, tenantId);
             res.status(201).json(invoice);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    updateInvoiceStatus = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = (req as any).user._id;
+            const { status } = req.body;
+            if (!status) {
+                res.status(400).json({ message: "Status is required" });
+                return;
+            }
+            const result = await this.salesService.updateStatus(req.params.id as string, userId, status);
+            res.status(200).json(result);
         } catch (error) {
             next(error);
         }

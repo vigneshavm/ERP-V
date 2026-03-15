@@ -1,12 +1,14 @@
 import { injectable, inject } from "tsyringe";
 import { JournalEntryRepository } from "../../../repositories/JournalEntryRepository.js";
+import { ChartOfAccountRepository } from "../../../repositories/ChartOfAccountRepository.js";
 import { AppError } from "../../../utils/AppError.js";
 import { info } from "../../../config/logger.js";
 
 @injectable()
 export class JournalEntryService {
     constructor(
-        @inject(JournalEntryRepository) private repo: JournalEntryRepository
+        @inject(JournalEntryRepository) private repo: JournalEntryRepository,
+        @inject(ChartOfAccountRepository) private accountRepo: ChartOfAccountRepository
     ) { }
 
     async getEntries(tenantId?: string, filters?: { startDate?: string; endDate?: string; accountId?: string }): Promise<any[]> {
@@ -53,5 +55,58 @@ export class JournalEntryService {
         const entry = await this.repo.findById(id);
         if (!entry) throw new AppError("Journal Entry not found", 404);
         return entry;
+    }
+
+    async postEntry(id: string, tenantId: string, userId: string): Promise<any> {
+        const entry = await this.repo.findById(id);
+        if (!entry) throw new AppError("Journal Entry not found", 404);
+        if (entry.status === 'POSTED') throw new AppError("Entry already posted", 400);
+
+        // Update balances in COA
+        for (const line of entry.entries) {
+            const amount = (line.debit || 0) - (line.credit || 0);
+            if (amount !== 0) {
+                // Find account by name or ID (entries store accountId which might be name or ID)
+                let account = await this.accountRepo.findById(line.accountId, tenantId);
+                if (!account) {
+                    account = await this.accountRepo.findByCode(line.accountId, tenantId);
+                }
+                
+                if (account) {
+                    await this.accountRepo.updateBalance((account._id as any).toString(), amount);
+                }
+            }
+        }
+
+        await this.repo.updateStatus(id, 'POSTED');
+        info(`Journal Entry ${id} posted by ${userId}`);
+        return { ...entry, status: 'POSTED' };
+    }
+
+    async voidEntry(id: string, tenantId: string, userId: string): Promise<any> {
+        const entry = await this.repo.findById(id);
+        if (!entry) throw new AppError("Journal Entry not found", 404);
+        if (entry.status === 'VOID') throw new AppError("Entry already voided", 400);
+
+        // Reverse balances if it was previously posted
+        if (entry.status === 'POSTED') {
+            for (const line of entry.entries) {
+                const amount = (line.debit || 0) - (line.credit || 0);
+                if (amount !== 0) {
+                    let account = await this.accountRepo.findById(line.accountId, tenantId);
+                    if (!account) {
+                        account = await this.accountRepo.findByCode(line.accountId, tenantId);
+                    }
+                    
+                    if (account) {
+                        await this.accountRepo.updateBalance((account._id as any).toString(), -amount);
+                    }
+                }
+            }
+        }
+
+        await this.repo.updateStatus(id, 'VOID');
+        info(`Journal Entry ${id} voided by ${userId}`);
+        return { ...entry, status: 'VOID' };
     }
 }

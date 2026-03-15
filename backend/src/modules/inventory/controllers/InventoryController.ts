@@ -270,4 +270,15 @@ export class InventoryController {
             res.status(500).json({ message: 'Server Error', error: err.message });
         }
     };
+
+    public recordMovement = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            await this.inventoryService.recordMovement(authReq.params.id, authReq.body, authReq.tenantId as string, authReq.user);
+            res.status(200).json({ message: 'Stock movement recorded successfully' });
+        } catch (err: any) {
+            error(`Record Movement Error: ${err.message}`);
+            res.status(err.statusCode || 500).json({ message: err.message });
+        }
+    };
 }

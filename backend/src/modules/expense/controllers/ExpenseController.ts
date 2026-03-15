@@ -243,10 +243,80 @@ export const deleteExpense = async (req: AuthenticatedRequest, res: Response): P
     }
 };
 
+/**
+ * @desc Get expense summary by category
+ * @route GET /api/expenses/summary
+ */
+export const getExpenseSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { year, month } = req.query;
+        const tenantId = (req as any).tenantId;
+
+        const match: any = { tenantId: new mongoose.Types.ObjectId(tenantId as string) };
+
+        if (year) {
+            const y = parseInt(year as string);
+            const start = new Date(y, month ? parseInt(month as string) - 1 : 0, 1);
+            const end = new Date(y, month ? parseInt(month as string) : 12, 0, 23, 59, 59);
+            match.date = { $gte: start, $lte: end };
+        }
+
+        const summary = await Expense.aggregate([
+            { $match: match },
+            {
+                $group: {
+                    _id: "$category",
+                    totalAmount: { $sum: "$amount" },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    category: "$_id",
+                    totalAmount: 1,
+                    count: 1,
+                    _id: 0
+                }
+            }
+        ]);
+
+        res.status(200).json(summary);
+    } catch (err) {
+        error(`Get expense summary failed: ${(err as Error).message}`);
+        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+    }
+};
+
+/**
+ * @desc Approve an expense
+ * @route POST /api/expenses/:id/approve
+ */
+export const approveExpense = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const expense = await Expense.findOneAndUpdate(
+            { _id: req.params.id, tenantId: (req as any).tenantId },
+            { status: 'approved' },
+            { new: true }
+        );
+
+        if (!expense) {
+            res.status(404).json({ message: 'Expense not found' });
+            return;
+        }
+
+        res.status(200).json(expense);
+    } catch (err) {
+        error(`Approve expense failed: ${(err as Error).message}`);
+        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+    }
+};
+
 export default {
     getAllExpenses,
     createExpense,
     getExpenseById,
     updateExpense,
     deleteExpense,
+    getExpenseSummary,
+    approveExpense
 };
