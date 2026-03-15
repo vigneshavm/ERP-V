@@ -11,7 +11,7 @@ const PERSIST_KEYS: Record<string, string> = {
     purchase: 'purchase'
 };
 
-let saveTimeout: NodeJS.Timeout | null = null;
+const saveTimeouts: Record<string, NodeJS.Timeout> = {};
 
 export const persistenceMiddleware: Middleware = (store) => (next) => (action) => {
     const result = next(action);
@@ -22,14 +22,18 @@ export const persistenceMiddleware: Middleware = (store) => (next) => (action) =
     const sliceName = actionType.split('/')[0];
 
     if (PERSIST_KEYS[sliceName]) {
-        if (saveTimeout) clearTimeout(saveTimeout);
+        if (saveTimeouts[sliceName]) {
+            clearTimeout(saveTimeouts[sliceName]);
+        }
 
-        saveTimeout = setTimeout(() => {
+        saveTimeouts[sliceName] = setTimeout(() => {
             const tenantId = state.auth.user?.tenantId;
             logger.info(`[Persistence] Debounced save for slice: ${sliceName} (Tenant: ${tenantId || 'None'})`);
             saveState(PERSIST_KEYS[sliceName], state[sliceName], tenantId);
+            delete saveTimeouts[sliceName];
         }, 1000); // 1s debounce
     }
 
     return result;
 };
+

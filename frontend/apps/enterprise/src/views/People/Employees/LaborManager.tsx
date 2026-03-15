@@ -29,7 +29,7 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { employees, attendance, payments } = useSelector((state: RootState) => state.labor);
-  const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+  const {  currentSector, currentBranch  } = useAuthStore();
   const tenantBranches = useSelector((state: RootState) => state.tenant.branches);
 
   const location = useLocation();

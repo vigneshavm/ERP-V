@@ -10,7 +10,7 @@ interface CounterWiseSalesReportProps {
 
 const CounterWiseSalesReport: React.FC<CounterWiseSalesReportProps> = ({ timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
     const { branches } = useSelector((state: RootState) => state.tenant);
 
     // Filter sales by sector

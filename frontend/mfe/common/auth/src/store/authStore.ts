@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { eventBus, EventType } from '@repo/shared';
+import { eventBus, EventType } from '../events';
 
 /**
  * Utility to set/remove cookies in a client-side environment.
@@ -10,7 +10,8 @@ const setCookie = (name: string, value: string, days?: number) => {
   let expires = "";
   if (days) {
     const date = new Date();
-    date.setTime(date.now() + days * 24 * 60 * 60 * 1000);
+    date.setTime(Date.now() + days * 24 * 60 * 60 * 1000);
+
     expires = "; expires=" + date.toUTCString();
   }
   document.cookie = name + "=" + (value || "") + expires + "; path=/; samesite=lax";
@@ -20,36 +21,39 @@ const removeCookie = (name: string) => {
   document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 };
 
-interface User {
+export interface User {
   id: string;
   username: string;
   email: string;
   name: string;
   role: string;
+  [key: string]: any; // Allow extensibility across different modules
 }
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   setAuth: (user: User, token: string) => void;
+  updateUser: (updates: Partial<User>) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
       setAuth: (user, token) => {
         set({ user, token, isAuthenticated: true });
-        // Legacy support for other MFEs
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('token', token);
         
-        // Sync token to cookie for Shell Middleware
-        setCookie('auth_token', token, 7);
+        // Legacy support for older apps expecting plain localStorage items
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('token', token);
+          setCookie('auth_token', token, 7);
+        }
 
         // Broadcast auth change to other MFEs
         eventBus.publish(EventType.AUTH_UPDATED, {
@@ -58,14 +62,26 @@ export const useAuthStore = create<AuthState>()(
           token,
         });
       },
+      updateUser: (updates) => {
+        const currentUser = get().user;
+        if (currentUser) {
+          const updatedUser = { ...currentUser, ...updates };
+          set({ user: updatedUser });
+          
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+          }
+        }
+      },
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
-        // Legacy support for other MFEs
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
         
-        // Clear cookie for Shell Middleware
-        removeCookie('auth_token');
+        if (typeof window !== 'undefined') {
+          // Legacy support removal
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          removeCookie('auth_token');
+        }
 
         // Broadcast auth change to other MFEs
         eventBus.publish(EventType.AUTH_UPDATED, {
@@ -77,7 +93,29 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        // Subscribe to auth updates once hydrated
+        const unsub = eventBus.subscribe(EventType.AUTH_UPDATED, (payload: any) => {
+          if (payload.isAuthenticated !== state?.isAuthenticated) {
+
+            // Update local state if it differs from broadcast
+            // We use set() indirectly here via the store instance
+            useAuthStore.setState({ 
+              isAuthenticated: payload.isAuthenticated, 
+              user: payload.user, 
+              token: payload.token 
+            });
+          }
+        });
+        return unsub;
+      },
+      // Ensure we only use localStorage if window is defined (SSR safety)
+
+      storage: createJSONStorage(() => typeof window !== 'undefined' ? localStorage : {
+        getItem: () => null,
+        setItem: () => {},
+        removeItem: () => {},
+      } as any),
     }
   )
 );

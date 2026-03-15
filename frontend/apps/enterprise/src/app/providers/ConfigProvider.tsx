@@ -21,7 +21,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
 
     // Use store tenant if active, otherwise fallback to prop (e.g. for Demo)
     const activeTenant = storeTenant || propTenant;
-    const userPreferences = useSelector((state: RootState) => state.auth.userPreferences);
+    const { userPreferences: userPreferences } = useAuthStore();
 
     const config = useMemo(() => activeTenant?.region || {
         currency: 'USD',

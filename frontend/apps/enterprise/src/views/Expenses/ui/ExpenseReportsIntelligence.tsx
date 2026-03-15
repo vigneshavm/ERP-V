@@ -28,16 +28,10 @@ import {
 } from 'lucide-react';
 import Layout from "@/shared/ui/Layout";
 
-interface AuthState {
-    user: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    message: string;
-}
+
 
 const ExpenseReportsIntelligence: React.FC = () => {
-    const auth = useSelector((state: RootState & { auth: AuthState }) => state.auth);
+    const auth = useAuthStore();
     const user = auth.user;
     const { report, loading } = useExpenseReports();
 

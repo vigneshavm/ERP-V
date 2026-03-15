@@ -13,7 +13,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/entities/session/model/authSlice';
+
 import { setSession } from "@/shared/lib/utils/session";
 import { registrationUtil } from "@/features/tenant-onboarding/lib/registrationUtil";
 import {

@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@repo/shared';
+
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -16,19 +18,25 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
   children, 
   fallbackUrl = 'http://localhost:3000' 
 }) => {
+  const navigate = useNavigate();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkAuth = () => {
       if (!isAuthenticated()) {
         console.log('🔒 AuthGuard: User not authenticated, redirecting...');
-        window.location.href = fallbackUrl;
+        if (fallbackUrl.startsWith('http')) {
+          window.location.href = fallbackUrl;
+        } else {
+          navigate(fallbackUrl);
+        }
       } else {
         setAuthorized(true);
       }
     };
 
     checkAuth();
+
     
     // Optional: Add storage event listener to handle cross-tab logout
     const handleStorageChange = (e: StorageEvent) => {

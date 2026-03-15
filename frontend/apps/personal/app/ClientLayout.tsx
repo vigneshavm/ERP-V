@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthStore } from '@repo/shared';
 import { useNavigation } from '../contexts/NavigationContext';
 
 // Settings Overlays
@@ -21,7 +21,7 @@ import SecurityPin from '../features/auth/components/SecurityPin';
 import SecurityLock from '../features/auth/components/SecurityLock';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-    useAuth();
+    useAuthStore();
     const navigation = useNavigation();
     const { 
         isLanguageOpen, setIsLanguageOpen,

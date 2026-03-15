@@ -15,7 +15,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 
 const GoogleBusiness: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const [activeTab, setActiveTab] = useState<'profile' | 'reviews' | 'posts' | 'photos' | 'insights'>('profile');
     const [isLoading, setIsLoading] = useState(false);

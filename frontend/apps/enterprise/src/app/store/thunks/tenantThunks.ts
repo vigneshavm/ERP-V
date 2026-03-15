@@ -1,7 +1,7 @@
 import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 // import { supabase } from '../../lib/supabase'; // Removed
-import { setAuthLoading, setAuthError, setAuthSuccess } from '@/entities/session/model/authSlice';
+
 import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '@/entities/session/model/tenantSlice';
 import { GoogleBusinessConfig } from "@/entities/session/model/growth";
 
@@ -16,7 +16,7 @@ const getConfig = (token: string) => ({
 export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
         const state = getState();
-        const token = state.auth.user?.token;
+        const { token } = useAuthStore.getState();
         if (!token) return; // Should handle error appropriately
 
         const mapProfileToConfig = (data: any): GoogleBusinessConfig => ({
@@ -54,7 +54,7 @@ export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispa
 export const updateEcommerceSettings = (tenantId: string, settings: any) => async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
         const state = getState();
-        const token = state.auth.user?.token;
+        const { token } = useAuthStore.getState();
         if (!token) return;
 
         // Assuming backend accepts partial updates to profile including settings
@@ -72,7 +72,7 @@ export const updateEcommerceSettings = (tenantId: string, settings: any) => asyn
 export const activateEcommerce = (tenantId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
         const state = getState();
-        const token = state.auth.user?.token;
+        const { token } = useAuthStore.getState();
         if (!token) return;
 
         const ecommerceConfig: any = {

@@ -1,10 +1,10 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
+import {  useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
 import api from "@/shared/api/api";
-import { logout } from "@/entities/session/model/authSlice";
+
 import { clearSession } from "@/shared/lib/utils/session";
 
 const securePassword = async (p: string) => p;
@@ -17,7 +17,7 @@ interface ChangePasswordModalProps {
 
 const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');

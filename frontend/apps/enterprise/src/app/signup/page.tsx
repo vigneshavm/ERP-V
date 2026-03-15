@@ -5,7 +5,7 @@ import { logger } from '@/shared/lib/logger';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { setUser } from '@/entities/session/model/authSlice';
+
 import {
     Building2,
     User,

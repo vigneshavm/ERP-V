@@ -9,7 +9,8 @@ import { AlertCircle, CheckCircle2, TrendingUp, TrendingDown, Wallet } from 'luc
 import { formatCurrency, CalendarTransaction } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
 import { useNavigation, View } from '../../contexts/NavigationContext';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useTransactionsFeature } from '../transactions/hooks/useTransactionsFeature';

@@ -10,7 +10,7 @@ interface HourlyBillingReportProps {
 
 const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
 
     // Filter sales by sector
     const relevantSales = useMemo(() => {

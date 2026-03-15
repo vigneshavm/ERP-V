@@ -9,7 +9,7 @@ import {
 import { MarketingTemplate, MarketingCreative } from "@/types/tenant";
 
 const Campaigns: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);

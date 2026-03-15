@@ -22,16 +22,10 @@ export interface ExpenseCategory {
     subcategories?: ExpenseSubCategory[];
 }
 
-interface AuthState {
-    user: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    message: string;
-}
+
 
 export const useExpenseCategories = () => {
-    const { user } = useSelector((state: RootState & { auth: AuthState }) => state.auth);
+    const { user } = useAuthStore();
     const [categories, setCategories] = useState<ExpenseCategory[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);

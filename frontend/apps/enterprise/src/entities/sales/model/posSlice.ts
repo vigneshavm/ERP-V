@@ -64,7 +64,7 @@ export const createInvoice = createAsyncThunk(
     async (invoiceData: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/invoice`, invoiceData, getConfig(token));
             return response.data;
@@ -84,7 +84,7 @@ export const getAllInvoices = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             // Use the sales-invoice endpoint as posRoutes doesn't have a GET /invoices
             const response = await api.get(`/api/sales-invoice/invoices`, getConfig(token));
@@ -105,7 +105,7 @@ export const getInvoiceById = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/invoice/${id}`, getConfig(token));
             return response.data;
@@ -125,7 +125,7 @@ export const deleteInvoice = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             await api.delete(`${API_URL}/invoice/${id}`, getConfig(token));
             return id;
@@ -149,7 +149,7 @@ export const updateSaleStatus = createAsyncThunk<
     async ({ id, status }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/invoice/${id}/status`, { status }, getConfig(token));
             // Return BOTH id and status to fulfill the expected payload for the reducer

@@ -49,7 +49,7 @@ export const getSupplierGroups = createAsyncThunk<SupplierGroup[], void, { state
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.get(API_URL, getConfig(token));
             return response.data.data || response.data;
@@ -69,7 +69,7 @@ export const createSupplierGroup = createAsyncThunk<SupplierGroup, Partial<Suppl
     async (groupData, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.post(API_URL, groupData, getConfig(token));
             return response.data.data || response.data;
@@ -89,7 +89,7 @@ export const updateSupplierGroup = createAsyncThunk<SupplierGroup, { id: string,
     async ({ id, data }, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             const response = await api.put(`${API_URL}/${id}`, data, getConfig(token));
             return response.data.data || response.data;
@@ -109,7 +109,7 @@ export const deleteSupplierGroup = createAsyncThunk<string, string, { state: Roo
     async (id, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Token not found');
             await api.delete(`${API_URL}/${id}`, getConfig(token));
             return id;

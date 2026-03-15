@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Smartphone, ArrowRight, Camera, Settings2, ShoppingBag, Check } from 'lucide-react';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
-import { formatCurrency, DashboardData, Transaction, Category, useLanguage, useExpenses } from '@repo/shared';
+import { formatCurrency, DashboardData, Transaction, Category, useLanguage } from '@repo/shared';
+
+
 import { Card } from '@repo/ui';
 
 import PredictiveAlert from '../../predictions-and-alerts/PredictiveAlert';

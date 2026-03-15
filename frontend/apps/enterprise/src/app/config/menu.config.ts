@@ -42,9 +42,15 @@ import {
     Key,
     Lock,
     TrendingUp,
-    CreditCard
+    CreditCard,
+    Clock,
+    Plus,
+    RotateCcw,
+    AlertTriangle,
+    Barcode
 } from 'lucide-react';
 import { AppView, ModuleType } from "@repo/shared";
+
 
 export interface MenuItem {
     id: AppView;
@@ -268,6 +274,14 @@ export const MENU_ITEMS: MenuItem[] = [
     }
 ];
 
-// Helper Imports (to avoid errors if Lucide exports differ)
-import { Clock, Plus, RotateCcw, AlertTriangle, Barcode } from 'lucide-react';
+// MenuItem type used across the app
+export interface MenuItem {
+    id: AppView;
+    label: string;
+    icon?: any;
+    path?: string; // Optional, mostly for compatibility
+    module: ModuleType;
+    children?: MenuItem[];
+    isGrow?: boolean;
+}
 

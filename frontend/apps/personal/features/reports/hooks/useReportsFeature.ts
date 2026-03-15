@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { fetchReports, fetchStatsData, fetchYearlyInsights } from '../services/reportsApi';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 import { StatsData } from '@repo/shared';
 
 export const useReportsFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [reports, setReports] = useState<any[]>([]);
     const [stats, setStats] = useState<StatsData | null>(null);
     const [yearlyInsights, setYearlyInsights] = useState<any | null>(null);

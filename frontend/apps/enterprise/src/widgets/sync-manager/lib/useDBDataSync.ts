@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { useTenantData } from '@/features/tenant-onboarding/lib/useTenantData';
 import { useProductSync } from './useProductSync';
@@ -14,7 +13,7 @@ import { useVisualPreferences } from '@/features/tenant-onboarding/lib/useVisual
  * Splits logic into domain-specific hooks for better maintainability and performance.
  */
 export const useDBDataSync = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     // Ensure tenantId is a string, even if user object has full tenant populated
     const tenantId = user?.tenantId && typeof user.tenantId === 'object'
         ? (user.tenantId as any)._id

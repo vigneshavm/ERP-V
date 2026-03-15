@@ -1,4 +1,4 @@
-import { User } from '@/entities/session/model/authSlice';
+
 
 export const getSession = (): User | null => {
     if (typeof window === 'undefined') return null;

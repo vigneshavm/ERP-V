@@ -33,6 +33,7 @@ export const CategorySchema = z.object({
     limit: z.number().optional(),
     color: z.string().default("#3498db"),
     emoji: z.string().default("💰"),
+    icon: z.string().optional(), // Added for consistency with Goal/Loan
     type: z.enum(["income", "expense", "both"]).default("expense"),
     over: z.boolean().optional(),
 });

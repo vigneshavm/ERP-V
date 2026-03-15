@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
-import { logout, setAuthError, setAuthSuccess } from "@/entities/session/model/authSlice";
+
 import api from "@/shared/api/api";
 import { clearSession } from "@/shared/lib/utils/session";
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
@@ -12,7 +12,7 @@ import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthM
 const ResetPassword = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, isSuccess, isError } = useSelector((state: RootState) => state.auth);
+    const {  isLoading, isSuccess, isError  } = useAuthStore();
     const [isPending, startTransition] = useTransition();
 
     const [password, setPassword] = useState('');

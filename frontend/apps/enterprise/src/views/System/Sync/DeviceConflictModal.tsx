@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { forceLogout, login, resetAuthState } from "@/entities/session/model/authSlice";
+import { useDispatch } from 'react-redux';
+
 import { AppDispatch, RootState } from "@/app/store/store";
 
 interface DeviceConflictModalProps {
@@ -11,7 +11,7 @@ interface DeviceConflictModalProps {
 
 const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, password, onClose }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading } = useSelector((state: RootState) => state.auth);
+    const {  isLoading  } = useAuthStore();
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
 
@@ -37,7 +37,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
     };
 
     const handleCancel = () => {
-        dispatch(resetAuthState());
+        
         onClose();
     };
 

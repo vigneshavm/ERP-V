@@ -18,6 +18,13 @@ export interface IItem extends Document {
     isActive: boolean;
     addedBy: string; // ObjectId of User - Keep for audit
     tenantId: Types.ObjectId | string; // ObjectId of Tenant - NEW: Scoping
+    
+    // WooCommerce-style Variation Support
+    parentId?: Types.ObjectId | string;
+    isParent: boolean;
+    model?: string;
+    gender?: string;
+
     valuationMethod: 'FIFO' | 'WAC';
     batches: {
         batchNumber: string;

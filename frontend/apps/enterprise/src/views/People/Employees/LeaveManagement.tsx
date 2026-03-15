@@ -22,7 +22,7 @@ import { LeaveRequest, LeaveType } from "@/entities/people/model/hr";
 const LeaveManagement: React.FC = () => {
     const dispatch = useDispatch();
     const { leaves, employees } = useSelector((state: RootState) => state.labor);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
 
     const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
     const [filterStatus, setFilterStatus] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');

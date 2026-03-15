@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile, resetAuthState } from "@/entities/session/model/authSlice";
+
 import Layout from "@/shared/ui/Layout/Layout";
 import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "@/app/store/store";
@@ -24,9 +24,7 @@ interface FormErrors {
 const ProfileSettings: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const { user, isLoading, isSuccess, isError, message } = useSelector(
-        (state: RootState) => state.auth
-    );
+    const {  user, isLoading, isSuccess, isError, message  } = useAuthStore();
 
     const [formData, setFormData] = useState<FormData>({
         name: '',
@@ -65,7 +63,7 @@ const ProfileSettings: React.FC = () => {
             toast.success('Profile updated successfully!');
             const timer = setTimeout(() => {
                 setShowSuccess(false);
-                dispatch(resetAuthState());
+                
             }, 3000);
             return () => clearTimeout(timer);
         }
@@ -74,7 +72,7 @@ const ProfileSettings: React.FC = () => {
     useEffect(() => {
         if (isError && message) {
             toast.error(message);
-            dispatch(resetAuthState());
+            
         }
     }, [isError, message, dispatch]);
 

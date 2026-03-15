@@ -70,7 +70,7 @@ interface BranchHealth {
 
 const POSOrdersIntelligence: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { salesHistory, isLoading: posLoading } = useSelector((state: RootState) => state.pos);
     const { dashboardStats, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
     const tenant_id = user?.tenantId || 'TEN001';

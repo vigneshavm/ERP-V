@@ -154,6 +154,10 @@ export class InventoryService {
         return this.inventoryRepository.getLowStockItems(tenantId);
     }
 
+    async getVariations(parentId: string, tenantId: string): Promise<IItem[]> {
+        return this.inventoryRepository.findByParentId(parentId, tenantId);
+    }
+
     async getInventoryStats(tenantId: string): Promise<any> {
         const stats = await Item.aggregate([
             { $match: { tenantId } },

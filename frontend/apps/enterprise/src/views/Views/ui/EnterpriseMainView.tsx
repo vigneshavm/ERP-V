@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store/store';
-import { setUser, getProfile } from '@/entities/session/model/authSlice';
+
 import { useUiStore } from '@/shared/lib/store/uiStore';
 import { APP_CONFIG } from '@/app/config/index';
 import { useDBDataSync } from '@/widgets/sync-manager/lib/useDBDataSync';
@@ -24,7 +24,7 @@ import { useNavigation } from '@/app/providers/NavigationContext';
 export function EnterpriseMainView() {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const {  user  } = useAuthStore();
   const { tenants } = useSelector((state: RootState) => state.tenant);
   const { setDesktopCollapsed } = useUiStore();
   const { currentView, setCurrentView } = useNavigation();

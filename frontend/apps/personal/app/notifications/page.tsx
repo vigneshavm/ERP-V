@@ -1,11 +1,13 @@
 "use client";
 
 import NotificationsView from '@/features/predictions-and-alerts/NotificationsView';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 import { useNavigation } from '@/contexts/NavigationContext';
 
 export default function NotificationsPage() {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const { setIsRemindersOpen } = useNavigation();
     
     return (

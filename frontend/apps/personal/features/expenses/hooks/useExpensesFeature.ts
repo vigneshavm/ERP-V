@@ -1,57 +1,44 @@
 "use client";
 
-import { useState, useEffect, useTransition } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchExpensesHistory, submitExpenseTransaction, fetchCategories } from '../services/expensesApi';
 import { ExpenseHistory, Category } from '@repo/shared';
-import { useExpenses } from '@repo/shared';
+
+
 
 export const useExpensesFeature = () => {
-    const { refreshTrigger, triggerRefresh } = useExpenses();
-    const [data, setData] = useState<ExpenseHistory | null>(null);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
-    const [isPending, startTransition] = useTransition();
+    const queryClient = useQueryClient();
 
-    const loadData = async () => {
-        setLoading(true);
-        try {
-            const [historyResult, categoriesResult] = await Promise.all([
-                fetchExpensesHistory(),
-                fetchCategories()
-            ]);
-            setData(historyResult);
-            setCategories(categoriesResult);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data: historyData, isLoading: historyLoading, error: historyError } = useQuery({
+        queryKey: ['expenses', 'history'],
+        queryFn: fetchExpensesHistory,
+    });
 
-    useEffect(() => {
-        loadData();
-    }, [refreshTrigger]);
+    const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
+        queryKey: ['expenses', 'categories'],
+        queryFn: fetchCategories,
+    });
+
+    const addExpenseMutation = useMutation({
+        mutationFn: ({ amount, categoryName, notes }: { amount: number; categoryName: string; notes?: string }) => 
+            submitExpenseTransaction(amount, categoryName, notes),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['expenses'] });
+        },
+    });
 
     const addExpense = async (amount: number, categoryName: string, notes?: string) => {
-        startTransition(async () => {
-            try {
-                await submitExpenseTransaction(amount, categoryName, notes);
-                triggerRefresh();
-            } catch (err) {
-                console.error("Failed to add expense:", err);
-            }
-        });
+        addExpenseMutation.mutate({ amount, categoryName, notes });
     };
 
     return {
-        data,
-        categories,
-        loading,
-        error,
-        isPending,
+        data: historyData || null,
+        categories: categoriesData || [],
+        loading: historyLoading || categoriesLoading,
+        error: (historyError as Error) || null,
+        isPending: addExpenseMutation.isPending,
         addExpense,
-        refresh: loadData
+        refresh: () => queryClient.invalidateQueries({ queryKey: ['expenses'] })
     };
 };
+

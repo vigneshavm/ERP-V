@@ -1,48 +1,42 @@
-import { logger } from '@/shared/lib/logger';
 import React, { useState } from 'react';
-import { AuthGuard } from "@repo/ui";
-import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/app/store/store';
-import { setUser, getProfile } from '@/entities/session/model/authSlice';
-import { useUiStore } from '@/shared/lib/store/uiStore';
-import { APP_CONFIG } from './config';
-
-import Login from '@/views/auth/ui/Login';
-import AdminLogin from '@/features/auth-by-email/ui/AdminLogin';
-import ResetPassword from '@/views/auth/ui/ResetPassword';
-import ForgotPassword from '@/views/auth/ui/ForgotPassword';
-import Register from '@/views/auth/ui/Register';
-import TenantManager from '@/views/People/Tenants/TenantManager';
-import TenantSignUp from '@/views/People/Tenants/TenantSignUp';
-import { POSCustomerDisplay } from '@/views/Pos/ui/POSCustomerDisplay';
-
-// Config
-import { ConfigProvider } from '@/app/providers/ConfigProvider';
-import { useDBDataSync } from '@/widgets/sync-manager/lib/useDBDataSync';
-import { getSession, clearSession } from '@/shared/lib/utils/session';
-
-import { Tenant } from '@/entities/session/model/core';
-import { Routes, Route } from 'react-router-dom';
-
-// NEW: Imported TenantView
-import TenantView from '@/views/Views/ui/TenantView';
-
-type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
-
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { Shield, Store, ArrowRight, LogOut } from 'lucide-react';
+
+import { AuthGuard } from "@repo/ui";
+import { useAppBootstrap } from '@/shared/hooks/useAppBootstrap';
+import { POSCustomerDisplay } from '@/views/Pos/ui/POSCustomerDisplay';
+
+// Views
+import LandingPage from '@/views/AppLayout/LandingPage';
+import AdminView from '@/views/AppLayout/AdminView';
+import LoadingScreen from '@/views/AppLayout/LoadingScreen';
+import TenantView from '@/views/Views/ui/TenantView';
+import ResetPassword from '@/views/auth/ui/ResetPassword';
+import ForgotPassword from '@/views/auth/ui/ForgotPassword';
+import TenantSignUp from '@/views/People/Tenants/TenantSignUp';
+
+import { RootState } from '@/app/store/store';
+import { useUiStore } from '@/shared/lib/store/uiStore';
+import { useDBDataSync } from '@/widgets/sync-manager/lib/useDBDataSync';
+import { getSession, clearSession } from '@/shared/lib/utils/session';
+import { APP_CONFIG } from '@/app/config';
+import { logger } from '@/shared/lib/logger';
+import { setUser, getProfile } from '@/entities/session/model/authSlice';
+import AdminLogin from '@/features/auth-by-email/ui/AdminLogin';
+import TenantManager from '@/views/People/Tenants/TenantManager';
 
 interface AuthenticatedAppProps {
-  currentTenant: Tenant | null;
-  setCurrentTenant: (tenant: Tenant | null) => void;
+  currentTenant: any;
+  setCurrentTenant: (t: any) => void;
   isLoggedIn: boolean;
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  setIsLoggedIn: (v: boolean) => void;
   isResolving: boolean;
-  setIsResolving: (isResolving: boolean) => void;
-  viewMode: ViewMode;
-  setViewMode: (viewMode: ViewMode) => void;
+  setIsResolving: (v: boolean) => void;
+  viewMode: string;
+  setViewMode: (m: string) => void;
 }
 
 const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({
@@ -294,20 +288,20 @@ const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({
 };
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+  const { 
+    viewMode, 
+    isResolving, 
+    currentTenant, 
+    user, 
+    handlers 
+  } = useAppBootstrap();
+
   const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-
-  const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    return getSession() ? 'TENANT' : 'LANDING';
-  });
-  const [isResolving, setIsResolving] = useState(APP_CONFIG?.REQUIRE_TENANT_ID ?? true);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!getSession());
-
-  if (mode === 'customer_display') {
+  if (urlParams.get('mode') === 'customer_display') {
     return (
       <AuthGuard>
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
         <POSCustomerDisplay />
       </AuthGuard>
     );
@@ -315,22 +309,40 @@ const App: React.FC = () => {
 
   return (
     <AuthGuard>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/signup" element={<TenantSignUp onComplete={() => window.location.href = '/'} onBackToLogin={() => window.location.href = '/login'} />} />
-        <Route path="/*" element={
-          <AuthenticatedApp
-            currentTenant={currentTenant}
-            setCurrentTenant={setCurrentTenant}
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-            isResolving={isResolving}
-            setIsResolving={setIsResolving}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
+        <Route path="/signup" element={
+          <TenantSignUp 
+            onComplete={() => navigate('/')} 
+            onBackToLogin={() => navigate('/login')} 
           />
+        } />
+
+        <Route path="/*" element={
+          isResolving ? <LoadingScreen /> :
+          viewMode === 'ADMIN' ? (
+            <AdminView 
+              setViewMode={handlers.setViewMode} 
+              setCurrentTenant={handlers.setCurrentTenant} 
+              setIsLoggedIn={handlers.setIsLoggedIn} 
+            />
+          ) :
+          viewMode === 'TENANT' ? (
+            <TenantView
+              currentTenant={currentTenant}
+              isLoggedIn={!!user}
+              onLogout={() => handlers.setIsLoggedIn(false)}
+              onLogin={() => handlers.setViewMode('LANDING')}
+            />
+          ) : (
+            <LandingPage 
+              setViewMode={handlers.setViewMode} 
+              setCurrentTenant={handlers.setCurrentTenant} 
+              setIsLoggedIn={handlers.setIsLoggedIn} 
+            />
+          )
         } />
       </Routes>
     </AuthGuard>

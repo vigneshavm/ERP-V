@@ -11,7 +11,7 @@ import {
 import { SMSCampaign, SMSConfig } from "@/types/tenant";
 
 const SMSMarketing: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const [activeTab, setActiveTab] = useState<'campaigns' | 'insights' | 'templates' | 'config'>('campaigns');
 

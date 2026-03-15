@@ -21,7 +21,7 @@ import Customer360Modal from './Customer360Modal';
 const CustomerList: React.FC = () => {
     const { customers } = useSelector((state: RootState) => state.customers);
     const { invoices: salesHistory } = useSelector((state: RootState) => state.pos);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState<'name' | 'purchases' | 'recent'>('name');

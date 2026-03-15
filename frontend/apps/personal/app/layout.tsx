@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "../contexts/AuthContext";
+import { QueryProvider, LanguageProvider } from "@repo/shared";
 import { SettingsProvider } from "../contexts/SettingsContext";
 import { NavigationProvider } from "../contexts/NavigationContext";
-import { ExpenseProvider, LanguageProvider } from "@repo/shared";
 import ClientLayout from "./ClientLayout";
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,19 +36,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthGuard>
+        <QueryProvider>
           <LanguageProvider>
-            <AuthProvider>
-              <SettingsProvider>
-                <ExpenseProvider>
-                  <NavigationProvider>
-                    <ClientLayout>
-                      {children}
-                    </ClientLayout>
-                  </NavigationProvider>
-                </ExpenseProvider>
-              </SettingsProvider>
-            </AuthProvider>
+            <SettingsProvider>
+              <NavigationProvider>
+                <ClientLayout>
+                  {children}
+                </ClientLayout>
+              </NavigationProvider>
+            </SettingsProvider>
           </LanguageProvider>
+        </QueryProvider>
+
         </AuthGuard>
       </body>
     </html>

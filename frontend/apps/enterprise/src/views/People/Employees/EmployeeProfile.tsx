@@ -31,7 +31,7 @@ const EmployeeProfile: React.FC = () => {
     const navigate = useNavigate();
     const { employees, attendance, payments } = useSelector((state: RootState) => state.labor);
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
 
     const employee = employees.find(e => e.id === id || e._id === id);
 

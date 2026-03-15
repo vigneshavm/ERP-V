@@ -17,6 +17,7 @@ export * from '@/entities/people/model/laborSlice';
 export * from '@/entities/purchase/model/purchaseSlice';
 export * from '@/entities/session/model/tenantSlice';
 export * from '@/entities/session/model/authSlice';
+
 export * from './slices/settingsSlice';
 export * from '@/entities/contact/model/supplierSlice';
 export * from '@/entities/system/model/systemSlice';

@@ -62,7 +62,7 @@ interface VendorInflowOutflowProps {
 }
 
 const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = false }) => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
 
     // Data State

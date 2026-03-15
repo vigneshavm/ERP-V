@@ -48,7 +48,7 @@ export const updateEmployee = createAsyncThunk(
     async ({ id, data }: { id: string; data: Partial<Employee> }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
 
             // Assuming the endpoint for updating any user (as admin) is /api/users/:id
             // If it's specifically for labor/employees, it might be /api/labor/:id

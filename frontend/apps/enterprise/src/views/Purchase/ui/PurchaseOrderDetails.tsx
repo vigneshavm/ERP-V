@@ -23,7 +23,7 @@ interface Props {
 
 const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propItems, onBack, onApprove, onConvert, onUpdateStatus }) => {
     logger.info("PurchaseOrderDetails loaded - Version with ReceiveGoodsModal fix");
-    const { role } = useSelector((state: RootState) => state.auth);
+    const {  role  } = useAuthStore();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();

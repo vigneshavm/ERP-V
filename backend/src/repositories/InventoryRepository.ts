@@ -65,6 +65,10 @@ export class InventoryRepository {
         return Item.findOneAndDelete({ _id: id, tenantId });
     }
 
+    async findByParentId(parentId: string, tenantId: string): Promise<IItem[]> {
+        return Item.find({ parentId, tenantId }).sort({ createdAt: -1 });
+    }
+
     async findByQuery(query: any): Promise<IItem[]> {
         return Item.find(query);
     }

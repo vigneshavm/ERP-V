@@ -1,9 +1,8 @@
-import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { AppView, ModuleType } from '@repo/shared';
 
 export const usePermissions = () => {
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const {  user, role  } = useAuthStore();
     
     // In a real app, this would check against a permissions map
     // For now, we'll use some basic logic

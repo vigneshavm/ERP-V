@@ -106,7 +106,7 @@ const NodeTopology: React.FC<{ devices: DeviceRegistryEntry[] }> = ({ devices })
 /* ─── Main Sync Component ──────────────────────────────────── */
 const Sync: React.FC = () => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { activeTab, setActiveTab } = useUiStore();
 

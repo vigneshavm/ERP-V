@@ -51,7 +51,7 @@ export const fetchJournalEntries = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
             const response = await api.get(API_URL, getConfig(token));
@@ -67,7 +67,7 @@ export const createJournalEntry = createAsyncThunk(
     async (entryData: Partial<JournalEntry>, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
             const response = await api.post(API_URL, entryData, getConfig(token));

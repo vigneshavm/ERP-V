@@ -20,7 +20,7 @@ export interface GoodsReceivedNote {
 
 export const useGRNData = () => {
     const { orders, grns } = useSelector((state: RootState) => state.purchase);
-    const { currentSector, currentBranch, user } = useSelector((state: RootState) => state.auth);
+    const {  currentSector, currentBranch, user  } = useAuthStore();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('ALL');

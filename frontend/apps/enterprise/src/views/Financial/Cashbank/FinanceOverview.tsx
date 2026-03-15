@@ -36,7 +36,7 @@ import FinanceModals from "@/views/Financial/FinanceModals";
 const FinanceOverviewPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { transactions, cheques, dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
-    const { currentSector, currentBranch, theme } = useSelector((state: RootState) => state.auth);
+    const {  currentSector, currentBranch, theme  } = useAuthStore();
     const { branches: dbBranches } = useSelector((state: RootState) => state.tenant);
     const { employees, attendance } = useSelector((state: RootState) => state.labor);
     const { salesHistory } = useSelector((state: RootState) => state.pos);

@@ -52,7 +52,7 @@ const SupplierLedger: React.FC = () => {
     const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(id || null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const user = useSelector((state: RootState) => state.auth.user);
+    const { user: user } = useAuthStore();
     const token = user?.token;
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
 

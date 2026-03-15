@@ -90,7 +90,7 @@ const SecurityMetric: React.FC<{
 const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {}, handlePermissionToggle }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { employees } = useSelector((state: RootState) => state.labor || { employees: [] });
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
     const securityScore = useMemo(() => {

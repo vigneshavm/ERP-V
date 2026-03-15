@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { APP_CONFIG } from "@/app/config";
 import { setTenants, setBranches } from "@/entities/session/model/tenantSlice";
 import { setEmployees } from "@/entities/people/model/laborSlice";
-import { setUser } from "@/entities/session/model/authSlice";
+
 import { TenantUser } from "@/entities/session/model/core";
 import { useTenantDataMappers } from './useTenantDataMappers';
 import { fetchTenantsRaw, fetchBranchesRaw, fetchEmployeesRaw } from './tenantQueries';

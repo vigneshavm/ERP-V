@@ -10,6 +10,12 @@ export interface BaseProduct {
     subCategory?: string; // Granular category
     productType?: string; // Generic type e.g. Shirt, Mobile
 
+    // WooCommerce-style Variation Support
+    parentId?: string; // Backend: parentId
+    isParent: boolean;
+    model?: string;
+    gender?: string;
+
     // Pricing
     costPrice: number; // Backend: costPrice
     sellingPrice: number; // Backend: sellingPrice

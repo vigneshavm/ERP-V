@@ -38,7 +38,7 @@ const transformExpense = (exp: ReduxExpense): Expense => ({
 export const useExpenses = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { expenses: reduxExpenses, isLoading: loading, isError, message: error } = useSelector((state: RootState) => state.expense);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
 
     const fetchExpenses = useCallback(() => {
         if (user) {

@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { useExpenseCategories, ExpenseCategory } from "@/features/expense-tracking/lib/useExpenseCategories";
 import Layout from "@/shared/ui/Layout";
@@ -28,7 +27,7 @@ import {
 } from 'lucide-react';
 
 const ExpenseCategoriesManager: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { categories, loading, upsertCategory, deleteCategory } = useExpenseCategories();
 
     const [searchTerm, setSearchTerm] = useState('');

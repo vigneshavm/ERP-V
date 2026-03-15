@@ -49,7 +49,7 @@ interface AgedProduct {
 
 const AgedStockManager: React.FC = () => {
     const { agingReport, isLoading } = useSelector((state: RootState) => state.inventory);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const tenant_id = user?.tenantId || 'TEN001';
     const dispatch = useDispatch();
 

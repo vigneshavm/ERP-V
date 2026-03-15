@@ -1,6 +1,6 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import api from "@/shared/api/api";
 import Modal from '../../components/shared/Overlay/Modal';
 import { RootState, AppDispatch } from "@/app/store/store";
@@ -43,7 +43,7 @@ interface FormData {
 
 const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [formData, setFormData] = useState<FormData>({

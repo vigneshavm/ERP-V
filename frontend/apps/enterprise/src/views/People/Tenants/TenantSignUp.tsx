@@ -1,7 +1,7 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/entities/session/model/authSlice';
+
 import {
     Building2,
     User,

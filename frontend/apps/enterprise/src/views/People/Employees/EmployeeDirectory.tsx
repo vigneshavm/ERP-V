@@ -31,7 +31,7 @@ const EmployeeDirectory: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { employees } = useSelector((state: RootState) => state.labor);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);

@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Ban } from 'lucide-react';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { usePermissions } from '@/hooks/usePermissions';
 import { AppView } from '@repo/shared';
@@ -21,7 +20,7 @@ interface ModuleRendererProps {
 }
 
 const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const {  user, role  } = useAuthStore();
     const { checkAccess } = usePermissions();
 
     // Developer/Owner bypass - full access

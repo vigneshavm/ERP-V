@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { fetchGoals, addGoal, updateGoalProgress } from '../services/goalsApi';
-import { useExpenses } from '@repo/shared';
+import { useExpenseStore } from '@repo/shared';
+
 
 export const useGoalsFeature = () => {
-    const { refreshTrigger } = useExpenses();
+    const { refreshTrigger } = useExpenseStore();
+
     const [goals, setGoals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);

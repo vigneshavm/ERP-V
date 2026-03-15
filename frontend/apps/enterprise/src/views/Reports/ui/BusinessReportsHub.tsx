@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { useBusinessReports, ReportType, BusinessReportData } from "@/widgets/stats-dashboard/lib/useBusinessReports";
 import {
@@ -47,7 +46,7 @@ interface BusinessReportsHubProps {
 }
 
 const BusinessReportsHub: React.FC<BusinessReportsHubProps> = ({ view }) => {
-    const { user, currentBranch } = useSelector((state: RootState) => state.auth);
+    const {  user, currentBranch  } = useAuthStore();
 
     // Default to current month-to-date
     const now = new Date();

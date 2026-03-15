@@ -43,7 +43,7 @@ export const getAccounts = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/accounts`, getConfig(token));
             return response.data as Account[];
@@ -63,7 +63,7 @@ export const createAccount = createAsyncThunk(
     async (accountData: Partial<Account>, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/accounts`, accountData, getConfig(token));
             return response.data as Account;
@@ -83,7 +83,7 @@ export const updateAccount = createAsyncThunk(
     async ({ id, accountData }: { id: string; accountData: Partial<Account> }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/accounts/${id}`, accountData, getConfig(token));
             return response.data as Account;
@@ -103,7 +103,7 @@ export const deleteAccount = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             await api.delete(`${API_URL}/accounts/${id}`, getConfig(token));
             return id;
@@ -123,7 +123,7 @@ export const getTransactions = createAsyncThunk(
     async (accountId: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/accounts/${accountId}/transactions`, getConfig(token));
             return response.data as Transaction[];
@@ -143,7 +143,7 @@ export const createTransfer = createAsyncThunk(
     async (transferData: { fromAccount: string; toAccount: string; amount: number; description: string }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/transfers`, transferData, getConfig(token));
             return response.data;
@@ -163,7 +163,7 @@ export const getCashBankPosition = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/position`, getConfig(token));
             return response.data as CashBankPosition;
@@ -183,7 +183,7 @@ export const createCashTransaction = createAsyncThunk(
     async (txnData: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/cash-transactions`, txnData, getConfig(token));
             return response.data as Transaction;
@@ -203,7 +203,7 @@ export const getAccountLedger = createAsyncThunk(
     async ({ id, filters }: { id: string | undefined; filters: any }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const params = new URLSearchParams();
             if (filters?.startDate) params.append('startDate', filters.startDate);
@@ -230,7 +230,7 @@ export const toggleReconciliation = createAsyncThunk(
     async (txnId: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/transactions/${txnId}/reconcile`, {}, getConfig(token));
             return response.data;
@@ -250,7 +250,7 @@ export const bulkReconcile = createAsyncThunk(
     async ({ transactionIds, reconciled }: { transactionIds: string[]; reconciled: boolean }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/transactions/bulk-reconcile`, { transactionIds, reconciled }, getConfig(token));
             return response.data;
@@ -270,7 +270,7 @@ export const getBankSummary = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/summary`, getConfig(token));
             return response.data as BankSummary;
@@ -290,7 +290,7 @@ export const validatePayments = createAsyncThunk(
     async ({ accountId, payments }: { accountId: string; payments: any[] }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/validate-payments`, { accountId, payments }, getConfig(token));
             return response.data;
