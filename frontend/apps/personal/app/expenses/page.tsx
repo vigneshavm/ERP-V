@@ -1,25 +1,8 @@
 "use client";
 
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import ExpensesView from "../../features/expenses/views/ExpensesView";
-import CategoryDetailsView from "../../features/expenses/views/CategoryDetailsView";
+import ExpensesPage from "@/pages/expenses/ui/ExpensesPage";
 
-function ExpensesContent() {
-    const searchParams = useSearchParams();
-    const view = searchParams.get('view');
-
-    if (view === 'CategoryDetails') {
-        return <CategoryDetailsView />;
-    }
-
-    return <ExpensesView />;
+export default function Page() {
+    return <ExpensesPage />;
 }
 
-export default function ExpensesPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <ExpensesContent />
-        </Suspense>
-    );
-}

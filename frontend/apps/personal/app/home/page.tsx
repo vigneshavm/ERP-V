@@ -1,7 +1,8 @@
 "use client";
 
-import DashboardView from "../../features/dashboard/views/DashboardView";
+import HomePage from "@/pages/home/ui/HomePage";
 
-export default function HomePage() {
-  return <DashboardView />;
+export default function Page() {
+  return <HomePage />;
 }
+

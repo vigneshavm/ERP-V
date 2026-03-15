@@ -5,22 +5,20 @@ import { Smartphone, ArrowRight, Camera, Settings2, ShoppingBag, Check } from 'l
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
 import { formatCurrency, DashboardData, Transaction, Category, useLanguage } from '@repo/shared';
-
-
 import { Card } from '@repo/ui';
 
-import PredictiveAlert from '../../predictions-and-alerts/PredictiveAlert';
-import { calculateMonthlyForecast, analyzeCategoryTrends, ForecastResult, CategoryTrend } from '../../../utils/predictionEngine';
-import { useNavigation } from '../../../contexts/NavigationContext';
-import { useDashboardConfig } from '../../../hooks/useDashboardConfig';
+import PredictiveAlert from '@/features/predictions-and-alerts/PredictiveAlert';
+import { calculateMonthlyForecast, analyzeCategoryTrends, ForecastResult, CategoryTrend } from '@/shared/lib/utils/predictionEngine';
+import { useNavigation } from '../contexts/NavigationContext'; // Contexts remain in app for now or moved to app/providers
+import { useDashboardConfig } from '@/shared/lib/hooks/useDashboardConfig';
 import Link from 'next/link';
-import { WidgetContainer } from '../../../components/ui/WidgetContainer';
+import { WidgetContainer } from '@/shared/ui/WidgetContainer';
 import WidgetMarketplace from '../components/WidgetMarketplace';
-import { WIDGET_REGISTRY } from '../../../services/WidgetRegistry';
+import { WIDGET_REGISTRY } from '@/shared/api/WidgetRegistry';
 
 import { useDashboardFeature } from '../hooks/useDashboardFeature';
-import { useTransactionsFeature } from '../../transactions/hooks/useTransactionsFeature';
-import { useExpensesFeature } from '../../expenses/hooks/useExpensesFeature';
+import { useTransactionsFeature } from '@/features/transactions/hooks/useTransactionsFeature';
+import { useExpensesFeature } from '@/features/expenses/hooks/useExpensesFeature';
 
 const DashboardView: React.FC = () => {
     const { t } = useLanguage();
