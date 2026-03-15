@@ -12,7 +12,7 @@ import FeedbackEngagement from './FeedbackEngagement';
 
 const CustomerEngagement: React.FC = () => {
     const dispatch = useDispatch();
-    const { activeTab } = useSelector((state: RootState) => state.ui);
+    const { activeTab } = useUiStore();
 
     const renderContent = () => {
         switch (activeTab) {

@@ -5,14 +5,15 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { addToCart } from "@/entities/sales/model/posSlice";
-import { activateEcommerce } from '../../../redux/thunks/tenantThunks';
+import { activateEcommerce } from '@/app/store/thunks/tenantThunks';
 import {
     Search, Filter, Star, Heart, ShoppingCart,
     Sparkles, Send, X, Bot, RotateCcw, Image as ImageIcon,
     Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
     Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
 } from 'lucide-react';
-import { Product, getProductRecommendations, searchProductsByImage } from "@repo/shared";
+import { Product } from "@repo/shared";
+import { getProductRecommendations, searchProductsByImage } from "@/features/ai-intelligence/lib/GeminiService";
 import GrowHero from './components/GrowHero';
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
@@ -132,7 +133,7 @@ const OnlineStore: React.FC = () => {
         try {
             const res = await getProductRecommendations(aiQuery, baseProducts);
             setAiResult({ text: res.recommendationText, ids: res.recommendedIds });
-        } catch (e) {
+        } catch (e: any) {
             logger.error(e);
             setAiResult({ text: "I'm having trouble connecting to the brain right now. Please try again.", ids: [] });
         } finally {
@@ -153,7 +154,7 @@ const OnlineStore: React.FC = () => {
                 text: `I found ${ids.length} products that look similar to your image.`,
                 ids: ids
             });
-        } catch (err) {
+        } catch (err: any) {
             logger.error(err);
             setAiResult({ text: "Could not analyze image.", ids: [] });
         } finally {
@@ -326,4 +327,3 @@ const OnlineStore: React.FC = () => {
 };
 
 export default OnlineStore;
-

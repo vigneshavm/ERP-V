@@ -18,12 +18,12 @@ import { REPORT_CATALOG, ReportItem } from '../ReportData';
 
 import BusinessReportsHub from './BusinessReportsHub';
 import { ReportType } from "@/widgets/stats-dashboard/lib/useBusinessReports";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 
 const ReportsModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const {  user, role  } = useAuthStore();
-    // const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui); // Removed as uiSlice is missing
-    const globalActiveTab: any = 'REPORTS'; // Default value since uiSlice is missing
+    const { activeTab: globalActiveTab } = useUiStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTabLocal] = useState<string>('transactions');
     const [selectedReportSlug, setSelectedReportSlug] = useState<string | null>(null);
@@ -86,9 +86,11 @@ const ReportsModule: React.FC = () => {
                 setSelectedReportSlug(null);
                 break;
             default:
-                if (globalActiveTab.includes('SALES')) setActiveTabLocal('transactions');
-                else if (globalActiveTab.includes('CUSTOMER')) setActiveTabLocal('parties');
-                else if (globalActiveTab.includes('ROI')) setActiveTabLocal('marketing');
+                if (globalActiveTab && typeof globalActiveTab === 'string') {
+                    if (globalActiveTab.includes('SALES')) setActiveTabLocal('transactions');
+                    else if (globalActiveTab.includes('CUSTOMER')) setActiveTabLocal('parties');
+                    else if (globalActiveTab.includes('ROI')) setActiveTabLocal('marketing');
+                }
                 break;
         }
     }, [globalActiveTab]);

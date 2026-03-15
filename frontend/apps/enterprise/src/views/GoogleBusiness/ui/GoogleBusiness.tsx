@@ -9,8 +9,10 @@ import {
     ChevronRight, Edit3, MessageCircle, MessageSquare, Heart, Eye,
     TrendingUp, Filter, Calendar, Layout, ArrowUpRight
 } from 'lucide-react';
-import { syncGoogleProfile } from '../../redux';
-import { GoogleReview, GooglePost, GooglePhoto, BusinessHour, Tenant } from "@/entities/session/model/core";
+import { syncGoogleProfile } from '@/app/store/thunks/tenantThunks';
+import { GoogleReview, GooglePost, GooglePhoto, BusinessHour } from "@/entities/session/model/growth";
+import { Tenant } from "@/entities/session/model/core";
+import { useUiStore } from "@/shared/lib/store/uiStore";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -18,7 +20,7 @@ const GoogleBusiness: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui);
+    const { activeTab: globalActiveTab } = useUiStore();
 
     const activeTenant = tenants.find((t: Tenant) => t.id === user?.tenantId);
     const gbpConfig = activeTenant?.googleBusinessConfig;

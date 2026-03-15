@@ -7,7 +7,7 @@ import {
     Layout, Image as ImageIcon, Type, Palette, Download,
     ChevronLeft, Check, Plus
 } from 'lucide-react';
-import { MarketingTemplate, MarketingCreative } from "@/types/tenant";
+import { MarketingTemplate, MarketingCreative } from "@/entities/session/model/growth";
 
 const Campaigns: React.FC = () => {
     const {  user  } = useAuthStore();

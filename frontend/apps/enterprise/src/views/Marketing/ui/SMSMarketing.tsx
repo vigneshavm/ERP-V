@@ -9,7 +9,7 @@ import {
     ChevronRight, ArrowUpRight, Copy, Trash2, Edit3,
     Smartphone, Mail, Bell, Target, Sparkles, Star
 } from 'lucide-react';
-import { SMSCampaign, SMSConfig } from "@/types/tenant";
+import { SMSCampaign, SMSConfig } from "@/entities/session/model/growth";
 
 const SMSMarketing: React.FC = () => {
     const {  user  } = useAuthStore();

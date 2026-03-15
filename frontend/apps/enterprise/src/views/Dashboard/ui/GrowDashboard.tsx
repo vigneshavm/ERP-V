@@ -12,6 +12,7 @@ import { WhatsAppService } from "@/shared/api/whatsappService";
 
 const GrowDashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const { setActiveTab } = useUiStore();
     const { lowStockItems } = useSelector((state: RootState) => state.inventory);
     const { dashboardStats } = useSelector((state: RootState) => state.reports);
 

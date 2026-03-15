@@ -2,7 +2,7 @@ import { useAuthStore } from '@repo/shared';
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
-import { addTransaction, addCheque, updateChequeStatus } from "@/app/store/slices/financeSlice";
+import { addTransaction, addCheque, updateChequeStatus } from "@/entities/finance/model/financeSlice";
 import Layout from "@/shared/ui/Layout";
 import {
     TrendingUp,
@@ -25,14 +25,14 @@ import {
     Info,
     MoreVertical
 } from 'lucide-react';
-import { TransactionType, Sector } from "@/types/common";
-import { formatCurrency } from "@/utils/helpers";
+import { TransactionType, Sector } from "@repo/shared";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 // Sub-components (Upgraded UI versions)
-import FinanceOverviewCard from "@/views/Financial/FinanceOverview";
-import ExpenseManager from "@/views/Financial/ExpenseManager";
-import ChequeLedger from "@/views/Financial/ChequeLedger";
-import FinanceModals from "@/views/Financial/FinanceModals";
+import FinanceOverviewCard from "@/views/Financial/ui/FinanceOverview";
+import ExpenseManager from "@/views/Financial/ui/ExpenseManager";
+import ChequeLedger from "@/views/Financial/ui/ChequeLedger";
+import FinanceModals from "@/views/Financial/ui/FinanceModals";
 
 const FinanceOverviewPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -107,7 +107,7 @@ const FinanceOverviewPage: React.FC = () => {
             date: new Date().toISOString(),
             description: newExpense.description,
             paymentMethod: newExpense.paymentMethod,
-            sector: currentSector || Sector.GENERAL,
+            sector: (currentSector as any) || Sector.GENERAL,
             branchId: currentBranch === 'All' ? ((dbBranches || []).length > 0 ? dbBranches[0].id : 'Main') : currentBranch
         } as any));
         setShowExpenseModal(false);
@@ -122,7 +122,7 @@ const FinanceOverviewPage: React.FC = () => {
             ...newCheque,
             amount: parseFloat(newCheque.amount),
             status: 'PENDING',
-            sector: currentSector || Sector.GENERAL
+            sector: (currentSector as any) || Sector.GENERAL
         }));
         setShowChequeModal(false);
         setNewCheque({ number: '', bankName: '', payee: '', amount: '', date: new Date().toISOString().split('T')[0], type: 'ISSUED' });
@@ -311,7 +311,7 @@ const FinanceOverviewPage: React.FC = () => {
                                 Your current operating buffer is <span className="text-white">{(netProfit / 30000).toFixed(1)} months</span>.
                                 Wings AI suggests redistributing surplus cash into short-term inventory assets for the upcoming pulse season.
                                 Avoid stagnant bank balances to maximize return on capital.
-                            </p>
+                                </p>
                         </div>
                         <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
                             <button className="px-8 py-4 bg-white text-neutral-950 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">

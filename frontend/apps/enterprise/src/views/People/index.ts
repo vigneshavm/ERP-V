@@ -1,2 +1,13 @@
-// People module exports
-
+export * from './Employees/EmployeeDirectory';
+export * from './Employees/EmployeeProfile';
+export * from './Employees/LaborManager';
+export * from './Employees/LeaveManagement';
+export * from './Employees/DailyAttendanceBoard';
+export * from './Suppliers/SupplierDetail';
+export * from './Suppliers/SupplierGroups';
+export * from './Suppliers/SupplierStatements';
+export * from './Suppliers/SupplierLedger';
+export * from './Payroll/PayrollDashboard';
+export * from './Payroll/SalaryStructureManager';
+export * from './Payroll/PayrollRuns';
+export * from './Payroll/PayslipView';
