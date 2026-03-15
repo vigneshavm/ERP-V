@@ -1,24 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
-import BottomNav from '../components/BottomNav';
+import Sidebar from '@/widgets/layout/Sidebar';
+import Header from '@/widgets/layout/Header';
+import BottomNav from '@/widgets/layout/BottomNav';
 import { useAuthStore } from '@repo/shared';
 import { useNavigation } from '../contexts/NavigationContext';
 
 // Settings Overlays
-import LanguageSettings from '../features/settings/components/LanguageSettings';
-import CurrencySettings from '../features/settings/components/CurrencySettings';
-import AppearanceSettings from '../features/settings/components/AppearanceSettings';
-import HelpSupport from '../features/settings/components/HelpSupport';
-import BackupRestore from '../features/settings/components/BackupRestore';
-import DataManagement from '../features/settings/components/DataManagement';
-import InviteFriends from '../features/settings/components/InviteFriends';
-import EditProfile from '../features/settings/components/EditProfile';
-import SyncStatus from '../features/settings/components/SyncStatus';
-import SecurityPin from '../features/auth/components/SecurityPin';
-import SecurityLock from '../features/auth/components/SecurityLock';
+import LanguageSettings from '@/features/settings/components/LanguageSettings';
+import CurrencySettings from '@/features/settings/components/CurrencySettings';
+import AppearanceSettings from '@/features/settings/components/AppearanceSettings';
+import HelpSupport from '@/features/settings/components/HelpSupport';
+import BackupRestore from '@/features/settings/components/BackupRestore';
+import DataManagement from '@/features/settings/components/DataManagement';
+import InviteFriends from '@/features/settings/components/InviteFriends';
+import EditProfile from '@/features/settings/components/EditProfile';
+import SyncStatus from '@/features/settings/components/SyncStatus';
+import SecurityPin from '@/features/auth/components/SecurityPin';
+import SecurityLock from '@/features/auth/components/SecurityLock';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     useAuthStore();
