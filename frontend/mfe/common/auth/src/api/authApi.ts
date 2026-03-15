@@ -1,8 +1,8 @@
 import { useAuthLogin } from '@repo/b2b-services';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore, AuthState } from '../store/authStore';
 
 export const useLogin = () => {
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setAuth = useAuthStore((state: AuthState) => state.setAuth);
 
   return useAuthLogin({
     onSuccess: (data, variables, context) => {
@@ -12,6 +12,6 @@ export const useLogin = () => {
 };
 
 export const useLogout = () => {
-  const logout = useAuthStore((state) => state.logout);
+  const logout = useAuthStore((state: AuthState) => state.logout);
   return () => logout();
 };

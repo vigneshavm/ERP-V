@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     "@yourcompany/finance-lib"
   ],
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: false,

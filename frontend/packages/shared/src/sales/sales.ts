@@ -1,5 +1,6 @@
 import { Product } from '../inventory';
-import { Sector, TaxMode, PaymentMethod } from '../common/common';
+import { Sector } from '../common/common';
+import { TaxMode, PaymentMethod } from '../inventory/enums';
 
 export interface EstimateItem {
     item?: string | any; // Product ID or populated Product

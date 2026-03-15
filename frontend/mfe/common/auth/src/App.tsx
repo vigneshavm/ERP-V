@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
+import { useAuthStore, AuthState } from './store/authStore';
 
 import { LoginPage } from './views/LoginPage';
 import { SelectionPage } from './views/SelectionPage';
 
 const App: React.FC = () => {
   const [mounted, setMounted] = React.useState(false);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
 
   React.useEffect(() => {
     setMounted(true);

@@ -141,6 +141,8 @@ export const createCategory = async (
         id: crypto.randomUUID(),
         name,
         icon,
+        emoji: "💰", // Default emoji
+        type: "expense", // Default type
         color,
         value: 0,
         limit,

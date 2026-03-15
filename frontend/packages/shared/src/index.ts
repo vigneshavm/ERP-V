@@ -47,7 +47,7 @@ export * from './auth/auth.schema';
 export { useAuthStore } from './auth/authStore';
 export type { AuthState, User } from './auth/authStore';
 
-export { useExpenseStore } from './store/expenseStore';
+export { useExpenseStore, ExpenseProvider, useExpenses } from './store/expenseStore';
 
 export * from './common/common';
 export { api } from './services/apiClient';
