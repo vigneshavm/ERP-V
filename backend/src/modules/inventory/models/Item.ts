@@ -67,6 +67,21 @@ const itemSchema = new Schema<IItem>(
             default: true,
             index: true
         },
+        parentId: {
+            type: Schema.Types.ObjectId,
+            ref: "Item",
+            index: true
+        },
+        isParent: {
+            type: Boolean,
+            default: false
+        },
+        model: {
+            type: String
+        },
+        gender: {
+            type: String
+        },
         addedBy: {
             type: String,
             ref: "User",
