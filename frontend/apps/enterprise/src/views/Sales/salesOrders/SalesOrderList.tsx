@@ -84,11 +84,11 @@ const SalesOrderList = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="space-y-4 sm:space-y-6 animate-fade-in pb-10 px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sales Orders</h1>
+                        <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Sales Orders</h1>
                         <p className="text-sm text-slate-500 mt-1">Manage, track, and fulfill customer orders</p>
                     </div>
                     <div className="flex gap-3">
@@ -103,7 +103,7 @@ const SalesOrderList = () => {
                         </button>
                         <button
                             onClick={() => navigate('/sales/sales-order')}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium flex-1 md:flex-none"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -114,7 +114,7 @@ const SalesOrderList = () => {
                 </div>
 
                 {/* Dashboard / Metrics Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
@@ -190,8 +190,8 @@ const SalesOrderList = () => {
                 {/* Main Content Island */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                     {/* Advanced Filter Bar */}
-                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50">
+                        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
                             {/* Search */}
                             <div className="relative w-full md:max-w-md group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -209,7 +209,7 @@ const SalesOrderList = () => {
                             </div>
 
                             {/* Filters & Actions */}
-                            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full lg:w-auto">
                                 <select
                                     value={filters.status}
                                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -223,7 +223,7 @@ const SalesOrderList = () => {
                                     <option value="Cancelled">Cancelled</option>
                                 </select>
 
-                                <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 transition-colors select-none">
+                                <label className="flex items-center justify-center gap-2 cursor-pointer bg-white px-3 py-2 border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 transition-colors select-none w-full sm:w-auto">
                                     <input
                                         type="checkbox"
                                         checked={filters.overdue}
@@ -236,7 +236,7 @@ const SalesOrderList = () => {
                                 {(filters.status || filters.search || filters.overdue) && (
                                     <button
                                         onClick={() => setFilters({ status: '', search: '', overdue: false })}
-                                        className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-2 transition-colors"
+                                        className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-2 py-2 sm:py-0 transition-colors w-full sm:w-auto text-center"
                                     >
                                         Clear
                                     </button>

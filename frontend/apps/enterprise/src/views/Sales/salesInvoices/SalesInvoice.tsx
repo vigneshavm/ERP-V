@@ -116,17 +116,18 @@ const SalesInvoice = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto animate-fade-in pb-12 bg-app min-h-screen">
+      <div className="max-w-7xl mx-auto animate-fade-in pb-12 bg-app min-h-screen px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <PageHeader
           title="Sales Invoices"
           description="Manage and track your customer invoicing"
           actions={
             <button
               onClick={() => navigate('/sales/new')}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all font-black uppercase tracking-widest text-xs btn-interactive"
+              className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-white rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all font-black uppercase tracking-widest text-[10px] sm:text-xs btn-interactive whitespace-nowrap"
             >
-              <Plus className="w-4 h-4" />
-              <span>Create Invoice</span>
+              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Create Invoice</span>
+              <span className="sm:hidden">New</span>
             </button>
           }
         />
@@ -140,7 +141,7 @@ const SalesInvoice = () => {
         )}
 
         {/* KPI Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <MetricCard
             title="Total Invoices"
             value={totalInvoices}
@@ -171,7 +172,7 @@ const SalesInvoice = () => {
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col gap-4 mb-8">
           <div className="flex flex-wrap gap-4 items-end">
             {/* Search */}
-            <div className="flex-1 min-w-[200px]">
+            <div className="flex-1 w-full sm:w-auto min-w-0 sm:min-w-[200px]">
               <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Search</label>
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
@@ -186,7 +187,7 @@ const SalesInvoice = () => {
             </div>
 
             {/* Status Filter */}
-            <div className="w-48">
+            <div className="w-full sm:w-48">
               <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Status</label>
               <select
                 value={statusFilter}
@@ -201,7 +202,7 @@ const SalesInvoice = () => {
             </div>
 
             {/* Customer Filter */}
-            <div className="w-auto">
+            <div className="w-full sm:w-auto">
               <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Customer</label>
               {selectedCustomer ? (
                 <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-2 rounded-lg text-sm font-medium animate-fade-in h-[38px]">
@@ -213,7 +214,7 @@ const SalesInvoice = () => {
               ) : (
                 <button
                   onClick={() => setShowCustomerModal(true)}
-                  className="px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-all text-sm font-medium flex items-center gap-2 h-[38px]"
+                  className="w-full sm:w-auto px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-all text-sm font-medium flex items-center justify-center gap-2 h-[38px]"
                 >
                   <Filter className="w-4 h-4" />
                   Filter Customer
@@ -342,7 +343,7 @@ const SalesInvoice = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-between bg-neutral-50 dark:bg-neutral-900">
+                <div className="px-4 sm:px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row items-center justify-between gap-4 bg-neutral-50 dark:bg-neutral-900">
                   <div className="text-xs text-neutral-500">
                     Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredInvoices.length)}</span> of <span className="font-medium">{filteredInvoices.length}</span> results
                   </div>

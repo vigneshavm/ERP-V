@@ -101,8 +101,8 @@ const BudgetTrackerPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#05070a] text-white p-4 md:p-8 font-sans selection:bg-emerald-500/30">
-            <div className="max-w-5xl mx-auto space-y-10 pb-32">
+        <div className="min-h-screen bg-[#05070a] text-white p-3 sm:p-4 md:p-8 font-sans selection:bg-emerald-500/30">
+            <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 lg:space-y-10 pb-32">
 
                 {/* Top Navigation */}
                 <div className="flex items-center justify-between">
@@ -119,8 +119,8 @@ const BudgetTrackerPage: React.FC = () => {
 
                 {/* Hero Section */}
                 <div className="relative overflow-hidden pt-4">
-                    <div className="flex flex-col items-center justify-center w-full py-12 text-center">
-                        <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-4">
+                    <div className="flex flex-col items-center justify-center w-full py-6 sm:py-8 lg:py-12 text-center">
+                        <h1 className="text-2xl sm:text-3xl md:text-6xl font-black tracking-tight text-white mb-4">
                             Get deeper insights into <br className="hidden md:block" /> your data
                         </h1>
                     </div>
@@ -134,8 +134,8 @@ const BudgetTrackerPage: React.FC = () => {
                         <div className="flex items-end justify-between w-full">
                             <div>
                                 <div className="flex items-start gap-1">
-                                    <span className="text-3xl font-medium text-neutral-500 mt-2">₹</span>
-                                    <h2 className="text-6xl md:text-8xl font-medium tracking-tight tabular-nums expanager-text-gradient">
+                                    <span className="text-xl sm:text-3xl font-medium text-neutral-500 mt-2">₹</span>
+                                    <h2 className="text-4xl sm:text-6xl md:text-8xl font-medium tracking-tight tabular-nums expanager-text-gradient">
                                         {report?.total_expense.toLocaleString('en-IN')}
                                     </h2>
                                 </div>
@@ -151,22 +151,22 @@ const BudgetTrackerPage: React.FC = () => {
                     </div>
 
                     {/* Tab Switcher */}
-                    <div className="flex items-center gap-8 mt-10 p-1 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 mt-6 sm:mt-10 p-1 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 overflow-x-auto">
                         <button
                             onClick={() => setActiveTab('budget')}
-                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'budget' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'budget' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
                         >
                             Budget
                         </button>
                         <button
                             onClick={() => setActiveTab('calendar')}
-                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'calendar' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'calendar' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
                         >
                             Calendar
                         </button>
                         <button
                             onClick={() => setActiveTab('stats')}
-                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'stats' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'stats' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
                         >
                             Insights
                         </button>
@@ -175,9 +175,9 @@ const BudgetTrackerPage: React.FC = () => {
 
                 {/* Dynamic Content Based on Tab */}
                 {activeTab === 'budget' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-fade-in">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 animate-fade-in">
                         {/* Left Side: Recent Transactions & Timeline */}
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className="lg:col-span-8 space-y-6 sm:space-y-8">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500">Recent Transactions</h3>
                                 <div className="flex items-center gap-2">
@@ -201,12 +201,12 @@ const BudgetTrackerPage: React.FC = () => {
 
                             {/* Monthly Trend Card (Legacy feel preserved but updated) */}
                             {report?.monthly_trends.slice(0, 1).map((m, idx) => (
-                                <div key={idx} className="bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl mt-12">
-                                    <div className="flex items-center justify-between mb-8">
-                                        <h3 className="text-xl font-bold tracking-tight">Summary: {m.month}</h3>
+                                <div key={idx} className="bg-neutral-900/40 border border-white/5 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 backdrop-blur-xl mt-6 sm:mt-12">
+                                    <div className="flex items-center justify-between mb-4 sm:mb-8">
+                                        <h3 className="text-base sm:text-xl font-bold tracking-tight">Summary: {m.month}</h3>
                                         <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active</span>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-10">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-10">
                                         <div>
                                             <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Total Budget</p>
                                             <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-4">
@@ -227,8 +227,8 @@ const BudgetTrackerPage: React.FC = () => {
                         </div>
 
                         {/* Right Side: Category Breakdown & Nudges */}
-                        <div className="lg:col-span-4 space-y-8">
-                            <div className="expanager-glass rounded-[2rem] p-8 expanager-glow-border">
+                        <div className="lg:col-span-4 space-y-4 sm:space-y-6 lg:space-y-8">
+                            <div className="expanager-glass rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 lg:p-8 expanager-glow-border">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-4 flex items-center gap-2">
                                     <Zap className="w-4 h-4 fill-emerald-500" /> Intelligence
                                 </p>
@@ -242,8 +242,8 @@ const BudgetTrackerPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-neutral-900 border border-white/5 rounded-[2rem] p-8">
-                                <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500 mb-8">Categories</h3>
+                            <div className="bg-neutral-900 border border-white/5 rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 lg:p-8">
+                                <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-neutral-500 mb-4 sm:mb-8">Categories</h3>
                                 <div className="space-y-6">
                                     {report?.by_category.slice(0, 5).map((cat, i) => (
                                         <div key={i} className="space-y-3">
@@ -279,7 +279,7 @@ const BudgetTrackerPage: React.FC = () => {
             </div>
 
             {/* Floating Navigation / Action */}
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-8 px-10 py-6 bg-neutral-900/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
+            <div className="fixed bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-6 lg:gap-8 px-5 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-6 bg-neutral-900/90 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
                 <button
                     onClick={() => setActiveTab('budget')}
                     className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'budget' ? 'text-emerald-500 scale-110' : 'text-neutral-500 opacity-40 hover:opacity-100'}`}
@@ -298,9 +298,9 @@ const BudgetTrackerPage: React.FC = () => {
 
                 <button
                     onClick={() => setIsFormOpen(true)}
-                    className="w-16 h-16 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 rounded-full -mt-20 flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all outline-none border-[6px] border-[#05070a]"
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 rounded-full -mt-12 sm:-mt-20 flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all outline-none border-4 sm:border-[6px] border-[#05070a]"
                 >
-                    <Plus className="w-8 h-8 stroke-[4]" />
+                    <Plus className="w-6 h-6 sm:w-8 sm:h-8 stroke-[4]" />
                 </button>
 
                 <button

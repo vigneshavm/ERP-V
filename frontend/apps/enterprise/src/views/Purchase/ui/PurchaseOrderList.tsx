@@ -93,9 +93,9 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     return (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex-1 flex flex-col min-h-0">
             {/* Toolbar */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 space-y-4">
+            <div className="p-4 sm:p-5 border-b border-neutral-200 dark:border-neutral-800 space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                    <div className="flex gap-4 items-center w-full sm:w-auto">
+                    <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
                         <div className="relative flex-1 sm:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
@@ -132,8 +132,8 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                 </div>
 
                 {/* Advanced Filters Bar */}
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-3 pt-2 w-full">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Status:</span>
                         <select
                             value={statusFilter}
@@ -146,7 +146,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             ))}
                         </select>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Vendor:</span>
                         <select
                             value={vendorFilter}
@@ -157,7 +157,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             {vendors.map(v => <option key={v} value={v}>{v}</option>)}
                         </select>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Date From:</span>
                         <input
                             type="date"
@@ -166,7 +166,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             className="bg-transparent text-xs font-semibold focus:outline-none cursor-pointer"
                         />
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">To:</span>
                         <input
                             type="date"
@@ -258,8 +258,8 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 <td className="px-6 py-4 font-bold text-neutral-900 dark:text-white text-right">
                                     ₹{Number(order.total_amount).toLocaleString()}
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex items-center justify-end gap-2">
+                                <td className="px-4 sm:px-6 py-4 text-right">
+                                    <div className="flex items-center justify-end gap-1 sm:gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button onClick={(e) => { e.stopPropagation(); onView(order.id); }} className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-500" title="View Details">
                                             <MoreHorizontal className="w-4 h-4" />
                                         </button>

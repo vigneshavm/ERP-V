@@ -138,7 +138,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                     <td className="px-6 py-4 text-secondary">
                                         {bill.dueDate || bill.due_date ? new Date(bill.dueDate || bill.due_date).toLocaleDateString() : '—'}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 sm:px-6 py-4">
                                         <div className="flex items-center justify-end gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => navigate(`/purchase/bills/view/${bill._id || bill.id}`)}
