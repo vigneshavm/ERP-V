@@ -93,7 +93,7 @@ export const usePOSLogic = (): POSLogic => {
     const { items: products, categories } = useSelector((state: RootState) => state.inventory); // New selector
     const { branches: allBranches } = useSelector((state: RootState) => state.tenant); // New selector
 
-    const { user, currentSector, currentBranch } = useSelector((state: RootState) => state.auth); // Consolidated auth selector
+    const {  user, currentSector, currentBranch  } = useAuthStore(); // Consolidated auth selector
 
     const activeCounterId = useSelector((state: RootState) => state.pos.activeCounterId || 'C1'); // New selector
     const activeCounterName = useMemo(() => {

@@ -1,6 +1,5 @@
 import { logger } from '@/shared/lib/logger';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 // import { supabase } from '../lib/supabase'; // Removed
 
@@ -144,7 +143,7 @@ export interface BusinessReportData {
 }
 
 export const useBusinessReports = (type: ReportType, filters: { branch_id?: string; date_range: { from: string; to: string } }) => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const [data, setData] = useState<BusinessReportData | null>(null);
     const [loading, setLoading] = useState(false);
 

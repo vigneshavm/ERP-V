@@ -61,7 +61,7 @@ const PaymentInCreator: React.FC = () => {
     // Generate receipt number
     const generateReceiptNo = () => `RCP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`;
 
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { customers: posCustomers } = useSelector((state: RootState) => state.pos);
 
     // Filter customers by tenant

@@ -10,7 +10,7 @@ import {
     Layers, Calendar, Briefcase, Building, Save, Palette, LayoutGrid, Shield
 } from 'lucide-react';
 import { useUiStore } from '@/shared/lib/store/uiStore';
-import { setBranch, setTheme } from "@/entities/session/model/authSlice";
+
 import { useConfig } from "@/app/providers/ConfigProvider";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -31,7 +31,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     const dispatch = useDispatch();
-    const { user, role, theme } = useSelector((state: RootState) => state.auth);
+    const {  user, role, theme  } = useAuthStore();
     const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
     const { currentView } = useNavigation();
     const {
@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         setSidebarOpen,
         setDesktopCollapsed
     } = useUiStore();
-    const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
+    const { currentBranch: selectedBranch } = useAuthStore();
     const { tenantId } = useConfig();
     const currentTenant = useMemo(() => tenants.find((t: any) => t.id === tenantId), [tenants, tenantId]);
     const { getBranchName } = useBranchResolver();

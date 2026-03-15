@@ -8,17 +8,7 @@ export interface UserVisualIdentity {
     visualIdentityConfig?: Record<string, any>;
 }
 
-export interface AuthState {
-    user: TenantUser | null;
-    currentSector: Sector;
-    currentBranch: string;
-    role: SystemRole;
-    theme: 'light' | 'dark' | 'system';
-    userPreferences?: UserVisualIdentity;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: string | null;
-}
+export 
 
 export interface SettingsState {
     appName: string;

@@ -16,7 +16,7 @@ export * from './slices/financeSlice';
 export * from './slices/laborSlice';
 export * from './slices/purchaseSlice';
 export * from './slices/tenantSlice';
-export * from './slices/authSlice';
+
 export * from './slices/settingsSlice';
 export * from './slices/supplierSlice';
 export * from './slices/uiSlice';

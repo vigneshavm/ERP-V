@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { useRecurringExpenses } from '@/features/expense-tracking/lib/useRecurringExpenses';
 import {
@@ -27,16 +26,10 @@ import {
 } from 'lucide-react';
 import Layout from "@/shared/ui/Layout";
 
-interface AuthState {
-    user: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    message: string;
-}
+
 
 const RecurringExpensesIntelligence: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { loading, intelligence, recurringExpenses } = useRecurringExpenses();
 
     const riskColorMap = {

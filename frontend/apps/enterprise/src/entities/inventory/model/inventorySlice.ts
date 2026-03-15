@@ -74,7 +74,7 @@ export const getAllItems = createAsyncThunk(
   async (params: { page?: number; limit?: number; search?: string; category?: string } | void, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       let queryParams = "";
@@ -106,7 +106,7 @@ export const getInventoryStats = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.get(`${API_URL}/inventory-stats`, getConfig(token));
@@ -127,7 +127,7 @@ export const getItemById = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/${id}`, getConfig(token));
       return response.data;
@@ -147,7 +147,7 @@ export const addItem = createAsyncThunk(
   async (itemData: Partial<Product>, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.post(API_URL, itemData, getConfig(token));
       return response.data;
@@ -167,7 +167,7 @@ export const updateItem = createAsyncThunk(
   async ({ id, itemData }: { id: string; itemData: Partial<Product> }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.put(
         `${API_URL}/${id}`,
@@ -191,7 +191,7 @@ export const deleteItem = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       await api.delete(`${API_URL}/${id}`, getConfig(token));
       return id;
@@ -211,7 +211,7 @@ export const deleteItemsBatch = createAsyncThunk(
   async (ids: string[], thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       await api.delete(`${API_URL}/batch`, {
         ...getConfig(token),
@@ -234,7 +234,7 @@ export const getLowStockItems = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/low-stock`, getConfig(token));
       return response.data;
@@ -255,7 +255,7 @@ export const getAgingReport = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/aging-report`, getConfig(token));
       return response.data;
@@ -275,7 +275,7 @@ export const applyAgingAction = createAsyncThunk(
   async ({ itemId, action, value }: { itemId: string; action: string; value?: number }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.post(`${API_URL}/aging-action`, { itemId, action, value }, getConfig(token));
       return response.data;
@@ -295,7 +295,7 @@ export const bulkUpdateCategory = createAsyncThunk(
   async (params: { ids: string[]; category: string }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.put(`${API_URL}/bulk/category`, params, getConfig(token));
@@ -312,7 +312,7 @@ export const bulkAdjustStock = createAsyncThunk(
   async (params: { ids: string[]; adjustment: number; type: 'ADD' | 'SUBTRACT' | 'SET' }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.put(`${API_URL}/bulk/stock`, params, getConfig(token));
@@ -329,7 +329,7 @@ export const duplicateItem = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.post(`${API_URL}/${id}/duplicate`, {}, getConfig(token));
@@ -346,7 +346,7 @@ export const toggleItemStatus = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.patch(`${API_URL}/${id}/toggle-status`, {}, getConfig(token));
@@ -363,7 +363,7 @@ export const getStockHistory = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.get(`${API_URL}/${id}/history`, getConfig(token));

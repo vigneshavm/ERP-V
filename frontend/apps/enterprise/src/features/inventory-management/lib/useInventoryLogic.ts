@@ -44,7 +44,7 @@ import { useInventoryActions } from './useInventoryActions';
 export const useInventoryLogic = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { items: products, categories } = useSelector((state: RootState) => state.inventory);
-    const { currentSector, currentBranch, role } = useSelector((state: RootState) => state.auth);
+    const {  currentSector, currentBranch, role  } = useAuthStore();
     const { tenantId } = useConfig();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { getBranchName } = useBranchResolver();

@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { updateSettings, resetSettings } from "@/app/store/slices/settingsSlice";
 import { updateTenantDetails } from "@/entities/session/model/tenantSlice";
-import { updateProfile } from "@/entities/session/model/authSlice";
+
 import { SettingsState } from "@/entities/session/model/settings";
 import { Tenant } from "@/entities/session/model/core";
 import { TaxMode, AppView } from "@repo/shared";
@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const {  user, role  } = useAuthStore();
     const settings = useSelector((state: RootState) => state.settings);
 
     const activeTenant = tenants.find((t: any) => t.id === user?.tenantId);

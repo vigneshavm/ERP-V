@@ -10,7 +10,7 @@ import api from "@/shared/api/api";
 import { TenantUser, DbRoleCode, Tenant } from "@/entities/session/model/core";
 
 const StaffManager: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
 
     // Get current tenant data

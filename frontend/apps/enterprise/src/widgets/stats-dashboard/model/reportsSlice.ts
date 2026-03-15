@@ -38,7 +38,7 @@ export const getSalesReport = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/sales`, getConfig(token));
       return response.data;
@@ -58,7 +58,7 @@ export const getStockReport = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/stock`, getConfig(token));
       return response.data;
@@ -78,7 +78,7 @@ export const getCustomerReport = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/customers`, getConfig(token));
       return response.data;
@@ -98,7 +98,7 @@ export const getDashboardStats = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
-      const token = state.auth.user?.token;
+      const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/dashboard-stats`, getConfig(token));
       return response.data;

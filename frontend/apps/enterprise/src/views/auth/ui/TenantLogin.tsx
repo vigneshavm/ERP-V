@@ -1,8 +1,8 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useTransition } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
-import { setUser, setAuthError } from "@/entities/session/model/authSlice";
+
 import { Store, Lock, ArrowRight, ArrowLeft, AlertCircle, Eye, EyeOff, Loader2, Mail, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -32,7 +32,7 @@ const DEFAULT_BRANDING = {
 
 const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { isError, message } = useSelector((state: RootState) => state.auth);
+    const {  isError, message  } = useAuthStore();
 
     const [identity, setIdentity] = useState('');
     const [password, setPassword] = useState('');

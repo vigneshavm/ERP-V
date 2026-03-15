@@ -47,7 +47,7 @@ const DebitNotes: React.FC = () => {
     const { orders, grns } = useSelector((state: RootState) => state.purchase);
     const { bills } = useSelector((state: RootState) => state.bill);
     const { suppliers: vendors } = useSelector((state: RootState) => state.suppliers);
-    const { currentBranch } = useSelector((state: RootState) => state.auth);
+    const {  currentBranch  } = useAuthStore();
     const { currentBranchId, getBranchName } = useBranchResolver();
 
     const [searchTerm, setSearchTerm] = useState('');

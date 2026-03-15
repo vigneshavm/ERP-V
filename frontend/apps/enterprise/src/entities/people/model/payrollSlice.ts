@@ -89,7 +89,7 @@ export const fetchSalaryComponents = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/components`, getConfig(token));
             return response.data.data;
@@ -104,7 +104,7 @@ export const createSalaryComponent = createAsyncThunk(
     async (data: Partial<SalaryComponent>, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/components`, data, getConfig(token));
             return response.data.data;
@@ -119,7 +119,7 @@ export const updateSalaryComponent = createAsyncThunk(
     async ({ id, data }: { id: string, data: Partial<SalaryComponent> }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/components/${id}`, data, getConfig(token));
             return response.data.data;
@@ -134,7 +134,7 @@ export const deleteSalaryComponent = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             await api.delete(`${API_URL}/components/${id}`, getConfig(token));
             return id;
@@ -149,7 +149,7 @@ export const fetchSalaryStructure = createAsyncThunk(
     async (employeeId: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/structures/${employeeId}`, getConfig(token));
             return { employeeId, structure: response.data.data };
@@ -164,7 +164,7 @@ export const fetchAllSalaryStructures = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/structures`, getConfig(token));
             return response.data.data;
@@ -179,7 +179,7 @@ export const saveSalaryStructure = createAsyncThunk(
     async (data: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/structures`, data, getConfig(token));
             return response.data.data;
@@ -194,7 +194,7 @@ export const bulkUpdateSalaryStructure = createAsyncThunk(
     async (data: { componentId: string, amount: number }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/structures/bulk`, data, getConfig(token)); // Corrected route
             return response.data;
@@ -209,7 +209,7 @@ export const fetchPayrollRuns = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/runs`, getConfig(token));
             return response.data.data;
@@ -227,7 +227,7 @@ export const generatePayrollRun = createAsyncThunk(
     async (data: { month: number, year: number }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/runs`, data, getConfig(token));
             return response.data.data;
@@ -242,7 +242,7 @@ export const approvePayroll = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/runs/${id}/approve`, {}, getConfig(token));
             return response.data.data;
@@ -257,7 +257,7 @@ export const payPayroll = createAsyncThunk(
     async ({ id, accountId, paymentMode }: { id: string; accountId: string; paymentMode: string }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/runs/${id}/pay`, { accountId, paymentMode }, getConfig(token));
             return response.data.data;
@@ -273,7 +273,7 @@ export const processIndividualPayout = createAsyncThunk(
     async (data: { employeeId: string, month: number, year: number, paymentMode: string, accountId: string, overrideWorkedDays?: number, force?: boolean }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/payout`, data, getConfig(token));
             return response.data.data;
@@ -288,7 +288,7 @@ export const fetchAttendanceSummary = createAsyncThunk(
     async ({ month, year }: { month: number; year: number }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/attendance?month=${month}&year=${year}`, getConfig(token));
             return response.data.data;
@@ -303,7 +303,7 @@ export const saveAttendanceSummary = createAsyncThunk(
     async (data: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as RootState;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/attendance`, data, getConfig(token));
             return response.data.data;

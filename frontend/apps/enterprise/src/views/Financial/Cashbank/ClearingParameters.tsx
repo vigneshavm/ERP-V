@@ -2,7 +2,6 @@ import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
 import { X, Save, RefreshCw, Zap, ShieldCheck } from 'lucide-react';
 import api from "@/shared/api/api"; // Direct API import since no slice action exists yet
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 
 interface ClearingParametersProps {
@@ -10,7 +9,7 @@ interface ClearingParametersProps {
 }
 
 const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
     const [parameters, setParameters] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [initializing, setInitializing] = useState(false);

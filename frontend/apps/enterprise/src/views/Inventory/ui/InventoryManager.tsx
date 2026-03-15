@@ -77,7 +77,7 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) =>
 const InventoryManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { items, isLoading, agingReport, pagination, stockHistory, inventoryStats } = useSelector((state: RootState) => state.inventory);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [showAgingModal, setShowAgingModal] = useState(false);

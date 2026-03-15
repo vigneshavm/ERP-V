@@ -1,6 +1,5 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import {
     Calendar,
@@ -20,7 +19,7 @@ import api from "@/shared/api/api";
 import { AttendanceStatus } from "@repo/shared";
 
 const DailyAttendanceBoard: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [employees, setEmployees] = useState<any[]>([]);
     const [attendanceMap, setAttendanceMap] = useState<Record<string, any>>({});

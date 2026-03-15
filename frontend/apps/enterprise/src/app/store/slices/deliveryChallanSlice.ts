@@ -43,7 +43,7 @@ export const createDeliveryChallan = createAsyncThunk(
     async (challanData: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(API_URL, challanData, getConfig(token));
             return response.data;
@@ -63,7 +63,7 @@ export const getAllDeliveryChallans = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(API_URL, getConfig(token));
             return response.data;
@@ -83,7 +83,7 @@ export const getDeliveryChallanById = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/${id}`, getConfig(token));
             return response.data;
@@ -103,7 +103,7 @@ export const updateDeliveryChallan = createAsyncThunk(
     async ({ id, data }: { id: string; data: any }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/${id}`, data, getConfig(token));
             return response.data;
@@ -123,7 +123,7 @@ export const convertToInvoice = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(`${API_URL}/${id}/convert-to-invoice`, {}, getConfig(token));
             return response.data;
@@ -143,7 +143,7 @@ export const deleteDeliveryChallan = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             await api.delete(`${API_URL}/${id}`, getConfig(token));
             return id;

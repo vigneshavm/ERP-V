@@ -14,16 +14,10 @@ export interface ExpenseReportStats {
     recommendations: string[];
 }
 
-interface AuthState {
-    user: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    message: string;
-}
+
 
 export const useExpenseReports = () => {
-    const { user } = useSelector((state: RootState & { auth: AuthState }) => state.auth);
+    const { user } = useAuthStore();
     const [report, setReport] = useState<ExpenseReportStats | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);

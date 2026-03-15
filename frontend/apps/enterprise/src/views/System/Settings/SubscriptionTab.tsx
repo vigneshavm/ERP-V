@@ -24,7 +24,7 @@ interface Plan {
 const SubscriptionTab: React.FC = () => {
     const dispatch = useDispatch();
     const [isPending, startTransition] = useTransition();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant || { tenants: [] });
 
     const currentTenant = (tenants || []).find((t: any) => (t.id || t._id) === user?.tenantId);

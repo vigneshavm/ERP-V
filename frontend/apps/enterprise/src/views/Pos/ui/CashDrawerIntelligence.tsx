@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import {
     Wallet,
@@ -59,7 +58,7 @@ interface CashDrawer {
 // --- Component ---
 
 const CashDrawerIntelligence: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [searchTerm, setSearchTerm] = useState('');

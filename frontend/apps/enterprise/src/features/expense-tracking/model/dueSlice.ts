@@ -35,7 +35,7 @@ export const createDueAdjustment = createAsyncThunk(
     async (adjustmentData: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             return await dueService.createDueAdjustment(adjustmentData, token);
         } catch (error: any) {
@@ -56,7 +56,7 @@ export const getDueAdjustments = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             return await dueService.getDueAdjustments(token);
         } catch (error: any) {
@@ -77,7 +77,7 @@ export const getCustomerDueAdjustments = createAsyncThunk(
     async (customerId: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             return await dueService.getCustomerDueAdjustments(customerId, token);
         } catch (error: any) {

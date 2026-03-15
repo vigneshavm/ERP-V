@@ -46,7 +46,7 @@ const LOYALTY_TIERS: LoyaltyTier[] = [
 const LoyaltyPoints: React.FC = () => {
     const { customers } = useSelector((state: RootState) => state.customers);
     const { invoices: salesHistory } = useSelector((state: RootState) => state.pos);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'transactions' | 'settings'>('overview');

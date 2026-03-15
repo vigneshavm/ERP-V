@@ -82,7 +82,7 @@ const CategoryManager: React.FC = () => {
 
     // Sector Context
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const currentTenant = tenants.find(t => t.id === user?.tenantId);
     const sector = currentTenant?.sector || 'General';
 

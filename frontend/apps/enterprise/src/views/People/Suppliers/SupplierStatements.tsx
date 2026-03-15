@@ -52,7 +52,7 @@ interface LedgerData {
 }
 
 const SupplierStatements: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
 
     const [selectedSupplierId, setSelectedSupplierId] = useState<string>('');

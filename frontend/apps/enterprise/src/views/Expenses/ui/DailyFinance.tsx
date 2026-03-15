@@ -27,7 +27,7 @@ type PeriodType = 'DAILY' | 'MONTHLY' | 'YEARLY' | 'CUSTOM';
 
 const DailyFinancePage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { theme, user } = useSelector((state: RootState) => state.auth);
+    const {  theme, user  } = useAuthStore();
     const { getBranchName } = useBranchResolver();
     const { dailyFinanceRecords } = useSelector((state: RootState) => state.finance);
 

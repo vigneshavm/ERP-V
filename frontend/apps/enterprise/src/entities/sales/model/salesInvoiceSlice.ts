@@ -37,7 +37,7 @@ export const getSalesInvoiceSummary = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/summary`, getConfig(token));
             return response.data;
@@ -57,7 +57,7 @@ export const getAllSalesInvoices = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/invoices`, getConfig(token));
             return response.data;
@@ -77,7 +77,7 @@ export const getSalesInvoiceById = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/invoice/${id}`, getConfig(token));
             return response.data;
@@ -97,7 +97,7 @@ export const deleteSalesInvoice = createAsyncThunk(
     async (id: string, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             await api.delete(`${API_URL}/invoice/${id}`, getConfig(token));
             return id;
@@ -117,7 +117,7 @@ export const markSalesInvoiceAsPaid = createAsyncThunk(
     async ({ id, amount, bankAccount, paymentMethod }: { id: string; amount: number; bankAccount?: string; paymentMethod?: string }, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.put(`${API_URL}/invoice/${id}/mark-paid`, {
                 amount,
@@ -141,7 +141,7 @@ export const createSalesInvoice = createAsyncThunk(
     async (invoiceData: any, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.post(API_URL, invoiceData, getConfig(token));
             return response.data;

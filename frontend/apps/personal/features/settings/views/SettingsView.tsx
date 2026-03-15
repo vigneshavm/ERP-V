@@ -12,7 +12,7 @@ import { Button } from '../../../components/ui/Button';
 import { SecurityPinMode } from '../../auth';
 
 import { useNavigation } from '../../../contexts/NavigationContext';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuthStore } from '@repo/shared';
 
 interface SettingsViewProps {
     setPinMode: (mode: SecurityPinMode) => void;
@@ -25,7 +25,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
     const { t, availableLanguages, language } = useLanguage();
     const { userProfile, theme, currency } = useSettings();
-    const { logout } = useAuth();
+    const logout = useAuthStore(state => state.logout);
     const {
         setIsCurrencyOpen,
         setIsLanguageOpen,

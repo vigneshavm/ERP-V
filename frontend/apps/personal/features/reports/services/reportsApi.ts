@@ -1,25 +1,19 @@
-import { appData, delay } from '../../../services/mockState';
+import { api } from '@repo/shared';
 import { StatsData } from '@repo/shared';
 
 export const fetchStatsData = async (): Promise<StatsData> => {
-    await delay(500);
-    return {
-        stats: appData.stats,
-        categories: appData.categories as any[]
-    };
+    return api.get<StatsData>('/personal/reports/stats');
 };
 
 export const fetchYearlyInsights = async (): Promise<any> => {
-    await delay(500);
-    return appData.yearlyInsights;
+    return api.get('/personal/reports/yearly-insights');
 };
 
 export const fetchReports = async (): Promise<any[]> => {
-    await delay(500);
-    return appData.reports || [];
+    return api.get<any[]>('/personal/reports');
 };
 
 export const fetchRecurringBills = async (): Promise<any[]> => {
-    await delay(500);
-    return appData.recurringBills;
+    return api.get<any[]>('/personal/reports/recurring-bills');
 };
+

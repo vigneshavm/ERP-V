@@ -39,7 +39,7 @@ const SupplierDetail: React.FC = () => {
     (state: RootState) => state.suppliers
   );
 
-  const { user } = useSelector((state: RootState) => state.auth);
+  const {  user  } = useAuthStore();
   const [selectedBranch, setSelectedBranch] = React.useState<string>(user?.branchId || '');
 
   // Edit Financials Logic

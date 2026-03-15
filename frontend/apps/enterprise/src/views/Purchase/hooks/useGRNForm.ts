@@ -11,7 +11,7 @@ export const useGRNForm = () => {
     const dispatch = useDispatch();
 
     const { orders } = useSelector((state: RootState) => state.purchase);
-    const { user, currentBranch } = useSelector((state: RootState) => state.auth);
+    const {  user, currentBranch  } = useAuthStore();
 
     const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
     const [grnData, setGrnData] = useState<Partial<GRN>>({

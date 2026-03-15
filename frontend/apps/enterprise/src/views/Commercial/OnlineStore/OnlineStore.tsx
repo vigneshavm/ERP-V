@@ -77,10 +77,10 @@ const OnlineStoreSetup: React.FC<{
 
 const OnlineStore: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { items: products } = useSelector((state: RootState) => state.inventory);
-    const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const {  currentSector, currentBranch  } = useAuthStore();
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);
     const ecomConfig = activeTenant?.ecommerceConfig;

@@ -9,7 +9,7 @@ import { getProductRecommendations, searchProductsByImage } from "@/features/ai-
 export const useStorefrontLogic = () => {
     const dispatch = useDispatch();
     const { items: products } = useSelector((state: RootState) => state.inventory);
-    const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
+    const {  currentSector, currentBranch  } = useAuthStore();
 
     // --- View State ---
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

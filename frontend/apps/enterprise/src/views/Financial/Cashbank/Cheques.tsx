@@ -40,7 +40,7 @@ import ClearingParameters from './ClearingParameters';
 const Cheques: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { cheques, effectiveBalance, bankBalance: reduxBankBalance, pdcAlerts, loading } = useSelector((state: RootState) => state.finance);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
     const { accounts } = useSelector((state: RootState) => state.cashbank);
     const { orders: purchases } = useSelector((state: RootState) => state.purchase);
 

@@ -42,7 +42,7 @@ interface CustomerLedger {
 const CustomerLedgerPage: React.FC = () => {
     const { customers } = useSelector((state: RootState) => state.customers);
     const { invoices: salesHistory } = useSelector((state: RootState) => state.pos);
-    const { currentSector } = useSelector((state: RootState) => state.auth);
+    const {  currentSector  } = useAuthStore();
 
     const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');

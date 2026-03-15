@@ -1,6 +1,5 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useEffect, useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from "@/shared/ui/Layout/Layout";
 import {
@@ -39,7 +38,7 @@ const SupplierAgeing: React.FC = () => {
     const [data, setData] = useState<SupplierAgeing[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const user = useSelector((state: RootState) => state.auth.user);
+    const { user: user } = useAuthStore();
 
     const fetchAgeing = async () => {
         setLoading(true);

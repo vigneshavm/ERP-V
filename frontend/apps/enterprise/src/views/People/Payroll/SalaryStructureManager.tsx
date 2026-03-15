@@ -13,7 +13,7 @@ const SalaryStructureManager = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { components, structures, success, loading } = useSelector((state: RootState) => state.payroll);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const { user: user } = useAuthStore();
 
     logger.info("[SalaryStructureManager] Current User:", user);
     logger.info("[SalaryStructureManager] Components:", components);

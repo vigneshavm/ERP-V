@@ -1,5 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Lock, Sparkles, ArrowRight, Zap } from 'lucide-react';
+
 
 interface UpgradeUpsellProps {
     moduleName: string;
@@ -17,6 +19,8 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
         "Priority 24/7 Support"
     ]
 }) => {
+    const navigate = useNavigate();
+
     return (
         <div className="h-full flex items-center justify-center p-6 bg-neutral-50/50 dark:bg-neutral-900/50">
             <div className="max-w-md w-full bg-white dark:bg-neutral-800 rounded-3xl shadow-xl shadow-primary/5 border border-neutral-200 dark:border-neutral-700 p-8 text-center relative overflow-hidden">
@@ -55,7 +59,7 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
 
                     <button
                         className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 group"
-                        onClick={() => window.location.href = '/settings/subscription'}
+                        onClick={() => navigate('/settings/subscription')}
                     >
                         Learn More & Upgrade
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

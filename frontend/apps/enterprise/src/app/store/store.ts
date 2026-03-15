@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '@/entities/session/model/authSlice';
+
 import customerReducer from '@/entities/contact/model/customerSlice';
 import inventoryReducer from '@/entities/inventory/model/inventorySlice';
 import posReducer from '@/entities/sales/model/posSlice';
@@ -25,7 +25,7 @@ import systemReducer from '@/entities/system/model/systemSlice';
 export const store = configureStore({
   reducer: {
     settings: settingsReducer,
-    auth: authReducer,
+
     customers: customerReducer,
     inventory: inventoryReducer,
     pos: posReducer,

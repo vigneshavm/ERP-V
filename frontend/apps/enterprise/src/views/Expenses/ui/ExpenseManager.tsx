@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import Layout from "@/shared/ui/Layout";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
@@ -8,7 +7,7 @@ import { Receipt, TrendingDown, ArrowRight, Wallet, History, Search, Filter, Dow
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const ExpenseManagerPage: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const tenant_id = user?.tenantId || 'TEN001';
 
     // Mock data for demonstration - in real app, these would come from Redux or API

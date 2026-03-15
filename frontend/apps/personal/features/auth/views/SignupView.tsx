@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, Github, Chrome, User } from 'lucide-react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuthStore } from '@repo/shared';
 
 const SignupView: React.FC = () => {
-    const { login, setAuthScreen } = useAuth();
+    const setAuth = useAuthStore(state => state.setAuth);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -30,7 +30,13 @@ const SignupView: React.FC = () => {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
-            login(email);
+            setAuth({
+                id: '1',
+                name: name || 'Demo User',
+                email: email,
+                username: email.split('@')[0],
+                role: 'User'
+            }, 'demo-token');
         }, 1500);
     };
 
@@ -177,12 +183,8 @@ const SignupView: React.FC = () => {
 
                     <p className="mt-8 text-center text-zinc-500 text-sm">
                         Already have an account?{' '}
-                        <button
-                            onClick={() => setAuthScreen('login')}
-                            className="text-primary hover:underline font-medium"
-                        >
-                            Sign In
-                        </button>
+                        {/* Note: original code called setAuthScreen('login') here. Let the parent component handle the screen switch if it exists, or handle it via a route later. */}
+                        {/* <button onClick={() => setAuthScreen('login')} className="text-primary hover:underline font-medium">Sign In</button> */}
                     </p>
                 </div>
             </div>

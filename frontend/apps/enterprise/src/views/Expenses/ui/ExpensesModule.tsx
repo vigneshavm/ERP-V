@@ -7,16 +7,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import ExpenseForm from '@/features/expense-tracking/ui/ExpenseForm';
 
-interface AuthState {
-    user: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    message: string;
-}
+
 
 const ExpensesModule: React.FC = () => {
-    const auth = useSelector((state: RootState & { auth: AuthState }) => state.auth);
+    const auth = useAuthStore();
     const user = auth.user;
     const role = (user as any)?.role;
     const { expenses, createExpense, updateExpense, deleteExpense, loading } = useExpenses();

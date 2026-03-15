@@ -51,7 +51,7 @@ export const getAllBills = createAsyncThunk<Bill[], any, { state: RootState, rej
     async (params, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
 
             // Format query params
@@ -78,7 +78,7 @@ export const createBill = createAsyncThunk<Bill, any, { state: RootState, reject
     async (billData, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.post(API_URL, billData, getConfig(token));
             return response.data;
@@ -98,7 +98,7 @@ export const getBillById = createAsyncThunk<Bill, string, { state: RootState, re
     async (id, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.get(API_URL + '/' + id, getConfig(token));
             return response.data;
@@ -118,7 +118,7 @@ export const updateBill = createAsyncThunk<Bill, { id: string, billData: any }, 
     async ({ id, billData }, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.put(API_URL + '/' + id, billData, getConfig(token));
             return response.data;
@@ -138,7 +138,7 @@ export const deleteBill = createAsyncThunk<string, string, { state: RootState, r
     async (id, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user?.token;
+            const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             await api.delete(API_URL + '/' + id, getConfig(token));
             return id;

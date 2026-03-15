@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import { supabase } from '../lib/supabase'; // Removed
-import { setUserPreferences } from "@/entities/session/model/authSlice";
+
 import { getTable } from "@/shared/api/dataSource";
 
 export const useVisualPreferences = (tenantId: string | undefined, userId: string | undefined) => {

@@ -26,7 +26,7 @@ interface TenantViewProps {
 
 const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLogout }) => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const {  user  } = useAuthStore();
     const { tenants } = useSelector((state: RootState) => state.tenant);
     const { currentView } = useNavigation();
     const {

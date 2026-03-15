@@ -20,7 +20,7 @@ import { ReportType } from "@/widgets/stats-dashboard/lib/useBusinessReports";
 
 const ReportsModule: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const {  user, role  } = useAuthStore();
     // const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui); // Removed as uiSlice is missing
     const globalActiveTab: any = 'REPORTS'; // Default value since uiSlice is missing
     const [searchQuery, setSearchQuery] = useState('');

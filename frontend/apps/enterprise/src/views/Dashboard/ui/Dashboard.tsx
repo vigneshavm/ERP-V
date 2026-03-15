@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
   const { transactions, dailyFinanceRecords, bankBalance: balance, loading: financeLoading } = useSelector((state: RootState) => state.finance);
   const { items: products } = useSelector((state: RootState) => state.inventory);
   const { customers } = useSelector((state: RootState) => state.pos);
-  const { currentSector, theme } = useSelector((state: RootState) => state.auth);
+  const {  currentSector, theme  } = useAuthStore();
   const { branches, getBranchName, currentBranchId } = useBranchResolver();
   const { dashboardStats, stockReport, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
   const { expenses } = useSelector((state: RootState) => state.expense);
