@@ -12,6 +12,15 @@ export type Loan = z.infer<typeof schemas.LoanSchema>;
 export type PersonalTransaction = z.infer<typeof schemas.TransactionSchema>;
 export type Budget = z.infer<typeof schemas.BudgetSchema>;
 
+export interface BankAccount {
+  _id: string;
+  bankName: string;
+  accountNumber: string;
+  accountType: 'Current' | 'Savings' | 'OD' | 'CC' | 'Loan' | 'Other';
+  currentBalance: number;
+  isActive: boolean;
+}
+
 export interface DashboardData {
   profile: Profile;
   smsTransfers: SMSTransfers;
@@ -27,7 +36,7 @@ export interface CalendarTransaction extends PersonalTransaction {
   categoryId: string;
   categoryName: string;
   categoryColor: string;
-  categoryIcon: string;
+  categoryEmoji: string;
 }
 
 export interface ExpenseHistory {

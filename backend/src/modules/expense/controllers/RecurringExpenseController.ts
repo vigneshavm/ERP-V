@@ -167,6 +167,8 @@ export const getAllRecurringExpenses = async (req: AuthenticatedRequest, res: Re
             branch_id: exp.branch_id,
             branch_name: exp.branch_name,
             description: exp.description,
+            type: exp.type || "expense",
+            accountId: exp.accountId,
         }));
 
         res.status(200).json({ expenses, intelligence });
@@ -182,7 +184,7 @@ export const getAllRecurringExpenses = async (req: AuthenticatedRequest, res: Re
  */
 export const createRecurringExpense = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const { category, amount, frequency, vendor, next_due, branch_id, branch_name, description } = req.body;
+        const { category, amount, frequency, vendor, next_due, branch_id, branch_name, description, type, accountId } = req.body;
 
         if (!category || !amount || !next_due) {
             res.status(400).json({ message: 'Category, amount, and next due date are required' });
@@ -198,6 +200,8 @@ export const createRecurringExpense = async (req: AuthenticatedRequest, res: Res
             branch_id,
             branch_name,
             description,
+            type: type || "expense",
+            accountId,
             createdBy: req.user?._id
         });
 
@@ -213,6 +217,8 @@ export const createRecurringExpense = async (req: AuthenticatedRequest, res: Res
             branch_id: expense.branch_id,
             branch_name: expense.branch_name,
             description: expense.description,
+            type: expense.type,
+            accountId: expense.accountId,
         });
     } catch (err) {
         error(`Create recurring expense failed: ${(err as Error).message}`);
@@ -264,6 +270,8 @@ export const updateRecurringExpense = async (req: AuthenticatedRequest, res: Res
             branch_id: updatedExpense.branch_id,
             branch_name: updatedExpense.branch_name,
             description: updatedExpense.description,
+            type: updatedExpense.type,
+            accountId: updatedExpense.accountId,
         });
     } catch (err) {
         error(`Update recurring expense failed: ${(err as Error).message}`);

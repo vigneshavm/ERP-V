@@ -7,6 +7,9 @@ export interface IExpenseCategory extends Document {
     is_cash_allowed: boolean;
     is_active: boolean;
     gst_eligible: boolean;
+    color?: string;
+    emoji?: string;
+    type: "income" | "expense" | "both";
     createdBy: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
@@ -38,6 +41,19 @@ const expenseCategorySchema = new Schema<IExpenseCategory>(
         gst_eligible: {
             type: Boolean,
             default: false,
+        },
+        color: {
+            type: String,
+            default: "#3498db",
+        },
+        emoji: {
+            type: String,
+            default: "💰",
+        },
+        type: {
+            type: String,
+            enum: ["income", "expense", "both"],
+            default: "expense",
         },
         createdBy: {
             type: Schema.Types.ObjectId,

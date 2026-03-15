@@ -16,8 +16,8 @@
     "@repo/config-eslint": "*",
     "@repo/config-tailwind": "*",
     "@repo/config-typescript": "*",
-    "@yourcompany/finance-lib": "*",
-    "@yourcompany/ui-react": "*",
+    "@repo/shared": "*",
+    "@repo/ui": "*",
     "@yourcompany/utils": "*"
   },
   "peerDependencies": {

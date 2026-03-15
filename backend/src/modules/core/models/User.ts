@@ -115,6 +115,14 @@ const userSchema = new Schema<IUser>(
             type: Date,
             default: null,
         },
+        personalFinanceSettings: {
+            monthStartDay: {
+                type: Number,
+                default: 1,
+                min: 1,
+                max: 31
+            }
+        }
     },
     { timestamps: true }
 );

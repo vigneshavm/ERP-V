@@ -7,3 +7,4 @@ export * from "./UI/Modal";
 export * from "./Form/Input";
 export * from "./Display/ThemeToggle";
 export * from "./AuthGuard";
+export { default as MetricCard } from "./UI/MetricCard";

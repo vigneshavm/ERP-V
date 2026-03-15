@@ -10,7 +10,7 @@ export const fetchCategories = async (): Promise<Category[]> => {
 
 export const createCategory = async (
     name: string,
-    icon: string,
+    emoji: string,
     color: string,
     limit: number
 ): Promise<Category> => {
@@ -19,8 +19,9 @@ export const createCategory = async (
     const newCategory: Category = {
         id: crypto.randomUUID(),
         name,
-        icon,
+        emoji,
         color,
+        type: 'expense',
         value: 0,
         limit,
         over: false,
@@ -32,7 +33,7 @@ export const createCategory = async (
 
 export const updateCategory = async (
     id: string,
-    updates: Partial<Pick<Category, 'name' | 'icon' | 'color' | 'limit'>>
+    updates: Partial<Pick<Category, 'name' | 'emoji' | 'color' | 'limit'>>
 ): Promise<void> => {
     await delay(200);
     saveState();

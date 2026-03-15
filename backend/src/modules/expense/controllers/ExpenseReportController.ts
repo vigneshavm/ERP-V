@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 
 import Expense from '../models/Expense.js';
 import ExpenseCategory from '../models/ExpenseCategory.js';
+import User from '../../core/models/User.js';
+import { FinancialPeriod } from '../../../utils/FinancialPeriod.js';
 import { error } from '../../../config/logger.js';
 
 /**
@@ -58,17 +60,28 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
         const now = new Date();
 
         // Default to current month if no date range provided
-        const startDate = req.query.startDate
-            ? new Date(req.query.startDate as string)
-            : new Date(now.getFullYear(), now.getMonth(), 1);
-        const endDate = req.query.endDate
-            ? new Date(req.query.endDate as string)
-            : new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        let startDate: Date;
+        let endDate: Date;
+
+        if (req.query.startDate && req.query.endDate) {
+            startDate = new Date(req.query.startDate as string);
+            endDate = new Date(req.query.endDate as string);
+        } else {
+            // Get user preference for month start
+            const user = await User.findById(userId);
+            const monthStartDay = user?.personalFinanceSettings?.monthStartDay || 1;
+            const period = FinancialPeriod.getPeriod(now, monthStartDay);
+            startDate = period.startDate;
+            endDate = period.endDate;
+        }
 
         // Get report period label
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'];
-        const report_period = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
+        
+        const report_period = startDate.getDate() === 1 && endDate.getDate() >= 28 
+            ? `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`
+            : `${startDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
 
         // Get all expenses for the period
         const expenses = await Expense.find({
@@ -195,28 +208,28 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
             recommendations.push('Regularly review expense patterns to identify cost optimization opportunities');
         }
 
-        // Calculate monthly trends for the last 6 months
+        // Calculate monthly trends for the last 6 periods
+        const user = await User.findById(userId);
+        const monthStartDay = user?.personalFinanceSettings?.monthStartDay || 1;
+        const recentPeriods = FinancialPeriod.getRecentPeriods(6, monthStartDay);
+        
         const monthly_trends = [];
-        for (let i = 0; i < 6; i++) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const mStart = new Date(d.getFullYear(), d.getMonth(), 1);
-            const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-
+        for (const period of recentPeriods) {
             const mExpenses = await Expense.find({
                 createdBy: userId,
-                date: { $gte: mStart, $lte: mEnd }
+                date: { $gte: period.startDate, $lte: period.endDate }
             });
 
             const mTotal = mExpenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
-            const mIncome = mTotal * 1.5; // Mock income for visual consistency with screenshot
+            const mIncome = mTotal * 1.5; // Mock income for visual consistency
 
             monthly_trends.push({
-                month: monthNames[d.getMonth()],
-                year: d.getFullYear(),
+                month: monthNames[period.startDate.getMonth()],
+                year: period.startDate.getFullYear(),
                 expense: mTotal,
                 income: mIncome,
-                budget_utilization: 75, // Placeholder
-                label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`
+                budget_utilization: 75,
+                label: period.label
             });
         }
 

@@ -232,6 +232,39 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response): Prom
     }
 };
 
+/**
+ * @desc Update personal finance settings (e.g. month start day)
+ * @route POST /api/users/finance-settings
+ */
+export const updateFinanceSettings = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { monthStartDay } = req.body;
+        
+        if (monthStartDay < 1 || monthStartDay > 31) {
+            res.status(400).json({ message: 'Invalid month start day' });
+            return;
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            { $set: { 'personalFinanceSettings.monthStartDay': monthStartDay } },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.status(200).json({
+            message: 'Finance settings updated successfully',
+            personalFinanceSettings: user.personalFinanceSettings
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+    }
+};
+
 export default {
     getAllUsers,
     updateUser,

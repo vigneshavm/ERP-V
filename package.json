@@ -10,7 +10,8 @@
         "frontend/packages/*",
         "frontend/common/*",
         "frontend/mfe/personal/*",
-        "frontend/mfe/business/*"
+        "frontend/mfe/business/*",
+        "frontend/mfe/common/*"
     ],
     "scripts": {
         "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",

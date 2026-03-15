@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { AmountInput } from '@yourcompany/ui-react';
+import { Input } from '@repo/ui';
 import { useBudgetCalculations, BudgetStatus } from '../features/budget-tracking';
 
 export const BudgetPlannerPage: React.FC = () => {
@@ -19,15 +19,15 @@ export const BudgetPlannerPage: React.FC = () => {
       <h2 className="text-xl font-bold text-gray-900">Budget Planner</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <AmountInput 
+        <Input 
           label="Monthly Budget" 
           value={budget} 
-          onChange={setBudget} 
+          onChange={(e) => setBudget(e.target.value)} 
         />
-        <AmountInput 
+        <Input 
           label="Total Spent" 
           value={spent} 
-          onChange={setSpent} 
+          onChange={(e) => setSpent(e.target.value)} 
         />
       </div>
 

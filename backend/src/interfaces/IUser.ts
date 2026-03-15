@@ -41,6 +41,10 @@ export interface IUser extends Document {
     lastFailedLogin?: Date | null;
     accountLockedUntil?: Date | null;
 
+    personalFinanceSettings?: {
+        monthStartDay: number;
+    };
+
     createdAt: Date;
     updatedAt: Date;
 

@@ -10,6 +10,8 @@ export interface IRecurringExpense extends Document {
     branch_name?: string;
     description?: string;
     is_active: boolean;
+    type: "income" | "expense";
+    accountId?: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
@@ -54,6 +56,15 @@ const recurringExpenseSchema = new Schema<IRecurringExpense>(
         is_active: {
             type: Boolean,
             default: true,
+        },
+        type: {
+            type: String,
+            enum: ["income", "expense"],
+            default: "expense",
+        },
+        accountId: {
+            type: Schema.Types.ObjectId,
+            ref: "BankAccount",
         },
         createdBy: {
             type: Schema.Types.ObjectId,

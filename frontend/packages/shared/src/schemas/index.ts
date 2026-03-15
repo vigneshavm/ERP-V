@@ -4,6 +4,9 @@ export const UserSchema = z.object({
     id: z.string(),
     name: z.string().min(2),
     email: z.string().email(),
+    personalFinanceSettings: z.object({
+        monthStartDay: z.number().min(1).max(31).default(1),
+    }).optional(),
 });
 
 export const ExpenseCategorySchema = z.enum(["Personal", "Business", "Travel", "Food", "Other"]);
@@ -26,10 +29,11 @@ export const MonthlySummarySchema = z.object({
 export const CategorySchema = z.object({
     id: z.string(),
     name: z.string(),
-    value: z.number(),
-    limit: z.number(),
-    color: z.string(),
-    icon: z.string(),
+    value: z.number().optional(),
+    limit: z.number().optional(),
+    color: z.string().default("#3498db"),
+    emoji: z.string().default("💰"),
+    type: z.enum(["income", "expense", "both"]).default("expense"),
     over: z.boolean().optional(),
 });
 
@@ -71,10 +75,15 @@ export const LoanSchema = z.object({
 
 export const TransactionSchema = z.object({
     id: z.string(),
-    name: z.string(),
+    type: z.enum(["income", "expense"]),
     amount: z.number(),
+    category: z.string(), // categoryId
+    account: z.string(), // accountId
     date: z.string(),
-    time: z.string(),
+    time: z.string().optional(),
+    description: z.string().optional(),
+    isRecurring: z.boolean().default(false),
+    recurringId: z.string().optional(),
     isAnomaly: z.boolean().optional(),
     anomalyReason: z.string().optional(),
     notes: z.string().optional(),
