@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import SecurePasswordInput from '../ui/SecurePasswordInput';
+import SecurePasswordInput from '@/views/auth/ui/SecurePasswordInput';
 import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
 import AuthLayout from '@/views/Views/ui/AuthLayout';
 import AuthAlert from '@/views/Views/ui/AuthAlert';

@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
     const [bgError, setBgError] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const [isPending, startTransition] = useTransition();
+    const [isTransitionPending, startTransition] = useTransition();
 
     const backgroundImage = (!bgError && tenant?.loginBgUrl) || SECTOR_IMAGES[allowedSector] || DEFAULT_BRANDING.BACKGROUND;
 
@@ -55,18 +55,19 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                 else if (code === DbRoleCode.MANAGER) systemRole = SystemRole.MANAGER;
             }
 
-            const sessionUser: any = {
+            const userWithToken: any = {
                 ...apiUser,
                 id: apiUser._id,
                 name: apiUser.fullName,
                 systemRole: systemRole,
                 sector: allowedSector,
-                tenantId: tenant?.id
+                tenantId: tenant?.id,
+                token: data.token
             };
 
             startTransition(() => {
-                setSession(sessionUser, data.token);
-                dispatch(setUser(apiUser));
+                setSession(userWithToken);
+                dispatch(setUser(userWithToken));
             });
             setError('');
         },
@@ -98,7 +99,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
         });
     };
 
-    const loading = isPending;
+    const loading = isPending || isTransitionPending;
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#06080F] overflow-hidden font-[system-ui]">

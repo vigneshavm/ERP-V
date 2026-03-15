@@ -117,7 +117,7 @@ export class GrowthIntelligenceService {
 
     // Super Admin: Update specific tenant entitlements
     static async updateTenantGrowthEntitlements(tenantId: string, entitlements: GrowthChannelType[]): Promise<boolean> {
-        logger.info(`Super Admin updating entitlements for tenant ${tenantId}:`, entitlements);
+        logger.info(`Super Admin updating entitlements for tenant ${tenantId}:`, { entitlements });
         return true;
     }
 
@@ -238,7 +238,7 @@ export class GrowthIntelligenceService {
                     return true;
             }
         } catch (error) {
-            logger.error('Connection verification failed:', error);
+            logger.error('Connection verification failed:', { error });
             return false;
         }
     }

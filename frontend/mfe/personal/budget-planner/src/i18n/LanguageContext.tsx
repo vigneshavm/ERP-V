@@ -1,12 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { en } from './locales/en';
 import { es } from './locales/es';
 import { hi } from './locales/hi';
 import { ta } from './locales/ta';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Translations = Record<string, any>;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const locales: Record<string, { name: string; translations: Translations; flag: string }> = {
     'en': { name: 'English', translations: en, flag: '🇺🇸' },
@@ -41,7 +43,9 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const t = (key: string): string => {
         const keys = key.split('.');
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         let value: any = locales[language]?.translations || locales['en'].translations;
+        /* eslint-enable @typescript-eslint/no-explicit-any */
 
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {

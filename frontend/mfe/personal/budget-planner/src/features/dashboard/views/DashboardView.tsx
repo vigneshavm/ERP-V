@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Smartphone, ArrowRight, Camera, Settings2, ShoppingBag, Check } from 'lucide-react';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
-import { formatCurrency, DashboardData, Transaction, Category, useLanguage, useExpenses } from '@repo/shared';
+import { formatCurrency, useLanguage } from '@repo/shared';
 import { Card } from '@repo/ui';
 
 import PredictiveAlert from '../../predictions-and-alerts/PredictiveAlert';
@@ -23,7 +24,6 @@ import { useExpensesFeature } from '../../expenses/hooks/useExpensesFeature';
 const DashboardView: React.FC = () => {
     const { t } = useLanguage();
     const { 
-        setCurrentView, 
         setIsSMSHelperOpen, 
         setIsBankStatementOpen, 
         setIsReceiptOCROpen 
@@ -31,11 +31,7 @@ const DashboardView: React.FC = () => {
     
     const { data: dashboardData, loading: dashboardLoading } = useDashboardFeature();
     const { transactions, loading: transactionsLoading } = useTransactionsFeature();
-    const { data: expensesData, categories, loading: expensesLoading } = useExpensesFeature();
-
-    const [forecast, setForecast] = useState<ForecastResult | null>(null);
-    const [trends, setTrends] = useState<CategoryTrend[]>([]);
-    const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
+    const { categories, loading: expensesLoading } = useExpensesFeature();
 
     const {
         activeWidgetIds,
@@ -46,17 +42,22 @@ const DashboardView: React.FC = () => {
         addWidget
     } = useDashboardConfig();
 
-    useEffect(() => {
+    const forecast = useMemo<ForecastResult | null>(() => {
         if (dashboardData && transactions.length > 0 && categories.length > 0) {
-            // Calculate predictions
             const currentMonthBudget = dashboardData.monthlySummaries[0]?.budget || 0;
-            const forecastResult = calculateMonthlyForecast(transactions as any, currentMonthBudget);
-            const trendResults = analyzeCategoryTrends(transactions as any, categories as any);
-
-            setForecast(forecastResult);
-            setTrends(trendResults);
+            return calculateMonthlyForecast(transactions, currentMonthBudget);
         }
+        return null;
     }, [dashboardData, transactions, categories]);
+
+    const trends = useMemo<CategoryTrend[]>(() => {
+        if (dashboardData && transactions.length > 0 && categories.length > 0) {
+            return analyzeCategoryTrends(transactions, categories);
+        }
+        return [];
+    }, [dashboardData, transactions, categories]);
+
+    const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
 
     const loading = dashboardLoading || transactionsLoading || expensesLoading;
     const data = dashboardData;
@@ -318,7 +319,7 @@ const DashboardView: React.FC = () => {
                     </WidgetContainer>
                 );
 
-            case 'weekly-spending':
+            case 'weekly-spending': {
                 const weeklyData = [
                     { day: 'Mon', amount: 120 },
                     { day: 'Tue', amount: 340 },
@@ -362,6 +363,7 @@ const DashboardView: React.FC = () => {
                         </Card>
                     </WidgetContainer>
                 );
+            }
 
             default:
                 return null;

@@ -24,6 +24,6 @@ export const saveState = <T>(key: string, state: T, tenantId?: string): void => 
         const partitionKey = tenantId ? `${tenantId}_${key}` : key;
         localStorage.setItem(partitionKey, JSON.stringify(state));
     } catch (e) {
-        logger.warn("Could not save state", e);
+        logger.warn("Could not save state", e as any);
     }
 };

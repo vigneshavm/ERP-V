@@ -1,24 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getDefaultWidgetIds } from '../services/WidgetRegistry';
 
 const STORAGE_KEY = 'dashboard_widget_config';
 
 export const useDashboardConfig = () => {
-    const [activeWidgetIds, setActiveWidgetIds] = useState<string[]>([]);
-    const [isEditMode, setIsEditMode] = useState(false);
-
-    useEffect(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                setActiveWidgetIds(JSON.parse(saved));
-            } catch (e) {
-                setActiveWidgetIds(getDefaultWidgetIds());
+    const [activeWidgetIds, setActiveWidgetIds] = useState<string[]>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch {
+                    return getDefaultWidgetIds();
+                }
             }
-        } else {
-            setActiveWidgetIds(getDefaultWidgetIds());
         }
-    }, []);
+        return getDefaultWidgetIds();
+    });
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const saveConfig = (newIds: string[]) => {
         setActiveWidgetIds(newIds);

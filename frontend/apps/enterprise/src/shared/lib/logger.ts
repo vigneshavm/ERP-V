@@ -10,7 +10,7 @@ const IS_PROD = typeof process !== 'undefined' ? process.env.NODE_ENV === 'produ
  * In production: Reports to Sentry (captures errors, adds breadcrumbs for others).
  */
 export const logger = {
-  info: (message: string, data?: Record<string, unknown>): void => {
+  info: (message: string, data?: any): void => {
     if (IS_PROD) {
       Sentry.addBreadcrumb({
         category: 'log',
@@ -23,7 +23,7 @@ export const logger = {
     }
   },
 
-  warn: (message: string, data?: Record<string, unknown>): void => {
+  warn: (message: string, data?: any): void => {
     if (IS_PROD) {
       Sentry.addBreadcrumb({
         category: 'log',
@@ -32,11 +32,11 @@ export const logger = {
         data,
       });
     } else {
-      logger.warn(`[WARN] ${message}`, data || '');
+      console.warn(`[WARN] ${message}`, data || '');
     }
   },
 
-  error: (message: string | Error, data?: Record<string, unknown>): void => {
+  error: (message: string | Error, data?: any): void => {
     if (IS_PROD) {
       if (message instanceof Error) {
         Sentry.captureException(message, { extra: data });
@@ -47,11 +47,11 @@ export const logger = {
         });
       }
     } else {
-      logger.error(`[ERROR] ${message}`, data || '');
+      console.error(`[ERROR] ${message}`, data || '');
     }
   },
 
-  debug: (message: string, data?: Record<string, unknown>): void => {
+  debug: (message: string, data?: any): void => {
     if (!IS_PROD) {
       console.debug(`[DEBUG] ${message}`, data || '');
     }

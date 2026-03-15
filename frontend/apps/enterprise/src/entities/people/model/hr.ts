@@ -1,10 +1,11 @@
-import { Sector, BranchId, SystemRole, AttendanceStatus } from './common';
+import { Sector, BranchId, SystemRole, AttendanceStatus } from '@repo/shared';
 
 export interface Employee {
     id: string;
     _id?: string;
     name: string;
     role: string;
+    roleId?: string;
     systemRole: SystemRole;
     mobile: string;
     dailyRate: number;

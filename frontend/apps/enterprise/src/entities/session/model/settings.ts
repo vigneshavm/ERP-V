@@ -1,5 +1,5 @@
-import { TenantUser } from './tenant';
-import { Sector, SystemRole, TaxMode, AppView } from './common';
+import { TenantUser } from './core';
+import { Sector, SystemRole, TaxMode, AppView, BranchId } from '@repo/shared';
 
 export interface UserVisualIdentity {
     theme?: 'light' | 'dark' | 'system';

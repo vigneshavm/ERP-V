@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { RootState } from '@/app/store/store';
 import { Tenant } from "@/entities/session/model/core";
 
 import { generatePalette } from "@/shared/lib/utils/colorUtils";
@@ -79,7 +79,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ tenant: propTena
     }), [config, activeTenant?.id, effectiveTheme, effectiveColor, effectiveLogo]);
 
     return (
-        <ConfigContext.Provider value={contextValue}>
+        <ConfigContext.Provider value={contextValue as any}>
             {children}
         </ConfigContext.Provider>
     );

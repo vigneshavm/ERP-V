@@ -3,7 +3,7 @@ export * from "./schemas";
 export * from "./types";
 export type { PersonalTransaction as Transaction } from "./types";
 export * from './finance/finance';
-export * from './inventory/product'; export * from './inventory/attributes';
+export * from './inventory/product'; export * from './inventory/attributes'; export * from './inventory/enums';
 export * from './purchase/purchase';
 export * from './contact/supplier';
 export * from './sales/sales';

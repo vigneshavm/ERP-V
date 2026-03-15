@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Smartphone, ArrowRight, Camera, Settings2, ShoppingBag, Check } from 'lucide-react';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
-import { formatCurrency, DashboardData, Transaction, Category, useLanguage, useExpenses } from '@repo/shared';
+import { formatCurrency, useLanguage } from '@repo/shared';
 import { Card } from '@repo/ui';
 
 import PredictiveAlert from '@/features/predictions-and-alerts/PredictiveAlert';
@@ -23,7 +24,6 @@ import { useExpensesFeature } from '@/features/expenses/hooks/useExpensesFeature
 const DashboardView: React.FC = () => {
     const { t } = useLanguage();
     const { 
-        setCurrentView, 
         setIsSMSHelperOpen, 
         setIsBankStatementOpen, 
         setIsReceiptOCROpen 
@@ -31,10 +31,23 @@ const DashboardView: React.FC = () => {
     
     const { data: dashboardData, loading: dashboardLoading } = useDashboardFeature();
     const { transactions, loading: transactionsLoading } = useTransactionsFeature();
-    const { data: expensesData, categories, loading: expensesLoading } = useExpensesFeature();
+    const { categories, loading: expensesLoading } = useExpensesFeature();
 
-    const [forecast, setForecast] = useState<ForecastResult | null>(null);
-    const [trends, setTrends] = useState<CategoryTrend[]>([]);
+    const forecast = useMemo<ForecastResult | null>(() => {
+        if (dashboardData && transactions.length > 0 && categories.length > 0) {
+            const currentMonthBudget = dashboardData.monthlySummaries[0]?.budget || 0;
+            return calculateMonthlyForecast(transactions, currentMonthBudget);
+        }
+        return null;
+    }, [dashboardData, transactions, categories]);
+
+    const trends = useMemo<CategoryTrend[]>(() => {
+        if (dashboardData && transactions.length > 0 && categories.length > 0) {
+            return analyzeCategoryTrends(transactions, categories);
+        }
+        return [];
+    }, [dashboardData, transactions, categories]);
+
     const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
 
     const {
@@ -45,18 +58,6 @@ const DashboardView: React.FC = () => {
         removeWidget,
         addWidget
     } = useDashboardConfig();
-
-    useEffect(() => {
-        if (dashboardData && transactions.length > 0 && categories.length > 0) {
-            // Calculate predictions
-            const currentMonthBudget = dashboardData.monthlySummaries[0]?.budget || 0;
-            const forecastResult = calculateMonthlyForecast(transactions as any, currentMonthBudget);
-            const trendResults = analyzeCategoryTrends(transactions as any, categories as any);
-
-            setForecast(forecastResult);
-            setTrends(trendResults);
-        }
-    }, [dashboardData, transactions, categories]);
 
     const loading = dashboardLoading || transactionsLoading || expensesLoading;
     const data = dashboardData;
@@ -299,7 +300,7 @@ const DashboardView: React.FC = () => {
                     <WidgetContainer key={id} id={id} isEditMode={isEditMode} onRemove={() => removeWidget(id)} title={widgetMeta.name}>
                         <Card style={{ padding: '16px', textAlign: 'left', marginBottom: 0 } as React.CSSProperties}>
                             <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>Spending by Category</h4>
-                            {trends.slice(0, 3).map((trend, i: number) => (
+                            {trends.slice(0, 3).map((trend: CategoryTrend, i: number) => (
                                 <div key={i} style={{ marginBottom: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: 'var(--font-size-xs)' }}>
                                         <span>{trend.categoryName}</span>
@@ -318,7 +319,7 @@ const DashboardView: React.FC = () => {
                     </WidgetContainer>
                 );
 
-            case 'weekly-spending':
+            case 'weekly-spending': {
                 const weeklyData = [
                     { day: 'Mon', amount: 120 },
                     { day: 'Tue', amount: 340 },
@@ -349,7 +350,7 @@ const DashboardView: React.FC = () => {
                                                 borderRadius: '8px',
                                                 color: 'var(--text-primary)',
                                                 fontSize: '13px'
-                                            }}
+                                             }}
                                         />
                                         <Bar
                                             dataKey="amount"
@@ -362,6 +363,7 @@ const DashboardView: React.FC = () => {
                         </Card>
                     </WidgetContainer>
                 );
+            }
 
             default:
                 return null;

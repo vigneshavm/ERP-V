@@ -10,10 +10,10 @@ const nextConfig: NextConfig = {
     "@yourcompany/finance-lib"
   ],
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   webpack(config) {
     config.resolve.alias = {

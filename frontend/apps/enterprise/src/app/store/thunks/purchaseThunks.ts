@@ -1,9 +1,9 @@
 import { AppDispatch, RootState } from "../store";
 import { PurchaseOrder } from "@repo/shared";
-import { approveOrder } from '../slices/purchaseSlice';
-import { addStockBulk } from '../slices/inventorySlice';
+import { approveOrder } from '@/entities/purchase/model/purchaseSlice';
+import { addStockBulk } from '@/entities/inventory/model/inventorySlice';
 import { TransactionType } from "@repo/shared";
-import { addTransaction } from '../slices/financeSlice';
+import { addTransaction } from '@/entities/finance/model/financeSlice';
 // import { recordVendorTransaction } from '../vendorSlice'; // Missing
 
 export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch, getState: () => RootState) => {
@@ -21,7 +21,7 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
     }))));
     dispatch(addTransaction({
         id: Math.random().toString(36).substr(2, 9),
-        type: TransactionType.EXPENSE,
+        type: TransactionType.EXPENSE as any,
         category: 'Inventory Restock',
         amount: order.total_amount,
         date: new Date().toISOString(),
@@ -29,7 +29,7 @@ export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppD
         sector: 'Retail', // Default
         branchId: order.branch_id,
         paymentMethod: 'Cash' // Default required field
-    }));
+    } as any));
 
     // Record Vendor Transaction if vendorId exists
     if (order.vendor_id) {

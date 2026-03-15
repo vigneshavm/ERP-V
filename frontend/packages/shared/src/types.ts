@@ -37,6 +37,7 @@ export interface CalendarTransaction extends PersonalTransaction {
   categoryName: string;
   categoryColor: string;
   categoryEmoji: string;
+  categoryIcon: string;
 }
 
 export interface ExpenseHistory {
@@ -87,6 +88,7 @@ export interface CartItem {
 export type SaleStatus = 'PENDING' | 'COMPLETED' | 'CANCELLED';
 
 export interface Sale {
+    _id?: string;
     id: string;
     status: SaleStatus;
     total: number;
@@ -94,6 +96,7 @@ export interface Sale {
 }
 
 export interface Customer {
+    _id?: string;
     id: string;
     name: string;
     phone: string;

@@ -107,7 +107,7 @@ const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({
       try {
         dispatch(setUser(sessionUser));
       } catch (e) {
-        logger.error("Failed to restore session", e);
+        logger.error("Failed to restore session", e as any);
         clearSession();
       }
     }

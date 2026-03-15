@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '@/shared/api/api';
-import { RootState } from '../store';
+import { RootState } from '@/app/store/store';
 
 // Define Types (Should be in types/finance.ts ideally, but inline for now)
 export interface JournalEntry {

@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
     
     // Log for local development
-    logger.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error('ErrorBoundary caught an error:', { error, errorInfo });
   }
 
   public resetError = () => {

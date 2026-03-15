@@ -1,5 +1,5 @@
 import { Tenant, DbRoleCode } from "@/entities/session/model/core";
-import { Employee } from "@/entities/people/model/laborSlice";
+import { Employee } from "@/entities/people/model/hr";
 import { ModuleType, SystemRole } from "@repo/shared";
 import { normalizeModules, DEFAULT_TENANT_MODULES } from "../utils/entitlementUtil";
 
@@ -127,7 +127,6 @@ export const useTenantDataMappers = () => {
             branchId: e.assigned_branch_id,
             tenantId: e.tenant_id,
             mobile: e.mobile,
-            roleId: e.role_id,
             wageType: 'DAILY',
             isActive: true
         };

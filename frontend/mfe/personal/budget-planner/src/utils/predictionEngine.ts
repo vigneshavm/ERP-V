@@ -1,4 +1,4 @@
-import { CalendarTransaction } from '../services/api';
+import { CalendarTransaction, Category } from '@repo/shared';
 
 export interface ForecastResult {
     currentSpent: number;
@@ -58,7 +58,7 @@ export const calculateMonthlyForecast = (
  */
 export const analyzeCategoryTrends = (
     transactions: CalendarTransaction[],
-    categories: any[]
+    categories: Category[]
 ): CategoryTrend[] => {
     const now = new Date();
     const currentMonth = now.getMonth();
@@ -68,23 +68,24 @@ export const analyzeCategoryTrends = (
     const daysRemaining = daysInMonth - todayDate;
 
     return categories
-        .filter(cat => cat.limit > 0)
+        .filter(cat => (cat.limit ?? 0) > 0)
         .map(cat => {
             const catTxns = transactions.filter(t => {
                 const d = new Date(t.date);
                 return t.categoryId === cat.id && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
             });
 
+            const limit = cat.limit ?? 0;
             const spent = catTxns.reduce((sum, t) => sum + t.amount, 0);
             const dailyAvg = spent / todayDate;
             const projected = spent + (dailyAvg * daysRemaining);
-            const overBy = Math.max(0, projected - cat.limit);
+            const overBy = Math.max(0, projected - limit);
 
             return {
                 categoryId: cat.id,
                 categoryName: cat.name,
                 spent,
-                limit: cat.limit,
+                limit,
                 projected,
                 overBy
             };

@@ -100,14 +100,12 @@ export function validateSpacing(value: number | string): {
  */
 export function flagSpacingIssue(issue: SpacingIssue): void {
     if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
-        logger.warn(
-            `⚠️ [8pt Grid Issue]`,
-            `\n  Element: ${issue.element}`,
-            `\n  Property: ${issue.property}`,
-            `\n  Value: ${issue.value}px (off-grid)`,
-            `\n  Suggested: ${issue.suggestedValue}px`,
-            issue.location ? `\n  Location: ${issue.location}` : ''
-        );
+        logger.warn(`⚠️ [8pt Grid Issue] in ${issue.element}`, {
+            property: issue.property,
+            value: `${issue.value}px (off-grid)`,
+            suggested: `${issue.suggestedValue}px`,
+            location: issue.location
+        });
     }
 }
 

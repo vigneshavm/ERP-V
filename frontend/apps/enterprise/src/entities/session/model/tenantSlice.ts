@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Tenant, TenantState, TenantEcommerceConfig, GoogleBusinessConfig } from "@/entities/session/model/core";
-import { SettingsState } from "../../types/settings";
+import { Tenant, TenantState, TenantEcommerceConfig } from "./core";
+import { GoogleBusinessConfig } from "./growth";
+import type { SettingsState } from "./settings";
 import { ModuleType } from "@repo/shared";
 
 const initialTenantState: TenantState = {

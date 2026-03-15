@@ -44,11 +44,11 @@ export const saveDailyFinanceRecord = (record: any) => async (dispatch: AppDispa
                     logger.info('Daily finance record synced immediately');
                 }
             } catch (error) {
-                logger.error('Immediate sync failed:', error);
+                logger.error('Immediate sync failed:', error as any);
             }
         }
     } catch (err) {
-        logger.error('Failed to queue daily finance record:', err);
+        logger.error('Failed to queue daily finance record:', err as any);
     }
 };
 
@@ -93,11 +93,11 @@ export const updateDailyFinanceRecord = (record: any) => async (dispatch: AppDis
                     logger.info('Daily finance update synced immediately');
                 }
             } catch (error) {
-                logger.error('Immediate update sync failed:', error);
+                logger.error('Immediate update sync failed:', error as any);
             }
         }
     } catch (err) {
-        logger.error('Failed to queue daily finance update:', err);
+        logger.error('Failed to queue daily finance update:', err as any);
     }
 };
 
@@ -129,10 +129,10 @@ export const deleteDailyFinanceRecord = (id: string) => async (dispatch: AppDisp
                     logger.info('Daily finance deletion synced immediately');
                 }
             } catch (error) {
-                logger.error('Immediate delete sync failed:', error);
+                logger.error('Immediate delete sync failed:', error as any);
             }
         }
     } catch (err) {
-        logger.error('Failed to queue daily finance deletion:', err);
+        logger.error('Failed to queue daily finance deletion:', err as any);
     }
 };

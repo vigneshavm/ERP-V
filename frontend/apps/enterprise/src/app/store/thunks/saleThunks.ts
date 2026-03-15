@@ -1,16 +1,16 @@
 import { logger } from '@/shared/lib/logger';
 import { AppDispatch, RootState } from "../store";
 import { Sale } from "@repo/shared";
-import { calculateLoyaltyPoints } from "../../utils/loyalty";
-import { updateCustomerPoints } from '../slices/posSlice';
-import { recordSale } from '../slices/posSlice';
-import { deductStock } from '../slices/inventorySlice';
+import { calculateLoyaltyPoints } from "@/entities/session/model/loyaltyUtils";
+import { updateCustomerPoints } from '@/entities/sales/model/posSlice';
+import { recordSale } from '@/entities/sales/model/posSlice';
+import { deductStock } from '@/entities/inventory/model/inventorySlice';
 import { APP_CONFIG } from "@/app/config";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { TransactionType, Sector } from "@repo/shared";
-import { addTransaction } from '../slices/financeSlice';
+import { addTransaction } from '@/entities/finance/model/financeSlice';
 
-export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const processSale = (sale: any) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { user } = state.auth;
     const currentTenant = state.tenant.tenants.find((t: any) => t.id === user?.tenantId);
@@ -34,14 +34,14 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
 
     // 1. Update Local Redux State (Optimistic)
     dispatch(recordSale(sale));
-    sale.items.forEach(item => {
+    sale.items.forEach((item: any) => {
         const deductionQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
         dispatch(deductStock({ id: item.id, qty: deductionQty }));
     });
 
     // 2. Push to Backend API if Online
     if (navigator.onLine) {
-        import("../../services/api").then(module => {
+        import("@/shared/api/api").then(module => {
             const api = module.default;
             api.post('/sales-invoice/sync', {
                 sale_json: {
@@ -53,7 +53,7 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
                     logger.info(`Synced sale atomically via thunk: ${sale.id}`);
                 }
             }).catch(err => {
-                logger.error('Failed to sync sale atomically to Backend:', err);
+                logger.error('Failed to sync sale atomically to Backend:', err as any);
             });
         });
     }
@@ -75,14 +75,13 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
 
     dispatch(addTransaction({
         id: Math.random().toString(36).substr(2, 9),
-        type: TransactionType.INCOME,
+        type: TransactionType.INCOME as any,
         category: 'Sales',
         amount: sale.total,
         date: sale.date,
-        description: `Sale #${sale.id} - ${descBranch} (${sale.counterName || 'Counter'}) (${sale.paymentMethod})`,
-        paymentMethod: sale.paymentMethod || 'CASH',
+        description: `Sale - Invoice #${sale.id}`,
+        branchId: sale.branchId,
+        paymentMethod: sale.paymentMethod || 'Cash',
         sector: sale.sector as Sector,
-        branchId: sale.branchId
-    }));
+    } as any));
 };
-

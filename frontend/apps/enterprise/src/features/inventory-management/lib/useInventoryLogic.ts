@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { addItem as addProduct, updateItem as editProduct } from "@/entities/inventory/model/inventorySlice";
-import { useConfig } from '../contexts/ConfigProvider';
-import { useBranchResolver } from './useBranchResolver'; // Assuming this exists or will be moved/kept
+import { useConfig } from '@/app/providers/ConfigProvider';
+import { useBranchResolver } from '@/hooks/useBranchResolver';
 import { Sector, BranchId } from "@repo/shared";
 import { Product } from "@repo/shared";
 

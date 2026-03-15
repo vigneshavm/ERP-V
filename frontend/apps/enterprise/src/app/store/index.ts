@@ -10,16 +10,16 @@ export const store = configureStore({
 export * from './types';
 
 // Re-export actions for easier imports in components
-export * from './slices/inventorySlice';
-export * from './slices/posSlice';
-export * from './slices/financeSlice';
-export * from './slices/laborSlice';
-export * from './slices/purchaseSlice';
-export * from './slices/tenantSlice';
-export * from './slices/authSlice';
+export * from '@/entities/inventory/model/inventorySlice';
+export * from '@/entities/sales/model/posSlice';
+export * from '@/entities/finance/model/financeSlice';
+export * from '@/entities/people/model/laborSlice';
+export * from '@/entities/purchase/model/purchaseSlice';
+export * from '@/entities/session/model/tenantSlice';
+export * from '@/entities/session/model/authSlice';
 export * from './slices/settingsSlice';
-export * from './slices/supplierSlice';
-export * from './slices/uiSlice';
+export * from '@/entities/contact/model/supplierSlice';
+export * from '@/entities/system/model/systemSlice';
 
 // --- Thunks ---
 export * from './thunks/saleThunks';

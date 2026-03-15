@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mockData from '../mock/data.json';
 import { formatCurrency, delay as repoDelay, ExpenseHistory, SMSMessage } from '@repo/shared';
 
@@ -7,7 +8,7 @@ export const delay = repoDelay;
 export let appData: any = JSON.parse(JSON.stringify(mockData));
 
 // Undo/Redo Stack
-export let undoStack: string[] = [];
+export const undoStack: string[] = [];
 export let redoStack: string[] = [];
 
 export const saveState = () => {
@@ -16,6 +17,7 @@ export const saveState = () => {
     redoStack = []; // Clear redo stack on new action
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const resetState = (newData: any) => {
     appData = JSON.parse(JSON.stringify(newData));
 };
@@ -23,8 +25,9 @@ export const resetState = (newData: any) => {
 export const setAppData = (data: any) => {
     appData = data;
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
-export let mockExpenseHistory: ExpenseHistory = {
+export const mockExpenseHistory: ExpenseHistory = {
     totalSpent: 1495765,
     month: "June 2025",
     categories: [

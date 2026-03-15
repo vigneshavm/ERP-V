@@ -7,7 +7,7 @@ import api from "@/shared/api/api";
 import { clearSession } from "@/shared/lib/utils/session";
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import PasswordStrengthMeter from '../../components/Auth/PasswordStrengthMeter';
+import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
 
 const ResetPassword = () => {
     const navigate = useNavigate();

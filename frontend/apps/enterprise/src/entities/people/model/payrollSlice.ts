@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
-import { RootState } from '../store';
+import { RootState } from '@/app/store/store';
 
 // Types
 export interface SalaryComponent {

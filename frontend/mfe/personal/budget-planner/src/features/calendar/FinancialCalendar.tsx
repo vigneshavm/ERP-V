@@ -320,7 +320,7 @@ const FinancialCalendar: React.FC<Props> = () => {
                                         {icon}
                                     </div>
                                     <div>
-                                        <p style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{txn.name}</p>
+                                        <p style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{txn.description || t('common.transaction')}</p>
                                         <div style={{ display: 'flex', gap: '8px', fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', marginTop: '2px' }}>
                                             <span>{txn.categoryName}</span>
                                             <span>·</span>

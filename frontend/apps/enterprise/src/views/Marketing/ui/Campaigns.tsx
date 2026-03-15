@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from "@/redux/store";
+import { RootState } from "@/app/store/store";
 import {
     Layout, Image as ImageIcon, Type, Palette, Download,
     ChevronLeft, Check, Plus

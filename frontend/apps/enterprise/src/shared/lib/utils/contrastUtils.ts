@@ -166,15 +166,13 @@ export function checkContrast(foreground: string | RGB, background: string | RGB
 export function flagContrastIssue(issue: ContrastIssue): void {
     if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
         const emoji = issue.ratio < WCAGLevel.DISABLED ? '🔴' : '🟡';
-        logger.warn(
-            `${emoji} [A11y Contrast Issue]`,
-            `\n  Element: ${issue.element}`,
-            `\n  Type: ${issue.elementType}`,
-            `\n  Foreground: ${issue.foreground}`,
-            `\n  Background: ${issue.background}`,
-            `\n  Ratio: ${issue.ratio.toFixed(2)}:1`,
-            `\n  Required: ${issue.requiredRatio}:1`
-        );
+        logger.warn(`${emoji} [A11y Contrast Issue] in ${issue.element}`, {
+            type: issue.elementType,
+            foreground: issue.foreground,
+            background: issue.background,
+            ratio: `${issue.ratio.toFixed(2)}:1`,
+            required: `${issue.requiredRatio}:1`
+        });
     }
 }
 

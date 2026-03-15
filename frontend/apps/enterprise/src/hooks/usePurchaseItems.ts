@@ -15,6 +15,7 @@ export const usePurchaseItems = (initialItems: PurchaseOrderItem[] = []) => {
             tax_percent: product.tax_percent || 0,
             tax_type: 'GST',
             discount_amount: 0,
+            discount_percent: 0,
             line_total: product.cost_price || product.rate || 0
         };
         setItems(prev => [...prev, newItem]);

@@ -1,7 +1,7 @@
 
 import { Product } from "@repo/shared";
 import { Sector } from "@repo/shared";
-import { ProductUnit } from './constants';
+import { ProductUnit } from "@repo/shared";
 
 export type ShirtInput = Omit<Partial<Product>, 'sector' | 'hsnCode' | 'gstPercentage'> & {
     price: number;

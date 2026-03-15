@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { RootState } from '@/app/store/store';
 import {
     MessageSquare, Send, Calendar, Users, BarChart3,
     Shield, Zap, CheckCircle, AlertCircle, Plus,

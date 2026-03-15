@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from "../store";
 import { Customer } from "@repo/shared";
 import { APP_CONFIG } from "@/app/config";
 // import { supabase } from '../../lib/supabase'; // Removed
-import { setCustomer, addCustomer } from '../slices/posSlice';
+import { setCustomer, addCustomer } from '@/entities/sales/model/posSlice';
 import api from "@/shared/api/api";
 
 const calculateTier = (points: number): 'Silver' | 'Gold' | 'Platinum' | 'General' => {
@@ -37,7 +37,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
         const dbCust = searchResult?.data;
 
         if (dbCust) {
-            const customer: Customer = {
+            const customer: any = {
                 id: dbCust.id,
                 name: dbCust.name,
                 phone: dbCust.phone,
@@ -65,7 +65,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
         const createdCust = createResult?.data;
 
         if (createdCust) {
-            const customer: Customer = {
+            const customer: any = {
                 id: createdCust.id,
                 name: createdCust.name,
                 phone: createdCust.phone,
@@ -79,11 +79,11 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
             return customer;
         }
     } catch (err) {
-        logger.error('Customer lookup/creation failed:', err);
+        logger.error('Customer lookup/creation failed:', err as any);
     }
 
     // Fallback: Create local-only temp customer if Supabase fails or is disabled
-    const tempCustomer: Customer = {
+    const tempCustomer: any = {
         id: `temp-${Date.now()}`,
         name: name || 'Walk-in Customer',
         phone: phone,

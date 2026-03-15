@@ -1,4 +1,4 @@
-import { Sector, BranchId } from './common';
+import { Sector, BranchId } from '@repo/shared';
 
 export interface ScanItem {
     name: string;

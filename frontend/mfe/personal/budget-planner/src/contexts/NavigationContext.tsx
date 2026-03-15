@@ -89,7 +89,7 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return 'Dashboard';
     };
 
-    const currentView = getViewFromPath(pathname);
+    const currentView = getViewFromPath(pathname || '/');
 
     const setCurrentView = (view: View) => {
         const viewToPath: Partial<Record<View, string>> = {

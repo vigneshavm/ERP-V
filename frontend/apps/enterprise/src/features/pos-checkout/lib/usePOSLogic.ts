@@ -146,7 +146,7 @@ export const usePOSLogic = (): POSLogic => {
     }, []);
 
     const cartSubtotal = useMemo(() => {
-        return cart.reduce((acc, item) => acc + (item.qty * (item.cost || 0)), 0); // Added (item.cost || 0)
+        return cart.reduce((acc, item) => acc + (item.qty * (item.price || 0)), 0);
     }, [cart]);
 
     const taxAmount = useMemo(() => {

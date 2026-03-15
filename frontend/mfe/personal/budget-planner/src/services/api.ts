@@ -1,5 +1,4 @@
 import { appData, undoStack, redoStack, delay, setAppData } from './mockState';
-import { StatsData, Category, Budget, Transaction, CalendarTransaction, Notification } from '@repo/shared';
 export type { Goal, Notification, Category, Transaction, Participant, CalendarTransaction } from '@repo/shared';
 
 export const undo = async (): Promise<void> => {

@@ -47,7 +47,7 @@ export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispa
             dispatch(updateGoogleBusinessProfile({ tenantId, config: mapProfileToConfig(data.data) }));
         }
     } catch (err) {
-        logger.error('Failed to sync google profile:', err);
+        logger.error('Failed to sync google profile:', err as any);
     }
 };
 
@@ -62,7 +62,7 @@ export const updateEcommerceSettings = (tenantId: string, settings: any) => asyn
         await api.put('/business/profile', { ecommerceSettings: settings }, getConfig(token));
         dispatch(updateTenantEcommerce(settings));
     } catch (err) {
-        logger.error('Failed to update ecommerce settings:', err);
+        logger.error('Failed to update ecommerce settings:', err as any);
     }
 };
 
@@ -89,6 +89,6 @@ export const activateEcommerce = (tenantId: string) => async (dispatch: AppDispa
         await api.put('/business/profile', { ecommerceConfig }, getConfig(token));
         dispatch(setEcommerceEnabled({ tenantId, config: ecommerceConfig }));
     } catch (err) {
-        logger.error('Failed to activate ecommerce:', err);
+        logger.error('Failed to activate ecommerce:', err as any);
     }
 };

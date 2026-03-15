@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SettingsState } from "../../types/settings";
+import { SettingsState } from "@/entities/session/model/settings";
 import { DbRoleCode } from "@/entities/session/model/core";
 import { SystemRole, AppView } from "@repo/shared";
 

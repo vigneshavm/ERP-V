@@ -39,8 +39,8 @@ export type ModuleType =
     | 'MULTI_BRANCH'
     | 'GROW';
 export type BranchId = string;
-export { TaxMode } from '../inventory/enums';
-export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
+
+// Removed redundant TaxMode and PaymentMethod exports - now handled by enums.ts via index.ts
 export type AppView =
     // --- MAIN ERP ---
     // Dashboard

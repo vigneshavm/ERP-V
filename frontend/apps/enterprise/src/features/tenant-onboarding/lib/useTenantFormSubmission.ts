@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import api from "@/shared/api/api";
 import { updateTenantDetails, addTenant } from "@/entities/session/model/tenantSlice";
 import { Tenant } from "@/entities/session/model/core";
-import { CURRENCIES } from '../constants/common';
 
 // Local mapper function (kept for reference, mostly handling API response mapping now)
 export const mapDbTenantToTenant = (dbTenant: any): Tenant => {

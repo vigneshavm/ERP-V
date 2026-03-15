@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { FinanceState, Transaction, Cheque, DayEndSummary } from "../../types/finance";
+import { FinanceState, FinanceTransaction, Cheque, DayEndSummary } from "@repo/shared";
 import { TransactionType } from "@repo/shared";
 import api from "@/shared/api/api";
-import { RootState } from '../store';
+import { RootState } from '@/app/store/store';
 
 const API_URL = '/api/cashbank';
 const DAY_END_API_URL = '/api/day-end';
@@ -120,7 +120,7 @@ const financeSlice = createSlice({
     name: 'finance',
     initialState: initialFinanceState,
     reducers: {
-        addTransaction: (state, action: PayloadAction<Transaction>) => {
+        addTransaction: (state, action: PayloadAction<FinanceTransaction>) => {
             state.transactions.unshift(action.payload);
         },
         addCheque: (state, action: PayloadAction<Cheque>) => {
@@ -132,7 +132,7 @@ const financeSlice = createSlice({
                 cheque.status = action.payload.status;
             }
         },
-        setTransactions: (state, action: PayloadAction<Transaction[]>) => {
+        setTransactions: (state, action: PayloadAction<FinanceTransaction[]>) => {
             state.transactions = action.payload;
         },
         setCheques: (state, action: PayloadAction<Cheque[]>) => {

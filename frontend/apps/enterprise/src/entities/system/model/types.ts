@@ -3,7 +3,12 @@ import { z } from "zod";
 
 export type SystemConfig = z.infer<typeof SystemConfigSchema>;
 export type RegistryAudit = z.infer<typeof RegistryAuditSchema>;
-export type SyncStatus = z.infer<typeof SyncStatusSchema>;
+export interface SyncStatus {
+    mfeId: string;
+    lastSync: string;
+    status: 'HEALTHY' | 'DELAYED' | 'CRITICAL';
+    version: string;
+}
 
 export interface SystemState {
     configs: SystemConfig[];

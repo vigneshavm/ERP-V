@@ -14,8 +14,6 @@ import NotificationsView from '@/features/predictions-and-alerts/NotificationsVi
 import AnalyticsView from '@/features/reports/AnalyticsView';
 import LoansView from '@/features/cards-and-loans/LoansView';
 import CategoryDetailsView from '@/features/expenses/views/CategoryDetailsView';
-import CreditCardView from '@/features/cards-and-loans/CreditCardView';
-import DebitCardView from '@/features/cards-and-loans/DebitCardView';
 
 export const BudgetPlannerPage: React.FC = () => {
   const { currentView, setCurrentView, setPinMode, appPin, setIsRemindersOpen } = useNavigation();

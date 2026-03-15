@@ -72,7 +72,7 @@ export const register = createAsyncThunk<User, any, { rejectValue: string }>(
             if (response) {
                 localStorage.setItem('user', JSON.stringify(response));
             }
-            return response;
+            return response as User;
         } catch (error: any) {
             const message =
                 (error as any)?.message || error?.toString?.() || 'Registration failed';
@@ -121,7 +121,7 @@ export const performPasswordReset = createAsyncThunk<{ message: string }, any, {
     async (payload, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.resetPassword, payload);
-            return response;
+            return response as { message: string };
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -144,7 +144,7 @@ export const forceLogout = createAsyncThunk<any, any, { rejectValue: string }>(
     async (credentials, thunkAPI) => {
         try {
             const response = await httpClient.post(endpoints.auth.forceLogout, credentials);
-            return response;
+            return response as any;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -167,7 +167,7 @@ export const getProfile = createAsyncThunk<any, void, { state: RootState, reject
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response;
+            return response as any;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

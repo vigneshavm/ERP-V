@@ -1,6 +1,6 @@
+"use client";
 import { logger } from '@/shared/lib/logger';
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- TODO(TS-FIX): Phase 2/3 fix
-"use client";
 
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';

@@ -5,23 +5,7 @@
 
 import type { Sector, SystemRole } from '@repo/shared';
 
-// ── Types ───────────────────────────────────────────────────
-export interface Employee {
-    id: string;
-    tenantId: string;
-    name: string;
-    role: string;
-    roleId?: string;
-    mobile?: string;
-    dailyRate: number;
-    wageType?: 'DAILY' | 'MONTHLY' | 'HOURLY';
-    branchId?: string;
-    sector: Sector;
-    joinedDate?: string;
-    isActive?: boolean;
-    systemRole: SystemRole;
-    pin: string;
-}
+import type { Employee } from '../model/hr';
 
 export interface LaborStats {
     days: number;
