@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppView } from '@repo/shared';
 
 interface NavigationContextType {
@@ -12,14 +12,16 @@ interface NavigationContextType {
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const pathname = location.pathname;
+    const searchParams = new URLSearchParams(location.search);
 
     // Mapping path to view
     const getViewFromPath = (path: string): AppView => {
+        // BrowserRouter manages basename (/enterprise), so pathname is already relative to it
         const cleanPath = path === '/' ? '' : path.replace(/^\/|\/$/g, '');
-        
+
         // Tab-based mapping (for legacy /?tab=...)
         const tab = searchParams.get('tab');
         if (tab) return tab as AppView;
@@ -200,13 +202,13 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         const path = viewToPath[view];
         if (path) {
-            // Remove multiple leading/trailing slashes and ensure at least one leading slash
             const normalize = (p: string) => p.replace(/\/+$/, '') || '/';
+            // BrowserRouter handles the /enterprise basename automatically
             const targetPath = normalize(path);
             const currentPath = normalize(pathname);
             
             if (targetPath !== currentPath) {
-                router.push(path);
+                navigate(path);
             }
         } else {
             setCurrentViewInternal(view);

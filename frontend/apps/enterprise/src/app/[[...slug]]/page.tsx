@@ -2,6 +2,7 @@
 
 import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { NavigationProvider } from '@/app/providers/NavigationContext';
 import { EnterpriseMainView } from '@/views/Views/ui/EnterpriseMainView';
 
 export default function CatchAllPage() {
@@ -24,10 +25,17 @@ export default function CatchAllPage() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-t-primary border-white/10 rounded-full animate-spin" />
+      </div>
+    }>
       <BrowserRouter basename="/enterprise">
-        <EnterpriseMainView />
+        <NavigationProvider>
+          <EnterpriseMainView />
+        </NavigationProvider>
       </BrowserRouter>
     </Suspense>
   );
 }
+

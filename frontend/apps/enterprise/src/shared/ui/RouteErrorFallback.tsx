@@ -1,6 +1,5 @@
 import React from 'react';
-import { AlertCircle, RefreshCw, Home, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 
 interface RouteErrorFallbackProps {
   error: Error;
@@ -45,13 +44,13 @@ const RouteErrorFallback: React.FC<RouteErrorFallbackProps> = ({ error, resetErr
               Try Again
             </button>
             
-            <Link
-              to="/"
+            <a
+              href="/enterprise/dashboard"
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-default text-main rounded-xl font-bold text-sm transition-all hover:bg-white/10"
             >
               <Home className="w-4 h-4" />
               Dashboard
-            </Link>
+            </a>
           </div>
           
           <p className="mt-8 text-[10px] text-secondary font-bold tracking-[0.2em] uppercase opacity-40">
