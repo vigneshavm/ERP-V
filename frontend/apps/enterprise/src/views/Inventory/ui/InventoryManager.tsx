@@ -55,20 +55,20 @@ import {
 } from 'lucide-react';
 
 const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) => (
-    <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/50 transition-all">
+    <div className="bg-white dark:bg-neutral-800 p-4 sm:p-5 lg:p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/50 transition-all">
         <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/10 rounded-full blur-2xl -mr-12 -mt-12 group-hover:bg-${color}-500/20 transition-all`}></div>
         <div className="flex justify-between items-start relative z-10">
-            <div>
-                <p className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest">{title}</p>
-                <h3 className="text-2xl font-black text-neutral-900 dark:text-white mt-1 italic tracking-tight">{value}</h3>
+            <div className="min-w-0">
+                <p className="text-neutral-500 dark:text-neutral-400 text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{title}</p>
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-neutral-900 dark:text-white mt-1 italic tracking-tight truncate">{value}</h3>
                 {subtext && (
-                    <p className={`text-[10px] font-bold mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-rose-500' : 'text-neutral-400'}`}>
+                    <p className={`text-[9px] sm:text-[10px] font-bold mt-1 sm:mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-rose-500' : 'text-neutral-400'}`}>
                         {subtext}
                     </p>
                 )}
             </div>
-            <div className={`p-3 rounded-xl bg-neutral-100 dark:bg-neutral-700/50 text-neutral-600 dark:text-neutral-400 group-hover:text-primary transition-colors`}>
-                <Icon className="w-5 h-5" />
+            <div className={`p-2 sm:p-3 rounded-xl bg-neutral-100 dark:bg-neutral-700/50 text-neutral-600 dark:text-neutral-400 group-hover:text-primary transition-colors flex-shrink-0`}>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
         </div>
     </div>
@@ -244,36 +244,36 @@ const InventoryManager: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-main pb-16">
+            <div className="space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in text-main pb-16">
                 <PageHeader
                     title="Inventory Core Manager"
                     description={`Central stock authority and metadata control for ${tenant_id}`}
                     actions={
-                        <div className="flex gap-2">
-                            <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:border-primary/50 transition-all uppercase tracking-widest text-main shadow-sm">
+                        <div className="flex gap-2 flex-wrap">
+                            <button className="px-3 sm:px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:border-primary/50 transition-all uppercase tracking-widest text-main shadow-sm">
                                 <Download className="w-4 h-4" /> Export
                             </button>
-                            <button onClick={handleOpenAgingReport} className="px-4 py-2 bg-rose-50 dark:bg-rose-900/10 text-rose-600 border border-rose-200 dark:border-rose-900/20 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-rose-600 hover:text-white transition-all uppercase tracking-widest shadow-sm">
+                            <button onClick={handleOpenAgingReport} className="px-3 sm:px-4 py-2 bg-rose-50 dark:bg-rose-900/10 text-rose-600 border border-rose-200 dark:border-rose-900/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-rose-600 hover:text-white transition-all uppercase tracking-widest shadow-sm">
                                 <AlertOctagon className="w-4 h-4" /> Stock Aging
                             </button>
                             <button
                                 onClick={() => setIsTransferModalOpen(true)}
-                                className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/10 text-indigo-600 border border-indigo-200 dark:border-indigo-900/20 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest shadow-sm"
+                                className="px-3 sm:px-4 py-2 bg-indigo-50 dark:bg-indigo-900/10 text-indigo-600 border border-indigo-200 dark:border-indigo-900/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest shadow-sm"
                             >
                                 <ArrowRightLeft className="w-4 h-4" /> Transfer
                             </button>
                             <button
                                 onClick={handleAddProduct}
-                                className="px-5 py-2 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
+                                className="px-3 sm:px-5 py-2 bg-primary text-white rounded-xl text-[10px] sm:text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-1.5 sm:gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
                             >
-                                <Plus className="w-5 h-5" /> Register SKU
+                                <Plus className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Register</span> SKU
                             </button>
                         </div>
                     }
                 />
 
                 {/* Metrics Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                     <MetricCard
                         title="Total SKU Count"
                         value={inventoryMetrics.totalItems}
@@ -298,9 +298,9 @@ const InventoryManager: React.FC = () => {
                         color="emerald"
                         trend="up"
                     />
-                    <div className="bg-neutral-900 text-white p-6 rounded-xl shadow-xl relative overflow-hidden group border border-white/5">
+                    <div className="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-1 bg-neutral-900 text-white p-4 sm:p-5 lg:p-6 rounded-xl shadow-xl relative overflow-hidden group border border-white/5">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition duration-700 stroke-[3]" />
-                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 italic">Agent Pulse</p>
+                        <p className="text-[9px] sm:text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1 sm:mb-2 italic">Agent Pulse</p>
                         <p className="text-sm font-bold leading-relaxed text-neutral-200">
                             {inventoryMetrics.lowStock > 0 ? (
                                 <>Inventory needs attention. <span className="text-primary underline decoration-2 underline-offset-4 font-black">{items.find((i: any) => i.stockQty <= i.lowStockLimit)?.sku || 'Some SKUs'}</span> is low.</>
@@ -312,20 +312,20 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Controls Bar */}
-                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                    <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto items-stretch md:items-center">
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 sm:gap-4 lg:gap-6 bg-white dark:bg-neutral-800 p-3 sm:p-4 lg:p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 w-full xl:w-auto items-stretch sm:items-center">
                         <div className="relative flex-1 xl:w-[450px]">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
                                 type="text"
                                 placeholder="Search by SKU, Name or Barcode..."
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-main placeholder:text-neutral-400"
+                                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-main placeholder:text-neutral-400"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <select
-                            className="px-6 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] outline-none hover:border-primary transition-all text-main cursor-pointer"
+                            className="px-3 sm:px-6 py-2.5 sm:py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] outline-none hover:border-primary transition-all text-main cursor-pointer w-full sm:w-auto"
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
                         >
@@ -335,11 +335,11 @@ const InventoryManager: React.FC = () => {
                         </select>
                     </div>
 
-                    <div className="flex gap-3 w-full md:w-auto justify-end">
+                    <div className="flex gap-2 sm:gap-3 w-full sm:w-auto justify-end">
                         {selectedItems.size > 0 && (
                             <button
                                 onClick={handleBulkDelete}
-                                className="px-6 py-3 bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-[0.15em] shadow-xl shadow-rose-600/20 flex items-center gap-2 hover:bg-rose-700 transition-all active:scale-95"
+                                className="px-3 sm:px-6 py-2.5 sm:py-3 bg-rose-600 text-white rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] shadow-xl shadow-rose-600/20 flex items-center gap-2 hover:bg-rose-700 transition-all active:scale-95"
                             >
                                 Trash ({selectedItems.size})
                             </button>
@@ -347,7 +347,7 @@ const InventoryManager: React.FC = () => {
                         <div className="relative">
                             <button
                                 onClick={() => setShowMoreActions(!showMoreActions)}
-                                className="px-6 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-main rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm flex items-center gap-2"
+                                className="px-3 sm:px-6 py-2.5 sm:py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-main rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm flex items-center gap-2"
                             >
                                 More Actions <MoreVertical className="w-4 h-4" />
                             </button>
@@ -395,22 +395,22 @@ const InventoryManager: React.FC = () => {
                 <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm tabular-nums border-collapse">
-                            <thead className="bg-neutral-50/50 dark:bg-neutral-700/50 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-black uppercase tracking-[0.25em] text-[10px]">
+                            <thead className="bg-neutral-50/50 dark:bg-neutral-700/50 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-black uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[9px] sm:text-[10px]">
                                 <tr>
-                                    <th className="px-6 py-5 w-10">
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 w-10">
                                         <button onClick={toggleSelectAll} className="text-neutral-400 hover:text-primary transition-all">
                                             {selectedItems.size === items.length && items.length > 0 ?
-                                                <CheckSquare className="w-5 h-5 text-primary" /> :
-                                                <Square className="w-5 h-5" />
+                                                <CheckSquare className="w-4 h-4 sm:w-5 sm:h-5 text-primary" /> :
+                                                <Square className="w-4 h-4 sm:w-5 sm:h-5" />
                                             }
                                         </button>
                                     </th>
-                                    <th className="px-6 py-5">Product Master</th>
-                                    <th className="px-6 py-5">Classification</th>
-                                    <th className="px-6 py-5">Stock Node</th>
-                                    <th className="px-6 py-5 text-right">Pricing</th>
-                                    <th className="px-6 py-5">Status</th>
-                                    <th className="px-6 py-5 w-10"></th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5">Product</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 hidden md:table-cell">Classification</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 hidden lg:table-cell">Stock Node</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 text-right">Price</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 hidden sm:table-cell">Status</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-5 w-10"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
@@ -433,40 +433,40 @@ const InventoryManager: React.FC = () => {
                                         const isSelected = selectedItems.has(item._id);
                                         return (
                                             <tr key={item._id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-all group ${isSelected ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
-                                                <td className="px-6 py-5">
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5">
                                                     <button onClick={() => toggleSelect(item._id)} className="text-neutral-400 hover:text-primary transition-all">
                                                         {isSelected ?
-                                                            <CheckSquare className="w-5 h-5 text-primary" /> :
-                                                            <Square className="w-5 h-5" />
+                                                            <CheckSquare className="w-4 h-4 sm:w-5 sm:h-5 text-primary" /> :
+                                                            <Square className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         }
                                                     </button>
                                                 </td>
-                                                <td className="px-6 py-5">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center shrink-0 overflow-hidden">
-                                                            {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-neutral-400" />}
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5">
+                                                    <div className="flex items-start gap-2 sm:gap-4">
+                                                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center shrink-0 overflow-hidden">
+                                                            {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400" />}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <div
-                                                                className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight truncate max-w-[200px] group-hover:text-primary transition-colors cursor-pointer"
+                                                                className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight truncate max-w-[120px] sm:max-w-[200px] group-hover:text-primary transition-colors cursor-pointer text-xs sm:text-sm"
                                                                 onClick={() => handleEditProduct(item)}
                                                             >
                                                                 {item.name}
                                                             </div>
-                                                            <div className="flex items-center gap-2 mt-1">
-                                                                <span className="text-[10px] text-neutral-500 font-bold">SKU: {item.sku || 'N/A'}</span>
-                                                                {item.barcode && <div className="flex items-center gap-1"><Barcode className="w-3 h-3 text-neutral-400" /><span className="text-[10px] text-neutral-500 font-bold">{item.barcode}</span></div>}
+                                                            <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+                                                                <span className="text-[9px] sm:text-[10px] text-neutral-500 font-bold">SKU: {item.sku || 'N/A'}</span>
+                                                                {item.barcode && <div className="hidden sm:flex items-center gap-1"><Barcode className="w-3 h-3 text-neutral-400" /><span className="text-[10px] text-neutral-500 font-bold">{item.barcode}</span></div>}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-5">
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5 hidden md:table-cell">
                                                     <div className="flex flex-col gap-1">
                                                         <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded text-[9px] font-black uppercase tracking-widest w-fit border border-neutral-200 dark:border-neutral-600">{item.category}</span>
                                                         <span className="text-[10px] text-primary font-bold italic">{item.brand || 'No Brand'}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-5">
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5 hidden lg:table-cell">
                                                     <div className="flex flex-col">
                                                         <div className={`text-sm font-black italic ${isLowStock ? 'text-rose-500' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                             {item.stockQty} {item.unit}
@@ -477,16 +477,16 @@ const InventoryManager: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-5 text-right">
-                                                    <div className="font-bold text-neutral-400 text-[10px] uppercase tracking-wider line-through decoration-rose-500/30">₹{item.costPrice?.toLocaleString()}</div>
-                                                    <div className="font-black text-primary text-xl italic tracking-tight mt-0.5">₹{item.sellingPrice?.toLocaleString()}</div>
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5 text-right">
+                                                    <div className="font-bold text-neutral-400 text-[9px] sm:text-[10px] uppercase tracking-wider line-through decoration-rose-500/30">₹{item.costPrice?.toLocaleString()}</div>
+                                                    <div className="font-black text-primary text-base sm:text-xl italic tracking-tight mt-0.5">₹{item.sellingPrice?.toLocaleString()}</div>
                                                 </td>
-                                                <td className="px-6 py-5">
-                                                    <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] border ${isLowStock ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-900/20 dark:border-rose-900/30' : 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900/30'}`}>
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5 hidden sm:table-cell">
+                                                    <span className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.15em] border ${isLowStock ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-900/20 dark:border-rose-900/30' : 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900/30'}`}>
                                                         {isLowStock ? 'Critical Low' : 'In Stock'}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-5 text-right relative">
+                                                <td className="px-3 sm:px-6 py-3 sm:py-5 text-right relative">
                                                     <div className="flex items-center justify-end gap-2">
                                                         <button
                                                             onClick={() => setRowActionDropdown(rowActionDropdown === item._id ? null : item._id)}
@@ -542,8 +542,8 @@ const InventoryManager: React.FC = () => {
                         </table>
 
                         {/* Pagination */}
-                        <div className="px-8 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/30 dark:bg-neutral-800/30 flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Showing {items.length} of {pagination?.total || items.length} Registered Products</div>
+                        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/30 dark:bg-neutral-800/30 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-6">
+                            <div className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] sm:tracking-[0.3em]">Showing {items.length} of {pagination?.total || items.length} Products</div>
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
@@ -568,19 +568,19 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Automation Advisory */}
-                <div className="bg-neutral-900 dark:bg-neutral-800/50 text-white p-10 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                    <TrendingUp className="absolute -bottom-16 -right-16 w-64 h-64 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000" />
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
+                <div className="bg-neutral-900 dark:bg-neutral-800/50 text-white p-5 sm:p-7 lg:p-10 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                    <TrendingUp className="absolute -bottom-16 -right-16 w-40 sm:w-64 h-40 sm:h-64 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000" />
+                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-12">
                         <div className="flex-1">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.25em] mb-6">
-                                <Zap className="w-4 h-4 fill-current" /> Automation Pipeline Active
+                            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full text-primary text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] mb-3 sm:mb-6">
+                                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" /> Automation Pipeline Active
                             </div>
-                            <h4 className="text-3xl font-black mb-4 italic tracking-tight">Streamline your <span className="text-primary underline decoration-4 underline-offset-8">Stock Authority.</span></h4>
+                            <h4 className="text-xl sm:text-2xl lg:text-3xl font-black mb-2 sm:mb-4 italic tracking-tight">Streamline your <span className="text-primary underline decoration-2 sm:decoration-4 underline-offset-4 sm:underline-offset-8">Stock Authority.</span></h4>
                             <p className="text-sm text-neutral-400 font-bold leading-relaxed italic max-w-3xl">
                                 Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
                             </p>
                         </div>
-                        <button className="px-10 py-5 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-[0.25em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
+                        <button className="w-full sm:w-auto px-6 sm:px-10 py-3 sm:py-5 bg-primary text-white rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.25em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
                             Enable Auto-Restock
                         </button>
                     </div>
@@ -634,13 +634,13 @@ const InventoryManager: React.FC = () => {
             {/* Stock Aging Modal */}
             {showAgingModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-5xl rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                        <div className="px-10 py-8 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
+                    <div className="bg-white dark:bg-neutral-800 w-full max-w-5xl rounded-2xl sm:rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] mx-2 sm:mx-0">
+                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 lg:py-8 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                             <div>
-                                <h3 className="text-2xl font-black italic flex items-center gap-3 text-neutral-900 dark:text-neutral-100">
-                                    <AlertOctagon className="w-8 h-8 text-rose-600" /> Dead Stock Analysis
+                                <h3 className="text-lg sm:text-xl lg:text-2xl font-black italic flex items-center gap-2 sm:gap-3 text-neutral-900 dark:text-neutral-100">
+                                    <AlertOctagon className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-rose-600" /> Dead Stock Analysis
                                 </h3>
-                                <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-[0.2em]">Identified items with stock age {'>'} 180 days</p>
+                                <p className="text-[9px] sm:text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-[0.15em] sm:tracking-[0.2em]">Items with stock age {'>'} 180 days</p>
                             </div>
                             <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-rose-600 rounded-full transition-all"><X className="w-6 h-6" /></button>
                         </div>
@@ -706,8 +706,8 @@ const InventoryManager: React.FC = () => {
                                 </table>
                             )}
                         </div>
-                        <div className="px-10 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-700/50 flex justify-end">
-                            <button onClick={() => setShowAgingModal(false)} className="px-8 py-4 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl">
+                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-700/50 flex justify-end">
+                            <button onClick={() => setShowAgingModal(false)} className="px-5 sm:px-8 py-3 sm:py-4 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl">
                                 Close Panel
                             </button>
                         </div>

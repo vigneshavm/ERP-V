@@ -112,11 +112,11 @@ const EstimateList = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="space-y-4 sm:space-y-6 animate-fade-in pb-10 px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                        <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
                             <Calculator className="w-6 h-6 text-indigo-600" />
                             Estimates
                         </h1>
@@ -124,14 +124,14 @@ const EstimateList = () => {
                     </div>
                     <button
                         onClick={() => navigate('/sales/estimate')}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium"
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-all font-medium w-full sm:w-auto"
                     >
                         <Plus className="w-4 h-4" /> Create Estimate
                     </button>
                 </div>
 
                 {/* KPI Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
@@ -184,8 +184,8 @@ const EstimateList = () => {
                 {/* Filter Island + Table */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     {/* Filter Bar */}
-                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50">
+                        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
                             {/* Search */}
                             <div className="relative w-full md:max-w-md group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -204,7 +204,7 @@ const EstimateList = () => {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                                className="w-full lg:w-auto px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                             >
                                 <option value="all">All Status</option>
                                 <option value="draft">Draft</option>
@@ -264,8 +264,8 @@ const EstimateList = () => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {getStatusBadge(estimate.status)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right">
+                                                <div className="flex justify-end gap-1 sm:gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={() => navigate(`/sales/estimate/${estimate._id}`)}
                                                         className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg"
