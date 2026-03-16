@@ -16,11 +16,11 @@ const App: React.FC = () => {
   const router = useRouter();
   const handleSelection = (type: 'personal' | 'business' | 'enterprise') => {
     if (type === 'personal') {
-      window.location.href = 'http://localhost:3000/personal/home';
+      window.location.href = '/personal/home';
     } else if (type === 'business') {
-      router.push('/business/store');
+      window.location.href = '/business/store';
     } else {
-      router.push('/enterprise');
+      window.location.href = '/enterprise';
     }
   };
 

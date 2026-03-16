@@ -2,9 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Car, Smartphone, Zap, MoreHorizontal, UserCircle, Coffee, ChevronRight, Heart, Utensils, X } from 'lucide-react';
-import { useLanguage } from '@repo/shared';
-import { fetchCategories, fetchTransactionsByCategory } from '@/entities/expense/api';
-import { formatCurrency, Category, Transaction } from '@repo/shared';
+import { useLanguage, useCategories, useTransactions, formatCurrency, Category, Transaction } from '@repo/shared';
 import { Card } from '@/shared/ui/Card';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -28,22 +26,23 @@ interface CategoryListProps {
 const CategoryList: React.FC<CategoryListProps> = ({ refreshTrigger = 0, onCategoryClick }) => {
     const { t } = useLanguage();
     const { navigateToCategoryDetails } = useNavigation();
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { categories: rawCategories, loading: catsLoading } = useCategories();
+    const { transactions, loading: txnsLoading } = useTransactions();
 
-    useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const data = await fetchCategories();
-                setCategories(data);
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadCategories();
-    }, [refreshTrigger]);
+    const categories = React.useMemo(() => {
+        if (catsLoading || txnsLoading) return [];
+        
+        return rawCategories.map(cat => {
+            const catTransactions = transactions.filter(t => t.categoryId === cat.id);
+            const totalValue = catTransactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+            return {
+                ...cat,
+                value: totalValue
+            };
+        });
+    }, [rawCategories, transactions, catsLoading, txnsLoading]);
+
+    const loading = catsLoading || txnsLoading;
 
     if (loading) return <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>{t('categories.loading')}</div>;
 

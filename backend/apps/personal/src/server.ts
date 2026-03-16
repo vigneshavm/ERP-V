@@ -17,7 +17,7 @@ import { ConfigService } from "@smarterp/shared";
 const config = container.resolve(ConfigService);
 logger.info("Validating environment variables via ConfigService...");
 
-const PORT = config.get("PORT") || process.env.PERSONAL_PORT || 5001;
+const PORT = process.env.PERSONAL_PORT || config.get("PORT") || 5001;
 
 // Log loaded env for debugging (masked)
 console.log("🔍 Checking Environment Variables for Personal API...");

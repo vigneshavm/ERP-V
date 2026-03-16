@@ -21,6 +21,8 @@ export interface IUser extends Document {
     // NEW: Multi-tenancy
     tenantId?: Types.ObjectId;
     role: "owner" | "manager" | "staff" | "customer" | "superadmin";
+    totalWealth?: number;
+    currency?: string;
 
 
     // Reset Password

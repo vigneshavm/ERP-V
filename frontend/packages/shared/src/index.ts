@@ -23,6 +23,7 @@ export type {
 
 // Conflict Resolution: Rename User from types.ts to SchemaUser
 export type { PersonalTransaction as Transaction, User as SchemaUser } from "./types";
+export { PersonalTransactionType } from './adapters/types';
 
 export * from './finance/finance';
 export * from './inventory/product'; export * from './inventory/attributes'; export * from './inventory/enums';
@@ -73,4 +74,8 @@ export * from './hooks/usePersonalFinance';
 export * from './query/queryClient';
 export * from './query/QueryProvider';
 
-
+// Adapters Layer (Mock/DB)
+export * from './adapters';
+export * from './adapters/context';
+export * from './adapters/hooks';
+export * from './adapters/types';

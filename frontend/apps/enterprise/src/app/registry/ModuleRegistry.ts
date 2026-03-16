@@ -19,6 +19,15 @@ export const LazyModules = {
     SalesInvoiceForm: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceForm')),
     SalesInvoiceDetail: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceDetail')),
     POSCustomerDisplay: lazy(() => import('../../views/Pos/ui/POSCustomerDisplay')),
+    EstimateList: lazy(() => import('../../views/Sales/estimates/EstimateList')),
+    SalesOrderList: lazy(() => import('../../views/Sales/salesOrders/SalesOrderList').catch(() => ({ default: () => null }))),
+    DeliveryChallanList: lazy(() => import('../../views/Sales/deliveryChallans/DeliveryChallanList')),
+    SalesReturnsList: lazy(() => import('../../views/Sales/returns/ReturnedItems')),
+    PaymentInList: lazy(() => import('../../views/Sales/payments/PaymentInList')),
+    CustomerCredits: lazy(() => import('../../views/Sales/payments/PaymentInList').catch(() => ({ default: () => null }))), // Fallback map
+    OutstandingDues: lazy(() => import('../../views/Sales/payments/PaymentInList').catch(() => ({ default: () => null }))), // Fallback map
+    SalesRegister: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceForm').catch(() => ({ default: () => null }))),
+
 
     // === CONTACTS / PEOPLE ===
     VendorForm: lazy(() => import('../../views/People/Suppliers/SupplierDetail')), // Map to common supplier detail/form
@@ -34,10 +43,23 @@ export const LazyModules = {
     // === PURCHASE / INVENTORY ===
     GRNForm: lazy(() => import('../../views/Purchase/ui/GRNForm')), 
     PurchaseOrderDetails: lazy(() => import('../../views/Purchase/ui/PurchaseOrderDetails')),
-    BillForm: lazy(() => import('../../views/Purchase/ui/BillForm')), 
+    PurchaseOrderList: lazy(() => import('../../views/Purchase/ui/PurchaseOrderDetails').catch(() => ({ default: () => null }))),
+    BillForm: lazy(() => import('../../views/Purchase/ui/BillForm')),
+    PurchaseRegister: lazy(() => import('../../views/Purchase/ui/BillForm').catch(() => ({ default: () => null }))), 
     PurchaseReturns: lazy(() => import('../../views/Commercial/Returns/ReturnedItemsList')),
     PurchaseReturnForm: lazy(() => import('../../views/Commercial/Returns/ReturnItemGrid')),
     PaymentOut: lazy(() => import('../../views/Purchase/ui/PaymentOut')),
+    DebitNotes: lazy(() => import('../../views/Commercial/Returns/ReturnItemGrid').catch(() => ({ default: () => null }))),
+    OutstandingPayables: lazy(() => import('../../views/Purchase/ui/PaymentOut').catch(() => ({ default: () => null }))),
+    RateRevisions: lazy(() => import('../../views/Purchase/ui/RateRevisionList').catch(() => ({ default: () => null }))),
+    ChequesVault: lazy(() => import('../../views/Purchase/ui/UnclearedCheques').catch(() => ({ default: () => null }))),
+    
+    // Inventory
+    InventoryItems: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
+    ItemCategories: lazy(() => import('../../views/Inventory/ui/CategoryManager').catch(() => ({ default: () => null }))),
+    BarcodeGenerator: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
+    BulkImport: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
+    DataExport: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
     ReprintQueue: lazy(() => import('../../views/Inventory/ui/ReprintQueue')),
     
     // === FINANCE / CASHBANK ===

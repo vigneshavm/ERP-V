@@ -31,7 +31,7 @@ console.log("🔍 Checking Environment Variables for Enterprise API...");
     }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.ENTERPRISE_PORT || process.env.PORT || 5000;
 
 // =======================
 // Email Transport Verification

@@ -2,28 +2,31 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
-import { formatCurrency, DashboardData, Category } from '@repo/shared';
-import { useLanguage } from '@repo/shared';
+import { 
+    formatCurrency, 
+    useLanguage, 
+    useTransactions, 
+    useUser, 
+    PersonalTransactionType as TransactionType,
+    mapTransactionsToHistory
+} from '@repo/shared';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-
-import { useDashboardFeature } from '../../dashboard/hooks/useDashboardFeature';
-import { useExpensesFeature } from '../hooks/useExpensesFeature';
 
 const IncomeView: React.FC = () => {
     const { t } = useLanguage();
-    const { data: dashboardData, loading: dashboardLoading } = useDashboardFeature();
-    const { data: expensesData, loading: expensesLoading } = useExpensesFeature();
+    const { user, loading: userLoading } = useUser();
+    const { transactions, loading: transactionsLoading } = useTransactions(TransactionType.INCOME);
 
-    const loading = dashboardLoading || expensesLoading;
-    const data = dashboardData;
+    const loading = userLoading || transactionsLoading;
+    const historyData = mapTransactionsToHistory(transactions, TransactionType.INCOME);
     
     // Process categories once data is available
-    const categories = expensesData?.categories.filter(c => c.value > 0) || [];
+    const categories = historyData.categories;
 
     if (loading) return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>{t('income.loading')}</div>;
-    if (!data) return null;
+    if (!historyData) return null;
 
-    const totalIncome = data.monthlySummaries[0]?.income || 0;
+    const totalIncome = historyData.totalSpent;
 
     return (
         <div className="view-content-wrapper">
@@ -42,7 +45,7 @@ const IncomeView: React.FC = () => {
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
-                                    {categories.map((entry, index) => (
+                                    {categories.map((entry: { name: string; value: number; color: string }, index: number) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
@@ -64,19 +67,19 @@ const IncomeView: React.FC = () => {
                     <Card style={{ padding: '20px' }}>
                         <p style={{ color: 'var(--label-text)', fontSize: '14px', marginBottom: '8px', fontWeight: 600 }}>{t('income.totalIncome')}</p>
                         <h2 style={{ fontSize: '32px', fontWeight: 800, color: 'var(--success-color)' }}>
-                            {formatCurrency(totalIncome, data.profile.currency)}
+                            {formatCurrency(totalIncome, user?.currency || 'INR')}
                         </h2>
                     </Card>
                     
                     <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <h4 style={{ fontWeight: 700, color: 'var(--text-primary)', opacity: 0.9 }}>{t('income.recentSources')}</h4>
-                        {categories.map((cat, i) => (
+                        {categories.map((cat: { name: string; value: number; color: string }, i: number) => (
                             <div key={i} style={{ padding: '12px', background: 'var(--surface-overlay)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--card-border)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: cat.color }}></div>
                                     <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</span>
                                 </div>
-                                <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatCurrency(cat.value, data.profile.currency)}</span>
+                                <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatCurrency(cat.value, user?.currency || 'INR')}</span>
                             </div>
                         ))}
                     </div>

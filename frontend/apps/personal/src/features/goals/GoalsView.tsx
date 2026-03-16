@@ -2,12 +2,15 @@
 
 import React, { useState } from 'react';
 import { Target, TrendingUp, ChevronLeft, Plus, Rocket, Award, Zap, ChevronRight, Sparkles } from 'lucide-react';
-import { formatCurrency, Goal } from '@repo/shared';
-import { useLanguage } from '@repo/shared';
+import { 
+    formatCurrency, 
+    useLanguage, 
+    useGoals,
+    PersonalTransactionType
+} from '@repo/shared';
 import { Card } from '@/shared/ui/Card';
 import { Button } from '@/shared/ui/Button';
 import AddGoalModal from './AddGoalModal';
-import { useGoalsFeature } from './hooks/useGoalsFeature';
 
 const iconMap: Record<string, React.ElementType> = {
     Target: Target,
@@ -21,22 +24,23 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
         goals, 
         loading, 
         addGoal, 
-        updateGoalProgress 
-    } = useGoalsFeature();
+        updateGoalProgress,
+        refresh
+    } = useGoals();
     
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
-    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+    const [selectedGoal, setSelectedGoal] = useState<any | null>(null);
 
-    const openSimulator = (goal: Goal) => {
+    const openSimulator = (goal: any) => {
         setSelectedGoal(goal);
         setIsSimulatorOpen(true);
     };
 
     if (loading) return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>{t('goals.loading')}</div>;
 
-    const totalSaved = goals.reduce((acc, goal) => acc + goal.current, 0);
-    const totalTargetValue = goals.reduce((acc, goal) => acc + goal.target, 0);
+    const totalSaved = goals.reduce((acc, goal) => acc + (goal.currentAmount || 0), 0);
+    const totalTargetValue = goals.reduce((acc, goal) => acc + (goal.targetAmount || 0), 0);
     const globalProgress = totalTargetValue > 0 ? Math.round((totalSaved / totalTargetValue) * 100) : 0;
 
     return (
@@ -86,8 +90,10 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
             {/* Goals Grid */}
             <div className="responsive-grid goals-grid">
                 {goals.map((goal) => {
-                    const progress = Math.round((goal.current / goal.target) * 100);
-                    const IconComponent = iconMap[goal.icon] || Target;
+                    const current = goal.currentAmount || 0;
+                    const target = goal.targetAmount || 1;
+                    const progress = Math.round((current / target) * 100);
+                    const IconComponent = Target; // Default icon
                     return (
                         <Card key={goal.id} style={{ padding: '20px', marginBottom: 0, position: 'relative' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
@@ -104,7 +110,7 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
                                     </Button>
                                     <div style={{ textAlign: 'right' }}>
                                         <p style={{ fontSize: '18px', fontWeight: 700, color: goal.color }}>{progress}%</p>
-                                        <span style={{ fontSize: '14px', color: goal.color, fontWeight: 600 }}>{formatCurrency(goal.target)}</span>
+                                        <span style={{ fontSize: '14px', color: goal.color, fontWeight: 600 }}>{formatCurrency(target)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -162,8 +168,8 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{formatCurrency(goal.current)}</span>
-                                    <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{formatCurrency(goal.target - goal.current)} {t('goals.remaining')}</span>
+                                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{formatCurrency(current)}</span>
+                                    <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{formatCurrency(target - current)} {t('goals.remaining')}</span>
                                 </div>
                                 <div style={{ width: '48px', height: '48px', position: 'relative' }}>
                                     <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%' }}>
@@ -190,7 +196,7 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
                                     <Zap size={16} />
                                 </div>
                                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', flex: 1 }}>
-                                    {t('goals.saveDaily')} <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{formatCurrency(goal.dailyNudge)} {t('goals.daily')}</span> {t('goals.toReach')} {goal.deadline.split(' ')[1] || goal.deadline}.
+                                    Target Date: <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{goal.deadline}</span>.
                                 </p>
                                 <ChevronRight size={18} color="var(--text-secondary)" className="clickable" />
                             </div>
@@ -214,7 +220,7 @@ const GoalsView: React.FC<{ onAddGoal?: () => void; refreshTrigger?: number; onB
             <AddGoalModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                onAdded={() => useGoalsFeature().refresh()}
+                onAdded={() => refresh()}
             />
 
             {/* {selectedGoal && (

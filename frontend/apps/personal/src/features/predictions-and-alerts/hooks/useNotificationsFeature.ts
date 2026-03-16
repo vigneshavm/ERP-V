@@ -15,8 +15,8 @@ export const useNotificationsFeature = () => {
     const loadData = async () => {
         setLoading(true);
         try {
-            const data = await fetchNotifications();
-            setNotifications(data);
+            const response = await fetchNotifications();
+            setNotifications(response.data);
             setError(null);
         } catch (err) {
             setError(err as Error);

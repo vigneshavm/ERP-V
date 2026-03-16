@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useUser } from '@repo/shared';
 
 export type ThemeType = 'Dark' | 'Light' | 'System' | 'Cyber' | 'Gold';
 
@@ -35,7 +36,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // User Profile
     const [userProfile, setUserProfileState] = useState<UserProfile>({ name: 'Amvic', initials: 'AV' });
 
-    // Initial load from localStorage
+    const { user, loading: userLoading, updateSettings } = useUser();
+
+    // Initial load from localStorage and Adapter
     useEffect(() => {
         const savedTheme = localStorage.getItem('app-theme-preference') as ThemeType;
         if (savedTheme) setThemeState(savedTheme);
@@ -46,15 +49,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const savedCurrency = localStorage.getItem('app-currency');
         if (savedCurrency) setCurrencyState(savedCurrency);
 
-        const savedProfile = localStorage.getItem('app-user-profile');
-        if (savedProfile) {
-            try {
-                setUserProfileState(JSON.parse(savedProfile));
-            } catch (e) {
-                console.error("Failed to parse saved user profile", e);
-            }
+        if (user) {
+            setUserProfileState({
+                name: user.name,
+                initials: user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+            });
         }
-    }, []);
+    }, [user]);
 
     // Persist and apply Theme
     const setTheme = (newTheme: ThemeType) => {

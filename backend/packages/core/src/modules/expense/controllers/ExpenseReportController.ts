@@ -232,7 +232,6 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
                 label: period.label
             });
         }
-
         res.status(200).json({
             report_period,
             total_expense,
@@ -249,6 +248,101 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
     }
 };
 
+/**
+ * @desc Get stats for statistics page
+ * @route GET /api/expenses/expense-reports/stats
+ */
+export const getStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?._id;
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const expenses = await Expense.find({
+            createdBy: userId,
+            date: { $gte: startOfMonth }
+        });
+
+        const categories = await ExpenseCategory.find({ createdBy: userId });
+        
+        const barData = categories.map(cat => {
+            const spent = expenses
+                .filter(e => e.category === cat.name)
+                .reduce((sum, e) => sum + (e.amount || 0), 0);
+            return {
+                name: cat.name,
+                expense: spent,
+                limit: cat.monthly_budget
+            };
+        });
+
+        const totalSpent = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+        const totalBudget = categories.reduce((sum, c) => sum + (c.monthly_budget || 0), 0);
+
+        res.status(200).json({
+            stats: {
+                barData,
+                remainingBudget: Math.max(0, totalBudget - totalSpent)
+            },
+            categories
+        });
+    } catch (err) {
+        error(`Get stats failed: ${(err as Error).message}`);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+/**
+ * @desc Get history for history page
+ * @route GET /api/expenses/history
+ */
+export const getHistory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?._id;
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const expenses = await Expense.find({
+            createdBy: userId,
+            date: { $gte: startOfMonth }
+        }).sort({ date: -1 });
+
+        const categorySummary = await Expense.aggregate([
+            { $match: { createdBy: userId, date: { $gte: startOfMonth } } },
+            { $group: { _id: "$category", total: { $sum: "$amount" } } }
+        ]);
+
+        const paymentSummary = await Expense.aggregate([
+            { $match: { createdBy: userId, date: { $gte: startOfMonth } } },
+            { $group: { _id: { $toUpper: "$paymentMethod" }, total: { $sum: "$amount" } } }
+        ]);
+
+        const dailyTrend = await Expense.aggregate([
+            { $match: { createdBy: userId, date: { $gte: startOfMonth } } },
+            { 
+                $group: { 
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } }, 
+                    amount: { $sum: "$amount" } 
+                } 
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        res.status(200).json({
+            totalSpent: expenses.reduce((sum, e) => sum + (e.amount || 0), 0),
+            month: now.toLocaleString('default', { month: 'long' }),
+            categories: categorySummary.map(c => ({ name: c._id || 'Other', value: c.total, color: '#4F46E5' })),
+            paymentMethods: paymentSummary.map(p => ({ name: p._id || 'CASH', value: p.total, color: '#10B981' })),
+            dailyTrend: dailyTrend.map(d => ({ day: d._id, amount: d.amount }))
+        });
+    } catch (err) {
+        error(`Get history failed: ${(err as Error).message}`);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 export default {
     getExpenseReport,
+    getStats,
+    getHistory
 };

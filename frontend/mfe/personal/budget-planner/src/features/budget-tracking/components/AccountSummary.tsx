@@ -1,12 +1,12 @@
 import React from 'react';
-import { usePersonalFinance } from '@repo/shared';
+import { useAccounts } from '@repo/shared';
 import { MetricCard } from '@repo/ui';
 import { Wallet, Landmark, CreditCard } from 'lucide-react';
 
 export const AccountSummary = () => {
-    const { accounts } = usePersonalFinance();
+    const { accounts, loading } = useAccounts();
 
-    if (accounts.length === 0) return null;
+    if (loading || accounts.length === 0) return null;
 
     return (
         <div className="mb-12">
@@ -38,7 +38,7 @@ export const AccountSummary = () => {
 
                     return (
                         <MetricCard
-                            key={acc._id}
+                            key={acc.id}
                             title={`${acc.bankName} • ${acc.accountType}`}
                             value={`₹${acc.currentBalance.toLocaleString('en-IN')}`}
                             icon={Icon}

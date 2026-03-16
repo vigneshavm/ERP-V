@@ -26,3 +26,32 @@ export const formatCurrency = (amount: number, currency?: string): string => {
  * Shared delay function for simulations
  */
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Period range utilities
+ */
+export const getPeriodRange = (date: Date, startDay: number) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const day = d.getDate();
+    let start, end;
+    if (day >= startDay) {
+        start = new Date(year, month, startDay);
+        end = new Date(year, month + 1, startDay - 1);
+    } else {
+        start = new Date(year, month - 1, startDay);
+        end = new Date(year, month, startDay - 1);
+    }
+    return { start, end };
+};
+
+export const getNextPeriod = (currentStart: Date, startDay: number) => {
+    const next = new Date(currentStart.getFullYear(), currentStart.getMonth() + 1, startDay);
+    return getPeriodRange(next, startDay);
+};
+
+export const getPrevPeriod = (currentStart: Date, startDay: number) => {
+    const prev = new Date(currentStart.getFullYear(), currentStart.getMonth() - 1, startDay);
+    return getPeriodRange(prev, startDay);
+};

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { QueryProvider, LanguageProvider } from "@repo/shared";
+import { QueryProvider, LanguageProvider, DataProvider } from "@repo/shared";
 import { SettingsProvider } from "@/shared/contexts/SettingsContext";
 import { NavigationProvider } from "@/shared/contexts/NavigationContext";
 import ClientLayout from "./ClientLayout";
-
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Expanger - Personal Finance",
+  title: "Expancer - Personal Finance",
   description: "Advanced expense manager for personal use",
 };
 
@@ -38,6 +36,7 @@ export default function RootLayout({
         <AuthGuard>
         <QueryProvider>
           <LanguageProvider>
+            <DataProvider>
             <SettingsProvider>
               <NavigationProvider>
                 <ClientLayout>
@@ -45,6 +44,7 @@ export default function RootLayout({
                 </ClientLayout>
               </NavigationProvider>
             </SettingsProvider>
+            </DataProvider>
           </LanguageProvider>
         </QueryProvider>
 

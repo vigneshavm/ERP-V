@@ -6,10 +6,7 @@ import { X, Target, Calendar, Users, Plus, Check, Search, Info } from 'lucide-re
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { Goal, Participant } from '@repo/shared';
-import { addGoal } from './services/goalsApi';
-import { fetchContacts } from '@/entities/transaction/transactionsApi';
-import { useLanguage } from '@repo/shared';
+import { PersonalGoal, Participant, useGoals, useLanguage, useContacts } from '@repo/shared';
 
 interface AddGoalModalProps {
     isOpen: boolean;
@@ -25,14 +22,10 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose, onAdded })
     const [isCollaborative, setIsCollaborative] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
-    const [contacts, setContacts] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
+    
+    const { contacts, loading: contactsLoading } = useContacts();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchContacts().then(setContacts);
-        }
-    }, [isOpen]);
 
     const handleToggleContact = (contact: any) => {
         if (selectedContacts.find(c => c.id === contact.id)) {
@@ -42,17 +35,20 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose, onAdded })
         }
     };
 
+    const { addGoal: createGoal } = useGoals();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setIsSubmitting(true);
 
-        const newGoal: Omit<Goal, 'id'> = {
+        const newGoal: Omit<PersonalGoal, 'id' | 'status'> = {
             name,
-            target: parseFloat(target),
-            current: 0,
+            targetAmount: parseFloat(target),
+            currentAmount: 0,
             icon: 'Target', // Default for now
             color: 'var(--primary-color)', // Default for now
             deadline: deadline || 'Dec 2026',
+            category: 'Personal', // Default for now
             dailyNudge: Math.round(parseFloat(target) / 365), // Rough estimate
             isCollaborative,
             participants: isCollaborative ? selectedContacts.map(c => ({
@@ -65,13 +61,13 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose, onAdded })
         };
 
         try {
-            await addGoal(newGoal);
+            await createGoal(newGoal);
             onAdded();
             onClose();
         } catch (error) {
             console.error("Failed to create goal:", error);
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -278,10 +274,10 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose, onAdded })
                     <Button
                         variant="primary"
                         type="submit"
-                        disabled={!name || !target || loading || (isCollaborative && selectedContacts.length === 0)}
+                        disabled={!name || !target || isSubmitting || (isCollaborative && selectedContacts.length === 0)}
                         style={{ flex: 1 }}
                     >
-                        {loading ? "Creating..." : (t('common.create') || "Create Goal")}
+                        {isSubmitting ? "Creating..." : (t('common.create') || "Create Goal")}
                     </Button>
                 </div>
             </form>

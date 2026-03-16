@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { useLanguage, formatCurrency } from '@repo/shared';
+import { useLanguage, formatCurrency, useTransactions } from '@repo/shared';
 import { useNavigation } from '@/shared/contexts/NavigationContext';
-import { useTransactionsFeature } from '@/features/transaction-management/model';
 import { ArrowLeft, Tag } from 'lucide-react';
 
 const CategoryDetailsView: React.FC = () => {
     const { t } = useLanguage();
     const { categoryDetailsState, setCurrentView } = useNavigation();
-    const { transactions, loading } = useTransactionsFeature();
+    const { transactions, loading } = useTransactions();
 
     const categoryTransactions = useMemo(() => {
         if (!categoryDetailsState) return [];

@@ -1,19 +1,17 @@
 import React, { useMemo } from 'react';
-import { usePersonalFinance } from '@repo/shared';
+import { useTransactions, formatCurrency } from '@repo/shared';
 import { Calendar, RefreshCw, AlertCircle } from 'lucide-react';
 
 export const SubscriptionTracker = () => {
-    const { transactions } = usePersonalFinance();
+    const { transactions, loading } = useTransactions();
 
     const recurringSubscriptions = useMemo(() => {
         // Filter transactions that are marked as recurring
-        // In a real app, this might come from a dedicated /recurring endpoint
         const recurring = transactions.filter(t => t.isRecurring);
         
-        // Group by description/name to find "Subscriptions"
         return recurring.map(t => {
             const nextDue = new Date(t.date);
-            nextDue.setMonth(nextDue.getMonth() + 1); // Mock next due date
+            nextDue.setMonth(nextDue.getMonth() + 1);
             
             const today = new Date();
             const diffTime = nextDue.getTime() - today.getTime();
@@ -22,7 +20,7 @@ export const SubscriptionTracker = () => {
             return {
                 id: t.id,
                 name: t.description || 'Subscription',
-                amount: t.amount,
+                amount: Math.abs(t.amount),
                 nextDue: nextDue.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
                 daysLeft: diffDays,
                 status: diffDays < 5 ? 'due' : 'ok'
@@ -30,7 +28,7 @@ export const SubscriptionTracker = () => {
         });
     }, [transactions]);
 
-    if (recurringSubscriptions.length === 0) return null;
+    if (loading || recurringSubscriptions.length === 0) return null;
 
     return (
         <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-3xl p-6 mb-8">
@@ -68,7 +66,7 @@ export const SubscriptionTracker = () => {
                         
                         <div className="flex items-end justify-between">
                             <div>
-                                <p className="text-lg font-black tracking-tighter">₹{sub.amount}</p>
+                                <p className="text-lg font-black tracking-tighter">{formatCurrency(sub.amount)}</p>
                                 <p className="text-[10px] text-neutral-500">Next: {sub.nextDue}</p>
                             </div>
                             <div className="text-right">

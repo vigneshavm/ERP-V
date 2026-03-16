@@ -1,0 +1,32 @@
+import mongoose, { Schema } from "mongoose";
+const loyaltyTransactionSchema = new Schema({
+    customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Customer",
+        required: true,
+    },
+    type: {
+        type: String,
+        enum: ["EARNED", "REDEEMED", "EXPIRED", "BONUS"],
+        required: true,
+    },
+    points: {
+        type: Number,
+        required: true,
+    },
+    invoice: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Invoice",
+    },
+    description: {
+        type: String,
+        default: "",
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+}, { timestamps: true });
+const LoyaltyTransaction = mongoose.model("LoyaltyTransaction", loyaltyTransactionSchema);
+export default LoyaltyTransaction;

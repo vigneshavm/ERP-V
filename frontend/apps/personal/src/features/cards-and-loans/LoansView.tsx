@@ -3,13 +3,11 @@
 import React, { useState } from 'react';
 import { Landmark, UserCircle, Plus, ChevronRight, ChevronLeft, X, TrendingUp, TrendingDown, Clock, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatCurrency, Loan } from '@repo/shared';
-import { useLanguage } from '@repo/shared';
+import { formatCurrency, PersonalLoan, useLoans, useLanguage } from '@repo/shared';
 import { Card } from '@/shared/ui/Card';
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useLoansFeature } from './hooks/useLoansFeature';
 
 const iconMap: Record<string, any> = {
     Landmark: Landmark,
@@ -22,26 +20,26 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
         loans, 
         loading, 
         addLoan, 
-        updateLoan, 
-        deleteLoan, 
-        recordPayment 
-    } = useLoansFeature();
+        recordPayment,
+        deleteLoan,
+        refresh
+    } = useLoans();
 
     const [activeTab, setActiveTab] = useState<'Borrowed' | 'Lent'>('Borrowed');
 
     // Modal states
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
-    const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
+    const [editingLoan, setEditingLoan] = useState<PersonalLoan | null>(null);
+    const [selectedLoan, setSelectedLoan] = useState<PersonalLoan | null>(null);
     const [paymentAmount, setPaymentAmount] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Form state
-    const defaultForm: Partial<Loan> = {
-        name: '', bank: '', total: 0, current: 0, interestRate: 0, tenureMonths: 0, type: 'Borrowed', deadline: '', color: '#3498DB', icon: 'Landmark'
+    const defaultForm: Partial<PersonalLoan> = {
+        name: '', bank: '', principalAmount: 0, paidAmount: 0, interestRate: 0, termMonths: 0, type: 'Borrowed', deadline: '', color: '#3498DB', icon: 'Landmark'
     };
-    const [formData, setFormData] = useState<Partial<Loan>>(defaultForm);
+    const [formData, setFormData] = useState<Partial<PersonalLoan>>(defaultForm);
 
     const handleOpenAddModal = () => {
         setEditingLoan(null);
@@ -49,28 +47,30 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
         setIsAddModalOpen(true);
     };
 
-    const handleOpenEditModal = (loan: Loan) => {
+    const handleOpenEditModal = (loan: PersonalLoan) => {
         setEditingLoan(loan);
         setFormData(loan);
         setIsAddModalOpen(true);
     };
 
     const handleSaveLoan = async () => {
-        if (!formData.name || !formData.bank || !formData.total) return;
+        if (!formData.name || !formData.bank || !formData.principalAmount) return;
         setIsSubmitting(true);
         try {
             if (editingLoan) {
-                await updateLoan(editingLoan.id!, formData as Partial<Loan>);
+                // Not implemented in hook yet
+                // await updateLoan(editingLoan.id!, formData as Partial<PersonalLoan>);
             } else {
-                await addLoan(formData as Omit<Loan, 'id'>);
+                await addLoan(formData as Omit<PersonalLoan, 'id' | 'status'>);
             }
             setIsAddModalOpen(false);
+            refresh();
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleDeleteLoanFromState = async (id: number) => {
+    const handleDeleteLoanFromState = async (id: string) => {
         if (!window.confirm(t('loans.deleteConfirm') || 'Are you sure you want to delete this loan?')) return;
         setIsSubmitting(true);
         try {
@@ -95,9 +95,9 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
 
     if (loading && loans.length === 0) return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>{t('loans.loading')}</div>;
 
-    const filteredLoans = loans.filter((loan: Loan) => loan.type === activeTab);
-    const totalBorrowed = loans.filter((l: Loan) => l.type === 'Borrowed').reduce((acc: number, curr: Loan) => acc + (curr.total - curr.current), 0);
-    const totalLent = loans.filter((l: Loan) => l.type === 'Lent').reduce((acc: number, curr: Loan) => acc + (curr.total - curr.current), 0);
+    const filteredLoans = loans.filter((loan: PersonalLoan) => loan.type === activeTab);
+    const totalBorrowed = loans.filter((l: PersonalLoan) => l.type === 'Borrowed').reduce((acc: number, curr: PersonalLoan) => acc + (curr.principalAmount - curr.paidAmount), 0);
+    const totalLent = loans.filter((l: PersonalLoan) => l.type === 'Lent').reduce((acc: number, curr: PersonalLoan) => acc + (curr.principalAmount - curr.paidAmount), 0);
     const netPayable = totalBorrowed - totalLent;
     const isNetPositive = netPayable < 0; // If you lent more than borrowed, you are net positive
     const absNetPayable = Math.abs(netPayable);
@@ -251,8 +251,8 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
                 {/* Loans Grid */}
                 <div className="responsive-grid">
                     <AnimatePresence mode="popLayout">
-                        {filteredLoans.map((loan: Loan, index: number) => {
-                            const percentage = Math.round((loan.current / loan.total) * 100);
+                        {filteredLoans.map((loan: PersonalLoan, index: number) => {
+                            const percentage = Math.round((loan.paidAmount / loan.principalAmount) * 100);
                             const IconComponent = iconMap[loan.icon] || Landmark;
 
                             return (
@@ -296,8 +296,8 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
 
                                     <div style={{ marginBottom: '20px' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)', marginBottom: '10px', fontWeight: 600 }}>
-                                            <span style={{ color: 'var(--text-primary)' }}>{formatCurrency(loan.current)}</span>
-                                            <span style={{ color: 'var(--text-secondary)' }}>{formatCurrency(loan.total)}</span>
+                                            <span style={{ color: 'var(--text-primary)' }}>{formatCurrency(loan.paidAmount)}</span>
+                                            <span style={{ color: 'var(--text-secondary)' }}>{formatCurrency(loan.principalAmount)}</span>
                                         </div>
                                         <div style={{ width: '100%', height: '10px', background: 'var(--surface-overlay)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--surface-overlay-subtle)' }}>
                                             <motion.div
@@ -320,10 +320,10 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
                                                     <p style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{loan.interestRate}% <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', fontWeight: 400 }}>APR</span></p>
                                                 </div>
                                             )}
-                                            {loan.tenureMonths !== undefined && loan.tenureMonths > 0 && (
+                                            {loan.termMonths !== undefined && loan.termMonths > 0 && (
                                                 <div style={{ flex: 1, background: 'var(--surface-overlay)', padding: '10px', borderRadius: '10px' }}>
                                                     <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('loans.tenureTitle') || 'Tenure'}</p>
-                                                    <p style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{loan.tenureMonths} <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', fontWeight: 400 }}>Months</span></p>
+                                                    <p style={{ color: 'var(--text-primary)', fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{loan.termMonths} <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', fontWeight: 400 }}>Months</span></p>
                                                 </div>
                                             )}
                                         </div>
@@ -347,19 +347,18 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
                 </div>
 
 
-                {/* Add / Edit Loan Modal */}
                 <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title={editingLoan ? (t('loans.editLoan') || 'Edit Loan') : (t('loans.addNewLoan') || 'New Loan')}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Input label={t('loans.nameLabel') || 'Loan Name'} value={formData.name || ''} onChange={(e: any) => setFormData({ ...formData, name: e.target.value })} placeholder={t('loans.namePlaceholder') || "e.g. Car Loan"} />
                         <Input label={t('loans.bankLabel') || 'Bank / Person'} value={formData.bank || ''} onChange={(e: any) => setFormData({ ...formData, bank: e.target.value })} placeholder={t('loans.bankPlaceholder') || "e.g. Bank of America"} />
-                        <Input label={t('loans.totalAmountLabel') || 'Total Amount'} type="number" value={formData.total || ''} onChange={(e: any) => setFormData({ ...formData, total: Number(e.target.value) })} placeholder="0.00" />
+                        <Input label={t('loans.totalAmountLabel') || 'Total Amount'} type="number" value={formData.principalAmount || ''} onChange={(e: any) => setFormData({ ...formData, principalAmount: Number(e.target.value) })} placeholder="0.00" />
 
                         <div style={{ display: 'flex', gap: '16px' }}>
                             <div style={{ flex: 1 }}>
                                 <Input label={t('loans.interestRateLabel') || 'Interest (%)'} type="number" step="0.1" value={formData.interestRate || ''} onChange={(e: any) => setFormData({ ...formData, interestRate: Number(e.target.value) })} placeholder="0.0" />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <Input label={t('loans.tenureLabel') || 'Tenure (Mo)'} type="number" step="1" value={formData.tenureMonths || ''} onChange={(e: any) => setFormData({ ...formData, tenureMonths: Number(e.target.value) })} placeholder="12" />
+                                <Input label={t('loans.tenureLabel') || 'Tenure (Mo)'} type="number" step="1" value={formData.termMonths || ''} onChange={(e: any) => setFormData({ ...formData, termMonths: Number(e.target.value) })} placeholder="12" />
                             </div>
                         </div>
 
@@ -381,7 +380,7 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
                             fullWidth
                             size="large"
                             isLoading={isSubmitting}
-                            disabled={!formData.name || !formData.bank || !formData.total}
+                            disabled={!formData.name || !formData.bank || !formData.principalAmount}
                             onClick={handleSaveLoan}
                             style={{ marginTop: '8px' }}
                         >
@@ -426,7 +425,7 @@ const LoansView: React.FC<{ refreshTrigger?: number; onBack?: () => void }> = ({
                                         {t('common.pay') || 'Pay'}
                                     </Button>
                                 </div>
-                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', textAlign: 'right' }}>Remaining: {formatCurrency(selectedLoan.total - selectedLoan.current)}</p>
+                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', textAlign: 'right' }}>Remaining: {formatCurrency(selectedLoan.principalAmount - selectedLoan.paidAmount)}</p>
                             </div>
 
                             <div style={{ display: 'flex', gap: '12px' }}>

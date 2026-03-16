@@ -14,7 +14,8 @@ export const fetchExpenses = async (): Promise<Category[]> => {
 };
 
 export const fetchCategories = async (): Promise<Category[]> => {
-    return api.get<Category[]>('/personal/expenses/categories');
+    const response = await api.get<{ categories: Category[] }>('/personal/expenses/categories');
+    return response.categories;
 };
 
 

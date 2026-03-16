@@ -144,6 +144,11 @@ app.use("/api/personal/expenses", expenseModuleRoutes);
 import smsTrackerRoutes from '@smarterp/core/modules/sms-tracker/routes/sms-tracker.routes.js';
 app.use("/api/personal/sms-tracker", smsTrackerRoutes);
 
+// DASHBOARD Route
+import { getDashboardData } from './controllers/DashboardController.js';
+import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
+app.get("/api/personal/dashboard", protect, getDashboardData);
+
 // FINANCE Module
 import financeRoutes from '@smarterp/core/modules/finance/routes/finance.routes.js';
 app.use("/api/personal/finance", financeRoutes);

@@ -4,7 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { Smartphone, ArrowRight, Camera, Settings2, ShoppingBag, Check } from 'lucide-react';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
-import { formatCurrency, DashboardData, Transaction, Category, useLanguage } from '@repo/shared';
+import { 
+    formatCurrency, 
+    useLanguage,
+    useTransactions,
+    useGoals,
+    useBudget,
+    useUser,
+    PersonalTransactionType as TransactionType
+} from '@repo/shared';
 import { Card } from '@repo/ui';
 
 import PredictiveAlert from '@/features/predictions-and-alerts/PredictiveAlert';
@@ -16,10 +24,6 @@ import { WidgetContainer } from '@/shared/ui/WidgetContainer';
 import WidgetMarketplace from '../components/WidgetMarketplace';
 import { WIDGET_REGISTRY } from '@/shared/api/WidgetRegistry';
 
-import { useDashboardFeature } from '@/features/dashboard/hooks/useDashboardFeature';
-import { useTransactionsFeature } from '@/features/transaction-management/model';
-import { useExpensesFeature } from '@/features/expenses/hooks/useExpensesFeature';
-
 const DashboardView: React.FC = () => {
     const { t } = useLanguage();
     const { 
@@ -29,9 +33,11 @@ const DashboardView: React.FC = () => {
         setIsReceiptOCROpen 
     } = useNavigation();
     
-    const { data: dashboardData, loading: dashboardLoading } = useDashboardFeature();
-    const { transactions, loading: transactionsLoading } = useTransactionsFeature();
-    const { data: expensesData, categories, loading: expensesLoading } = useExpensesFeature();
+    // New Adapter Hooks
+    const { user, loading: userLoading } = useUser();
+    const { transactions, loading: transactionsLoading } = useTransactions();
+    const { goals, loading: goalsLoading } = useGoals();
+    const { budget, loading: budgetLoading } = useBudget();
 
     const [forecast, setForecast] = useState<ForecastResult | null>(null);
     const [trends, setTrends] = useState<CategoryTrend[]>([]);
@@ -47,19 +53,27 @@ const DashboardView: React.FC = () => {
     } = useDashboardConfig();
 
     useEffect(() => {
-        if (dashboardData && transactions.length > 0 && categories.length > 0) {
+        if (transactions.length > 0 && budget) {
             // Calculate predictions
-            const currentMonthBudget = dashboardData.monthlySummaries[0]?.budget || 0;
+            const currentMonthBudget = budget.totalBudget || 0;
+            // Map types if necessary or ensure compatibility
             const forecastResult = calculateMonthlyForecast(transactions as any, currentMonthBudget);
-            const trendResults = analyzeCategoryTrends(transactions as any, categories as any);
+            
+            // Extract categories for trends (or use a dedicated hook if needed)
+            const uniqueCategories = Array.from(new Set(transactions.map(t => t.category))).map(name => ({
+                id: name,
+                name: name
+            }));
+            
+            const trendResults = analyzeCategoryTrends(transactions as any, uniqueCategories as any);
 
             setForecast(forecastResult);
             setTrends(trendResults);
         }
-    }, [dashboardData, transactions, categories]);
+    }, [transactions, budget]);
 
-    const loading = dashboardLoading || transactionsLoading || expensesLoading;
-    const data = dashboardData;
+    const loading = userLoading || transactionsLoading || goalsLoading || budgetLoading;
+    const data = user; // Profile data
 
     if (loading) {
         return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>{t('dashboard.loadingWealth')}</div>;
@@ -95,7 +109,7 @@ const DashboardView: React.FC = () => {
                         >
                             <p style={{ color: 'var(--label-text)', fontSize: 'var(--font-size-sm)', marginBottom: '8px', fontWeight: 600 }}>{t('dashboard.totalWealth')}</p>
                             <h2 style={{ fontSize: 'clamp(var(--font-size-3xl), 5vw, var(--font-size-4xl))', fontWeight: 800, color: 'var(--warning-color)', letterSpacing: '-1px' }}>
-                                {formatCurrency(data.profile.totalWealth, data.profile.currency)}
+                                {formatCurrency(user?.totalWealth || 0, user?.currency || 'INR')}
                             </h2>
                         </Card>
                     </WidgetContainer>
@@ -174,7 +188,7 @@ const DashboardView: React.FC = () => {
                                 </div>
                                 <div style={{ textAlign: 'left' }}>
                                     <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 800, color: 'var(--text-primary)' }}>{t('dashboard.transactionHelper')}</h4>
-                                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--label-text)' }}>{data.smsTransfers.pendingCount} {t('dashboard.newSpendsDetected')}</p>
+                                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--label-text)' }}>{t('dashboard.newSpendsDetected')}</p>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', fontSize: 'var(--font-size-sm)', fontWeight: 800 }}>
@@ -220,60 +234,45 @@ const DashboardView: React.FC = () => {
                 );
 
             case 'monthly-summary':
-                return (
+                return budget && (
                     <WidgetContainer key={id} id={id} isEditMode={isEditMode} onRemove={() => removeWidget(id)} title={widgetMeta.name} className="widget-span-full">
                         <div className="dashboard-monthly-grid">
-                            {data.monthlySummaries.map((item, idx) => (
-                                <Card
-                                    key={idx}
-                                    className="monthly-summary-card"
-                                    noMargin
-                                    style={{
-                                        border: item.isCurrentMonth ? '2px solid var(--primary-color)' : '1px solid var(--card-border)',
-                                        background: item.isCurrentMonth ? 'var(--surface-overlay)' : 'var(--card-bg)',
-                                        position: 'relative',
-                                        marginBottom: '0'
-                                    }}
-                                >
-                                    {item.isCurrentMonth && (
-                                        <div style={{
-                                            position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-color)',
-                                            color: 'var(--bg-color)', padding: '4px 12px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: 800
-                                        }}>
-                                            {t('dashboard.current')}
-                                        </div>
-                                    )}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                                        <div style={{ textAlign: 'left' }}>
-                                            <span style={{ fontWeight: 800, fontSize: 'var(--font-size-xl)', display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>{item.month}</span>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <div style={{ background: 'var(--success-color)', color: 'var(--bg-color)', padding: '4px 10px', borderRadius: '10px', fontSize: 'var(--font-size-xs)', fontWeight: 800 }}>
-                                                    {formatCurrency(item.budget, data.profile.currency)}
-                                                </div>
+                            <Card
+                                className="monthly-summary-card"
+                                noMargin
+                                style={{
+                                    border: '2px solid var(--primary-color)',
+                                    background: 'var(--surface-overlay)',
+                                    position: 'relative',
+                                    marginBottom: '0'
+                                }}
+                            >
+                                <div style={{
+                                    position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-color)',
+                                    color: 'var(--bg-color)', padding: '4px 12px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: 800
+                                }}>
+                                    {t('dashboard.current')}
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                                    <div style={{ textAlign: 'left' }}>
+                                        <span style={{ fontWeight: 800, fontSize: 'var(--font-size-xl)', display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>Current Month</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{ background: 'var(--success-color)', color: 'var(--bg-color)', padding: '4px 10px', borderRadius: '10px', fontSize: 'var(--font-size-xs)', fontWeight: 800 }}>
+                                                {formatCurrency(budget.totalBudget, user?.currency || 'INR')}
                                             </div>
                                         </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                            <p style={{ color: 'var(--label-text)', fontSize: 'var(--font-size-xs)', marginBottom: '4px', fontWeight: 600 }}>{t('dashboard.netFlow')}</p>
-                                            <p style={{ fontWeight: 800, color: 'var(--success-color)', fontSize: 'var(--font-size-base)' }}>
-                                                + {formatCurrency(item.income - item.expense, data.profile.currency)}
-                                            </p>
-                                        </div>
                                     </div>
-                                    <div style={{ width: '100%', height: '8px', background: 'var(--surface-overlay-subtle)', borderRadius: '4px', marginBottom: '12px', overflow: 'hidden' }}>
-                                        <div style={{ width: `${item.progress}%`, height: '100%', background: 'var(--success-color)' }}></div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <p style={{ color: 'var(--label-text)', fontSize: 'var(--font-size-xs)', marginBottom: '4px', fontWeight: 600 }}>Spent</p>
+                                        <p style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: 'var(--font-size-base)' }}>
+                                            {formatCurrency(budget.spentAmount, user?.currency || 'INR')}
+                                        </p>
                                     </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                        <div style={{ textAlign: 'left' }}>
-                                            <p style={{ color: 'var(--label-text)', fontSize: 'var(--font-size-xs)', marginBottom: '4px', fontWeight: 600 }}>{t('dashboard.expense')}</p>
-                                            <p style={{ fontWeight: 700, color: 'var(--danger-color)' }}>{formatCurrency(item.expense, data.profile.currency)}</p>
-                                        </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                            <p style={{ color: 'var(--label-text)', fontSize: 'var(--font-size-xs)', marginBottom: '4px', fontWeight: 600 }}>{t('dashboard.income')}</p>
-                                            <p style={{ fontWeight: 700, color: 'var(--success-color)' }}>{formatCurrency(item.income, data.profile.currency)}</p>
-                                        </div>
-                                    </div>
-                                </Card>
-                            ))}
+                                </div>
+                                <div style={{ width: '100%', height: '8px', background: 'var(--surface-overlay-subtle)', borderRadius: '4px', marginBottom: '12px', overflow: 'hidden' }}>
+                                    <div style={{ width: `${Math.min((budget.spentAmount / budget.totalBudget) * 100, 100)}%`, height: '100%', background: 'var(--primary-color)' }}></div>
+                                </div>
+                            </Card>
                         </div>
                     </WidgetContainer>
                 );
@@ -282,32 +281,36 @@ const DashboardView: React.FC = () => {
                 return (
                     <WidgetContainer key={id} id={id} isEditMode={isEditMode} onRemove={() => removeWidget(id)} title={widgetMeta.name}>
                         <Card style={{ padding: '16px', textAlign: 'left', marginBottom: 0 }}>
-                            <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>Savings Progress</h4>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--label-text)' }}>Emergency Fund</span>
-                                <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>65%</span>
-                            </div>
-                            <div style={{ width: '100%', height: '8px', background: 'var(--surface-overlay)', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: '65%', height: '100%', background: 'var(--primary-color)' }}></div>
-                            </div>
+                            <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>Top Goals Progress</h4>
+                            {goals.slice(0, 2).map(goal => (
+                                <div key={goal.id} style={{ marginBottom: '16px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--label-text)' }}>{goal.name}</span>
+                                        <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{Math.round((goal.currentAmount / goal.targetAmount) * 100)}%</span>
+                                    </div>
+                                    <div style={{ width: '100%', height: '8px', background: 'var(--surface-overlay)', borderRadius: '4px', overflow: 'hidden' }}>
+                                        <div style={{ width: `${(goal.currentAmount / goal.targetAmount) * 100}%`, height: '100%', background: goal.color }}></div>
+                                    </div>
+                                </div>
+                            ))}
                         </Card>
                     </WidgetContainer>
                 );
 
             case 'category-breakdown':
-                return (
+                return budget && (
                     <WidgetContainer key={id} id={id} isEditMode={isEditMode} onRemove={() => removeWidget(id)} title={widgetMeta.name}>
                         <Card style={{ padding: '16px', textAlign: 'left', marginBottom: 0 }}>
                             <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>Spending by Category</h4>
-                            {trends.slice(0, 3).map((trend, i: number) => (
+                            {budget.categoryBudgets.slice(0, 3).map((cb, i: number) => (
                                 <div key={i} style={{ marginBottom: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: 'var(--font-size-xs)' }}>
-                                        <span>{trend.categoryName}</span>
-                                        <span style={{ fontWeight: 600 }}>{formatCurrency(trend.spent, data.profile.currency)}</span>
+                                        <span>{cb.categoryName}</span>
+                                        <span style={{ fontWeight: 600 }}>{formatCurrency(cb.spent, user?.currency || 'INR')}</span>
                                     </div>
                                     <div style={{ width: '100%', height: '6px', background: 'var(--surface-overlay)', borderRadius: '3px', overflow: 'hidden' }}>
                                         <div style={{
-                                            width: `${Math.min((trend.spent / (data.monthlySummaries[0].expense || 1)) * 100, 100)}%`,
+                                            width: `${Math.min((cb.spent / (budget.totalBudget || 1)) * 100, 100)}%`,
                                             height: '100%',
                                             background: i === 0 ? 'var(--primary-color)' : i === 1 ? 'var(--warning-color)' : 'var(--danger-color)'
                                         }}></div>

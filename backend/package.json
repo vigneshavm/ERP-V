@@ -13,6 +13,7 @@
     "dev": "npm run dev:enterprise",
     "dev:enterprise": "npm run dev --workspace=@smarterp/enterprise-api",
     "dev:personal": "npm run dev --workspace=@smarterp/personal-api",
+    "dev:all": "npx concurrently \"npm run dev:enterprise\" \"npm run dev:personal\"",
     "build": "tsc",
     "start:ts": "tsx src/server.ts",
     "seed": "node scripts/seed.js",

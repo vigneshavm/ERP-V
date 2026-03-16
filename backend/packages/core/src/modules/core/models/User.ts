@@ -115,6 +115,14 @@ const userSchema = new Schema<IUser>(
             type: Date,
             default: null,
         },
+        totalWealth: {
+            type: Number,
+            default: 0,
+        },
+        currency: {
+            type: String,
+            default: "INR",
+        },
         personalFinanceSettings: {
             monthStartDay: {
                 type: Number,

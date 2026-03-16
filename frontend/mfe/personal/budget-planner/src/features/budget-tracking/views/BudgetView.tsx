@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { usePersonalFinance } from "@repo/shared";
+import { 
+    useTransactions, 
+    useBudget, 
+    useUser, 
+    useLanguage, 
+    formatCurrency, 
+    getPeriodRange, 
+    getNextPeriod, 
+    getPrevPeriod 
+} from "@repo/shared";
 import { AddTransactionModal } from '../components/AddTransactionModal';
 import { AnalyticsDashboard } from '../components/AnalyticsDashboard';
 import { 
@@ -12,11 +21,14 @@ import { AccountSummary } from '../components/AccountSummary';
 import { SubscriptionTracker } from '../components/SubscriptionTracker';
 
 export const BudgetView = () => {
-    const { 
-        transactions, categories, monthStartDay, fetchTransactions, 
-        fetchCategories, fetchAccounts, loading, updateMonthStartDay,
-        getPeriodRange, getNextPeriod, getPrevPeriod
-    } = usePersonalFinance();
+    const { t } = useLanguage();
+    const { transactions, loading: transactionsLoading, refresh: refreshTransactions } = useTransactions();
+    const { budget, loading: budgetLoading, refresh: refreshBudget } = useBudget();
+    const { user, updateSettings } = useUser();
+    
+    // monthStartDay usually comes from user settings in this app
+    const monthStartDay = user?.monthStartDay || 1;
+    const loading = transactionsLoading || budgetLoading;
     
     const [view, setView] = useState<'dashboard' | 'analytics'>('dashboard');
     const [searchQuery, setSearchQuery] = useState("");
@@ -27,17 +39,14 @@ export const BudgetView = () => {
     const period = getPeriodRange(currentDate, monthStartDay);
 
     useEffect(() => {
-        const startStr = period.start.toISOString().split('T')[0];
-        const endStr = period.end.toISOString().split('T')[0];
-        fetchTransactions(startStr, endStr);
-        fetchCategories();
-        fetchAccounts();
-    }, [fetchTransactions, fetchCategories, fetchAccounts, monthStartDay, currentDate]);
+        refreshTransactions();
+        refreshBudget();
+    }, [refreshTransactions, refreshBudget, monthStartDay, currentDate]);
 
     const filteredTransactions = transactions.filter(t => {
         const matchesSearch = t.description?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                             categories.find(c => c.id === t.category)?.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesType = filterType === 'all' || t.type === filterType;
+                             t.category?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesType = filterType === 'all' || (filterType === 'income' ? t.amount > 0 : t.amount < 0);
         return matchesSearch && matchesType;
     });
 
@@ -115,7 +124,7 @@ export const BudgetView = () => {
                                 value={monthStartDay}
                                 onChange={(e) => {
                                     const val = parseInt(e.target.value);
-                                    updateMonthStartDay(val);
+                                    updateSettings({ monthStartDay: val });
                                 }}
                                 className="bg-neutral-100 dark:bg-neutral-800 border-none rounded-lg text-sm px-3 py-2"
                             >
@@ -206,8 +215,7 @@ export const BudgetView = () => {
                         ) : (
                             <div className="grid gap-3">
                                 {filteredTransactions.map((tx) => {
-                                    const cat = categories.find(c => c.id === tx.category);
-                                    const isIncome = tx.type === 'income';
+                                    const isIncome = tx.amount > 0;
                                     
                                     return (
                                         <div 
@@ -216,17 +224,15 @@ export const BudgetView = () => {
                                         >
                                             <div 
                                                 className={`h-14 w-14 rounded-2xl flex items-center justify-center shadow-inner ${isIncome ? 'bg-green-50 text-green-600 dark:bg-green-950/30' : 'bg-red-50 text-red-600 dark:bg-red-950/30'}`}
-                                                style={{ border: `1px solid ${cat?.color}20` }}
                                             >
-                                                <span className="text-2xl">{(cat as any)?.emoji || '💰'}</span>
+                                                <span className="text-2xl">💰</span>
                                             </div>
                                             
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <h4 className="font-bold text-neutral-900 dark:text-neutral-100 truncate">{cat?.name || 'Uncategorized'}</h4>
-                                                    {tx.isRecurring && (
-                                                        <span className="px-1.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-[8px] font-black text-blue-600 uppercase tracking-tighter">Recurring</span>
-                                                    )}
+                                                    <h4 className="font-bold text-neutral-900 dark:text-neutral-100 truncate">
+                                                        {budget?.categoryBudgets.find(cb => cb.categoryId === tx.category)?.categoryName || tx.category || 'Uncategorized'}
+                                                    </h4>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-xs font-medium text-neutral-400">
                                                     <span>{new Date(tx.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
@@ -237,7 +243,7 @@ export const BudgetView = () => {
 
                                             <div className="text-right">
                                                 <p className={`text-lg font-black ${isIncome ? 'text-green-600' : 'text-neutral-900 dark:text-neutral-100'}`}>
-                                                    {isIncome ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                                                    {isIncome ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
                                                 </p>
                                                 <div className="flex items-center justify-end gap-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <MoreHorizontal className="h-3 w-3" /> Details
