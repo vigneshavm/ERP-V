@@ -252,7 +252,7 @@ export class AuthController {
     public login = async (req: Request, res: Response): Promise<void> => {
         try {
             // Import rate limiter handler
-            const { handleLoginAttempt } = await import('../../../middlewares/rateLimiter.js');
+            const { handleLoginAttempt } = await import('@smarterp/shared/middlewares/rateLimiter.js');
 
             const { email, password } = req.body;
 

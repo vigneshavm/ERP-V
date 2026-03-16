@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Target, Calendar, Users, Plus, Check, Search, Info } from 'lucide-react';
-import { Modal } from '../../components/ui/Modal';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Modal } from '@/shared/ui/Modal';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
 import { Goal, Participant } from '@repo/shared';
 import { addGoal } from './services/goalsApi';
-import { fetchContacts } from '../transactions/services/transactionsApi';
+import { fetchContacts } from '@/entities/transaction/transactionsApi';
 import { useLanguage } from '@repo/shared';
 
 interface AddGoalModalProps {

@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { ChevronLeft, FileText, Download, Calendar, Filter, TrendingUp, TrendingDown, DollarSign, X } from 'lucide-react';
 import { fetchReports } from './services/reportsApi';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
 import { useReportsFeature } from './hooks/useReportsFeature';
 
 interface DetailedReportsProps {

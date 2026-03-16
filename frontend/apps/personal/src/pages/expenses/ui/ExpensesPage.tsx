@@ -2,12 +2,12 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ExpensesView } from '@/features/expense-tracking/ui/ExpensesView';
-import { CategoryDetailsView } from '@/features/expense-tracking/ui/CategoryDetailsView';
+import ExpensesView from '@/features/expenses/views/ExpensesView';
+import CategoryDetailsView from '@/features/expense-tracking/ui';
 
 function ExpensesContent() {
     const searchParams = useSearchParams();
-    const view = searchParams.get('view');
+    const view = searchParams?.get('view');
 
     if (view === 'CategoryDetails') {
         return <CategoryDetailsView />;

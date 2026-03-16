@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { CreditCard, AlertCircle, CheckCircle2, ChevronRight, CalendarDays, ShieldCheck } from 'lucide-react';
 import { formatCurrency } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
 import { useCardsFeature } from './hooks/useCardsFeature';
 
 const NetworkBadge: React.FC<{ network: string }> = ({ network }) => {

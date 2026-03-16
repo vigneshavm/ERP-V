@@ -5,10 +5,10 @@ import { Landmark, UserCircle, Plus, ChevronRight, ChevronLeft, X, TrendingUp, T
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency, Loan } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Modal } from '../../components/ui/Modal';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Card } from '@/shared/ui/Card';
+import { Modal } from '@/shared/ui/Modal';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
 import { useLoansFeature } from './hooks/useLoansFeature';
 
 const iconMap: Record<string, any> = {

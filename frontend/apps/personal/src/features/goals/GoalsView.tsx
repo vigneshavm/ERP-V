@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { Target, TrendingUp, ChevronLeft, Plus, Rocket, Award, Zap, ChevronRight, Sparkles } from 'lucide-react';
 import { formatCurrency, Goal } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
 import AddGoalModal from './AddGoalModal';
 import { useGoalsFeature } from './hooks/useGoalsFeature';
 

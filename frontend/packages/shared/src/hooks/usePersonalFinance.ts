@@ -16,8 +16,8 @@ export const usePersonalFinance = () => {
         setLoading(true);
         try {
             const url = startDate && endDate 
-                ? `/expense/personal-transactions?startDate=${startDate}&endDate=${endDate}`
-                : '/expense/personal-transactions';
+                ? `/personal/expenses/transactions?startDate=${startDate}&endDate=${endDate}`
+                : '/personal/expenses/transactions';
             const data = await api.get<PersonalTransaction[]>(url);
             setTransactions(data);
             setError(null);
@@ -30,7 +30,7 @@ export const usePersonalFinance = () => {
 
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await api.get<{ categories: Category[] }>('/expense/expense-categories');
+            const response = await api.get<{ categories: Category[] }>('/personal/expense-categories');
             setCategories(response.categories);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch categories');
@@ -39,7 +39,7 @@ export const usePersonalFinance = () => {
 
     const fetchAccounts = useCallback(async () => {
         try {
-            const data = await api.get<BankAccount[]>('/finance/bank-accounts');
+            const data = await api.get<BankAccount[]>('/personal/finance/accounts'); // Harmonized to /accounts
             setAccounts(data);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch accounts');
@@ -48,7 +48,7 @@ export const usePersonalFinance = () => {
 
     const addTransaction = async (data: Partial<PersonalTransaction>) => {
         try {
-            await api.post('/expense/personal-transactions', data);
+            await api.post('/personal/expenses/transactions', data);
             await fetchTransactions();
             await fetchAccounts(); // Balance updated
         } catch (err: any) {
@@ -58,7 +58,7 @@ export const usePersonalFinance = () => {
 
     const updateTransaction = async (id: string, data: Partial<PersonalTransaction>) => {
         try {
-            await api.put(`/expense/personal-transactions/${id}`, data);
+            await api.put(`/personal/expenses/transactions/${id}`, data);
             await fetchTransactions();
             await fetchAccounts();
         } catch (err: any) {
@@ -68,7 +68,7 @@ export const usePersonalFinance = () => {
 
     const deleteTransaction = async (id: string) => {
         try {
-            await api.delete(`/expense/personal-transactions/${id}`);
+            await api.delete(`/personal/expenses/transactions/${id}`);
             await fetchTransactions();
             await fetchAccounts();
         } catch (err: any) {
@@ -78,7 +78,7 @@ export const usePersonalFinance = () => {
 
     const addCategory = async (data: Partial<Category>) => {
         try {
-            await api.post('/expense/expense-categories', data);
+            await api.post('/personal/expense-categories', data);
             await fetchCategories();
         } catch (err: any) {
             throw new Error(err.message || 'Failed to add category');
@@ -87,7 +87,7 @@ export const usePersonalFinance = () => {
 
     const updateMonthStartDay = async (day: number) => {
         try {
-            await api.post('/user/finance-settings', { monthStartDay: day });
+            await api.post('/personal/user/finance-settings', { monthStartDay: day });
             setMonthStartDay(day);
         } catch (err: any) {
             throw new Error(err.message || 'Failed to update settings');

@@ -3,7 +3,7 @@
 import { YearlyInsights } from '@/features/reports';
 import { useExpenseStore } from '@repo/shared';
 
-import { useNavigation } from '@/contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 
 export default function InsightsPage() {
     useNavigation();

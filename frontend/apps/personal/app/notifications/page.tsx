@@ -3,7 +3,7 @@
 import NotificationsView from '@/features/predictions-and-alerts/NotificationsView';
 import { useExpenseStore } from '@repo/shared';
 
-import { useNavigation } from '@/contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 
 export default function NotificationsPage() {
     const { refreshTrigger } = useExpenseStore();

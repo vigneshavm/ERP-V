@@ -107,31 +107,40 @@ const redisOptions = {
 };
 
 // Redis client with circuit breaker
-const redisClient: RedisClient = new Redis(redisOptions);
+// const redisClient: RedisClient = new Redis(redisOptions);
+const redisClient: any = {
+    on: () => {},
+    connect: async () => {},
+    get: async () => null,
+    setex: async () => {},
+    del: async () => {},
+    keys: async () => [],
+    quit: async () => {},
+};
 
 let isConnected = false;
 
-redisClient.on('connect', () => {
-    console.log('✅ Redis connected');
-    isConnected = true;
-    circuitBreaker.state = 'CLOSED';
-    circuitBreaker.failures = 0;
-});
+// redisClient.on('connect', () => {
+//     console.log('✅ Redis connected');
+//     isConnected = true;
+//     circuitBreaker.state = 'CLOSED';
+//     circuitBreaker.failures = 0;
+// });
 
-redisClient.on('error', (err: Error) => {
-    logError('Redis connection error:', { error: err.message });
-    isConnected = false;
-});
+// redisClient.on('error', (err: Error) => {
+//     logError('Redis connection error:', { error: err.message });
+//     isConnected = false;
+// });
 
-redisClient.on('close', () => {
-    console.log('📦 Redis connection closed');
-    isConnected = false;
-});
+// redisClient.on('close', () => {
+//     console.log('📦 Redis connection closed');
+//     isConnected = false;
+// });
 
-// Attempt connection
-redisClient.connect().catch((err: Error) => {
-    logError('Failed to connect to Redis:', { error: err.message });
-});
+// // Attempt connection
+// redisClient.connect().catch((err: Error) => {
+//     logError('Failed to connect to Redis:', { error: err.message });
+// });
 
 /**
  * Get cached value with circuit breaker

@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
     return [
       // API Proxy
       {
+        source: "/api/personal/:path*",
+        destination: "http://localhost:5001/api/personal/:path*",
+      },
+      {
         source: "/api/:path*",
         destination: "http://localhost:5000/api/:path*",
       },
@@ -29,6 +33,24 @@ const nextConfig: NextConfig = {
       {
         source: "/personal/:path*",
         destination: "http://localhost:3002/personal/:path*",
+      },
+
+      // Online Store MFE Assets & Pages
+      {
+        source: "/business/store/_next/:path*",
+        destination: "http://localhost:3005/business/store/_next/:path*",
+      },
+      {
+        source: "/business/store/assets/:path*",
+        destination: "http://localhost:3005/business/store/assets/:path*",
+      },
+      {
+        source: "/business/store",
+        destination: "http://localhost:3005/business/store",
+      },
+      {
+        source: "/business/store/:path*",
+        destination: "http://localhost:3005/business/store/:path*",
       },
 
       // Business MFE Assets & Pages

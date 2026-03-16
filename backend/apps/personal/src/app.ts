@@ -17,9 +17,11 @@ import requestTimeout from "@smarterp/shared/middlewares/timeout.js";
 import errorHandler from "@smarterp/shared/middlewares/errorHandler.js";
 import tenantResolver from "@smarterp/shared/middlewares/tenantResolver.js";
 import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from '@smarterp/shared/config/swagger.js';
+import { getSwaggerSpec } from '@smarterp/shared/config/swagger.js';
 
+// Load environment variables from current directory or root
 dotenv.config();
+dotenv.config({ path: "../../.env" });
 
 const app: Express = express();
 
@@ -99,6 +101,11 @@ app.use(tenantResolver);
 // =======================
 // Swagger Documentation
 // =======================
+const swaggerSpec = getSwaggerSpec({
+    title: 'SmartERPAI Personal API',
+    port: process.env.PERSONAL_PORT || 5001,
+    modules: ['core', 'expense', 'sms-tracker']
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Root Route
@@ -112,30 +119,34 @@ app.get("/", (_req, res) => {
 
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
-app.use("/api", coreRoutes);
+app.use("/api/personal/core", coreRoutes);
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
-app.use("/api/roles", roleRoutes);
+app.use("/api/personal/roles", roleRoutes);
 
 import syncRoutes from "@smarterp/core/modules/core/routes/syncRoutes.js";
-app.use("/api/sync", syncRoutes);
+app.use("/api/personal/sync", syncRoutes);
 
 import feedbackRoutes from "@smarterp/core/modules/core/routes/feedbackRoutes.js";
-app.use("/api/feedback", feedbackRoutes);
+app.use("/api/personal/feedback", feedbackRoutes);
 
 import notificationRoutes from "@smarterp/core/modules/core/routes/notificationRoutes.js";
-app.use("/api/notifications", notificationRoutes);
+app.use("/api/personal/notifications", notificationRoutes);
 
 import auditLogRoutes from "@smarterp/core/modules/core/routes/auditLogRoutes.js";
-app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/personal/audit-logs", auditLogRoutes);
 
 // EXPENSE Module
 import expenseModuleRoutes from '@smarterp/core/modules/expense/routes/expense.routes.js';
-app.use("/api", expenseModuleRoutes);
+app.use("/api/personal/expenses", expenseModuleRoutes);
 
 // SMS Tracker Module
 import smsTrackerRoutes from '@smarterp/core/modules/sms-tracker/routes/sms-tracker.routes.js';
-app.use("/api/sms-tracker", smsTrackerRoutes);
+app.use("/api/personal/sms-tracker", smsTrackerRoutes);
+
+// FINANCE Module
+import financeRoutes from '@smarterp/core/modules/finance/routes/finance.routes.js';
+app.use("/api/personal/finance", financeRoutes);
 
 
 // =======================

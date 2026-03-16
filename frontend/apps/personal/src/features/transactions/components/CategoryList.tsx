@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Car, Smartphone, Zap, MoreHorizontal, UserCircle, Coffee, ChevronRight, Heart, Utensils, X } from 'lucide-react';
 import { useLanguage } from '@repo/shared';
-import { fetchCategories, fetchTransactionsByCategory } from '../../expenses/services/expensesApi';
+import { fetchCategories, fetchTransactionsByCategory } from '@/entities/expense/api';
 import { formatCurrency, Category, Transaction } from '@repo/shared';
 import { Card } from '@/shared/ui/Card';
 

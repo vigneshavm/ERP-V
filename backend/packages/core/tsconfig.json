@@ -1,8 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    "rootDir": "../../",
+    "outDir": "dist",
+    "baseUrl": "../../",
+    "paths": {
+      "@smarterp/shared/*": ["packages/shared/src/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../shared/src/**/*"],
+  "references": [
+    { "path": "../shared" }
+  ]
 }

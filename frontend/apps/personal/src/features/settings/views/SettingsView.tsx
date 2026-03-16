@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Bell, Shield, Database, Heart, Share2, HelpCircle, ChevronRight, LogOut, Moon, Globe, DollarSign, LayoutGrid, Cloud, Fingerprint, X, Lock } from 'lucide-react';
 
 import { View } from '@/shared/contexts/NavigationContext';
-import { fetchCategories } from '../../expenses/services/expensesApi';
+import { fetchCategories } from '@/entities/expense/api';
 import { useLanguage } from '@repo/shared';
 import { useSettings } from '@/shared/contexts/SettingsContext';
 import { Card } from '@/shared/ui/Card';

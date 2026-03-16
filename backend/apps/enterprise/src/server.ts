@@ -53,21 +53,25 @@ cron.schedule('0 9 * * *', async () => {
     await PaymentReminderService.checkAll();
 });
 
-const server = http.createServer(app);
+let server = http.createServer(app);
 
 const startServer = (port: number | string) => {
-    const serverInstance = server.listen(port, () => {
+    server.listen(port, () => {
         logger.info(`🚀 Enterprise API running on port ${port}`);
     });
 
-    serverInstance.on('error', (error: any) => {
+    server.on('error', (error: any) => {
         if (error.syscall !== 'listen') {
             throw error;
         }
 
         if (error.code === 'EADDRINUSE') {
             logger.warn(`⚠️  Port ${port} is already in use. Trying next available port...`);
-            startServer(Number(port) + 1);
+            server.close(() => {
+                // Create a NEW server instance to ensure clean state
+                server = http.createServer(app);
+                startServer(Number(port) + 1);
+            });
         } else if (error.code === 'EACCES') {
             logger.error(`❌ Port ${port} requires elevated privileges`);
             process.exit(1);
@@ -76,7 +80,7 @@ const startServer = (port: number | string) => {
         }
     });
 
-    return serverInstance;
+    return server;
 };
 
 startServer(PORT);

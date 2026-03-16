@@ -2,7 +2,7 @@
 
 import CreditCardView from '@/features/cards-and-loans/CreditCardView';
 import DebitCardView from '@/features/cards-and-loans/DebitCardView';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/Tabs';
 
 export default function CardsPage() {
   return (

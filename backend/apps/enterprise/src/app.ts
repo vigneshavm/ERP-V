@@ -17,9 +17,11 @@ import requestTimeout from "@smarterp/shared/middlewares/timeout.js";
 import errorHandler from "@smarterp/shared/middlewares/errorHandler.js";
 import tenantResolver from "@smarterp/shared/middlewares/tenantResolver.js";
 import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from '@smarterp/shared/config/swagger.js';
+import { getSwaggerSpec } from '@smarterp/shared/config/swagger.js';
 
+// Load environment variables from current directory or root
 dotenv.config();
+dotenv.config({ path: "../../.env" });
 
 const app: Express = express();
 
@@ -99,6 +101,11 @@ app.use(tenantResolver);
 // =======================
 // Swagger Documentation
 // =======================
+const swaggerSpec = getSwaggerSpec({
+    title: 'SmartERPAI Enterprise API',
+    port: process.env.PORT || 5000,
+    modules: ['core', 'crm', 'finance', 'hr', 'inventory', 'marketing', 'purchase', 'sales', 'agents']
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Root Route

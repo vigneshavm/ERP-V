@@ -18,7 +18,7 @@ const App: React.FC = () => {
     if (type === 'personal') {
       window.location.href = 'http://localhost:3000/personal/home';
     } else if (type === 'business') {
-      router.push('/business');
+      router.push('/business/store');
     } else {
       router.push('/enterprise');
     }

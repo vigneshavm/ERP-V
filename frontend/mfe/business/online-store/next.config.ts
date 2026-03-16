@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath: "/business",
+  basePath: "/business/store",
   transpilePackages: [
     "@repo/shared",
     "@repo/ui",

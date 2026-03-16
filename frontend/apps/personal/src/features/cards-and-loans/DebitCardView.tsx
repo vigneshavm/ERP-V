@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Wallet, ArrowUpRight, ArrowDownRight, ChevronRight, Lock, Smartphone } from 'lucide-react';
 import { formatCurrency } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
+import { Card } from '@/shared/ui/Card';
 import { useCardsFeature } from './hooks/useCardsFeature';
 
 const NetworkBadge: React.FC<{ network: string }> = ({ network }) => (

@@ -11,6 +11,6 @@ router.use('/expenses', expenseRoutes);
 router.use('/expense-categories', expenseCategoryRoutes);
 router.use('/recurring-expenses', recurringExpenseRoutes);
 router.use('/expense-reports', expenseReportRoutes);
-router.use('/personal-transactions', personalTransactionRoutes);
+router.use('/transactions', personalTransactionRoutes);
 
 export default router;

@@ -1,5 +1,5 @@
 import { singleton } from "tsyringe";
-import { BaseRepository } from "../../../../shared/src/repositories/BaseRepository.js";
+import { BaseRepository } from "@smarterp/shared/repositories/BaseRepository.js";
 import BankAccount, { IBankAccount } from "../models/BankAccount.js";
 import { ClientSession, ObjectId } from "mongodb";
 import crypto from "crypto";

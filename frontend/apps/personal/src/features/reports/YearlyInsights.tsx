@@ -5,8 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChevronRight, ChevronLeft, FileText, Download, CheckCircle2, TrendingUp, Info } from 'lucide-react';
 import { formatCurrency, CalendarTransaction } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
 import { useReportsFeature } from './hooks/useReportsFeature';
 
 interface YearlyInsightsProps {

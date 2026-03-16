@@ -1,7 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import { CashBankRepository } from '../repositories/CashBankRepository.js';
 import { AppError } from '@smarterp/shared/utils/AppError.js';
-import { IBankAccount } from '@smarterp/shared/interfaces/IBankAccount.js';
+import type { IBankAccount } from '@smarterp/shared/interfaces/IBankAccount.js';
 import { ICashbankTransaction } from '@smarterp/shared/interfaces/ICashbankTransaction.js';
 import { ICheque } from '@smarterp/shared/interfaces/ICheque.js';
 import { info } from '@smarterp/shared/config/logger.js';
