@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import { IBankAccount } from '@smarterp/shared/interfaces/IBankAccount.js';
 
+export { IBankAccount };
+
 const bankAccountSchema = new Schema<IBankAccount>(
     {
         bankName: {

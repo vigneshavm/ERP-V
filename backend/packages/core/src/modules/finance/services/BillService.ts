@@ -1,5 +1,5 @@
 import { injectable, inject } from "tsyringe";
-import { BillRepository } from '@smarterp/shared/repositories/BillRepository.js';
+import { BillRepository } from '../repositories/BillRepository.js';
 import { AppError } from '@smarterp/shared/utils/AppError.js';
 import { info } from '@smarterp/shared/config/logger.js';
 import { ObjectId } from "mongodb";
@@ -77,7 +77,7 @@ export class BillService {
             status: paymentStatus === 'paid' ? 'paid' : (_status || 'unpaid'),
             description, paymentMethod, paidAmount,
             bankAccount: (bankAccount && ObjectId.isValid(bankAccount)) ? bankAccount : undefined,
-            paymentStatus, createdBy: userId
+            paymentStatus, createdBy: userId as any
         });
 
         // Handle bank payment side effects

@@ -1,8 +1,9 @@
 import { injectable, inject } from "tsyringe";
-import { CashBankRepository } from '@smarterp/shared/repositories/CashBankRepository.js';
+import { CashBankRepository } from '../repositories/CashBankRepository.js';
 import { AppError } from '@smarterp/shared/utils/AppError.js';
-// import { IBankAccount } from '@smarterp/shared/interfaces/IBankAccount.js';
+import { IBankAccount } from '@smarterp/shared/interfaces/IBankAccount.js';
 import { ICashbankTransaction } from '@smarterp/shared/interfaces/ICashbankTransaction.js';
+import { ICheque } from '@smarterp/shared/interfaces/ICheque.js';
 import { info } from '@smarterp/shared/config/logger.js';
 import { ObjectId } from "mongodb";
 import { invalidateUserCache } from '@smarterp/shared/config/cache.js';
@@ -19,7 +20,7 @@ export class CashBankService {
     }
 
     // Account Logic
-    async getAccounts(userId: string): Promise<any[]> {
+    async getAccounts(userId: string): Promise<IBankAccount[]> {
         const accounts = await this.cashBankRepository.getAccounts(userId);
         return accounts.map(acc => ({
             ...acc,
@@ -27,7 +28,7 @@ export class CashBankService {
         }));
     }
 
-    async createAccount(data: any, userId: string, userName: string): Promise<any> {
+    async createAccount(data: any, userId: string, userName: string): Promise<IBankAccount> {
         const { bankName, accountNumber, accountType, branch, ifsc, openingBalance } = data;
 
         if (!bankName || !accountNumber || !ifsc) {
@@ -172,17 +173,9 @@ export class CashBankService {
     // Ledger & Reports
     async getLedger(accountId: string, userId: string, queryParams: any): Promise<any> {
         const { startDate, endDate, reconciled } = queryParams;
-        const query: any = {
-            userId,
-            $or: [{ fromAccount: accountId }, { toAccount: accountId }]
-        };
-
-        if (startDate || endDate) {
-            query.date = {};
-            if (startDate) query.date.$gte = new Date(startDate);
-            if (endDate) query.date.$lte = new Date(endDate);
-        }
-        if (reconciled !== undefined) query.reconciled = reconciled === 'true';
+        const start = startDate ? new Date(startDate) : undefined;
+        const end = endDate ? new Date(endDate) : undefined;
+        const isReconciled = reconciled !== undefined ? reconciled === 'true' : undefined;
 
         // Account Details (or Cash)
         let account: any;
@@ -190,7 +183,7 @@ export class CashBankService {
             const balance = await this.cashBankRepository.getCashBalance(userId);
             account = {
                 _id: 'cash', bankName: 'Cash in Hand', accountNumber: 'CASH-ACCOUNT',
-                openingBalance: 0, currentBalance: balance, getDecryptedAccountNumber: () => 'CASH-ACCOUNT'
+                openingBalance: 0, currentBalance: balance
             };
         } else {
             const acc = await this.cashBankRepository.findAccountById(accountId, userId);
@@ -203,20 +196,11 @@ export class CashBankService {
 
         // Period Opening Balance Calculation
         let periodOpeningBalance = account.openingBalance || 0;
-        if (startDate) {
-            const priorTxns = await this.cashBankRepository.queryTransactions({
-                userId,
-                date: { $lt: new Date(startDate) },
-                $or: [{ fromAccount: accountId }, { toAccount: accountId }]
-            }, {}); // No sort needed for sum
-
-            priorTxns.forEach(t => {
-                const isMoneyIn = t.toAccount.toString() === accountId;
-                periodOpeningBalance += isMoneyIn ? t.amount : -t.amount;
-            });
+        if (start) {
+            periodOpeningBalance += await this.cashBankRepository.getPriorTransactionsSum(accountId, userId, start);
         }
 
-        const transactions = await this.cashBankRepository.queryTransactions(query);
+        const transactions = await this.cashBankRepository.getLedgerTransactions(accountId, userId, start, end, isReconciled);
         let runningBalance = periodOpeningBalance;
 
         const ledger = transactions.map(txn => {
@@ -224,7 +208,7 @@ export class CashBankService {
             const amount = isCredit ? txn.amount : -txn.amount;
             runningBalance += amount;
             return {
-                ...txn, // already lean
+                ...txn,
                 debit: !isCredit ? txn.amount : 0,
                 credit: isCredit ? txn.amount : 0,
                 runningBalance,
@@ -287,7 +271,7 @@ export class CashBankService {
         };
     }
 
-    async getBankSummary(userId: string): Promise<any> {
+    async getBankSummary(userId: string): Promise<{ accounts: IBankAccount[], totalBalance: number, accountCount: number }> {
         const accounts = await this.cashBankRepository.getAccounts(userId);
         const totalBalance = accounts.reduce((sum, acc) => sum + (acc.currentBalance || 0), 0);
         const accountCount = accounts.length;
@@ -304,12 +288,7 @@ export class CashBankService {
         const account = await this.cashBankRepository.findAccountById(accountId, userId);
         if (!account) throw new AppError('Account not found', 404);
 
-        const allPendingIssued = await this.cashBankRepository.queryCheques({
-            accountId,
-            type: 'ISSUED',
-            status: 'PENDING',
-            userId
-        });
+        const allPendingIssued = await this.cashBankRepository.getPendingIssuedCheques(accountId, userId);
 
         const totalPDCValue = allPendingIssued.reduce((sum, c) => sum + c.amount, 0);
         const effectiveBalance = account.currentBalance - totalPDCValue;
@@ -342,13 +321,7 @@ export class CashBankService {
             if (!account) throw new AppError('Account not found', 404);
 
             const targetDate = new Date(date);
-            const pendingIssuedCheques = await this.cashBankRepository.queryCheques({
-                accountId,
-                type: 'ISSUED',
-                status: 'PENDING',
-                date: { $lte: targetDate },
-                userId
-            });
+            const pendingIssuedCheques = await this.cashBankRepository.getPendingIssuedCheques(accountId, userId, targetDate);
 
             const totalPDCValue = pendingIssuedCheques.reduce((sum, c) => sum + c.amount, 0);
             const effectiveBalance = account.currentBalance - totalPDCValue;
@@ -411,13 +384,7 @@ export class CashBankService {
         const account = await this.cashBankRepository.findAccountById(id, userId);
         if (!account) throw new AppError('Account not found', 404);
 
-        const pendingIssuedCheques = await this.cashBankRepository.queryCheques({
-            accountId: id,
-            type: 'ISSUED',
-            status: 'PENDING',
-            date: { $lte: targetDate },
-            userId
-        });
+        const pendingIssuedCheques = await this.cashBankRepository.getPendingIssuedCheques(id, userId, targetDate);
 
         const totalPDCForDate = pendingIssuedCheques.reduce((sum, c) => sum + c.amount, 0);
         const effectiveBalance = account.currentBalance - totalPDCForDate;
@@ -443,27 +410,13 @@ export class CashBankService {
         const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
         const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
 
-        const cashInTransactions = await this.cashBankRepository.queryTransactions({
-            type: 'in',
-            toAccount: 'cash',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId
-        });
+        const cashInTransactions = await this.cashBankRepository.getDailyCashTransactions(userId, startOfDay, endOfDay, 'in');
         const cashSales = cashInTransactions.reduce((sum, t) => sum + t.amount, 0);
 
-        const cashOutTransactions = await this.cashBankRepository.queryTransactions({
-            type: 'out',
-            fromAccount: 'cash',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId
-        });
+        const cashOutTransactions = await this.cashBankRepository.getDailyCashTransactions(userId, startOfDay, endOfDay, 'out');
         const cashExpenses = cashOutTransactions.reduce((sum, t) => sum + t.amount, 0);
 
-        const pendingCheques = await this.cashBankRepository.queryCheques({
-            status: 'PENDING',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId
-        });
+        const pendingCheques = await this.cashBankRepository.getDailyCheques(userId, startOfDay, endOfDay, 'PENDING');
 
         return {
             openingCash: 0,
@@ -481,7 +434,7 @@ export class CashBankService {
         await this.invalidateFinanceCache(_userId);
     }
 
-    async getAllTransactions(userId: string): Promise<any[]> {
+    async getAllTransactions(userId: string): Promise<ICashbankTransaction[]> {
         return this.cashBankRepository.queryTransactions({ userId }, { date: -1 });
     }
 }
