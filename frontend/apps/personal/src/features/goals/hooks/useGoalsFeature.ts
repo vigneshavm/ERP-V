@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchGoals, addGoal, updateGoalProgress } from '../services/goalsApi';
+import { fetchGoals, addGoal, updateGoalProgress } from '@/features/goals/services/goalsApi';
 import { useExpenseStore } from '@repo/shared';
 
 

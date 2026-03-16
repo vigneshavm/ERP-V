@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Camera, Check, X, User, ChevronLeft } from 'lucide-react';
-import { useSettings } from '../../../contexts/SettingsContext';
+import { useSettings } from '@/shared/contexts/SettingsContext';
 
 const EditProfile: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { userProfile, setUserProfile, accentColor } = useSettings();

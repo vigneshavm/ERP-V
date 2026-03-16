@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Undo, Redo, X } from 'lucide-react';
-import { undo, redo } from '../../services/api';
+import { undo, redo } from '@repo/shared';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface UndoRedoControlsProps {

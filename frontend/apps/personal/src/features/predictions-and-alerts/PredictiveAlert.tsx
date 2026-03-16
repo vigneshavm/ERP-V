@@ -3,10 +3,10 @@
 import React from 'react';
 import { TrendingUp, AlertCircle, ArrowUpRight, ChevronRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '../../components/ui/Card';
+import { Card } from '@/shared/ui/Card';
 import { useLanguage } from '@repo/shared';
 import { formatCurrency } from '@repo/shared';
-import { ForecastResult, CategoryTrend } from '../../utils/predictionEngine';
+import { ForecastResult, CategoryTrend } from '@/shared/lib/utils/predictionEngine';
 
 interface PredictiveAlertProps {
     forecast: ForecastResult;

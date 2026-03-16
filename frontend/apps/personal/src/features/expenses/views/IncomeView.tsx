@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '@/shared/ui/Card';
 import { formatCurrency, DashboardData, Category } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';

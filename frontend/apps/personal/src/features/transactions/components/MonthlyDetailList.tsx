@@ -4,13 +4,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Utensils, Zap, Car, ShoppingBag, Coffee, CreditCard, ArrowUpRight, ArrowDownRight, Search, DollarSign, Heart, Film, Receipt, ArrowDownUp, ShieldAlert, Check, Trash2, Tag, ChevronDown } from 'lucide-react';
 import { formatCurrency, CalendarTransaction } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import { UndoRedoControls } from '../../../components/ui/UndoRedoControls';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { UndoRedoControls } from '@/shared/ui/UndoRedoControls';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTransactionsFeature } from '../hooks/useTransactionsFeature';
-import { useExpensesFeature } from '../../expenses/hooks/useExpensesFeature';
+import { useTransactionsFeature } from '@/features/transaction-management/model';
+import { useExpensesFeature } from '@/features/expenses/hooks/useExpensesFeature';
 
 const ICON_MAP: Record<string, any> = {
     Utensils, Zap, Car, ShoppingBag, Coffee, CreditCard, Heart, Film, Receipt

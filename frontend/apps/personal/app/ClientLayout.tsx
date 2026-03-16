@@ -5,7 +5,7 @@ import Sidebar from '@/widgets/layout/Sidebar';
 import Header from '@/widgets/layout/Header';
 import BottomNav from '@/widgets/layout/BottomNav';
 import { useAuthStore } from '@repo/shared';
-import { useNavigation } from '../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 
 // Settings Overlays
 import LanguageSettings from '@/features/settings/components/LanguageSettings';

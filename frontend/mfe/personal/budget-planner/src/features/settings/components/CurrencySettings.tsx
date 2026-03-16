@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Check, Search, X, DollarSign, ArrowRightLeft, ChevronLeft } from 'lucide-react';
 import { useLanguage } from '@repo/shared';
-import { useSettings } from '../../../contexts/SettingsContext';
+import { useSettings } from '@/shared/contexts/SettingsContext';
 
 const currencies = [
     { code: 'INR', name: 'Indian Rupee', symbol: '₹', rate: 1, flag: '🇮🇳' },

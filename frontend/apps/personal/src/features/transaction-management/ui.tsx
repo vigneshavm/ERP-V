@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { Landmark, Wallet, CreditCard, Plus, ArrowRightLeft, MoreVertical, X } from 'lucide-react';
 import { formatCurrency } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import { useTransactionsFeature } from '../hooks/useTransactionsFeature';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { useTransactionsFeature } from './model';
 
 interface BankAccountsProps {
     refreshTrigger?: number;

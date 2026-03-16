@@ -2,8 +2,8 @@
 
 import React, { useMemo } from 'react';
 import { useLanguage, formatCurrency } from '@repo/shared';
-import { useNavigation } from '../../../contexts/NavigationContext';
-import { useTransactionsFeature } from '../../transactions/hooks/useTransactionsFeature';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
+import { useTransactionsFeature } from '@/features/transaction-management/model';
 import { ArrowLeft, Tag } from 'lucide-react';
 
 const CategoryDetailsView: React.FC = () => {

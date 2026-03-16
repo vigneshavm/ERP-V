@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchReports, fetchStatsData, fetchYearlyInsights } from '../services/reportsApi';
+import { fetchReports, fetchStatsData, fetchYearlyInsights } from '@/features/reports/services/reportsApi';
 import { useExpenseStore } from '@repo/shared';
 
 import { StatsData } from '@repo/shared';

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchAllTransactions, fetchAccounts, createAccount, bulkUpdateTransactions, bulkDeleteTransactions, disputeTransaction } from '../services/transactionsApi';
+import { fetchAllTransactions, fetchAccounts, createAccount, bulkUpdateTransactions, bulkDeleteTransactions, disputeTransaction } from '@/entities/transaction/transactionsApi';
 import { CalendarTransaction } from '@repo/shared';
 import { useExpenseStore } from '@repo/shared';
 

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import StatsAnalytics from './StatsAnalytics';
-import { useNavigation } from '../../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 import { useLanguage } from '@repo/shared';
-import { Button } from '../../components/ui/Button';
+import { Button } from '@/shared/ui/Button';
 
 interface AnalyticsViewProps {
     refreshTrigger?: number;

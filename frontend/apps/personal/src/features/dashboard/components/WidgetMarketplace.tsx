@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Plus, Check, ShoppingBag } from 'lucide-react';
-import { WIDGET_REGISTRY, Widget } from '../../../services/WidgetRegistry';
-import { Card } from '../../../components/ui/Card';
+import { WIDGET_REGISTRY, Widget } from '@/shared/api/WidgetRegistry';
+import { Card } from '@/shared/ui/Card';
 
 interface WidgetMarketplaceProps {
     isOpen: boolean;

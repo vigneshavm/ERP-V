@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider, LanguageProvider } from "@repo/shared";
-import { SettingsProvider } from "../contexts/SettingsContext";
-import { NavigationProvider } from "../contexts/NavigationContext";
+import { SettingsProvider } from "@/shared/contexts/SettingsContext";
+import { NavigationProvider } from "@/shared/contexts/NavigationContext";
 import ClientLayout from "./ClientLayout";
 
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { Search, Bell, LayoutGrid, Sun, Moon, Mic, Camera } from 'lucide-react';
 import { useNavigation } from '../contexts/NavigationContext';
 import { useLanguage } from '@repo/shared';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettings } from '@/shared/contexts/SettingsContext';
 
 const Header: React.FC = () => {
     const { t } = useLanguage();

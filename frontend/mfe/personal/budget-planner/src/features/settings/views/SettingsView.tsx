@@ -6,7 +6,7 @@ import { User, Bell, Shield, Database, Heart, Share2, HelpCircle, ChevronRight, 
 import { View } from '../../../contexts/NavigationContext';
 import { fetchCategories } from '../../expenses/services/expensesApi';
 import { useLanguage } from '@repo/shared';
-import { useSettings } from '../../../contexts/SettingsContext';
+import { useSettings } from '@/shared/contexts/SettingsContext';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { SecurityPinMode } from '../../auth';

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchNotifications } from '../services/notificationsApi';
+import { fetchNotifications } from '@/features/predictions-and-alerts/services/notificationsApi';
 import { useExpenseStore } from '@repo/shared';
 
 

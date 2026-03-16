@@ -21,7 +21,18 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "../../apps/personal/src/*",
+        "../../apps/business/src/*",
+        "../../apps/enterprise/src/*"
+      ],
+      "personal/*": ["../../apps/personal/src/app/*"],
+      "business/*": ["../../apps/business/src/app/*"],
+      "enterprise/*": ["../../apps/enterprise/src/app/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

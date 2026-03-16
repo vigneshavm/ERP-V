@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LayoutGrid, Receipt, Plus, Wallet, PieChart, Settings, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useNavigation } from '../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 import { useLanguage } from '@repo/shared';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

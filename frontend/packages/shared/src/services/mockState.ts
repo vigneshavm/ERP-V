@@ -61,6 +61,21 @@ export const updateSMSMessages = (updater: (messages: SMSMessage[]) => SMSMessag
     smsMockMessages = updater(smsMockMessages);
 };
 
+
+export const undo = async (): Promise<void> => {
+    if (undoStack.length === 0) return;
+    redoStack.push(JSON.stringify(appData));
+    setAppData(JSON.parse(undoStack.pop()!));
+    await delay(100);
+};
+
+export const redo = async (): Promise<void> => {
+    if (redoStack.length === 0) return;
+    undoStack.push(JSON.stringify(appData));
+    setAppData(JSON.parse(redoStack.pop()!));
+    await delay(100);
+};
+
 // Ensure budget has history for MFE
 if (appData.budget && !appData.budget.history) {
     appData.budget.history = mockExpenseHistory;

@@ -9,15 +9,15 @@ import { Card } from '@repo/ui';
 
 import PredictiveAlert from '@/features/predictions-and-alerts/PredictiveAlert';
 import { calculateMonthlyForecast, analyzeCategoryTrends, ForecastResult, CategoryTrend } from '@/shared/lib/utils/predictionEngine';
-import { useNavigation } from '../contexts/NavigationContext'; // Contexts remain in app for now or moved to app/providers
+import { useNavigation } from '@/shared/contexts/NavigationContext'; // Contexts moved to src/shared/contexts
 import { useDashboardConfig } from '@/shared/lib/hooks/useDashboardConfig';
 import Link from 'next/link';
 import { WidgetContainer } from '@/shared/ui/WidgetContainer';
 import WidgetMarketplace from '../components/WidgetMarketplace';
 import { WIDGET_REGISTRY } from '@/shared/api/WidgetRegistry';
 
-import { useDashboardFeature } from '../hooks/useDashboardFeature';
-import { useTransactionsFeature } from '@/features/transactions/hooks/useTransactionsFeature';
+import { useDashboardFeature } from '@/features/dashboard/hooks/useDashboardFeature';
+import { useTransactionsFeature } from '@/features/transaction-management/model';
 import { useExpensesFeature } from '@/features/expenses/hooks/useExpensesFeature';
 
 const DashboardView: React.FC = () => {

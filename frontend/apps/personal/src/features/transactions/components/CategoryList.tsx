@@ -5,7 +5,7 @@ import { Car, Smartphone, Zap, MoreHorizontal, UserCircle, Coffee, ChevronRight,
 import { useLanguage } from '@repo/shared';
 import { fetchCategories, fetchTransactionsByCategory } from '../../expenses/services/expensesApi';
 import { formatCurrency, Category, Transaction } from '@repo/shared';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '@/shared/ui/Card';
 
 const iconMap: Record<string, React.ElementType> = {
     Car: Car,
@@ -18,7 +18,7 @@ const iconMap: Record<string, React.ElementType> = {
     Utensils: Utensils
 };
 
-import { useNavigation } from '../../../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 
 interface CategoryListProps {
     refreshTrigger?: number;

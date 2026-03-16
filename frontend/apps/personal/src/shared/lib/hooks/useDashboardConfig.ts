@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDefaultWidgetIds } from '../services/WidgetRegistry';
+import { getDefaultWidgetIds } from '@/shared/api/WidgetRegistry';
 
 const STORAGE_KEY = 'dashboard_widget_config';
 

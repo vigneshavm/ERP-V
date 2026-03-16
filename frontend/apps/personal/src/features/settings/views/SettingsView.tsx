@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { User, Bell, Shield, Database, Heart, Share2, HelpCircle, ChevronRight, LogOut, Moon, Globe, DollarSign, LayoutGrid, Cloud, Fingerprint, X, Lock } from 'lucide-react';
 
-import { View } from '../../../contexts/NavigationContext';
+import { View } from '@/shared/contexts/NavigationContext';
 import { fetchCategories } from '../../expenses/services/expensesApi';
 import { useLanguage } from '@repo/shared';
-import { useSettings } from '../../../contexts/SettingsContext';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+import { useSettings } from '@/shared/contexts/SettingsContext';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
 import { SecurityPinMode } from '../../auth';
 
-import { useNavigation } from '../../../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 import { useAuthStore } from '@repo/shared';
 
 interface SettingsViewProps {

@@ -1,4 +1,4 @@
-import { CalendarTransaction } from '../services/api';
+import { CalendarTransaction } from '@repo/shared';
 
 export interface ForecastResult {
     currentSpent: number;

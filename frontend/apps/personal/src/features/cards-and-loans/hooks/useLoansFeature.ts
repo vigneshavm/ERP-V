@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchLoans, createLoan, updateLoan, deleteLoan, recordLoanPayment } from '../services/loansApi';
+import { fetchLoans, createLoan, updateLoan, deleteLoan, recordLoanPayment } from '@/features/cards-and-loans/services/loansApi';
 import { useExpenseStore } from '@repo/shared';
 
 import { Loan } from '@repo/shared';

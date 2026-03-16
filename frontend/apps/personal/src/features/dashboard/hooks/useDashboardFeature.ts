@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchDashboardData } from '../services/dashboardApi';
+import { fetchDashboardData } from '@/features/dashboard/services/dashboardApi';
 import { DashboardData } from '@repo/shared';
 import { useExpenseStore } from '@repo/shared';
 

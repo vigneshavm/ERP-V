@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Check, Search, X, Languages, ChevronLeft } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '@/shared/ui/Button';
 import { useLanguage } from '@repo/shared';
 
 const LanguageSettings: React.FC<{ onClose: () => void }> = ({ onClose }) => {

@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
     "@repo/ui",
     "@repo/shared",
     "@repo/mfe-auth",
-    "@repo/b2b-services"
+    "@repo/b2b-services",
+    "personal",
+    "business",
+    "enterprise-manager"
   ],
   eslint: {
     ignoreDuringBuilds: true,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Moon, Sun, Check, Palette, X, ChevronLeft, Zap, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@repo/shared';
-import { useSettings } from '../../../contexts/SettingsContext';
+import { useSettings } from '@/shared/contexts/SettingsContext';
 
 interface AppearanceSettingsProps {
     onClose?: () => void;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchExpensesHistory, submitExpenseTransaction, fetchCategories } from '../services/expensesApi';
+import { fetchExpensesHistory, submitExpenseTransaction, fetchCategories } from '@/entities/expense/api';
 import { ExpenseHistory, Category } from '@repo/shared';
 
 

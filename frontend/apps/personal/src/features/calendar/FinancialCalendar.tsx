@@ -7,9 +7,9 @@ import {
 } from 'lucide-react';
 import { formatCurrency, CalendarTransaction } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { useTransactionsFeature } from '../transactions/hooks/useTransactionsFeature';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
+import { useTransactionsFeature } from '@/features/transaction-management/model';
 
 // Map icon name strings (stored in data.json) → React icon elements
 const ICON_MAP: Record<string, React.ReactNode> = {

@@ -8,12 +8,12 @@ import {
 import { AlertCircle, CheckCircle2, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { formatCurrency, CalendarTransaction } from '@repo/shared';
 import { useLanguage } from '@repo/shared';
-import { useNavigation, View } from '../../contexts/NavigationContext';
+import { useNavigation, View } from '@/shared/contexts/NavigationContext';
 import { useExpenseStore } from '@repo/shared';
 
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { useTransactionsFeature } from '../transactions/hooks/useTransactionsFeature';
+import { Card } from '@/shared/ui/Card';
+import { Button } from '@/shared/ui/Button';
+import { useTransactionsFeature } from '@/features/transaction-management/model';
 
 type Period = 'Day' | 'Week' | 'Month' | 'Year';
 

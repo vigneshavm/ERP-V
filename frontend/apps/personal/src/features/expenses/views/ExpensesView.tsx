@@ -3,7 +3,7 @@ import { ExpenseBreakdown } from '@repo/mfe-budget-planner';
 import CategoryList from '../../transactions/components/CategoryList';
 import { useExpensesFeature } from '../hooks/useExpensesFeature';
 import { useLanguage, useExpenseStore, Category } from '@repo/shared';
-import { useNavigation } from '../../../contexts/NavigationContext';
+import { useNavigation } from '@/shared/contexts/NavigationContext';
 
 const ExpensesView: React.FC = () => {
     const { t } = useLanguage();

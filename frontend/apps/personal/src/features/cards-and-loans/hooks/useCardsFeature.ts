@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchCreditCards, fetchDebitCards } from '../services/cardsApi';
+import { fetchCreditCards, fetchDebitCards } from '@/features/cards-and-loans/services/cardsApi';
 import { useExpenseStore } from '@repo/shared';
 
 
