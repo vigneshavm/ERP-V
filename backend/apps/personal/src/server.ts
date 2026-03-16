@@ -8,18 +8,16 @@ import path from "path";
 import { validateEnv } from "@smarterp/shared/config/validateEnv.js";
 import { verifyEmailTransport } from "@smarterp/shared/utils/emailService.js";
 
-// robust .env loading
-const result = dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
-if (result.error) {
-    console.warn("⚠️  dotenv config failed to load .env file from CWD. Trying default...");
-    dotenv.config(); // fallback
-}
+import { container } from "tsyringe";
+import { ConfigService } from "@smarterp/shared";
 
 // =======================
-// Environment Validation
+// Config & Environment
 // =======================
-logger.info("Validating environment variables...");
-validateEnv();
+const config = container.resolve(ConfigService);
+logger.info("Validating environment variables via ConfigService...");
+
+const PORT = config.get("PORT") || process.env.PERSONAL_PORT || 5001;
 
 // Log loaded env for debugging (masked)
 console.log("🔍 Checking Environment Variables for Personal API...");
