@@ -2,6 +2,7 @@ import { useAuthStore } from '@repo/shared';
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { updateProfile } from "@/entities/session/model/authSlice";
 
 import Layout from "@/shared/ui/Layout/Layout";
 import { toast } from 'react-toastify';

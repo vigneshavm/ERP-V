@@ -1,0 +1,42 @@
+
+> enterprise-manager@0.1.0 build
+> next build
+
+   ▲ Next.js 15.2.0
+   - Environments: .env.production, .env
+
+   Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Auto register service worker with: C:\Users\avmvi\Project\ERP\frontend\node_modules\next-pwa\register.js
+> [PWA] Service worker: C:\Users\avmvi\Project\ERP\frontend\apps\enterprise\public\sw.js
+> [PWA]   url: /enterprise/sw.js
+> [PWA]   scope: /enterprise/
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/6) ...
+   Generating static pages (1/6) 
+   Generating static pages (2/6) 
+   Generating static pages (4/6) 
+ ✓ Generating static pages (6/6)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /_not-found                          985 B           120 kB
+├ ƒ /[[...slug]]                         115 kB          353 kB
+├ ○ /forgot-password                     4.38 kB         243 kB
+├ ○ /reset-password                      6.77 kB         245 kB
+└ ○ /signup                              5 kB            190 kB
++ First Load JS shared by all            119 kB
+  ├ chunks/5084-a561402a85873542.js      62.6 kB
+  ├ chunks/87c73c54-edaf5636981915f8.js  53 kB
+  └ other shared chunks (total)          3.12 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -368,13 +368,14 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             unit: defaultUnit,
             cutLength: meterValue, // For Meter-based products
             isQuickEntry: true, // Flag for reporting
+            isParent: false, // Added for type safety
             // Fill required Product fields for type safety
             category: "Quick Entry",
             costPrice: 0,
             sellingPrice: price,
             stockQty: 999,
             tenantId: "" // Will be filled by backend/middleware if needed, or left empty for transient items
-        } as CartItem;
+        } as unknown as CartItem;
         onAddToCart(quickItem);
 
         // Reset for next entry - CLEAR type to allow selecting different type
@@ -463,7 +464,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                 alert("No products identified.");
             }
         } catch (err) {
-            logger.error(err);
+            logger.error(err as string | Error);
             alert("Failed to identify product.");
         } finally {
             setIsIdentifying(false);

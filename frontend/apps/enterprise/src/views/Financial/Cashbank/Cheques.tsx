@@ -73,7 +73,7 @@ const Cheques: React.FC = () => {
     useEffect(() => {
         dispatch(getAccounts());
         dispatch(fetchPurchaseOrders());
-        dispatch(fetchCheques(currentSector));
+        dispatch(fetchCheques(currentSector ?? undefined));
     }, [dispatch, currentSector]);
 
     useEffect(() => {

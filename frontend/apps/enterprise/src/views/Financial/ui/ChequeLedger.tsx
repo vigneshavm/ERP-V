@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface ChequeLedgerProps {
     sectorCheques: any[];

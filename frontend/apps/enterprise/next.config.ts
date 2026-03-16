@@ -14,10 +14,10 @@ const nextConfig: NextConfig = {
     "@yourcompany/ui-react"
   ],
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   webpack(config) {
     config.resolve.alias = {

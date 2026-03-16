@@ -10,17 +10,13 @@ import { logger } from '@/shared/lib/logger';
 import type { Tenant } from '@/entities/session/model/core';
 import { setUser, getProfile } from '@/entities/session/model/authSlice';
 
-
-
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
 export const useAppBootstrap = () => {
   const dispatch = useDispatch();
-  // Using the shared Zustand auth store
   const { user, role } = useAuthStore();
   const { tenants } = useSelector((s: RootState) => s.tenant);
   const { setActiveTab, activeTab } = useUiStore();
-
 
   useDBDataSync();
 
@@ -34,53 +30,60 @@ export const useAppBootstrap = () => {
   useEffect(() => {
     const sessionUser = getSession();
     if (sessionUser && !user) {
-      try { 
-        dispatch(setUser(sessionUser) as any); 
-      }
-      catch (e: any) { 
-        logger.error('Failed to restore session', e); 
-        clearSession(); 
-      }
+      void Promise.resolve().then(() => {
+        try { 
+          dispatch(setUser(sessionUser) as any); 
+        } catch (e: any) { 
+          logger.error('Failed to restore session', e); 
+          clearSession(); 
+        }
+      });
     }
   }, [dispatch, user]);
 
   // Fetch profile
   useEffect(() => {
     if (user?.token) {
+      void Promise.resolve().then(() => {
         dispatch(getProfile() as any);
+      });
     }
   }, [dispatch, user?.token]);
 
   // Tenant resolution
   useEffect(() => {
-    const storedId = localStorage.getItem('erp_current_tenant');
-    if (tenants.length > 0) {
-      if (storedId) {
-        const restored = tenants.find(t => t.id === storedId);
-        if (restored) { 
+    void Promise.resolve().then(() => {
+      const storedId = localStorage.getItem('erp_current_tenant');
+      if (tenants.length > 0) {
+        if (storedId) {
+          const restored = tenants.find(t => t.id === storedId);
+          if (restored) { 
             setCurrentTenant(restored); 
             setViewMode('TENANT'); 
-        }
-      } else if (APP_CONFIG?.REQUIRE_TENANT_ID && APP_CONFIG?.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
-        const t = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
-        if (t) { 
+          }
+        } else if (APP_CONFIG?.REQUIRE_TENANT_ID && APP_CONFIG?.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
+          const t = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
+          if (t) { 
             setCurrentTenant(t); 
             setViewMode('TENANT'); 
+          }
         }
+        setIsResolving(false);
+      } else if (!APP_CONFIG?.REQUIRE_TENANT_ID) {
+        setIsResolving(false);
       }
-      setIsResolving(false);
-    } else if (!APP_CONFIG?.REQUIRE_TENANT_ID) {
-      setIsResolving(false);
-    }
+    });
   }, [tenants, viewMode]);
 
   // Global 401 listener
   useEffect(() => {
     const handle = () => {
-      clearSession(); 
-      dispatch(setUser(null) as any); 
-      setViewMode('LANDING');
-      logger.info("🔒 Force logout triggered by API 401");
+      void Promise.resolve().then(() => {
+        clearSession(); 
+        dispatch(setUser(null) as any); 
+        setViewMode('LANDING');
+        logger.info("🔒 Force logout triggered by API 401");
+      });
     };
     window.addEventListener('auth:unauthorized', handle);
     return () => window.removeEventListener('auth:unauthorized', handle);
@@ -89,7 +92,9 @@ export const useAppBootstrap = () => {
   // Role-based Default Page
   useEffect(() => {
     if (user && role === 'Staff' && activeTab === 'DASHBOARD') {
+      void Promise.resolve().then(() => {
         setActiveTab('DASHBOARD');
+      });
     }
   }, [user, role, activeTab, setActiveTab]);
 
@@ -100,15 +105,15 @@ export const useAppBootstrap = () => {
     role,
     user,
     handlers: { 
-        setViewMode, 
-        setCurrentTenant,
-        setIsLoggedIn: (val: boolean) => {
-            if (!val) {
-                clearSession();
-                dispatch(setUser(null) as any);
-                setViewMode('LANDING');
-            }
+      setViewMode, 
+      setCurrentTenant,
+      setIsLoggedIn: (val: boolean) => {
+        if (!val) {
+          clearSession();
+          dispatch(setUser(null) as any);
+          setViewMode('LANDING');
         }
+      }
     },
   };
 };

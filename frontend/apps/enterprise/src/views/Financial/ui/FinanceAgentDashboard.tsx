@@ -331,6 +331,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
 ───────────────────────────────────────────── */
 const FinanceAgentDashboard: React.FC = () => {
     const dispatch = useDispatch();
+    const { setActiveTab } = useUiStore();
     const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [lastRefreshed, setLastRefreshed] = useState(new Date());

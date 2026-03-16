@@ -94,7 +94,7 @@ const SupplierLedger: React.FC = () => {
                 setData(response.data.data);
             }
         } catch (error: any) {
-            logger.error(error);
+            logger.error(error as string | Error);
             toast.error(error.response?.data?.message || 'Failed to fetch ledger');
         } finally {
             setLoading(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Rocket, ArrowRight, ShoppingBag } from 'lucide-react';
-import FeatureMatrix from '../../views/Commercial/OnlineStore/components/FeatureMatrix';
-import PricingTiers from '../../views/Commercial/OnlineStore/components/PricingTiers';
+import FeatureMatrix from '../../Commercial/OnlineStore/components/FeatureMatrix';
+import PricingTiers from '../../Commercial/OnlineStore/components/PricingTiers';
 
 interface OnlineStoreSetupProps {
     isLoading: boolean;

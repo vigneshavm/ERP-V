@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { setTransactions, setCheques, setDailyRecords } from '@/entities/finance/model/financeSlice';
-import { Transaction, Cheque } from "@repo/shared"; // Check shared-kernel for finance types
+import { FinanceTransaction, Cheque } from "@repo/shared"; // Check shared-kernel for finance types
 import { SyncManager } from "./SyncManager";
 import { fetchTransactionsRaw, fetchChequesRaw, fetchDailyFinanceRaw } from './financeQueries';
 
@@ -45,8 +45,9 @@ export const useFinanceSync = (tenantId: string | undefined) => {
             description: t.description,
             sector: t.sector,
             branchId: t.branch_id,
-            tenantId: t.tenant_id
-        })) as Transaction[];
+            tenantId: t.tenant_id,
+            paymentMethod: t.payment_method || 'Cash'
+        })) as FinanceTransaction[];
         dispatch(setTransactions(mappedTx));
     }, [rawTx, dispatch]);
 

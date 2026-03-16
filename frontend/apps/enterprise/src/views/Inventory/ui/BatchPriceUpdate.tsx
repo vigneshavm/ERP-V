@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Save, AlertCircle, CheckCircle, Package, ArrowRight, Printer } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useConfig } from "@/contexts/ConfigContext";
+import { useConfig } from "@/app/providers/ConfigContext";
 
 interface Item {
     _id: string;

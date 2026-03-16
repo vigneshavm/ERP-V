@@ -2,9 +2,9 @@
   "name": "@repo/mfe-budget-planner",
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev -p 3002",
+    "dev": "next dev -p 3006",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "next start -p 3006",
     "lint": "next lint"
   },
   "private": true,

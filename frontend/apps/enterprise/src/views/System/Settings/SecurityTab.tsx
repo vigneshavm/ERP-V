@@ -129,7 +129,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                         }
                     })).unwrap();
                     successCount++;
-                } catch (err) { logger.error(err); }
+                } catch (err) { logger.error(err as string | Error); }
             }
             return { done: successCount, total: toMigrate.length, success: true };
         },

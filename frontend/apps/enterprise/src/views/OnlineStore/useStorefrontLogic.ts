@@ -54,7 +54,7 @@ export const useStorefrontLogic = () => {
             const res = await getProductRecommendations(aiQuery, baseProducts);
             setAiResult({ text: res.recommendationText, ids: res.recommendedIds });
         } catch (e) {
-            logger.error(e);
+            logger.error(e as string | Error);
             setAiResult({ text: "I'm having trouble connecting to the brain right now. Please try again.", ids: [] });
         } finally {
             setAiThinking(false);
@@ -77,7 +77,7 @@ export const useStorefrontLogic = () => {
                 ids: ids
             });
         } catch (err) {
-            logger.error(err);
+            logger.error(err as string | Error);
             setAiResult({ text: "Could not analyze image.", ids: [] });
         } finally {
             setIsVisualSearching(false);

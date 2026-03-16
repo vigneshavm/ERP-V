@@ -19,16 +19,18 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        setIsMounted(true);
-        const saved = getStoredTheme();
-        const initialTheme = saved || 'dark';
-        setThemeState(initialTheme);
-        applyTheme(initialTheme);
-        
-        // Apply theme class to root element
-        const root = window.document.documentElement;
-        root.classList.remove('light', 'dark', 'cyber', 'gold');
-        root.classList.add(initialTheme);
+        void Promise.resolve().then(() => {
+            setIsMounted(true);
+            const saved = getStoredTheme();
+            const initialTheme = saved || 'dark';
+            setThemeState(initialTheme);
+            applyTheme(initialTheme);
+            
+            // Apply theme class to root element
+            const root = window.document.documentElement;
+            root.classList.remove('light', 'dark', 'cyber', 'gold');
+            root.classList.add(initialTheme);
+        });
     }, []);
 
     const setTheme = (newTheme: Theme) => {

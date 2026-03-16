@@ -37,12 +37,17 @@ export type {
     Customer as SalesCustomer,
     Invoice,
     Invoice as SalesInvoice,
+    PopulatedInvoice,
     Sale,
     Sale as SalesSale,
     SaleStatus,
     SaleStatus as SalesSaleStatus,
     Session,
-    Session as SalesSession
+    Session as SalesSession,
+    Estimate,
+    EstimateItem,
+    SalesOrder,
+    SalesOrderItem
 } from './sales/sales';
 
 export * from './sales/salesReturn';

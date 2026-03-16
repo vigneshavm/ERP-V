@@ -96,7 +96,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                     successCount++;
                 } catch (err) {
                     failCount++;
-                    logger.error('Failed to upload purchase:', purchase.details.invoice_no, err);
+                    logger.error(`Failed to upload purchase: ${purchase.details.invoice_no}`, err as string | Error);
                 }
             }
 

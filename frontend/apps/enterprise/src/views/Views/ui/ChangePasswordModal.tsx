@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import {  useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
+import { logout } from "@/entities/session/model/authSlice";
 import api from "@/shared/api/api";
 
 import { clearSession } from "@/shared/lib/utils/session";

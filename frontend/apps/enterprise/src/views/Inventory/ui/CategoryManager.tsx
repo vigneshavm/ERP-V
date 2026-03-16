@@ -127,7 +127,7 @@ const CategoryManager: React.FC = () => {
             }
 
         } catch (err: any) {
-            logger.error(err);
+            logger.error(err as string | Error);
             const message = err.response?.data?.message || err.message || 'Network Error';
             setError(message);
         } finally {

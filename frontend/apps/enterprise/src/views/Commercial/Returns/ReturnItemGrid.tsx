@@ -9,16 +9,12 @@ interface ReturnItemGridProps {
 }
 
 export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItemsChange }) => {
-    if (!invoice) return <div className="p-8 text-center text-slate-500">No invoice selected.</div>;
-    // We map invoice items to potential return items (with 0 quantity initially or pre-filled?)
-    // Better to let user add items or list all matches and let them set qty > 0.
-    // Let's list all items.
-
     // State for the return working list. 
     // We transform CartItems to SalesReturnItem-like structure for editing.
     const [returnItems, setReturnItems] = useState<Partial<SalesReturnItem>[]>([]);
 
     useEffect(() => {
+        if (!invoice) return;
         // Initialize return items from invoice
         const initialItems = invoice.items.map((item: any) => ({
             productId: item.id || '', // CartItem maps to Product (id might be _id or id) - assuming id
@@ -35,6 +31,8 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
         // eslint-disable-next-line react-hooks/set-state-in-effect -- TODO(TS-FIX): Phase 2/3 fix
         setReturnItems(initialItems);
     }, [invoice]);
+
+    if (!invoice) return <div className="p-8 text-center text-slate-500">No invoice selected.</div>;
 
     const handleQuantityChange = (index: number, qty: number) => {
         const newItems = [...returnItems];

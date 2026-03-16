@@ -6,8 +6,8 @@
     "dev": "nodemon --watch src --exec tsx src/server.ts"
   },
   "dependencies": {
-    "@smarterp/core": "workspace:*",
-    "@smarterp/shared": "workspace:*",
+    "@smarterp/core": "*",
+    "@smarterp/shared": "*",
     "express": "^4.21.2"
   }
 }

@@ -215,7 +215,7 @@ const MarketingTemplates: React.FC = () => {
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{template.usage.toLocaleString()} Used</span>
                                 </div>
                                 <button
-                                    onClick={() => dispatch(setActiveTab('GROW_MARKETING_CAMPAIGNS'))}
+                                    onClick={() => useUiStore.getState().setActiveTab('GROW_MARKETING_CAMPAIGNS')}
                                     className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white hover:text-indigo-500 transition-colors"
                                 >
                                     Use Template <ArrowRight className="w-4 h-4" />

@@ -28,6 +28,16 @@ import SupplierFilterBar from './components/SupplierFilterBar';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 
+// Sort indicator
+const SortIcon = ({ column, sortConfig }: { column: string; sortConfig: { key: string; direction: 'asc' | 'desc' } | null }) => {
+  if (!sortConfig || sortConfig.key !== column) {
+    return <span className="text-slate-300 dark:text-neutral-600 ml-1 inline-flex flex-col text-[8px] leading-none"><ChevronUp className="w-2.5 h-2.5" /><ChevronDown className="w-2.5 h-2.5 -mt-0.5" /></span>;
+  }
+  return sortConfig.direction === 'asc'
+    ? <ChevronUp className="w-3 h-3 text-indigo-500 ml-1 inline" />
+    : <ChevronDown className="w-3 h-3 text-indigo-500 ml-1 inline" />;
+};
+
 const Suppliers: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -58,7 +68,7 @@ const Suppliers: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    const dataToExport = suppliers.map(s => ({
+    const dataToExport = suppliers.map((s: any) => ({
       'Business Name': s.businessName,
       'Group': s.supplierGroup || 'N/A',
       'Contact Person': s.contactPersonName,
@@ -92,7 +102,7 @@ const Suppliers: React.FC = () => {
 
   const filteredSuppliers = useMemo(() => {
     return suppliers.filter(
-      (supplier) => {
+      (supplier: any) => {
         const matchesSearch = supplier.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (supplier.supplierGroup && supplier.supplierGroup.toLowerCase().includes(searchTerm.toLowerCase())) ||
           supplier.contactPersonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,7 +116,7 @@ const Suppliers: React.FC = () => {
 
         return true;
       }
-    ).sort((a, b) => {
+    ).sort((a: any, b: any) => {
       if (!sortConfig) return 0;
       const valA = a[sortConfig.key] || 0;
       const valB = b[sortConfig.key] || 0;
@@ -114,23 +124,13 @@ const Suppliers: React.FC = () => {
       if (typeof valA === 'string' && typeof valB === 'string') {
         return sortConfig.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
       }
-      return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
+      return sortConfig.direction === 'asc' ? (valA as number) - (valB as number) : (valB as number) - (valA as number);
     });
   }, [suppliers, searchTerm, sortConfig, filterStatus]);
 
   // Calculate Metrics
-  const totalToPay = suppliers.reduce((sum, s) => sum + (s.netBalance || 0), 0);
-  const totalToCollect = suppliers.reduce((sum, s) => sum + (s.totalOutstanding || 0), 0);
-
-  // Sort indicator
-  const SortIcon = ({ column }: { column: string }) => {
-    if (!sortConfig || sortConfig.key !== column) {
-      return <span className="text-slate-300 dark:text-neutral-600 ml-1 inline-flex flex-col text-[8px] leading-none"><ChevronUp className="w-2.5 h-2.5" /><ChevronDown className="w-2.5 h-2.5 -mt-0.5" /></span>;
-    }
-    return sortConfig.direction === 'asc'
-      ? <ChevronUp className="w-3 h-3 text-indigo-500 ml-1 inline" />
-      : <ChevronDown className="w-3 h-3 text-indigo-500 ml-1 inline" />;
-  };
+  const totalToPay = suppliers.reduce((sum: number, s: any) => sum + (s.netBalance || 0), 0);
+  const totalToCollect = suppliers.reduce((sum: number, s: any) => sum + (s.totalOutstanding || 0), 0);
 
   return (
     <Layout>
@@ -188,7 +188,7 @@ const Suppliers: React.FC = () => {
                     onClick={() => handleSort('businessName')}
                   >
                     // eslint-disable-next-line react-hooks/static-components -- TODO(TS-FIX): Phase 2/3 fix
-                    Supplier Name <SortIcon column="businessName" />
+                    Supplier Name <SortIcon column="businessName" sortConfig={sortConfig} />
                   </th>
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
                     Group
@@ -202,28 +202,28 @@ const Suppliers: React.FC = () => {
                     onClick={() => handleSort('totalAmount')}
                   >
                     // eslint-disable-next-line react-hooks/static-components -- TODO(TS-FIX): Phase 2/3 fix
-                    Total Invoiced <SortIcon column="totalAmount" />
+                    Total Invoiced <SortIcon column="totalAmount" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('totalPaid')}
                   >
                     // eslint-disable-next-line react-hooks/static-components -- TODO(TS-FIX): Phase 2/3 fix
-                    Total Paid <SortIcon column="totalPaid" />
+                    Total Paid <SortIcon column="totalPaid" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('netBalance')}
                   >
                     // eslint-disable-next-line react-hooks/static-components -- TODO(TS-FIX): Phase 2/3 fix
-                    Balance <SortIcon column="netBalance" />
+                    Balance <SortIcon column="netBalance" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('lastPaymentDate')}
                   >
                     // eslint-disable-next-line react-hooks/static-components -- TODO(TS-FIX): Phase 2/3 fix
-                    Last Payment <SortIcon column="lastPaymentDate" />
+                    Last Payment <SortIcon column="lastPaymentDate" sortConfig={sortConfig} />
                   </th>
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider text-right w-16 whitespace-nowrap">
                   </th>

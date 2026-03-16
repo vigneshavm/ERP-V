@@ -18,6 +18,11 @@ export const tokens = {
     success: 'var(--success-color)',
     warning: 'var(--warning-color)',
     error: 'var(--danger-color)',
+    surface: {
+      default: 'var(--surface-default)',
+      raised: 'var(--surface-raised)',
+      deep: 'var(--surface-deep)',
+    },
   },
   spacing: {
     '4xs': '2px',

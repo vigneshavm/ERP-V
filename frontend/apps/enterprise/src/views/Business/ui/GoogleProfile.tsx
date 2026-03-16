@@ -85,7 +85,7 @@ const GoogleProfile: React.FC = () => {
             }
         } catch (error: any) {
             toast.error('Failed to load business profile');
-            logger.error(error);
+            logger.error(error as string | Error);
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,8 @@
     "description": "Unified orchestration for BizzAI ERP",
     "workspaces": [
         "backend",
+        "backend/apps/*",
+        "backend/packages/*",
         "frontend",
         "frontend/apps/*",
         "frontend/packages/*",

@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store/store';
+import { setUser, getProfile } from '@/entities/session/model/authSlice';
 
 import { useUiStore } from '@/shared/lib/store/uiStore';
 import { APP_CONFIG } from '@/app/config/index';

@@ -6,6 +6,7 @@ import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { updateProfile } from "@/entities/session/model/authSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { updateSettings, resetSettings } from "@/app/store/slices/settingsSlice";
 import { updateTenantDetails } from "@/entities/session/model/tenantSlice";

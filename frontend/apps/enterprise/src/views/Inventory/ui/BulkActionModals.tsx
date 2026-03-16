@@ -24,7 +24,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
             await onConfirm(targetCategory);
             onClose();
         } catch (error) {
-            logger.error(error);
+            logger.error(error as string | Error);
         } finally {
             setIsSubmitting(false);
         }
@@ -98,7 +98,7 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
             await onConfirm(adjustment, type);
             onClose();
         } catch (error) {
-            logger.error(error);
+            logger.error(error as string | Error);
         } finally {
             setIsSubmitting(false);
         }

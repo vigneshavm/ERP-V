@@ -21,7 +21,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
             const res = await api.get(`/api/finance/clearing?sector=${currentSector}`);
             setParameters(res.data);
         } catch (err) {
-            logger.error(err);
+            logger.error(err instanceof Error ? err : String(err));
         } finally {
             setLoading(false);
         }
@@ -37,7 +37,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
             await api.post('/finance/clearing/init', { sector: currentSector });
             await fetchParameters();
         } catch (err) {
-            logger.error(err);
+            logger.error(err instanceof Error ? err : String(err));
             alert('Failed to initialize unit');
         } finally {
             setInitializing(false);
@@ -49,7 +49,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
             await api.put(`/api/finance/clearing/${id}`, updates);
             await fetchParameters(); // Refresh to ensure sync
         } catch (err) {
-            logger.error(err);
+            logger.error(err instanceof Error ? err : String(err));
             alert('Failed to update parameter');
         }
     };

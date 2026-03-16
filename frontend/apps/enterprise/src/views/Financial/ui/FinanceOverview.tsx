@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 interface FinanceOverviewProps {
     totalSales: number;

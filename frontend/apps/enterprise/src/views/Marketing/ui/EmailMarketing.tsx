@@ -27,7 +27,6 @@ import { useUiStore } from '@/shared/lib/store/uiStore';
 import Campaigns from './Campaigns';
 
 const EmailMarketing: React.FC = () => {
-    const dispatch = useDispatch();
     const [viewMode, setViewMode] = useState<'manager' | 'builder'>('manager');
 
     const emailCampaigns = [

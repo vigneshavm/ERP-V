@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Phone, Mail, MapPin, Search, X, Briefcase } from 'lucide-react';
 import { FormSection, InputWrapper } from './CustomerUI';
-import { Customer } from "../../../../types";
+import { Customer } from "@repo/shared";
 
 interface CustomerFormProps {
     initialData?: Partial<Customer>;

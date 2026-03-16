@@ -128,7 +128,7 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({ isOpen, onClose
             }
         } catch (error: any) {
             toast.error('Failed to complete business setup');
-            logger.error(error);
+            logger.error(error as string | Error);
         } finally {
             setIsLoading(false);
         }

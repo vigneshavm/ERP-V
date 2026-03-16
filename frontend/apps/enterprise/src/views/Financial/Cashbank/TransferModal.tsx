@@ -32,7 +32,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
             })).unwrap();
             onSuccess();
         } catch (error) {
-            logger.error(error);
+            logger.error(error instanceof Error ? error : String(error));
         } finally {
             setLoading(false);
         }

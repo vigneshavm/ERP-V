@@ -20,7 +20,7 @@ const RateRevisionList: React.FC = () => {
                 setRevisions(data.data);
             }
         } catch (error) {
-            logger.error(error);
+            logger.error(error as string | Error);
             toast.error("Failed to load revisions");
         } finally {
             setLoading(false);

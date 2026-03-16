@@ -44,7 +44,7 @@ const MetaCallback: React.FC = () => {
                     setMessage(data.message || 'Failed to connect to Meta.');
                 }
             } catch (err: any) {
-                logger.error(err);
+                logger.error(err as string | Error);
                 setStatus('error');
                 setMessage('An error occurred while connecting.');
             }

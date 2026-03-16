@@ -7,7 +7,7 @@ import {
     Star, MessageCircle, Heart, AlertTriangle, Calendar,
     Tag, MousePointer2, Percent, Globe
 } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { useUiStore } from "@/shared/lib/store/uiStore";
 import { WhatsAppService } from "@/shared/api/whatsappService";
@@ -25,7 +25,6 @@ const useCurrentTenant = (): Tenant | null => {
 };
 
 const WhatsAppMarketing: React.FC = () => {
-    const dispatch = useDispatch();
     const currentTenant = useCurrentTenant();
     const integrations = currentTenant?.integrations;
 

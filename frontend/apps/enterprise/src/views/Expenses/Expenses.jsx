@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Layout from "../../components/shared/Layout/Layout.tsx";
-import FormInput from "../../components/core/Form/Input.tsx";
-import { getAllExpenses, createExpense, deleteExpense, reset } from "../../redux/slices/expenseSlice.ts";
-import { getAccounts } from "../../redux/slices/cashbankSlice.ts";
+import Layout from "@/shared/ui/Layout/Layout";
+import FormInput from "@/shared/ui/Form/Input";
+import { getAllExpenses, createExpense, deleteExpense, reset } from "@/features/expense-tracking/model/expenseSlice";
+import { getAccounts } from "@/entities/finance/model/cashbankSlice";
 import { Receipt, Plus, Wallet, Calendar, FileText, TrendingDown, Search, Trash2, CreditCard, Banknote, Building2 } from 'lucide-react';
 
 const Expenses = () => {
@@ -15,7 +15,7 @@ const Expenses = () => {
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState(() => ({
         expenseNo: 'EXP-' + Date.now(),
         date: new Date().toISOString().split('T')[0],
         category: '',
@@ -24,7 +24,7 @@ const Expenses = () => {
         bankAccount: '',
         description: '',
         receipt: null
-    });
+    }));
 
     const expenseCategories = [
         'Rent', 'Utilities', 'Salaries', 'Transportation', 'Marketing', 'Office Supplies',
