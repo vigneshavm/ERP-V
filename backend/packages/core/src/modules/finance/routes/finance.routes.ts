@@ -10,15 +10,15 @@ import financialReportRoutes from './financialReportRoutes.js';
 const router = express.Router();
 
 router.use('/bills', billRoutes);
-router.use('/cashbank', cashBankRoutes);
+router.use('/cash-banks', cashBankRoutes);
 router.use('/due', dueRoutes);
 router.use('/loyalty', loyaltyRoutes);
 router.use('/day-end', dayEndRoutes);
 router.use('/accounts', accountRoutes);
 
-// Bank Statement
+// Bank Statements
 import bankStatementRoutes from './bankStatementRoutes.js';
-router.use('/bank-statement', bankStatementRoutes);
+router.use('/bank-statements', bankStatementRoutes);
 
 // Loans
 import loanRoutes from './loanRoutes.js';
@@ -31,7 +31,7 @@ router.get('/daily-finance', protect, getAllDailyFinance);
 
 // Mount Journal Entry routes
 import journalEntryRoutes from './journalEntryRoutes.js';
-router.use('/journal', journalEntryRoutes);
+router.use('/journal-entries', journalEntryRoutes);
 
 // Mount Clearing Parameter routes
 import clearingParameterRoutes from './clearingParameterRoutes.js';

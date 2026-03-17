@@ -8,6 +8,7 @@ import { connectDB } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
 import authRouter from './modules/auth/auth.routes';
+import * as MockController from './modules/mock/mock.controller';
 import dashboardRouter from './modules/dashboard/dashboard.routes';
 import expensesRouter from './modules/expenses/expenses.routes';
 import budgetRouter from './modules/budget/budget.routes';
@@ -33,6 +34,10 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'budget-planner-api', ts: new Date() }));
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
+app.get(`${BASE}/auth/me`, MockController.getMockUser);
+app.get(`${BASE}/transactions`, MockController.getMockTransactions);
+app.get(`${BASE}/personal/reports/analytics`, MockController.getMockAnalytics);
+
 app.use(`${BASE}/auth`,          authRouter);
 app.use(`${BASE}/dashboard`,     dashboardRouter);
 app.use(`${BASE}/expenses`,      expensesRouter);
@@ -52,7 +57,11 @@ app.use(errorHandler);
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 (async () => {
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('Failed to connect to DB, continuing in Mock mode...', err);
+  }
   app.listen(PORT, () => console.log(`Budget Planner API running on port ${PORT}`));
 })();
 

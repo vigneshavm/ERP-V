@@ -1,10 +1,10 @@
 import { Router, Response, NextFunction } from 'express';
 import { body, param } from 'express-validator';
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '../../config/database';
-import { AppError } from '../../middleware/errorHandler';
-import { authenticate, validate } from '../../middleware/index';
-import { AuthRequest } from '../../types';
+import { db } from '../config/database';
+import { AppError } from '../middleware/errorHandler';
+import { authenticate, validate } from '../middleware/index';
+import { AuthRequest } from '../types';
 
 // ═══════════════════════════════════════════════════════════════════
 // GOALS  /api/v1/goals
@@ -404,7 +404,7 @@ reportsRouter.get('/detailed', async (req: AuthRequest, res: Response, next: Nex
   try {
     const { from, to } = req.query as { from: string; to: string };
     if (!from || !to) throw AppError.badRequest('from and to query params are required');
-    const r = await db.query(
+    const r = await db.query<{ type: string; amount: string | number }>(
       `SELECT t.*, c.name AS category_name, c.color AS category_color
        FROM transactions t LEFT JOIN categories c ON c.id = t.category_id
        WHERE t.user_id = $1 AND t.date BETWEEN $2 AND $3

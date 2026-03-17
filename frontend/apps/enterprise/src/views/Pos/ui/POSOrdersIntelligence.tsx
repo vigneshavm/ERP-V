@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { getAllInvoices } from "@/entities/sales/model/posSlice";
 import { getDashboardStats } from "@/widgets/stats-dashboard/model/reportsSlice";
+import { useERPDashboard } from '@repo/shared';
 import {
     ShoppingCart,
     Search,
@@ -73,7 +74,7 @@ const POSOrdersIntelligence: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const {  user  } = useAuthStore();
     const { salesHistory, isLoading: posLoading } = useSelector((state: RootState) => state.pos);
-    const { dashboardStats, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
+    const { stats: dashboardStats, loading: reportsLoading, refresh: refreshDashboard } = useERPDashboard();
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -81,8 +82,8 @@ const POSOrdersIntelligence: React.FC = () => {
 
     useEffect(() => {
         dispatch(getAllInvoices());
-        dispatch(getDashboardStats());
-    }, [dispatch]);
+        refreshDashboard();
+    }, [dispatch, refreshDashboard]);
 
     // --- Intelligence Engine ---
 

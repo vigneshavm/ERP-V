@@ -177,3 +177,49 @@ export interface ExpenseHistory {
     paymentMethods: Array<{ name: string; value: number; color: string }>;
     dailyTrend: Array<{ day: string; amount: number }>;
 }
+
+/**
+ * ERP & Enterprise Specific Types
+ */
+
+export interface JournalEntry {
+    id: string;
+    date: string;
+    reference: string;
+    description: string;
+    status: 'POSTED' | 'DRAFT';
+    entries: { accountId: string; accountName: string; debit: number; credit: number; }[];
+}
+
+export interface StockReport {
+    summary: {
+        totalItems: number;
+        lowStockItems: number;
+        totalValue: number;
+    };
+    items: Array<{
+        id: string;
+        name: string;
+        sku: string;
+        stockQty: number;
+        minStockLevel: number;
+        costPrice: number;
+    }>;
+}
+
+export interface DashboardStats {
+    totalRevenue: number;
+    totalOutstanding: number;
+    totalBalance: number;
+    totalProfit: number;
+    dailySales: Array<{ _id: string; totalSales: number }>;
+    revenueVsExpenses?: Array<{ month: string; revenue: number; expenses: number }>;
+}
+
+export interface SupplierAnalytics {
+    id: string;
+    name: string;
+    netBalance: number;
+    totalInvoices: number;
+    lastPaymentDate?: string;
+}

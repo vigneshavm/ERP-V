@@ -117,59 +117,68 @@ app.get("/", (_req, res) => {
 // Routes Integration (Enterprise)
 // =======================
 
+// =======================
+// MOCK DATA ROUTES (Mock-First Strategy - v1)
+// =======================
+import * as MockController from "./controllers/MockController.js";
+app.get("/api/v1/finance/journal-entries", MockController.getMockJournalEntries);
+app.get("/api/v1/inventory/stock-reports", MockController.getMockStockReport);
+app.get("/api/v1/enterprise/dashboard/stats", MockController.getMockDashboardStats);
+app.get("/api/v1/crm/suppliers/analytics", MockController.getMockSuppliers);
+
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
-app.use("/api", coreRoutes);
+app.use("/api/v1", coreRoutes);
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
-app.use("/api/roles", roleRoutes);
+app.use("/api/v1/core/roles", roleRoutes);
 
 import syncRoutes from "@smarterp/core/modules/core/routes/syncRoutes.js";
-app.use("/api/sync", syncRoutes);
+app.use("/api/v1/core/sync", syncRoutes);
 
 import feedbackRoutes from "@smarterp/core/modules/core/routes/feedbackRoutes.js";
-app.use("/api/feedback", feedbackRoutes);
+app.use("/api/v1/core/feedback", feedbackRoutes);
 
 import notificationRoutes from "@smarterp/core/modules/core/routes/notificationRoutes.js";
-app.use("/api/notifications", notificationRoutes);
+app.use("/api/v1/core/notifications", notificationRoutes);
 
 import auditLogRoutes from "@smarterp/core/modules/core/routes/auditLogRoutes.js";
-app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/v1/core/audit-logs", auditLogRoutes);
 
 // INVENTORY Module
 import inventoryRoutes from "@smarterp/core/modules/inventory/routes/inventory.routes.js";
-app.use("/api/inventory", inventoryRoutes);
+app.use("/api/v1/inventory", inventoryRoutes);
 
 // SALES Module
 import salesRoutes from "@smarterp/core/modules/sales/routes/sales.routes.js";
-app.use("/api/sales-invoice", salesRoutes);
+app.use("/api/v1/sales/invoices", salesRoutes);
 import paymentInRoutes from "@smarterp/core/modules/sales/routes/paymentIn.routes.js";
-app.use("/api/payment-in", paymentInRoutes);
+app.use("/api/v1/sales/payments-in", paymentInRoutes);
 import salesOrderRoutes from "@smarterp/core/modules/sales/routes/salesOrder.routes.js";
-app.use("/api/sales-orders", salesOrderRoutes);
+app.use("/api/v1/sales/orders", salesOrderRoutes);
 import deliveryChallanRoutes from "@smarterp/core/modules/sales/routes/deliveryChallan.routes.js";
-app.use("/api/delivery-challan", deliveryChallanRoutes);
+app.use("/api/v1/sales/delivery-challans", deliveryChallanRoutes);
 import posRoutes from "@smarterp/core/modules/sales/routes/pos.routes.js";
-app.use("/api/pos", posRoutes);
+app.use("/api/v1/sales/pos", posRoutes);
 
 // PURCHASE Module
 import purchaseModuleRoutes from "@smarterp/core/modules/purchase/routes/purchase.routes.js";
 import purchasePaymentRoutes from "@smarterp/core/modules/purchase/routes/purchasePaymentRoutes.js";
-app.use("/api/purchases", purchaseModuleRoutes);
-app.use("/api/purchase-payments", purchasePaymentRoutes);
-app.use("/api/purchase-returns", purchaseModuleRoutes);
+app.use("/api/v1/purchases", purchaseModuleRoutes);
+app.use("/api/v1/purchases/payments", purchasePaymentRoutes);
+app.use("/api/v1/purchases/returns", purchaseModuleRoutes);
 
 // FINANCE Module
 import financeRoutes from "@smarterp/core/modules/finance/routes/finance.routes.js";
-app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
+app.use("/api/v1/finance", financeRoutes); // Bills, Cashbank, Due, Loyalty
 
 // CRM Module
 import crmRoutes from "@smarterp/core/modules/crm/routes/crm.routes.js";
-app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
+app.use("/api/v1/crm", crmRoutes); // Customers, Suppliers, WhatsApp
 
 // HR Module
 import hrRoutes from "@smarterp/core/modules/hr/routes/hr.routes.js";
-app.use("/api/hr", hrRoutes); // Employees
+app.use("/api/v1/hr", hrRoutes); // Employees
 
 // MARKETING Module
 import marketingRoutes from "@smarterp/core/modules/marketing/routes/meta.routes.js";
@@ -182,9 +191,9 @@ app.use("/api/v1/agents", agentRoutes);
 
 // MISC / LEGACY (To be modularized)
 import returnRoutes from "@smarterp/core/modules/sales/routes/return.routes.js";
-app.use("/api/returns", returnRoutes);
+app.use("/api/v1/sales/returns", returnRoutes);
 import estimateRoutes from "@smarterp/core/modules/sales/routes/estimate.routes.js";
-app.use("/api/estimates", estimateRoutes);
+app.use("/api/v1/sales/estimates", estimateRoutes);
 
 
 // =======================

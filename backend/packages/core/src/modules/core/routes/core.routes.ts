@@ -16,8 +16,8 @@ const router = express.Router();
 
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
-router.use('/business', businessRoutes);
-router.use('/health', healthRoutes);
+router.use('/core/business', businessRoutes);
+router.use('/core/health', healthRoutes);
 router.use('/refresh-token', refreshTokenRoutes);
 router.use('/reports', reportRoutes);
 router.use('/settings', settingsRoutes);

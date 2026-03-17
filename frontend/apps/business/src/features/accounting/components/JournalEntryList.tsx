@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Calendar as CalendarIcon, FileText, ChevronRight } from 'lucide-react';
 import { Button } from "@repo/ui";
-
-interface JournalEntry {
-    _id: string;
-    date: string;
-    reference: string;
-    description: string;
-    status: 'POSTED' | 'DRAFT';
-    entries: { accountId: string; accountName: string; debit: number; credit: number; }[];
-}
+import { useJournalEntries } from '@repo/shared';
+import { JournalEntry } from '@repo/shared/adapters/types';
 
 interface JournalEntryListProps {
     onNewEntry: () => void;
@@ -17,18 +10,7 @@ interface JournalEntryListProps {
 
 const JournalEntryList: React.FC<JournalEntryListProps> = ({ onNewEntry }) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(false);
-    // Mock data based on original structure
-    const [entries] = useState<JournalEntry[]>([
-        {
-            _id: '1',
-            date: new Date().toISOString(),
-            reference: 'JV/2026/001',
-            description: 'Opening balance for Petty Cash',
-            status: 'POSTED',
-            entries: [{ accountId: '101', accountName: 'Petty Cash', debit: 1000, credit: 0 }]
-        }
-    ]);
+    const { entries, loading, error, refresh } = useJournalEntries();
 
     const filteredEntries = entries.filter(entry => 
         entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,7 +81,7 @@ const JournalEntryList: React.FC<JournalEntryListProps> = ({ onNewEntry }) => {
                                 {filteredEntries.map((entry) => {
                                     const totalAmount = entry.entries.reduce((sum, e) => sum + e.debit, 0);
                                     return (
-                                        <tr key={entry._id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
+                                        <tr key={entry.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 dark:text-neutral-300">
                                                 <div className="flex items-center gap-2">
                                                     <CalendarIcon className="w-4 h-4 text-neutral-400" />

@@ -12,9 +12,9 @@ const inventoryController = container.resolve(InventoryController);
 const categoryController = new CategoryController();
 
 router.get("/categories", protect, cacheMiddleware(3600), categoryController.getAllCategories);
-router.post("/", protect, inventoryController.addItem);
+router.post("/items", protect, inventoryController.addItem);
 router.post("/import", protect, importLimiter, inventoryController.importItems);
-router.get("/", protect, cacheMiddleware(300), inventoryController.getAllItems);
+router.get("/items", protect, cacheMiddleware(300), inventoryController.getAllItems);
 router.get("/inventory-stats", protect, cacheMiddleware(300), inventoryController.getInventoryStats);
 router.get("/low-stock", protect, cacheMiddleware(300), inventoryController.getLowStockItems);
 router.get("/aging-report", protect, cacheMiddleware(600), inventoryController.getStockAgingReport);

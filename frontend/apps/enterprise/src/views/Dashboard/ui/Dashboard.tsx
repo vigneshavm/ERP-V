@@ -12,6 +12,7 @@ import { getAllExpenses } from "@/features/expense-tracking/model/expenseSlice";
 import { fetchEffectiveBalance, fetchCheques } from "@/entities/finance/model/financeSlice";
 import { getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
+import { useERPDashboard } from '@repo/shared';
 import MetricCard from "@/shared/ui/Feedback/MetricCard";
 import Layout from "@/shared/ui/Layout/Layout";
 import {
@@ -59,9 +60,9 @@ const Dashboard: React.FC = () => {
   const { customers } = useSelector((state: RootState) => state.pos);
   const {  currentSector, theme  } = useAuthStore();
   const { branches, getBranchName, currentBranchId } = useBranchResolver();
-  const { dashboardStats, stockReport, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
   const { expenses } = useSelector((state: RootState) => state.expense);
-  const { suppliers, isLoading: supplierLoading } = useSelector((state: RootState) => state.suppliers);
+  const { stats: dashboardStats, stockReport, suppliers, loading: reportsLoading, refresh: refreshDashboard } = useERPDashboard();
+  const supplierLoading = reportsLoading; // Unify loading states
 
   // Contextual Header Data
   const branchName = useMemo(() => getBranchName(currentBranchId), [getBranchName, currentBranchId]);
@@ -76,19 +77,22 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAllData();
+    // Other data still managed by Redux
+    dispatch(getCustomerReport());
+    dispatch(getAllExpenses());
 
     // Real-Time Pulse: Poll for high-priority updates every 30 seconds
     const interval = setInterval(() => {
-      dispatch(getDashboardStats());
-      // Optionally poll other metrics like balance or suppliers if needed for "true" live feel
+      refreshDashboard();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [dispatch, refreshDashboard]);
 
   const handleRefresh = () => {
-    fetchAllData();
+    refreshDashboard();
+    dispatch(getCustomerReport());
+    dispatch(getAllExpenses());
   };
 
   // --- 1. DATA MAPPING ---

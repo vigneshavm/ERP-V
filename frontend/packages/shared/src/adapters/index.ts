@@ -1,14 +1,13 @@
 import { IDataAdapter } from './IDataAdapter';
-import { MockAdapter } from './MockAdapter';
+import { ApiAdapter } from './ApiAdapter';
 
 /**
  * Single contact point for the data layer.
- * To swap to a real DB, create a DBAdapter implementing IDataAdapter 
- * and change the export below.
+ * Set to ApiAdapter for real API calls (including backend mocks).
+ * Set to MockAdapter for pure client-side simulation.
  */
 
-// export const dataAdapter: IDataAdapter = new DBAdapter(); // For production
-export const dataAdapter: IDataAdapter = MockAdapter;
+export const dataAdapter: IDataAdapter = ApiAdapter;
 
 export * from './types';
 export * from './IDataAdapter';

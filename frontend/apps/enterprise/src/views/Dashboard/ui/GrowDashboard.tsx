@@ -6,6 +6,7 @@ import { useUiStore } from "@/shared/lib/store/uiStore";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { getDashboardStats } from "@/widgets/stats-dashboard/model/reportsSlice";
 import { getAllItems } from "@/entities/inventory/model/inventorySlice";
+import { useERPDashboard } from '@repo/shared';
 import { googleBusinessService, GoogleBusinessProfileData } from "@/features/google-business/api/googleBusinessService";
 import { StoreService } from "@/features/online-store/api/storeService";
 import { WhatsAppService } from "@/shared/api/whatsappService";
@@ -14,7 +15,7 @@ const GrowDashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { setActiveTab } = useUiStore();
     const { lowStockItems } = useSelector((state: RootState) => state.inventory);
-    const { dashboardStats } = useSelector((state: RootState) => state.reports);
+    const { stats: dashboardStats, loading: erpLoading, refresh: refreshERPDashboard } = useERPDashboard();
 
     const [isLoading, setIsLoading] = useState(true);
     const [googleProfile, setGoogleProfile] = useState<GoogleBusinessProfileData | null>(null);
@@ -26,7 +27,7 @@ const GrowDashboard: React.FC = () => {
             setIsLoading(true);
             try {
                 await Promise.all([
-                    dispatch(getDashboardStats()),
+                    refreshERPDashboard(),
                     dispatch(getAllItems()),
                     // eslint-disable-next-line no-console -- TODO(TS-FIX): Phase 2/3 fix
                     googleBusinessService.getProfile().then(setGoogleProfile).catch(console.error),

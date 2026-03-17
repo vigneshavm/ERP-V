@@ -15,7 +15,11 @@ import {
     PaymentMethod,
     AccountType,
     LoanStatus,
-    GoalStatus
+    GoalStatus,
+    JournalEntry,
+    StockReport,
+    DashboardStats,
+    SupplierAnalytics
 } from './types';
 
 const delay = (ms: number = 450) => new Promise(resolve => setTimeout(resolve, ms));
@@ -61,6 +65,12 @@ class MockAdapterImpl implements IDataAdapter {
         { id: 'sms1', sender: 'AXISBK', amount: 450, date: new Date().toISOString(), rawText: 'Spent Rs. 450 at Sangeetha Veg Restaurant', type: 'debit', merchant: 'Sangeetha Veg', status: 'pending' },
     ];
 
+    // ERP Mocks
+    private journalEntries: JournalEntry[] = [];
+    private dashboardStats: DashboardStats;
+    private stockReport: StockReport;
+    private suppliers: SupplierAnalytics[] = [];
+
     constructor() {
         this.seedData();
         
@@ -77,6 +87,68 @@ class MockAdapterImpl implements IDataAdapter {
                 spent: Math.floor(Math.random() * (c.monthlyBudget || 5000))
             }))
         };
+
+        // ERP Seed
+        this.dashboardStats = {
+            totalRevenue: 2450000,
+            totalOutstanding: 450000,
+            totalBalance: 1250000,
+            totalProfit: 850000,
+            dailySales: [
+                { _id: '2026-03-10', totalSales: 120000 },
+                { _id: '2026-03-11', totalSales: 150000 },
+                { _id: '2026-03-12', totalSales: 95000 },
+                { _id: '2026-03-13', totalSales: 110000 },
+                { _id: '2026-03-14', totalSales: 210000 },
+                { _id: '2026-03-15', totalSales: 180000 },
+                { _id: '2026-03-16', totalSales: 240000 },
+            ],
+            revenueVsExpenses: [
+                { month: '2025-10', revenue: 1800000, expenses: 1400000 },
+                { month: '2025-11', revenue: 2100000, expenses: 1600000 },
+                { month: '2025-12', revenue: 2400000, expenses: 1800000 },
+                { month: '2026-01', revenue: 2000000, expenses: 1550000 },
+                { month: '2026-02', revenue: 2300000, expenses: 1750000 },
+                { month: '2026-03', revenue: 2500000, expenses: 1900000 },
+            ]
+        };
+
+        this.stockReport = {
+            summary: { totalItems: 1250, lowStockItems: 15, totalValue: 8540000 },
+            items: [
+                { id: 'p1', name: 'Industrial Motor A1', sku: 'MOT-A1', stockQty: 45, minStockLevel: 10, costPrice: 15000 },
+                { id: 'p2', name: 'Precision Gears', sku: 'GEAR-P2', stockQty: 8, minStockLevel: 20, costPrice: 2500 },
+                { id: 'p3', name: 'Heavy Duty Bearings', sku: 'BEAR-H3', stockQty: 120, minStockLevel: 50, costPrice: 850 },
+            ]
+        };
+
+        this.suppliers = [
+            { id: 's1', name: 'Zenith Engineering', netBalance: 125000, totalInvoices: 12, lastPaymentDate: '2026-02-15' },
+            { id: 's2', name: 'Global Logistics Corp', netBalance: 45000, totalInvoices: 8, lastPaymentDate: '2026-03-01' },
+            { id: 's3', name: 'Precision Parts Ltd', netBalance: 0, totalInvoices: 25, lastPaymentDate: '2026-03-10' },
+        ];
+
+        this.journalEntries = [
+            {
+                id: 'j1',
+                date: new Date().toISOString(),
+                reference: 'JV/2026/001',
+                description: 'Opening balance for Petty Cash',
+                status: 'POSTED',
+                entries: [{ accountId: '101', accountName: 'Petty Cash', debit: 1000, credit: 0 }]
+            },
+            {
+                id: 'j2',
+                date: new Date().toISOString(),
+                reference: 'JV/2026/002',
+                description: 'Salary distribution for March 2026',
+                status: 'POSTED',
+                entries: [
+                    { accountId: '501', accountName: 'Salary Expense', debit: 500000, credit: 0 },
+                    { accountId: '102', accountName: 'HDFC Bank Account', debit: 0, credit: 500000 }
+                ]
+            }
+        ];
     }
 
     private seedData() {
@@ -169,7 +241,7 @@ class MockAdapterImpl implements IDataAdapter {
 
     async getContacts(): Promise<any[]> {
         await delay();
-        return [...this.contacts];
+        return [];
     }
 
     async getTransactions(limit?: number): Promise<PersonalTransaction[]> {
@@ -382,9 +454,29 @@ class MockAdapterImpl implements IDataAdapter {
             months: [
                 { month: 'January', income: 150000, expense: 90000, savings: 60000 },
                 { month: 'February', income: 150000, expense: 95000, savings: 55000 },
-                // ... more months can be added
             ]
         };
+    }
+
+    // ERP & Enterprise Methods
+    async getJournalEntries(): Promise<JournalEntry[]> {
+        await delay();
+        return [...this.journalEntries];
+    }
+
+    async getStockReport(): Promise<StockReport> {
+        await delay();
+        return { ...this.stockReport };
+    }
+
+    async getDashboardStats(): Promise<DashboardStats> {
+        await delay();
+        return { ...this.dashboardStats };
+    }
+
+    async getSuppliers(): Promise<SupplierAnalytics[]> {
+        await delay();
+        return [...this.suppliers];
     }
 }
 

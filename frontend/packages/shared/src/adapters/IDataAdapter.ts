@@ -58,4 +58,10 @@ export interface IDataAdapter {
     // Analytics Methods
     getAnalyticsSummary(period: 'month' | 'year'): Promise<AnalyticsSummary>;
     getYearlyOverview(year: number): Promise<YearlyOverview>;
+
+    // ERP & Enterprise Methods
+    getJournalEntries(): Promise<JournalEntry[]>;
+    getStockReport(): Promise<StockReport>;
+    getDashboardStats(): Promise<DashboardStats>;
+    getSuppliers(): Promise<SupplierAnalytics[]>;
 }

@@ -87,6 +87,27 @@ The system now uses a structured Repository pattern to isolate business logic fr
 
 ---
 
+## Data Source Integrity
+
+An audit was performed to ensure all frontend data is loaded from backend APIs and to identify any usage of mock data.
+
+### Audit Findings
+
+| MFE / Package | Integrity Status | Findings |
+| :--- | :--- | :--- |
+| **Personal** | ✅ **Compliant** | Uses `transactionsApi` and feature hooks. Calls `/personal/*` endpoints. |
+| **Business** | ❌ **Non-Compliant** | Accounting views (`AccountLedger`, `Taxation`, `FinancialStatements`) contain hardcoded mock data arrays. |
+| **Enterprise** | ✅ **Compliant** | Uses Redux Thunks and `apiClient`. Calls `/api/*` endpoints. |
+| **Auth Shell** | ✅ **Compliant** | Standard authentication flow with real backend endpoints. |
+| **@repo/shared** | ⚠️ **Risk Found** | `dataAdapter` defaults to `MockAdapter`. `mock/data.json` is present and large (44KB). |
+
+### Remediation Strategy
+
+1. **Refactor Business MFE**: Create feature-level API services for `accounting` and migrate views to use these services instead of hardcoded arrays.
+2. **Unified Adapter Switch**: Update `@repo/shared/src/adapters/index.ts` to use a real database/API adapter by default, or provide a clean way to toggle between environments.
+3. **Mock Data Removal**: Once API parity is confirmed, delete all `mock` directories to prevent accidental usage.
+4. **Backend Parity**: Ensure that for every "Mocked" business view, a corresponding implementation exists in the `@smarterp/core` backend module.
+
 ## 🔄 Cross-App Communication & Shared Infrastructure
 
 ### 1. Shared Platform Layer (`packages/`)
