@@ -13,12 +13,32 @@ interface AuthenticatedRequest extends Request {
 
 export const getAllBills = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const billService = container.resolve(BillService);
-    const { supplier, status, paymentStatus } = req.query;
-    const bills = await billService.getAllBills(
+    const { supplier, status, paymentStatus, page = 1, limit = 50, sort = '-date' } = req.query;
+
+    // Handle sort
+    const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+    const sortOrder = String(sort).startsWith('-') ? -1 : 1;
+    const sortObj: any = {};
+    sortObj[sortField] = sortOrder;
+
+    const { data, total } = await billService.getAllBillsPaginated(
         req.user?._id as string,
+        Number(page),
+        Number(limit),
+        sortObj,
         { supplier: supplier as string, status: status as string, paymentStatus: paymentStatus as string }
     );
-    res.status(200).json(bills);
+
+    res.status(200).json({
+        success: true,
+        data,
+        pagination: {
+            total,
+            page: Number(page),
+            limit: Number(limit),
+            pages: Math.ceil(total / Number(limit))
+        }
+    });
 });
 
 export const createBill = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {

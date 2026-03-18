@@ -130,6 +130,15 @@ const userSchema = new Schema<IUser>(
                 min: 1,
                 max: 31
             }
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+            index: true
+        },
+        deletedAt: {
+            type: Date,
+            default: null
         }
     },
     { timestamps: true }

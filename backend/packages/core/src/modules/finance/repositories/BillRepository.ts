@@ -18,6 +18,21 @@ export class BillRepository extends BaseRepository<IBill> {
             .exec();
     }
 
+    async findBillsPaginated(query: any, page: number, limit: number, sort: any, session?: ClientSession): Promise<{ data: IBill[], total: number }> {
+        const skip = (page - 1) * limit;
+        const [data, total] = await Promise.all([
+            this.model.find(query)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .populate('supplier', 'businessName')
+                .session(session || null)
+                .exec(),
+            this.model.countDocuments(query).session(session || null).exec()
+        ]);
+        return { data, total };
+    }
+
     async findBillById(id: string, userId: string, session?: ClientSession): Promise<IBill | null> {
         return this.model.findOne({ _id: id, createdBy: userId })
             .populate('supplier')

@@ -24,6 +24,25 @@ export class InvoiceRepository {
             .sort({ createdAt: -1 });
     }
 
+    async findAllPaginated(userId: string, page: number, limit: number, sort: any): Promise<{ data: IInvoice[], total: number }> {
+        const skip = (page - 1) * limit;
+        const query = {
+            createdBy: userId,
+            isDeleted: { $ne: true }
+        };
+
+        const [data, total] = await Promise.all([
+            Invoice.find(query)
+                .populate("customer", "name phone")
+                .sort(sort)
+                .skip(skip)
+                .limit(limit),
+            Invoice.countDocuments(query)
+        ]);
+
+        return { data, total };
+    }
+
     async update(id: string, userId: string, updateData: any): Promise<IInvoice | null> {
         return Invoice.findOneAndUpdate(
             { _id: id, createdBy: userId },

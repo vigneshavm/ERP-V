@@ -19,8 +19,31 @@ export class SalesController {
     getAllSalesInvoices = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = (req as any).user._id;
-            const invoices = await this.salesService.getAllInvoices(userId);
-            res.status(200).json(invoices);
+            const { page = 1, limit = 50, sort = '-createdAt' } = req.query;
+
+            // Handle sort
+            const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+            const sortOrder = String(sort).startsWith('-') ? -1 : 1;
+            const sortObj: any = {};
+            sortObj[sortField] = sortOrder;
+
+            const { data, total } = await this.salesService.getAllInvoicesPaginated(
+                userId,
+                Number(page),
+                Number(limit),
+                sortObj
+            );
+
+            res.status(200).json({
+                success: true,
+                data,
+                pagination: {
+                    total,
+                    page: Number(page),
+                    limit: Number(limit),
+                    pages: Math.ceil(total / Number(limit))
+                }
+            });
         } catch (error) {
             next(error);
         }
@@ -78,6 +101,16 @@ export class SalesController {
             }
             const result = await this.salesService.updateStatus(req.params.id as string, userId, status);
             res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    updateSalesInvoice = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = (req as any).user._id;
+            const invoice = await this.salesService.updateInvoice(req.params.id as string, userId, req.body);
+            res.status(200).json(invoice);
         } catch (error) {
             next(error);
         }

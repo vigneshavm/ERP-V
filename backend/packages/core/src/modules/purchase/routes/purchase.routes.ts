@@ -12,9 +12,9 @@ const router = express.Router();
 router.use('/returns', purchaseReturnRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/supplier-groups', supplierGroupRoutes);
-router.use('/extraction', extractionRoutes);
+router.use('/extractions', extractionRoutes);
 router.use('/debit-notes', debitNoteRoutes);
-router.use('/reconciliation', reconciliationRoutes);
+router.use('/reconciliations', reconciliationRoutes);
 router.use('/', purchaseRoutes);
 
 export default router;

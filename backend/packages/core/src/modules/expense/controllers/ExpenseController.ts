@@ -23,9 +23,35 @@ interface AuthenticatedRequest extends Request {
  */
 export const getAllExpenses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const expenses = await Expense.find({ createdBy: req.user?._id })
-            .sort({ createdAt: -1 });
-        res.status(200).json(expenses);
+        const { page = 1, limit = 50, sort = '-date' } = req.query;
+        const pageSize = Number(limit);
+        const skip = (Number(page) - 1) * pageSize;
+
+        // Handle sort
+        const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+        const sortOrder = String(sort).startsWith('-') ? -1 : 1;
+        const sortObj: any = {};
+        sortObj[sortField] = sortOrder;
+
+        const match = { createdBy: req.user?._id };
+
+        const expenses = await Expense.find(match)
+            .sort(sortObj)
+            .skip(skip)
+            .limit(pageSize);
+
+        const total = await Expense.countDocuments(match);
+
+        res.status(200).json({
+            success: true,
+            data: expenses,
+            pagination: {
+                total,
+                page: Number(page),
+                limit: pageSize,
+                pages: Math.ceil(total / pageSize)
+            }
+        });
     } catch (err) {
         error(`Get all expenses failed: ${(err as Error).message}`);
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });

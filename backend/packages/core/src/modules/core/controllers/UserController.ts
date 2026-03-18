@@ -47,11 +47,35 @@ interface UserUpdateData {
  *       401:
  *         description: Unauthorized
  */
-export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
-        const req = _req as AuthenticatedRequest;
-        const users = await User.find({ tenantId: req.tenantId }).select('-password');
-        res.status(200).json(users);
+        const authReq = req as AuthenticatedRequest;
+        const { page = 1, limit = 10 } = req.query;
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const filter: any = { 
+            tenantId: authReq.tenantId,
+            isDeleted: { $ne: true } 
+        };
+
+        const [users, total] = await Promise.all([
+            User.find(filter)
+                .select('-password')
+                .skip(skip)
+                .limit(Number(limit))
+                .lean(),
+            User.countDocuments(filter)
+        ]);
+
+        res.status(200).json({
+            users,
+            pagination: {
+                total,
+                page: Number(page),
+                limit: Number(limit),
+                pages: Math.ceil(total / Number(limit))
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: (error as Error).message });
     }
@@ -219,7 +243,10 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response): Prom
             return;
         }
 
-        const user = await User.findByIdAndDelete(id);
+        const user = await User.findByIdAndUpdate(id, {
+            isDeleted: true,
+            deletedAt: new Date()
+        });
 
         if (!user) {
             res.status(404).json({ message: 'User not found' });

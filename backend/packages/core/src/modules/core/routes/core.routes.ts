@@ -3,7 +3,6 @@ import authRoutes from './authRoutes.js';
 import userRoutes from './userRoutes.js';
 import businessRoutes from './businessRoutes.js';
 import healthRoutes from './healthRoutes.js';
-import refreshTokenRoutes from './refreshTokenRoutes.js';
 import reportRoutes from './reportRoutes.js';
 import settingsRoutes from './settingsRoutes.js';
 import shopRoutes from './shopRoutes.js';
@@ -18,7 +17,6 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/core/business', businessRoutes);
 router.use('/core/health', healthRoutes);
-router.use('/refresh-token', refreshTokenRoutes);
 router.use('/reports', reportRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/shop', shopRoutes);
@@ -26,6 +24,5 @@ router.use('/branches', branchRoutes);
 router.use('/subscription-plans', subscriptionPlanRoutes);
 router.use('/audit-logs', auditLogRoutes);
 router.use('/admin', adminRoutes);
-
 
 export default router;

@@ -21,6 +21,17 @@ export class BillService {
         return this.billRepository.findBills(query);
     }
 
+    async getAllBillsPaginated(userId: string, page: number, limit: number, sort: any, filters: { supplier?: string; status?: string; paymentStatus?: string }): Promise<{ data: any[], total: number }> {
+        const query: any = { createdBy: userId };
+        if (filters.supplier) query.supplier = filters.supplier;
+        if (filters.status) query.status = filters.status;
+        if (filters.paymentStatus) {
+            const statuses = filters.paymentStatus.split(',');
+            query.paymentStatus = statuses.length > 1 ? { $in: statuses } : filters.paymentStatus;
+        }
+        return this.billRepository.findBillsPaginated(query, page, limit, sort);
+    }
+
     async getBillById(id: string, userId: string): Promise<any> {
         if (!ObjectId.isValid(id)) throw new AppError("Invalid bill ID format", 400);
         const bill = await this.billRepository.findBillById(id, userId);
