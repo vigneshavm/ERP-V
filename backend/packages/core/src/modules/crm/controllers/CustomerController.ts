@@ -228,8 +228,20 @@ export class CustomerController {
      */
     public getAllCustomers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            const { page = 1, limit = 50, sort = 'name' } = req.query;
+            const pageSize = Number(limit);
+            const skip = (Number(page) - 1) * pageSize;
+
+            // Handle sort
+            const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+            const sortOrder = String(sort).startsWith('-') ? -1 : 1;
+            const sortObj: any = {};
+            sortObj[sortField] = sortOrder;
+
+            const match = { owner: new mongoose.Types.ObjectId(req.user?._id) };
+
             const customers = await Customer.aggregate([
-                { $match: { owner: new mongoose.Types.ObjectId(req.user?._id) } },
+                { $match: match },
                 {
                     $lookup: {
                         from: 'transactions',
@@ -249,43 +261,28 @@ export class CustomerController {
                                 }
                             }
                         },
-                        totalPurchases: {
-                            $sum: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.amount'
-                                }
-                            }
-                        },
-                        lastPurchase: {
-                            $max: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.createdAt'
-                                }
-                            }
-                        }
+                        totalPurchases: { $sum: '$transactions.amount' },
+                        lastPurchase: { $max: '$transactions.createdAt' }
                     }
                 },
                 { $project: { transactions: 0 } },
-                { $sort: { name: 1 } }
+                { $sort: sortObj },
+                { $skip: skip },
+                { $limit: pageSize }
             ]);
 
-            res.status(200).json(customers);
+            const total = await Customer.countDocuments(match);
+
+            res.status(200).json({
+                success: true,
+                data: customers,
+                pagination: {
+                    total,
+                    page: Number(page),
+                    limit: pageSize,
+                    pages: Math.ceil(total / pageSize)
+                }
+            });
         } catch (err) {
             error(`Get All Customers Error: ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });

@@ -1,5 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import { DueRepository } from '@smarterp/shared/repositories/DueRepository.js';
+import { SupplierRepository } from '@smarterp/shared/repositories/SupplierRepository.js';
+import Bill from "../models/Bill.js";
+import Customer from "../../crm/models/Customer.js";
 import { AppError } from '@smarterp/shared/utils/AppError.js';
 import { info } from '@smarterp/shared/config/logger.js';
 import { ObjectId } from "mongodb";
@@ -7,7 +10,8 @@ import { ObjectId } from "mongodb";
 @injectable()
 export class DueService {
     constructor(
-        @inject(DueRepository) private dueRepository: DueRepository
+        @inject(DueRepository) private dueRepository: DueRepository,
+        @inject(SupplierRepository) private supplierRepository: SupplierRepository
     ) { }
 
     async createDueAdjustment(data: any, userId: string, userName?: string): Promise<any> {
@@ -69,5 +73,46 @@ export class DueService {
             customer: { name: customer.name, phone: customer.phone },
             adjustments,
         };
+    }
+
+    async getReceivableDues(tenantId: string): Promise<any[]> {
+        return Customer.find({ tenantId: new ObjectId(tenantId), dues: { $gt: 0 } })
+            .select('name phone address dues')
+            .lean();
+    }
+
+    async getPayableDues(tenantId: string): Promise<any[]> {
+        // Find all bills not fully paid
+        const unpaidBills = await Bill.find({ 
+            tenantId: tenantId, 
+            paymentStatus: { $in: ['unpaid', 'partial'] } 
+        }).populate('supplier', 'businessName contactNo').lean();
+
+        // Group by supplier
+        const map = new Map();
+        unpaidBills.forEach((bill: any) => {
+            const supplierId = bill.supplier?._id?.toString();
+            if (!supplierId) return;
+            
+            if (!map.has(supplierId)) {
+                map.set(supplierId, {
+                    supplier: bill.supplier,
+                    totalDue: 0,
+                    bills: []
+                });
+            }
+            const data = map.get(supplierId);
+            const due = bill.amount - (bill.paidAmount || 0);
+            data.totalDue += due;
+            data.bills.push({
+                billNo: bill.billNo,
+                date: bill.date,
+                amount: bill.amount,
+                paidAmount: bill.paidAmount,
+                due
+            });
+        });
+
+        return Array.from(map.values());
     }
 }

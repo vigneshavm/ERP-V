@@ -46,6 +46,8 @@ export interface IUser extends Document {
     personalFinanceSettings?: {
         monthStartDay: number;
     };
+    isDeleted?: boolean;
+    deletedAt?: Date | null;
 
     createdAt: Date;
     updatedAt: Date;

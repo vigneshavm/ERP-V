@@ -39,9 +39,9 @@ app.get(`${BASE}/transactions`, MockController.getMockTransactions);
 app.get(`${BASE}/personal/reports/analytics`, MockController.getMockAnalytics);
 
 app.use(`${BASE}/auth`,          authRouter);
-app.use(`${BASE}/dashboard`,     dashboardRouter);
+app.use(`${BASE}/dashboards`,    dashboardRouter);
 app.use(`${BASE}/expenses`,      expensesRouter);
-app.use(`${BASE}/budget`,        budgetRouter);
+app.use(`${BASE}/budgets`,       budgetRouter);
 app.use(`${BASE}/goals`,         goalsRouter);
 app.use(`${BASE}/loans`,         loansRouter);
 app.use(`${BASE}/accounts`,      accountsRouter);

@@ -1,28 +1,22 @@
 import express from "express";
 import {
-  addDue,
-  getAllDues,
-  getCustomerDues,
-  updateDue,
-  clearDue,
   createDueAdjustment,
   getDueAdjustments,
   getCustomerDueAdjustments,
+  getPayableDues,
+  getReceivableDues,
 } from "../controllers/DueController.js";
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// New due adjustment routes
+// Due adjustment routes
 router.post("/adjust", protect, createDueAdjustment);
 router.get("/adjustments", protect, getDueAdjustments);
 router.get("/customer/:customerId/adjustments", protect, getCustomerDueAdjustments);
 
-// Legacy routes (kept for backward compatibility)
-router.post("/", protect, addDue);
-router.get("/", protect, getAllDues);
-router.get("/customer/:id", protect, getCustomerDues);
-router.put("/:id", protect, updateDue);
-router.put("/:id/clear", protect, clearDue);
+// New split dues endpoints
+router.get("/payable", protect, getPayableDues);
+router.get("/receivable", protect, getReceivableDues);
 
 export default router;

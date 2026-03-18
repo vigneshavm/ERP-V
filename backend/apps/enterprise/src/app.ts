@@ -113,6 +113,10 @@ app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Enterprise API is running");
 });
 
+// Health Check
+import { healthCheck } from "@smarterp/core/modules/core/controllers/HealthController.js";
+app.get("/health", healthCheck);
+
 // =======================
 // Routes Integration (Enterprise)
 // =======================
@@ -121,9 +125,8 @@ app.get("/", (_req, res) => {
 // MOCK DATA ROUTES (Mock-First Strategy - v1)
 // =======================
 import * as MockController from "./controllers/MockController.js";
-app.get("/api/v1/finance/journal-entries", MockController.getMockJournalEntries);
 app.get("/api/v1/inventory/stock-reports", MockController.getMockStockReport);
-app.get("/api/v1/enterprise/dashboard/stats", MockController.getMockDashboardStats);
+app.get("/api/v1/enterprise/dashboards/stats", MockController.getMockDashboardStats);
 app.get("/api/v1/crm/suppliers/analytics", MockController.getMockSuppliers);
 
 // Catch-all for common frontend paths to avoid 404 crashes
@@ -181,6 +184,9 @@ app.use("/api/v1/purchases/returns", purchaseModuleRoutes);
 import financeRoutes from "@smarterp/core/modules/finance/routes/finance.routes.js";
 app.use("/api/v1/finance", financeRoutes); // Bills, Cashbank, Due, Loyalty
 
+import financeAIRoutes from "@smarterp/core/modules/finance-ai/routes/finance-ai.routes.js";
+app.use("/api/v1/finance", financeAIRoutes); // Document Extraction, AI Prediction, AI Chat
+
 // CRM Module
 import crmRoutes from "@smarterp/core/modules/crm/routes/crm.routes.js";
 app.use("/api/v1/crm", crmRoutes); // Customers, Suppliers, WhatsApp
@@ -191,7 +197,7 @@ app.use("/api/v1/hr", hrRoutes); // Employees
 
 // MARKETING Module
 import marketingRoutes from "@smarterp/core/modules/marketing/routes/meta.routes.js";
-app.use("/api/marketing/meta", marketingRoutes);
+app.use("/api/v1/marketing/meta", marketingRoutes);
 
 // AI AGENT Module (Extraction, Audit, Communication)
 import agentRoutes from "@smarterp/core/modules/agents/routes/agentRoutes.js";

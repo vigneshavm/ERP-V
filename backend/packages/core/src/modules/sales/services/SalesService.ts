@@ -47,6 +47,10 @@ export class SalesService {
         return this.invoiceRepository.findAll(userId);
     }
 
+    async getAllInvoicesPaginated(userId: string, page: number, limit: number, sort: any): Promise<{ data: IInvoice[], total: number }> {
+        return this.invoiceRepository.findAllPaginated(userId, page, limit, sort);
+    }
+
     async getInvoiceById(invoiceId: string, userId: string): Promise<any> {
         const invoice = await this.invoiceRepository.findById(invoiceId, userId);
         if (!invoice) {
@@ -202,6 +206,19 @@ export class SalesService {
         if (!updatedInvoice) throw new AppError("Invoice not found or update failed", 404);
 
         info(`Invoice ${updatedInvoice.invoiceNo} status updated to ${status}`);
+        await this.invalidateSalesCache(userId);
+
+        return updatedInvoice;
+    }
+
+    async updateInvoice(invoiceId: string, userId: string, updateData: any): Promise<IInvoice> {
+        const updatedInvoice = await this.invoiceRepository.update(invoiceId, userId, {
+            $set: updateData
+        });
+
+        if (!updatedInvoice) throw new AppError("Invoice not found or update failed", 404);
+
+        info(`Invoice ${updatedInvoice.invoiceNo} updated by ${userId}`);
         await this.invalidateSalesCache(userId);
 
         return updatedInvoice;

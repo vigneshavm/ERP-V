@@ -113,45 +113,49 @@ app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Personal API is running");
 });
 
+// Health Check
+import { healthCheck } from "@smarterp/core/modules/core/controllers/HealthController.js";
+app.get("/health", healthCheck);
+
 // =======================
 // Routes Integration (Personal)
 // =======================
 
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
-app.use("/api/personal/core", coreRoutes);
+app.use("/api/v1/personal/core", coreRoutes);
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
-app.use("/api/personal/roles", roleRoutes);
+app.use("/api/v1/personal/roles", roleRoutes);
 
 import syncRoutes from "@smarterp/core/modules/core/routes/syncRoutes.js";
-app.use("/api/personal/sync", syncRoutes);
+app.use("/api/v1/personal/sync", syncRoutes);
 
 import feedbackRoutes from "@smarterp/core/modules/core/routes/feedbackRoutes.js";
-app.use("/api/personal/feedback", feedbackRoutes);
+app.use("/api/v1/personal/feedback", feedbackRoutes);
 
 import notificationRoutes from "@smarterp/core/modules/core/routes/notificationRoutes.js";
-app.use("/api/personal/notifications", notificationRoutes);
+app.use("/api/v1/personal/notifications", notificationRoutes);
 
 import auditLogRoutes from "@smarterp/core/modules/core/routes/auditLogRoutes.js";
-app.use("/api/personal/audit-logs", auditLogRoutes);
+app.use("/api/v1/personal/audit-logs", auditLogRoutes);
 
 // EXPENSE Module
 import expenseModuleRoutes from '@smarterp/core/modules/expense/routes/expense.routes.js';
-app.use("/api/personal/expenses", expenseModuleRoutes);
+app.use("/api/v1/personal/expenses", expenseModuleRoutes);
 
 // SMS Tracker Module
 import smsTrackerRoutes from '@smarterp/core/modules/sms-tracker/routes/sms-tracker.routes.js';
-app.use("/api/personal/sms-tracker", smsTrackerRoutes);
+app.use("/api/v1/personal/sms-trackers", smsTrackerRoutes);
 
 // DASHBOARD Route
 import { getDashboardData } from './controllers/DashboardController.js';
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
-app.get("/api/personal/dashboard", protect, getDashboardData);
+app.get("/api/v1/personal/dashboards", protect, getDashboardData);
 
 // FINANCE Module
 import financeRoutes from '@smarterp/core/modules/finance/routes/finance.routes.js';
-app.use("/api/personal/finance", financeRoutes);
+app.use("/api/v1/personal/finance", financeRoutes);
 
 
 // =======================

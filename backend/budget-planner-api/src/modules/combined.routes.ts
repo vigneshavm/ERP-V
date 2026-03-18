@@ -19,6 +19,14 @@ goalsRouter.get('/', async (req: AuthRequest, res: Response, next: NextFunction)
   } catch (err) { next(err); }
 });
 
+goalsRouter.get('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const r = await db.query('SELECT * FROM goals WHERE id = $1 AND user_id = $2', [req.params.id, req.user!.sub]);
+    if (!r.rows[0]) throw AppError.notFound('Goal not found');
+    res.json({ success: true, data: r.rows[0] });
+  } catch (err) { next(err); }
+});
+
 goalsRouter.post('/',
   validate([
     body('name').trim().notEmpty(),
@@ -64,6 +72,7 @@ goalsRouter.patch('/:id',
       const set = (col: string, val: unknown) => { params.push(val); fields.push(`${col} = $${params.length}`); };
       if (req.body.name) set('name', req.body.name);
       if (req.body.target) set('target', req.body.target);
+      if (req.body.current !== undefined) set('current', req.body.current);
       if (req.body.icon) set('icon', req.body.icon);
       if (req.body.color) set('color', req.body.color);
       if (req.body.deadline) set('deadline', req.body.deadline);
@@ -94,6 +103,14 @@ loansRouter.get('/', async (req: AuthRequest, res: Response, next: NextFunction)
   try {
     const r = await db.query('SELECT * FROM loans WHERE user_id = $1 ORDER BY deadline ASC', [req.user!.sub]);
     res.json({ success: true, data: r.rows });
+  } catch (err) { next(err); }
+});
+
+loansRouter.get('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const r = await db.query('SELECT * FROM loans WHERE id = $1 AND user_id = $2', [req.params.id, req.user!.sub]);
+    if (!r.rows[0]) throw AppError.notFound('Loan not found');
+    res.json({ success: true, data: r.rows[0] });
   } catch (err) { next(err); }
 });
 
@@ -128,7 +145,7 @@ loansRouter.patch('/:id',
     try {
       const fields: string[] = []; const params: unknown[] = [];
       const set = (col: string, val: unknown) => { params.push(val); fields.push(`${col} = $${params.length}`); };
-      ['name', 'bank', 'interest_rate', 'tenure_months', 'deadline', 'icon', 'color'].forEach(f => {
+      ['name', 'bank', 'total', 'current', 'interest_rate', 'tenure_months', 'deadline', 'icon', 'color', 'type'].forEach(f => {
         const k = f.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
         if (req.body[k] !== undefined) set(f, req.body[k]);
       });
@@ -294,6 +311,49 @@ cardsRouter.post('/debit',
   }
 );
 
+cardsRouter.patch('/credit/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const fields: string[] = []; const params: unknown[] = [req.params.id, req.user!.sub];
+    const set = (col: string, val: unknown) => { params.push(val); fields.push(`${col} = $${params.length}`); };
+    const mappings: Record<string, string> = {
+      bank: 'bank', cardName: 'card_name', last4: 'last4', network: 'network',
+      limit: 'card_limit', spent: 'spent', dueDate: 'due_date', minDue: 'min_due',
+      color: 'color', gradient: 'gradient'
+    };
+    Object.entries(mappings).forEach(([bodyKey, dbCol]) => {
+      if (req.body[bodyKey] !== undefined) set(dbCol, req.body[bodyKey]);
+    });
+    if (!fields.length) throw AppError.badRequest('No fields to update');
+    const r = await db.query(
+      `UPDATE credit_cards SET ${fields.join(', ')} WHERE id = $1 AND user_id = $2 RETURNING *`,
+      params
+    );
+    if (!r.rowCount) throw AppError.notFound('Credit card not found');
+    res.json({ success: true, data: r.rows[0] });
+  } catch (err) { next(err); }
+});
+
+cardsRouter.patch('/debit/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const fields: string[] = []; const params: unknown[] = [req.params.id, req.user!.sub];
+    const set = (col: string, val: unknown) => { params.push(val); fields.push(`${col} = $${params.length}`); };
+    const mappings: Record<string, string> = {
+      bank: 'bank', cardName: 'card_name', last4: 'last4', network: 'network',
+      accountId: 'account_id', color: 'color', gradient: 'gradient'
+    };
+    Object.entries(mappings).forEach(([bodyKey, dbCol]) => {
+      if (req.body[bodyKey] !== undefined) set(dbCol, req.body[bodyKey]);
+    });
+    if (!fields.length) throw AppError.badRequest('No fields to update');
+    const r = await db.query(
+      `UPDATE debit_cards SET ${fields.join(', ')} WHERE id = $1 AND user_id = $2 RETURNING *`,
+      params
+    );
+    if (!r.rowCount) throw AppError.notFound('Debit card not found');
+    res.json({ success: true, data: r.rows[0] });
+  } catch (err) { next(err); }
+});
+
 cardsRouter.delete('/credit/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     await db.query('DELETE FROM credit_cards WHERE id = $1 AND user_id = $2', [req.params.id, req.user!.sub]);
@@ -446,10 +506,48 @@ transactionsRouter.get('/contacts', async (req: AuthRequest, res: Response, next
   } catch (err) { next(err); }
 });
 
+/** GET /api/v1/transactions — all transactions joined with category info */
+transactionsRouter.get('/', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { page = 1, limit = 50, sort = '-date' } = req.query;
+    const pageSize = Number(limit);
+    const skip = (Number(page) - 1) * pageSize;
+
+    // Handle sort (Postgres style)
+    const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+    const sortOrder = String(sort).startsWith('-') ? 'DESC' : 'ASC';
+    
+    // Mapping for DB columns if necessary
+    const colMap: Record<string, string> = {
+      date: 'date', amount: 'amount', category: 'category', type: 'type'
+    };
+    const dbCol = colMap[sortField] || 'date';
+
+    const r = await db.query(
+      `SELECT * FROM transactions WHERE user_id = $1 ORDER BY ${dbCol} ${sortOrder} LIMIT $2 OFFSET $3`,
+      [req.user!.sub, pageSize, skip]
+    );
+
+    const countR = await db.query('SELECT COUNT(*) FROM transactions WHERE user_id = $1', [req.user!.sub]);
+    const total = parseInt(countR.rows[0].count);
+
+    res.json({
+      success: true,
+      data: r.rows,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: pageSize,
+        pages: Math.ceil(total / pageSize)
+      }
+    });
+  } catch (err) { next(err); }
+});
+
 /** GET /api/v1/transactions/monthly?month=YYYY-MM — grouped by category */
 transactionsRouter.get('/monthly', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const month = (req.query.month as string) || new Date().toISOString().slice(0, 7);
+    const month = typeof req.query.month === 'string' ? req.query.month : new Date().toISOString().slice(0, 7);
     const r = await db.query(
       `SELECT c.id AS category_id, c.name, c.color, c.icon,
               SUM(t.amount) AS total, COUNT(*) AS count

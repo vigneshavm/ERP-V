@@ -185,8 +185,35 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response): 
  */
 export const getAllSuppliers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const suppliers = await Supplier.find({ owner: req.user?._id }).sort({ businessName: 1 });
-        res.status(200).json(suppliers);
+        const { page = 1, limit = 50, sort = 'businessName' } = req.query;
+        const pageSize = Number(limit);
+        const skip = (Number(page) - 1) * pageSize;
+
+        // Handle sort
+        const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
+        const sortOrder = String(sort).startsWith('-') ? -1 : 1;
+        const sortObj: any = {};
+        sortObj[sortField] = sortOrder;
+
+        const match = { owner: req.user?._id };
+
+        const suppliers = await Supplier.find(match)
+            .sort(sortObj)
+            .skip(skip)
+            .limit(pageSize);
+
+        const total = await Supplier.countDocuments(match);
+
+        res.status(200).json({
+            success: true,
+            data: suppliers,
+            pagination: {
+                total,
+                page: Number(page),
+                limit: pageSize,
+                pages: Math.ceil(total / pageSize)
+            }
+        });
     } catch (err) {
         error(`Get All Suppliers Error: ${(err as Error).message}`);
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });

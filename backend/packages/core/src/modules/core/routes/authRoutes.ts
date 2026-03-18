@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { container } from "tsyringe";
 import { AuthController } from "../controllers/AuthController.js";
+import refreshTokenRoutes from "./refreshTokenRoutes.js";
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { authLimiter, passwordResetLimiter, forceLogoutLimiter } from '@smarterp/shared/middlewares/rateLimiter.js';
 import { getCsrfToken } from '@smarterp/shared/middlewares/csrfMiddleware.js';
@@ -16,8 +17,17 @@ router.post("/forgot-password", passwordResetLimiter, authController.forgotPassw
 router.post("/reset-password", passwordResetLimiter, authController.resetPassword);
 router.post("/logout", protect, authController.logout);
 
+/**
+ * @desc Refresh token routes
+ * POST /api/auth/refresh-token/ (refresh)
+ * POST /api/auth/refresh-token/revoke (revoke)
+ * POST /api/auth/refresh-token/revoke-all (revoke-all)
+ */
+router.use("/refresh-token", refreshTokenRoutes);
+
 // Protected routes
 router.get("/profile", protect, authController.getProfile);
+router.patch("/profile", protect, authController.updateProfile);
 router.get("/csrf-token", protect, getCsrfToken); // CSRF token endpoint
 
 export default router;

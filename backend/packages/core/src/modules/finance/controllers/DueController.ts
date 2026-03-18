@@ -29,6 +29,20 @@ export const getCustomerDueAdjustments = asyncHandler(async (req: AuthenticatedR
     res.status(200).json(result);
 });
 
+export const getPayableDues = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const dueService = container.resolve(DueService);
+    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const result = await dueService.getPayableDues(tenantId as string);
+    res.status(200).json(result);
+});
+
+export const getReceivableDues = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const dueService = container.resolve(DueService);
+    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const result = await dueService.getReceivableDues(tenantId as string);
+    res.status(200).json(result);
+});
+
 // Legacy stubs
 export const addDue = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
     res.status(501).json({ message: 'Not implemented - use createDueAdjustment instead' });
@@ -54,6 +68,8 @@ export default {
     createDueAdjustment,
     getDueAdjustments,
     getCustomerDueAdjustments,
+    getPayableDues,
+    getReceivableDues,
     addDue,
     getAllDues,
     getCustomerDues,

@@ -6,7 +6,7 @@ import advanceRoutes from './advanceRoutes.js';
 const router = express.Router();
 
 router.use('/employees', employeeRoutes);
-router.use('/payroll', payrollRoutes);
+router.use('/payrolls', payrollRoutes);
 router.use('/advances', advanceRoutes);
 
 export default router;

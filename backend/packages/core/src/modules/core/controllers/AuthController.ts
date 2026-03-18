@@ -440,6 +440,61 @@ export class AuthController {
 
     /**
      * @swagger
+     * /api/auth/profile:
+     *   patch:
+     *     summary: Update current user profile
+     *     tags: [Auth]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name: { type: string }
+     *               email: { type: string }
+     *               phone: { type: string }
+     *               shopName: { type: string }
+     *     responses:
+     *       200:
+     *         description: Profile updated successfully
+     */
+    public updateProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const userId = req.user?._id;
+            const updates = req.body;
+            
+            // Limit allowed update fields for profile
+            const allowedUpdates = ['name', 'email', 'phone', 'shopName'];
+            const filteredUpdates: any = {};
+            allowedUpdates.forEach(key => {
+                if (updates[key] !== undefined) filteredUpdates[key] = updates[key];
+            });
+
+            if (Object.keys(filteredUpdates).length === 0) {
+                res.status(400).json({ message: 'No valid update fields provided' });
+                return;
+            }
+
+            const user = await User.findByIdAndUpdate(userId, filteredUpdates, { new: true, runValidators: true }).select('-password');
+            if (!user) {
+                res.status(404).json({ message: 'User not found' });
+                return;
+            }
+
+            res.status(200).json({
+                message: 'Profile updated successfully',
+                user
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+        }
+    };
+
+    /**
+     * @swagger
      * /api/auth/forgot-password:
      *   post:
      *     summary: Request password reset link
@@ -689,7 +744,7 @@ export class AuthController {
     public logout = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const { refreshToken } = req.body;
-            const { clearDeviceIdCookie } = await import('../../../utils/deviceUtils.js');
+            const { clearDeviceIdCookie } = await import('@smarterp/shared/utils/deviceUtils.js');
 
             if (refreshToken) {
                 const storedToken = await RefreshToken.findOne({

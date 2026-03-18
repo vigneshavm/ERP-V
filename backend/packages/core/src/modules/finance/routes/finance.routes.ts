@@ -6,36 +6,27 @@ import loyaltyRoutes from './loyaltyRoutes.js';
 import dayEndRoutes from './dayEndRoutes.js';
 import accountRoutes from './accountRoutes.js';
 import financialReportRoutes from './financialReportRoutes.js';
+import bankStatementRoutes from './bankStatementRoutes.js';
+import loanRoutes from './loanRoutes.js';
+import { getAllDailyFinance } from '../controllers/CashBankController.js';
+import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
+import journalEntryRoutes from './journalEntryRoutes.js';
+import clearingParameterRoutes from './clearingParameterRoutes.js';
 
 const router = express.Router();
 
 router.use('/bills', billRoutes);
 router.use('/cash-banks', cashBankRoutes);
-router.use('/due', dueRoutes);
-router.use('/loyalty', loyaltyRoutes);
-router.use('/day-end', dayEndRoutes);
+router.use('/dues', dueRoutes);
+router.use('/loyalty-points', loyaltyRoutes);
+router.use('/day-ends', dayEndRoutes);
 router.use('/accounts', accountRoutes);
-
-// Bank Statements
-import bankStatementRoutes from './bankStatementRoutes.js';
 router.use('/bank-statements', bankStatementRoutes);
-
-// Loans
-import loanRoutes from './loanRoutes.js';
 router.use('/loans', loanRoutes);
 
-// Daily Finance (Sync)
-import { getAllDailyFinance } from '../controllers/CashBankController.js';
-import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
-router.get('/daily-finance', protect, getAllDailyFinance);
-
-// Mount Journal Entry routes
-import journalEntryRoutes from './journalEntryRoutes.js';
+router.get('/daily-finances', protect, getAllDailyFinance);
 router.use('/journal-entries', journalEntryRoutes);
-
-// Mount Clearing Parameter routes
-import clearingParameterRoutes from './clearingParameterRoutes.js';
-router.use('/clearing', clearingParameterRoutes);
+router.use('/clearings', clearingParameterRoutes);
 router.use('/reports', financialReportRoutes);
 
 export default router;
