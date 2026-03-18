@@ -39,7 +39,7 @@ export const createPayment = createAsyncThunk(
     'paymentOut/create',
     async (paymentData: PaymentOut, { rejectWithValue }) => {
         try {
-            const response = await api.post('/api/purchase-payments', paymentData);
+            const response = await api.post('/v1/purchases/payments', paymentData);
             return response.data.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Failed to create payment');
@@ -51,7 +51,7 @@ export const getPayments = createAsyncThunk(
     'paymentOut/getAll',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get('/api/purchase-payments');
+            const response = await api.get('/v1/purchases/payments');
             return response.data.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Failed to fetch payments');
@@ -63,7 +63,7 @@ export const updatePaymentStatus = createAsyncThunk(
     'paymentOut/updateStatus',
     async ({ id, status, bounceReason }: { id: string, status: string, bounceReason?: string }, { rejectWithValue }) => {
         try {
-            const response = await api.patch(`/api/purchase-payments/${id}/status`, { status, bounceReason });
+            const response = await api.patch(`/v1/purchases/payments/${id}/status`, { status, bounceReason });
             return response.data.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Failed to update status');

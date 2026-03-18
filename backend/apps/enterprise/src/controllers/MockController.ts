@@ -68,3 +68,29 @@ export const getMockSuppliers = (req: Request, res: Response) => {
         { id: 's3', name: 'Precision Parts Ltd (API Mock)', netBalance: 0, totalInvoices: 25, lastPaymentDate: '2026-03-10' },
     ]);
 };
+
+export const getMockBusinessProfile = (req: Request, res: Response) => {
+    res.json({
+        success: true,
+        data: {
+            _id: 'tenant_123',
+            userId: 'user_123',
+            businessName: 'Vignesh Enterprise',
+            email: 'vignesh@expancer.com',
+            phone: '+91 9876543210',
+            address: '123 Tech Park, Chennai',
+            category: 'Retail',
+            businessType: 'Private Limited'
+        }
+    });
+};
+
+export const getMockEmployees = (req: Request, res: Response) => {
+    res.json({
+        success: true,
+        data: [
+            { _id: 'emp_1', name: 'John Doe', role: 'Manager' },
+            { _id: 'emp_2', name: 'Jane Smith', role: 'Developer' }
+        ]
+    });
+};

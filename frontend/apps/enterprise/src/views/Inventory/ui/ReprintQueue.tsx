@@ -1,6 +1,6 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/shared/api/api';
 import { toast } from 'react-toastify';
 import { Printer, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useConfig } from '@/app/providers/ConfigContext';
@@ -18,7 +18,6 @@ interface QueueItem {
 
 const ReprintQueue: React.FC = () => {
     const { tenantId } = useConfig();
-    const apiUrl = (import.meta as any).env.VITE_BACKEND_URL;
     const [queue, setQueue] = useState<QueueItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
@@ -26,10 +25,7 @@ const ReprintQueue: React.FC = () => {
     const fetchQueue = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${apiUrl}/inventory/reprint-queue`, {
-                headers: { Authorization: `Bearer ${token}`, 'x-tenant-id': tenantId }
-            });
+            const res = await api.get('/v1/inventory/reprint-queue');
             setQueue(res.data);
         } catch (err) {
             logger.error('Fetch Queue Error:', err);
@@ -41,16 +37,13 @@ const ReprintQueue: React.FC = () => {
 
     useEffect(() => {
         fetchQueue();
-    }, [apiUrl, tenantId]);
+    }, [tenantId]);
 
     const handleClearQueue = async () => {
         if (!confirm('Are you sure you want to clear the reprint queue?')) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${apiUrl}/inventory/reprint-queue`, {
-                headers: { Authorization: `Bearer ${token}`, 'x-tenant-id': tenantId }
-            });
+            await api.delete('/v1/inventory/reprint-queue');
             toast.success('Queue cleared');
             setQueue([]);
         } catch (err) {

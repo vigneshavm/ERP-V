@@ -40,7 +40,7 @@ const initialState: JournalEntryState = {
     success: false
 };
 
-const API_URL = '/api/journal';
+const API_URL = '/v1/finance/journal-entries';
 
 // Helpers
 const getConfig = (token: string) => ({

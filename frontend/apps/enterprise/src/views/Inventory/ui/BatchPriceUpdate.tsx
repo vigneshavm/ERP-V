@@ -1,7 +1,7 @@
 import { logger } from '@/shared/lib/logger';
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Save, AlertCircle, CheckCircle, Package, ArrowRight, Printer } from 'lucide-react';
-import axios from 'axios';
+import api from '@/shared/api/api';
 import { toast } from 'react-toastify';
 import { useConfig } from "@/app/providers/ConfigContext";
 
@@ -16,7 +16,6 @@ interface Item {
 
 const BatchPriceUpdate: React.FC = () => {
     const { tenantId } = useConfig();
-    const apiUrl = (import.meta as any).env.VITE_BACKEND_URL;
     const [sku, setSku] = useState('');
     const [item, setItem] = useState<Item | null>(null);
     const [newPrice, setNewPrice] = useState<string>('');
@@ -40,17 +39,9 @@ const BatchPriceUpdate: React.FC = () => {
         setNewPrice('');
 
         try {
-            // We search by SKU. The getAllItems endpoint supports search.
-            // But ideally we want exact match. 
-            // The existing API /api/inventory?search=sku might return multiple.
-            // Let's assume we can use the search query.
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${apiUrl}/inventory?search=${encodeURIComponent(sku)}&limit=1`, {
-                headers: { Authorization: `Bearer ${token}`, 'x-tenant-id': tenantId }
-            });
+            const res = await api.get(`/v1/inventory?search=${encodeURIComponent(sku)}&limit=1`);
 
             if (res.data.items && res.data.items.length > 0) {
-                // Check for exact SKU match if possible, or take the first one
                 const found = res.data.items.find((i: Item) => i.sku.toLowerCase() === sku.toLowerCase()) || res.data.items[0];
                 setItem(found);
 
@@ -73,12 +64,9 @@ const BatchPriceUpdate: React.FC = () => {
 
         setUpdating(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post(`${apiUrl}/inventory/batch-price-update`, {
+            const res = await api.post('/v1/inventory/batch-price-update', {
                 sku: item.sku,
                 newPrice: parseFloat(newPrice)
-            }, {
-                headers: { Authorization: `Bearer ${token}`, 'x-tenant-id': tenantId }
             });
 
             toast.success(res.data.message);

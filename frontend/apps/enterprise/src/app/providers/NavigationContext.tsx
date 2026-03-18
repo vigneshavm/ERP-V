@@ -19,15 +19,9 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Mapping path to view
     const getViewFromPath = (path: string): AppView => {
-        // BrowserRouter manages basename (/enterprise), so pathname is already relative to it
-        const cleanPath = path === '/' ? '' : path.replace(/^\/|\/$/g, '');
-
-        // Tab-based mapping (for legacy /?tab=...)
-        const tab = searchParams.get('tab');
-        if (tab) return tab as AppView;
-
+        const segments = path.replace(/^\/|\/$/g, '').split('/').filter(Boolean);
+        
         const pathMap: Record<string, AppView> = {
-            '': 'LANDING',
             'landing': 'LANDING',
             'demo': 'LANDING',
             'dashboard': 'DASHBOARD',
@@ -39,6 +33,7 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             'sales': 'SALES',
             'sales/register': 'SALES_REGISTER',
             'sales/new': 'SALES_INVOICE',
+            'sales/invoice/create': 'SALES_INVOICE',
             'sales/estimates': 'ESTIMATE',
             'sales/orders': 'SALES_ORDER',
             'sales/challans': 'DELIVERY_CHALLAN',
@@ -49,66 +44,84 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             'purchase': 'PURCHASE',
             'purchase/register': 'PURCHASE_REGISTER',
             'suppliers': 'SUPPLIER_LIST',
+            'suppliers/add': 'VENDORS',
+            'suppliers/inflow': 'VENDOR_INFLOW_OUTFLOW',
+            'suppliers/groups': 'SUPPLIERS',
+            'suppliers/statements': 'SUPPLIER_STATEMENTS',
+            'suppliers/ledger': 'SUPPLIER_LEDGER',
             'purchase/new': 'PURCHASE_ENTRY',
             'purchase/orders': 'PURCHASE_ORDER',
             'purchase/grn': 'GOODS_RECEIVED',
+            'purchase/grn/new': 'GOODS_RECEIVED',
             'purchase/bills': 'PURCHASE_BILLS',
+            'purchase/bills/new': 'PURCHASE_BILLS',
             'purchase/history': 'PURCHASE_HISTORY',
             'purchase/returns': 'PURCHASE_RETURN',
             'purchase/debit-notes': 'DEBIT_NOTES',
             'purchase/payments': 'SUPPLIER_PAYMENTS',
             'purchase/payment-out': 'PURCHASE_PAYMENT_OUT',
             'purchase/payables': 'OUTSTANDING_PAYABLES',
-            'purchase/upload': 'PURCHASE_UPLOAD',
+            'purchase/snapshot': 'PAYABLE_SNAPSHOT',
+            'purchase/ageing-analysis': 'SUPPLIER_AGEING',
             'purchase/rate-revisions': 'RATE_REVISIONS',
             'purchase/cheques-vault': 'CHEQUES_VAULT',
             'purchase/inflow-outflow': 'VENDOR_INFLOW_OUTFLOW',
-            'inventory': 'INVENTORY',
+            'inventory': 'INVENTORY_ITEMS',
             'inventory/items': 'INVENTORY_ITEMS',
             'inventory/categories': 'ITEM_CATEGORIES',
-            'inventory/batch-expiry': 'BATCH_EXPIRY',
             'inventory/barcodes': 'BARCODE_GENERATOR',
             'inventory/import': 'BULK_IMPORT',
             'inventory/reprint': 'REPRINT_QUEUE',
             'inventory/export': 'DATA_EXPORT',
             'finance': 'FINANCE',
-            'finance/cash': 'CASH_ACCOUNTS',
+            'cashbank/cash-in-hand': 'CASH_ACCOUNTS',
             'cashbank/accounts': 'BANK_ACCOUNTS',
-            'finance/petty-cash': 'PETTY_CASH',
-            'finance/transfers': 'FUND_TRANSFERS',
-            'finance/reconciliation': 'BANK_RECONCILIATION',
-            'finance/summary': 'BANK_SUMMARY',
-            'finance/loans': 'LOAN_ACCOUNTS',
-            'finance/goals': 'FINANCIAL_GOALS',
+            'cashbank/transfers': 'FUND_TRANSFERS',
+            'cashbank/reconciliation': 'BANK_RECONCILIATION',
+            'cashbank/position': 'BANK_SUMMARY',
+            'cashbank/petty-cash': 'PETTY_CASH',
+            'finance/journal': 'JOURNAL_ENTRIES',
+            'finance/journal/new': 'JOURNAL_ENTRIES',
             'finance/bank-statement': 'BANK_STATEMENT',
             'finance/sms-tracker': 'SMS_TRACKER',
+            'finance/budget-tracker': 'BUDGET_TRACKER',
+            'finance/agents': 'FINANCE_AGENTS',
+            'finance/goals': 'FINANCIAL_GOALS',
             'finance/gst': 'GST_RECONCILIATION',
-            'finance/journal': 'JOURNAL_ENTRIES',
             'expenses': 'EXPENSES',
             'expenses/tracker': 'EXPENSES',
             'expenses/categories': 'EXPENSE_CATEGORIES',
             'expenses/recurring': 'RECURRING_EXPENSES',
             'expenses/reports': 'EXPENSE_REPORTS',
-            'finance/budget-tracker': 'BUDGET_TRACKER',
             'customers': 'CUSTOMER_LIST',
             'customers/ledger': 'CUSTOMER_LEDGER',
-            'staff': 'HR',
+            'people': 'HR',
+            'people/employees': 'HR',
+            'people/employees/leaves': 'LEAVE_MANAGEMENT',
             'people/employees/labor': 'STAFF_MANAGER',
             'people/payroll': 'PAYROLL',
             'people/employees/allowances': 'ALLOWANCE_MANAGER',
             'people/payroll/attendance': 'ATTENDANCE_SUMMARY',
+            'people/payroll/structure': 'SALARY_STRUCTURE_MANAGER',
+            'people/payroll/run': 'PAYROLL_RUNS',
             'people/attendance': 'ATTENDANCE_BOARD',
             'settings': 'SETTINGS',
-            'settings/sync': 'SYNC_SHARE',
-            'settings/restore': 'RESTORE',
             'settings/tenants': 'TENANT_MANAGEMENT',
             'settings/architect': 'TENANT_ARCHITECT',
-            'settings/audit': 'AUDIT_LOGS',
-            'settings/super-admin': 'SUPER_ADMIN_CONSOLE',
             'growth': 'GROW',
         };
 
-        return pathMap[cleanPath] || 'LANDING';
+        // Prefix matching strategy: try the full path, then try stripping segments from the right
+        for (let i = segments.length; i > 0; i--) {
+            const currentPath = segments.slice(0, i).join('/');
+            if (pathMap[currentPath]) return pathMap[currentPath];
+        }
+
+        // Fallback to tab param
+        const tab = searchParams.get('tab');
+        if (tab) return tab as AppView;
+
+        return 'LANDING';
     };
 
     const [currentView, setCurrentViewInternal] = useState<AppView>(() => getViewFromPath(pathname));

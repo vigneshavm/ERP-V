@@ -84,6 +84,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                         case 'POS': return <LazyModules.POSCustomerDisplay />;
                         case 'POS_ORDERS': return <LazyModules.POSCustomerDisplay />;
                         case 'POS_RETURNS': return <LazyModules.POSCustomerDisplay />;
+                        case 'SHIFT_MANAGEMENT': return <LazyModules.POSCustomerDisplay />;
 
                         // === PURCHASE & SUPPLIERS ===
                         case 'PURCHASE_ENTRY':
@@ -110,6 +111,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                         case 'SUPPLIERS': return <LazyModules.SupplierGroups />;
 
                         // === INVENTORY ===
+                        case 'INVENTORY':
                         case 'INVENTORY_ITEMS': return <LazyModules.InventoryItems />;
                         case 'ITEM_CATEGORIES': return <LazyModules.ItemCategories />;
                         case 'BARCODE_GENERATOR': return <LazyModules.BarcodeGenerator />;
@@ -129,6 +131,12 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                         case 'FINANCE_AGENTS': return <LazyModules.FinanceAgentDashboard />;
                         case 'FINANCIAL_GOALS': return <LazyModules.FinancialGoals />;
                         case 'GST_RECONCILIATION': return <LazyModules.GSTReconciliation />;
+
+                        // === EXPENSES ===
+                        case 'EXPENSES': return <LazyModules.GrowDashboard />; // Map to appropriate module
+                        case 'EXPENSE_CATEGORIES': return <LazyModules.GrowDashboard />;
+                        case 'RECURRING_EXPENSES': return <LazyModules.GrowDashboard />;
+                        case 'EXPENSE_REPORTS': return <LazyModules.GrowDashboard />;
 
                         // === HR & PAYROLL ===
                         case 'STAFF_MANAGER': return <LazyModules.LaborManager />;

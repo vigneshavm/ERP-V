@@ -2,7 +2,7 @@ import { useAuthStore } from '@repo/shared';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "@/shared/api/api";
 
-const API_URL = "/delivery-challan";
+const API_URL = "/v1/sales/delivery-challans";
 
 // Get token from state
 const getConfig = (token: string) => ({
