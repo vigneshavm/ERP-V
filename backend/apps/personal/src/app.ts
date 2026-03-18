@@ -113,6 +113,12 @@ app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Personal API is running");
 });
 
+// COMPATIBILITY ALIASES
+import { container } from "tsyringe";
+import { AuthController } from "@smarterp/core/modules/core/controllers/AuthController.js";
+const authController = container.resolve(AuthController);
+app.get("/api/v1/auth/me", protect, (req, res) => authController.getProfile(req, res));
+
 // Health Check
 import { healthCheck } from "@smarterp/core/modules/core/controllers/HealthController.js";
 app.get("/health", healthCheck);
@@ -124,6 +130,7 @@ app.get("/health", healthCheck);
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
 app.use("/api/v1/personal/core", coreRoutes);
+app.use("/api/v1", coreRoutes); // Alias for shared adapter
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
 app.use("/api/v1/personal/roles", roleRoutes);
@@ -143,6 +150,7 @@ app.use("/api/v1/personal/audit-logs", auditLogRoutes);
 // EXPENSE Module
 import expenseModuleRoutes from '@smarterp/core/modules/expense/routes/expense.routes.js';
 app.use("/api/v1/personal/expenses", expenseModuleRoutes);
+app.use("/api/v1", expenseModuleRoutes); // Alias for /v1/transactions, /v1/categories
 
 // SMS Tracker Module
 import smsTrackerRoutes from '@smarterp/core/modules/sms-tracker/routes/sms-tracker.routes.js';
@@ -152,10 +160,13 @@ app.use("/api/v1/personal/sms-trackers", smsTrackerRoutes);
 import { getDashboardData } from './controllers/DashboardController.js';
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 app.get("/api/v1/personal/dashboards", protect, getDashboardData);
+app.get("/api/v1/personal/dashboard", protect, getDashboardData); // Compatibility
+app.get("/api/v1/dashboard", protect, getDashboardData); // Shared adapter
 
 // FINANCE Module
 import financeRoutes from '@smarterp/core/modules/finance/routes/finance.routes.js';
 app.use("/api/v1/personal/finance", financeRoutes);
+app.use("/api/v1/finance", financeRoutes); // Alias for shared adapter
 
 
 // =======================

@@ -184,8 +184,8 @@ app.use("/api/v1/purchases/returns", purchaseModuleRoutes);
 import financeRoutes from "@smarterp/core/modules/finance/routes/finance.routes.js";
 app.use("/api/v1/finance", financeRoutes); // Bills, Cashbank, Due, Loyalty
 
-import financeAIRoutes from "@smarterp/core/modules/finance-ai/routes/finance-ai.routes.js";
-app.use("/api/v1/finance", financeAIRoutes); // Document Extraction, AI Prediction, AI Chat
+// import financeAIRoutes from "@smarterp/core/modules/finance-ai/routes/finance-ai.routes.js";
+// app.use("/api/v1/finance", financeAIRoutes); // Document Extraction, AI Prediction, AI Chat
 
 // CRM Module
 import crmRoutes from "@smarterp/core/modules/crm/routes/crm.routes.js";

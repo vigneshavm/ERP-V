@@ -30,5 +30,13 @@ export const getBalanceSheet = asyncHandler(async (req: AuthenticatedRequest, re
     res.status(200).json(report);
 });
 
-const FinancialReportController = { getTrialBalance, getProfitAndLoss, getBalanceSheet };
+export const getCashFlow = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const service = container.resolve(FinancialReportService);
+    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const { startDate, endDate } = req.query;
+    const report = await service.getCashFlow(tenantId as string, startDate as string, endDate as string);
+    res.status(200).json(report);
+});
+
+const FinancialReportController = { getTrialBalance, getProfitAndLoss, getBalanceSheet, getCashFlow };
 export default FinancialReportController;

@@ -37,7 +37,7 @@ class ApiClient {
             (response) => response,
             (error) => {
                 if (error.response?.status === 401) {
-                    console.error('Session expired. Redirecting to login...');
+                    console.error(`Session expired [${error.config?.url}]. Redirecting to login...`);
                     // Handle logout logic here if needed, or emit event
                 }
                 return Promise.reject(error);
