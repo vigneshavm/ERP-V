@@ -72,6 +72,26 @@ let FinancialReportService = class FinancialReportService {
             totalLiabilitiesAndEquity: totalLiabilities + totalEquity
         };
     }
+    async getCashFlow(tenantId, startDate, endDate) {
+        // Find Cash/Bank accounts
+        const accounts = await this.accountRepo.findAll(tenantId);
+        const cashBankAccounts = accounts.filter(a => a.type === 'Asset' &&
+            (a.name.toLowerCase().includes('cash') || a.name.toLowerCase().includes('bank')));
+        // Calculate simplified cash flow based on current balances
+        const inflow = cashBankAccounts.reduce((sum, a) => sum + (a.currentBalance > 0 ? a.currentBalance : 0), 0);
+        const outflow = cashBankAccounts.reduce((sum, a) => sum + (a.currentBalance < 0 ? Math.abs(a.currentBalance) : 0), 0);
+        return {
+            accounts: cashBankAccounts.map(a => ({
+                name: a.name,
+                balance: a.currentBalance,
+                type: a.name.toLowerCase().includes('cash') ? 'Cash' : 'Bank'
+            })),
+            totalInflow: inflow,
+            totalOutflow: outflow,
+            netCashFlow: inflow - outflow,
+            period: { startDate, endDate } // Future: filter journal entries by date
+        };
+    }
 };
 FinancialReportService = __decorate([
     injectable(),

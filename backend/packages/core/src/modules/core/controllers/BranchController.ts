@@ -5,14 +5,14 @@ import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 
 export const getAllBranches = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore - tenantId added by middleware
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.tenantId;
     const branches = await Branch.find({ tenantId }).sort({ createdAt: -1 });
     res.status(200).json(branches);
 });
 
 export const getBranch = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.tenantId;
     const branch = await Branch.findOne({ _id: req.params.id, tenantId });
     if (!branch) {
         throw new AppError("Branch not found", 404);
@@ -22,7 +22,7 @@ export const getBranch = asyncHandler(async (req: Request, res: Response) => {
 
 export const createBranch = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.tenantId;
 
     // Check if main branch exists if this is trying to be main
     if (req.body.isMain) {
@@ -45,7 +45,7 @@ export const createBranch = asyncHandler(async (req: Request, res: Response) => 
 
 export const updateBranch = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.tenantId;
 
     if (req.body.isMain) {
         await Branch.updateMany({ tenantId, _id: { $ne: req.params.id } }, { isMain: false });
@@ -65,7 +65,7 @@ export const updateBranch = asyncHandler(async (req: Request, res: Response) => 
 
 export const deleteBranch = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.tenantId;
     const branch = await Branch.findOneAndDelete({ _id: req.params.id, tenantId });
 
     if (!branch) {

@@ -21,11 +21,32 @@ import { seedInventory } from '../services/inventorySeeder.js';
  *       401:
  *         description: Unauthorized
  */
-export const getAllUsers = async (_req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
-        const req = _req;
-        const users = await User.find({ tenantId: req.tenantId }).select('-password');
-        res.status(200).json(users);
+        const authReq = req;
+        const { page = 1, limit = 10 } = req.query;
+        const skip = (Number(page) - 1) * Number(limit);
+        const filter = {
+            tenantId: authReq.tenantId,
+            isDeleted: { $ne: true }
+        };
+        const [users, total] = await Promise.all([
+            User.find(filter)
+                .select('-password')
+                .skip(skip)
+                .limit(Number(limit))
+                .lean(),
+            User.countDocuments(filter)
+        ]);
+        res.status(200).json({
+            users,
+            pagination: {
+                total,
+                page: Number(page),
+                limit: Number(limit),
+                pages: Math.ceil(total / Number(limit))
+            }
+        });
     }
     catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
@@ -185,7 +206,10 @@ export const deleteUser = async (req, res) => {
             res.status(403).json({ message: 'Unauthorized: Cannot delete other users' });
             return;
         }
-        const user = await User.findByIdAndDelete(id);
+        const user = await User.findByIdAndUpdate(id, {
+            isDeleted: true,
+            deletedAt: new Date()
+        });
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;

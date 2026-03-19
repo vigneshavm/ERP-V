@@ -6,7 +6,7 @@ import Backup from "../models/Backup.js";
 import Conflict from "../models/Conflict.js";
 
 export const getSyncConfig = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId; // Assuming middleware populates this
+    const tenantId = req.user!.tenantId; // Assuming middleware populates this
 
     // Fetch real data
     const settings = await SyncSettings.findOne({ tenantId });
@@ -36,7 +36,7 @@ export const getSyncConfig = asyncHandler(async (req: Request, res: Response) =>
 });
 
 export const updateSettings = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.user!.tenantId;
     const { settings } = req.body;
 
     const updated = await SyncSettings.findOneAndUpdate(
@@ -53,7 +53,7 @@ export const updateSettings = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getDevices = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.user!.tenantId;
     const devices = await Device.find({ tenantId });
     res.json({ success: true, data: devices });
 });
@@ -67,7 +67,7 @@ export const addDevice = asyncHandler(async (_req: Request, res: Response) => {
 });
 
 export const getBackups = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.user!.tenantId;
     const backups = await Backup.find({ tenantId }).sort({ createdAt: -1 });
 
     // Using defaults instead of hardcoded true for demo
@@ -98,7 +98,7 @@ export const restoreBackup = asyncHandler(async (_req: Request, res: Response) =
 });
 
 export const getConflicts = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.user!.tenantId;
     const conflicts = await Conflict.find({ tenantId });
     res.json({ success: true, data: conflicts });
 });

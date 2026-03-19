@@ -44,7 +44,7 @@ export const mandatoryAudit = (entityType: string, action: string) => {
                         entityId: req.params.id || req.body.id || 'unknown',
                         beforeSnapshot,
                         afterSnapshot,
-                        ipAddress: req.ip || req.connection.remoteAddress,
+                        ipAddress: req.ip || req.socket.remoteAddress,
                         userAgent: req.headers['user-agent'],
                         metadata: {
                             correlationId: (req as any).correlationId,

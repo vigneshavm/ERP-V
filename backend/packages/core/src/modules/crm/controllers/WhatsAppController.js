@@ -144,3 +144,72 @@ export const getStats = async (req, res) => {
         });
     }
 };
+export const updateTemplate = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { id } = req.params;
+        const { name, content, category } = req.body;
+        const template = await WhatsAppTemplate.findOneAndUpdate({ _id: id, userId }, { name, content, category }, { new: true });
+        if (!template) {
+            res.status(404).json({ success: false, message: "Template not found" });
+            return;
+        }
+        res.status(200).json({ success: true, data: template });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+export const deleteTemplate = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { id } = req.params;
+        const template = await WhatsAppTemplate.findOneAndDelete({ _id: id, userId });
+        if (!template) {
+            res.status(404).json({ success: false, message: "Template not found" });
+            return;
+        }
+        res.status(200).json({ success: true, message: "Template deleted" });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+export const sendTemplateMessage = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { templateId, contactNo, variables } = req.body;
+        const template = await WhatsAppTemplate.findOne({ _id: templateId, userId });
+        if (!template) {
+            res.status(404).json({ success: false, message: "Template not found" });
+            return;
+        }
+        // Logic to replace variables in template content
+        let messageContent = template.content;
+        if (variables && typeof variables === 'object') {
+            Object.keys(variables).forEach(key => {
+                messageContent = messageContent.replace(new RegExp(`{{${key}}}`, 'g'), variables[key]);
+            });
+        }
+        // Create a campaign record for this message
+        const campaign = await WhatsAppCampaign.create({
+            userId,
+            name: `Direct Message: ${template.name}`,
+            templateId,
+            status: 'sent',
+            sent: 1,
+            delivered: 1, // Simulated
+            read: 0,
+            failed: 0
+        });
+        res.status(200).json({
+            success: true,
+            message: "Message sent successfully (simulated)",
+            campaignId: campaign._id,
+            content: messageContent
+        });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

@@ -1,299 +1,175 @@
 import { Request, Response } from 'express';
-
+import mongoose from 'mongoose';
 import User from '../models/User.js';
 import BusinessProfile from '../models/BusinessProfile.js';
+import Tenant from '../models/Tenant.js';
 import { seedInventory } from '../services/inventorySeeder.js';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-    tenantId?: string; // Injected by Auth Middleware
-}
-
-/**
- * User update data interface
- */
 interface UserUpdateData {
-    name?: string;
-    email?: string;
-    phone?: string;
-    shopName?: string;
-    gstNumber?: string;
+    name?:        string;
+    email?:       string;
+    phone?:       string;
+    shopName?:    string;
+    gstNumber?:   string;
     shopAddress?: string;
 }
 
+/** GET /api/v1/users — list users for the authenticated tenant. */
+export const getAllUsers = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const filter = { tenantId: req.tenantId, isDeleted: { $ne: true } };
+
+    const [users, total] = await Promise.all([
+        User.find(filter).select('-password').skip(skip).limit(Number(limit)).lean(),
+        User.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+        users,
+        pagination: {
+            total,
+            page:  Number(page),
+            limit: Number(limit),
+            pages: Math.ceil(total / Number(limit)),
+        },
+    });
+
 /**
- * @swagger
- * /api/users:
- *   get:
- *     summary: Get all users
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of all users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       401:
- *         description: Unauthorized
+ * PUT /api/v1/users/:id — update user credentials and optionally sync BusinessProfile.
+ *
+ * The BusinessProfile sync is wrapped in the same session as the User update
+ * so a failure in either write does not leave data partially applied.
+ * seedInventory is called only after both writes commit.
  */
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const authReq = req as AuthenticatedRequest;
-        const { page = 1, limit = 10 } = req.query;
-        const skip = (Number(page) - 1) * Number(limit);
+export const updateUser = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
+    const { id } = req.params;
 
-        const filter: any = { 
-            tenantId: authReq.tenantId,
-            isDeleted: { $ne: true } 
-        };
-
-        const [users, total] = await Promise.all([
-            User.find(filter)
-                .select('-password')
-                .skip(skip)
-                .limit(Number(limit))
-                .lean(),
-            User.countDocuments(filter)
-        ]);
-
-        res.status(200).json({
-            users,
-            pagination: {
-                total,
-                page: Number(page),
-                limit: Number(limit),
-                pages: Math.ceil(total / Number(limit))
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+    // Assert — do not use optional chaining here. protect guarantees user is set;
+    // if it were missing, the check would silently pass (undefined !== id === true).
+    const requestingUserId = req.user!._id.toString();
+    if (requestingUserId !== id) {
+        res.status(403).json({ message: "Unauthorized: Cannot update other users' profiles" });
+        return;
     }
-};
 
-/**
- * @swagger
- * /api/users/{id}:
- *   put:
- *     summary: Update user profile
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name: { type: string }
- *               email: { type: string }
- *               phone: { type: string }
- *               shopName: { type: string }
- *               gstNumber: { type: string }
- *               shopAddress: { type: string }
- *               businessCategory: { type: string }
- *               businessType: { type: string }
- *     responses:
- *       200:
- *         description: Profile updated successfully
- *       400:
- *         description: Invalid input or email in use
- *       403:
- *         description: Unauthorized to update this profile
- */
-export const updateUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { id } = req.params;
-        const { name, email, phone, shopName, gstNumber, shopAddress, businessCategory, businessType } = req.body;
+    const {
+        name, email, phone, shopName, gstNumber, shopAddress,
+        businessCategory, businessType,
+    } = req.body;
 
-        // Validate that user is updating their own profile
-        if (req.user?._id.toString() !== id) {
-            res.status(403).json({ message: 'Unauthorized: Cannot update other users\' profiles' });
+    if (email) {
+        const conflict = await User.exists({ email, tenantId: req.tenantId, _id: { $ne: id } });
+        if (conflict) {
+            res.status(400).json({ message: 'Email already in use' });
             return;
         }
+    }
 
-        // Check if new email is already taken (if email is being changed)
-        if (email) {
-            const existingUser = await User.findOne({
-                email,
-                tenantId: req.tenantId,
-                _id: { $ne: id }
-            });
-            if (existingUser) {
-                res.status(400).json({ message: 'Email already in use' });
-                return;
-            }
-        }
+    const userUpdate: UserUpdateData = {};
+    if (name        !== undefined) userUpdate.name        = name;
+    if (email       !== undefined) userUpdate.email       = email;
+    if (phone       !== undefined) userUpdate.phone       = phone;
+    if (shopName    !== undefined) userUpdate.shopName    = shopName;
+    if (gstNumber   !== undefined) userUpdate.gstNumber   = gstNumber;
+    if (shopAddress !== undefined) userUpdate.shopAddress = shopAddress;
 
-        // Update only allowed fields
-        const updateData: UserUpdateData = {};
-        if (name !== undefined) updateData.name = name;
-        if (email !== undefined) updateData.email = email;
-        if (phone !== undefined) updateData.phone = phone;
-        if (shopName !== undefined) updateData.shopName = shopName;
-        if (gstNumber !== undefined) updateData.gstNumber = gstNumber;
-        if (shopAddress !== undefined) updateData.shopAddress = shopAddress;
+    const needsBusinessSync =
+        businessCategory !== undefined || shopName      !== undefined ||
+        phone            !== undefined || shopAddress   !== undefined ||
+        email            !== undefined || businessType  !== undefined;
 
-        const user = await User.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true, runValidators: true }
-        ).select('-password');
+    // Wrap User + BusinessProfile writes in a transaction so neither can
+    // partially apply if the other fails.
+    let user: any;
+    let businessProfile: any;
 
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+        user = await User.findByIdAndUpdate(id, userUpdate, {
+            new: true, runValidators: true, session,
+        }).select('-password');
 
-        // --- Sync with BusinessProfile ---
-        // If specific business fields are present, update BusinessProfile
-        if (businessCategory !== undefined || shopName !== undefined || phone !== undefined || shopAddress !== undefined || email !== undefined || businessType !== undefined) {
-            const businessUpdate: any = {};
-            if (shopName !== undefined) businessUpdate.businessName = shopName;
-            if (businessCategory !== undefined) businessUpdate.category = businessCategory;
-            if (businessType !== undefined) businessUpdate.businessType = businessType;
-            if (phone !== undefined) businessUpdate.phone = phone;
-            if (shopAddress !== undefined) businessUpdate.address = shopAddress;
-            if (email !== undefined) businessUpdate.email = email;
+        if (!user) throw Object.assign(new Error('User not found'), { statusCode: 404 });
 
-            // Ensure we have a BusinessProfile
-            await BusinessProfile.findOneAndUpdate(
+        if (needsBusinessSync) {
+            const businessUpdate: Record<string, unknown> = {};
+            if (shopName          !== undefined) businessUpdate.businessName = shopName;
+            if (businessCategory  !== undefined) businessUpdate.category     = businessCategory;
+            if (businessType      !== undefined) businessUpdate.businessType  = businessType;
+            if (phone             !== undefined) businessUpdate.phone         = phone;
+            if (shopAddress       !== undefined) businessUpdate.address       = shopAddress;
+            if (email             !== undefined) businessUpdate.email         = email;
+
+            businessProfile = await BusinessProfile.findOneAndUpdate(
                 { userId: user._id },
                 { $set: businessUpdate },
-                { new: true, upsert: true, setDefaultsOnInsert: true }
+                { new: true, upsert: true, setDefaultsOnInsert: true, session },
             );
-
-            // Trigger Inventory Seeding if category is updated
-            if (businessCategory) {
-                await seedInventory(user._id.toString(), businessCategory);
-            }
         }
-
-        // Fetch the possibly updated or existing category to return it
-        const businessProfile = await BusinessProfile.findOne({ userId: user._id });
-        const currentCategory = businessProfile?.category || "";
-        const currentType = businessProfile?.businessType || "";
-
-        res.status(200).json({
-            message: 'Profile updated successfully',
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                shopName: user.shopName,
-                gstNumber: user.gstNumber,
-                shopAddress: user.shopAddress,
-                phone: user.phone,
-                businessCategory: currentCategory, // Return from BusinessProfile
-                businessType: currentType,
-                role: user.role,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
-    }
-};
+    });
 
 /**
- * @swagger
- * /api/users/{id}:
- *   delete:
- *     summary: Delete user account
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User account deleted successfully
- *       403:
- *         description: Unauthorized to delete this user
- *       404:
- *         description: User not found
+ * DELETE /api/v1/users/:id — soft-delete the authenticated user's account.
+ * Guards against deleting the tenant owner (would orphan the tenant).
  */
-export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { id } = req.params;
+export const deleteUser = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
+    const { id } = req.params;
 
-        // Validate that user is deleting their own account
-        if (req.user?._id.toString() !== id) {
-            res.status(403).json({ message: 'Unauthorized: Cannot delete other users' });
-            return;
-        }
-
-        const user = await User.findByIdAndUpdate(id, {
-            isDeleted: true,
-            deletedAt: new Date()
-        });
-
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
-
-        res.status(200).json({ message: 'User account deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+    // Assert — see comment in updateUser
+    if (req.user!._id.toString() !== id) {
+        res.status(403).json({ message: 'Unauthorized: Cannot delete other users' });
+        return;
     }
-};
+
+    // Prevent orphaning the tenant if the owner deletes themselves
+    const ownerOfTenant = await Tenant.exists({ ownerId: id, status: 'ACTIVE' });
+    if (ownerOfTenant) {
+        res.status(409).json({
+            message: 'Cannot delete the tenant owner account. Transfer ownership first.',
+        });
+        return;
+    }
+
+    const user = await User.findByIdAndUpdate(id, { isDeleted: true, deletedAt: new Date() });
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+
+    res.status(200).json({ message: 'User account deleted successfully' });
 
 /**
- * @desc Update personal finance settings (e.g. month start day)
- * @route POST /api/users/finance-settings
+ * POST /api/v1/users/finance-settings
+ * Update the personal finance month-start day for the authenticated user.
  */
-export const updateFinanceSettings = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { monthStartDay } = req.body;
-        
-        if (monthStartDay < 1 || monthStartDay > 31) {
-            res.status(400).json({ message: 'Invalid month start day' });
-            return;
-        }
+export const updateFinanceSettings = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
+    const { monthStartDay } = req.body;
 
-        const user = await User.findByIdAndUpdate(
-            req.user?._id,
-            { $set: { 'personalFinanceSettings.monthStartDay': monthStartDay } },
-            { new: true }
-        ).select('-password');
-
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
-
-        res.status(200).json({
-            message: 'Finance settings updated successfully',
-            personalFinanceSettings: user.personalFinanceSettings
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+    // Explicit type check — coercion allows strings to slip past numeric comparisons
+    const day = Number(monthStartDay);
+    if (!Number.isInteger(day) || day < 1 || day > 31) {
+        res.status(400).json({ message: 'monthStartDay must be an integer between 1 and 31' });
+        return;
     }
-};
 
-export default {
-    getAllUsers,
-    updateUser,
-    deleteUser,
-};
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: { 'personalFinanceSettings.monthStartDay': day } },
+        { new: true },
+    ).select('-password');
+
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+
+    res.status(200).json({
+        message: 'Finance settings updated successfully',
+        personalFinanceSettings: user.personalFinanceSettings,
+    });
+
+export default { getAllUsers, updateUser, deleteUser };

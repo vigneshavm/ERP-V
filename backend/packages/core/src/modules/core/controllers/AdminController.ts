@@ -19,21 +19,13 @@ export class AdminController {
      *         description: Forbidden (Not a superadmin)
      */
     public getAllUsersAcrossTenants = async (_req: Request, res: Response): Promise<void> => {
-        try {
-            // Fetch all users and populate tenant info
-            const users = await User.find({})
-                .populate('tenantId', 'name shopName slug')
-                .select('-password')
-                .lean();
+        // Fetch all users and populate tenant info
+        const users = await User.find({})
+            .populate('tenantId', 'name shopName slug')
+            .select('-password')
+            .lean();
 
-            res.status(200).json(users);
-        } catch (error) {
-            res.status(500).json({
-                message: 'Server Error',
-                error: (error as Error).message
-            });
-        }
-    };
+        res.status(200).json(users);
 }
 
 export default new AdminController();

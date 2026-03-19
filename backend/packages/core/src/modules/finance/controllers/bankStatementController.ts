@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import asyncHandler from 'express-async-handler';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { container } from 'tsyringe';
 import { BankStatementService } from '../services/BankStatementService.js';
 
@@ -8,7 +8,7 @@ import { BankStatementService } from '../services/BankStatementService.js';
  */
 export const uploadStatement = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const service = container.resolve(BankStatementService);
-    const userId = (req as any).user?._id as string;
+    const userId = req.user!._id as string;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated properly' });
         return;
@@ -27,7 +27,7 @@ export const uploadStatement = asyncHandler(async (req: Request, res: Response):
  */
 export const getTransactions = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const service = container.resolve(BankStatementService);
-    const userId = (req as any).user?._id as string;
+    const userId = req.user!._id as string;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated' });
         return;

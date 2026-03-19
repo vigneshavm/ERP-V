@@ -13,56 +13,44 @@ declare global {
     }
 }
 
-// Redis client for distributed rate limiting
-// Cast to any to avoid "not constructable" error if default export mismatch occurs
+// Redis client for distributed rate limiting.
+// Graceful degradation: if Redis is unavailable the in-memory fallback below
+// keeps rate limiting active on the local instance (non-distributed but still effective).
 const RedisClass: any = Redis;
-// const redisClient = new RedisClass({
-//     host: process.env.REDIS_HOST || 'localhost',
-//     port: parseInt(process.env.REDIS_PORT || '6379'),
-//     password: process.env.REDIS_PASSWORD || undefined,
-//     retryStrategy: (times: number) => {
-//         if (times > 3) return null;
-//         return Math.min(times * 50, 200);
-//     },
-//     maxRetriesPerRequest: 3,
-//     lazyConnect: true,
-//     enableOfflineQueue: false, // Don't queue commands when offline
-// });
-
-const redisClient: any = {
-    on: () => {},
-    connect: async () => {},
-    get: async () => null,
-    setex: async () => {},
-    del: async () => {},
-    sadd: async () => {},
-    expire: async () => {},
-    scard: async () => 0,
-};
+const redisClient: any = new RedisClass({
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD || undefined,
+    retryStrategy: (times: number) => {
+        if (times > 3) return null; // stop retrying after 3 attempts
+        return Math.min(times * 50, 200);
+    },
+    maxRetriesPerRequest: 3,
+    lazyConnect: true,
+    enableOfflineQueue: false, // don't queue commands when offline
+});
 
 let isRedisAvailable = false;
-let redisErrorLogged = false; // Track if we've already logged the Redis error
+let redisErrorLogged = false;
 
-// redisClient.on('connect', () => {
-//     console.log('✅ Redis connected (rate limiting)');
-//     isRedisAvailable = true;
-//     redisErrorLogged = false; // Reset error flag on successful connection
-// });
+redisClient.on('connect', () => {
+    console.log('✅ Redis connected (rate limiting)');
+    isRedisAvailable = true;
+    redisErrorLogged = false;
+});
 
-// redisClient.on('error', (err: any) => {
-//     // Only log the first Redis error to prevent log spam
-//     if (!redisErrorLogged && process.env.NODE_ENV !== 'test') {
-//         logError('Redis error (rate limiting):', err.message);
-//         warn('Redis unavailable - rate limiting will use in-memory fallback');
-//         redisErrorLogged = true;
-//     }
-//     isRedisAvailable = false;
-// });
+redisClient.on('error', (err: any) => {
+    // Log once — don't spam on every reconnect attempt
+    if (!redisErrorLogged && process.env.NODE_ENV !== 'test') {
+        logError('Redis error (rate limiting):', err.message);
+        warn('Redis unavailable — rate limiting falling back to in-memory store (single-instance only)');
+        redisErrorLogged = true;
+    }
+    isRedisAvailable = false;
+});
 
-// // Attempt connection (non-blocking)
-// redisClient.connect().catch((_err: any) => {
-//     // Error will be logged by the 'error' event handler
-// });
+// Non-blocking connect — errors handled by the 'error' event above
+redisClient.connect().catch((_err: any) => {});
 
 // In-memory fallback store (per-instance only)
 const memoryStore = new Map();
@@ -187,7 +175,7 @@ const resetRateLimit = async (key: string): Promise<void> => {
  */
 export const loginRateLimiter = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const ip = req.ip || req.connection.remoteAddress || 'unknown';
+        const ip = req.ip || req.socket.remoteAddress || 'unknown';
         const email = req.body.email;
         const deviceId = (req.signedCookies?.deviceId as string) || (req.headers['x-device-id'] as string) || 'unknown';
         const correlationId = req.correlationId || 'unknown';
@@ -398,7 +386,7 @@ export const authLimiter = loginRateLimiter; // Alias
 
 export const passwordResetLimiter = async (req: Request, res: Response, next: NextFunction) => {
     // Simple IP-based limiting for password reset
-    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const key = 'rl:pwreset:' + ip;
 
     const state = await getRateLimitState(key, 60 * 60 * 1000); // 1 hour
@@ -449,7 +437,7 @@ export const importLimiter = async (req: Request, res: Response, next: NextFunct
     // User-based limiting for imports
     const userId = (req as any).user?._id?.toString();
     // If not authenticated (shouldn't happen on protected route), fall back to IP
-    const identifier = userId || req.ip || req.connection.remoteAddress || 'unknown';
+    const identifier = userId || req.ip || req.socket.remoteAddress || 'unknown';
 
     const key = `rl:import:${identifier}`;
     const windowMs = 15 * 60 * 1000; // 15 minutes

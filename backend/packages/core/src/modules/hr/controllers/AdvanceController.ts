@@ -1,45 +1,24 @@
 import { Request, Response } from 'express';
 import SalaryAdvance from '../models/SalaryAdvance.js';
+import { asyncHandler }    from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created }     from '@smarterp/shared/utils/response.js';
+import { requireTenantId } from '@smarterp/shared/utils/tenantContext.js';
 
-export const createAdvance = async (req: Request, res: Response) => {
-    try {
-        const { employeeId, amount, date, type, notes } = req.body;
-        const tenantId = (req as any).user.tenantId;
+export const createAdvance = asyncHandler(async (req: Request, res: Response) => {
+    const tenantId = requireTenantId(req);
+    const { employeeId, amount, date, type, notes } = req.body;
+    const advance = await SalaryAdvance.create({ tenantId, employeeId, amount, date: date || new Date(), type: type || 'ADVANCE', status: 'PENDING', notes });
+    created(res, advance);
+});
 
-        const advance = await SalaryAdvance.create({
-            tenantId,
-            employeeId,
-            amount,
-            date: date || new Date(),
-            type: type || 'ADVANCE',
-            status: 'PENDING',
-            notes
-        });
+export const getEmployeeAdvances = asyncHandler(async (req: Request, res: Response) => {
+    const tenantId = requireTenantId(req);
+    const advances = await SalaryAdvance.find({ tenantId, employeeId: req.params.employeeId }).sort({ date: -1 });
+    ok(res, advances);
+});
 
-        res.status(201).json({ success: true, data: advance });
-    } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
-
-export const getEmployeeAdvances = async (req: Request, res: Response) => {
-    try {
-        const { employeeId } = req.params;
-        const tenantId = (req as any).user.tenantId;
-
-        const advances = await SalaryAdvance.find({ tenantId, employeeId }).sort({ date: -1 });
-        res.status(200).json({ success: true, data: advances });
-    } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
-
-export const getAllAdvances = async (req: Request, res: Response) => {
-    try {
-        const tenantId = (req as any).user.tenantId;
-        const advances = await SalaryAdvance.find({ tenantId }).populate('employeeId', 'name role').sort({ date: -1 });
-        res.status(200).json({ success: true, data: advances });
-    } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
+export const getAllAdvances = asyncHandler(async (req: Request, res: Response) => {
+    const tenantId = requireTenantId(req);
+    const advances = await SalaryAdvance.find({ tenantId }).populate('employeeId', 'name role').sort({ date: -1 });
+    ok(res, advances);
+});

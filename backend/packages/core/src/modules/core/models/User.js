@@ -125,6 +125,15 @@ const userSchema = new Schema({
             min: 1,
             max: 31
         }
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, { timestamps: true });
 // Compound Index: Email must be unique PER TENANT

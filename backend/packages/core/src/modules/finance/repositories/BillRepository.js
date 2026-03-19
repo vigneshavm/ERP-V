@@ -22,6 +22,20 @@ let BillRepository = class BillRepository extends BaseRepository {
             .session(session || null)
             .exec();
     }
+    async findBillsPaginated(query, page, limit, sort, session) {
+        const skip = (page - 1) * limit;
+        const [data, total] = await Promise.all([
+            this.model.find(query)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .populate('supplier', 'businessName')
+                .session(session || null)
+                .exec(),
+            this.model.countDocuments(query).session(session || null).exec()
+        ]);
+        return { data, total };
+    }
     async findBillById(id, userId, session) {
         return this.model.findOne({ _id: id, createdBy: userId })
             .populate('supplier')

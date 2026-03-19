@@ -5,176 +5,137 @@ import { generateToken, verifyRefreshToken, generateRandomToken } from '@smarter
 import User from "../models/User.js";
 import { clearDeviceIdCookie, getDeviceIdFromCookie } from '@smarterp/shared/utils/deviceUtils.js';
 
-
-// Define interface for authenticated request
-interface AuthenticatedRequest extends express.Request {
-    user: {
-        _id: any;
-        [key: string]: any;
-    };
-}
-
 const router = express.Router();
 
 /**
- * @desc Refresh access token using refresh token
- * @route POST /api/auth/refresh-token
- * @access Public
+ * POST /api/auth/refresh-token
+ * Exchange a valid refresh token for a new access + refresh token pair.
  */
 router.post("/", async (req, res) => {
     try {
         const { refreshToken } = req.body;
-
         if (!refreshToken) {
             return res.status(400).json({ message: "Refresh token required" });
         }
 
-        // Find refresh token in database
         const storedToken = await RefreshToken.findOne({ token: refreshToken });
-
         if (!storedToken) {
             return res.status(401).json({ message: "Invalid refresh token" });
         }
-
-        // Check if token is active
         if (!storedToken.isActive()) {
             return res.status(401).json({ message: "Refresh token expired or revoked" });
         }
 
-        // Verify JWT signature
         const decoded = verifyRefreshToken(refreshToken);
         if (!decoded) {
             return res.status(401).json({ message: "Invalid refresh token signature" });
         }
 
-        // Get user
         const user = await User.findById(storedToken.user).select("-password");
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // CRITICAL: Validate deviceId from cookie matches user's active deviceId
         const deviceIdFromCookie = getDeviceIdFromCookie(req);
-
         if (!deviceIdFromCookie || user.activeDeviceId !== deviceIdFromCookie) {
-            // Device mismatch - this device was logged out
-            // Revoke this refresh token
-            storedToken.isRevoked = true;
-            storedToken.revokedAt = new Date();
-            await storedToken.save();
-
+            await RefreshToken.findByIdAndUpdate(storedToken._id, {
+                isRevoked: true, revokedAt: new Date()
+            });
             return res.status(401).json({
                 message: "Session expired. Please log in again.",
                 sessionExpired: true
             });
         }
 
-        // Generate new tokens
         const newAccessToken = generateToken(user._id.toString());
         const newRefreshToken = generateRandomToken();
 
-        // Revoke old refresh token and create new one
-        storedToken.isRevoked = true;
-        storedToken.revokedAt = new Date();
-        await storedToken.save();
-
-        // Create new refresh token
-        await RefreshToken.create({
-            token: newRefreshToken,
-            user: user._id,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-            createdByIp: req.ip,
-            userAgent: req.headers["user-agent"],
-        });
+        // Rotate: revoke old, issue new
+        await Promise.all([
+            RefreshToken.findByIdAndUpdate(storedToken._id, {
+                isRevoked: true, revokedAt: new Date()
+            }),
+            RefreshToken.create({
+                token: newRefreshToken,
+                user: user._id,
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                createdByIp: req.ip,
+                userAgent: req.headers["user-agent"],
+            })
+        ]);
 
         res.json({
             accessToken: newAccessToken,
             refreshToken: newRefreshToken,
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                shopName: user.shopName,
-            },
+            user: { _id: user._id, name: user.name, email: user.email, shopName: user.shopName },
         });
     } catch (error) {
         console.error("Refresh token error:", error);
-        res.status(500).json({ message: "Server error", error: (error as Error).message });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 /**
- * @desc Revoke refresh token (logout)
- * @route POST /api/auth/revoke
- * @access Protected
+ * DELETE /api/auth/refresh-token
+ * Revoke a specific refresh token (logout current device).
+ * Replaces POST /revoke — DELETE is correct because we are destroying a session resource.
  */
-
-router.post("/revoke", protect, async (req, res) => {
+router.delete("/", protect, async (req, res) => {
     try {
-        const authReq = req as AuthenticatedRequest;
-        const { refreshToken } = req.body;
+            const { refreshToken } = req.body;
 
         if (!refreshToken) {
             return res.status(400).json({ message: "Refresh token required" });
         }
 
-        const storedToken = await RefreshToken.findOne({ token: refreshToken, user: authReq.user._id });
-
+        const storedToken = await RefreshToken.findOne({
+            token: refreshToken,
+            user: req.user._id
+        });
         if (!storedToken) {
             return res.status(404).json({ message: "Refresh token not found" });
         }
 
-        storedToken.isRevoked = true;
-        storedToken.revokedAt = new Date();
-        await storedToken.save();
+        await Promise.all([
+            RefreshToken.findByIdAndUpdate(storedToken._id, {
+                isRevoked: true, revokedAt: new Date()
+            }),
+            User.findByIdAndUpdate(req.user._id, {
+                $set: { activeDeviceId: null, activeSessionCreatedAt: null }
+            })
+        ]);
 
-        // Clear device session on logout
-        const user = await User.findById(authReq.user._id);
-        if (user) {
-            user.activeDeviceId = null;
-            user.activeSessionCreatedAt = null;
-            await user.save();
-        }
-
-        // Clear deviceId cookie
         clearDeviceIdCookie(res);
-
-        res.json({ message: "Refresh token revoked successfully" });
+        res.json({ message: "Session revoked successfully" });
     } catch (error) {
         console.error("Revoke token error:", error);
-        res.status(500).json({ message: "Server error", error: (error as Error).message });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 /**
- * @desc Revoke all refresh tokens for user (logout all devices)
- * @route POST /api/auth/revoke-all
- * @access Protected
+ * DELETE /api/auth/refresh-token/all
+ * Revoke all refresh tokens for the authenticated user (logout all devices).
+ * Replaces POST /revoke-all.
  */
-router.post("/revoke-all", protect, async (req, res) => {
+router.delete("/all", protect, async (req, res) => {
     try {
-        const authReq = req as AuthenticatedRequest;
+    
+        await Promise.all([
+            RefreshToken.updateMany(
+                { user: req.user._id, isRevoked: false },
+                { isRevoked: true, revokedAt: new Date() }
+            ),
+            User.findByIdAndUpdate(req.user._id, {
+                $set: { activeDeviceId: null, activeSessionCreatedAt: null }
+            })
+        ]);
 
-        await RefreshToken.updateMany(
-            { user: authReq.user._id, isRevoked: false },
-            { isRevoked: true, revokedAt: new Date() }
-        );
-
-        // Clear device session on logout all
-        const user = await User.findById(authReq.user._id);
-        if (user) {
-            user.activeDeviceId = null;
-            user.activeSessionCreatedAt = null;
-            await user.save();
-        }
-
-        // Clear deviceId cookie
         clearDeviceIdCookie(res);
-
-        res.json({ message: "All refresh tokens revoked successfully" });
+        res.json({ message: "All sessions revoked successfully" });
     } catch (error) {
         console.error("Revoke all tokens error:", error);
-        res.status(500).json({ message: "Server error", error: (error as Error).message });
+        res.status(500).json({ message: "Server error" });
     }
 });
 

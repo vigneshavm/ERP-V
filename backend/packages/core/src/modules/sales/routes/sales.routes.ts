@@ -12,13 +12,12 @@ router.post("/", protect, salesController.createSalesInvoice);
 router.get("/", protect, salesController.getAllSalesInvoices);
 router.get("/:id", protect, salesController.getSalesInvoiceById);
 router.patch("/:id", protect, salesController.updateSalesInvoice);
+
+// PATCH /:id/status handles all status transitions including mark-as-paid.
+// Clients send: { status: "paid" }
+// PUT /:id/mark-paid is removed — PUT embeds a verb and is not idempotent here.
 router.patch("/:id/status", protect, salesController.updateInvoiceStatus);
-router.put("/:id/mark-paid", protect, salesController.markSalesInvoiceAsPaid);
-router.delete(
-    "/:id",
-    protect,
-    requirePermission("delete:invoice"),
-    salesController.deleteSalesInvoice
-);
+
+router.delete("/:id", protect, requirePermission("delete:invoice"), salesController.deleteSalesInvoice);
 
 export default router;

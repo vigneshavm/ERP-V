@@ -9,6 +9,6 @@ router.post("/", createPaymentIn);
 router.get("/", getPaymentInRecords);
 router.get("/:id", getPaymentInById);
 // Customer-specific routes
-router.get("/customer/:customerId/invoices", getCustomerOutstandingInvoices);
-router.get("/customer/:customerId/info", getCustomerPaymentInfo);
+router.get("/customers/:customerId/invoices", getCustomerOutstandingInvoices);
+router.get("/customers/:customerId/info", getCustomerPaymentInfo);
 export default router;

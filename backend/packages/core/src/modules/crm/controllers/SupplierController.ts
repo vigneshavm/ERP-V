@@ -1,287 +1,93 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
-
 import Supplier from '../models/Supplier.js';
-import { info, error } from '@smarterp/shared/config/logger.js';
+import { info } from '@smarterp/shared/config/logger.js';
+import { asyncHandler }               from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created, paginated }     from '@smarterp/shared/utils/response.js';
+import { parsePagination, parseSort } from '@smarterp/shared/utils/pagination.js';
+import { requireUserId }              from '@smarterp/shared/utils/tenantContext.js';
+import { AppError }                   from '@smarterp/shared/utils/AppError.js';
 
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
-
-/**
- * @swagger
- * /api/suppliers:
- *   post:
- *     summary: Add new supplier
- *     tags: [Suppliers]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Supplier'
- *     responses:
- *       201:
- *         description: Supplier created successfully
- */
-export const addSupplier = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { businessName, contactPersonName, contactNo, email, physicalAddress, gstNo, supplierType, openingBalance, balanceType, creditPeriod, status } = req.body;
-
-        if (!businessName) {
-            res.status(400).json({ message: 'Legal Business Name must be provided' });
-            return;
-        }
-
-        // Check for duplicate contactNo if provided
-        if (contactNo) {
-            const existingContact = await Supplier.findOne({
-                contactNo,
-                owner: req.user?._id
-            });
-
-            if (existingContact) {
-                res.status(400).json({ message: 'Contact number already exists in your supplier list' });
-                return;
-            }
-        }
-
-        // Check for duplicate email if provided
-        if (email) {
-            const existingEmail = await Supplier.findOne({
-                email,
-                owner: req.user?._id
-            });
-
-            if (existingEmail) {
-                res.status(400).json({ message: 'Email already exists in your supplier list' });
-                return;
-            }
-        }
-
-        // Auto-generate supplierId
-        const lastSupplier = await Supplier.findOne({ owner: req.user?._id }).sort({ supplierId: -1 });
-        let nextId = 1;
-        if (lastSupplier && lastSupplier.supplierId) {
-            const lastNum = parseInt(lastSupplier.supplierId.split('-')[1]);
-            nextId = lastNum + 1;
-        }
-        const supplierId = `SUP-${nextId.toString().padStart(5, '0')}`;
-
-        // Create supplier with owner reference
-        const supplier = await Supplier.create({
-            supplierId,
-            businessName,
-            contactPersonName,
-            contactNo,
-            email,
-            physicalAddress,
-            gstNo,
-            supplierType: supplierType || 'manufacturer',
-            openingBalance: openingBalance || 0,
-            balanceType: balanceType || 'payable',
-            creditPeriod: creditPeriod || 0,
-            status: status || 'active',
-            tenantId: req.user?.tenantId,
-            owner: req.user?._id
-        });
-
-        info(`New supplier added by ${req.user?.name}: ${businessName} (${supplierId})`);
-        res.status(201).json(supplier);
-    } catch (err) {
-        error(`Add Supplier Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
+const validId = (id: string) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new AppError('Invalid supplier ID format', 400);
+    return id;
 };
 
-/**
- * @desc Update supplier
- * @route PUT /api/suppliers/:id
- */
-export const updateSupplier = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
-            res.status(400).json({ message: 'Invalid supplier ID format' });
-            return;
-        }
+export const addSupplier = asyncHandler(async (req: Request, res: Response) => {
+    const userId = requireUserId(req);
+    const { businessName, contactPersonName, contactNo, email, physicalAddress, gstNo, supplierType, openingBalance, balanceType, creditPeriod, status } = req.body;
+    if (!businessName) throw new AppError('Legal Business Name must be provided', 400);
 
-        const supplier = await Supplier.findOne({
-            _id: req.params.id,
-            owner: req.user?._id
-        });
+    const [dupPhone, dupEmail] = await Promise.all([
+        contactNo ? Supplier.exists({ contactNo, owner: userId }) : null,
+        email     ? Supplier.exists({ email,     owner: userId }) : null,
+    ]);
+    if (dupPhone) throw new AppError('Contact number already exists in your supplier list', 400);
+    if (dupEmail) throw new AppError('Email already exists in your supplier list', 400);
 
-        if (!supplier) {
-            res.status(404).json({ message: 'Supplier not found or unauthorized' });
-            return;
-        }
+    const last      = await Supplier.findOne({ owner: userId }).sort({ supplierId: -1 });
+    const nextNum   = last?.supplierId ? parseInt(last.supplierId.split('-')[1]) + 1 : 1;
+    const supplierId = `SUP-${String(nextNum).padStart(5, '0')}`;
 
-        // Check for duplicate contactNo if being updated
-        if (req.body.contactNo && req.body.contactNo !== supplier.contactNo) {
-            const existingContact = await Supplier.findOne({
-                contactNo: req.body.contactNo,
-                owner: req.user?._id,
-                _id: { $ne: req.params.id }
-            });
+    const supplier = await Supplier.create({
+        supplierId, businessName, contactPersonName, contactNo, email, physicalAddress,
+        gstNo, supplierType: supplierType || 'manufacturer', openingBalance: openingBalance || 0,
+        balanceType: balanceType || 'payable', creditPeriod: creditPeriod || 0,
+        status: status || 'active', tenantId: req.user!.tenantId, owner: userId,
+    });
 
-            if (existingContact) {
-                res.status(400).json({ message: 'Contact number already exists' });
-                return;
-            }
-        }
+    info(`New supplier added by ${req.user!.name}: ${businessName} (${supplierId})`);
+    created(res, supplier);
+});
 
-        // Check for duplicate email if being updated
-        if (req.body.email && req.body.email !== supplier.email) {
-            const existingEmail = await Supplier.findOne({
-                email: req.body.email,
-                owner: req.user?._id,
-                _id: { $ne: req.params.id }
-            });
+export const updateSupplier = asyncHandler(async (req: Request, res: Response) => {
+    const userId   = requireUserId(req);
+    const id       = validId(req.params.id);
+    const supplier = await Supplier.findOne({ _id: id, owner: userId });
+    if (!supplier) throw new AppError('Supplier not found or unauthorized', 404);
 
-            if (existingEmail) {
-                res.status(400).json({ message: 'Email already exists' });
-                return;
-            }
-        }
+    const [dupPhone, dupEmail] = await Promise.all([
+        req.body.contactNo && req.body.contactNo !== supplier.contactNo
+            ? Supplier.exists({ contactNo: req.body.contactNo, owner: userId, _id: { $ne: id } }) : null,
+        req.body.email && req.body.email !== supplier.email
+            ? Supplier.exists({ email: req.body.email, owner: userId, _id: { $ne: id } }) : null,
+    ]);
+    if (dupPhone) throw new AppError('Contact number already exists', 400);
+    if (dupEmail) throw new AppError('Email already exists', 400);
 
-        const updated = await Supplier.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+    const updated = await Supplier.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    if (!updated) throw new AppError('Supplier not found', 404);
+    info(`Supplier updated by ${req.user!.name}: ${updated.businessName}`);
+    ok(res, updated, 'Supplier updated successfully');
+});
 
-        if (!updated) {
-            res.status(404).json({ message: 'Supplier not found' });
-            return;
-        }
+export const getAllSuppliers = asyncHandler(async (req: Request, res: Response) => {
+    const userId          = requireUserId(req);
+    const { page, limit } = parsePagination(req.query, 50);
+    const sort            = parseSort(req.query.sort as string | undefined, 'businessName');
+    const [suppliers, total] = await Promise.all([
+        Supplier.find({ owner: userId }).sort(sort).skip((page-1)*limit).limit(limit),
+        Supplier.countDocuments({ owner: userId }),
+    ]);
+    paginated(res, suppliers, total, page, limit);
+});
 
-        info(`Supplier updated by ${req.user?.name}: ${updated.businessName} (${updated.supplierId})`);
-        res.status(200).json(updated);
-    } catch (err) {
-        error(`Update Supplier Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
+export const getSupplierById = asyncHandler(async (req: Request, res: Response) => {
+    const userId   = requireUserId(req);
+    const id       = validId(req.params.id);
+    const supplier = await Supplier.findOne({ _id: id, owner: userId });
+    if (!supplier) throw new AppError('Supplier not found or unauthorized', 404);
+    ok(res, supplier);
+});
 
-/**
- * @swagger
- * /api/suppliers:
- *   get:
- *     summary: Get all suppliers
- *     tags: [Suppliers]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of suppliers retrieved
- */
-export const getAllSuppliers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { page = 1, limit = 50, sort = 'businessName' } = req.query;
-        const pageSize = Number(limit);
-        const skip = (Number(page) - 1) * pageSize;
+export const deleteSupplier = asyncHandler(async (req: Request, res: Response) => {
+    const userId   = requireUserId(req);
+    const id       = validId(req.params.id);
+    const supplier = await Supplier.findOne({ _id: id, owner: userId });
+    if (!supplier) throw new AppError('Supplier not found or unauthorized', 404);
+    await Supplier.findByIdAndDelete(id);
+    info(`Supplier deleted by ${req.user!.name}: ${supplier.businessName}`);
+    ok(res, null, 'Supplier deleted');
+});
 
-        // Handle sort
-        const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
-        const sortOrder = String(sort).startsWith('-') ? -1 : 1;
-        const sortObj: any = {};
-        sortObj[sortField] = sortOrder;
-
-        const match = { owner: req.user?._id };
-
-        const suppliers = await Supplier.find(match)
-            .sort(sortObj)
-            .skip(skip)
-            .limit(pageSize);
-
-        const total = await Supplier.countDocuments(match);
-
-        res.status(200).json({
-            success: true,
-            data: suppliers,
-            pagination: {
-                total,
-                page: Number(page),
-                limit: pageSize,
-                pages: Math.ceil(total / pageSize)
-            }
-        });
-    } catch (err) {
-        error(`Get All Suppliers Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-/**
- * @desc Get single supplier
- * @route GET /api/suppliers/:id
- */
-export const getSupplierById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
-            res.status(400).json({ message: 'Invalid supplier ID format' });
-            return;
-        }
-
-        const supplier = await Supplier.findOne({
-            _id: req.params.id,
-            owner: req.user?._id
-        });
-
-        if (!supplier) {
-            res.status(404).json({ message: 'Supplier not found or unauthorized' });
-            return;
-        }
-
-        res.status(200).json(supplier);
-    } catch (err) {
-        error(`Get Supplier By Id Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-/**
- * @desc Delete supplier
- * @route DELETE /api/suppliers/:id
- */
-export const deleteSupplier = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
-            res.status(400).json({ message: 'Invalid supplier ID format' });
-            return;
-        }
-
-        const supplier = await Supplier.findOne({
-            _id: req.params.id,
-            owner: req.user?._id
-        });
-
-        if (!supplier) {
-            res.status(404).json({ message: 'Supplier not found or unauthorized' });
-            return;
-        }
-
-        await Supplier.findByIdAndDelete(req.params.id as string);
-        info(`Supplier deleted by ${req.user?.name}: ${supplier.businessName}`);
-        res.status(200).json({ message: 'Supplier deleted' });
-    } catch (err) {
-        error(`Delete Supplier Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-export default {
-    addSupplier,
-    updateSupplier,
-    getAllSuppliers,
-    getSupplierById,
-    deleteSupplier,
-};
+export default { addSupplier, updateSupplier, getAllSuppliers, getSupplierById, deleteSupplier };

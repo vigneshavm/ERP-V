@@ -25,7 +25,7 @@ export const generateToken = (userId: string, sessionContext: SessionContext = {
             }
         },
         process.env.JWT_SECRET as string,
-        { expiresIn: "7d" } // 7 days (as per original code, comment said 15m but value was 7d?) - Checking original code: { expiresIn: "7d" } // 15 minutes - production security. Discrepancy. I will keep 7d to match code behavior.
+        { expiresIn: (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as any } // Default 15min. Device-lock model requires short-lived access tokens.
     );
 };
 
@@ -45,7 +45,7 @@ export const generateRefreshToken = (userId: string, sessionStart = new Date()):
             absoluteExpiry: absoluteExpiry.toISOString()
         },
         process.env.JWT_REFRESH_SECRET as string,
-        { expiresIn: "7d" } // 7 days rolling, but absolute max is 30 days
+        { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any } // 7 days rolling, absolute max enforced by absoluteExpiry claim (30 days)
     );
 };
 

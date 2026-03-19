@@ -6,7 +6,7 @@ import Notification from "../models/Notification.js";
 // @route   GET /api/notifications
 // @access  Private
 export const getNotifications = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+    const userId = req.user!._id;
     const { unreadOnly } = req.query;
 
     const query: any = { recipient: userId };
@@ -32,7 +32,7 @@ export const getNotifications = asyncHandler(async (req: Request, res: Response)
 // @access  Private
 export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
     const notificationId = req.params.id;
-    const userId = (req as any).user._id;
+    const userId = req.user!._id;
 
     const notification = await Notification.findOne({ _id: notificationId, recipient: userId });
 
@@ -51,7 +51,7 @@ export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
 // @route   PATCH /api/notifications/read-all
 // @access  Private
 export const markAllAsRead = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+    const userId = req.user!._id;
 
     await Notification.updateMany(
         { recipient: userId, readAt: null },

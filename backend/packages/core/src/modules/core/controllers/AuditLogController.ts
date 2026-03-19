@@ -6,7 +6,7 @@ import AuditLog from "../models/AuditLog.js";
 // @route   GET /api/audit-logs
 // @access  Private (Admin/Owner)
 export const getAuditLogs = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user.tenantId;
+    const tenantId = req.user.tenantId;
     const { entity, action, user, startDate, endDate, limit = 50, page = 1 } = req.query;
 
     const query: any = { tenantId };

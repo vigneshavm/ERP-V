@@ -15,7 +15,10 @@ router.post("/", protect, createDeliveryChallan);
 router.get("/", protect, getAllDeliveryChallans);
 router.get("/:id", protect, getDeliveryChallanById);
 router.put("/:id", protect, updateDeliveryChallan);
-router.post("/:id/convert-to-invoice", protect, convertToInvoice);
 router.delete("/:id", protect, deleteDeliveryChallan);
+
+// POST /:id/invoices replaces POST /:id/convert-to-invoice.
+// Creating an invoice from a delivery challan is a sub-resource creation — POST + noun.
+router.post("/:id/invoices", protect, convertToInvoice);
 
 export default router;

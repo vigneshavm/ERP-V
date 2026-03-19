@@ -32,6 +32,18 @@ let BillService = class BillService {
         }
         return this.billRepository.findBills(query);
     }
+    async getAllBillsPaginated(userId, page, limit, sort, filters) {
+        const query = { createdBy: userId };
+        if (filters.supplier)
+            query.supplier = filters.supplier;
+        if (filters.status)
+            query.status = filters.status;
+        if (filters.paymentStatus) {
+            const statuses = filters.paymentStatus.split(',');
+            query.paymentStatus = statuses.length > 1 ? { $in: statuses } : filters.paymentStatus;
+        }
+        return this.billRepository.findBillsPaginated(query, page, limit, sort);
+    }
     async getBillById(id, userId) {
         if (!ObjectId.isValid(id))
             throw new AppError("Invalid bill ID format", 400);

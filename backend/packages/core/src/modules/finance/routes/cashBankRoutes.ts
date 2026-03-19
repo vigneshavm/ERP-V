@@ -19,7 +19,7 @@ import {
     getEffectiveBalance,
     getDayEndSummary,
     saveDayEndToDB,
-    getAllTransactions // Import new method
+    getAllTransactions
 } from "../controllers/CashBankController.js";
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { validate } from '@smarterp/shared/middlewares/validate.js';
@@ -54,17 +54,23 @@ router.post("/cash-transactions", protect, validate(CreateCashTransactionSchema)
 // Cheques
 router.get("/cheques", protect, getCheques);
 router.post("/cheques", protect, validate(CreateChequeSchema), createCheque);
-router.put("/cheques/:id/status", protect, validate(UpdateChequeStatusSchema), updateChequeStatus);
+// PATCH /cheques/:id replaces PUT /cheques/:id/status — status is a partial field update.
+router.patch("/cheques/:id", protect, validate(UpdateChequeStatusSchema), updateChequeStatus);
 
 // Reconciliation & Ledger
 router.get("/accounts/:id/ledger", protect, getAccountLedger);
-router.put("/transactions/:id/reconcile", protect, toggleReconciliation);
-router.put("/transactions/bulk-reconcile", protect, validate(BulkReconcileSchema), bulkReconcile);
+// PATCH /transactions/:id replaces PUT /transactions/:id/reconcile — single field toggle.
+router.patch("/transactions/:id", protect, toggleReconciliation);
+// PATCH /transactions/bulk replaces PUT /transactions/bulk-reconcile.
+router.patch("/transactions/bulk", protect, validate(BulkReconcileSchema), bulkReconcile);
+
+// Payment Validation
+// POST /payment-validations replaces POST /validate-payments — noun resource name.
+router.post("/payment-validations", protect, validate(ValidatePaymentsSchema), validatePayments);
 
 // Reporting & Analysis
 router.get("/summary", protect, cacheMiddleware(300), getBankSummary);
 router.get("/position", protect, cacheMiddleware(300), getCashBankPosition);
-router.post("/validate-payments", protect, validate(ValidatePaymentsSchema), validatePayments);
 router.get("/accounts/:id/effective-balance", protect, getEffectiveBalance);
 
 // Day End Logic
