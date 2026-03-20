@@ -4,8 +4,8 @@ import Feedback from "../models/Feedback.js";
 
 export const submitFeedback = asyncHandler(async (req: Request, res: Response) => {
     const { type, feedback, rating, email } = req.body;
-    const tenantId = (req as any).user?.tenantId;
-    const userId = (req as any).user?._id;
+    const tenantId = req.user!.tenantId;
+    const userId = req.user!._id;
 
     const newFeedback = await Feedback.create({
         tenantId,

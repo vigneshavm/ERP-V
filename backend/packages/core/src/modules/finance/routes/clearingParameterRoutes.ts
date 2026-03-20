@@ -4,8 +4,13 @@ import { initializeUnit, getParameters, updateParameter } from '../controllers/C
 
 const router = express.Router();
 
-router.post('/init', protect, initializeUnit);
-router.get('/', protect, getParameters);
-router.put('/:id', protect, updateParameter);
+router.get("/", protect, getParameters);
+
+// PUT / replaces POST /init.
+// Initialising clearing parameters is an idempotent upsert — PUT is correct.
+// If parameters exist they are replaced; if not, they are created.
+router.put("/", protect, initializeUnit);
+
+router.put("/:id", protect, updateParameter);
 
 export default router;

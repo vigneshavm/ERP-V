@@ -11,6 +11,7 @@ router.post("/", createSalesOrder);
 router.get("/", listSalesOrders);
 router.get("/:id", getSalesOrderById);
 router.put("/:id", auditUpdate("SalesOrder", "UPDATE_SALES_ORDER"), updateSalesOrder);
+router.patch("/:id", auditUpdate("SalesOrder", "UPDATE_SALES_ORDER"), updateSalesOrder);
 router.patch("/:id/status", updateOrderStatus);
 // Sales Order Actions
 router.post("/:id/confirm", confirmSalesOrder);

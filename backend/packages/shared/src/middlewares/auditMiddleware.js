@@ -40,7 +40,7 @@ export const auditDelete = (entityType, action) => {
                     entityType,
                     entityId: String(req.params.id),
                     beforeSnapshot: req.deletedEntity || null, // Controller should attach this
-                    ipAddress: req.ip || req.connection.remoteAddress,
+                    ipAddress: req.ip || req.socket.remoteAddress,
                     userAgent: req.headers["user-agent"],
                     metadata: { method: req.method, path: req.path },
                 }).catch((err) => logError("Audit logging failed:", err));
@@ -66,7 +66,7 @@ export const auditUpdate = (entityType, action) => {
                     entityId: String(req.params.id),
                     beforeSnapshot: req.originalEntity || null, // Controller should attach this
                     afterSnapshot: req.updatedEntity || data, // Use response data if not attached
-                    ipAddress: req.ip || req.connection.remoteAddress,
+                    ipAddress: req.ip || req.socket.remoteAddress,
                     userAgent: req.headers["user-agent"],
                     metadata: { method: req.method, path: req.path },
                 }).catch((err) => logError("Audit logging failed:", err));

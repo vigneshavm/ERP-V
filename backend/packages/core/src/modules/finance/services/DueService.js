@@ -12,13 +12,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { injectable, inject } from "tsyringe";
 import { DueRepository } from '@smarterp/shared/repositories/DueRepository.js';
+import { SupplierRepository } from '@smarterp/shared/repositories/SupplierRepository.js';
+import Bill from "../models/Bill.js";
+import Customer from "../../crm/models/Customer.js";
 import { AppError } from '@smarterp/shared/utils/AppError.js';
 import { info } from '@smarterp/shared/config/logger.js';
 import { ObjectId } from "mongodb";
 let DueService = class DueService {
     dueRepository;
-    constructor(dueRepository) {
+    supplierRepository;
+    constructor(dueRepository, supplierRepository) {
         this.dueRepository = dueRepository;
+        this.supplierRepository = supplierRepository;
     }
     async createDueAdjustment(data, userId, userName) {
         const { customerId, adjustmentAmount, adjustmentMethod, notes = '' } = data;
@@ -73,10 +78,49 @@ let DueService = class DueService {
             adjustments,
         };
     }
+    async getReceivableDues(tenantId) {
+        return Customer.find({ tenantId: new ObjectId(tenantId), dues: { $gt: 0 } })
+            .select('name phone address dues')
+            .lean();
+    }
+    async getPayableDues(tenantId) {
+        // Find all bills not fully paid
+        const unpaidBills = await Bill.find({
+            tenantId: tenantId,
+            paymentStatus: { $in: ['unpaid', 'partial'] }
+        }).populate('supplier', 'businessName contactNo').lean();
+        // Group by supplier
+        const map = new Map();
+        unpaidBills.forEach((bill) => {
+            const supplierId = bill.supplier?._id?.toString();
+            if (!supplierId)
+                return;
+            if (!map.has(supplierId)) {
+                map.set(supplierId, {
+                    supplier: bill.supplier,
+                    totalDue: 0,
+                    bills: []
+                });
+            }
+            const data = map.get(supplierId);
+            const due = bill.amount - (bill.paidAmount || 0);
+            data.totalDue += due;
+            data.bills.push({
+                billNo: bill.billNo,
+                date: bill.date,
+                amount: bill.amount,
+                paidAmount: bill.paidAmount,
+                due
+            });
+        });
+        return Array.from(map.values());
+    }
 };
 DueService = __decorate([
     injectable(),
     __param(0, inject(DueRepository)),
-    __metadata("design:paramtypes", [DueRepository])
+    __param(1, inject(SupplierRepository)),
+    __metadata("design:paramtypes", [DueRepository,
+        SupplierRepository])
 ], DueService);
 export { DueService };

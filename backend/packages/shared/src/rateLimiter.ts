@@ -187,7 +187,7 @@ const resetRateLimit = async (key: string): Promise<void> => {
  */
 export const loginRateLimiter = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const ip = req.ip || req.connection.remoteAddress || 'unknown';
+        const ip = req.ip || req.socket.remoteAddress || 'unknown';
         const email = req.body.email;
         const deviceId = (req.signedCookies?.deviceId as string) || (req.headers['x-device-id'] as string) || 'unknown';
         const correlationId = req.correlationId || 'unknown';
@@ -398,7 +398,7 @@ export const authLimiter = loginRateLimiter; // Alias
 
 export const passwordResetLimiter = async (req: Request, res: Response, next: NextFunction) => {
     // Simple IP-based limiting for password reset
-    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const key = 'rl:pwreset:' + ip;
 
     const state = await getRateLimitState(key, 60 * 60 * 1000); // 1 hour
@@ -449,7 +449,7 @@ export const importLimiter = async (req: Request, res: Response, next: NextFunct
     // User-based limiting for imports
     const userId = (req as any).user?._id?.toString();
     // If not authenticated (shouldn't happen on protected route), fall back to IP
-    const identifier = userId || req.ip || req.connection.remoteAddress || 'unknown';
+    const identifier = userId || req.ip || req.socket.remoteAddress || 'unknown';
 
     const key = `rl:import:${identifier}`;
     const windowMs = 15 * 60 * 1000; // 15 minutes

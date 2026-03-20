@@ -124,18 +124,20 @@ app.get("/health", healthCheck);
 // =======================
 // MOCK DATA ROUTES (Mock-First Strategy - v1)
 // =======================
-import * as MockController from "./controllers/MockController.js";
-app.get("/api/v1/inventory/stock-reports", MockController.getMockStockReport);
-app.get("/api/v1/enterprise/dashboards/stats", MockController.getMockDashboardStats);
-app.get("/api/v1/crm/suppliers/analytics", MockController.getMockSuppliers);
+// Mock / stub routes — development only. Never expose in production.
+if (process.env.NODE_ENV !== 'production') {
+    const MockController = await import("./controllers/MockController.js");
+    app.get("/api/v1/inventory/stock-reports",     MockController.getMockStockReport);
+    app.get("/api/v1/enterprise/dashboards/stats", MockController.getMockDashboardStats);
+    app.get("/api/v1/crm/suppliers/analytics",     MockController.getMockSuppliers);
+    app.get("/api/business/profile",               MockController.getMockBusinessProfile);
+    app.get("/api/v1/business/profile",            MockController.getMockBusinessProfile);
+    app.get("/api/employees",    MockController.getMockEmployees);
+    app.get("/api/v1/employees", MockController.getMockEmployees);
+    app.get("/api/branches",    (_req, res) => res.json({ success: true, data: [] }));
+    app.get("/api/v1/branches", (_req, res) => res.json({ success: true, data: [] }));
+}
 
-// Catch-all for common frontend paths to avoid 404 crashes
-app.get("/api/business/profile", MockController.getMockBusinessProfile);
-app.get("/api/v1/business/profile", MockController.getMockBusinessProfile);
-app.get("/api/employees", MockController.getMockEmployees);
-app.get("/api/v1/employees", MockController.getMockEmployees);
-app.get("/api/branches", (req, res) => res.json({ success: true, data: [] }));
-app.get("/api/v1/branches", (req, res) => res.json({ success: true, data: [] }));
 
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
@@ -160,7 +162,7 @@ app.use("/api/v1/core/audit-logs", auditLogRoutes);
 // INVENTORY Module
 import inventoryRoutes from "@smarterp/core/modules/inventory/routes/inventory.routes.js";
 app.use("/api/v1/inventory", inventoryRoutes);
-app.use("/api/inventory", inventoryRoutes);
+// Unversioned /api/inventory alias removed — all clients must use /api/v1/inventory
 
 // SALES Module
 import salesRoutes from "@smarterp/core/modules/sales/routes/sales.routes.js";

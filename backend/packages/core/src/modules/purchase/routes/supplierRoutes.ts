@@ -1,42 +1,17 @@
 import express from 'express';
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 import {
-    createSupplier,
-    getSuppliers,
-    getSupplierById,
-    updateSupplier,
-    deleteSupplier,
-    getSupplierAnalytics,
-    getSupplierReports,
-    getAgeingAnalysis,
-    bulkUpdateOpeningBalance,
-    getVendorInflowOutflow,
     getSupplierLedger
 } from '../controllers/SupplierController.js';
-import { getGroups } from '../controllers/SupplierGroupController.js';
+
+// NOTE: Supplier CRUD and analytics have moved to /crm/suppliers (canonical home).
+// This file retains only the /ledger alias used by purchase-report flows.
+// New client code should use GET /api/v1/crm/suppliers/:id/ledger instead.
 
 const router = express.Router();
 
-router.get('/analytics', protect, getSupplierAnalytics);
-router.get('/ageing-analysis', protect, getAgeingAnalysis);
-router.get('/reports', protect, getSupplierReports);
-router.get('/inflow-outflow', protect, getVendorInflowOutflow);
-router.post('/bulk-opening-balance', protect, bulkUpdateOpeningBalance);
-router.get('/groups', protect, getGroups); // Fix for 500 error on /suppliers/groups
-router.get('/statements', protect, (_req, res) => {
-    // Placeholder to prevent collision with /:id
-    res.status(200).json({ success: true, message: "Statements endpoint ready" });
-});
-
+// Deprecated alias — kept for backward compatibility during migration
+// Canonical: GET /api/v1/crm/suppliers/:id/ledger
 router.get('/:id/ledger', protect, getSupplierLedger);
-
-router.route('/')
-    .post(protect, createSupplier)
-    .get(protect, getSuppliers);
-
-router.route('/:id')
-    .get(protect, getSupplierById)
-    .put(protect, updateSupplier)
-    .delete(protect, deleteSupplier);
 
 export default router;

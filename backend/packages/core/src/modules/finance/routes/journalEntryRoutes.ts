@@ -1,7 +1,7 @@
 import express from 'express';
-import { 
-    getJournalEntries, 
-    createJournalEntry, 
+import {
+    getJournalEntries,
+    createJournalEntry,
     getJournalEntryById,
     postJournalEntry,
     voidJournalEntry
@@ -13,7 +13,15 @@ const router = express.Router();
 router.get("/", protect, getJournalEntries);
 router.post("/", protect, createJournalEntry);
 router.get("/:id", protect, getJournalEntryById);
-router.post("/:id/post", protect, postJournalEntry);
-router.post("/:id/void", protect, voidJournalEntry);
+
+// PATCH /:id/status replaces POST /:id/post and POST /:id/void.
+// Request body: { status: "posted" | "voided" }
+// The controller dispatches to the correct handler based on the status value.
+router.patch("/:id/status", protect, (req, res, next) => {
+    const { status } = req.body;
+    if (status === "posted") return postJournalEntry(req, res, next);
+    if (status === "voided") return voidJournalEntry(req, res, next);
+    return res.status(400).json({ message: 'status must be "posted" or "voided"' });
+});
 
 export default router;

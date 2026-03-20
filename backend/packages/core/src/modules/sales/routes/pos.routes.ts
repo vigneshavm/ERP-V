@@ -1,9 +1,3 @@
-import express from 'express';
-// import posController from '../controllers/POSController.js'; // Existing
-import posRoutes from './posRoutes.js'; // The actual individual routes file
-
-const router = express.Router();
-
-router.use('/', posRoutes);
-
-export default router;
+// pos.routes.ts — legacy wrapper, kept to avoid breaking imports.
+// All POS routes are defined in posRoutes.ts.
+export { default } from './posRoutes.js';

@@ -1,0 +1,18 @@
+{
+  "name": "@smarterp/budget-planner-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SmartERPAI Budget Planner API",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev":   "nodemon --watch src --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@smarterp/core":   "*",
+    "@smarterp/shared": "*",
+    "express":          "^4.21.2",
+    "mongoose":         "^8.0.0"
+  }
+}

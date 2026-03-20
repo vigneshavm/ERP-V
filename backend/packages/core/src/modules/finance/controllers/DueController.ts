@@ -1,44 +1,36 @@
 import { Request, Response } from 'express';
-import asyncHandler from 'express-async-handler';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { container } from 'tsyringe';
 import { DueService } from '../services/DueService.js';
 
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
-
 export const createDueAdjustment = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const dueService = container.resolve(DueService);
-    const adjustment = await dueService.createDueAdjustment(req.body, req.user?._id as string, req.user?.name);
+    const adjustment = await dueService.createDueAdjustment(req.body, req.user!._id as string, req.user!.name);
     res.status(201).json({ message: 'Due adjustment created successfully', adjustment });
 });
 
 export const getDueAdjustments = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const dueService = container.resolve(DueService);
-    const adjustments = await dueService.getDueAdjustments(req.user?._id as string);
+    const adjustments = await dueService.getDueAdjustments(req.user!._id as string);
     res.status(200).json(adjustments);
 });
 
 export const getCustomerDueAdjustments = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const dueService = container.resolve(DueService);
-    const result = await dueService.getCustomerDueAdjustments(req.params.customerId as string, req.user?._id as string);
+    const result = await dueService.getCustomerDueAdjustments(req.params.customerId as string, req.user!._id as string);
     res.status(200).json(result);
 });
 
 export const getPayableDues = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const dueService = container.resolve(DueService);
-    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const tenantId = req.tenantId || req.user!.tenantId;
     const result = await dueService.getPayableDues(tenantId as string);
     res.status(200).json(result);
 });
 
 export const getReceivableDues = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const dueService = container.resolve(DueService);
-    const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+    const tenantId = req.tenantId || req.user!.tenantId;
     const result = await dueService.getReceivableDues(tenantId as string);
     res.status(200).json(result);
 });

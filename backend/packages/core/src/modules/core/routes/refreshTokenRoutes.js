@@ -7,10 +7,10 @@ import { clearDeviceIdCookie, getDeviceIdFromCookie } from '@smarterp/shared/uti
 const router = express.Router();
 /**
  * @desc Refresh access token using refresh token
- * @route POST /api/auth/refresh
+ * @route POST /api/auth/refresh-token
  * @access Public
  */
-router.post("/refresh", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         const { refreshToken } = req.body;
         if (!refreshToken) {

@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch src --watch ../../packages/core/src --exec tsx src/server.ts"
+    "dev":   "nodemon --watch src --watch ../../packages/core/src --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "dependencies": {
-    "@smarterp/core": "*",
+    "@smarterp/core":   "*",
     "@smarterp/shared": "*",
-    "express": "^4.21.2"
+    "express":          "^4.21.2"
   }
 }

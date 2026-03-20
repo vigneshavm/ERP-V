@@ -36,14 +36,14 @@ import mongoose from 'mongoose';
  *                   type: string
  *                   example: development
  */
-export const healthCheck = async (_req: Request, res: Response): Promise<void> => {
+export const healthCheck = asyncHandler(async (_req: Request, res: Response): Promise<void> =>{
     res.status(200).json({
         status: 'ok',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV || 'development',
     });
-};
+});
 
 /**
  * @swagger
@@ -58,38 +58,29 @@ export const healthCheck = async (_req: Request, res: Response): Promise<void> =
  *       503:
  *         description: Application is not ready
  */
-export const readinessCheck = async (_req: Request, res: Response): Promise<void> => {
-    try {
-        // Check database connection
-        const dbState = mongoose.connection.readyState;
-        const dbReady = dbState === 1; // 1 = connected
+export const readinessCheck = asyncHandler(async (_req: Request, res: Response): Promise<void> =>{
+    // Check database connection
+    const dbState = mongoose.connection.readyState;
+    const dbReady = dbState === 1; // 1 = connected
 
-        if (!dbReady) {
-            res.status(503).json({
-                status: 'not_ready',
-                timestamp: new Date().toISOString(),
-                checks: {
-                    database: 'disconnected',
-                },
-            });
-            return;
-        }
-
-        res.status(200).json({
-            status: 'ready',
-            timestamp: new Date().toISOString(),
-            checks: {
-                database: 'connected',
-            },
-        });
-    } catch (error) {
+    if (!dbReady) {
         res.status(503).json({
             status: 'not_ready',
             timestamp: new Date().toISOString(),
-            error: (error as Error).message,
+            checks: {
+                database: 'disconnected',
+            },
         });
+        return;
     }
-};
+
+    res.status(200).json({
+        status: 'ready',
+        timestamp: new Date().toISOString(),
+        checks: {
+            database: 'connected',
+        },
+    });
 
 /**
  * @swagger
@@ -104,31 +95,22 @@ export const readinessCheck = async (_req: Request, res: Response): Promise<void
  *       503:
  *         description: Database is disconnected
  */
-export const dbHealthCheck = async (_req: Request, res: Response): Promise<void> => {
-    try {
-        const dbState = mongoose.connection.readyState;
-        const dbReady = dbState === 1;
+export const dbHealthCheck = asyncHandler(async (_req: Request, res: Response): Promise<void> =>{
+    const dbState = mongoose.connection.readyState;
+    const dbReady = dbState === 1;
 
-        if (!dbReady) {
-            res.status(503).json({
-                status: 'disconnected',
-                timestamp: new Date().toISOString(),
-            });
-            return;
-        }
-
-        res.status(200).json({
-            status: 'connected',
-            timestamp: new Date().toISOString(),
-        });
-    } catch (error) {
+    if (!dbReady) {
         res.status(503).json({
-            status: 'error',
+            status: 'disconnected',
             timestamp: new Date().toISOString(),
-            error: (error as Error).message,
         });
+        return;
     }
-};
+
+    res.status(200).json({
+        status: 'connected',
+        timestamp: new Date().toISOString(),
+    });
 
 /**
  * @swagger
@@ -141,12 +123,12 @@ export const dbHealthCheck = async (_req: Request, res: Response): Promise<void>
  *       200:
  *         description: Application is alive
  */
-export const livenessCheck = async (_req: Request, res: Response): Promise<void> => {
+export const livenessCheck = asyncHandler(async (_req: Request, res: Response): Promise<void> =>{
     res.status(200).json({
         status: 'alive',
         timestamp: new Date().toISOString(),
     });
-};
+});
 
 export default {
     healthCheck,

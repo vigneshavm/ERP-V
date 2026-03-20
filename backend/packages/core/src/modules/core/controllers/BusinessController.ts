@@ -3,6 +3,8 @@ import BusinessProfile from "../models/BusinessProfile.js";
 import Tenant from "../models/Tenant.js";
 import Sector from "../models/Sector.js";
 import BusinessType from "../models/BusinessType.js";
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 
 
@@ -15,39 +17,31 @@ import BusinessType from "../models/BusinessType.js";
  *     security:
  *       - bearerAuth: []
  */
-export const getSetupStatus = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        let profile = await BusinessProfile.findOne({ userId });
+export const getSetupStatus = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    let profile = await BusinessProfile.findOne({ userId });
 
-        if (!profile) {
-            profile = await BusinessProfile.create({
-                userId,
-                businessName: (req as any).user.shopName || "My Business",
-                email: (req as any).user.email,
-                phone: (req as any).user.phone || "",
-            });
-        }
-
-        const setupData = {
-            businessName: profile.businessName,
-            category: profile.category,
-            businessType: profile.businessType,
-            phone: profile.phone,
-            isSetupComplete: !!(profile.category && profile.businessType)
-        };
-
-        res.status(200).json({
-            success: true,
-            data: setupData
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
+    if (!profile) {
+        profile = await BusinessProfile.create({
+            userId,
+            businessName: req.user.shopName || "My Business",
+            email: req.user.email,
+            phone: req.user.phone || "",
         });
     }
-};
+
+    const setupData = {
+        businessName: profile.businessName,
+        category: profile.category,
+        businessType: profile.businessType,
+        phone: profile.phone,
+        isSetupComplete: !!(profile.category && profile.businessType)
+    };
+
+    res.status(200).json({
+        success: true,
+        data: setupData
+    });
 
 /**
  * @swagger
@@ -58,36 +52,28 @@ export const getSetupStatus = async (req: Request, res: Response) => {
  *     security:
  *       - bearerAuth: []
  */
-export const completeSetup = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        const { businessName, category, businessType, phone } = req.body;
+export const completeSetup = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    const { businessName, category, businessType, phone } = req.body;
 
-        const profile = await BusinessProfile.findOneAndUpdate(
-            { userId },
-            {
-                $set: {
-                    businessName,
-                    category,
-                    businessType,
-                    phone,
-                }
-            },
-            { new: true, runValidators: true, upsert: true }
-        );
+    const profile = await BusinessProfile.findOneAndUpdate(
+        { userId },
+        {
+            $set: {
+                businessName,
+                category,
+                businessType,
+                phone,
+            }
+        },
+        { new: true, runValidators: true, upsert: true }
+    );
 
-        res.status(200).json({
-            success: true,
-            message: "Business setup completed successfully",
-            data: profile
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
+    res.status(200).json({
+        success: true,
+        message: "Business setup completed successfully",
+        data: profile
+    });
 
 /**
  * @swagger
@@ -103,42 +89,34 @@ export const completeSetup = async (req: Request, res: Response) => {
  *       404:
  *         description: Profile not found
  */
-export const getProfile = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        let profile = await BusinessProfile.findOne({ userId });
+export const getProfile = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    let profile = await BusinessProfile.findOne({ userId });
 
-        if (!profile) {
-            // Create a default profile if not found
-            profile = await BusinessProfile.create({
-                userId,
-                businessName: (req as any).user.shopName || "My Business",
-                email: (req as any).user.email,
-                phone: (req as any).user.phone || "",
-                address: (req as any).user.shopAddress || ""
-            });
-        }
-
-        // Fetch Tenant to get structured address
-        const tenant = await Tenant.findById((req as any).user.tenantId);
-
-        const responseData = {
-            ...profile.toObject(),
-            tenantAddress: tenant?.address || null,
-            gstNumber: tenant?.subscriptionPlan ? "" : (req as any).user.gstNumber // Placeholder logic
-        };
-
-        res.status(200).json({
-            success: true,
-            data: responseData
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
+    if (!profile) {
+        // Create a default profile if not found
+        profile = await BusinessProfile.create({
+            userId,
+            businessName: req.user.shopName || "My Business",
+            email: req.user.email,
+            phone: req.user.phone || "",
+            address: req.user.shopAddress || ""
         });
     }
-};
+
+    // Fetch Tenant to get structured address
+    const tenant = await Tenant.findById(req.user.tenantId);
+
+    const responseData = {
+        ...profile.toObject(),
+        tenantAddress: tenant?.address || null,
+        gstNumber: tenant?.subscriptionPlan ? "" : req.user.gstNumber // Placeholder logic
+    };
+
+    res.status(200).json({
+        success: true,
+        data: responseData
+    });
 
 /**
  * @swagger
@@ -165,28 +143,20 @@ export const getProfile = async (req: Request, res: Response) => {
  *       200:
  *         description: Profile updated successfully
  */
-export const updateProfile = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        const profileData = req.body;
+export const updateProfile = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    const profileData = req.body;
 
-        const profile = await BusinessProfile.findOneAndUpdate(
-            { userId },
-            { $set: profileData },
-            { new: true, runValidators: true, upsert: true }
-        );
+    const profile = await BusinessProfile.findOneAndUpdate(
+        { userId },
+        { $set: profileData },
+        { new: true, runValidators: true, upsert: true }
+    );
 
-        res.status(200).json({
-            success: true,
-            data: profile
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
+    res.status(200).json({
+        success: true,
+        data: profile
+    });
 
 /**
  * @swagger
@@ -202,57 +172,49 @@ export const updateProfile = async (req: Request, res: Response) => {
  *       404:
  *         description: Business profile not found
  */
-export const syncGoogle = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
+export const syncGoogle = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
 
-        // In a real app, this would exchange tokens and fetch from GMB API
-        // Removing simulated data for now
-        const simulatedInsights = {
-            views: 0,
-            calls: 0,
-            directions: 0,
-            websiteClicks: 0
-        };
+    // In a real app, this would exchange tokens and fetch from GMB API
+    // Removing simulated data for now
+    const simulatedInsights = {
+        views: 0,
+        calls: 0,
+        directions: 0,
+        websiteClicks: 0
+    };
 
-        const simulatedCompleteness = 0;
+    const simulatedCompleteness = 0;
 
-        const profile = await BusinessProfile.findOneAndUpdate(
-            { userId },
-            {
-                $set: {
-                    insights: simulatedInsights,
-                    completeness: simulatedCompleteness,
-                    isConnected: true,
-                    verified: false,
-                    lastSyncAt: new Date(),
-                    reviews: [],
-                    posts: [],
-                    photos: []
-                }
-            },
-            { new: true }
-        );
+    const profile = await BusinessProfile.findOneAndUpdate(
+        { userId },
+        {
+            $set: {
+                insights: simulatedInsights,
+                completeness: simulatedCompleteness,
+                isConnected: true,
+                verified: false,
+                lastSyncAt: new Date(),
+                reviews: [],
+                posts: [],
+                photos: []
+            }
+        },
+        { new: true }
+    );
 
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: "Business profile not found"
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Google Business Profile sync initiated (Real API integration pending).",
-            data: profile
-        });
-    } catch (error: any) {
-        res.status(500).json({
+    if (!profile) {
+        return res.status(404).json({
             success: false,
-            message: error.message
+            message: "Business profile not found"
         });
     }
-};
+
+    res.status(200).json({
+        success: true,
+        message: "Google Business Profile sync initiated (Real API integration pending).",
+        data: profile
+    });
 
 /**
  * @swagger
@@ -264,27 +226,19 @@ export const syncGoogle = async (req: Request, res: Response) => {
  *       200:
  *         description: List of business types
  */
-export const getBusinessTypes = async (_req: Request, res: Response) => {
-    try {
-        const types = await BusinessType.find({ isActive: true }).sort({ name: 1 });
+export const getBusinessTypes = asyncHandler(async (_req: Request, res: Response) =>{
+    const types = await BusinessType.find({ isActive: true }).sort({ name: 1 });
 
-        const formattedTypes = types.map(t => ({
-            id: t._id,
-            name: t.name,
-            slug: t.slug
-        }));
+    const formattedTypes = types.map(t => ({
+        id: t._id,
+        name: t.name,
+        slug: t.slug
+    }));
 
-        res.status(200).json({
-            success: true,
-            data: formattedTypes
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
+    res.status(200).json({
+        success: true,
+        data: formattedTypes
+    });
 
 /**
  * @swagger
@@ -309,45 +263,37 @@ export const getBusinessTypes = async (_req: Request, res: Response) => {
  *             properties:
  *               reply: { type: string }
  */
-export const replyToReview = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        const { reviewId } = req.params;
-        const { reply } = req.body;
+export const replyToReview = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    const { reviewId } = req.params;
+    const { reply } = req.body;
 
-        const profile = await BusinessProfile.findOne({ userId });
+    const profile = await BusinessProfile.findOne({ userId });
 
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: "Business profile not found"
-            });
-        }
-
-        const review = profile.reviews.find(r => (r as any)._id.toString() === reviewId || r.reviewer === reviewId);
-
-        if (!review) {
-            return res.status(404).json({
-                success: false,
-                message: "Review not found"
-            });
-        }
-
-        review.reply = reply;
-        await profile.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Reply posted successfully",
-            data: review
-        });
-    } catch (error: any) {
-        res.status(500).json({
+    if (!profile) {
+        return res.status(404).json({
             success: false,
-            message: error.message
+            message: "Business profile not found"
         });
     }
-};
+
+    const review = profile.reviews.find(r => (r as any)._id.toString() === reviewId || r.reviewer === reviewId);
+
+    if (!review) {
+        return res.status(404).json({
+            success: false,
+            message: "Review not found"
+        });
+    }
+
+    review.reply = reply;
+    await profile.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Reply posted successfully",
+        data: review
+    });
 
 /**
  * @swagger
@@ -368,45 +314,37 @@ export const replyToReview = async (req: Request, res: Response) => {
  *               type: { type: string, enum: [OFFER, EVENT, UPDATE] }
  *               imageUrl: { type: string }
  */
-export const createPost = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        const { content, type, imageUrl } = req.body;
+export const createPost = asyncHandler(async (req: Request, res: Response) =>{
+    const userId = req.user!._id;
+    const { content, type, imageUrl } = req.body;
 
-        const newPost = {
-            content,
-            type: type || 'UPDATE',
-            imageUrl: imageUrl || "",
-            views: 0,
-            clicks: 0,
-            date: new Date()
-        };
+    const newPost = {
+        content,
+        type: type || 'UPDATE',
+        imageUrl: imageUrl || "",
+        views: 0,
+        clicks: 0,
+        date: new Date()
+    };
 
-        const profile = await BusinessProfile.findOneAndUpdate(
-            { userId },
-            { $push: { posts: { $each: [newPost], $position: 0 } } },
-            { new: true }
-        );
+    const profile = await BusinessProfile.findOneAndUpdate(
+        { userId },
+        { $push: { posts: { $each: [newPost], $position: 0 } } },
+        { new: true }
+    );
 
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: "Business profile not found"
-            });
-        }
-
-        res.status(201).json({
-            success: true,
-            message: "Post created successfully",
-            data: profile.posts[0]
-        });
-    } catch (error: any) {
-        res.status(500).json({
+    if (!profile) {
+        return res.status(404).json({
             success: false,
-            message: error.message
+            message: "Business profile not found"
         });
     }
-};
+
+    res.status(201).json({
+        success: true,
+        message: "Post created successfully",
+        data: profile.posts[0]
+    });
 
 /**
  * @swagger
@@ -418,23 +356,15 @@ export const createPost = async (req: Request, res: Response) => {
  *       200:
  *         description: List of business sectors
  */
-export const getSectors = async (_req: Request, res: Response) => {
-    try {
-        const sectors = await Sector.find({ isActive: true }).sort({ name: 1 });
+export const getSectors = asyncHandler(async (_req: Request, res: Response) =>{
+    const sectors = await Sector.find({ isActive: true }).sort({ name: 1 });
 
-        const formattedSectors = sectors.map(s => ({
-            id: s._id,
-            name: s.name
-        }));
+    const formattedSectors = sectors.map(s => ({
+        id: s._id,
+        name: s.name
+    }));
 
-        res.status(200).json({
-            success: true,
-            data: formattedSectors
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
+    res.status(200).json({
+        success: true,
+        data: formattedSectors
+    });
