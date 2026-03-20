@@ -218,6 +218,7 @@ export const getSupplierAnalytics = asyncHandler(async (req: AuthenticatedReques
     });
 
     res.status(200).json({ success: true, data: enrichedStats });
+});
 
 
 export const createSupplier = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
@@ -271,6 +272,7 @@ export const createSupplier = asyncHandler(async (req: AuthenticatedRequest, res
     });
 
     res.status(201).json({ success: true, data: supplier });
+});
 
 export const getSuppliers = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId?.toString();
@@ -283,6 +285,7 @@ export const getSuppliers = asyncHandler(async (req: AuthenticatedRequest, res: 
         .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: suppliers });
+});
 
 export const getSupplierById = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const { id } = req.params;
@@ -338,6 +341,7 @@ export const getSupplierById = asyncHandler(async (req: AuthenticatedRequest, re
             manualTotalPaid: s.manualTotalPaid || 0
         }
     });
+});
 
 export const updateSupplier = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const { id } = req.params;
@@ -356,6 +360,7 @@ export const updateSupplier = asyncHandler(async (req: AuthenticatedRequest, res
     );
 
     res.status(200).json({ success: true, data: supplier });
+});
 
 export const deleteSupplier = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const { id } = req.params;
@@ -386,12 +391,14 @@ export const deleteSupplier = asyncHandler(async (req: AuthenticatedRequest, res
     }
 
     res.status(200).json({ success: true, message: 'Supplier deleted successfully' });
+});
 
 export const evaluateSupplierPerformance = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const { evaluateSupplier } = await import('../services/SupplierPerformanceService.js');
     const id = req.params.id as string;
     const metrics = await evaluateSupplier(id);
     res.json({ success: true, data: metrics });
+});
 
 export const getSupplierReports = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId?.toString();
@@ -423,6 +430,7 @@ export const getSupplierReports = asyncHandler(async (req: AuthenticatedRequest,
             overdue
         }
     });
+});
 
 export const getAgeingAnalysis = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId?.toString();
@@ -437,6 +445,7 @@ export const getAgeingAnalysis = asyncHandler(async (req: AuthenticatedRequest, 
         success: true,
         data
     });
+});
 
 export const bulkUpdateOpeningBalance = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId?.toString();
@@ -467,12 +476,14 @@ export const bulkUpdateOpeningBalance = asyncHandler(async (req: AuthenticatedRe
             results.failed++;
             results.errors.push(`Supplier not found: ${businessName}`);
         }
+    }
 
     res.status(200).json({
         success: true,
         message: `Bulk update completed. Updated: ${results.updated}, Failed: ${results.failed}`,
         data: results
     });
+});
 
 
 export const getVendorInflowOutflow = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
@@ -677,6 +688,7 @@ export const getVendorInflowOutflow = asyncHandler(async (req: AuthenticatedRequ
             totals
         }
     });
+});
 
 export const getSupplierLedger = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId?.toString();
@@ -861,4 +873,5 @@ export const getSupplierLedger = asyncHandler(async (req: AuthenticatedRequest, 
             transactions: processedTransactions
         }
     });
+});
 

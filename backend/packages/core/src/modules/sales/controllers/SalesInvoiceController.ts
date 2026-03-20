@@ -11,6 +11,7 @@ import BankAccount from '@smarterp/core/modules/finance/models/BankAccount.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -52,6 +53,7 @@ export const getSalesInvoiceSummary = asyncHandler(async (req: AuthenticatedRequ
         totalPaid,
         outstandingDues
     });
+});
 
 /**
  * @swagger
@@ -79,6 +81,7 @@ export const getAllSalesInvoices = asyncHandler(async (req: AuthenticatedRequest
         .populate('customer', 'name phone')
         .sort({ createdAt: -1 });
     res.status(200).json(invoices);
+});
 
 /**
  * @swagger
@@ -125,6 +128,7 @@ export const getSalesInvoiceById = asyncHandler(async (req: AuthenticatedRequest
     }));
 
     res.status(200).json(transformedInvoice);
+});
 
 /**
  * @swagger
@@ -188,6 +192,7 @@ export const deleteSalesInvoice = asyncHandler(async (req: AuthenticatedRequest,
     // - Add stock movement logging
 
     res.status(200).json({ message: 'Invoice soft-deleted successfully' });
+});
 
 /**
  * @swagger
@@ -330,6 +335,7 @@ export const markSalesInvoiceAsPaid = asyncHandler(async (req: AuthenticatedRequ
         message: `Invoice marked as ${newPaymentStatus}`,
         invoice: updatedInvoice
     });
+});
 
 export default {
     getSalesInvoiceSummary,

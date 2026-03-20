@@ -9,6 +9,7 @@ import Customer from '@smarterp/core/modules/crm/models/Customer.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -130,6 +131,7 @@ export const createEstimate = asyncHandler(async (req: AuthenticatedRequest, res
         message: 'Estimate created successfully',
         estimate: populatedEstimate
     });
+});
 
 /**
  * @swagger
@@ -149,6 +151,7 @@ export const getAllEstimates = asyncHandler(async (_req: Request, res: Response)
         .sort({ createdAt: -1 });
 
     res.status(200).json(estimates);
+});
 
 /**
  * @desc Get single estimate by ID
@@ -170,6 +173,7 @@ export const getEstimateById = asyncHandler(async (req: Request, res: Response):
     }
 
     res.status(200).json(estimate);
+});
 
 /**
  * @desc Update estimate
@@ -212,6 +216,7 @@ export const updateEstimate = asyncHandler(async (req: Request, res: Response): 
         message: 'Estimate updated successfully',
         estimate: updatedEstimate
     });
+});
 
 /**
  * @desc Delete estimate
@@ -234,6 +239,7 @@ export const deleteEstimate = asyncHandler(async (req: Request, res: Response): 
     await estimate.deleteOne();
 
     res.status(200).json({ message: 'Estimate deleted successfully' });
+});
 
 export default {
     createEstimate,

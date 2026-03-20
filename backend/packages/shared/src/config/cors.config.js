@@ -45,7 +45,7 @@ const isAllowedOrigin = async (origin) => {
         const domain = origin.replace(/^https?:\/\//, "").split(":")[0];
         // Use the Tenant model directly for lookups
         // Note: In high traffic, consider adding a cache layer here
-        const { default: Tenant } = await import("../modules/core/models/Tenant.js");
+        const { default: Tenant } = await import("@smarterp/core/modules/core/models/Tenant.js");
         const tenant = await Tenant.findOne({
             $or: [
                 { 'ecommerce.domain': domain },

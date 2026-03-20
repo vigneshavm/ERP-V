@@ -41,6 +41,13 @@ const nextConfig: NextConfig = {
       { source: "/budget/_next/:path*", destination: "http://localhost:3006/_next/:path*" },
       { source: "/budget", destination: "http://localhost:3006" },
       { source: "/budget/:path*", destination: "http://localhost:3006/:path*" },
+      
+      // Backend API Proxy
+      { source: "/api/auth/:path*", destination: "http://localhost:5000/api/auth/:path*" },
+      { source: "/api/personal/:path*", destination: "http://localhost:5001/api/personal/:path*" },
+      { source: "/api/budget/:path*", destination: "http://localhost:5005/api/budget/:path*" },
+      { source: "/api/v1/:path*", destination: "http://localhost:5000/api/v1/:path*" },
+      { source: "/api/:path*", destination: "http://localhost:5000/api/:path*" },
     ];
   },
 };

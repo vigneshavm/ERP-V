@@ -1,5 +1,5 @@
 import { CorsOptions } from 'cors';
-import Tenant from '../modules/core/models/Tenant.js'; // static top-level import
+import Tenant from '@smarterp/core/modules/core/models/Tenant.js'; // static top-level import
 
 /**
  * Static origin whitelist — built once at startup from env vars.

@@ -6,6 +6,7 @@ import User from '@smarterp/core/modules/core/models/User.js';
 import { FinancialPeriod } from '@smarterp/shared/utils/FinancialPeriod.js';
 import { error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 /**
@@ -236,6 +237,7 @@ export const getExpenseReport = asyncHandler(async (req: AuthenticatedRequest, r
         recommendations,
         monthly_trends,
     });
+});
 
 /**
  * @desc Get stats for statistics page
@@ -274,6 +276,7 @@ export const getStats = asyncHandler(async (req: AuthenticatedRequest, res: Resp
         },
         categories
     });
+});
 
 /**
  * @desc Get history for history page
@@ -317,6 +320,7 @@ export const getHistory = asyncHandler(async (req: AuthenticatedRequest, res: Re
         paymentMethods: paymentSummary.map(p => ({ name: p._id || 'CASH', value: p.total, color: '#10B981' })),
         dailyTrend: dailyTrend.map(d => ({ day: d._id, amount: d.amount }))
     });
+});
 
 export default {
     getExpenseReport,

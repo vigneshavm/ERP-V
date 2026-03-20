@@ -12,6 +12,7 @@ import { logStockMovement } from '@smarterp/shared/utils/stockMovementLogger.js'
 import { validateStockLevels, validateSalesOrderQuantities as _validateSalesOrderQuantities } from '@smarterp/shared/utils/inventoryValidator.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -194,9 +195,7 @@ export const createDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
                 };
 
                 // Log stock movement (2 entries as per requirement)
-                //  - Dynamic import
-                const { logStockMovement: logStock } = await import('../../../utils/stockMovementLogger.js');
-                await logStock(
+                await logStockMovement(
                     item,
                     'DELIVER',
                     challanItem.deliveredQty,
@@ -206,7 +205,7 @@ export const createDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
                     previousState,
                     newState
                 );
-                await logStock(
+                await logStockMovement(
                     item,
                     'IN_TRANSIT',
                     challanItem.deliveredQty,
@@ -260,9 +259,7 @@ export const createDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
             };
 
             // Log stock movement
-            //  - Dynamic import
-            const { logStockMovement: logStock } = await import('../../../utils/stockMovementLogger.js');
-            await logStock(
+            await logStockMovement(
                 item,
                 'DELIVER',
                 challanItem.deliveredQty,
@@ -272,7 +269,7 @@ export const createDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
                 previousState,
                 newState
             );
-            await logStock(
+            await logStockMovement(
                 item,
                 'IN_TRANSIT',
                 challanItem.deliveredQty,
@@ -296,6 +293,7 @@ export const createDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
         message: 'Delivery Challan created successfully',
         challan: populatedChallan,
     });
+});
 
 /**
  * @swagger
@@ -321,6 +319,7 @@ export const getAllDeliveryChallans = asyncHandler(async (req: AuthenticatedRequ
         .sort({ createdAt: -1 });
 
     res.status(200).json(challans);
+});
 
 /**
  * @swagger
@@ -360,6 +359,7 @@ export const getDeliveryChallanById = asyncHandler(async (req: AuthenticatedRequ
     }
 
     res.status(200).json(challan);
+});
 
 /**
  * @desc Update delivery challan
@@ -414,6 +414,7 @@ export const updateDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
         message: 'Delivery Challan updated successfully',
         challan: updatedChallan,
     });
+});
 
 /**
  * @desc Convert delivery challan to invoice
@@ -644,6 +645,7 @@ export const convertToInvoice = asyncHandler(async (req: AuthenticatedRequest, r
         invoice,
         challan,
     });
+});
 
 /**
  * @desc Delete delivery challan
@@ -720,6 +722,7 @@ export const deleteDeliveryChallan = asyncHandler(async (req: AuthenticatedReque
     info(`Delivery Challan deleted: ${challan.challanNumber} by ${req.user!.name}`);
 
     res.status(200).json({ message: 'Delivery Challan deleted successfully' });
+});
 
 export default {
     createDeliveryChallan,

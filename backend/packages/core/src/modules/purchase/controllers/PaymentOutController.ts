@@ -150,6 +150,7 @@ export const createPayment = asyncHandler(async (req: AuthenticatedRequest, res:
     session.endSession();
 
     res.status(201).json({ success: true, data: payment });
+});
 
 // Update Cheque Status (Clear / Bounce)
 export const updatePaymentStatus = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
@@ -235,6 +236,7 @@ export const updatePaymentStatus = asyncHandler(async (req: AuthenticatedRequest
     session.endSession();
 
     res.status(200).json({ success: true, data: payment });
+});
 
 
 export const getPayments = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
@@ -244,3 +246,4 @@ export const getPayments = asyncHandler(async (req: AuthenticatedRequest, res: R
         .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: payments });
+});

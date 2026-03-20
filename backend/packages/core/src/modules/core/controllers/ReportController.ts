@@ -8,6 +8,7 @@ import { generateAIReport } from '@smarterp/shared/utils/aiReportHelper.js';
 import { checkStockAlerts }  from '@smarterp/shared/utils/stockAlert.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 /** Return tenantId as an ObjectId, or throw a clear error if it is missing. */
@@ -34,6 +35,7 @@ export const getSalesReport = asyncHandler(async (req: AuthenticatedRequest, res
 
     info(`Sales report: tenant=${req.tenantId} invoices=${report.summary.totalInvoices}`);
     res.status(200).json({ report, stockAlerts });
+});
 
 /**
  * GET /api/v1/reports/stock
@@ -46,6 +48,7 @@ export const getStockReport = asyncHandler(async (req: AuthenticatedRequest, res
     const lowStock = items.filter((i: any) => i.stockQty <= i.lowStockLimit);
 
     res.status(200).json({ totalItems: items.length, lowStock });
+});
 
 /**
  * GET /api/v1/reports/customers
@@ -59,6 +62,7 @@ export const getCustomerReport = asyncHandler(async (req: AuthenticatedRequest, 
         .lean();
 
     res.status(200).json(customers);
+});
 
 /**
  * GET /api/v1/reports/dashboard-stats
@@ -134,5 +138,6 @@ export const getDashboardStats = asyncHandler(async (req: AuthenticatedRequest, 
         paymentMethods,
         topCustomersWithDues,
     });
+});
 
 export default { getSalesReport, getStockReport, getCustomerReport, getDashboardStats };

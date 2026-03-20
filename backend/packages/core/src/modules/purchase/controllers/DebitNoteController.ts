@@ -23,6 +23,7 @@ export const getDebitNotes = asyncHandler(async (req: Request, res: Response) =>
         success: true,
         data: debitNotes
     });
+});
 
 /**
  * @swagger
@@ -49,6 +50,7 @@ export const getDebitNoteById = asyncHandler(async (req: Request, res: Response)
         success: true,
         data: debitNote
     });
+});
 
 /**
  * @swagger
@@ -86,8 +88,8 @@ export const createDebitNote = asyncHandler(async (req: Request, res: Response) 
                     item.qty,
                     tenantId,
                     req.user,
-                    `DEBIT_NOTE_${debitNote.reason}`
                 );
+            }
         }
     }
 
@@ -96,6 +98,7 @@ export const createDebitNote = asyncHandler(async (req: Request, res: Response) 
         message: "Debit note created successfully",
         data: debitNote
     });
+});
 
 /**
  * @swagger
@@ -140,6 +143,7 @@ export const updateDebitNoteStatus = asyncHandler(async (req: Request, res: Resp
                     req.user,
                     `DEBIT_NOTE_${debitNote.reason}`
                 );
+            }
         }
     }
 
@@ -148,6 +152,7 @@ export const updateDebitNoteStatus = asyncHandler(async (req: Request, res: Resp
         message: "Debit note status updated",
         data: debitNote
     });
+});
 
 /**
  * @swagger
@@ -175,3 +180,4 @@ export const deleteDebitNote = asyncHandler(async (req: Request, res: Response) 
         success: true,
         message: "Debit note deleted successfully"
     });
+});

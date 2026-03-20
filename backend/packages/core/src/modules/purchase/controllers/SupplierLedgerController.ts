@@ -184,4 +184,5 @@ export const getSupplierLedger = asyncHandler(async (req: Request, res: Response
             transactions: timeline
         }
     });
+});
 

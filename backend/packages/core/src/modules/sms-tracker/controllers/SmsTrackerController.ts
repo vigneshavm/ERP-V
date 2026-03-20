@@ -8,6 +8,7 @@ import CashbankTransaction from '@smarterp/core/modules/finance/models/CashbankT
 import { error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 export const receiveSms = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const { text, sender } = req.body;
@@ -28,6 +29,7 @@ export const receiveSms = asyncHandler(async (req: AuthenticatedRequest, res: Re
     });
 
     res.status(201).json(smsTxn);
+});
 
 export const getSmsTransactions = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const transactions = await SmsTransaction.find({
@@ -35,6 +37,7 @@ export const getSmsTransactions = asyncHandler(async (req: AuthenticatedRequest,
         status: { $ne: 'ignored' }
     }).sort({ createdAt: -1 });
     res.status(200).json(transactions);
+});
 
 export const convertToExpense = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const session = await mongoose.startSession();
@@ -99,6 +102,7 @@ export const convertToExpense = asyncHandler(async (req: AuthenticatedRequest, r
 
     await session.commitTransaction();
     res.status(200).json({ message: 'Converted successfully', expense: expense[0] });
+});
 
 export const ignoreSms = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const { id } = req.params;
@@ -112,6 +116,7 @@ export const ignoreSms = asyncHandler(async (req: AuthenticatedRequest, res: Res
         return;
     }
     res.status(200).json({ message: 'SMS ignored' });
+});
 
 export default {
     receiveSms,

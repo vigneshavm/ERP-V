@@ -8,10 +8,7 @@ import BankAccount from '@smarterp/core/modules/finance/models/BankAccount.js';
 import CashbankTransaction from '@smarterp/core/modules/finance/models/CashbankTransaction.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
 
-/**
- * Request interface with authenticated user
- */
-// ReturnItem interface removed to fix build
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * @swagger
@@ -224,6 +221,7 @@ export const createPurchaseReturn = asyncHandler(async (req: AuthenticatedReques
     }
 
     res.status(201).json(purchaseReturn);
+});
 
 /**
  * @swagger
@@ -242,6 +240,7 @@ export const getAllPurchaseReturns = asyncHandler(async (req: AuthenticatedReque
         .populate('supplier', 'businessName')
         .sort({ createdAt: -1 });
     res.status(200).json(returns);
+});
 
 /**
  * @desc Get single purchase return by ID
@@ -277,6 +276,7 @@ export const getPurchaseReturnById = asyncHandler(async (req: AuthenticatedReque
         return;
     }
     res.status(200).json(pr);
+});
 
 /**
  * @desc Delete purchase return (reversal)
@@ -332,6 +332,7 @@ export const deletePurchaseReturn = asyncHandler(async (req: AuthenticatedReques
 
     info(`Purchase return deleted: ${pr.returnId} - Reversed ₹${pr.totalAmount}`);
     res.status(200).json({ message: 'Purchase return deleted and reversed successfully' });
+});
 
 export default {
     createPurchaseReturn,

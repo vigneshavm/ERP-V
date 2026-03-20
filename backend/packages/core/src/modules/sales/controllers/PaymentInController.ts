@@ -9,6 +9,7 @@ import BankAccount from '@smarterp/core/modules/finance/models/BankAccount.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -370,6 +371,7 @@ export const createPaymentIn = asyncHandler(async (req: AuthenticatedRequest, re
         message: 'Payment recorded successfully',
         payment: populatedPayment,
     });
+});
 
 /**
  * @swagger
@@ -391,6 +393,7 @@ export const getPaymentInRecords = asyncHandler(async (req: AuthenticatedRequest
         .sort({ paymentDate: -1 });
 
     res.status(200).json(payments);
+});
 
 /**
  * @swagger
@@ -439,6 +442,7 @@ export const getPaymentInById = asyncHandler(async (req: AuthenticatedRequest, r
     paymentWithDues.customerCurrentDues = customerCurrentDues;
 
     res.status(200).json(paymentWithDues);
+});
 
 /**
  * @swagger
@@ -500,6 +504,7 @@ export const getCustomerOutstandingInvoices = asyncHandler(async (req: Authentic
     }));
 
     res.status(200).json(invoicesWithBalance);
+});
 
 /**
  * @swagger
@@ -574,6 +579,7 @@ export const getCustomerPaymentInfo = asyncHandler(async (req: AuthenticatedRequ
         availableCredit,
         outstandingInvoices: invoicesWithBalance,
     });
+});
 
 export default {
     createPaymentIn,

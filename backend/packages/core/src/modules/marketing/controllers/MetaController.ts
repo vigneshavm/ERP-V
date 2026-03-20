@@ -12,6 +12,7 @@ export class MetaController {
     getAuthUrl = (_req: Request, res: Response) => {
         const url = metaService.getLoginUrl();
         res.json({ success: true, url });
+    };
 
     // Handle OAuth Callback
     handleCallback = async (req: Request, res: Response) => {
@@ -42,6 +43,7 @@ export class MetaController {
         this.refreshDataInternal(userId, accessToken);
 
         res.json({ success: true, data: integration });
+    };
 
 
     // Get Integration Status
@@ -62,6 +64,7 @@ export class MetaController {
                 adAccountsCount: integration.connectedPages?.length || 0
             }
         });
+    };
 
     // Internal method to refresh pages and ad accounts
     private async refreshDataInternal(userId: string, accessToken: string) {
@@ -106,24 +109,28 @@ export class MetaController {
                 whatsappBusinessAccounts: whatsappAccounts
             }
         );
+    }
 
     // Get Connected Pages
     getPages = async (req: Request, res: Response) => {
         const userId = req.user!._id;
         const integration = await MetaIntegration.findOne({ user: userId });
         res.json({ success: true, data: integration?.connectedPages || [] });
+    };
 
     // Get Ad Accounts
     getAdAccounts = async (req: Request, res: Response) => {
         const userId = req.user!._id;
         const integration = await MetaIntegration.findOne({ user: userId });
         res.json({ success: true, data: integration?.adAccounts || [] });
+    };
 
     // Get WhatsApp Accounts
     getWhatsAppAccounts = async (req: Request, res: Response) => {
         const userId = req.user!._id;
         const integration = await MetaIntegration.findOne({ user: userId });
         res.json({ success: true, data: integration?.whatsappBusinessAccounts || [] });
+    };
 
     // Publish Post to Instagram
     publishPost = async (req: Request, res: Response) => {
@@ -155,6 +162,7 @@ export class MetaController {
         );
 
         res.json({ success: true, data: result });
+    };
 
 
     // Webhook Verification

@@ -34,6 +34,7 @@ export const markReconciled = asyncHandler(async (req: Request, res: Response) =
     );
 
     res.status(200).json({ success: true, data: reconciliation });
+});
 
 /**
  * @swagger
@@ -64,6 +65,7 @@ export const getReconciliationStatus = asyncHandler(async (req: Request, res: Re
     });
 
     res.status(200).json({ success: true, data: statusMap });
+});
 
 /**
  * @swagger
@@ -79,3 +81,4 @@ export const unreconcile = asyncHandler(async (req: Request, res: Response) =>{
     await SupplierReconciliation.findOneAndDelete({ tenantId, transactionId });
 
     res.status(200).json({ success: true, message: 'Transaction unreconciled' });
+});

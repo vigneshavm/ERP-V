@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
+import { AuthenticatedRequest } from "@smarterp/shared/middlewares/authMiddleware.js";
 import { container } from "tsyringe";
 import { LoanService } from "../services/LoanService.js";
 

@@ -46,6 +46,7 @@ export const createRevision = asyncHandler(async (req: Request, res: Response) =
         message: "Rate Revision Request Created",
         data: revision
     });
+});
 
 /**
  * @swagger
@@ -63,6 +64,7 @@ export const getRevisions = asyncHandler(async (req: Request, res: Response) =>{
         .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: revisions });
+});
 
 /**
  * @swagger
@@ -115,16 +117,17 @@ export const approveRevision = asyncHandler(async (req: Request, res: Response) 
         revision.batchNumber,
         revision.newRate,
         tenantId,
-        user
+        user!
     );
 
     // 3. Mark Revision Approved
     revision.status = 'APPROVED';
-    revision.approvedBy = userId;
+    revision.approvedBy = userId as any;
     await revision.save({ session });
 
     await session.commitTransaction();
     res.status(200).json({ success: true, message: "Revision Approved. Debit Note Created & Cost Updated." });
+});
 
 /**
  * @swagger
@@ -150,3 +153,4 @@ export const rejectRevision = asyncHandler(async (req: Request, res: Response) =
     if (!revision) return res.status(404).json({ success: false, message: "Revision not found or already processed" });
 
     res.status(200).json({ success: true, message: "Revision Rejected" });
+});

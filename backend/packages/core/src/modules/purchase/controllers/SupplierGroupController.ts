@@ -39,6 +39,7 @@ export const createGroup = asyncHandler(async (req: AuthenticatedRequest, res: R
     });
 
     res.status(201).json({ success: true, data: group });
+});
 
 export const getGroups = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.user!.tenantId;
@@ -48,6 +49,7 @@ export const getGroups = asyncHandler(async (req: AuthenticatedRequest, res: Res
 
     const groups = await SupplierGroup.find({ tenantId }).sort({ name: 1 });
     res.status(200).json({ success: true, data: groups });
+});
 
 export const updateGroup = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const { id } = req.params;
@@ -64,6 +66,7 @@ export const updateGroup = asyncHandler(async (req: AuthenticatedRequest, res: R
     }
 
     res.status(200).json({ success: true, data: group });
+});
 
 export const deleteGroup = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const { id } = req.params;
@@ -85,3 +88,4 @@ export const deleteGroup = asyncHandler(async (req: AuthenticatedRequest, res: R
     }
 
     res.status(200).json({ success: true, message: 'Group deleted successfully' });
+});

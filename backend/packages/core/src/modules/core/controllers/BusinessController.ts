@@ -18,15 +18,16 @@ import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
  *       - bearerAuth: []
  */
 export const getSetupStatus = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     let profile = await BusinessProfile.findOne({ userId });
 
     if (!profile) {
         profile = await BusinessProfile.create({
             userId,
-            businessName: req.user.shopName || "My Business",
-            email: req.user.email,
-            phone: req.user.phone || "",
+            businessName: user.shopName || "My Business",
+            email: user.email,
+            phone: user.phone || "",
         });
     }
 
@@ -42,6 +43,7 @@ export const getSetupStatus = asyncHandler(async (req: Request, res: Response) =
         success: true,
         data: setupData
     });
+});
 
 /**
  * @swagger
@@ -53,7 +55,8 @@ export const getSetupStatus = asyncHandler(async (req: Request, res: Response) =
  *       - bearerAuth: []
  */
 export const completeSetup = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     const { businessName, category, businessType, phone } = req.body;
 
     const profile = await BusinessProfile.findOneAndUpdate(
@@ -74,6 +77,7 @@ export const completeSetup = asyncHandler(async (req: Request, res: Response) =>
         message: "Business setup completed successfully",
         data: profile
     });
+});
 
 /**
  * @swagger
@@ -90,33 +94,35 @@ export const completeSetup = asyncHandler(async (req: Request, res: Response) =>
  *         description: Profile not found
  */
 export const getProfile = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     let profile = await BusinessProfile.findOne({ userId });
 
     if (!profile) {
         // Create a default profile if not found
         profile = await BusinessProfile.create({
             userId,
-            businessName: req.user.shopName || "My Business",
-            email: req.user.email,
-            phone: req.user.phone || "",
-            address: req.user.shopAddress || ""
+            businessName: user.shopName || "My Business",
+            email: user.email,
+            phone: user.phone || "",
+            address: user.shopAddress || ""
         });
     }
 
     // Fetch Tenant to get structured address
-    const tenant = await Tenant.findById(req.user.tenantId);
+    const tenant = await Tenant.findById(user.tenantId);
 
     const responseData = {
         ...profile.toObject(),
         tenantAddress: tenant?.address || null,
-        gstNumber: tenant?.subscriptionPlan ? "" : req.user.gstNumber // Placeholder logic
+        gstNumber: tenant?.subscriptionPlan ? "" : user.gstNumber // Placeholder logic
     };
 
     res.status(200).json({
         success: true,
         data: responseData
     });
+});
 
 /**
  * @swagger
@@ -144,7 +150,8 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) =>{
  *         description: Profile updated successfully
  */
 export const updateProfile = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     const profileData = req.body;
 
     const profile = await BusinessProfile.findOneAndUpdate(
@@ -157,6 +164,7 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
         success: true,
         data: profile
     });
+});
 
 /**
  * @swagger
@@ -173,7 +181,8 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
  *         description: Business profile not found
  */
 export const syncGoogle = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
 
     // In a real app, this would exchange tokens and fetch from GMB API
     // Removing simulated data for now
@@ -215,6 +224,7 @@ export const syncGoogle = asyncHandler(async (req: Request, res: Response) =>{
         message: "Google Business Profile sync initiated (Real API integration pending).",
         data: profile
     });
+});
 
 /**
  * @swagger
@@ -239,6 +249,7 @@ export const getBusinessTypes = asyncHandler(async (_req: Request, res: Response
         success: true,
         data: formattedTypes
     });
+});
 
 /**
  * @swagger
@@ -264,7 +275,8 @@ export const getBusinessTypes = asyncHandler(async (_req: Request, res: Response
  *               reply: { type: string }
  */
 export const replyToReview = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     const { reviewId } = req.params;
     const { reply } = req.body;
 
@@ -294,6 +306,7 @@ export const replyToReview = asyncHandler(async (req: Request, res: Response) =>
         message: "Reply posted successfully",
         data: review
     });
+});
 
 /**
  * @swagger
@@ -315,7 +328,8 @@ export const replyToReview = asyncHandler(async (req: Request, res: Response) =>
  *               imageUrl: { type: string }
  */
 export const createPost = asyncHandler(async (req: Request, res: Response) =>{
-    const userId = req.user!._id;
+    const user = req.user!;
+    const userId = user._id;
     const { content, type, imageUrl } = req.body;
 
     const newPost = {
@@ -345,6 +359,7 @@ export const createPost = asyncHandler(async (req: Request, res: Response) =>{
         message: "Post created successfully",
         data: profile.posts[0]
     });
+});
 
 /**
  * @swagger
@@ -368,3 +383,4 @@ export const getSectors = asyncHandler(async (_req: Request, res: Response) =>{
         success: true,
         data: formattedSectors
     });
+});

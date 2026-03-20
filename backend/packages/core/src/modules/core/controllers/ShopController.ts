@@ -3,6 +3,7 @@ import { singleton } from 'tsyringe';
 import Tenant from '../models/Tenant.js';
 import SubscriptionPlan from '../models/SubscriptionPlan.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 @singleton()
@@ -42,6 +43,7 @@ export class ShopController {
         };
 
         res.status(200).json({ success: true, data });
+    };
 
     /**
      * @swagger
@@ -170,4 +172,5 @@ export class ShopController {
         };
 
         res.status(200).json({ success: true, message: 'Settings updated successfully', data });
+    }
 }

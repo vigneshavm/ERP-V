@@ -15,6 +15,7 @@ import CashbankTransaction from '@smarterp/core/modules/finance/models/CashbankT
 import { info, error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -352,6 +353,7 @@ export const createReturn = asyncHandler(async (req: AuthenticatedRequest, res: 
             paymentMethod: actualRefundMethod,
             description: `Return processed for invoice ${invoice.invoiceNo} - Return ID: ${returnId}`,
         });
+    }
 
     // Handle Bank Refund (Money OUT)
     info('=== BANK REFUND CHECK ===');
@@ -403,7 +405,7 @@ export const createReturn = asyncHandler(async (req: AuthenticatedRequest, res: 
 
             info(`Bank refund for return ${returnId}: -₹${totalReturnAmount} from ${bankAcc.bankName}`);
         }
-
+    }
 
     info(
         `Return created by ${req.user!.name}: ${returnId} for invoice ${invoice.invoiceNo}`
@@ -418,7 +420,7 @@ export const createReturn = asyncHandler(async (req: AuthenticatedRequest, res: 
         message: 'Return created successfully',
         return: populatedReturn,
     });
-    return;
+});
 
 /**
  * @swagger
@@ -439,6 +441,7 @@ export const getAllReturns = asyncHandler(async (req: AuthenticatedRequest, res:
         .sort({ createdAt: -1 });
 
     res.status(200).json(returns);
+});
 
 /**
  * @swagger
@@ -480,6 +483,7 @@ export const getReturnById = asyncHandler(async (req: AuthenticatedRequest, res:
     }
 
     res.status(200).json(returnRecord);
+});
 
 /**
  * @swagger
@@ -606,6 +610,7 @@ export const deleteReturn = asyncHandler(async (req: AuthenticatedRequest, res: 
     );
 
     res.status(200).json({ message: 'Return deleted successfully' });
+});
 
 export default {
     createReturn,

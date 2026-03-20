@@ -17,4 +17,5 @@ export class SubscriptionPlanController {
     public getPlans = async (_req: Request, res: Response): Promise<void> => {
         const plans = await SubscriptionPlan.find({ isActive: true }).sort({ price: 1 });
         res.status(200).json({ success: true, data: plans });
+    };
 }

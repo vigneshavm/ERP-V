@@ -32,4 +32,5 @@ export const runReceiptWorkflow = asyncHandler(async (req: Request, res: Respons
     } else {
         return res.status(500).json(result);
     }
+});
 

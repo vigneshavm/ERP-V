@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 
 
 
@@ -81,6 +82,7 @@ export const readinessCheck = asyncHandler(async (_req: Request, res: Response):
             database: 'connected',
         },
     });
+});
 
 /**
  * @swagger
@@ -111,6 +113,7 @@ export const dbHealthCheck = asyncHandler(async (_req: Request, res: Response): 
         status: 'connected',
         timestamp: new Date().toISOString(),
     });
+});
 
 /**
  * @swagger

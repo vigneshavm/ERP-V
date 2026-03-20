@@ -19,6 +19,7 @@ export const getRoles = asyncHandler(async (req: Request, res: Response) =>{
     const roles = await Role.find(query).sort({ isSystem: -1, name: 1 }); // System roles first
 
     res.status(200).json(roles);
+});
 
 // Create a new custom role
 export const createRole = asyncHandler(async (req: Request, res: Response) =>{
@@ -40,3 +41,4 @@ export const createRole = asyncHandler(async (req: Request, res: Response) =>{
     });
 
     res.status(201).json(newRole);
+});

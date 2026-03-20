@@ -13,6 +13,7 @@ import { info } from '@smarterp/shared/config/logger.js';
 import mongoose from 'mongoose';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 /**
  * Request interface with authenticated user
@@ -211,6 +212,7 @@ export class AuthController {
                 refreshToken: refreshToken,
             });
         }
+    };
 
     /**
      * @swagger
@@ -378,6 +380,7 @@ export class AuthController {
             token: accessToken,
             refreshToken: refreshToken,
         });
+    };
 
     /**
      * @swagger
@@ -409,6 +412,7 @@ export class AuthController {
             userResponse.tenantId = userResponse.tenantId._id;
         }
         res.status(200).json(userResponse);
+    };
 
     /**
      * @desc Get current auth user alias for /me
@@ -466,6 +470,7 @@ export class AuthController {
             message: 'Profile updated successfully',
             user
         });
+    };
 
     /**
      * @swagger
@@ -536,6 +541,7 @@ export class AuthController {
 
         // Always return generic success message (security best practice)
         res.status(200).json({ message: 'If this email exists, a reset link has been sent' });
+    };
 
     /**
      * @swagger
@@ -618,6 +624,7 @@ export class AuthController {
         res.status(200).json({
             message: 'All sessions revoked successfully. You can now log in from this device.'
         });
+    };
 
     /**
      * @swagger
@@ -675,6 +682,7 @@ export class AuthController {
         await user.save();
 
         res.status(200).json({ message: 'Password reset successful. Please log in.' });
+    };
 
     /**
      * @swagger
@@ -717,4 +725,5 @@ export class AuthController {
         clearDeviceIdCookie(res);
 
         res.status(200).json({ message: 'Logged out successfully' });
+    };
 }

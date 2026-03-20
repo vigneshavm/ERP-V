@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev":   "nodemon --watch src --watch ../../packages/core/src --exec tsx src/server.ts",
+    "dev":   "nodemon --watch src --watch ../../packages/core/src --watch ../../packages/shared/src --exec tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },

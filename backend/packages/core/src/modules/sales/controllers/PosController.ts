@@ -231,6 +231,7 @@ export const createInvoice = asyncHandler(async (req: Request, res: Response): P
         message: "Invoice created successfully",
         invoice: newInvoice[0]
     });
+});
 
 
 export default {

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { container } from 'tsyringe';
 import { AccountService } from '../services/AccountService.js';
 

@@ -8,6 +8,7 @@ import { AppError } from '@smarterp/shared/utils/AppError.js';
 export interface AuthenticatedRequest extends Request {
     user?: any;
     tenantId?: string;
+    deletedEntity?: any;
 }
 
 /**

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../index.css";
 
 export const metadata: Metadata = {
-  title: "BizzAI Auth Shell",
-  description: "Enterprise Monorepo Authentication and Launchpad",
+  title: "BizzAI — Sign In",
+  description: "Sign in to your BizzAI ERP workspace",
 };
 
 import Providers from "./Providers";

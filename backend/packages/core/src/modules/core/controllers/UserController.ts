@@ -5,6 +5,7 @@ import BusinessProfile from '../models/BusinessProfile.js';
 import Tenant from '../models/Tenant.js';
 import { seedInventory } from '../services/inventorySeeder.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 interface UserUpdateData {
@@ -37,6 +38,7 @@ export const getAllUsers = asyncHandler(async (req: AuthenticatedRequest, res: R
             pages: Math.ceil(total / Number(limit)),
         },
     });
+});
 
 /**
  * PUT /api/v1/users/:id — update user credentials and optionally sync BusinessProfile.
@@ -111,6 +113,7 @@ export const updateUser = asyncHandler(async (req: AuthenticatedRequest, res: Re
             );
         }
     });
+});
 
 /**
  * DELETE /api/v1/users/:id — soft-delete the authenticated user's account.
@@ -141,6 +144,7 @@ export const deleteUser = asyncHandler(async (req: AuthenticatedRequest, res: Re
     }
 
     res.status(200).json({ message: 'User account deleted successfully' });
+});
 
 /**
  * POST /api/v1/users/finance-settings
@@ -171,5 +175,6 @@ export const updateFinanceSettings = asyncHandler(async (req: AuthenticatedReque
         message: 'Finance settings updated successfully',
         personalFinanceSettings: user.personalFinanceSettings,
     });
+});
 
 export default { getAllUsers, updateUser, deleteUser };

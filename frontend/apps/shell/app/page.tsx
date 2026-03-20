@@ -97,7 +97,7 @@ export default function ShellHome() {
         </div>
 
         {/* app cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', width: '100%' }}>
           {apps.map((app) => {
             const Icon = app.icon;
             const c = colorMap[app.color];
@@ -108,32 +108,36 @@ export default function ShellHome() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  padding: '1.5rem',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: '20px',
+                  padding: '2.5rem',
+                  background: 'rgba(255,255,255,0.02)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: '32px',
                   textDecoration: 'none',
-                  transition: 'border-color 0.25s, background 0.25s, transform 0.2s',
+                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                   cursor: 'pointer',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
                 }}
                 onMouseEnter={e => {
                   (e.currentTarget as HTMLAnchorElement).style.borderColor = c.border;
                   (e.currentTarget as HTMLAnchorElement).style.background = c.bg;
-                  (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
+                  (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-8px)';
+                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 20px 40px ${c.bg}`;
                 }}
                 onMouseLeave={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                  (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.03)';
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                  (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.02)';
                   (e.currentTarget as HTMLAnchorElement).style.transform = 'none';
+                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
                 }}
               >
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.text, marginBottom: '1rem' }}>
-                  <Icon size={24} />
+                <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.text, marginBottom: '1.5rem', boxShadow: 'inset 0 0 10px rgba(255,255,255,0.1)' }}>
+                  <Icon size={32} />
                 </div>
-                <h2 style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, margin: '0 0 0.5rem' }}>{app.label}</h2>
-                <p style={{ color: '#9ca3af', fontSize: '0.82rem', lineHeight: 1.5, margin: '0 0 1.25rem', flex: 1 }}>{app.description}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: c.text, fontSize: '0.82rem', fontWeight: 700 }}>
-                  {app.cta} <ChevronRight size={14} />
+                <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>{app.label}</h2>
+                <p style={{ color: '#9ca3af', fontSize: '0.9rem', lineHeight: 1.6, margin: '0 0 1.5rem', flex: 1 }}>{app.description}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: c.text, fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {app.cta} <ChevronRight size={16} />
                 </div>
               </a>
             );

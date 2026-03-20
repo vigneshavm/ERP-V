@@ -66,6 +66,8 @@ export const extractSupplierFromInvoice = asyncHandler(async (req: Request, res:
 
     let extractedData;
     extractedData = JSON.parse(text);
+    res.status(200).json(extractedData);
+});
 
 /**
  * AI-powered extraction from pasted text using Gemini
@@ -122,6 +124,8 @@ export const extractSupplierFromText = asyncHandler(async (req: Request, res: Re
 
     let extractedData;
     extractedData = JSON.parse(text);
+    res.status(200).json(extractedData);
+});
 
 /**
  * AI-powered extraction for Purchase Invoices (Items, Qty, Cost)
@@ -183,5 +187,7 @@ export const extractPurchaseInvoice = asyncHandler(async (req: Request, res: Res
 
     let extractedData;
     extractedData = JSON.parse(text);
+    res.status(200).json(extractedData);
+});
 
 

@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 
 import ExpenseCategory from '../models/ExpenseCategory.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
+import { CreatedBy } from '@smarterp/shared/models/CreatedBy.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
@@ -42,6 +44,7 @@ export const getAllCategories = asyncHandler(async (req: AuthenticatedRequest, r
     }));
 
     res.status(200).json({ categories: transformed });
+});
 
 /**
  * @desc Create new expense category
@@ -93,6 +96,7 @@ export const createCategory = asyncHandler(async (req: AuthenticatedRequest, res
         emoji: category.emoji,
         type: category.type,
     });
+});
 
 /**
  * @desc Update expense category
@@ -153,6 +157,7 @@ export const updateCategory = asyncHandler(async (req: AuthenticatedRequest, res
         emoji: updatedCategory.emoji,
         type: updatedCategory.type,
     });
+});
 
 /**
  * @desc Delete expense category
@@ -178,6 +183,7 @@ export const deleteCategory = asyncHandler(async (req: AuthenticatedRequest, res
     info(`Deleted expense category: ${category.name}`);
 
     res.status(200).json({ message: 'Category deleted' });
+});
 
 export default {
     getAllCategories,

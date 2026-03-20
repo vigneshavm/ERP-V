@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Tenant from "../models/Tenant.js";
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
 
 // Extend Request type to include tenantId (added by middleware)
@@ -32,6 +33,7 @@ export const getSettings = asyncHandler(async (req: AuthenticatedRequest, res: R
     };
 
     res.status(200).json({ success: true, data });
+});
 
 export const updateSettings = asyncHandler(async (req: AuthenticatedRequest, res: Response) =>{
     const tenantId = req.tenantId;
@@ -78,6 +80,7 @@ export const updateSettings = asyncHandler(async (req: AuthenticatedRequest, res
     await tenant.save();
 
     res.status(200).json({ success: true, message: "Settings updated successfully" });
+});
 
 export const updatePassword = asyncHandler(async (_req: Request, res: Response) =>{
     res.status(501).json({ message: "Not implemented" });

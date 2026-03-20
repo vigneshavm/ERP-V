@@ -26,6 +26,7 @@ export class AdminController {
             .lean();
 
         res.status(200).json(users);
+    };
 }
 
 export default new AdminController();

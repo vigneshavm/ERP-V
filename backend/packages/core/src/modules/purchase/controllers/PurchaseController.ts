@@ -9,6 +9,7 @@ import Supplier from '../models/Supplier.js';
 import { error } from '@smarterp/shared/config/logger.js';
 import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 const generatePurchaseNumber = async (_tenantId: string): Promise<string> => {
     const today = new Date();
@@ -311,8 +312,12 @@ export const createPurchase = asyncHandler(async (req: AuthenticatedRequest, res
                 createdBy: req.user!._id
             });
 
-            await journalEntry.save({ session });
-
+        await journalEntry.save({ session });
+        } catch (jError: any) {
+            error(`Ledger posting failed for ${purchaseNumber}: ${jError.message}`);
+            // Non-blocking for the transaction itself if you prefer, 
+            // but here we let the main catch handle it if needed.
+        }
     }
 
     await session.commitTransaction();
@@ -349,9 +354,6 @@ export const getAllPurchases = asyncHandler(async (req: AuthenticatedRequest, re
         .populate('createdBy', 'name')
         .sort({ createdAt: -1 });
     res.json(purchases);
-    catch (err: any) {
-        res.status(500).json({ message: err.message });
-    }
 });
 
 /**
@@ -382,14 +384,12 @@ export const getPurchaseById = asyncHandler(async (req: AuthenticatedRequest, re
         return;
     }
     res.json(purchase);
-    catch (err: any) {
-        res.status(500).json({ message: err.message });
-    }
 });
 
 export const updatePurchase = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     const purchase = await Purchase.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(purchase);
+});
 
 // ... existing exports ...
 
@@ -428,10 +428,12 @@ export const getSupplierTotals = asyncHandler(async (req: AuthenticatedRequest, 
         { $sort: { totalAmount: -1 } }
     ]);
     res.json(totals);
+});
 
 export const deletePurchase = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> =>{
     await Purchase.findByIdAndDelete(req.params.id);
     res.json({ message: "Purchase deleted successfully" });
+});
 
 
 /**
@@ -479,6 +481,7 @@ export const getPurchaseHistory = asyncHandler(async (req: AuthenticatedRequest,
     });
 
     res.json({ success: true, data: history });
+});
 
 export default {
     createPurchase,

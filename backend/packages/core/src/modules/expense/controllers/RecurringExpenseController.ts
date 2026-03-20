@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 
 import RecurringExpense from '../models/RecurringExpense.js';
+import { AuthenticatedRequest } from '@smarterp/shared/middlewares/authMiddleware.js';
 
 import Expense from '../models/Expense.js';
 import { info, error } from '@smarterp/shared/config/logger.js';
@@ -165,6 +166,7 @@ export const getAllRecurringExpenses = asyncHandler(async (req: AuthenticatedReq
     }));
 
     res.status(200).json({ expenses, intelligence });
+});
 
 /**
  * @desc Create new recurring expense
@@ -207,6 +209,7 @@ export const createRecurringExpense = asyncHandler(async (req: AuthenticatedRequ
         type: expense.type,
         accountId: expense.accountId,
     });
+});
 
 /**
  * @desc Update recurring expense
@@ -254,6 +257,7 @@ export const updateRecurringExpense = asyncHandler(async (req: AuthenticatedRequ
         type: updatedExpense.type,
         accountId: updatedExpense.accountId,
     });
+});
 
 /**
  * @desc Delete recurring expense
@@ -279,6 +283,7 @@ export const deleteRecurringExpense = asyncHandler(async (req: AuthenticatedRequ
     info(`Deleted recurring expense: ${expense.category}`);
 
     res.status(200).json({ message: 'Recurring expense deleted' });
+});
 
 export default {
     getAllRecurringExpenses,
