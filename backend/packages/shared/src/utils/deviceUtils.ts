@@ -37,7 +37,7 @@ const getSameSiteSetting = (): "none" | "lax" | "strict" => {
     const isProduction = isProductionEnvironment();
     // Default to "none" for production (cross-domain deployments)
     // Override with COOKIE_SAME_SITE=lax if using same-domain deployment
-    return isProduction ? "none" : "strict";
+    return isProduction ? "none" : "lax";
 };
 
 /**

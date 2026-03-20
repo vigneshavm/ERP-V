@@ -7,7 +7,7 @@ export enum PersonalTransactionType {
     EXPENSE = 'expense'
 }
 
-export enum PaymentMethod {
+export enum AdapterPaymentMethod {
     CASH = 'cash',
     UPI = 'upi',
     CARD = 'card',
@@ -55,7 +55,7 @@ export interface PersonalTransaction {
     accountName: string;
     date: string;
     description: string;
-    paymentMethod: PaymentMethod;
+    paymentMethod: AdapterPaymentMethod;
     isRecurring: boolean;
     receiptUrl?: string;
     createdAt: string;

@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-import { AppView } from '@repo/shared';
 
 interface UiState {
-    activeTab: AppView;
     sidebarOpen: boolean;
     desktopCollapsed: boolean;
     isSyncing: boolean;
@@ -15,7 +13,6 @@ interface UiState {
     };
 
     // Actions
-    setActiveTab: (tab: AppView) => void;
     setSidebarOpen: (open: boolean) => void;
     setDesktopCollapsed: (collapsed: boolean) => void;
     setSyncing: (syncing: boolean) => void;
@@ -24,8 +21,7 @@ interface UiState {
     toggleSidebar: () => void;
 }
 
-export const useUiStore = create<UiState>((set: any) => ({
-    activeTab: 'DASHBOARD' as AppView,
+export const useUiStore = create<UiState>((set) => ({
     sidebarOpen: false,
     desktopCollapsed: false,
     isSyncing: false,
@@ -34,17 +30,16 @@ export const useUiStore = create<UiState>((set: any) => ({
         isOpen: false,
         title: '',
         message: '',
-        onConfirm: () => { },
+        onConfirm: () => {},
     },
 
-    setActiveTab: (tab: AppView) => set({ activeTab: tab }),
-    setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
-    setDesktopCollapsed: (collapsed: boolean) => set({ desktopCollapsed: collapsed }),
-    setSyncing: (syncing: boolean) => set({ isSyncing: syncing }),
-    setIsChangePasswordOpen: (open: boolean) => set({ isChangePasswordOpen: open }),
-    setConfirmDialog: (dialog: Partial<UiState['confirmDialog']>) => set((state: UiState) => ({
-        confirmDialog: { ...state.confirmDialog, ...dialog }
+    setSidebarOpen: (open) => set({ sidebarOpen: open }),
+    setDesktopCollapsed: (collapsed) => set({ desktopCollapsed: collapsed }),
+    setSyncing: (syncing) => set({ isSyncing: syncing }),
+    setIsChangePasswordOpen: (open) => set({ isChangePasswordOpen: open }),
+    setConfirmDialog: (dialog) => set((state) => ({
+        confirmDialog: { ...state.confirmDialog, ...dialog },
     })),
-    toggleSidebar: () => set((state: UiState) => ({ sidebarOpen: !state.sidebarOpen })),
+    toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
 }));
 

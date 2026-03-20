@@ -1,39 +1,35 @@
-"use client";
-
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import React from 'react';
-import { useAuthStore } from '@repo/mfe-auth';
-import { useRouter } from 'next/navigation';
+import Providers from "./Providers";
 
-export default function ShellLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      // Redirect to unified auth if not logged in
-      const currentHost = typeof window !== 'undefined' ? window.location.origin : '';
-      const loginUrl = `http://localhost:3000/login?redirect=${encodeURIComponent(currentHost)}`;
-      window.location.href = loginUrl;
-    }
-  }, [isAuthenticated, router]);
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
+export const metadata: Metadata = {
+  title: "AI ERP | Shell Orchestrator",
+  description: "Unified Enterprise Resource Planning Shell",
+};
 
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div className="shell-container min-h-screen bg-background text-foreground">
-      <header className="shell-header border-b flex items-center justify-between px-6 py-4">
-        <h1 className="text-xl font-bold tracking-tight">AI ERP Console</h1>
-        <div className="flex items-center gap-4">
-          {/* Global Search, Notifications, User Profile */}
-        </div>
-      </header>
-      <main className="shell-main flex">
-        <aside className="shell-sidebar w-64 border-r min-h-[calc(100vh-64px)] p-4">
-          {/* Global Navigation */}
-        </aside>
-        <section className="shell-content flex-1 p-6">
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers>
           {children}
-        </section>
-      </main>
-    </div>
+        </Providers>
+      </body>
+    </html>
   );
 }

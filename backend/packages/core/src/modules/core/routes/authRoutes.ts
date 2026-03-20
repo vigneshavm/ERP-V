@@ -27,6 +27,7 @@ router.use("/refresh-token", refreshTokenRoutes);
 
 // Protected routes
 router.get("/profile", protect, authController.getProfile);
+router.get("/me", protect, authController.me);
 router.patch("/profile", protect, authController.updateProfile);
 router.get("/csrf-token", protect, getCsrfToken); // CSRF token endpoint
 

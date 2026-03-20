@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "zod": "^3.24.2",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "@bizzai/auth": "*"
   },
   "devDependencies": {
     "@repo/config-typescript": "*",

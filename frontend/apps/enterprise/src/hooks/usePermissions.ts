@@ -1,30 +1,26 @@
 import { useAuthStore } from '@repo/shared';
-import { RootState } from '@/app/store/store';
 import { AppView, ModuleType } from '@repo/shared';
 
 export const usePermissions = () => {
-    const {  user, role  } = useAuthStore();
-    
-    // In a real app, this would check against a permissions map
-    // For now, we'll use some basic logic
-    
+    const { user, role } = useAuthStore();
+
+    const isSuperAdmin = role === 'Owner' || role === 'Admin' || role === 'SuperAdmin';
+
     const checkAccess = (viewId: AppView | string): boolean => {
         if (!user) return false;
-        if (role === 'Owner' || role === 'Admin' || user.email === 'avmvignesh0207@gmail.com') return true;
-        
-        // Add specific view access logic here
-        return true; 
+        if (isSuperAdmin) return true;
+        // TODO: replace with server-driven permissions map keyed by role
+        return true;
     };
 
     const checkModuleAccess = (module: ModuleType | string | undefined): boolean => {
         if (!user) return false;
-        if (role === 'Owner' || role === 'Admin' || user.email === 'avmvignesh0207@gmail.com') return true;
+        if (isSuperAdmin) return true;
         if (!module) return true;
-        
-        // Add specific module access logic here
+        // TODO: replace with server-driven module permission map
         return true;
     };
 
-    return { checkAccess, checkModuleAccess };
+    return { checkAccess, checkModuleAccess, isSuperAdmin };
 };
 

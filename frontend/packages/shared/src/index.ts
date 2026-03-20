@@ -53,21 +53,15 @@ export type {
 
 export * from './sales/salesReturn';
 export { posSlice, default as posReducer } from './sales/posSlice';
-export * from './auth/auth.schema';
-
-// Auth Store - Export User as the primary 'User' type for authentication context
-export * from './auth/authStore';
+export * from '@bizzai/auth';
 
 export { useExpenseStore, ExpenseProvider, useExpenses } from './store/expenseStore';
 
 export * from './common/common';
 export { api } from './services/apiClient';
 export * from './i18n/LanguageContext';
-export * from './auth/auth.utils';
 export * from './services/mockState';
 export * from './services/gemini';
-export * from './events/eventTypes';
-export * from './events/eventBus';
 export * from './hooks/usePersonalFinance';
 
 // Query

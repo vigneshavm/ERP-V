@@ -8,9 +8,38 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       // API Proxy
+      // API Proxy - Personal Specific
       {
         source: "/api/personal/:path*",
         destination: "http://localhost:5001/api/personal/:path*",
+      },
+      {
+        source: "/api/v1/transactions/:path*",
+        destination: "http://localhost:5001/api/v1/transactions/:path*",
+      },
+      {
+        source: "/api/v1/goals/:path*",
+        destination: "http://localhost:5001/api/v1/goals/:path*",
+      },
+      {
+        source: "/api/v1/budget/:path*",
+        destination: "http://localhost:5001/api/v1/budget/:path*",
+      },
+      {
+        source: "/api/v1/categories/:path*",
+        destination: "http://localhost:5001/api/v1/categories/:path*",
+      },
+      {
+        source: "/api/v1/accounts/:path*",
+        destination: "http://localhost:5001/api/v1/accounts/:path*",
+      },
+      {
+        source: "/api/v1/loans/:path*",
+        destination: "http://localhost:5001/api/v1/loans/:path*",
+      },
+      {
+        source: "/api/v1/personal/:path*",
+        destination: "http://localhost:5001/api/v1/personal/:path*",
       },
       {
         source: "/api/:path*",

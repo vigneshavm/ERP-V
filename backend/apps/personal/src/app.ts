@@ -108,6 +108,12 @@ const swaggerSpec = getSwaggerSpec({
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Debug Request Logger
+app.use((req, res, next) => {
+    console.log(`[PERSONAL-API] ${req.method} ${req.url}`);
+    next();
+});
+
 // Root Route
 app.get("/", (_req, res) => {
     res.send("🚀 SmartERPAI Personal API is running");
@@ -131,6 +137,7 @@ app.get("/health", healthCheck);
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
 app.use("/api/v1/personal/core", coreRoutes);
 app.use("/api/v1", coreRoutes); // Alias for shared adapter
+app.use("/api", coreRoutes);    // Alias for compatibility
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
 app.use("/api/v1/personal/roles", roleRoutes);

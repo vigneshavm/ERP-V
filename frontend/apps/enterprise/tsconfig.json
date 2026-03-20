@@ -39,6 +39,9 @@
       ],
       "@yourcompany/ui-react": [
         "../../packages/ui/src/index.tsx"
+      ],
+      "@bizzai/auth": [
+        "../../packages/auth/src/index.ts"
       ]
     },
     "allowImportingTsExtensions": true,

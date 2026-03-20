@@ -140,6 +140,7 @@ app.get("/api/v1/branches", (req, res) => res.json({ success: true, data: [] }))
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "@smarterp/core/modules/core/routes/core.routes.js";
 app.use("/api/v1", coreRoutes);
+app.use("/api", coreRoutes); // Alias for compatibility with some MFEs
 
 import roleRoutes from "@smarterp/core/modules/core/routes/roleRoutes.js";
 app.use("/api/v1/core/roles", roleRoutes);

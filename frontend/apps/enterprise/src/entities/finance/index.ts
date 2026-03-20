@@ -1,2 +1,3 @@
 export * from './model/financeSlice';
-export * from './api/daily_finance';
+export * from './api/transactions';
+export * from './financeThunks';

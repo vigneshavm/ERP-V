@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@bizzai/auth": ["../auth/src/index.ts"]
     },
     "jsx": "react-jsx",
     "esModuleInterop": true,

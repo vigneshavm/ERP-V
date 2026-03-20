@@ -1,8 +1,6 @@
-import React, { lazy, Suspense } from 'react';
-import { useUiStore } from '@/shared/lib/store/uiStore';
+import React, { lazy, Suspense, useState } from 'react';
 import { Download, Upload, QrCode, Hash, Loader2 } from 'lucide-react';
 
-// Lazy load feature-based components
 const DataExportFeature = lazy(() => import('@/features/system/data-export'));
 const BulkImportFeature = lazy(() => import('@/features/system/bulk-import'));
 const BarcodeGeneratorFeature = lazy(() => import('@/features/system/barcode-generator'));
@@ -13,37 +11,17 @@ type DataTab = 'export' | 'import' | 'labels' | 'series';
 const TabLoading = () => (
     <div className="min-h-[400px] flex flex-col items-center justify-center text-slate-400 gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-        <p className="text-xs font-black uppercase tracking-widest text-center">Initalizing Intelligence Layer...</p>
+        <p className="text-xs font-black uppercase tracking-widest text-center">Initializing Intelligence Layer...</p>
     </div>
 );
 
 export const SystemDataHub: React.FC = () => {
-    const { activeTab, setActiveTab } = useUiStore();
-
-    const activeDataTab: DataTab = (() => {
-        switch (activeTab) {
-            case 'GROW_DATA_IMPORT': return 'import';
-            case 'GROW_DATA_EXPORT': return 'export';
-            case 'BARCODE_GENERATOR': return 'labels';
-            case 'NUMBER_SERIES': return 'series';
-            default: return 'export';
-        }
-    })();
-
-    const handleTabChange = (tab: DataTab) => {
-        const tabMap: any = {
-            export: 'GROW_DATA_EXPORT',
-            import: 'GROW_DATA_IMPORT',
-            labels: 'BARCODE_GENERATOR',
-            series: 'NUMBER_SERIES'
-        };
-        setActiveTab(tabMap[tab]);
-    };
+    const [activeDataTab, setActiveDataTab] = useState<DataTab>('export');
 
     const tabs = [
-        { id: 'export', label: 'Data Export', icon: Download },
-        { id: 'import', label: 'Bulk Import', icon: Upload },
-        { id: 'labels', label: 'Label Engine', icon: QrCode },
+        { id: 'export', label: 'Data Export',   icon: Download },
+        { id: 'import', label: 'Bulk Import',   icon: Upload },
+        { id: 'labels', label: 'Label Engine',  icon: QrCode },
         { id: 'series', label: 'Number Series', icon: Hash },
     ];
 
@@ -55,11 +33,12 @@ export const SystemDataHub: React.FC = () => {
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => handleTabChange(tab.id as DataTab)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeDataTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-xl scale-105'
-                                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50 dark:hover:bg-white/5'
-                                }`}
+                            onClick={() => setActiveDataTab(tab.id as DataTab)}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                                activeDataTab === tab.id
+                                    ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-xl scale-105'
+                                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/50 dark:hover:bg-white/5'
+                            }`}
                         >
                             <Icon className="w-4 h-4" />
                             {tab.label}

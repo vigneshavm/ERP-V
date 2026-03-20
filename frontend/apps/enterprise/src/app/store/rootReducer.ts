@@ -1,55 +1,55 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import authReducer from '@/entities/session/model/authSlice';
-import customerReducer from '@/entities/contact/model/customerSlice';
-import inventoryReducer from '@/entities/inventory/model/inventorySlice';
-import posReducer from '@/entities/sales/model/posSlice';
-import salesInvoiceReducer from '@/entities/sales/model/salesInvoiceSlice';
-import reportsReducer from '@/widgets/stats-dashboard/model/reportsSlice';
-import supplierReducer from '@/entities/contact/model/supplierSlice';
-import expenseReducer from '@/features/expense-tracking/model/expenseSlice';
-import billReducer from '@/entities/finance/model/billSlice';
-import cashbankReducer from '@/entities/finance/model/cashbankSlice';
-import dueReducer from '@/features/expense-tracking/model/dueSlice';
-import deliveryChallanReducer from './slices/deliveryChallanSlice';
-import laborReducer from '@/entities/people/model/laborSlice';
-import financeReducer from '@/entities/finance/model/financeSlice';
-import purchaseReducer from '@/entities/purchase/model/purchaseSlice';
-import tenantReducer from '@/entities/session/model/tenantSlice';
-import settingsReducer from './slices/settingsSlice';
+import authReducer          from '@/entities/session/model/authSlice';
+import tenantReducer        from '@/entities/session/model/tenantSlice';
+import settingsReducer      from '@/entities/session/model/settingsSlice';
+import customerReducer      from '@/entities/contact/model/customerSlice';
+import supplierReducer      from '@/entities/contact/model/supplierSlice';
 import supplierGroupReducer from '@/entities/contact/model/supplierGroupSlice';
-import paymentOutReducer from './slices/paymentOutSlice';
-import journalEntryReducer from './slices/journalEntrySlice';
-import payrollReducer from '@/entities/people/model/payrollSlice';
-import systemReducer from '@/entities/system/model/systemSlice';
+import inventoryReducer     from '@/entities/inventory/model/inventorySlice';
+import posReducer           from '@/entities/sales/model/posSlice';
+import salesInvoiceReducer  from '@/entities/sales/model/salesInvoiceSlice';
+import deliveryChallanReducer from '@/entities/sales/model/deliveryChallanSlice';
+import billReducer          from '@/entities/finance/model/billSlice';
+import cashbankReducer      from '@/entities/finance/model/cashbankSlice';
+import financeReducer       from '@/entities/finance/model/financeSlice';
+import journalEntryReducer  from '@/entities/finance/model/journalEntrySlice';
+import purchaseReducer      from '@/entities/purchase/model/purchaseSlice';
+import paymentOutReducer    from '@/entities/purchase/model/paymentOutSlice';
+import laborReducer         from '@/entities/people/model/laborSlice';
+import payrollReducer       from '@/entities/people/model/payrollSlice';
+import systemReducer        from '@/entities/system/model/systemSlice';
+import expenseReducer       from '@/features/expense-tracking/model/expenseSlice';
+import dueReducer           from '@/features/expense-tracking/model/dueSlice';
+import reportsReducer       from '@/widgets/stats-dashboard/model/reportsSlice';
 
 const appReducer = combineReducers({
-    settings: settingsReducer,
-    auth: authReducer,
-    customers: customerReducer,
-    inventory: inventoryReducer,
-    pos: posReducer,
-    salesInvoice: salesInvoiceReducer,
-    reports: reportsReducer,
-    suppliers: supplierReducer,
-    expense: expenseReducer,
-    bill: billReducer,
-    cashbank: cashbankReducer,
-    due: dueReducer,
-    deliveryChallan: deliveryChallanReducer,
-    labor: laborReducer,
-    finance: financeReducer,
-    purchase: purchaseReducer,
-    tenant: tenantReducer,
+    auth:           authReducer,
+    tenant:         tenantReducer,
+    settings:       settingsReducer,
+    customers:      customerReducer,
+    suppliers:      supplierReducer,
     supplierGroups: supplierGroupReducer,
-    paymentOut: paymentOutReducer,
-    journalEntry: journalEntryReducer,
-    payroll: payrollReducer,
-    system: systemReducer,
+    inventory:      inventoryReducer,
+    pos:            posReducer,
+    salesInvoice:   salesInvoiceReducer,
+    deliveryChallan:deliveryChallanReducer,
+    bill:           billReducer,
+    cashbank:       cashbankReducer,
+    finance:        financeReducer,
+    journalEntry:   journalEntryReducer,
+    purchase:       purchaseReducer,
+    paymentOut:     paymentOutReducer,
+    labor:          laborReducer,
+    payroll:        payrollReducer,
+    system:         systemReducer,
+    expense:        expenseReducer,
+    due:            dueReducer,
+    reports:        reportsReducer,
 });
 
-const rootReducer = (state: any, action: any) => {
+const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: { type: string }) => {
+    // Wipe all state on logout so no tenant data bleeds between sessions
     if (action.type === 'auth/logout') {
-        // Clear all state to initial values
         state = undefined;
     }
     return appReducer(state, action);

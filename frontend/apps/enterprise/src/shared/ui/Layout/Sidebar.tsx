@@ -3,6 +3,7 @@ import { setTheme, setBranch } from '@/entities/session/model/authSlice';
 import { logger } from '@/shared/lib/logger';
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import {
     X, ChevronRight, ChevronLeft, Lock, Key, RefreshCcw,
     LayoutDashboard, Zap, DollarSign, FileText, ShoppingCart, List, Users, CreditCard,
@@ -12,20 +13,16 @@ import {
     Layers, Calendar, Briefcase, Building, Save, Palette, LayoutGrid, Shield
 } from 'lucide-react';
 import { useUiStore } from '@/shared/lib/store/uiStore';
-
-import { useConfig } from "@/app/providers/ConfigProvider";
-import { useBranchResolver } from "@/hooks/useBranchResolver";
-import { usePermissions } from "@/hooks/usePermissions";
-import { AppView, ModuleType } from "@repo/shared";
+import { useConfig } from '@/app/providers/ConfigProvider';
+import { useBranchResolver } from '@/hooks/useBranchResolver';
+import { usePermissions } from '@/hooks/usePermissions';
+import { AppView, ModuleType } from '@repo/shared';
 import { RootState } from '@/app/store/store';
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
 import { ThemeToggle } from '@repo/ui';
-import { useNavigation } from '@/app/providers/NavigationContext';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
 import { MENU_ITEMS, MenuItem } from '@/app/config/menu.config';
-
-
 
 interface SidebarProps {
     onLogout: () => void;
@@ -33,13 +30,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     const dispatch = useDispatch();
-    const {  user, role, theme  } = useAuthStore();
+    const { user, role, theme } = useAuthStore();
     const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
-    const { currentView } = useNavigation();
+    const { pathname } = useLocation();
     const {
         sidebarOpen,
         desktopCollapsed,
-        activeTab,
         isSyncing,
         setSidebarOpen,
         setDesktopCollapsed
@@ -52,20 +48,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
-    // Helper to check if any child is active to open the group by default
     const isGroupActive = (item: MenuItem): boolean => {
-        if (item.id === currentView || item.id === activeTab) return true;
+        if (item.path && (pathname === item.path || pathname.startsWith(item.path + '/'))) return true;
         if (!item.children) return false;
-        return item.children.some((child: MenuItem) =>
-            child.id === currentView || child.id === activeTab || (child.children && isGroupActive(child))
-        );
+        return item.children.some((child: MenuItem) => isGroupActive(child));
     };
 
     const renderMenuItem = (item: MenuItem) => {
-        // Manual Bypass in Render
-        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
-
-        if (!isBypassUser && !checkAccess(item.id) && !checkModuleAccess(item.module)) return null;
+        if (!checkAccess(item.id) && !checkModuleAccess(item.module)) return null;
 
         // Special handling for Grow Platform separator/header if needed
         // For now, we just render. We could add a header if item.isGrow is true.
@@ -97,31 +87,22 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     // Recursive render with depth tracking
     const renderRecursive = (item: MenuItem, isSub: boolean = false) => {
-        // Manual Bypass in Render
-        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
+        const hasRoleAccess = checkAccess(item.id);
+        const hasModuleAccess = checkModuleAccess(item.module);
 
-        // High-level rule: Access requires User Permission AND Tenant Module
-        if (!isBypassUser) {
-            const hasRoleAccess = checkAccess(item.id);
-            const hasModuleAccess = checkModuleAccess(item.module);
-
-            if (item.id === 'PURCHASE' || item.id === 'DASHBOARD' || item.id === 'FINANCE') {
-                logger.info(`Sidebar Debug [${item.id}]:`, {
-                    hasRoleAccess,
-                    hasModuleAccess,
-                    userRole: user?.role,
-                    rolePermissionCheck: checkAccess(item.id),
-                    moduleCheck: checkModuleAccess(item.module)
-                });
-            }
-
-            if (!hasRoleAccess) return null;
-            if (!hasModuleAccess) return null;
+        if (item.id === 'PURCHASE' || item.id === 'DASHBOARD' || item.id === 'FINANCE') {
+            logger.info(`Sidebar Debug [${item.id}]:`, {
+                hasRoleAccess,
+                hasModuleAccess,
+                userRole: user?.role,
+            });
         }
 
+        if (!hasRoleAccess) return null;
+        if (!hasModuleAccess) return null;
+
         if (item.children) {
-            // Filter children that the user has access to (both role and plan)
-            const visibleChildren = isBypassUser ? item.children : item.children.filter((child: MenuItem) =>
+            const visibleChildren = item.children.filter((child: MenuItem) =>
                 checkAccess(child.id) && checkModuleAccess(child.module)
             );
 
@@ -207,23 +188,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
     // Filtered items (only visible ones)
     const visibleErpItems = useMemo(() => erpItems.filter((item: MenuItem) => {
-        // Manual Bypass in Component for reliability
-        if (user?.email === 'avmvignesh0207@gmail.com') return true;
-
         const hasAccess = checkAccess(item.id) && checkModuleAccess(item.module);
         if (hasAccess) return true;
-        // Also show if it has visible children
         return item.children?.some((child: MenuItem) => checkAccess(child.id) && checkModuleAccess(child.module));
-    }), [erpItems, checkAccess, checkModuleAccess, user]);
+    }), [erpItems, checkAccess, checkModuleAccess]);
 
     const visibleGrowItems = useMemo(() => growItems.filter((item: MenuItem) => {
-        // Manual Bypass in Component for reliability
-        if (user?.email === 'avmvignesh0207@gmail.com') return true;
-
         const hasAccess = checkAccess(item.id) && checkModuleAccess(item.module);
         if (hasAccess) return true;
         return item.children?.some((child: MenuItem) => checkAccess(child.id) && checkModuleAccess(child.module));
-    }), [growItems, checkAccess, checkModuleAccess, user]);
+    }), [growItems, checkAccess, checkModuleAccess]);
 
     return (
         <aside className={`

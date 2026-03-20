@@ -7,12 +7,10 @@ const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+    '../../mfe/common/budget-planner/src/**/*.{js,ts,jsx,tsx}',
   ],
-  corePlugins: {
-    // Shell app (enterprise) handles the reset
-    preflight: false,
-  },
   theme: {
     extend: {},
   },

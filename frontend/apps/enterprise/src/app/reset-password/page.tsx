@@ -5,10 +5,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import SecurePasswordInput from '@/views/auth/ui/SecurePasswordInput';
+import SecurePasswordInput from '@/pages/auth/ui/SecurePasswordInput';
 import PasswordStrengthMeter from '@/features/auth-by-email/ui/PasswordStrengthMeter';
-import AuthLayout from '@/views/Views/ui/AuthLayout';
-import AuthAlert from '@/views/Views/ui/AuthAlert';
+import AuthLayout from '@/pages/Views/ui/AuthLayout';
+import AuthAlert from '@/pages/Views/ui/AuthAlert';
 import { useResetPasswordForm } from '@/features/auth-by-email/lib/useResetPasswordForm';
 
 function ResetPasswordContent() {

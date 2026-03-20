@@ -1,109 +1,130 @@
 import { lazy } from 'react';
 
-/**
- * Centrally registered lazy-loaded modules for the Enterprise MFE.
- * Refactored to eliminate duplicate entries and improve tree-shaking.
- */
+// All lazy imports must point to their real component.
+// Never use .catch(() => ({ default: () => null })) — use ErrorBoundary instead.
 export const LazyModules = {
     // === AUTH ===
-    Login: lazy(() => import('../../views/auth/ui/Login')),
+    Login:      lazy(() => import('../../pages/auth/ui/Login')),
     AdminLogin: lazy(() => import('../../features/auth-by-email/ui/AdminLogin')),
 
-    // === CORE / DASHBOARD ===
-    Dashboard: lazy(() => import('../../views/Dashboard/ui/Dashboard')),
-    DailyFinanceTracker: lazy(() => import('../../views/Dashboard/ui/Dashboard')), // Consolidated from redundant summary views
-    GrowDashboard: lazy(() => import('../../views/Dashboard/ui/GrowDashboard')),
-    GrowthHub: lazy(() => import('../../views/Dashboard/ui/GrowthHub')),
+    // === DASHBOARD ===
+    Dashboard:   lazy(() => import('../../pages/Dashboard/ui/Dashboard')),
+    GrowDashboard: lazy(() => import('../../pages/Dashboard/ui/GrowDashboard')),
+    GrowthHub:   lazy(() => import('../../pages/Dashboard/ui/GrowthHub')),
 
     // === SALES ===
-    SalesInvoiceForm: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceForm')),
-    SalesInvoiceDetail: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceDetail')),
-    POSCustomerDisplay: lazy(() => import('../../views/Pos/ui/POSCustomerDisplay')),
-    EstimateList: lazy(() => import('../../views/Sales/estimates/EstimateList')),
-    SalesOrderList: lazy(() => import('../../views/Sales/salesOrders/SalesOrderList').catch(() => ({ default: () => null }))),
-    DeliveryChallanList: lazy(() => import('../../views/Sales/deliveryChallans/DeliveryChallanList')),
-    SalesReturnsList: lazy(() => import('../../views/Sales/returns/ReturnedItems')),
-    PaymentInList: lazy(() => import('../../views/Sales/payments/PaymentInList')),
-    CustomerCredits: lazy(() => import('../../views/Sales/payments/PaymentInList').catch(() => ({ default: () => null }))), // Fallback map
-    OutstandingDues: lazy(() => import('../../views/Sales/payments/PaymentInList').catch(() => ({ default: () => null }))), // Fallback map
-    SalesRegister: lazy(() => import('../../views/Sales/salesInvoices/SalesInvoiceForm').catch(() => ({ default: () => null }))),
+    SalesInvoiceForm:   lazy(() => import('../../pages/Sales/salesInvoices/SalesInvoiceForm')),
+    SalesInvoiceDetail: lazy(() => import('../../pages/Sales/salesInvoices/SalesInvoiceDetail')),
+    SalesOrderList:     lazy(() => import('../../pages/Sales/salesOrders/SalesOrderList')),
+    SalesOrderDetail:   lazy(() => import('../../pages/Sales/salesOrders/SalesOrderDetail')),
+    EstimateList:       lazy(() => import('../../pages/Sales/estimates/EstimateList')),
+    EstimateDetail:     lazy(() => import('../../pages/Sales/estimates/EstimateDetail')),
+    DeliveryChallanList:   lazy(() => import('../../pages/Sales/deliveryChallans/DeliveryChallanList')),
+    DeliveryChallanDetail: lazy(() => import('../../pages/Sales/deliveryChallans/DeliveryChallanDetail')),
+    SalesReturnsList:   lazy(() => import('../../pages/Sales/returns/ReturnedItems')),
+    PaymentInList:      lazy(() => import('../../pages/Sales/payments/PaymentInList')),
+    PaymentInCreator:   lazy(() => import('../../pages/Sales/payments/PaymentInCreator')),
 
+    // === POS ===
+    POSModule:          lazy(() => import('../../pages/Pos/ui/POSModule')),
+    POSCustomerDisplay: lazy(() => import('../../pages/Pos/ui/POSCustomerDisplay')),
+    POSOrdersIntelligence:  lazy(() => import('../../pages/Pos/ui/POSOrdersIntelligence')),
+    POSReturnsIntelligence: lazy(() => import('../../pages/Pos/ui/POSReturnsIntelligence')),
+    ShiftManagement:    lazy(() => import('../../pages/Pos/ui/ShiftManagementIntelligence')),
 
-    // === CONTACTS / PEOPLE ===
-    VendorForm: lazy(() => import('../../views/People/Suppliers/SupplierDetail')), // Map to common supplier detail/form
-    VendorDetails: lazy(() => import('../../views/People/Suppliers/SupplierDetail')),
-    EditSupplier: lazy(() => import('../../views/People/Suppliers/SupplierDetail')),
-    VendorInflowOutflow: lazy(() => import('../../views/Purchase/ui/VendorInflowOutflow')),
-    SupplierGroups: lazy(() => import('../../views/People/Suppliers/SupplierGroups')),
-    SupplierStatements: lazy(() => import('../../views/People/Suppliers/SupplierStatements')),
-    SupplierLedger: lazy(() => import('../../views/People/Suppliers/SupplierLedger')),
-    SupplierAgeing: lazy(() => import('../../views/Purchase/ui/SupplierAgeing')),
-    SupplierPayments: lazy(() => import('../../views/Purchase/ui/SupplierPayments')), 
-    
-    // === PURCHASE / INVENTORY ===
-    GRNForm: lazy(() => import('../../views/Purchase/ui/GRNForm')), 
-    PurchaseOrderDetails: lazy(() => import('../../views/Purchase/ui/PurchaseOrderDetails')),
-    PurchaseOrderList: lazy(() => import('../../views/Purchase/ui/PurchaseOrderDetails').catch(() => ({ default: () => null }))),
-    BillForm: lazy(() => import('../../views/Purchase/ui/BillForm')),
-    PurchaseRegister: lazy(() => import('../../views/Purchase/ui/BillForm').catch(() => ({ default: () => null }))), 
-    PurchaseReturns: lazy(() => import('../../views/Commercial/Returns/ReturnedItemsList')),
-    PurchaseReturnForm: lazy(() => import('../../views/Commercial/Returns/ReturnItemGrid')),
-    PaymentOut: lazy(() => import('../../views/Purchase/ui/PaymentOut')),
-    DebitNotes: lazy(() => import('../../views/Commercial/Returns/ReturnItemGrid').catch(() => ({ default: () => null }))),
-    OutstandingPayables: lazy(() => import('../../views/Purchase/ui/PaymentOut').catch(() => ({ default: () => null }))),
-    RateRevisions: lazy(() => import('../../views/Purchase/ui/RateRevisionList').catch(() => ({ default: () => null }))),
-    ChequesVault: lazy(() => import('../../views/Purchase/ui/UnclearedCheques').catch(() => ({ default: () => null }))),
-    
-    // Inventory
-    InventoryItems: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
-    ItemCategories: lazy(() => import('../../views/Inventory/ui/CategoryManager').catch(() => ({ default: () => null }))),
-    BarcodeGenerator: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
-    BulkImport: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
-    DataExport: lazy(() => import('../../views/Inventory/ui/InventoryManager').catch(() => ({ default: () => null }))),
-    ReprintQueue: lazy(() => import('../../views/Inventory/ui/ReprintQueue')),
-    
+    // === SUPPLIERS ===
+    SupplierList:      lazy(() => import('../../pages/People/Suppliers/Suppliers')),
+    SupplierDetail:    lazy(() => import('../../pages/People/Suppliers/SupplierDetail')),
+    SupplierGroups:    lazy(() => import('../../pages/People/Suppliers/SupplierGroups')),
+    SupplierStatements:lazy(() => import('../../pages/People/Suppliers/SupplierStatements')),
+    SupplierLedger:    lazy(() => import('../../pages/People/Suppliers/SupplierLedger')),
+    SupplierAgeing:    lazy(() => import('../../pages/Purchase/ui/SupplierAgeing')),
+    SupplierPayments:  lazy(() => import('../../pages/Purchase/ui/SupplierPayments')),
+    VendorInflowOutflow: lazy(() => import('../../pages/Purchase/ui/VendorInflowOutflow')),
+
+    // === CUSTOMERS ===
+    CustomerList:    lazy(() => import('../../pages/People/Customers/CustomerList')),
+    CustomerDetail:  lazy(() => import('../../pages/People/Customers/CustomerDetail')),
+    CustomerLedger:  lazy(() => import('../../pages/People/Customers/CustomerLedger')),
+
+    // === PURCHASE ===
+    GRNForm:              lazy(() => import('../../pages/Purchase/ui/GRNForm')),
+    GoodsReceived:        lazy(() => import('../../pages/Purchase/ui/GoodsReceived')),
+    PurchaseOrderList:    lazy(() => import('../../pages/Purchase/ui/PurchaseOrderList')),
+    PurchaseOrderDetails: lazy(() => import('../../pages/Purchase/ui/PurchaseOrderDetails')),
+    PurchaseEntry:        lazy(() => import('../../pages/Purchase/ui/PurchaseEntry')),
+    PurchaseHistory:      lazy(() => import('../../pages/Purchase/ui/PurchaseHistory')),
+    BillForm:             lazy(() => import('../../pages/Purchase/ui/BillForm')),
+    Bills:                lazy(() => import('../../pages/Purchase/ui/Bills')),
+    PurchaseReturns:      lazy(() => import('../../pages/Purchase/ui/PurchaseReturns')),
+    PurchaseReturnForm:   lazy(() => import('../../pages/Purchase/ui/PurchaseReturnForm')),
+    DebitNotes:           lazy(() => import('../../pages/Purchase/ui/DebitNotes')),
+    PaymentOut:           lazy(() => import('../../pages/Purchase/ui/PaymentOut')),
+    PaymentOutList:       lazy(() => import('../../pages/Purchase/ui/PaymentOutList')),
+    OutstandingPayables:  lazy(() => import('../../pages/Purchase/ui/OutstandingPayables')),
+    PayableSnapshot:      lazy(() => import('../../pages/Purchase/ui/PayableSnapshot')),
+    RateRevisionList:     lazy(() => import('../../pages/Purchase/ui/RateRevisionList')),
+    RateRevisionForm:     lazy(() => import('../../pages/Purchase/ui/RateRevisionForm')),
+    UnclearedCheques:     lazy(() => import('../../pages/Purchase/ui/UnclearedCheques')),
+
+    // === INVENTORY ===
+    InventoryManager: lazy(() => import('../../pages/Inventory/ui/InventoryManager')),
+    CategoryManager:  lazy(() => import('../../pages/Inventory/ui/CategoryManager')),
+    BarcodeGenerator: lazy(() => import('../../features/system/barcode-generator/ui/BarcodeGeneratorFeature')),
+    BulkImport:       lazy(() => import('../../features/system/bulk-import/ui/BulkImportFeature')),
+    DataExport:       lazy(() => import('../../features/system/data-export/ui/DataExportFeature')),
+    ReprintQueue:     lazy(() => import('../../pages/Inventory/ui/ReprintQueue')),
+    AgedStockManager: lazy(() => import('../../pages/Inventory/ui/AgedStockManager')),
+    BatchPriceUpdate: lazy(() => import('../../pages/Inventory/ui/BatchPriceUpdate')),
+
     // === FINANCE / CASHBANK ===
-    BankAccounts: lazy(() => import('../../views/Financial/Cashbank/BankAccounts')),
-    Transfers: lazy(() => import('../../views/Financial/Cashbank/BankIntelligence')), // Map to intelligence/transfers
-    CashInHand: lazy(() => import('../../views/Financial/Cashbank/BankAccounts')), // Consolidated
-    CashBankPosition: lazy(() => import('../../views/Financial/Cashbank/BankIntelligence')),
-    AccountLedger: lazy(() => import('../../views/Financial/Cashbank/AccountLedger')),
-    JournalEntries: lazy(() => import('../../views/Financial/Journal/JournalEntries')),
-    JournalEntryForm: lazy(() => import('../../views/Financial/Journal/JournalEntryForm')),
-    BankStatementView: lazy(() => import('../../views/Finance/ui/BankStatementView')),
-    SmsTrackerPage: lazy(() => import('../../views/Finance/ui/SmsTrackerPage')),
-    BudgetTrackerPage: lazy(() => import('../../views/Finance/ui/BudgetTrackerPage')),
-    FinanceAgentDashboard: lazy(() => import('../../views/Dashboard/ui/Dashboard')), // Map to appropriate dashboard
-    FinancialGoals: lazy(() => import('../../views/Financial/Cashbank/FinancialGoals')), 
-    GSTReconciliation: lazy(() => import('../../views/Finance/GST/GSTReconciliation')),
-    
+    BankAccounts:        lazy(() => import('../../pages/Financial/Cashbank/BankAccounts')),
+    CashInHand:          lazy(() => import('../../pages/Financial/Cashbank/CashInHand')),
+    FundTransfers:       lazy(() => import('../../pages/Financial/Cashbank/Transfers')),
+    BankReconciliation:  lazy(() => import('../../pages/Financial/Cashbank/BankReconciliation')),
+    BankSummary:         lazy(() => import('../../pages/Financial/Cashbank/BankSummary')),
+    AccountLedger:       lazy(() => import('../../pages/Financial/Cashbank/AccountLedger')),
+    LoanAccounts:        lazy(() => import('../../pages/Financial/Cashbank/LoanAccounts')),
+    PettyCash:           lazy(() => import('../../pages/Financial/Cashbank/PettyCash')),
+    FinancialGoals:      lazy(() => import('../../pages/Financial/Cashbank/FinancialGoals')),
+    DayEndReconciliation:lazy(() => import('../../pages/Financial/Cashbank/DayEndReconciliation')),
+    JournalEntries:      lazy(() => import('../../pages/Financial/Journal/JournalEntries')),
+    JournalEntryForm:    lazy(() => import('../../pages/Financial/Journal/JournalEntryForm')),
+    // Finance/ views (merged into Financial/ — see folder structure)
+    BankStatementView:   lazy(() => import('../../pages/Financial/ui/BankStatementView')),
+    SmsTrackerPage:      lazy(() => import('../../pages/Financial/ui/SmsTrackerPage')),
+    BudgetTrackerPage:   lazy(() => import('../../pages/Financial/ui/BudgetTrackerPage')),
+    GSTReconciliation:   lazy(() => import('../../pages/Financial/GST/GSTReconciliation')),
+    TDSManager:          lazy(() => import('../../pages/Financial/Tax/TDSManager')),
+    ChequeLedger:        lazy(() => import('../../pages/Financial/ui/ChequeLedger')),
+    DueAdjustment:       lazy(() => import('../../pages/Financial/ui/DueAdjustment')),
+
+    // === EXPENSES ===
+    ExpensesModule:            lazy(() => import('../../pages/Expenses/ui/ExpensesModule')),
+    ExpenseCategoriesManager:  lazy(() => import('../../pages/Expenses/ui/ExpenseCategoriesManager')),
+    RecurringExpenses:         lazy(() => import('../../pages/Expenses/ui/RecurringExpensesIntelligence')),
+    ExpenseReports:            lazy(() => import('../../pages/Expenses/ui/ExpenseReportsIntelligence')),
+    ExpenseDashboard:          lazy(() => import('../../pages/Expenses/ui/ExpenseDashboard')),
+
     // === HR / PAYROLL ===
-    EmployeeDirectory: lazy(() => import('../../views/People/Employees/EmployeeDirectory')),
-    EmployeeProfile: lazy(() => import('../../views/People/Employees/EmployeeProfile')),
-    LaborManager: lazy(() => import('../../views/People/Employees/LaborManager')),
-    LeaveManagement: lazy(() => import('../../views/People/Employees/LeaveManagement')),
-    AllowanceManager: lazy(() => import('../../views/People/Payroll/SalaryStructureManager')), // Placeholder
-    DailyAttendanceBoard: lazy(() => import('../../views/People/Employees/DailyAttendanceBoard')),
-    PayrollDashboard: lazy(() => import('../../views/People/Payroll/PayrollDashboard')), 
-    SalaryStructureManager: lazy(() => import('../../views/People/Payroll/SalaryStructureManager')),
-    AttendanceSummaryManager: lazy(() => import('../../views/People/Employees/DailyAttendanceBoard')),
-    PayrollRuns: lazy(() => import('../../views/People/Payroll/PayrollRuns')),
-    PayslipView: lazy(() => import('../../views/People/Payroll/PayslipView')),
+    EmployeeDirectory:      lazy(() => import('../../pages/People/Employees/EmployeeDirectory')),
+    EmployeeProfile:        lazy(() => import('../../pages/People/Employees/EmployeeProfile')),
+    LaborManager:           lazy(() => import('../../pages/People/Employees/LaborManager')),
+    LeaveManagement:        lazy(() => import('../../pages/People/Employees/LeaveManagement')),
+    AllowanceManager:       lazy(() => import('../../pages/People/Employees/AllowanceManager')),
+    DailyAttendanceBoard:   lazy(() => import('../../pages/People/Employees/DailyAttendanceBoard')),
+    AttendanceSummary:      lazy(() => import('../../pages/People/Payroll/AttendanceSummaryManager')),
+    PayrollDashboard:       lazy(() => import('../../pages/People/Payroll/PayrollDashboard')),
+    SalaryStructureManager: lazy(() => import('../../pages/People/Payroll/SalaryStructureManager')),
+    PayrollRuns:            lazy(() => import('../../pages/People/Payroll/PayrollRuns')),
+    PayslipView:            lazy(() => import('../../pages/People/Payroll/PayslipView')),
 
-    // === GROWTH ===
-    TenantArchitect: lazy(() => import('../../views/Dashboard/ui/GrowthHub')),
+    // === SYSTEM / SETTINGS ===
+    Settings:         lazy(() => import('../../pages/System/Settings/Settings')),
+    AuditLogViewer:   lazy(() => import('../../pages/System/Audit/AuditLogViewer')),
+    TenantArchitect:  lazy(() => import('../../pages/System/Architecture/TenantArchitect')),
+    SuperAdminConsole:lazy(() => import('../../pages/System/Architecture/SuperAdminGrowthConsole')),
 
-};
-
-/**
- * Preloads a module by its identifier.
- * Optimized to actually perform the dynamic import.
- */
-export const preloadByViewId = (viewId: string) => {
-    const key = viewId as keyof typeof LazyModules;
-    if (LazyModules[key]) {
-        // Trigger the lazy load pre-emptively
-        (LazyModules[key] as any)._result?.(); 
-        console.log(`🚀 Preloading module: ${viewId}`);
-    }
+    // === REPORTS ===
+    ReportsDashboard: lazy(() => import('../../pages/Reports/ui/ReportsDashboard')),
 };

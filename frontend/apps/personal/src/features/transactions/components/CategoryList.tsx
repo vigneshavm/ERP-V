@@ -30,7 +30,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ refreshTrigger = 0, onCateg
     const { transactions, loading: txnsLoading } = useTransactions();
 
     const categories = React.useMemo(() => {
-        if (catsLoading || txnsLoading) return [];
+        if (catsLoading || txnsLoading || !Array.isArray(rawCategories)) return [];
         
         return rawCategories.map(cat => {
             const catTransactions = transactions.filter(t => t.categoryId === cat.id);

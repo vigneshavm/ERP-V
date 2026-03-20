@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { useParams } from 'next/navigation';
 import { NavigationProvider } from '@/app/providers/NavigationContext';
-import { EnterpriseMainView } from '@/views/Views/ui/EnterpriseMainView';
+import { EnterpriseMainView } from '@/pages/Views/ui/EnterpriseMainView';
 
 export default function CatchAllPage() {
   const [isClient, setIsClient] = React.useState(false);

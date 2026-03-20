@@ -12,7 +12,7 @@ import {
     AnalyticsSummary,
     YearlyOverview,
     PersonalTransactionType as TransactionType,
-    PaymentMethod,
+    AdapterPaymentMethod,
     AccountType,
     LoanStatus,
     GoalStatus,
@@ -176,7 +176,7 @@ class MockAdapterImpl implements IDataAdapter {
                 accountName: 'SBI',
                 date: date.toISOString(),
                 description: type === TransactionType.INCOME ? 'Professional Services' : merchants[Math.floor(Math.random() * merchants.length)],
-                paymentMethod: i % 3 === 0 ? PaymentMethod.UPI : (i % 3 === 1 ? PaymentMethod.CARD : PaymentMethod.CASH),
+                paymentMethod: i % 3 === 0 ? AdapterPaymentMethod.UPI : (i % 3 === 1 ? AdapterPaymentMethod.CARD : AdapterPaymentMethod.CASH),
                 isRecurring: i % 10 === 0,
                 createdAt: date.toISOString()
             });
@@ -417,7 +417,7 @@ class MockAdapterImpl implements IDataAdapter {
             accountName: 'SBI',
             date: new Date().toISOString(),
             description: `Converted from SMS: ${sms.merchant || 'Unknown'}`,
-            paymentMethod: PaymentMethod.UPI,
+            paymentMethod: AdapterPaymentMethod.UPI,
             isRecurring: false
         });
 

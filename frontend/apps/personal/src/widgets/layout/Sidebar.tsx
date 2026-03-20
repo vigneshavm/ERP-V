@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
             <div className="sidebar-logo" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingBottom: '32px' }}>
                 <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 800, letterSpacing: '2px', cursor: 'pointer', margin: 0, textAlign: 'center', outline: 'none' }}>
-                        {isCollapsed ? 'EX' : 'EXPANGER'}
+                        {isCollapsed ? 'EX' : 'Expancer'}
                     </h2>
                 </Link>
                 <div
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
                     gap: '12px',
                     color: 'var(--bg-color)',
                     padding: '16px',
-                    boxShadow: '0 8px 25px rgba(var(--primary-color-rgb), 0.3)',
+                    boxShadow: '0 4px 12px rgba(var(--primary-color-rgb), 0.2)',
                     transition: 'all 0.3s ease',
                     fontWeight: 'bold',
                     fontSize: 'var(--font-size-base)',

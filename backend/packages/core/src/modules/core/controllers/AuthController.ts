@@ -439,6 +439,13 @@ export class AuthController {
     };
 
     /**
+     * @desc Get current auth user alias for /me
+     */
+    public me = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        return this.getProfile(req, res);
+    };
+
+    /**
      * @swagger
      * /api/auth/profile:
      *   patch:

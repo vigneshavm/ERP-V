@@ -7,16 +7,16 @@ import { Shield, Store, ArrowRight, LogOut } from 'lucide-react';
 
 import { AuthGuard } from "@repo/ui";
 import { useAppBootstrap } from '@/shared/hooks/useAppBootstrap';
-import { POSCustomerDisplay } from '@/views/Pos/ui/POSCustomerDisplay';
+import { POSCustomerDisplay } from '@/pages/Pos/ui/POSCustomerDisplay';
 
 // Views
-import LandingPage from '@/views/AppLayout/LandingPage';
-import AdminView from '@/views/AppLayout/AdminView';
-import LoadingScreen from '@/views/AppLayout/LoadingScreen';
-import TenantView from '@/views/Views/ui/TenantView';
-import ResetPassword from '@/views/auth/ui/ResetPassword';
-import ForgotPassword from '@/views/auth/ui/ForgotPassword';
-import TenantSignUp from '@/views/People/Tenants/TenantSignUp';
+import LandingPage from '@/pages/AppLayout/LandingPage';
+import AdminView from '@/pages/AppLayout/AdminView';
+import LoadingScreen from '@/pages/AppLayout/LoadingScreen';
+import TenantView from '@/pages/Views/ui/TenantView';
+import ResetPassword from '@/pages/auth/ui/ResetPassword';
+import ForgotPassword from '@/pages/auth/ui/ForgotPassword';
+import TenantSignUp from '@/pages/People/Tenants/TenantSignUp';
 
 import { RootState } from '@/app/store/store';
 import { useUiStore } from '@/shared/lib/store/uiStore';
@@ -26,7 +26,7 @@ import { APP_CONFIG } from '@/app/config';
 import { logger } from '@/shared/lib/logger';
 import { setUser, getProfile } from '@/entities/session/model/authSlice';
 import AdminLogin from '@/features/auth-by-email/ui/AdminLogin';
-import TenantManager from '@/views/People/Tenants/TenantManager';
+import TenantManager from '@/pages/People/Tenants/TenantManager';
 
 
 
