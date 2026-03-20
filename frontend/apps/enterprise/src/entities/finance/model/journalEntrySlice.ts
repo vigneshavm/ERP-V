@@ -56,7 +56,7 @@ export const fetchJournalEntries = createAsyncThunk(
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
             const response = await api.get(API_URL, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch journal entries');
         }
@@ -72,7 +72,7 @@ export const createJournalEntry = createAsyncThunk(
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
             const response = await api.post(API_URL, entryData, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to create journal entry');
         }

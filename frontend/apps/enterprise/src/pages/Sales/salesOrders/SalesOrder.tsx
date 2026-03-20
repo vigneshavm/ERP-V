@@ -152,10 +152,11 @@ const SalesOrderPage = () => {
             };
 
             const response = await api.post(
-                `/api/sales-orders`,
+                `/sales-orders`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+
 
             toast.success('Sales Order saved as draft successfully!');
             navigate('/sales/sales-order-list');
@@ -194,19 +195,21 @@ const SalesOrderPage = () => {
             };
 
             const createResponse = await api.post(
-                `/api/sales-orders`,
+                `/sales-orders`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            const orderId = createResponse.data.salesOrder._id;
+            const orderId = createResponse.data.data.salesOrder._id;
+
 
             // Then confirm it
             await api.post(
-                `/api/sales-orders/${orderId}/confirm`,
+                `/sales-orders/${orderId}/confirm`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+
 
             toast.success('Sales Order confirmed successfully! Stock reserved.');
             navigate('/sales/sales-order-list');

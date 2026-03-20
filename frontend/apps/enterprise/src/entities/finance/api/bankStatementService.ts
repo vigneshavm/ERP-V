@@ -23,12 +23,12 @@ export const bankStatementService = {
             // Increase timeout because PDF processing by GenAI might take a while
             timeout: 60000
         });
-        return response.data;
+        return response.data.data || response.data;
     },
 
     getTransactions: async (status?: string) => {
         const params = status ? { status } : {};
         const response = await api.get('/finance/bank-statement/transactions', { params });
-        return response.data;
+        return response.data.data || response.data;
     }
 };

@@ -40,7 +40,7 @@ export const useBills = () => {
             const userData = JSON.parse(userDataString);
             const token = userData?.token;
             const response = await api.get(
-                `/api/cashbank/accounts`,
+                `/cashbank/accounts`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setBankAccounts(response.data);
@@ -64,7 +64,7 @@ export const useBills = () => {
             const userData = JSON.parse(userDataString);
             const token = userData?.token;
             await api.put(
-                `/api/bills/${paymentModal.bill._id}/payment`,
+                `/bills/${paymentModal.bill._id}/payment`,
                 paymentData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

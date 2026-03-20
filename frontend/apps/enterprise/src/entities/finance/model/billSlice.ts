@@ -61,7 +61,7 @@ export const getAllBills = createAsyncThunk<Bill[], any, { state: RootState, rej
             }
 
             const response = await api.get(API_URL, config);
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -81,7 +81,7 @@ export const createBill = createAsyncThunk<Bill, any, { state: RootState, reject
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.post(API_URL, billData, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -101,7 +101,7 @@ export const getBillById = createAsyncThunk<Bill, string, { state: RootState, re
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.get(API_URL + '/' + id, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -121,7 +121,7 @@ export const updateBill = createAsyncThunk<Bill, { id: string, billData: any }, 
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue('Not authorized');
             const response = await api.put(API_URL + '/' + id, billData, getConfig(token));
-            return response.data;
+            return response.data.data || response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

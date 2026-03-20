@@ -95,9 +95,11 @@ export const createEstimate = async (req, res) => {
             .populate('customer', 'name phone email');
         info(`Estimate created: ${estimateNo}`);
         res.status(201).json({
+            success: true,
             message: 'Estimate created successfully',
-            estimate: populatedEstimate
+            data: { estimate: populatedEstimate }
         });
+
     }
     catch (err) {
         error(`Estimate creation failed: ${err.message}`);
@@ -121,7 +123,11 @@ export const getAllEstimates = async (_req, res) => {
         const estimates = await Estimate.find()
             .populate('customer', 'name phone')
             .sort({ createdAt: -1 });
-        res.status(200).json(estimates);
+        res.status(200).json({
+            success: true,
+            data: estimates
+        });
+
     }
     catch (err) {
         res.status(500).json({ message: 'Server Error', error: err.message });
@@ -144,7 +150,11 @@ export const getEstimateById = async (req, res) => {
             res.status(404).json({ message: 'Estimate not found' });
             return;
         }
-        res.status(200).json(estimate);
+        res.status(200).json({
+            success: true,
+            data: estimate
+        });
+
     }
     catch (err) {
         res.status(500).json({ message: 'Server Error', error: err.message });
@@ -185,9 +195,11 @@ export const updateEstimate = async (req, res) => {
         const updatedEstimate = await Estimate.findById(estimate._id)
             .populate('customer');
         res.status(200).json({
+            success: true,
             message: 'Estimate updated successfully',
-            estimate: updatedEstimate
+            data: { estimate: updatedEstimate }
         });
+
     }
     catch (err) {
         res.status(500).json({ message: 'Server Error', error: err.message });
@@ -210,7 +222,11 @@ export const deleteEstimate = async (req, res) => {
             return;
         }
         await estimate.deleteOne();
-        res.status(200).json({ message: 'Estimate deleted successfully' });
+        res.status(200).json({
+            success: true,
+            message: 'Estimate deleted successfully'
+        });
+
     }
     catch (err) {
         res.status(500).json({ message: 'Server Error', error: err.message });

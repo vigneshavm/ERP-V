@@ -80,6 +80,14 @@ export interface POSLogic {
     allBranches: any[];
 }
 
+const GUEST_CUSTOMER = {
+    id: 'c1',
+    name: 'General Customer',
+    phone: '0000000000',
+    points: 0,
+    tier: 'BRONZE'
+};
+
 export const usePOSLogic = (): POSLogic => {
     const dispatch = useDispatch<AppDispatch>();
     const {
@@ -131,6 +139,13 @@ export const usePOSLogic = (): POSLogic => {
         resumeHeldBill,
         discardBill
     } = usePOSSession();
+
+    const activeCustomer = useMemo(() => {
+        const id = activeSession?.customerId;
+        if (!id || id === 'c1') return GUEST_CUSTOMER;
+        const found = customers.find((c: any) => c.id === id || c._id === id);
+        return found || GUEST_CUSTOMER;
+    }, [activeSession?.customerId, customers]);
 
     const toggleFullScreen = useCallback(() => {
         if (!document.fullscreenElement) {
@@ -187,7 +202,7 @@ export const usePOSLogic = (): POSLogic => {
         activeSessionIndex,
         activeSession,
         cart,
-        activeCustomer: activeSession?.customerId, // Changed to customerId
+        activeCustomer,
         customers,
         heldBills,
         isFullScreen,
@@ -218,7 +233,10 @@ export const usePOSLogic = (): POSLogic => {
         onRemoveFromCart: removeItem,
         onUpdateCartQty: updateQty,
         onUpdateCartLength: updateLength,
-        onSetCustomer: (customer) => dispatch(setCustomer(customer?.id || customer)), // Added customer?.id || customer
+        onSetCustomer: (customer) => {
+            const id = typeof customer === 'string' ? customer : customer?.id || customer?._id;
+            dispatch(setCustomer(id || null));
+        },
         onLookupOrCreateCustomer,
         onSetTaxMode: (mode) => dispatch(setTaxMode(mode.toUpperCase() as any)), // Changed toUpperCase
         onSetPaymentMethod: (method) => dispatch(setPaymentMethod(method.toUpperCase() as any)), // Changed toUpperCase

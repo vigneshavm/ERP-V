@@ -38,7 +38,8 @@ export const useExpenseCategories = () => {
             const response = await api.get('/expense-categories', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setCategories(response.data?.categories || response.data || []);
+            const data = response.data.data || response.data?.categories || response.data || [];
+            setCategories(Array.isArray(data) ? data : []);
             setError(null);
         } catch (err: any) {
             logger.error('Error fetching expense categories:', err);

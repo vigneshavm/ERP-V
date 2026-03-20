@@ -27,13 +27,50 @@ export const useRecurringExpenses = () => {
         ];
 
         const mockIntelligence = {
+            cashRequired30Days: 78500,
             summaryByBranch: [
-                { branch: 'Chennai Main', amount: 45000, cost_ratio: '12%', risk_level: 'LOW' },
-                { branch: 'Bangalore Sub', amount: 15500, cost_ratio: '8%', risk_level: 'LOW' },
+                {
+                    branch_name: 'Chennai Main',
+                    monthly_sales: 500000,
+                    total_monthly_fixed_cost: 45000,
+                    cost_ratio: '9%',
+                    risk_level: 'LOW',
+                    recommended_action: 'Maintain current overhead'
+                },
+                {
+                    branch_name: 'Bangalore Sub',
+                    monthly_sales: 200000,
+                    total_monthly_fixed_cost: 15500,
+                    cost_ratio: '7.7%',
+                    risk_level: 'LOW',
+                    recommended_action: 'Efficient operation'
+                },
             ],
             upcomingDues: [
-                { id: '1', description: 'Jan Rent', amount: 45000, dueDate: '2026-01-31', status: 'OVERDUE' },
-                { id: '2', description: 'Cloud Credits', amount: 12000, dueDate: '2026-02-10', status: 'UPCOMING' },
+                {
+                    id: '1',
+                    category_name: 'Office Rent',
+                    vendor: 'Elite Realty',
+                    amount: 45000,
+                    next_due_date: '2026-02-01',
+                    status: 'OVERDUE'
+                },
+                {
+                    id: '2',
+                    category_name: 'Internet Lease',
+                    vendor: 'Gigabit Fiber',
+                    amount: 3500,
+                    next_due_date: '2026-02-05',
+                    status: 'UPCOMING'
+                },
+                {
+                    id: '3',
+                    category_name: 'Cloud Credits',
+                    vendor: 'AWS',
+                    amount: 12000,
+                    next_due_date: '2026-02-10',
+                    status: 'UPCOMING'
+                },
             ],
             riskFactors: ['High fixed cost in Chennai']
         };

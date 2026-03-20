@@ -43,7 +43,8 @@ export const getAllExpenses = createAsyncThunk<Expense[], void, { state: RootSta
             const response = await api.get(API_URL, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            return response.data;
+            return response.data.data;
+
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

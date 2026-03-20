@@ -88,8 +88,9 @@ export const getAllInvoices = createAsyncThunk(
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             // Use the sales-invoice endpoint as posRoutes doesn't have a GET /invoices
-            const response = await api.get(`/api/sales-invoice/invoices`, getConfig(token));
-            return response.data;
+            const response = await api.get(`/sales-invoice/invoices`, getConfig(token));
+            return response.data.data;
+
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

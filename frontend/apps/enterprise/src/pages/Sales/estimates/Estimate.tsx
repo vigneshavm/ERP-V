@@ -171,17 +171,19 @@ const Estimate = () => {
       };
 
       const response = await api.post(
-        `/api/estimates`,
+        `/estimates`,
         estimateData,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
 
+
       toast.success("Estimate created successfully!");
 
       // Navigate to estimate detail page
-      navigate(`/sales/estimate/${response.data.estimate._id}`);
+      navigate(`/sales/estimate/${response.data.data.estimate._id}`);
+
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to create estimate");
     } finally {

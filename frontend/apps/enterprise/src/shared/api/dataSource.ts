@@ -11,13 +11,13 @@ export const getTable = async <T = any>(
 ): Promise<T[] | null> => {
     try {
         const { filters = {}, select = '*' } = options;
-        const response = await api.get(`/api/data/${tableName}`, {
+        const response = await api.get(`/data/${tableName}`, {
             params: {
                 filters: JSON.stringify(filters),
                 select
             }
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         logger.error(`Error fetching table ${tableName}:`, error);
         return null;

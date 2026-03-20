@@ -37,9 +37,21 @@ interface AuthState {
   conflictMessage?: string;
 }
 
+const getInitialUser = (): User | null => {
+  if (typeof window === 'undefined') return null;
+  const stored = localStorage.getItem('user');
+  try {
+    return stored ? JSON.parse(stored) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
+const initialUser = getInitialUser();
+
 const initialState: AuthState = {
-  user: null,
-  role: null,
+  user: initialUser,
+  role: initialUser?.role || null,
   currentSector: 'Retail',
   currentBranch: 'All',
   theme: 'light',
@@ -47,6 +59,7 @@ const initialState: AuthState = {
   error: null,
   message: null,
 };
+
 
 // Register user
 export const register = createAsyncThunk<User, any, { rejectValue: string }>(

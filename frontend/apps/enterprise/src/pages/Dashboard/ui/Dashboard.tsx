@@ -12,7 +12,7 @@ import { getAllExpenses } from "@/features/expense-tracking/model/expenseSlice";
 import { fetchEffectiveBalance, fetchCheques } from "@/entities/finance/model/financeSlice";
 import { getSupplierAnalytics } from "@/entities/contact/model/supplierSlice";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
-import { useERPDashboard } from '@repo/shared';
+import { useERPDashboard, DashboardStats } from '@repo/shared';
 import MetricCard from "@/shared/ui/Feedback/MetricCard";
 import Layout from "@/shared/ui/Layout/Layout";
 import {
@@ -96,7 +96,15 @@ const Dashboard: React.FC = () => {
   };
 
   // --- 1. DATA MAPPING ---
-  const stats = dashboardStats || {};
+  const defaultStats: DashboardStats = {
+    totalRevenue: 0,
+    totalOutstanding: 0,
+    totalBalance: 0,
+    totalProfit: 0,
+    dailySales: [],
+    revenueVsExpenses: []
+  };
+  const stats = dashboardStats || defaultStats;
   const totalOutstandingLive = useMemo(() => stats.totalOutstanding || 0, [stats]);
 
   // Real-Time Payables from Suppliers Analytics
@@ -163,7 +171,8 @@ const Dashboard: React.FC = () => {
 
   // RESTORED: Cost Intelligence - Expenditure Categories Synthesis - LIVE
   const costCategoriesData = useMemo(() => {
-    if (!expenses || expenses.length === 0) {
+    if (!Array.isArray(expenses) || expenses.length === 0) {
+
       const totalExp = (totalRevenueLive || 450000) * 0.75;
       return [
         { name: 'Logistics', value: Math.round(totalExp * 0.15), color: 'rgb(var(--color-primary))' },

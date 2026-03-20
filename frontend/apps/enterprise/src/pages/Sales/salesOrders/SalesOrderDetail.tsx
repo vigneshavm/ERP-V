@@ -46,10 +46,11 @@ const SalesOrderDetail = () => {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const token = user?.token;
             const response = await api.get(
-                `/api/sales-orders/${id}`,
+                `/sales-orders/${id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setOrder(response.data);
+            setOrder(response.data.data);
+
         } catch (error: any) {
             logger.error('Error fetching order details:', error);
             toast.error('Failed to fetch order details');
@@ -69,10 +70,11 @@ const SalesOrderDetail = () => {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const token = user?.token;
             await api.post(
-                `/api/sales-orders/${id}/cancel`,
+                `/sales-orders/${id}/cancel`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+
             toast.success('Sales Order cancelled successfully');
             fetchOrderDetails();
         } catch (error: any) {

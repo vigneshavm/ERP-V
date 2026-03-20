@@ -35,11 +35,12 @@ const SalesOrderList = () => {
             if (filters.overdue) params.append('overdue', 'true');
 
             const response = await api.get(
-                `/api/sales-orders?${params.toString()}`,
+                `/sales-orders?${params.toString()}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            let fetchedOrders = response.data;
+            let fetchedOrders = response.data.data;
+
 
             // Apply search filter on frontend
             if (filters.search) {

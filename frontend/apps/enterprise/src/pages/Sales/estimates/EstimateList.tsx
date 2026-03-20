@@ -33,12 +33,13 @@ const EstimateList = () => {
             if (userStr) {
                 const user = JSON.parse(userStr);
                 const response = await api.get(
-                    `/api/estimates`,
+                    `/estimates`,
                     {
                         headers: { Authorization: `Bearer ${user.token}` }
                     }
                 );
-                setEstimates(response.data);
+                setEstimates(response.data.data);
+
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Failed to fetch estimates');
@@ -55,11 +56,12 @@ const EstimateList = () => {
             if (userStr) {
                 const user = JSON.parse(userStr);
                 await api.delete(
-                    `/api/estimates/${id}`,
+                    `/estimates/${id}`,
                     {
                         headers: { Authorization: `Bearer ${user.token}` }
                     }
                 );
+
                 toast.success('Estimate deleted');
                 fetchEstimates();
             }

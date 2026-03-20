@@ -90,7 +90,7 @@ export const getAllItems = createAsyncThunk(
       }
 
       const response = await api.get(`${API_URL}${queryParams}`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -111,7 +111,7 @@ export const getInventoryStats = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.get(`${API_URL}/inventory-stats`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -131,7 +131,7 @@ export const getItemById = createAsyncThunk(
       const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/${id}`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -151,7 +151,7 @@ export const addItem = createAsyncThunk(
       const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.post(API_URL, itemData, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -175,7 +175,7 @@ export const updateItem = createAsyncThunk(
         itemData,
         getConfig(token)
       );
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -238,7 +238,7 @@ export const getLowStockItems = createAsyncThunk(
       const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/low-stock`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -259,7 +259,7 @@ export const getAgingReport = createAsyncThunk(
       const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.get(`${API_URL}/aging-report`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -279,7 +279,7 @@ export const applyAgingAction = createAsyncThunk(
       const { token } = useAuthStore.getState();
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
       const response = await api.post(`${API_URL}/aging-action`, { itemId, action, value }, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -300,7 +300,7 @@ export const bulkUpdateCategory = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.put(`${API_URL}/bulk/category`, params, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to update categories");
     }
@@ -317,7 +317,7 @@ export const bulkAdjustStock = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.put(`${API_URL}/bulk/stock`, params, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to adjust stock");
     }
@@ -334,7 +334,7 @@ export const duplicateItem = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.post(`${API_URL}/${id}/duplicate`, {}, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to duplicate item");
     }
@@ -351,7 +351,7 @@ export const toggleItemStatus = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.patch(`${API_URL}/${id}/toggle-status`, {}, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to toggle status");
     }
@@ -368,7 +368,7 @@ export const getStockHistory = createAsyncThunk(
       if (!token) return thunkAPI.rejectWithValue("Not authenticated");
 
       const response = await api.get(`${API_URL}/${id}/history`, getConfig(token));
-      return response.data;
+      return response.data.data || response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch stock history");
     }

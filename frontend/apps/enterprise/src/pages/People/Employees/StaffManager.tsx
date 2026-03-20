@@ -88,7 +88,7 @@ const StaffManager: React.FC = () => {
             };
 
             if (editingEmpId) {
-                const response = await api.put(`/api/hr/employees/${editingEmpId}`, empData);
+                const response = await api.put(`/hr/employees/${editingEmpId}`, empData);
                 const data = response.data.data;
 
                 if (data) {
@@ -141,7 +141,7 @@ const StaffManager: React.FC = () => {
         if (!window.confirm('Are you sure you want to remove this employee?')) return;
 
         try {
-            await api.delete(`/api/hr/employees/${id}`);
+            await api.delete(`/hr/employees/${id}`);
             setTenantEmployees(prev => prev.filter(e => e._id !== id));
         } catch (err: any) {
             logger.error('Error deleting employee:', err);

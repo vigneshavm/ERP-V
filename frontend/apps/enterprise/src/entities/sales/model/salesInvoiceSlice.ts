@@ -41,7 +41,8 @@ export const getSalesInvoiceSummary = createAsyncThunk(
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/summary`, getConfig(token));
-            return response.data;
+            return response.data.data;
+
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -61,7 +62,8 @@ export const getAllSalesInvoices = createAsyncThunk(
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/invoices`, getConfig(token));
-            return response.data;
+            return response.data.data;
+
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -81,7 +83,8 @@ export const getSalesInvoiceById = createAsyncThunk(
             const { token } = useAuthStore.getState();
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/invoice/${id}`, getConfig(token));
-            return response.data;
+            return response.data.data;
+
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

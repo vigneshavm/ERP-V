@@ -175,7 +175,7 @@ const AttendanceSummaryManager = () => {
                                                 />
                                             </td>
                                             <td className="px-4 py-4 text-gray-500">
-                                                {record.weeklyOffs + record.holidays}
+                                                {(record.weeklyOffs || 0) + (record.holidays || 0)}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 {record.isModified && (

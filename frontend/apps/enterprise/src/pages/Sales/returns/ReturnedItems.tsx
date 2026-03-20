@@ -48,7 +48,7 @@ const ReturnedItems = () => {
             const response = await api.get(`/returns`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setReturns(response.data || []);
+            setReturns(response.data.data || []);
         } catch (error) {
             logger.error('Error fetching returns:', error);
         } finally {

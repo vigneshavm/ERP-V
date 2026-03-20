@@ -78,7 +78,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Target Monthly Burn</p>
-                        <h3 className="text-2xl font-black tabular-nums">₹{recurringExpenses.reduce((s: number, e: any) => s + e.amount, 0).toLocaleString()}</h3>
+                        <h3 className="text-2xl font-black tabular-nums">₹{(recurringExpenses || []).reduce((s: number, e: any) => s + (e.amount || 0), 0).toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2 text-neutral-500 font-bold text-[10px] uppercase">
                             <Clock className="w-3.5 h-3.5" /> Next cycle: 1st Feb
                         </div>
@@ -89,7 +89,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                             <Wallet className="w-16 h-16" />
                         </div>
                         <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Cash Required (30D)</p>
-                        <h3 className="text-2xl font-black tabular-nums text-primary">₹{intelligence.cashRequired30Days.toLocaleString()}</h3>
+                        <h3 className="text-2xl font-black tabular-nums text-primary">₹{(intelligence?.cashRequired30Days || 0).toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2 text-neutral-500 font-bold text-[10px] uppercase">
                             <ShieldAlert className="w-3.5 h-3.5 text-amber-500" /> Reserve needed soon
                         </div>
@@ -97,7 +97,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
 
                     <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Avg Fixed Cost Ratio</p>
-                        <h3 className="text-2xl font-black">{Math.round(intelligence.summaryByBranch.reduce((s: number, b: any) => s + parseInt(b.cost_ratio), 0) / (intelligence.summaryByBranch.length || 1))}%</h3>
+                        <h3 className="text-2xl font-black">{Math.round((intelligence?.summaryByBranch || []).reduce((s: number, b: any) => s + parseInt(b.cost_ratio || '0'), 0) / (intelligence?.summaryByBranch?.length || 1))}%</h3>
                         <div className="w-full h-1 bg-neutral-100 dark:bg-neutral-900 rounded-full mt-3 overflow-hidden">
                             <div className="h-full bg-primary" style={{ width: '13%' }} />
                         </div>
@@ -127,7 +127,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                 </button>
                             </div>
                             <div className="divide-y divide-neutral-50 dark:divide-neutral-800 text-sm">
-                                {intelligence.summaryByBranch.map((branch: any, idx: number) => (
+                                {(intelligence?.summaryByBranch || []).map((branch: any, idx: number) => (
                                     <div key={idx} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border font-black ${riskColorMap[branch.risk_level as keyof typeof riskColorMap]}`}>
@@ -136,7 +136,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                             <div>
                                                 <p className="font-black text-lg tracking-tight leading-none">{branch.branch_name}</p>
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-2 flex items-center gap-1.5">
-                                                    Sales: ₹{branch.monthly_sales.toLocaleString()} <span className="text-neutral-200">|</span> GP: {branch.cost_ratio}
+                                                    Sales: ₹{(branch.monthly_sales || 0).toLocaleString()} <span className="text-neutral-200">|</span> GP: {branch.cost_ratio}
                                                 </p>
                                             </div>
                                         </div>
@@ -150,7 +150,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className="text-right mr-2">
-                                                <p className="font-black text-sm">₹{branch.total_monthly_fixed_cost.toLocaleString()}</p>
+                                                <p className="font-black text-sm">₹{(branch.total_monthly_fixed_cost || 0).toLocaleString()}</p>
                                                 <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">Monthly Commitment</p>
                                             </div>
                                             <button className="p-2 text-neutral-400 hover:text-primary transition-colors">
@@ -170,7 +170,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                     Active Obligation Queue
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {intelligence.upcomingDues.map((due: any, idx: number) => (
+                                    {(intelligence?.upcomingDues || []).map((due: any, idx: number) => (
                                         <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl flex items-center justify-between hover:bg-white/10 transition-all">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${due.status === 'OVERDUE' ? 'bg-error/20 text-error' : 'bg-primary/20 text-primary'}`}>
@@ -182,7 +182,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className={`font-black text-sm ${due.status === 'OVERDUE' ? 'text-error' : 'text-neutral-300'}`}>₹{due.amount.toLocaleString()}</p>
+                                                <p className={`font-black text-sm ${due.status === 'OVERDUE' ? 'text-error' : 'text-neutral-300'}`}>₹{(due.amount || 0).toLocaleString()}</p>
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">
                                                     {due.status === 'OVERDUE' ? 'OVERDUE' : `Due ${new Date(due.next_due_date).toLocaleDateString()}`}
                                                 </p>

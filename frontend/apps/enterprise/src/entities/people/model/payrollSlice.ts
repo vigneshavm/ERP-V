@@ -76,7 +76,7 @@ const initialState: PayrollState = {
     success: false
 };
 
-const API_URL = '/api/hr/payroll'; // Based on hr.routes.ts mounting
+const API_URL = '/hr/payroll'; // Based on hr.routes.ts mounting
 
 // Helpers
 const getConfig = (token: string) => ({

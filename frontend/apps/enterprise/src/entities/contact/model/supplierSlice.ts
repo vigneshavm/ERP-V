@@ -125,7 +125,7 @@ export const getSupplierStats = createAsyncThunk<{ _id: string, supplierName: st
     'suppliers/getStats',
     async (_, thunkAPI) => {
         try {
-            const response = await api.get('/api/purchases/stats/supplier-totals');
+            const response = await api.get('/purchases/stats/supplier-totals');
             return response.data;
         } catch (error: any) {
             const message = (error.response?.data?.message) || error.message || error.toString();

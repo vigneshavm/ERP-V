@@ -24,7 +24,8 @@ const SmsTrackerPage: React.FC = () => {
         setIsRefreshing(true);
         try {
             const res = await api.get('/sms-tracker');
-            setTransactions(Array.isArray(res.data) ? res.data : []);
+            const data = res.data.data || res.data;
+            setTransactions(Array.isArray(data) ? data : []);
         } catch (err) {
             toast.error('Failed to fetch SMS transactions');
             setTransactions([]);

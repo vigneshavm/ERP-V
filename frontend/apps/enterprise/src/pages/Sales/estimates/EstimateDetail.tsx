@@ -20,12 +20,13 @@ const EstimateDetail = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || '{}');
       const response = await api.get(
-        `/api/estimates/${id}`,
+        `/estimates/${id}`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      setEstimate(response.data);
+      setEstimate(response.data.data);
+
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to fetch estimate");
       navigate("/sales/estimates");

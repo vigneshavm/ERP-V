@@ -23,7 +23,7 @@ export const fetchAdvances = createAsyncThunk(
     'labor/fetchAdvances',
     async (employeeId: string | undefined, thunkAPI) => {
         try {
-            const url = employeeId ? `/api/hr/advances/employee/${employeeId}` : '/api/hr/advances';
+            const url = employeeId ? `/hr/advances/employee/${employeeId}` : '/hr/advances';
             const response = await api.get(url);
             return response.data.data;
         } catch (error: any) {
@@ -36,7 +36,7 @@ export const createAdvanceAction = createAsyncThunk(
     'labor/createAdvance',
     async (data: { employeeId: string; amount: number; type: string; notes?: string }, thunkAPI) => {
         try {
-            const response = await api.post('/api/hr/advances', data);
+            const response = await api.post('/hr/advances', data);
             return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to record advance');
@@ -54,7 +54,7 @@ export const updateEmployee = createAsyncThunk(
             // Assuming the endpoint for updating any user (as admin) is /api/users/:id
             // If it's specifically for labor/employees, it might be /api/labor/:id
             // Using /api/users/:id as a safe bet based on authSlice
-            const response = await api.put(`/api/hr/employees/${id}`, data, {
+            const response = await api.put(`/hr/employees/${id}`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             return response.data;
@@ -68,7 +68,7 @@ export const fetchLeaves = createAsyncThunk(
     'labor/fetchLeaves',
     async (employeeId: string | undefined, thunkAPI) => {
         try {
-            const url = employeeId ? `/api/hr/leaves/employee/${employeeId}` : '/api/hr/leaves';
+            const url = employeeId ? `/hr/leaves/employee/${employeeId}` : '/hr/leaves';
             const response = await api.get(url);
             return response.data.data;
         } catch (error: any) {
@@ -81,7 +81,7 @@ export const createLeaveRequest = createAsyncThunk(
     'labor/createLeave',
     async (data: any, thunkAPI) => {
         try {
-            const response = await api.post('/api/hr/leaves', data);
+            const response = await api.post('/hr/leaves', data);
             return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to submit leave request');
@@ -93,7 +93,7 @@ export const fetchHolidays = createAsyncThunk(
     'labor/fetchHolidays',
     async (_, thunkAPI) => {
         try {
-            const response = await api.get('/api/hr/holidays');
+            const response = await api.get('/hr/holidays');
             return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch holidays');

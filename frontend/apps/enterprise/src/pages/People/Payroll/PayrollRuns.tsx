@@ -37,7 +37,7 @@ const PayrollRuns = () => {
         if (id) {
             const fetchDetails = async () => {
                 try {
-                    const response = await api.get(`/api/hr/payroll/runs/${id}`);
+                    const response = await api.get(`/hr/payroll/runs/${id}`);
                     setRunDetails(response.data.data.run);
                     setPayslips(response.data.data.payslips || []);
                 } catch (e) {
@@ -77,9 +77,9 @@ const PayrollRuns = () => {
                                     <button
                                         onClick={async () => {
                                             if (confirm('Are you sure you want to approve this payroll?')) {
-                                                await api.put(`/api/hr/payroll/runs/${id}/approve`);
+                                                await api.put(`/hr/payroll/runs/${id}/approve`);
                                                 // Refresh
-                                                const response = await api.get(`/api/hr/payroll/runs/${id}`);
+                                                const response = await api.get(`/hr/payroll/runs/${id}`);
                                                 setRunDetails(response.data.data.run);
                                             }
                                         }}
@@ -93,9 +93,9 @@ const PayrollRuns = () => {
                                         onClick={async () => {
                                             const accountId = prompt('Enter Account ID (Placeholder UI):');
                                             if (accountId) {
-                                                await api.post(`/api/hr/payroll/runs/${id}/pay`, { accountId, paymentMode: 'CASH' });
+                                                await api.post(`/hr/payroll/runs/${id}/pay`, { accountId, paymentMode: 'CASH' });
                                                 // Refresh
-                                                const response = await api.get(`/api/hr/payroll/runs/${id}`);
+                                                const response = await api.get(`/hr/payroll/runs/${id}`);
                                                 setRunDetails(response.data.data.run);
                                             }
                                         }}

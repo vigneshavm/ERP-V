@@ -82,7 +82,7 @@ const Return = () => {
       const response = await api.get(`/pos/invoices`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setInvoices(response.data);
+      setInvoices(response.data.data || []);
       toast.success("Invoices loaded successfully");
     } catch (error: any) {
       logger.error("Error fetching invoices:", error);
@@ -104,7 +104,7 @@ const Return = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      const fullInvoice = response.data || {};
+      const fullInvoice = response.data.data || {};
       if (!fullInvoice.items || !Array.isArray(fullInvoice.items)) {
         throw new Error("Invalid invoice data: items missing");
       }
@@ -115,7 +115,7 @@ const Return = () => {
         const returnsResponse = await api.get(`/returns`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        existingReturns = returnsResponse.data.filter(
+        existingReturns = (returnsResponse.data.data || []).filter(
           (ret: any) => ret.invoice._id === invoice._id
         );
       } catch (error: any) {
