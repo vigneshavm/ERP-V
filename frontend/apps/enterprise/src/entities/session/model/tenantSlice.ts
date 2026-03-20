@@ -4,12 +4,13 @@ import { GoogleBusinessConfig } from "./growth";
 import type { SettingsState } from "./settings";
 import { ModuleType } from "@repo/shared";
 
-const initialTenantState: TenantState = {
+const initialTenantState: TenantState & { activeTenantId: string | null } = {
     tenants: [],
     branches: [
         { id: 'All', name: 'All Branches', city: 'Various', address: '', counters: [{ id: 'C1', name: 'Main Counter', lastBillNumber: 0 }, { id: 'C2', name: 'Express Counter', lastBillNumber: 0 }] }
     ],
-    roles: []
+    roles: [],
+    activeTenantId: null
 };
 
 const tenantSlice = createSlice({
@@ -242,6 +243,9 @@ const tenantSlice = createSlice({
                 tenant.ecommerceConfig = action.payload.config;
             }
         },
+        setActiveTenantId: (state, action: PayloadAction<string | null>) => {
+            state.activeTenantId = action.payload;
+        },
     }
 });
 
@@ -258,7 +262,8 @@ export const {
     setRoles,
     updateTenantEcommerce,
     updateGoogleBusinessProfile,
-    setEcommerceEnabled
+    setEcommerceEnabled,
+    setActiveTenantId
 } = tenantSlice.actions;
 
 export const tenantReducer = tenantSlice.reducer;

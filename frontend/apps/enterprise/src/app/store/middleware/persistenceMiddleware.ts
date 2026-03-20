@@ -27,7 +27,7 @@ export const persistenceMiddleware: Middleware = (store) => (next) => (action) =
         }
 
         saveTimeouts[sliceName] = setTimeout(() => {
-            const tenantId = state.auth.user?.tenantId;
+            const tenantId = (state.tenant as any).activeTenantId || state.auth.user?.tenantId;
             logger.info(`[Persistence] Debounced save for slice: ${sliceName} (Tenant: ${tenantId || 'None'})`);
             saveState(PERSIST_KEYS[sliceName], state[sliceName], tenantId);
             delete saveTimeouts[sliceName];

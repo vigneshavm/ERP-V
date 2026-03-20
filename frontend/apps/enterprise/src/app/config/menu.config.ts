@@ -69,9 +69,9 @@ export const MENU_ITEMS: MenuItem[] = [
         label: 'Dashboard',
         icon: LayoutDashboard,
         module: 'DASHBOARD',
-        path: '/',
+        path: '/dashboard',
         children: [
-            { id: 'DASHBOARD_OVERVIEW', label: 'Overview', icon: LayoutDashboard, module: 'DASHBOARD', path: '/' },
+            { id: 'DASHBOARD_OVERVIEW', label: 'Overview', icon: LayoutDashboard, module: 'DASHBOARD', path: '/dashboard' },
             { id: 'DASHBOARD_SUMMARY', label: 'Summary', icon: ClipboardList, module: 'DASHBOARD', path: '/dashboard/summary' },
         ]
     },

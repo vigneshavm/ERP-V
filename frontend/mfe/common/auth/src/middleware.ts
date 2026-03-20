@@ -27,37 +27,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Extract token from Cookie or Authorization header
-  let token = request.cookies.get('auth_token')?.value;
-
-  if (!token && request.headers.get('authorization')) {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    }
-  }
-
-  if (!token) {
-    return new NextResponse(
-      JSON.stringify({ message: 'Authentication required' }),
-      { status: 401, headers: { 'content-type': 'application/json' } }
-    );
-  }
-
-  try {
-    // 4. Validate JWT
-    const secret = new TextEncoder().encode(JWT_SECRET);
-    await jose.jwtVerify(token, secret);
-
-    // 5. Token is valid, proceed to proxy
-    return NextResponse.next();
-  } catch (error) {
-    console.error('Middleware Auth Error:', error);
-    return new NextResponse(
-      JSON.stringify({ message: 'Invalid or expired token' }),
-      { status: 401, headers: { 'content-type': 'application/json' } }
-    );
-  }
+  // 3. Let rewrite proxy handle /api authentication
+  // The backends (port 5000, 5001, etc.) already have their own protect middleware
+  return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more

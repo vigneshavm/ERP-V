@@ -1,5 +1,6 @@
 export * from "./utils";
 export * from "./schemas";
+export * from "./auth/auth.schema";
 
 // Domain Types (Explicitly exported to avoid ambiguity)
 export type {

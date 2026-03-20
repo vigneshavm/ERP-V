@@ -31,7 +31,7 @@ import TenantManager from '@/pages/People/Tenants/TenantManager';
 
 
 
-const App: React.FC = () => {
+const MainContent: React.FC = () => {
   const navigate = useNavigate();
   const { 
     viewMode, 
@@ -43,16 +43,11 @@ const App: React.FC = () => {
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('mode') === 'customer_display') {
-    return (
-      <AuthGuard>
-        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-        <POSCustomerDisplay />
-      </AuthGuard>
-    );
+    return <POSCustomerDisplay />;
   }
 
   return (
-    <AuthGuard>
+    <>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -89,6 +84,14 @@ const App: React.FC = () => {
           )
         } />
       </Routes>
+    </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <AuthGuard>
+      <MainContent />
     </AuthGuard>
   );
 };

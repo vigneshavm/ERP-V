@@ -134,6 +134,8 @@ if (process.env.NODE_ENV !== 'production') {
     app.get("/api/v1/business/profile",            MockController.getMockBusinessProfile);
     app.get("/api/employees",    MockController.getMockEmployees);
     app.get("/api/v1/employees", MockController.getMockEmployees);
+    app.get("/api/users",        MockController.getMockEmployees);
+    app.get("/api/v1/users",     MockController.getMockEmployees);
     app.get("/api/branches",    (_req, res) => res.json({ success: true, data: [] }));
     app.get("/api/v1/branches", (_req, res) => res.json({ success: true, data: [] }));
 }

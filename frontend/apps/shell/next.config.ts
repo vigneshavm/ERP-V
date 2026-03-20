@@ -34,6 +34,7 @@ const nextConfig: NextConfig = {
 
       // Enterprise (:3004)
       { source: "/enterprise/_next/:path*", destination: "http://localhost:3004/enterprise/_next/:path*" },
+      { source: "/enterprise/", destination: "http://localhost:3004/enterprise/" },
       { source: "/enterprise", destination: "http://localhost:3004/enterprise" },
       { source: "/enterprise/:path*", destination: "http://localhost:3004/enterprise/:path*" },
 

@@ -9,6 +9,7 @@ import { APP_CONFIG } from '@/app/config';
 import { logger } from '@/shared/lib/logger';
 import type { Tenant } from '@/entities/session/model/core';
 import { setUser, getProfile } from '@/entities/session/model/authSlice';
+import { setActiveTenantId } from '@/entities/session/model/tenantSlice';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 
@@ -24,12 +25,27 @@ export const useAppBootstrap = () => {
     () => getSession() ? 'TENANT' : 'LANDING'
   );
   const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
-  const [isResolving, setIsResolving] = useState(APP_CONFIG?.REQUIRE_TENANT_ID ?? true);
+
+  // FIX 4: Read cached tenant from localStorage synchronously so isResolving
+  // starts as false when we already know the tenant. This eliminates the
+  // full-screen LoadingScreen flash on every navigation for returning users.
+  // isResolving only stays true when there is genuinely no cached context.
+  const [isResolving, setIsResolving] = useState<boolean>(() => {
+    if (!APP_CONFIG?.REQUIRE_TENANT_ID) return false;
+    if (typeof window === 'undefined') return true;
+    const cached = localStorage.getItem('erp_current_tenant');
+    if (cached) {
+      dispatch(setActiveTenantId(cached));
+    }
+    // If we have a cached tenant id we can optimistically skip the loading
+    // screen — the tenant list will confirm it asynchronously.
+    return !cached;
+  });
 
   // Restore session from storage on mount
   useEffect(() => {
     const sessionUser = getSession();
-    if (sessionUser && !user) {
+    if (sessionUser) {
       try {
         dispatch(setUser(sessionUser));
       } catch (e) {
@@ -37,7 +53,7 @@ export const useAppBootstrap = () => {
         clearSession();
       }
     }
-  }, [dispatch, user]);
+  }, [dispatch]);
 
   // Fetch profile once token is available
   useEffect(() => {
@@ -46,20 +62,30 @@ export const useAppBootstrap = () => {
     }
   }, [dispatch, user?.token]);
 
-  // Resolve active tenant from stored preference or deploy config
+  // Resolve active tenant from stored preference or deploy config.
+  // FIX 4: If we already resolved optimistically above (isResolving=false),
+  // this effect still runs to confirm and update the tenant object, but the
+  // UI is not blocked waiting for it.
   useEffect(() => {
     const storedId = localStorage.getItem('erp_current_tenant');
+
     if (tenants.length > 0) {
       if (storedId) {
         const restored = tenants.find(t => t.id === storedId);
         if (restored) {
           setCurrentTenant(restored);
+          dispatch(setActiveTenantId(restored.id));
           setViewMode('TENANT');
         }
-      } else if (APP_CONFIG?.REQUIRE_TENANT_ID && APP_CONFIG?.DEPLOY_TENANT_ID && viewMode === 'LANDING') {
+      } else if (
+        APP_CONFIG?.REQUIRE_TENANT_ID &&
+        APP_CONFIG?.DEPLOY_TENANT_ID &&
+        viewMode === 'LANDING'
+      ) {
         const t = tenants.find(t => t.id === APP_CONFIG.DEPLOY_TENANT_ID);
         if (t) {
           setCurrentTenant(t);
+          dispatch(setActiveTenantId(t.id));
           setViewMode('TENANT');
         }
       }

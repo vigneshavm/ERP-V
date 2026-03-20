@@ -1,161 +1,74 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore, LoginForm, SelectionPage } from '@repo/mfe-auth';
-import { User, Briefcase, Building2, ChevronRight, LogOut, Zap } from 'lucide-react';
 
-const apps = [
-  {
-    id: 'personal',
-    label: 'Personal Budget',
-    description: 'Track expenses, set saving goals, and visualize your financial health.',
-    icon: User,
-    color: 'blue',
-    href: '/personal/home',
-    cta: 'Open Planner',
-  },
-  {
-    id: 'business',
-    label: 'Business Store',
-    description: 'Manage inventory, track sales, and oversee store operations.',
-    icon: Briefcase,
-    color: 'purple',
-    href: '/business',
-    cta: 'Open Store Manager',
-  },
-  {
-    id: 'online-store',
-    label: 'Online Storefront',
-    description: 'Customer-facing storefront with AI-powered product recommendations.',
-    icon: Briefcase,
-    color: 'green',
-    href: '/business/store',
-    cta: 'Open Storefront',
-  },
-  {
-    id: 'enterprise',
-    label: 'Enterprise ERP',
-    description: 'Multi-tenant ERP — sales, purchasing, finance, HR and admin.',
-    icon: Building2,
-    color: 'amber',
-    href: '/enterprise',
-    cta: 'Enter Management',
-  },
-] as const;
+/**
+ * Navigation strategy per MFE type:
+ *
+ *  - personal  → Next.js app on :3002, basePath /personal
+ *                Shell rewrites /personal/* → :3002. Use router.push (SPA).
+ *
+ *  - business  → Next.js app on :3003, basePath /business
+ *                Shell rewrites /business/* → :3003. Use router.push (SPA).
+ *
+ *  - enterprise → Vite SPA on :3004, base /enterprise/
+ *                 Runs as a completely separate JS runtime. The shell's
+ *                 Next.js router has no /enterprise page to render, so
+ *                 router.push lands on a 404 inside the shell.
+ *                 Fix: window.location.href forces a full browser navigation
+ *                 directly to the Vite dev server (proxied by the shell rewrite).
+ *
+ * FIX 2 (prefetch): Only prefetch the two Next.js MFEs. Prefetching the
+ * enterprise Vite bundle via router.prefetch does nothing useful since the
+ * shell can't serve it — the browser will fetch it naturally on navigation.
+ */
 
-const colorMap = {
-  blue:   { bg: 'rgba(59,130,246,0.12)',  border: 'rgba(59,130,246,0.35)',  text: '#60a5fa' },
-  purple: { bg: 'rgba(139,92,246,0.12)',  border: 'rgba(139,92,246,0.35)', text: '#a78bfa' },
-  green:  { bg: 'rgba(34,197,94,0.12)',   border: 'rgba(34,197,94,0.35)',  text: '#4ade80' },
-  amber:  { bg: 'rgba(245,158,11,0.12)',  border: 'rgba(245,158,11,0.35)', text: '#fbbf24' },
-};
+const NEXT_ROUTES = {
+  personal: '/personal/home',
+  business: '/business',
+} as const;
 
-const handleSelection = (type: 'personal' | 'business' | 'enterprise') => {
-  if (type === 'personal') window.location.href = '/personal/home';
-  else if (type === 'business') window.location.href = '/business';
-  else window.location.href = '/enterprise';
-};
+// Enterprise is a Vite SPA — navigated to with a hard redirect.
+const ENTERPRISE_URL = '/enterprise/';
 
 export default function ShellHome() {
+  const router = useRouter();
   const { isAuthenticated, logout } = useAuthStore();
   const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => { setMounted(true); }, []);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prefetch the two Next.js MFEs in the background on mount.
+  React.useEffect(() => {
+    if (!mounted) return;
+    Object.values(NEXT_ROUTES).forEach((route) => router.prefetch(route));
+  }, [mounted, router]);
 
   if (!mounted) return null;
+
+  const handleSelection = (type: 'personal' | 'business' | 'enterprise') => {
+    if (type === 'enterprise') {
+      // Vite SPA — must use a hard browser navigation so the separate
+      // Vite runtime boots correctly. The shell rewrite proxies this to :3004.
+      window.location.href = ENTERPRISE_URL;
+      return;
+    }
+    // Next.js MFEs — SPA navigation via shell rewrites.
+    router.push(NEXT_ROUTES[type]);
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
   if (!isAuthenticated) return <LoginForm />;
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#0a0a0a',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* background glows */}
-      <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '60%', height: '60%', background: 'rgba(59,130,246,0.07)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'rgba(139,92,246,0.07)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
-
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '960px' }}>
-        {/* header */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '999px', background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#60a5fa', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            <Zap size={12} /> AI ERP Console
-          </div>
-          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 900, color: '#fff', lineHeight: 1.15, margin: '0 0 0.75rem' }}>
-            Where would you like to{' '}
-            <span style={{ background: 'linear-gradient(135deg, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              go?
-            </span>
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '1rem', maxWidth: '420px', margin: '0 auto' }}>
-            Select a workspace to get started.
-          </p>
-        </div>
-
-        {/* app cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', width: '100%' }}>
-          {apps.map((app) => {
-            const Icon = app.icon;
-            const c = colorMap[app.color];
-            return (
-              <a
-                key={app.id}
-                href={app.href}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '2.5rem',
-                  background: 'rgba(255,255,255,0.02)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  borderRadius: '32px',
-                  textDecoration: 'none',
-                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = c.border;
-                  (e.currentTarget as HTMLAnchorElement).style.background = c.bg;
-                  (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-8px)';
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 20px 40px ${c.bg}`;
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)';
-                  (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.02)';
-                  (e.currentTarget as HTMLAnchorElement).style.transform = 'none';
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
-                }}
-              >
-                <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.text, marginBottom: '1.5rem', boxShadow: 'inset 0 0 10px rgba(255,255,255,0.1)' }}>
-                  <Icon size={32} />
-                </div>
-                <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>{app.label}</h2>
-                <p style={{ color: '#9ca3af', fontSize: '0.9rem', lineHeight: 1.6, margin: '0 0 1.5rem', flex: 1 }}>{app.description}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: c.text, fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  {app.cta} <ChevronRight size={16} />
-                </div>
-              </a>
-            );
-          })}
-        </div>
-
-        {/* sign out */}
-        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-          <button
-            onClick={() => { logout(); window.location.href = 'http://localhost:3000/login'; }}
-            style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', transition: 'color 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
-          >
-            <LogOut size={14} /> Sign out
-          </button>
-        </div>
-      </div>
-    </div>
+    <SelectionPage onSelect={handleSelection} />
   );
 }

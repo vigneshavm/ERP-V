@@ -10,8 +10,8 @@ import { MENU_ITEMS } from '@/app/config/menu.config';
 function buildViewToPath(): Record<string, string> {
     const map: Record<string, string> = {
         LANDING: '/',
-        DASHBOARD: '/',
-        DASHBOARD_OVERVIEW: '/',
+        DASHBOARD: '/dashboard',
+        DASHBOARD_OVERVIEW: '/dashboard',
     };
     const walk = (items: typeof MENU_ITEMS) => {
         for (const item of items) {
@@ -26,8 +26,8 @@ function buildViewToPath(): Record<string, string> {
 const VIEW_TO_PATH = buildViewToPath();
 
 // Reverse map: path prefix → AppView (longest match wins)
-const PATH_TO_VIEW: Array<[string, AppView]> = Object.entries(VIEW_TO_PATH)
-    .map(([view, path]) => [path, view as AppView])
+const PATH_TO_VIEW = (Object.entries(VIEW_TO_PATH) as Array<[AppView, string]>)
+    .map(([view, path]) => [path, view] as [string, AppView])
     .sort((a, b) => b[0].length - a[0].length); // longest path first
 
 export function getViewFromPath(pathname: string): AppView {

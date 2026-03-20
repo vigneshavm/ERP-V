@@ -100,7 +100,8 @@ const nextConfig: NextConfig = {
         destination: "http://localhost:3003/business/:path*",
       },
 
-      // Enterprise MFE Assets & Pages
+      // Enterprise MFE — Next.js on :3004, basePath="/enterprise"
+      // Trailing slash variant must be listed first (Next.js matches in order)
       {
         source: "/enterprise/_next/:path*",
         destination: "http://localhost:3004/enterprise/_next/:path*",
@@ -108,6 +109,10 @@ const nextConfig: NextConfig = {
       {
         source: "/enterprise/assets/:path*",
         destination: "http://localhost:3004/enterprise/assets/:path*",
+      },
+      {
+        source: "/enterprise/",
+        destination: "http://localhost:3004/enterprise/",
       },
       {
         source: "/enterprise",
