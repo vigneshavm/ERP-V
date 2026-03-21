@@ -19,19 +19,20 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
     extraActions
 }) => {
     return (
-        <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-[3rem] p-12 mb-8 text-white shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform pointer-events-none">
-                <Icon className="w-64 h-64" />
+        <div className="premium-card p-6 sm:p-10 lg:p-12 mb-6 sm:mb-8 shadow-2xl relative overflow-hidden group border border-white/10">
+            <div className={`absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 group-hover:bg-indigo-500/10 transition-all duration-700 pointer-events-none`}></div>
+            <div className="absolute top-0 right-0 p-8 sm:p-12 opacity-[0.03] group-hover:opacity-[0.07] group-hover:scale-110 transition-all duration-1000 pointer-events-none">
+                <Icon className="w-48 h-48 sm:w-64 sm:h-64" />
             </div>
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-center">
                 <div className="lg:col-span-2">
-                    <div className="flex items-center gap-2 text-indigo-200 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                    <div className="flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-[0.25em] mb-3 sm:mb-4 italic">
                         <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                         {title}
                     </div>
-                    <h2 className="text-6xl font-black tracking-tighter">{value}</h2>
-                    {subtitle && <p className="text-indigo-200 text-sm font-bold mt-2">{subtitle}</p>}
-                    <div className="flex flex-wrap items-center gap-4 mt-8">
+                    <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-slate-200 font-mono italic">{value}</h2>
+                    {subtitle && <p className="text-slate-500 text-xs sm:text-sm font-bold mt-2 sm:mt-3 tracking-wide">{subtitle}</p>}
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-6 sm:mt-8">
                         {stats}
                     </div>
                 </div>

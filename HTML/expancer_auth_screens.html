@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expancer — Auth Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background: #050507;
+  font-family: 'DM Sans', sans-serif;
+  color: #fff;
+  padding: 48px 32px 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.doc-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.doc-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #2ECC71, #27AE60 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.doc-header p {
+  color: #A0A0A8;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.screens {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.screen-block { display: flex; flex-direction: column; gap: 16px; }
+.screen-tag {
+  display: flex; align-items: center; gap: 10px; padding-left: 4px;
+}
+.screen-tag .code {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  color: #2ECC71; background: rgba(46,204,113,0.12);
+  padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(46,204,113,0.25);
+}
+.screen-tag .name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px; font-weight: 700; color: #fff;
+}
+
+/* Browser chrome */
+.browser {
+  width: 100%;
+  background: #0d0d10;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.browser-bar {
+  height: 40px;
+  background: #1a1a1e;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; padding: 0 16px; gap: 12px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+.browser-dot:nth-child(1){background:#FF5F57;}
+.browser-dot:nth-child(2){background:#FFBD2E;}
+.browser-dot:nth-child(3){background:#28C840;}
+.browser-url {
+  flex: 1; height: 24px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  display: flex; align-items: center; padding: 0 12px; gap: 6px;
+  max-width: 420px; margin: 0 auto;
+}
+.browser-url span { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* Full-page auth layout */
+.auth-page {
+  width: 100%;
+  min-height: 640px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* background glow orbs — matches source exactly */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+/* ── 2-col card — max-w-5xl — matches source ── */
+.auth-card {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(24,24,27,0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Left branding panel ── */
+.brand-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.brand-logo {
+  width: 48px; height: 48px;
+  background: #2ECC71;
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(46,204,113,0.25);
+}
+.brand-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 40px; font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.brand-desc {
+  color: #71717A;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+.feature-list {
+  display: flex; flex-direction: column; gap: 18px;
+}
+.feature-item {
+  display: flex; align-items: center; gap: 14px;
+}
+.feature-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #2ECC71;
+  flex-shrink: 0;
+}
+.feature-text {
+  font-size: 14px; color: #A1A1AA;
+}
+
+/* ── Right form panel ── */
+.form-panel {
+  padding: 48px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.form-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.form-subtitle {
+  font-size: 14px; color: #71717A;
+  margin-bottom: 32px;
+}
+
+/* Input group */
+.field { margin-bottom: 20px; }
+.field-label {
+  display: block;
+  font-size: 13px; font-weight: 500; color: #A1A1AA;
+  margin-bottom: 8px; padding-left: 2px;
+}
+.input-wrap {
+  position: relative;
+}
+.input-icon {
+  position: absolute;
+  left: 16px; top: 50%; transform: translateY(-50%);
+  color: #52525B;
+  font-size: 15px;
+  line-height: 1;
+}
+.mock-input {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 14px 16px 14px 44px;
+  color: #A1A1AA;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+}
+.mock-input.filled {
+  color: #fff;
+  border-color: rgba(46,204,113,0.25);
+}
+.mock-input.pass { letter-spacing: 4px; }
+
+/* Label row with forgot password */
+.label-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.forgot { font-size: 12px; color: #2ECC71; }
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  background: #2ECC71;
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 700;
+  padding: 15px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 4px;
+  box-shadow: 0 8px 24px rgba(46,204,113,0.2);
+  cursor: pointer;
+}
+.submit-arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Divider */
+.divider-row {
+  display: flex; align-items: center; gap: 12px;
+  margin: 28px 0;
+}
+.divider-line {
+  flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+}
+.divider-text {
+  font-size: 11px; color: #52525B;
+  text-transform: uppercase; letter-spacing: 2px; white-space: nowrap;
+}
+
+/* OAuth buttons */
+.oauth-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.oauth-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  font-size: 13px; font-weight: 500; color: #A1A1AA;
+  cursor: pointer;
+}
+.oauth-icon { font-size: 16px; }
+
+/* Bottom link */
+.form-footer {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 13px; color: #52525B;
+}
+.form-footer a {
+  color: #2ECC71; font-weight: 600;
+}
+
+/* signup 2-col password fields */
+.field-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* brand panel gradient variants */
+.brand-panel.login {
+  background: linear-gradient(135deg, rgba(46,204,113,0.08) 0%, transparent 60%);
+}
+.brand-panel.signup {
+  background: linear-gradient(135deg, rgba(46,204,113,0.15) 0%, #000 100%);
+}
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>Expancer</h1>
+  <p>Auth Screens — Login &amp; Signup · Desktop Web · Dark Theme · 1280px</p>
+</div>
+
+<div class="screens">
+
+  <!-- ═══════════════════════ LOGIN ═══════════════════════ -->
+  <div class="screen-block">
+    <div class="screen-tag">
+      <span class="code">AUTH-01</span>
+      <span class="name">Login — Sign In</span>
+    </div>
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+        </div>
+        <div class="browser-url">
+          <span>🔒</span>
+          <span>localhost:3000/login</span>
+        </div>
+      </div>
+
+      <div class="auth-page">
+        <!-- glow orbs — matches LoginView source: top-right + bottom-left -->
+        <div class="orb" style="width:52%;height:52%;top:-10%;right:-10%;background:#2ECC71;"></div>
+        <div class="orb" style="width:32%;height:32%;bottom:-10%;left:-10%;background:#2ECC71;"></div>
+
+        <div class="auth-card">
+          <!-- Left branding panel -->
+          <div class="brand-panel login">
+            <div class="brand-logo">EX</div>
+            <div class="brand-title">Expancer</div>
+            <div class="brand-desc">
+              Master your finances with elegance and precision. Track, analyze, and grow your wealth effortlessly.
+            </div>
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Real-time expense tracking</span>
+              </div>
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Deep financial insights</span>
+              </div>
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Secure cloud synchronization</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right form panel -->
+          <div class="form-panel">
+            <div class="form-title">Sign In</div>
+            <div class="form-subtitle">Enter your details to access your account</div>
+
+            <!-- Email field -->
+            <div class="field">
+              <div class="field-label">Email</div>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <div class="mock-input filled">admin@example.com</div>
+              </div>
+            </div>
+
+            <!-- Password field -->
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label" style="margin:0;">Password</span>
+                <span class="forgot">Forgot password?</span>
+              </div>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <div class="mock-input filled pass">••••••••</div>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-btn">
+              Sign In <span class="submit-arrow">→</span>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider-row">
+              <div class="divider-line"></div>
+              <span class="divider-text">or continue with</span>
+              <div class="divider-line"></div>
+            </div>
+
+            <!-- OAuth -->
+            <div class="oauth-row">
+              <div class="oauth-btn">
+                <span class="oauth-icon">🌐</span>
+                Google
+              </div>
+              <div class="oauth-btn">
+                <span class="oauth-icon">◎</span>
+                Github
+              </div>
+            </div>
+
+            <div class="form-footer">
+              Don't have an account? <a>Create one for free</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ SIGNUP ═══════════════════════ -->
+  <div class="screen-block">
+    <div class="screen-tag">
+      <span class="code">AUTH-02</span>
+      <span class="name">Signup — Create Account</span>
+    </div>
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+        </div>
+        <div class="browser-url">
+          <span>🔒</span>
+          <span>localhost:3000/signup</span>
+        </div>
+      </div>
+
+      <div class="auth-page">
+        <!-- glow orbs — matches SignupView source: top-left + bottom-right -->
+        <div class="orb" style="width:42%;height:42%;top:-10%;left:-10%;background:#2ECC71;"></div>
+        <div class="orb" style="width:42%;height:42%;bottom:-10%;right:-10%;background:#2ECC71;"></div>
+
+        <div class="auth-card">
+          <!-- Left branding panel -->
+          <div class="brand-panel signup">
+            <div class="brand-logo">EX</div>
+            <div class="brand-title">Join Expancer</div>
+            <div class="brand-desc">
+              Start your journey towards financial freedom today. Join thousands of users who trust Expancer for their wealth management.
+            </div>
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Personalized budget planning</span>
+              </div>
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Automatic expense categorization</span>
+              </div>
+              <div class="feature-item">
+                <div class="feature-dot"></div>
+                <span class="feature-text">Multi-device synchronization</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right form panel -->
+          <div class="form-panel">
+            <div class="form-title">Sign Up</div>
+            <div class="form-subtitle">Enter your details to create your free account</div>
+
+            <!-- Full Name -->
+            <div class="field">
+              <div class="field-label">Full Name</div>
+              <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <div class="mock-input filled">Vignesh A</div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="field">
+              <div class="field-label">Email</div>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <div class="mock-input filled">vignesh.chennai@example.com</div>
+              </div>
+            </div>
+
+            <!-- Password + Confirm — side by side grid -->
+            <div class="field-grid">
+              <div>
+                <div class="field-label">Password</div>
+                <div class="input-wrap">
+                  <span class="input-icon">🔒</span>
+                  <div class="mock-input filled pass">••••••••</div>
+                </div>
+              </div>
+              <div>
+                <div class="field-label">Confirm</div>
+                <div class="input-wrap">
+                  <span class="input-icon">🔒</span>
+                  <div class="mock-input filled pass">••••••••</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-btn">
+              Create Account <span class="submit-arrow">→</span>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider-row">
+              <div class="divider-line"></div>
+              <span class="divider-text">or join with</span>
+              <div class="divider-line"></div>
+            </div>
+
+            <!-- OAuth -->
+            <div class="oauth-row">
+              <div class="oauth-btn">
+                <span class="oauth-icon">🌐</span>
+                Google
+              </div>
+              <div class="oauth-btn">
+                <span class="oauth-icon">◎</span>
+                Github
+              </div>
+            </div>
+
+            <div class="form-footer">
+              Already have an account? <a>Sign In</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end screens -->
+</body>
+</html>

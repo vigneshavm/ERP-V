@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BizzAI Enterprise ERP — All Screen Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14; --surface:#141820; --surface2:#1c2230; --surface3:#242d3e;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --text:#e8edf5; --text2:#8b909e; --text3:#4a5060;
+  --primary:#6366f1; --primary-lt:rgba(99,102,241,0.15);
+  --success:#22c55e; --success-lt:rgba(34,197,94,0.12);
+  --warn:#f59e0b; --warn-lt:rgba(245,158,11,0.12);
+  --danger:#ef4444; --danger-lt:rgba(239,68,68,0.12);
+  --cyan:#06b6d4; --cyan-lt:rgba(6,182,212,0.12);
+  --purple:#a855f7; --purple-lt:rgba(168,85,247,0.12);
+  --sans:'Geist',system-ui,sans-serif;
+  --mono:'Geist Mono',monospace;
+}
+
+body{font-family:var(--sans);background:#0a0c12;color:var(--text);min-height:100vh}
+
+/* NAV */
+.top-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,15,20,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  display:flex;align-items:center;gap:0;
+  overflow-x:auto;
+}
+.nav-logo{
+  font-size:14px;font-weight:700;color:var(--text);
+  padding:0 20px 0 0;margin-right:12px;
+  border-right:1px solid var(--border);
+  white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.nav-logo span{color:var(--primary)}
+.nav-btn{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  color:var(--text2);padding:16px 14px;
+  border-bottom:2px solid transparent;
+  white-space:nowrap;transition:color .15s,border-color .15s;
+}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+/* SCREEN WRAPPER */
+.screen{display:none;animation:fadeIn .2s ease}
+.screen.active{display:flex;height:calc(100vh - 49px)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;padding:16px 0;
+}
+.sidebar-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px 20px;
+  font-size:14px;font-weight:700;color:var(--text);
+}
+.sb-icon{width:28px;height:28px;border-radius:8px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-section{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:8px 16px 4px}
+.sidebar-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 16px;cursor:pointer;
+  font-size:12px;font-weight:500;color:var(--text2);
+  border-left:2px solid transparent;
+  transition:all .15s;
+}
+.sidebar-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.sidebar-item.active{color:var(--primary);background:var(--primary-lt);border-left-color:var(--primary)}
+.sidebar-item svg{width:14px;height:14px;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:8px}
+.avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:var(--text)}
+.user-role{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column}
+
+/* PAGE HEADER */
+.page-header{
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.page-title{font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.page-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.page-actions{display:flex;align-items:center;gap:8px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#5457e0}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* CONTENT AREA */
+.content{padding:20px 24px;flex:1}
+
+/* METRIC CARDS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:16px;
+  position:relative;overflow:hidden;
+}
+.metric-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-right:48px}
+.metric-value{font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.metric-change{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px}
+.up{color:var(--success)}.down{color:var(--danger)}
+.metric-icon{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* TABLES */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.table-title{font-size:13px;font-weight:600;color:var(--text)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+td{font-size:12px;color:var(--text2);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.03)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02);color:var(--text)}
+.td-bold{font-weight:600;color:var(--text) !important}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.badge-success{background:var(--success-lt);color:var(--success)}
+.badge-warn{background:var(--warn-lt);color:var(--warn)}
+.badge-danger{background:var(--danger-lt);color:var(--danger)}
+.badge-primary{background:var(--primary-lt);color:var(--primary)}
+.badge-cyan{background:var(--cyan-lt);color:var(--cyan)}
+.badge-purple{background:var(--purple-lt);color:var(--purple)}
+
+/* SEARCH BAR */
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;min-width:200px;
+}
+.search-bar input{background:none;border:none;outline:none;font-family:var(--sans);font-size:12px;color:var(--text);width:100%}
+.search-bar input::placeholder{color:var(--text3)}
+
+/* CHART BAR */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px}
+.chart-bar{border-radius:4px 4px 0 0;min-width:18px;background:var(--primary);opacity:.7;transition:opacity .15s}
+.chart-bar:hover{opacity:1}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--sans);font-size:13px;color:var(--text);outline:none}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-lt)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 16px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab:hover{color:var(--text)}
+
+/* STATUS DOT */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-success{background:var(--success);box-shadow:0 0 6px var(--success)}
+.dot-warn{background:var(--warn)}
+.dot-danger{background:var(--danger)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* POS SPECIFIC */
+.pos-wrap{display:flex;gap:0;height:100%;overflow:hidden}
+.pos-left{flex:1;padding:16px;overflow-y:auto;background:var(--bg)}
+.pos-right{width:320px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column}
+.pos-item{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+.pos-total{padding:16px;border-top:1px solid var(--border)}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.product-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s}
+.product-card:hover{border-color:var(--primary);background:var(--primary-lt)}
+.product-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+.product-price{font-size:13px;font-weight:700;color:var(--primary)}
+.product-stock{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-logo">
+    <div class="sb-icon">B</div>
+    Bizz<span>AI</span>&nbsp;ERP
+  </div>
+  <button class="nav-btn active" onclick="show('dashboard',this)">Dashboard</button>
+  <button class="nav-btn" onclick="show('pos',this)">POS / Billing</button>
+  <button class="nav-btn" onclick="show('sales',this)">Sales</button>
+  <button class="nav-btn" onclick="show('invoice-form',this)">New Invoice</button>
+  <button class="nav-btn" onclick="show('purchase',this)">Purchase</button>
+  <button class="nav-btn" onclick="show('inventory',this)">Inventory</button>
+  <button class="nav-btn" onclick="show('finance',this)">Finance</button>
+  <button class="nav-btn" onclick="show('expenses',this)">Expenses</button>
+  <button class="nav-btn" onclick="show('customers',this)">Customers</button>
+  <button class="nav-btn" onclick="show('suppliers',this)">Suppliers</button>
+  <button class="nav-btn" onclick="show('hr',this)">HR / Payroll</button>
+  <button class="nav-btn" onclick="show('reports',this)">Reports</button>
+  <button class="nav-btn" onclick="show('settings',this)">Settings</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     1. DASHBOARD
+════════════════════════════════════════════════════ -->
+<div id="dashboard" class="screen active">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-section">Core</div>
+    <div class="sidebar-item active" onclick="navigate('dashboard')" style="cursor:pointer">📊 Dashboard</div>
+    <div class="sidebar-item" onclick="navigate('pos')" style="cursor:pointer">🛒 Billing / POS</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">📄 Sales</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">🚚 Purchase</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">📦 Inventory</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">🏦 Finance</div>
+    <div class="sidebar-item" onclick="navigate('expenses')" style="cursor:pointer">💸 Expenses</div>
+    <div class="sidebar-section">People</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">👤 Customers</div>
+    <div class="sidebar-item" onclick="navigate('suppliers')" style="cursor:pointer">🏭 Suppliers</div>
+    <div class="sidebar-item" onclick="navigate('hr')" style="cursor:pointer">👥 Staff / HR</div>
+    <div class="sidebar-section">System</div>
+    <div class="sidebar-item" onclick="navigate('reports')" style="cursor:pointer">📈 Reports</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">⚙️ Settings</div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">A</div>
+        <div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Dashboard</div><div class="page-sub">Neural Retail Co · All Branches · Live</div></div>
+      <div class="page-actions">
+        <span style="font-size:11px;color:var(--text3);margin-right:8px"><span class="dot dot-success"></span> Live · updated 2m ago</span>
+        <button class="btn btn-ghost btn-sm">↻ Refresh</button>
+        <button class="btn btn-primary btn-sm">+ New Sale</button>
+      </div>
+    </div>
+    <div class="content">
+      <!-- Metrics -->
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-label">Revenue MTD</div>
+          <div class="metric-icon" style="background:var(--success-lt)">💰</div>
+          <div class="metric-value">₹24.7L</div>
+          <div class="metric-change up">↑ 18% vs last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Outstanding Dues</div>
+          <div class="metric-icon" style="background:var(--warn-lt)">⏰</div>
+          <div class="metric-value">₹3.2L</div>
+          <div class="metric-change down">↑ 4% pending collection</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Bank Balance</div>
+          <div class="metric-icon" style="background:var(--cyan-lt)">🏦</div>
+          <div class="metric-value">₹18.4L</div>
+          <div class="metric-change up">↑ 6% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Stock Value</div>
+          <div class="metric-icon" style="background:var(--purple-lt)">📦</div>
+          <div class="metric-value">₹41.2L</div>
+          <div class="metric-change" style="color:var(--text2)">142 SKUs · 3 low stock</div>
+        </div>
+      </div>
+      <!-- Charts + Table row -->
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <span style="font-size:13px;font-weight:600">Sales · Last 7 Days</span>
+            <span class="badge badge-success">Live</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:35%"></div>
+            <div class="chart-bar" style="height:55%"></div>
+            <div class="chart-bar" style="height:40%"></div>
+            <div class="chart-bar" style="height:70%"></div>
+            <div class="chart-bar" style="height:60%"></div>
+            <div class="chart-bar" style="height:85%"></div>
+            <div class="chart-bar" style="height:100%;opacity:1"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px">
+            <span style="font-size:10px;color:var(--text3)">Mon</span><span style="font-size:10px;color:var(--text3)">Tue</span><span style="font-size:10px;color:var(--text3)">Wed</span><span style="font-size:10px;color:var(--text3)">Thu</span><span style="font-size:10px;color:var(--text3)">Fri</span><span style="font-size:10px;color:var(--text3)">Sat</span><span style="font-size:10px;color:var(--primary)">Sun</span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Cash & Bank Summary</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:12px">Cash in Hand</span>
+              <span style="font-size:14px;font-weight:700;color:var(--success)">₹1.24L</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:12px">HDFC Current A/C</span>
+              <span style="font-size:14px;font-weight:700;color:var(--cyan)">₹12.8L</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
+              <span style="font-size:12px">SBI Savings A/C</span>
+              <span style="font-size:14px;font-weight:700;color:var(--cyan)">₹4.36L</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Recent Transactions -->
+      <div class="table-wrap">
+        <div class="table-header"><span class="table-title">Recent Transactions</span><button class="btn btn-ghost btn-sm">View All</button></div>
+        <table>
+          <thead><tr><th>Invoice #</th><th>Customer</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">INV-2847</td><td>Rajan Textiles</td><td class="td-bold">₹24,500</td><td>Today, 2:14pm</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2846</td><td>Kumar Electronics</td><td class="td-bold">₹8,200</td><td>Today, 11:30am</td><td><span class="badge badge-warn">Partial</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2845</td><td>Sharma Brothers</td><td class="td-bold">₹3,750</td><td>Yesterday</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2844</td><td>Patel Hardware</td><td class="td-bold">₹15,600</td><td>Yesterday</td><td><span class="badge badge-danger">Overdue</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2843</td><td>Gupta & Sons</td><td class="td-bold">₹7,300</td><td>2 days ago</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     2. POS / BILLING TERMINAL
+════════════════════════════════════════════════════ -->
+<div id="pos" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item" onclick="navigate('dashboard')" style="cursor:pointer">📊 Dashboard</div>
+    <div class="sidebar-item active" onclick="navigate('pos')" style="cursor:pointer">🛒 POS Terminal</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">📋 Orders</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">↩ Returns</div>
+    <div class="sidebar-item" onclick="navigate('pos')" style="cursor:pointer">🕐 Shifts</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Cashier Mode</div></div></div></div>
+  </aside>
+  <div class="main" style="overflow:hidden">
+    <div class="pos-wrap">
+      <!-- Products side -->
+      <div class="pos-left">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div class="search-bar" style="flex:1"><span style="color:var(--text3)">🔍</span><input placeholder="Search products by name or barcode…"/></div>
+          <select style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--text);font-family:var(--sans)"><option>All Categories</option><option>Electronics</option><option>Clothing</option></select>
+        </div>
+        <div class="product-grid">
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">👕</div><div class="product-name">Cotton Shirt</div><div class="product-price">₹850</div><div class="product-stock">Stock: 24</div></div>
+          <div class="product-card" style="border-color:var(--primary);background:var(--primary-lt)"><div style="font-size:24px;margin-bottom:6px">👖</div><div class="product-name">Denim Jeans</div><div class="product-price">₹1,200</div><div class="product-stock">Stock: 12</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">👟</div><div class="product-name">Sports Shoes</div><div class="product-price">₹2,400</div><div class="product-stock">Stock: 8</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">🧥</div><div class="product-name">Formal Jacket</div><div class="product-price">₹3,200</div><div class="product-stock">Stock: 5</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">🧢</div><div class="product-name">Cap</div><div class="product-price">₹320</div><div class="product-stock">Stock: 30</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">🧣</div><div class="product-name">Scarf</div><div class="product-price">₹450</div><div class="product-stock">Stock: 18</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">👜</div><div class="product-name">Handbag</div><div class="product-price">₹1,800</div><div class="product-stock">Stock: 7</div></div>
+          <div class="product-card"><div style="font-size:24px;margin-bottom:6px">🩳</div><div class="product-name">Shorts</div><div class="product-price">₹580</div><div class="product-stock">Stock: 22</div></div>
+        </div>
+      </div>
+      <!-- Cart side -->
+      <div class="pos-right">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;font-weight:700">Current Bill</span>
+            <span class="badge badge-primary">Session #47</span>
+          </div>
+          <div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:12px;display:flex;align-items:center;justify-content:space-between">
+            <span><span style="color:var(--text3)">Customer:</span> <span style="color:var(--text);font-weight:600">Walk-in Customer</span></span>
+            <button style="background:none;border:none;font-size:10px;color:var(--primary);cursor:pointer;padding:0">+ Add</button>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto">
+          <div class="pos-item">
+            <div><div style="font-size:12px;font-weight:600">Denim Jeans</div><div style="font-size:11px;color:var(--text3)">₹1,200 × 2</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:13px;font-weight:700">₹2,400</span>
+              <button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px">×</button>
+            </div>
+          </div>
+          <div class="pos-item">
+            <div><div style="font-size:12px;font-weight:600">Cotton Shirt</div><div style="font-size:11px;color:var(--text3)">₹850 × 1</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:13px;font-weight:700">₹850</span>
+              <button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px">×</button>
+            </div>
+          </div>
+          <div class="pos-item">
+            <div><div style="font-size:12px;font-weight:600">Cap</div><div style="font-size:11px;color:var(--text3)">₹320 × 1</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:13px;font-weight:700">₹320</span>
+              <button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px">×</button>
+            </div>
+          </div>
+        </div>
+        <div class="pos-total">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px"><span>Subtotal</span><span>₹3,570</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px"><span>GST (18%)</span><span>₹642.60</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--success);margin-bottom:10px"><span>Discount</span><span>– ₹200</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--text);margin-bottom:14px;padding-top:10px;border-top:1px solid var(--border)"><span>Total</span><span>₹4,012.60</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <button class="btn btn-ghost" style="width:100%;justify-content:center">💵 Cash</button>
+            <button class="btn btn-primary" style="background:var(--cyan);width:100%;justify-content:center">📲 UPI</button>
+          </div>
+          <button class="btn btn-success" style="width:100%;justify-content:center;font-size:14px;padding:12px">✓ Complete Sale</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     3. SALES LIST
+════════════════════════════════════════════════════ -->
+<div id="sales" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item" onclick="navigate('dashboard')" style="cursor:pointer">📊 Dashboard</div>
+    <div class="sidebar-item active" onclick="navigate('sales')" style="cursor:pointer">📄 Sales Register</div>
+    <div class="sidebar-item" onclick="navigate('invoice-form')" style="cursor:pointer">+ New Invoice</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">📋 Estimates</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">📦 Orders</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">🚚 Challans</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">↩ Returns</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">💳 Receipts</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">⚠️ Dues</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Sales Register</div><div class="page-sub">143 invoices this month · ₹24.7L revenue</div></div>
+      <div class="page-actions">
+        <div class="search-bar"><span style="color:var(--text3)">🔍</span><input placeholder="Search invoices…" style="width:160px"/></div>
+        <button class="btn btn-ghost btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">+ New Invoice</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric-card"><div class="metric-label">Total Sales</div><div class="metric-value">₹24.7L</div><div class="metric-change up">↑ 18% MTD</div></div>
+        <div class="metric-card"><div class="metric-label">Invoices Raised</div><div class="metric-value">143</div><div class="metric-change up">↑ 12 today</div></div>
+        <div class="metric-card"><div class="metric-label">Outstanding</div><div class="metric-value">₹3.2L</div><div class="metric-change down">24 invoices pending</div></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;align-items:center">
+        <div class="tabs" style="margin-bottom:0;border-bottom:none">
+          <div class="tab active">All</div><div class="tab">Paid</div><div class="tab">Pending</div><div class="tab">Overdue</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <select style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);font-family:var(--sans)"><option>This Month</option><option>Last Month</option></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Items</th><th>Amount</th><th>GST</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">INV-2847</td><td>Rajan Textiles Pvt Ltd</td><td>21 Mar 2025</td><td>3 items</td><td>₹20,762</td><td>₹3,738</td><td class="td-bold">₹24,500</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2846</td><td>Kumar Electronics</td><td>21 Mar 2025</td><td>1 item</td><td>₹6,949</td><td>₹1,251</td><td class="td-bold">₹8,200</td><td><span class="badge badge-warn">Partial</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2845</td><td>Sharma Brothers</td><td>20 Mar 2025</td><td>5 items</td><td>₹3,178</td><td>₹572</td><td class="td-bold">₹3,750</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2844</td><td>Patel Hardware</td><td>20 Mar 2025</td><td>2 items</td><td>₹13,220</td><td>₹2,380</td><td class="td-bold">₹15,600</td><td><span class="badge badge-danger">Overdue</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2843</td><td>Gupta & Sons</td><td>19 Mar 2025</td><td>4 items</td><td>₹6,186</td><td>₹1,114</td><td class="td-bold">₹7,300</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2842</td><td>Mehta Pharma</td><td>19 Mar 2025</td><td>7 items</td><td>₹11,017</td><td>₹1,983</td><td class="td-bold">₹13,000</td><td><span class="badge badge-warn">Pending</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">INV-2841</td><td>Agarwal Traders</td><td>18 Mar 2025</td><td>2 items</td><td>₹4,237</td><td>₹763</td><td class="td-bold">₹5,000</td><td><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     4. NEW INVOICE FORM
+════════════════════════════════════════════════════ -->
+<div id="invoice-form" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">← Back to Sales</div>
+    <div class="sidebar-item active" onclick="navigate('invoice-form')" style="cursor:pointer">+ New Invoice</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">New Sales Invoice</div><div class="page-sub">INV-2848 · Draft</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm">Save Draft</button>
+        <button class="btn btn-ghost btn-sm">Preview</button>
+        <button class="btn btn-primary btn-sm">✓ Create Invoice</button>
+      </div>
+    </div>
+    <div class="content" style="overflow-y:auto">
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text)">Invoice Details</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Invoice No.</label><input class="form-input" value="INV-2848" readonly style="opacity:.6"/></div>
+            <div class="form-group"><label class="form-label">Invoice Date</label><input class="form-input" type="date" value="2025-03-21"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" value="2025-04-21"/></div>
+            <div class="form-group"><label class="form-label">Payment Terms</label><select class="form-input"><option>Net 30</option><option>Net 15</option><option>Immediate</option></select></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text)">Customer</div>
+          <div class="form-group"><label class="form-label">Select Customer</label>
+            <div style="display:flex;gap:8px"><input class="form-input" placeholder="Search customer…" style="flex:1"/><button class="btn btn-ghost btn-sm">+ New</button></div>
+          </div>
+          <div style="padding:10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text2)">
+            Select a customer to populate billing address
+          </div>
+        </div>
+      </div>
+      <!-- Line items -->
+      <div class="table-wrap" style="margin-bottom:14px">
+        <div class="table-header"><span class="table-title">Line Items</span><button class="btn btn-primary btn-sm">+ Add Item</button></div>
+        <table>
+          <thead><tr><th>#</th><th>Item / Description</th><th>Qty</th><th>Rate</th><th>Tax %</th><th>Amount</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><input class="form-input" style="width:100%" placeholder="Item name or code…" value="Cotton Shirt (XL)"/></td>
+              <td><input class="form-input" style="width:60px;text-align:center" value="2"/></td>
+              <td><input class="form-input" style="width:90px" value="850"/></td>
+              <td><select class="form-input" style="width:70px"><option>18%</option><option>12%</option><option>5%</option><option>0%</option></select></td>
+              <td class="td-bold">₹1,700</td>
+              <td><button style="background:none;border:none;color:var(--danger);cursor:pointer">×</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><input class="form-input" style="width:100%" value="Denim Jeans (32)"/></td>
+              <td><input class="form-input" style="width:60px;text-align:center" value="1"/></td>
+              <td><input class="form-input" style="width:90px" value="1200"/></td>
+              <td><select class="form-input" style="width:70px"><option>18%</option></select></td>
+              <td class="td-bold">₹1,200</td>
+              <td><button style="background:none;border:none;color:var(--danger);cursor:pointer">×</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Totals -->
+      <div style="display:flex;justify-content:flex-end">
+        <div class="card" style="width:320px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px"><span style="color:var(--text2)">Subtotal</span><span>₹2,900</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px"><span style="color:var(--text2)">CGST (9%)</span><span>₹261</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px"><span style="color:var(--text2)">SGST (9%)</span><span>₹261</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px"><span style="color:var(--text2)">Discount</span><input class="form-input" style="width:90px;text-align:right;padding:4px 8px;font-size:12px" value="0"/></div>
+          <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:15px;font-weight:700"><span>Total</span><span style="color:var(--primary)">₹3,422</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     5. PURCHASE
+════════════════════════════════════════════════════ -->
+<div id="purchase" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('purchase')" style="cursor:pointer">📋 Purchase Register</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">+ New Entry</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">📦 Orders</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">✅ GRN</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">🧾 Bills</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">📜 History</div>
+    <div class="sidebar-item" onclick="navigate('sales')" style="cursor:pointer">↩ Returns</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">📝 Debit Notes</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">💳 Payments Out</div>
+    <div class="sidebar-item" onclick="navigate('purchase')" style="cursor:pointer">⚠️ Payables</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Purchase Register</div><div class="page-sub">68 purchase orders this month · ₹14.2L payable</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">+ New Purchase</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+        <div class="metric-card"><div class="metric-label">Total Purchases</div><div class="metric-value">₹14.2L</div><div class="metric-change" style="color:var(--text2)">68 orders MTD</div></div>
+        <div class="metric-card"><div class="metric-label">Outstanding Payables</div><div class="metric-value">₹4.8L</div><div class="metric-change down">18 bills pending</div></div>
+        <div class="metric-card"><div class="metric-label">GRN Pending</div><div class="metric-value">7</div><div class="metric-change" style="color:var(--warn)">Awaiting receipt</div></div>
+        <div class="metric-card"><div class="metric-label">Suppliers Active</div><div class="metric-value">34</div><div class="metric-change up">↑ 3 new this month</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><span class="table-title">Purchase Orders</span>
+          <div style="display:flex;gap:8px">
+            <div class="search-bar"><span style="color:var(--text3)">🔍</span><input placeholder="Search…" style="width:140px"/></div>
+            <button class="btn btn-ghost btn-sm">Filter</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>PO #</th><th>Supplier</th><th>Date</th><th>Items</th><th>Amount</th><th>GRN</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">PO-1024</td><td>Sunrise Fabrics</td><td>21 Mar 2025</td><td>12 items</td><td class="td-bold">₹48,200</td><td><span class="badge badge-success">Done</span></td><td><span class="badge badge-warn">Partial</span></td><td><span class="badge badge-warn">Open</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">PO-1023</td><td>Metro Electronics</td><td>20 Mar 2025</td><td>4 items</td><td class="td-bold">₹82,500</td><td><span class="badge badge-success">Done</span></td><td><span class="badge badge-success">Paid</span></td><td><span class="badge badge-success">Closed</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">PO-1022</td><td>Raj Polymers Ltd</td><td>19 Mar 2025</td><td>8 items</td><td class="td-bold">₹31,000</td><td><span class="badge badge-cyan">Pending</span></td><td><span class="badge badge-danger">Unpaid</span></td><td><span class="badge badge-danger">Open</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">PO-1021</td><td>Global Supplies Co</td><td>18 Mar 2025</td><td>6 items</td><td class="td-bold">₹24,700</td><td><span class="badge badge-success">Done</span></td><td><span class="badge badge-success">Paid</span></td><td><span class="badge badge-success">Closed</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     6. INVENTORY
+════════════════════════════════════════════════════ -->
+<div id="inventory" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('inventory')" style="cursor:pointer">📦 Items</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">🏷 Categories</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">📅 Batch & Expiry</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">🔢 Barcodes</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">⬆ Bulk Import</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">⬇ Export</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Inventory Manager</div><div class="page-sub">142 active SKUs · ₹41.2L stock value</div></div>
+      <div class="page-actions">
+        <div class="search-bar"><span style="color:var(--text3)">🔍</span><input placeholder="Search items…" style="width:180px"/></div>
+        <button class="btn btn-ghost btn-sm">Filter</button>
+        <button class="btn btn-ghost btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">+ Add Item</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics">
+        <div class="metric-card"><div class="metric-label">Total Items</div><div class="metric-value">142</div><div class="metric-change up">↑ 8 added this month</div></div>
+        <div class="metric-card"><div class="metric-label">Stock Value</div><div class="metric-value">₹41.2L</div><div class="metric-change up">↑ 4% this week</div></div>
+        <div class="metric-card"><div class="metric-label">Low Stock</div><div class="metric-value">3</div><div class="metric-change down">Below reorder level</div></div>
+        <div class="metric-card"><div class="metric-label">Out of Stock</div><div class="metric-value">1</div><div class="metric-change down">Needs replenishment</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">All Items</span>
+          <div style="display:flex;gap:8px">
+            <select style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:var(--sans)"><option>All Categories</option></select>
+            <button class="btn btn-ghost btn-sm">Bulk Update</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th><input type="checkbox" style="accent-color:var(--primary)"/></th><th>Item Name</th><th>SKU / HSN</th><th>Category</th><th>Stock Qty</th><th>Reorder Level</th><th>Cost Price</th><th>Sell Price</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox" style="accent-color:var(--primary)"/></td><td class="td-bold">Cotton Shirt (XL)</td><td style="font-family:var(--mono);font-size:11px">SKU-1024 / 6205</td><td>Clothing</td><td class="td-bold">24</td><td>10</td><td>₹480</td><td>₹850</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><input type="checkbox" style="accent-color:var(--primary)"/></td><td class="td-bold">Denim Jeans (32)</td><td style="font-family:var(--mono);font-size:11px">SKU-1025 / 6203</td><td>Clothing</td><td class="td-bold">12</td><td>8</td><td>₹680</td><td>₹1,200</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><input type="checkbox" style="accent-color:var(--primary)"/></td><td class="td-bold">Sports Shoes (9)</td><td style="font-family:var(--mono);font-size:11px">SKU-1026 / 6402</td><td>Footwear</td><td class="td-bold" style="color:var(--warn)">4</td><td>5</td><td>₹1,400</td><td>₹2,400</td><td><span class="badge badge-warn">Low Stock</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><input type="checkbox" style="accent-color:var(--primary)"/></td><td class="td-bold">Formal Jacket (M)</td><td style="font-family:var(--mono);font-size:11px">SKU-1027 / 6201</td><td>Clothing</td><td class="td-bold" style="color:var(--danger)">0</td><td>3</td><td>₹1,800</td><td>₹3,200</td><td><span class="badge badge-danger">Out of Stock</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><input type="checkbox" style="accent-color:var(--primary)"/></td><td class="td-bold">Handbag (Tan)</td><td style="font-family:var(--mono);font-size:11px">SKU-1028 / 4202</td><td>Accessories</td><td class="td-bold">7</td><td>4</td><td>₹1,000</td><td>₹1,800</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     7. FINANCE
+════════════════════════════════════════════════════ -->
+<div id="finance" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('finance')" style="cursor:pointer">💵 Cash Accounts</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">🏦 Bank Accounts</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">🏮 Petty Cash</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">↔ Transfers</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">🔄 Reconciliation</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">📊 Summary</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">💳 Loans</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">🎯 Goals</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">📄 Bank Statement</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">💬 SMS Tracker</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">📋 GST</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">📓 Journal</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Cash & Bank Position</div><div class="page-sub">Live treasury overview · 3 accounts</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm">↔ Transfer</button>
+        <button class="btn btn-primary btn-sm">+ New Entry</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics">
+        <div class="metric-card"><div class="metric-label">Total Balance</div><div class="metric-value">₹18.4L</div><div class="metric-change up">↑ 6% vs yesterday</div></div>
+        <div class="metric-card"><div class="metric-label">Cash in Hand</div><div class="metric-value">₹1.24L</div><div class="metric-change" style="color:var(--text2)">Today's collection</div></div>
+        <div class="metric-card"><div class="metric-label">Bank Total</div><div class="metric-value">₹17.16L</div><div class="metric-change up">2 active accounts</div></div>
+        <div class="metric-card"><div class="metric-label">Pending Cheques</div><div class="metric-value">₹2.4L</div><div class="metric-change" style="color:var(--warn)">4 cheques clearing</div></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">Bank Accounts</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:12px;font-weight:600">HDFC Bank — Current A/C</div><div style="font-size:11px;color:var(--text3);margin-top:2px">A/C: xxxx 4821 · IFSC: HDFC0001234</div></div>
+                <div style="text-align:right"><div style="font-size:15px;font-weight:700;color:var(--success)">₹12.8L</div><span class="badge badge-success" style="margin-top:4px">Active</span></div>
+              </div>
+            </div>
+            <div style="padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:12px;font-weight:600">SBI — Savings A/C</div><div style="font-size:11px;color:var(--text3);margin-top:2px">A/C: xxxx 7203 · IFSC: SBIN0002847</div></div>
+                <div style="text-align:right"><div style="font-size:15px;font-weight:700;color:var(--cyan)">₹4.36L</div><span class="badge badge-success" style="margin-top:4px">Active</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">Recent Transactions</div>
+          <table style="width:100%">
+            <thead><tr><th style="padding:6px 0">Date</th><th style="padding:6px 0">Description</th><th style="padding:6px 0;text-align:right">Amount</th></tr></thead>
+            <tbody>
+              <tr><td style="padding:7px 0;font-size:11px">21 Mar</td><td style="font-size:12px">INV-2847 Receipt</td><td style="font-size:12px;text-align:right;color:var(--success);font-weight:600">+₹24,500</td></tr>
+              <tr><td style="padding:7px 0;font-size:11px">21 Mar</td><td style="font-size:12px">Supplier Payment PO-1024</td><td style="font-size:12px;text-align:right;color:var(--danger);font-weight:600">–₹18,200</td></tr>
+              <tr><td style="padding:7px 0;font-size:11px">20 Mar</td><td style="font-size:12px">INV-2845 Receipt</td><td style="font-size:12px;text-align:right;color:var(--success);font-weight:600">+₹3,750</td></tr>
+              <tr><td style="padding:7px 0;font-size:11px">20 Mar</td><td style="font-size:12px">Rent Expense</td><td style="font-size:12px;text-align:right;color:var(--danger);font-weight:600">–₹45,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     8. EXPENSES
+════════════════════════════════════════════════════ -->
+<div id="expenses" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('expenses')" style="cursor:pointer">🧾 Tracker</div>
+    <div class="sidebar-item" onclick="navigate('inventory')" style="cursor:pointer">🏷 Categories</div>
+    <div class="sidebar-item" onclick="navigate('expenses')" style="cursor:pointer">🔁 Recurring</div>
+    <div class="sidebar-item" onclick="navigate('reports')" style="cursor:pointer">📊 Reports</div>
+    <div class="sidebar-item" onclick="navigate('expenses')" style="cursor:pointer">🎯 Budget Tracker</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Expense Tracker</div><div class="page-sub">₹2.84L spent · 48 entries this month</div></div>
+      <div class="page-actions"><button class="btn btn-primary btn-sm">+ Add Expense</button></div>
+    </div>
+    <div class="content">
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric-card"><div class="metric-label">Total Expenses MTD</div><div class="metric-value">₹2.84L</div><div class="metric-change down">↑ 8% vs last month</div></div>
+        <div class="metric-card"><div class="metric-label">Largest Category</div><div class="metric-value">Rent</div><div class="metric-change" style="color:var(--text2)">₹45,000 · 15.8%</div></div>
+        <div class="metric-card"><div class="metric-label">Recurring Monthly</div><div class="metric-value">₹68,000</div><div class="metric-change" style="color:var(--text2)">6 active subscriptions</div></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="table-wrap">
+          <div class="table-header"><span class="table-title">Recent Expenses</span><button class="btn btn-ghost btn-sm">View All</button></div>
+          <table>
+            <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+            <tbody>
+              <tr><td>21 Mar</td><td class="td-bold">Office Supplies</td><td><span class="badge badge-primary">Admin</span></td><td class="td-bold">₹3,400</td></tr>
+              <tr><td>20 Mar</td><td class="td-bold">Rent — March</td><td><span class="badge badge-purple">Fixed</span></td><td class="td-bold">₹45,000</td></tr>
+              <tr><td>20 Mar</td><td class="td-bold">Courier Charges</td><td><span class="badge badge-cyan">Logistics</span></td><td class="td-bold">₹1,800</td></tr>
+              <tr><td>19 Mar</td><td class="td-bold">Staff Refreshments</td><td><span class="badge badge-warn">Misc</span></td><td class="td-bold">₹850</td></tr>
+              <tr><td>18 Mar</td><td class="td-bold">Electricity Bill</td><td><span class="badge badge-purple">Utilities</span></td><td class="td-bold">₹8,200</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">By Category</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Rent</span><span style="font-weight:600">₹45,000 · 15.8%</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:15.8%;height:100%;background:var(--primary);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Salaries</span><span style="font-weight:600">₹1.2L · 42.3%</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:42.3%;height:100%;background:var(--success);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Utilities</span><span style="font-weight:600">₹14,200 · 5%</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:5%;height:100%;background:var(--cyan);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Marketing</span><span style="font-weight:600">₹28,000 · 9.8%</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:9.8%;height:100%;background:var(--warn);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Other</span><span style="font-weight:600">₹75,000 · 26.4%</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:26.4%;height:100%;background:var(--text3);border-radius:3px"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     9. CUSTOMERS
+════════════════════════════════════════════════════ -->
+<div id="customers" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('customers')" style="cursor:pointer">👤 Directory</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">📊 Ledger</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">📋 Statements</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">👥 Groups</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">🌟 Loyalty Points</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">⚠️ With Dues</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Customer Directory</div><div class="page-sub">186 customers · 24 with outstanding dues</div></div>
+      <div class="page-actions">
+        <div class="search-bar"><span style="color:var(--text3)">🔍</span><input placeholder="Search customers…" style="width:180px"/></div>
+        <button class="btn btn-ghost btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">+ Add Customer</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric-card"><div class="metric-label">Total Customers</div><div class="metric-value">186</div><div class="metric-change up">↑ 8 new this month</div></div>
+        <div class="metric-card"><div class="metric-label">Total Receivables</div><div class="metric-value">₹3.2L</div><div class="metric-change down">24 overdue</div></div>
+        <div class="metric-card"><div class="metric-label">Top Customer</div><div class="metric-value">Rajan Textiles</div><div class="metric-change up">₹4.8L this year</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Phone</th><th>City</th><th>Total Purchases</th><th>Last Purchase</th><th>Outstanding</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">Rajan Textiles Pvt Ltd</td><td style="font-family:var(--mono);font-size:11px">+91 98765 43210</td><td>Mumbai</td><td class="td-bold">₹4.8L</td><td>Today</td><td style="color:var(--text2)">₹0</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Kumar Electronics</td><td style="font-family:var(--mono);font-size:11px">+91 87654 32109</td><td>Delhi</td><td class="td-bold">₹2.1L</td><td>Today</td><td style="color:var(--warn);font-weight:600">₹8,200</td><td><span class="badge badge-warn">Partial Due</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Sharma Brothers</td><td style="font-family:var(--mono);font-size:11px">+91 76543 21098</td><td>Pune</td><td class="td-bold">₹1.4L</td><td>Yesterday</td><td style="color:var(--text2)">₹0</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Patel Hardware</td><td style="font-family:var(--mono);font-size:11px">+91 65432 10987</td><td>Ahmedabad</td><td class="td-bold">₹3.2L</td><td>Yesterday</td><td style="color:var(--danger);font-weight:600">₹15,600</td><td><span class="badge badge-danger">Overdue</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Gupta & Sons</td><td style="font-family:var(--mono);font-size:11px">+91 54321 09876</td><td>Jaipur</td><td class="td-bold">₹98,400</td><td>2 days ago</td><td style="color:var(--text2)">₹0</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     10. SUPPLIERS
+════════════════════════════════════════════════════ -->
+<div id="suppliers" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('suppliers')" style="cursor:pointer">🏭 Directory</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">📊 Ledger</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">📋 Statements</div>
+    <div class="sidebar-item" onclick="navigate('customers')" style="cursor:pointer">👥 Groups</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Supplier Directory</div><div class="page-sub">34 active suppliers · ₹4.8L payable</div></div>
+      <div class="page-actions">
+        <div class="search-bar"><span style="color:var(--text3)">🔍</span><input placeholder="Search suppliers…" style="width:180px"/></div>
+        <button class="btn btn-primary btn-sm">+ Add Supplier</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Supplier</th><th>Contact</th><th>GSTIN</th><th>Total Purchases</th><th>Outstanding</th><th>Rating</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">Sunrise Fabrics Pvt Ltd</td><td style="font-family:var(--mono);font-size:11px">+91 98765 11111</td><td style="font-family:var(--mono);font-size:10px">27AABCS1234A1Z5</td><td class="td-bold">₹8.4L</td><td style="color:var(--warn);font-weight:600">₹48,200</td><td style="color:var(--warn)">★★★★☆</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Metro Electronics Ltd</td><td style="font-family:var(--mono);font-size:11px">+91 87654 22222</td><td style="font-family:var(--mono);font-size:10px">07BBACS2345B2Z6</td><td class="td-bold">₹12.1L</td><td style="color:var(--text2)">₹0</td><td style="color:var(--success)">★★★★★</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Raj Polymers Ltd</td><td style="font-family:var(--mono);font-size:11px">+91 76543 33333</td><td style="font-family:var(--mono);font-size:10px">24CCBCS3456C3Z7</td><td class="td-bold">₹3.2L</td><td style="color:var(--danger);font-weight:600">₹31,000</td><td style="color:var(--text2)">★★★☆☆</td><td><span class="badge badge-warn">At Risk</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-bold">Global Supplies Co</td><td style="font-family:var(--mono);font-size:11px">+91 65432 44444</td><td style="font-family:var(--mono);font-size:10px">19DDCCS4567D4Z8</td><td class="td-bold">₹5.8L</td><td style="color:var(--text2)">₹0</td><td style="color:var(--success)">★★★★☆</td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     11. HR / PAYROLL
+════════════════════════════════════════════════════ -->
+<div id="hr" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('hr')" style="cursor:pointer">👥 Staff Management</div>
+    <div class="sidebar-item" onclick="navigate('hr')" style="cursor:pointer">💰 Payroll</div>
+    <div class="sidebar-item" onclick="navigate('hr')" style="cursor:pointer">🎁 Allowances</div>
+    <div class="sidebar-item" onclick="navigate('hr')" style="cursor:pointer">📅 Attendance</div>
+    <div class="sidebar-item" onclick="navigate('hr')" style="cursor:pointer">📋 Daily Board</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Staff Management</div><div class="page-sub">12 active employees · March payroll ₹2.4L</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm">Run Payroll</button>
+        <button class="btn btn-primary btn-sm">+ Add Employee</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics">
+        <div class="metric-card"><div class="metric-label">Total Staff</div><div class="metric-value">12</div><div class="metric-change up">↑ 1 joined this month</div></div>
+        <div class="metric-card"><div class="metric-label">Monthly Payroll</div><div class="metric-value">₹2.4L</div><div class="metric-change" style="color:var(--text2)">Due: 31 Mar</div></div>
+        <div class="metric-card"><div class="metric-label">Attendance Today</div><div class="metric-value">10 / 12</div><div class="metric-change down">2 absent</div></div>
+        <div class="metric-card"><div class="metric-label">Pending Leaves</div><div class="metric-value">3</div><div class="metric-change" style="color:var(--warn)">Awaiting approval</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><span class="table-title">Employee Directory</span><button class="btn btn-ghost btn-sm">Mark Attendance</button></div>
+        <table>
+          <thead><tr><th>Employee</th><th>Role</th><th>Department</th><th>Joining Date</th><th>Salary</th><th>Today</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">Amit Sharma</td><td>Store Manager</td><td>Operations</td><td>1 Jan 2023</td><td class="td-bold">₹35,000</td><td><span class="badge badge-success">Present</span></td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Profile</button></td></tr>
+            <tr><td class="td-bold">Priya Patel</td><td>Cashier</td><td>Sales</td><td>15 Mar 2023</td><td class="td-bold">₹18,000</td><td><span class="badge badge-success">Present</span></td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Profile</button></td></tr>
+            <tr><td class="td-bold">Rahul Singh</td><td>Warehouse In-charge</td><td>Inventory</td><td>1 Jun 2022</td><td class="td-bold">₹22,000</td><td><span class="badge badge-danger">Absent</span></td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Profile</button></td></tr>
+            <tr><td class="td-bold">Neha Gupta</td><td>Accountant</td><td>Finance</td><td>1 Apr 2024</td><td class="td-bold">₹28,000</td><td><span class="badge badge-success">Present</span></td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Profile</button></td></tr>
+            <tr><td class="td-bold">Suresh Kumar</td><td>Sales Executive</td><td>Sales</td><td>15 Sep 2023</td><td class="td-bold">₹20,000</td><td><span class="badge badge-warn">Half Day</span></td><td><span class="badge badge-success">Active</span></td><td><button class="btn btn-ghost btn-sm">Profile</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     12. REPORTS
+════════════════════════════════════════════════════ -->
+<div id="reports" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('reports')" style="cursor:pointer">📊 Reports Hub</div>
+    <div class="sidebar-item" onclick="navigate('reports')" style="cursor:pointer">📈 Sales Reports</div>
+    <div class="sidebar-item" onclick="navigate('reports')" style="cursor:pointer">⏰ Hourly Billing</div>
+    <div class="sidebar-item" onclick="navigate('reports')" style="cursor:pointer">💹 Profit Pulse</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Business Reports Hub</div><div class="page-sub">AI-powered insights · March 2025</div></div>
+      <div class="page-actions">
+        <select style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text);font-family:var(--sans)"><option>March 2025</option><option>February 2025</option></select>
+        <button class="btn btn-ghost btn-sm">Export PDF</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="metrics">
+        <div class="metric-card"><div class="metric-label">Gross Revenue</div><div class="metric-value">₹24.7L</div><div class="metric-change up">↑ 18% vs Feb</div></div>
+        <div class="metric-card"><div class="metric-label">Gross Profit</div><div class="metric-value">₹8.2L</div><div class="metric-change up">Margin: 33.2%</div></div>
+        <div class="metric-card"><div class="metric-label">Total Expenses</div><div class="metric-value">₹2.84L</div><div class="metric-change down">↑ 8% vs Feb</div></div>
+        <div class="metric-card"><div class="metric-label">Net Profit</div><div class="metric-value">₹5.36L</div><div class="metric-change up">↑ 24% vs Feb</div></div>
+      </div>
+      <div class="grid-3">
+        <div class="card" style="grid-column:span 2">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Revenue vs Expenses — Daily Trend</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:100px">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:.7;height:45px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.6;height:20px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:.7;height:62px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.6;height:22px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:.7;height:50px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.6;height:18px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:.7;height:78px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.6;height:25px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:.7;height:68px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.6;height:20px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:100%;border-radius:3px 3px 0 0;background:var(--success);opacity:1;height:100px"></div><div style="width:100%;border-radius:3px 3px 0 0;background:var(--danger);opacity:.7;height:30px"></div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:10px">
+            <span style="font-size:11px;display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--success);display:inline-block"></span>Revenue</span>
+            <span style="font-size:11px;display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--danger);display:inline-block"></span>Expenses</span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">Top 5 Products</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Denim Jeans</span><span style="font-weight:600;color:var(--success)">₹2.4L</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Cotton Shirt</span><span style="font-weight:600;color:var(--success)">₹1.8L</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Formal Jacket</span><span style="font-weight:600;color:var(--success)">₹1.4L</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Sports Shoes</span><span style="font-weight:600;color:var(--success)">₹1.1L</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Handbag</span><span style="font-weight:600;color:var(--success)">₹94K</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     13. SETTINGS
+════════════════════════════════════════════════════ -->
+<div id="settings" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sb-icon">B</div> BizzAI ERP</div>
+    <div class="sidebar-item active" onclick="navigate('settings')" style="cursor:pointer">⚙️ General</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🏢 Company</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🎨 Branding</div>
+    <div class="sidebar-item" onclick="navigate('finance')" style="cursor:pointer">💰 Finance</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🔗 Integrations</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">📊 MIS Controls</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🧩 Modules</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🎨 Personalization</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">🔒 Security</div>
+    <div class="sidebar-item" onclick="navigate('settings')" style="cursor:pointer">💳 Subscription</div>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">A</div><div><div class="user-name">Admin User</div><div class="user-role">Owner // Authorized</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Settings</div><div class="page-sub">Neural Retail Co · System Configuration</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm">Reset</button>
+        <button class="btn btn-primary btn-sm">💾 Save Changes</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs">
+        <div class="tab active">General</div>
+        <div class="tab">Company</div>
+        <div class="tab">Branding</div>
+        <div class="tab">Finance</div>
+        <div class="tab">Security</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Business Profile</div>
+          <div class="form-group"><label class="form-label">Business Name</label><input class="form-input" value="Neural Retail Co"/></div>
+          <div class="form-group"><label class="form-label">GSTIN</label><input class="form-input" value="27AABCN1234A1Z5" style="font-family:var(--mono)"/></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Sector</label><select class="form-input"><option>Retail</option><option>Textile</option><option>Pharmacy</option></select></div>
+            <div class="form-group"><label class="form-label">Currency</label><select class="form-input"><option>INR (₹)</option><option>USD ($)</option></select></div>
+          </div>
+          <div class="form-group"><label class="form-label">Address</label><textarea class="form-input" rows="2" style="resize:none">123 Business Park, Mumbai - 400001</textarea></div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Invoice Settings</div>
+          <div class="form-group"><label class="form-label">Invoice Prefix</label><input class="form-input" value="INV-"/></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Default Tax Mode</label><select class="form-input"><option>GST Inclusive</option><option>GST Exclusive</option></select></div>
+            <div class="form-group"><label class="form-label">Default Due Days</label><input class="form-input" value="30" type="number"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Terms & Conditions</label><textarea class="form-input" rows="3" style="resize:none">Goods once sold will not be taken back. Subject to local jurisdiction.</textarea></div>
+          <div style="margin-top:14px;padding:12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;font-weight:500">Enable Digital Signature</span>
+            <div style="width:36px;height:20px;background:var(--primary);border-radius:10px;position:relative;cursor:pointer"><div style="position:absolute;right:2px;top:2px;width:16px;height:16px;background:#fff;border-radius:50%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Map: sidebar item text → screen id
+const NAV_MAP = {
+  '📊 Dashboard': 'dashboard',
+  'Overview': 'dashboard',
+  '📊 Overview': 'dashboard',
+  '🛒 Billing / POS': 'pos',
+  '🛒 POS Terminal': 'pos',
+  'POS Terminal': 'pos',
+  '📋 Orders': 'sales',
+  '📄 Sales': 'sales',
+  '📄 Sales Register': 'sales',
+  'Sales Register': 'sales',
+  '+ New Invoice': 'invoice-form',
+  '📋 Estimates': 'sales',
+  '📦 Orders': 'purchase',
+  '🚚 Purchase': 'purchase',
+  '📋 Purchase Register': 'purchase',
+  'Purchase Register': 'purchase',
+  '+ New Entry': 'purchase',
+  '✅ GRN': 'purchase',
+  '🧾 Bills': 'purchase',
+  '📜 History': 'purchase',
+  '↩ Returns': 'sales',
+  '📝 Debit Notes': 'purchase',
+  '💳 Payments Out': 'purchase',
+  '⚠️ Payables': 'purchase',
+  '📦 Inventory': 'inventory',
+  '📦 Items': 'inventory',
+  '🏷 Categories': 'inventory',
+  '📅 Batch & Expiry': 'inventory',
+  '🔢 Barcodes': 'inventory',
+  '⬆ Bulk Import': 'inventory',
+  '⬇ Export': 'inventory',
+  '🏦 Finance': 'finance',
+  '💵 Cash Accounts': 'finance',
+  '🏦 Bank Accounts': 'finance',
+  '🏮 Petty Cash': 'finance',
+  '↔ Transfers': 'finance',
+  '🔄 Reconciliation': 'finance',
+  '📊 Summary': 'finance',
+  '💳 Loans': 'finance',
+  '🎯 Goals': 'finance',
+  '📄 Bank Statement': 'finance',
+  '💬 SMS Tracker': 'finance',
+  '📋 GST': 'finance',
+  '📓 Journal': 'finance',
+  '💸 Expenses': 'expenses',
+  '🧾 Tracker': 'expenses',
+  '🔁 Recurring': 'expenses',
+  '🎯 Budget Tracker': 'expenses',
+  '👤 Customers': 'customers',
+  '👤 Directory': 'customers',
+  '🌟 Loyalty Points': 'customers',
+  '⚠️ With Dues': 'customers',
+  '🏭 Suppliers': 'suppliers',
+  '🏭 Directory': 'suppliers',
+  '👥 Staff / HR': 'hr',
+  '👥 Staff Management': 'hr',
+  '💰 Payroll': 'hr',
+  '🎁 Allowances': 'hr',
+  '📅 Attendance': 'hr',
+  '📋 Daily Board': 'hr',
+  '📈 Reports': 'reports',
+  '📊 Reports Hub': 'reports',
+  '📈 Sales Reports': 'reports',
+  '⏰ Hourly Billing': 'reports',
+  '💹 Profit Pulse': 'reports',
+  '⚙️ Settings': 'settings',
+  '⚙️ General': 'settings',
+  '🏢 Company': 'settings',
+  '🎨 Branding': 'settings',
+  '💰 Finance': 'settings',
+  '🔗 Integrations': 'settings',
+  '📊 MIS Controls': 'settings',
+  '🧩 Modules': 'settings',
+  '🎨 Personalization': 'settings',
+  '🔒 Security': 'settings',
+  '💳 Subscription': 'settings',
+};
+
+// Top nav id → label map
+const SCREEN_NAV = {
+  'dashboard': 'Dashboard',
+  'pos': 'POS / Billing',
+  'sales': 'Sales',
+  'invoice-form': 'New Invoice',
+  'purchase': 'Purchase',
+  'inventory': 'Inventory',
+  'finance': 'Finance',
+  'expenses': 'Expenses',
+  'customers': 'Customers',
+  'suppliers': 'Suppliers',
+  'hr': 'HR / Payroll',
+  'reports': 'Reports',
+  'settings': 'Settings',
+};
+
+function navigate(screenId) {
+  // Show correct screen
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
+
+  // Sync top nav buttons
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === SCREEN_NAV[screenId]);
+  });
+
+  // Sync all sidebar items across every screen
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    // Get the onclick attr to determine what screen this item targets
+    const handler = el.getAttribute('onclick') || '';
+    const match = handler.match(/navigate\('([^']+)'\)/);
+    const itemTarget = match ? match[1] : null;
+    el.classList.toggle('active', itemTarget === screenId);
+  });
+}
+
+// Wire top nav buttons
+function show(id, btn) { navigate(id); }
+
+// Wire ALL sidebar items on page load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    const txt = el.textContent.trim();
+    if (NAV_MAP[txt]) {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => navigate(NAV_MAP[txt]));
+    }
+  });
+});
+</script>
+</body>
+</html>

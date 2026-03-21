@@ -51,17 +51,17 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
-            <h3 className="text-secondary font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
-                <CreditCard className="w-3.5 h-4 text-secondary/70" /> Settlement
+        <div className="premium-card p-3 sm:p-4 shadow-2xl flex-1 flex flex-col min-h-0 transition-all border-white/10">
+            <h3 className="text-slate-500 font-black uppercase text-[10px] tracking-widest mb-3 flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-indigo-400" /> Settlement
             </h3>
 
             {/* Redemption Section */}
             {activeCustomer.id !== 'c1' && loyaltyConfig && (
-                <div className="mb-4 p-2.5 bg-secondary/5 dark:bg-secondary/10 border border-secondary/20 rounded-lg">
+                <div className="mb-4 p-2.5 bg-indigo-600/5 border border-indigo-500/20 rounded-xl">
                     <div className="flex justify-between items-center mb-1.5">
-                        <span className="text-[10px] font-bold text-secondary uppercase">Loyalty Redemption</span>
-                        <span className="text-[10px] text-neutral-500 dark:text-neutral-400">Bal: <span className="font-bold text-secondary">{activeCustomer.points} pts</span></span>
+                        <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Loyalty Redemption</span>
+                        <span className="text-[10px] text-slate-500">Bal: <span className="font-black text-slate-300">{activeCustomer.points} pts</span></span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             <input
                                 type="number"
                                 placeholder="Points to redeem"
-                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white dark:bg-neutral-900 border border-secondary/30 dark:border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-secondary font-mono"
+                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white/5 border border-white/10 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500/50 font-mono text-slate-200"
                                 min="0"
                                 max={activeCustomer.points}
                                 onChange={(e) => {
@@ -95,15 +95,15 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 }
                                 onSetRedeemedPoints(activeCustomer.points);
                             }}
-                            className="px-2 py-1.5 text-[10px] font-bold bg-secondary text-white rounded hover:bg-secondary/90 transition-colors"
+                            className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white rounded hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20"
                         >
                             MAX
                         </button>
                     </div>
                     {redemptionAmount > 0 && (
                         <div className="mt-1.5 flex justify-between items-center text-[10px]">
-                            <span className="text-success font-bold">Redemption Value:</span>
-                            <span className="text-success font-bold">-₹{(redemptionAmount || 0).toFixed(2)}</span>
+                            <span className="text-emerald-400 font-black uppercase tracking-widest">Redemption Value:</span>
+                            <span className="text-emerald-400 font-black font-mono">-₹{(redemptionAmount || 0).toFixed(2)}</span>
                         </div>
                     )}
                 </div>
@@ -113,13 +113,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
             <div className="space-y-3 mb-4">
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <span className="text-[9px] font-bold text-neutral-400 mb-1 block uppercase">Tax Mode</span>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-700">
+                        <span className="text-[9px] font-black text-slate-500 mb-1 block uppercase tracking-widest">Tax Mode</span>
+                        <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
                             {(['EXCLUSIVE', 'INCLUSIVE'] as TaxMode[]).map(mode => (
                                 <button
                                     key={mode}
                                     onClick={() => onSetTaxMode(mode)}
-                                    className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-secondary text-white shadow' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
+                                    className={`flex-1 text-[10px] py-1.5 rounded-lg font-black uppercase tracking-widest transition-all ${taxMode === mode ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                                 >
                                     {mode === 'EXCLUSIVE' ? '+ Tax' : 'Incl.'}
                                 </button>
@@ -127,19 +127,19 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                         </div>
                     </div>
                     <div>
-                        <span className="text-[9px] font-bold text-neutral-400 mb-1 block uppercase">Payment</span>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-700">
+                        <span className="text-[9px] font-black text-slate-500 mb-1 block uppercase tracking-widest">Payment</span>
+                        <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button
                                     key={method}
                                     onClick={() => onSetPaymentMethod(method)}
-                                    className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-success text-white shadow font-bold' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
+                                    className={`flex-1 py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-emerald-600 text-white shadow-lg font-black' : 'text-slate-500 hover:text-slate-300'}`}
                                     title={method}
                                 >
                                     {method === 'CASH' && <Banknote className="w-4 h-4" />}
                                     {method === 'CARD' && <Smartphone className="w-4 h-4" />}
                                     {method === 'UPI' && <Smartphone className="w-4 h-4" />}
-                                    <span className="text-[9px] uppercase leading-none">{method}</span>
+                                    <span className="text-[9px] uppercase font-black leading-none">{method}</span>
                                 </button>
                             ))}
                         </div>
@@ -150,19 +150,19 @@ export const POSFooter: React.FC<POSFooterProps> = ({
 
 
             <div className="mt-auto space-y-1.5">
-                <div className="flex justify-between items-center text-xs border-t border-neutral-200 dark:border-neutral-700 pt-2">
-                    <span className="text-neutral-500 dark:text-neutral-400 font-medium">Subtotal</span>
-                    <span className="text-neutral-800 dark:text-neutral-200 font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
+                <div className="flex justify-between items-center text-xs border-t border-white/10 pt-3">
+                    <span className="text-slate-500 font-black uppercase tracking-widest">Subtotal</span>
+                    <span className="text-slate-300 font-black font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-neutral-500 dark:text-neutral-400 font-medium">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
-                    <span className="text-secondary font-mono">₹{(taxAmount || 0).toFixed(2)}</span>
+                    <span className="text-slate-500 font-black uppercase tracking-widest">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
+                    <span className="text-indigo-400 font-black font-mono">₹{(taxAmount || 0).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-end pt-1">
-                    <span className="text-neutral-700 dark:text-neutral-300 font-bold text-sm">
-                        {isRefund ? 'Refund Amount' : 'Total Payable'}
+                <div className="flex justify-between items-end pt-2">
+                    <span className="text-slate-400 font-black uppercase text-[10px] tracking-widest mb-1">
+                        {isRefund ? 'Refund' : 'Payable'}
                     </span>
-                    <span className={`font-bold text-2xl font-mono tracking-tight ${isRefund ? 'text-error' : 'text-success'}`}>
+                    <span className={`font-black text-3xl font-mono tracking-tighter ${isRefund ? 'text-rose-400' : 'text-emerald-400'}`}>
                         ₹{Math.abs(finalTotal || 0).toFixed(2)}
                     </span>
                 </div>
@@ -170,19 +170,20 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <button
                     onClick={onCheckout}
                     disabled={isEmpty || isProcessing}
-                    className="relative w-full py-3 bg-primary hover:bg-primary/90 disabled:bg-neutral-200 dark:disabled:bg-neutral-800 disabled:border disabled:border-neutral-300 dark:disabled:border-neutral-700 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 mt-2 text-base group"
+                    className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20 mt-3 text-lg group overflow-hidden"
                     title="Shortcut: Ctrl + Space"
                 >
+                    <div className="absolute inset-0 bg-white/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                     {isProcessing ? (
                         <>
                             <Loader2 className="w-6 h-6 animate-spin" />
-                            Processing...
+                            Processing
                         </>
                     ) : (
                         <>
-                            <Check className="w-6 h-6" />
+                            <PackageCheck className="w-6 h-6" />
                             Finalize Bill
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/20 px-2 py-1 rounded">Ctrl+Space</span>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/40 px-2 py-1 rounded-lg border border-white/10 font-mono tracking-tighter">Ctrl+Space</span>
                         </>
                     )}
                 </button>

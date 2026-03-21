@@ -1,12 +1,19 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { DollarSign, FileText, Calendar, TrendingUp, LayoutDashboard, PieChart, Target, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { 
+  Plus, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Receipt, 
+  TrendingUp, 
+  CreditCard,
+  MoreVertical
+} from 'lucide-react';
 import { useExpenses } from "@/features/expense-tracking/lib/useExpenses";
 import { useExpenseCategories } from "@/features/expense-tracking/lib/useExpenseCategories";
 import Layout from "@/shared/ui/Layout";
 
 const ExpenseDashboardPage = () => {
-    const { user } = useSelector((state) => state.auth);
     const { expenses, loading } = useExpenses();
     const { categories } = useExpenseCategories();
 
@@ -34,16 +41,17 @@ const ExpenseDashboardPage = () => {
         const monthChange = lastMonthTotal > 0 ? ((thisMonthTotal - lastMonthTotal) / lastMonthTotal * 100).toFixed(1) : 0;
 
         // Category breakdown
-        const byCategory = {};
+        const byCategory: Record<string, number> = {};
         expenses.forEach(e => {
             if (!byCategory[e.category]) byCategory[e.category] = 0;
             byCategory[e.category] += Number(e.amount || 0);
         });
 
         const categoryBreakdown = Object.entries(byCategory)
-            .map(([name, amount]) => ({ name, amount }))
-            .sort((a, b) => b.amount - a.amount)
-            .slice(0, 5);
+            .map(([name, amount]) => ({ name, amount, percentage: total > 0 ? (amount / total * 100).toFixed(1) : 0 }))
+            .sort((a, b) => b.amount - a.amount);
+
+        const largestCategory = categoryBreakdown[0] || { name: 'None', amount: 0, percentage: 0 };
 
         return {
             total,
@@ -53,138 +61,170 @@ const ExpenseDashboardPage = () => {
             lastMonthTotal,
             monthChange,
             categoryBreakdown,
-            avgPerEntry: count > 0 ? Math.round(total / count) : 0
+            largestCategory
         };
     }, [expenses]);
 
+    const formatCurrency = (val: number) => {
+        if (val >= 100000) return `₹${(val / 100000).toFixed(2)}L`;
+        return `₹${val.toLocaleString()}`;
+    };
+
+    const getCategoryColor = (cat: string) => {
+        const colors: Record<string, string> = {
+            'Rent': '#6366f1',
+            'Salaries': '#22c55e',
+            'Utilities': '#3b82f6',
+            'Marketing': '#f59e0b',
+            'Admin': '#8b5cf6',
+            'Fixed': '#ec4899',
+            'Logistics': '#06b6d4',
+            'Misc': '#64748b'
+        };
+        return colors[cat] || '#8b5cf6';
+    };
+
     return (
         <Layout>
-            <div className="p-6 space-y-6">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl shadow-lg shadow-violet-500/20">
-                        <LayoutDashboard className="w-6 h-6 text-white" />
-                    </div>
+            <div className="premium-bg min-h-screen text-white p-6 sm:p-8 space-y-8 font-sans">
+                
+                {/* Header Section */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h1 className="text-2xl font-black text-neutral-900 dark:text-white tracking-tight">
-                            Expense Dashboard
-                        </h1>
-                        <p className="text-sm text-neutral-500">Overview of your expense analytics</p>
+                        <h1 className="text-4xl font-extrabold tracking-tight mb-1 opacity-95">Expense Tracker</h1>
+                        <p className="text-sm font-medium text-white/40 flex items-center gap-2">
+                            {formatCurrency(stats.thisMonthTotal)} spent • {stats.thisMonthCount} entries this month
+                        </p>
                     </div>
+                    <button className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-lg shadow-lg active:scale-95 transition-all">
+                        <Plus size={16} />
+                        Add Expense
+                    </button>
                 </div>
 
                 {loading ? (
-                    <div className="p-12 text-center text-neutral-400">Loading dashboard...</div>
+                    <div className="p-12 text-center text-white/20 font-bold uppercase tracking-[0.2em]">Loading Analytics...</div>
                 ) : (
                     <>
-                        {/* Main Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total Lifetime</p>
-                                        <h3 className="text-2xl font-black text-neutral-900 dark:text-white">₹{stats.total.toLocaleString()}</h3>
-                                    </div>
-                                    <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-600 dark:text-red-400">
-                                        <DollarSign className="w-6 h-6" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">This Month</p>
-                                        <h3 className="text-2xl font-black text-neutral-900 dark:text-white">₹{stats.thisMonthTotal.toLocaleString()}</h3>
-                                        <div className={`flex items-center gap-1 mt-1 text-xs font-bold ${Number(stats.monthChange) > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
-                                            {Number(stats.monthChange) > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                            {Math.abs(stats.monthChange)}% vs last month
-                                        </div>
-                                    </div>
-                                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
-                                        <Calendar className="w-6 h-6" />
+                        {/* Top Metric Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                            {/* Total Expenses MTD */}
+                            <div className="premium-card p-6 flex flex-col justify-between">
+                                <span className="premium-stat-label mb-6 block">Total Expenses MTD</span>
+                                <div>
+                                    <div className="premium-stat-value mb-1">{formatCurrency(stats.thisMonthTotal)}</div>
+                                    <div className={`text-[10px] font-bold flex items-center gap-1 uppercase tracking-wider ${Number(stats.monthChange) > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                                        {Number(stats.monthChange) > 0 ? <ArrowUpRight size={10} strokeWidth={3} /> : <ArrowDownRight size={10} strokeWidth={3} />}
+                                        {Math.abs(Number(stats.monthChange))}% vs last month
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total Entries</p>
-                                        <h3 className="text-2xl font-black text-neutral-900 dark:text-white">{stats.count}</h3>
-                                    </div>
-                                    <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
-                                        <FileText className="w-6 h-6" />
+                            {/* Largest Category */}
+                            <div className="premium-card p-6 flex flex-col justify-between">
+                                <span className="premium-stat-label mb-6 block">Largest Category</span>
+                                <div>
+                                    <div className="premium-stat-value mb-1">{stats.largestCategory.name}</div>
+                                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                                        ₹{Number(stats.largestCategory.amount).toLocaleString()} • {stats.largestCategory.percentage}%
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Average / Entry</p>
-                                        <h3 className="text-2xl font-black text-neutral-900 dark:text-white">₹{stats.avgPerEntry.toLocaleString()}</h3>
-                                    </div>
-                                    <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600 dark:text-amber-400">
-                                        <TrendingUp className="w-6 h-6" />
+                            {/* Recurring Monthly */}
+                            <div className="premium-card p-6 flex flex-col justify-between">
+                                <span className="premium-stat-label mb-6 block">Recurring Monthly</span>
+                                <div>
+                                    <div className="premium-stat-value mb-1">₹68,000</div>
+                                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                                        6 active subscriptions
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Secondary Stats */}
+                        {/* Middle Section: Recent Expenses and By Category */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Category Breakdown */}
-                            <div className="lg:col-span-2 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm p-6">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <PieChart className="w-5 h-5 text-violet-500" />
-                                    <h3 className="font-black text-neutral-900 dark:text-white">Top Categories</h3>
+                            {/* Recent Expenses Table */}
+                            <div className="lg:col-span-2 premium-card p-0 overflow-hidden">
+                                <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+                                    <h3 className="text-lg font-bold tracking-tight">Recent Expenses</h3>
+                                    <button className="text-[10px] font-bold text-white/40 hover:text-white transition-colors px-3 py-1 bg-white/5 rounded border border-white/5 uppercase tracking-widest">
+                                        View All
+                                    </button>
                                 </div>
-                                <div className="space-y-4">
-                                    {stats.categoryBreakdown.map((cat, idx) => (
-                                        <div key={cat.name} className="flex items-center gap-4">
-                                            <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 font-bold text-sm">
-                                                {idx + 1}
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] bg-white/[0.02]">
+                                            <tr>
+                                                <th className="px-6 py-4">Date</th>
+                                                <th className="px-6 py-4">Description</th>
+                                                <th className="px-6 py-4">Category</th>
+                                                <th className="px-6 py-4 text-right">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5 text-[11px] font-bold">
+                                            {expenses.slice(0, 5).map((exp, idx) => (
+                                                <tr key={idx} className="hover:bg-white/[0.01] transition-colors group">
+                                                    <td className="px-6 py-4 text-white/40 whitespace-nowrap">
+                                                        {new Date(exp.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-white/90 truncate max-w-[150px]">
+                                                        {exp.description || 'General Expense'}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span 
+                                                            className="premium-badge border"
+                                                            style={{ 
+                                                                backgroundColor: `${getCategoryColor(exp.category)}15`,
+                                                                borderColor: `${getCategoryColor(exp.category)}30`,
+                                                                color: getCategoryColor(exp.category)
+                                                            }}
+                                                        >
+                                                            {exp.category?.toUpperCase()}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right text-white tracking-tight">
+                                                        ₹{Number(exp.amount).toLocaleString()}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {expenses.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={4} className="px-6 py-12 text-center text-white/10 italic">No recent entries</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* By Category Progress Chart */}
+                            <div className="premium-card p-6 flex flex-col">
+                                <h3 className="text-lg font-bold mb-8 tracking-tight">By Category</h3>
+                                <div className="space-y-6 flex-1">
+                                    {stats.categoryBreakdown.slice(0, 5).map((cat, idx) => (
+                                        <div key={idx} className="space-y-2">
+                                            <div className="flex justify-between items-end">
+                                                <span className="text-xs font-bold text-white/70">{cat.name}</span>
+                                                <span className="text-[10px] font-black text-white/40 tracking-wider">
+                                                    ₹{Number(cat.amount).toLocaleString()} • {cat.percentage}%
+                                                </span>
                                             </div>
-                                            <div className="flex-1">
-                                                <div className="flex justify-between mb-1">
-                                                    <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{cat.name}</span>
-                                                    <span className="text-sm font-bold text-neutral-900 dark:text-white">₹{cat.amount.toLocaleString()}</span>
-                                                </div>
-                                                <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                                                    <div
-                                                        className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full"
-                                                        style={{ width: `${Math.min((cat.amount / stats.total) * 100, 100)}%` }}
-                                                    />
-                                                </div>
+                                            <div className="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                                                <div 
+                                                    className="h-full rounded-full transition-all duration-1000"
+                                                    style={{ 
+                                                        width: `${cat.percentage}%`,
+                                                        backgroundColor: getCategoryColor(cat.name)
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                     ))}
                                     {stats.categoryBreakdown.length === 0 && (
-                                        <p className="text-neutral-400 text-sm text-center py-4">No category data available</p>
+                                        <div className="flex-1 flex items-center justify-center text-white/10 italic">No data</div>
                                     )}
-                                </div>
-                            </div>
-
-                            {/* Quick Stats */}
-                            <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl shadow-xl shadow-violet-500/20 p-6 text-white">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <Target className="w-5 h-5" />
-                                    <h3 className="font-black">Budget Overview</h3>
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="p-4 bg-white/10 rounded-xl">
-                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Active Categories</p>
-                                        <p className="text-2xl font-black">{categories.length}</p>
-                                    </div>
-                                    <div className="p-4 bg-white/10 rounded-xl">
-                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Monthly Target</p>
-                                        <p className="text-2xl font-black">₹{categories.reduce((sum, c) => sum + (c.monthly_budget || 0), 0).toLocaleString()}</p>
-                                    </div>
-                                    <div className="p-4 bg-white/10 rounded-xl">
-                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Last Month Total</p>
-                                        <p className="text-2xl font-black">₹{stats.lastMonthTotal.toLocaleString()}</p>
-                                    </div>
                                 </div>
                             </div>
                         </div>

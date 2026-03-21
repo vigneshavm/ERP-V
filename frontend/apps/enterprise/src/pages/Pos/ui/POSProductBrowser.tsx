@@ -15,37 +15,37 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
         <button
             onClick={() => onAddToCart(product)}
             disabled={product.stockQty <= 0}
-            className={`text-left group relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl border transition-all duration-200 ${product.stockQty <= 0
-                ? 'opacity-50 border-neutral-200 dark:border-neutral-700 cursor-not-allowed'
-                : 'border-neutral-200 dark:border-neutral-700 hover:border-primary dark:hover:border-primary hover:shadow-md'
+            className={`text-left group relative flex flex-col premium-card transition-all duration-300 ${product.stockQty <= 0
+                ? 'opacity-40 grayscale cursor-not-allowed'
+                : 'hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(79,70,229,0.1)]'
                 }`}
         >
-            <div className="h-28 w-full bg-neutral-100 dark:bg-neutral-700/50 rounded-t-xl overflow-hidden relative">
+            <div className="h-28 w-full bg-white/5 rounded-t-xl overflow-hidden relative">
                 {product.image ? (
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
+                    <div className="w-full h-full flex items-center justify-center text-slate-700 group-hover:text-slate-500 transition-colors">
                         <Package className="w-8 h-8" />
                     </div>
                 )}
-                <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold ${product.stockQty > 10 ? 'bg-success/10 text-success' :
-                    product.stockQty > 0 ? 'bg-warning/10 text-warning' : 'bg-error/10 text-error'
+                <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${product.stockQty > 10 ? 'bg-emerald-500/20 text-emerald-400' :
+                    product.stockQty > 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-rose-500/20 text-rose-400'
                     }`}>
                     {product.stockQty} {product.unit === 'Meter' ? 'm' : ''}
                 </div>
             </div>
 
             <div className="p-3 flex flex-col flex-1">
-                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-1 mb-0.5">{product.name}</h3>
-                {product.nameTamil && <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-1 mb-1">{product.nameTamil}</p>}
+                <h3 className="font-black text-slate-300 text-xs uppercase tracking-tight line-clamp-1 mb-0.5">{product.name}</h3>
+                {product.nameTamil && <p className="text-[10px] text-slate-500 line-clamp-1 mb-1">{product.nameTamil}</p>}
                 <div className="mt-auto flex justify-between items-end">
-                    <span className="text-xs text-neutral-500 font-mono">{product.sku}</span>
-                    <span className="font-bold text-primary">₹{product.sellingPrice}</span>
+                    <span className="text-[10px] text-slate-600 font-mono tracking-tighter">{product.sku}</span>
+                    <span className="font-black text-indigo-400">₹{product.sellingPrice}</span>
                 </div>
             </div>
 
-            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                {product.stockQty > 0 && <div className="bg-primary text-white p-2 rounded-full shadow-lg"><Check className="w-5 h-5" /></div>}
+            <div className="absolute inset-0 bg-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                {product.stockQty > 0 && <div className="bg-indigo-600 text-white p-2 rounded-full shadow-lg shadow-indigo-600/30"><Check className="w-5 h-5" /></div>}
             </div>
         </button>
     );
@@ -174,24 +174,24 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
     }, []);
 
     return (
-        <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 relative">
+        <div className="flex flex-col h-full premium-bg border-r border-white/10 relative">
             {/* Search & Filter Header */}
-            <div className="p-4 space-y-4 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+            <div className="p-4 space-y-4 bg-white/5 border-b border-white/10">
                 {/* Search Bar */}
                 <div className="relative flex gap-2">
                     <div className="relative flex-1">
-                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-primary' : 'text-neutral-400'}`} />
+                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-indigo-400' : 'text-slate-500'}`} />
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder={isManualMode ? "Manual Mode: Type Name or Pattern..." : "Scan Barcode (or Ctrl+F)"}
-                            className={`w-full pl-10 pr-14 py-2 bg-neutral-100 dark:bg-neutral-700 border rounded-lg text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 focus:ring-2 focus:ring-primary transition-all font-medium ${isManualMode ? 'border-primary/50 bg-primary/5' : 'border-none'}`}
+                            className={`w-full pl-10 pr-14 py-2 premium-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm uppercase tracking-tight ${isManualMode ? 'bg-indigo-600/10 text-indigo-400' : ''}`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleScanKeyDown}
                             autoFocus
                         />
-                        <kbd className="absolute right-2 top-2 text-[9px] bg-neutral-200 dark:bg-neutral-600 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-500 font-mono">Ctrl+F</kbd>
+                        <kbd className="absolute right-2 top-2 text-[8px] bg-white/5 px-1 py-0.5 rounded text-slate-500 border border-white/10 font-mono font-black uppercase tracking-tighter">Ctrl+F</kbd>
                     </div>
                     <button
                         onClick={() => {
@@ -200,9 +200,9 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                                 setTimeout(() => searchInputRef.current?.focus(), 100);
                             }
                         }}
-                        className={`p-2 rounded-lg border transition-all ${isManualMode
-                            ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
-                            : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                        className={`p-2 rounded-xl border transition-all ${isManualMode
+                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-600/30'
+                            : 'premium-card text-slate-500 hover:text-slate-300 hover:border-indigo-500/50'
                             }`}
                         title="Manual Lookup Mode (F2)"
                     >
@@ -220,9 +220,9 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                                 setSelectedCategory(cat);
                                 setSelectedSubcategory('All');
                             }}
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat
-                                ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${selectedCategory === cat
+                                ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/30'
+                                : 'premium-card text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             {cat}
@@ -263,7 +263,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                     {filteredProducts.length > pageSize && (
                         <button
                             onClick={() => setPageSize(prev => prev + 20)}
-                            className="col-span-full py-4 text-primary font-bold hover:bg-primary/5 dark:hover:bg-neutral-700 rounded-xl transition-colors border-2 border-dashed border-neutral-200 dark:border-neutral-700"
+                            className="col-span-full py-4 text-indigo-400 font-black uppercase text-[10px] tracking-widest hover:bg-white/5 premium-card transition-all border-dashed border-white/20"
                         >
                             Load More (+20)
                         </button>

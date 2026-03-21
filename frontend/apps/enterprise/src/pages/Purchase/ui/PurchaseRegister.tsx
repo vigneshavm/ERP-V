@@ -239,20 +239,35 @@ const PurchaseRegister: React.FC = () => {
         switch (s) {
             case 'APPROVED':
             case 'COMPLETED':
-                return <span className="px-2 py-1 bg-success/10 text-success text-xs font-bold rounded-full flex items-center gap-1"><CheckCircle className="w-3 h-3" /> {status === 'COMPLETED' ? 'Completed' : 'Approved'}</span>;
+            case 'PAID':
+                return (
+                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
+                        <CheckCircle className="w-3 h-3" /> {status}
+                    </span>
+                );
             case 'PENDING':
             case 'PENDING APPROVAL':
             case 'DRAFT':
-                return <span className="px-2 py-1 bg-warning/10 text-warning text-xs font-bold rounded-full flex items-center gap-1"><Clock className="w-3 h-3" /> {s === 'DRAFT' ? 'Draft' : 'Pending'}</span>;
+                return (
+                    <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
+                        <Clock className="w-3 h-3" /> {status}
+                    </span>
+                );
             case 'REJECTED':
             case 'CANCELLED':
-                return <span className="px-2 py-1 bg-error/10 text-error text-xs font-bold rounded-full flex items-center gap-1"><XCircle className="w-3 h-3" /> {status}</span>;
-            case 'PAID':
-                return <span className="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Paid</span>;
+                return (
+                    <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
+                        <XCircle className="w-3 h-3" /> {status}
+                    </span>
+                );
             case 'BILLED':
-                return <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-bold rounded-full flex items-center gap-1"><FileText className="w-3 h-3" /> Billed</span>;
+                return (
+                    <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
+                        <FileText className="w-3 h-3" /> Billed
+                    </span>
+                );
             default:
-                return <span className="px-2 py-1 bg-neutral-100 text-neutral-600 text-xs font-bold rounded-full">{status}</span>;
+                return <span className="px-2 py-0.5 bg-white/5 text-slate-500 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-full w-fit mx-auto">{status}</span>;
         }
     };
 
@@ -307,34 +322,34 @@ const PurchaseRegister: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col">
+            <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col premium-bg min-h-screen px-4 pt-6">
                 <PageHeader
                     title="Purchase Register"
                     description="Comprehensive record and audit trail of all purchases"
                     actions={
                         <div className="flex gap-2">
-                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700">
+                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="px-3 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 text-slate-400 transition-all">
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />
                             </button>
-                            <button onClick={handleExportCSV} className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
-                                <FileSpreadsheet className="w-4 h-4 text-green-600" /> Excel
+                            <button onClick={handleExportCSV} className="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 hover:bg-white/10 flex items-center gap-2 transition-all">
+                                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" /> Excel
                             </button>
-                            <button onClick={handleExportPDF} className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-red-600" /> PDF
+                            <button onClick={handleExportPDF} className="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 hover:bg-white/10 flex items-center gap-2 transition-all">
+                                <FileText className="w-3.5 h-3.5 text-rose-400" /> PDF
                             </button>
                             <select
                                 value={viewMode}
                                 onChange={(e) => setViewMode(e.target.value as any)}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 outline-none focus:ring-2 focus:ring-primary/20"
+                                className="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 hover:bg-white/10 outline-none focus:ring-1 focus:ring-indigo-500/50 appearance-none min-w-[140px] text-center transition-all cursor-pointer"
                             >
                                 <option value="ALL">All Orders</option>
-                                <option value="BILLED">Billed / Completed</option>
-                                <option value="UNBILLED">Unbilled / Pending</option>
+                                <option value="BILLED">Billed</option>
+                                <option value="UNBILLED">Unbilled</option>
                                 <option value="DRAFT">Drafts</option>
                             </select>
                             <button
                                 onClick={() => navigate('PURCHASE_ENTRY')}
-                                className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition-all"
                             >
                                 <Plus className="w-4 h-4" /> New Purchase
                             </button>
@@ -344,57 +359,73 @@ const PurchaseRegister: React.FC = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatsCard
-                        title="Total Value"
-                        value={`₹${totalPurchasesValue.toLocaleString()}`}
-                        icon={<TrendingUp />}
-                        iconBgColor="bg-primary/10"
-                        iconColor="text-primary"
-                    />
-                    <StatsCard
-                        title="Total Billed"
-                        value={`₹${totalBilledValue.toLocaleString()}`}
-                        icon={<CheckSquare />}
-                        iconBgColor="bg-emerald-100 dark:bg-emerald-900/30"
-                        iconColor="text-emerald-600 dark:text-emerald-400"
-                    />
-                    <StatsCard
-                        title="Transactions"
-                        value={filteredOrders.length}
-                        icon={<FileText />}
-                        iconBgColor="bg-neutral-100 dark:bg-neutral-700"
-                        iconColor="text-neutral-600 dark:text-neutral-300"
-                    />
-                    <StatsCard
-                        title="Pending"
-                        value={pendingCount}
-                        icon={<Clock />}
-                        iconBgColor="bg-warning/10"
-                        iconColor="text-warning"
-                    />
+                    <div className="premium-card p-4 shadow-xl border border-white/5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <TrendingUp className="w-12 h-12 text-indigo-400" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Value</p>
+                        <p className="text-2xl font-black text-slate-200 font-mono">₹{totalPurchasesValue.toLocaleString()}</p>
+                    </div>
 
+                    <div className="premium-card p-4 shadow-xl border border-white/5 relative overflow-hidden group text-right">
+                        <div className="absolute top-0 left-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <CheckSquare className="w-12 h-12 text-emerald-400" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Billed</p>
+                        <p className="text-2xl font-black text-emerald-400 font-mono text-white/90">₹{totalBilledValue.toLocaleString()}</p>
+                    </div>
+
+                    <div className="premium-card p-4 shadow-xl border border-white/5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <FileText className="w-12 h-12 text-indigo-400" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Transactions</p>
+                        <p className="text-2xl font-black text-slate-200 font-mono">{filteredOrders.length}</p>
+                    </div>
+
+                    <div className="premium-card p-4 shadow-xl border border-white/5 relative overflow-hidden group text-right">
+                        <div className="absolute top-0 left-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Clock className="w-12 h-12 text-amber-400" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Pending</p>
+                        <p className="text-2xl font-black text-amber-400 font-mono text-white/90">{pendingCount}</p>
+                    </div>
                 </div>
 
                 {/* Advanced Filters */}
-                <div className="bg-card rounded-xl border border-default p-4 flex flex-col gap-4">
+                <div className="premium-card p-4 shadow-xl border border-white/5">
                     <div className="flex flex-wrap gap-4 items-end">
                         <div className="flex-1 min-w-[200px]">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
-                            <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted" />
-                                <input type="text" placeholder="Search PO #..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-input border border-default rounded-lg text-sm text-main placeholder-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">Search Procurement</label>
+                            <div className="relative group">
+                                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                                <input 
+                                    type="text" 
+                                    placeholder="Search PO # or Vendor..." 
+                                    value={searchTerm} 
+                                    onChange={e => setSearchTerm(e.target.value)} 
+                                    className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-medium text-slate-200 placeholder:text-slate-600 focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all" 
+                                />
                             </div>
                         </div>
                         <div className="w-48">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Vendor</label>
-                            <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">Vendor</label>
+                            <select 
+                                value={vendorFilter} 
+                                onChange={e => setVendorFilter(e.target.value)} 
+                                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black uppercase tracking-tight text-slate-300 focus:ring-1 focus:ring-indigo-500/50 outline-none cursor-pointer appearance-none transition-all"
+                            >
                                 <option value="ALL">All Vendors</option>
                                 {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
                             </select>
                         </div>
                         <div className="w-40">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">Status</label>
-                            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">Status</label>
+                            <select 
+                                value={statusFilter} 
+                                onChange={e => setStatusFilter(e.target.value)} 
+                                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black uppercase tracking-tight text-slate-300 focus:ring-1 focus:ring-indigo-500/50 outline-none cursor-pointer appearance-none transition-all"
+                            >
                                 <option value="ALL">All Status</option>
                                 <option value="COMPLETED">Completed</option>
                                 <option value="Approved">Approved</option>
@@ -403,66 +434,74 @@ const PurchaseRegister: React.FC = () => {
                                 <option value="CANCELLED">Cancelled</option>
                             </select>
                         </div>
-                        <div className="w-36">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">From</label>
-                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
-                        </div>
-                        <div className="w-36">
-                            <label className="text-xs font-bold text-muted uppercase mb-1 block">To</label>
-                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
+                        <div className="flex gap-2">
+                            <div className="w-36">
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">From</label>
+                                <input 
+                                    type="date" 
+                                    value={dateFrom} 
+                                    onChange={e => setDateFrom(e.target.value)} 
+                                    className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs font-black text-slate-300 focus:ring-1 focus:ring-indigo-500/50 outline-none invert dark:invert-0 brightness-200 dark:brightness-100" 
+                                />
+                            </div>
+                            <div className="w-36">
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">To</label>
+                                <input 
+                                    type="date" 
+                                    value={dateTo} 
+                                    onChange={e => setDateTo(e.target.value)} 
+                                    className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs font-black text-slate-300 focus:ring-1 focus:ring-indigo-500/50 outline-none invert dark:invert-0 brightness-200 dark:brightness-100" 
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Table */}
-                <div className="bg-card rounded-xl border border-default flex-1 flex flex-col overflow-hidden">
+                <div className="premium-card shadow-2xl border border-white/5 flex-1 flex flex-col overflow-hidden">
                     <div className="flex-1 overflow-auto custom-scrollbar">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-surface text-muted uppercase text-xs font-medium sticky top-0 z-10">
+                        <table className="w-full text-left text-sm border-separate border-spacing-0">
+                            <thead className="bg-white/5 backdrop-blur-md sticky top-0 z-10">
                                 <tr>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('number')}>
-                                        <div className="flex items-center gap-2">
-                                            Number #
-                                            {sortColumn === 'number' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'number' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                    <th className="px-6 py-4 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('number')}>
+                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                            PO Number
+                                            {sortColumn === 'number' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
+                                            {sortColumn !== 'number' && <ArrowUpDown className="w-3 h-3 text-slate-700" />}
                                         </div>
                                     </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('date')}>
-                                        <div className="flex items-center gap-2">
+                                    <th className="px-6 py-4 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('date')}>
+                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                             Date
-                                            {sortColumn === 'date' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'date' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                            {sortColumn === 'date' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
+                                            {sortColumn !== 'date' && <ArrowUpDown className="w-3 h-3 text-slate-700" />}
                                         </div>
                                     </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" onClick={() => handleSort('vendor')}>
-                                        <div className="flex items-center gap-2">
-                                            Vendor
-                                            {sortColumn === 'vendor' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'vendor' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                    <th className="px-6 py-4 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('vendor')}>
+                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                            Vendor / Supplier
+                                            {sortColumn === 'vendor' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
+                                            {sortColumn !== 'vendor' && <ArrowUpDown className="w-3 h-3 text-slate-700" />}
                                         </div>
                                     </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center" onClick={() => handleSort('items')}>
-                                        <div className="flex items-center justify-center gap-2">
-                                            Items
-                                            {sortColumn === 'items' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'items' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                    <th className="px-6 py-4 cursor-pointer hover:bg-white/5 transition-colors text-center" onClick={() => handleSort('items')}>
+                                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                            SKUs
+                                            {sortColumn === 'items' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
+                                            {sortColumn !== 'items' && <ArrowUpDown className="w-3 h-3 text-slate-700" />}
                                         </div>
                                     </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-right" onClick={() => handleSort('amount')}>
-                                        <div className="flex items-center justify-end gap-2">
-                                            Amount
-                                            {sortColumn === 'amount' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'amount' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
+                                    <th className="px-6 py-4 cursor-pointer hover:bg-white/5 transition-colors text-right" onClick={() => handleSort('amount')}>
+                                        <div className="flex items-center justify-end gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                            Net Amount
+                                            {sortColumn === 'amount' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
+                                            {sortColumn !== 'amount' && <ArrowUpDown className="w-3 h-3 text-slate-700" />}
                                         </div>
                                     </th>
-                                    <th className="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-center" onClick={() => handleSort('status')}>
-                                        <div className="flex items-center justify-center gap-2">
-                                            Status
-                                            {sortColumn === 'status' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-primary" /> : <ArrowDown className="w-3 h-3 text-primary" />)}
-                                            {sortColumn !== 'status' && <ArrowUpDown className="w-3 h-3 text-neutral-300" />}
-                                        </div>
+                                    <th className="px-6 py-4 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                        Status
                                     </th>
-                                    <th className="p-4 text-center">Action</th>
+                                    <th className="px-6 py-4 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
@@ -478,30 +517,38 @@ const PurchaseRegister: React.FC = () => {
                                         }
 
                                         return (
-                                            <tr key={order._id || order.id} className="hover:bg-surface transition-colors">
-                                                <td className="p-4 font-mono text-xs text-primary font-bold">
-                                                    #{order.purchaseNumber || order.po_number || 'N/A'}
+                                            <tr key={order._id || order.id} className="hover:bg-white/5 transition-colors group">
+                                                <td className="px-6 py-4">
+                                                    <span className="font-mono text-[11px] font-black text-indigo-400 uppercase tracking-tighter">
+                                                        #{order.purchaseNumber || order.po_number || 'N/A'}
+                                                    </span>
                                                 </td>
-                                                <td className="p-4 text-secondary">
+                                                <td className="px-6 py-4">
                                                     <div className="flex flex-col">
-                                                        <span className="font-medium text-main">
-                                                            {new Date(order.date || order.po_date).toLocaleDateString()}
+                                                        <span className="text-[11px] font-black text-slate-300 uppercase tracking-tight">
+                                                            {new Date(order.date || order.po_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </span>
-                                                        <span className="text-xs text-muted">
+                                                        <span className="text-[9px] text-slate-600 font-mono">
                                                             {new Date((order as any).createdAt || (order as any).created_at || order.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 font-medium text-main">
-                                                    {vName}
+                                                <td className="px-6 py-4">
+                                                    <span className="text-[11px] font-black text-slate-200 uppercase tracking-tight line-clamp-1">
+                                                        {vName}
+                                                    </span>
                                                 </td>
-                                                <td className="p-4 text-center text-secondary">{order.items.length}</td>
-                                                <td className="p-4 text-right font-bold text-main">
-                                                    ₹{(order.totalAmount || order.total_amount || 0).toLocaleString()}
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className="text-[11px] font-black text-slate-400 font-mono">{order.items.length}</span>
                                                 </td>
-                                                <td className="p-4 text-center">{getStatusBadge(order.status)}</td>
-                                                <td className="p-4 text-center">
-                                                    <button onClick={() => handleView(order)} className="p-2 hover:bg-surface rounded-lg text-primary transition-colors">
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="text-[11px] font-black text-slate-200 font-mono">
+                                                        ₹{(order.totalAmount || order.total_amount || 0).toLocaleString()}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-center">{getStatusBadge(order.status)}</td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <button onClick={() => handleView(order)} className="p-2 hover:bg-indigo-500/10 rounded-lg text-slate-500 hover:text-indigo-400 transition-all">
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                 </td>
@@ -514,24 +561,26 @@ const PurchaseRegister: React.FC = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="p-4 border-t border-default flex items-center justify-between bg-surface">
-                        <div className="text-xs text-muted">
-                            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, displayOrders.length)} of {displayOrders.length} entries
+                    <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-white/5 backdrop-blur-md">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                            Showing {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, displayOrders.length)} <span className="text-slate-700">/</span> {displayOrders.length} records
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
+                                className="p-2 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-20 text-slate-400 transition-all"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <span className="text-sm font-medium px-2 text-main">Page {currentPage} of {totalPages || 1}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest px-4 text-slate-300">
+                                Page {currentPage} <span className="text-slate-600">OF</span> {totalPages || 1}
+                            </span>
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2 border border-default rounded-lg hover:bg-card disabled:opacity-50 text-main"
+                                className="p-2 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-20 text-slate-400 transition-all"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>

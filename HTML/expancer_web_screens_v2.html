@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expancer — Desktop Screen Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:#000000;
+  --card:rgba(18,18,22,0.82);
+  --card-border:rgba(255,255,255,0.09);
+  --surface:rgba(255,255,255,0.05);
+  --surface2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.09);
+  --text:#FFFFFF;
+  --text2:#A0A0A8;
+  --text3:rgba(255,255,255,0.3);
+  --green:#2ECC71;
+  --green-rgb:46,204,113;
+  --green-dim:rgba(46,204,113,0.12);
+  --green-border:rgba(46,204,113,0.25);
+  --red:#FF453A;
+  --red-rgb:255,69,58;
+  --amber:#F1C40F;
+  --amber-rgb:241,196,15;
+  --blue:#3498DB;
+  --blue-rgb:52,152,219;
+  --purple:#9B59B6;
+  --outfit:'Outfit',sans-serif;
+  --inter:'Inter',sans-serif;
+}
+
+body {
+  background:#050507;
+  font-family:var(--inter);
+  color:var(--text);
+  padding:48px 32px 96px;
+}
+
+/* ── Doc header ── */
+.doc-header {
+  text-align:center;
+  margin-bottom:72px;
+}
+.doc-header h1 {
+  font-family:var(--outfit);
+  font-size:52px;
+  font-weight:900;
+  letter-spacing:-2px;
+  background:linear-gradient(135deg,#2ECC71,#27AE60 60%,#1a8a42);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.doc-header p {
+  color:var(--text2);
+  font-size:14px;
+  margin-top:10px;
+  letter-spacing:0.4px;
+}
+
+/* ── Screen stack ── */
+.screens { display:flex; flex-direction:column; gap:64px; max-width:1400px; margin:0 auto; }
+
+.screen-block { display:flex; flex-direction:column; gap:16px; }
+.screen-tag {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-left:4px;
+}
+.screen-tag .code {
+  font-family:var(--outfit);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--green);
+  background:var(--green-dim);
+  padding:4px 10px;
+  border-radius:6px;
+  border:1px solid var(--green-border);
+}
+.screen-tag .name {
+  font-family:var(--outfit);
+  font-size:18px;
+  font-weight:700;
+  color:var(--text);
+}
+
+/* ── Browser chrome ── */
+.browser {
+  width:100%;
+  background:#0d0d10;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.1);
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.browser-bar {
+  height:40px;
+  background:#1a1a1e;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:12px;
+}
+.browser-dots { display:flex; gap:6px; }
+.browser-dot { width:12px; height:12px; border-radius:50%; }
+.browser-dot:nth-child(1){background:#FF5F57;}
+.browser-dot:nth-child(2){background:#FFBD2E;}
+.browser-dot:nth-child(3){background:#28C840;}
+.browser-url {
+  flex:1;
+  height:24px;
+  background:rgba(255,255,255,0.06);
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  padding:0 12px;
+  gap:6px;
+  max-width:380px;
+  margin:0 auto;
+}
+.browser-url span { font-size:11px; color:var(--text3); }
+.browser-url .lock { font-size:10px; }
+
+/* ── App shell ── */
+.app-shell {
+  display:flex;
+  height:680px;
+  background:radial-gradient(ellipse at 20% 0%,rgba(46,204,113,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 100%,rgba(46,204,113,0.04) 0%,transparent 50%),
+             #000000;
+  padding:16px;
+  gap:16px;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width:260px;
+  flex-shrink:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:18px;
+  backdrop-filter:blur(12px);
+  padding:20px 16px;
+  gap:0;
+}
+.sidebar-logo {
+  font-family:var(--outfit);
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:1px;
+  color:var(--green);
+  padding-bottom:28px;
+  text-align:center;
+}
+.sidebar-nav { display:flex; flex-direction:column; gap:4px; flex:1; }
+.nav-item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:500;
+  color:var(--text2);
+  border:1px solid transparent;
+  min-height:44px;
+}
+.nav-item .icon {
+  width:20px;
+  height:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.nav-item.active {
+  background:var(--green-dim);
+  color:var(--green);
+  border-color:var(--green-border);
+  font-weight:600;
+}
+.sidebar-add {
+  margin-top:16px;
+  background:var(--green);
+  color:#000;
+  font-family:var(--outfit);
+  font-size:14px;
+  font-weight:700;
+  padding:14px 16px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* ── Main panel ── */
+.main-panel {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:22px;
+  backdrop-filter:blur(12px);
+  min-width:0;
+}
+.app-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.page-title {
+  font-family:var(--outfit);
+  font-size:20px;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.3px;
+}
+.header-actions { display:flex; gap:6px; align-items:center; }
+.ha-btn {
+  width:36px;height:36px;
+  border-radius:10px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  color:var(--text2);
+}
+.ha-btn.active { color:var(--green); background:var(--green-dim); }
+.content-area {
+  flex:1;
+  overflow:hidden;
+  padding:24px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+/* ── Shared content primitives ── */
+.card {
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+}
+.card.accent-green { border-color:var(--green-border); background:rgba(46,204,113,0.05); }
+.card.accent-red   { border-color:rgba(255,69,58,0.2); background:rgba(255,69,58,0.04); }
+.card.accent-amber { border-color:rgba(241,196,15,0.2); background:rgba(241,196,15,0.04); }
+.card.accent-blue  { border-color:rgba(52,152,219,0.2); background:rgba(52,152,219,0.04); }
+
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.grid4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; }
+.gridA { display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; }
+.gridB { display:grid; grid-template-columns:1fr 1.5fr; gap:16px; align-items:start; }
+
+.row { display:flex; justify-content:space-between; align-items:center; }
+.col { display:flex; flex-direction:column; }
+
+.label {
+  font-size:11px;
+  font-weight:600;
+  color:var(--text2);
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  margin-bottom:4px;
+}
+.value {
+  font-family:var(--outfit);
+  font-weight:700;
+  color:var(--text);
+  line-height:1.1;
+}
+.v-xs { font-size:13px; }
+.v-sm { font-size:16px; }
+.v-md { font-size:22px; }
+.v-lg { font-size:30px; letter-spacing:-1px; }
+.v-xl { font-size:38px; letter-spacing:-1.5px; }
+.v-green { color:var(--green) !important; }
+.v-red   { color:var(--red) !important; }
+.v-amber { color:var(--amber) !important; }
+.v-blue  { color:var(--blue) !important; }
+
+.badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11px; font-weight:700;
+  padding:3px 9px; border-radius:6px;
+}
+.badge-green { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+.badge-red   { background:rgba(255,69,58,0.12); color:var(--red); border:1px solid rgba(255,69,58,0.25); }
+.badge-amber { background:rgba(241,196,15,0.12); color:var(--amber); border:1px solid rgba(241,196,15,0.2); }
+.badge-blue  { background:rgba(52,152,219,0.12); color:var(--blue); border:1px solid rgba(52,152,219,0.2); }
+.badge-ghost { background:var(--surface2); color:var(--text2); border:1px solid var(--border); }
+
+.section-title {
+  font-family:var(--outfit);
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:10px;
+}
+
+.progress-bar {
+  width:100%;height:6px;
+  background:var(--surface2);
+  border-radius:3px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; border-radius:3px;
+  background:var(--green);
+}
+
+.divider { width:100%; height:1px; background:var(--border); }
+
+/* tx row */
+.tx-row {
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.tx-row:last-child{border-bottom:none;}
+.tx-icon {
+  width:38px;height:38px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.tx-info{flex:1;}
+.tx-name{font-size:13px;font-weight:600;color:var(--text);}
+.tx-cat{font-size:11px;color:var(--text2);margin-top:2px;}
+.tx-amt{font-family:var(--outfit);font-size:14px;font-weight:700;}
+
+/* setting row */
+.set-row{
+  display:flex;align-items:center;gap:14px;
+  padding:11px 0;border-bottom:1px solid var(--border);
+}
+.set-row:last-child{border-bottom:none;}
+.set-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.set-name{font-size:13px;font-weight:600;color:var(--text);}
+.set-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.chev{color:var(--text3);font-size:12px;margin-left:auto;}
+
+/* notif row */
+.notif-row{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.notif-row:last-child{border-bottom:none;}
+.notif-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.notif-title{font-size:13px;font-weight:600;color:var(--text);}
+.notif-body{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5;}
+.notif-time{font-size:10px;color:var(--text3);white-space:nowrap;margin-left:auto;}
+
+/* goal card */
+.goal-item{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:16px;padding:16px;
+  margin-bottom:10px;
+}
+
+/* bar chart */
+.barchart{
+  display:flex;align-items:flex-end;gap:8px;
+  height:100px;width:100%;
+}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar-fill{
+  width:100%;border-radius:6px 6px 0 0;
+  background:rgba(46,204,113,0.2);
+  border:1px solid rgba(46,204,113,0.3);
+}
+.bar-fill.cur{background:var(--green);border-color:var(--green);}
+.bar-lbl{font-size:10px;color:var(--text2);font-weight:600;}
+
+/* mini pill tabs */
+.tabs{display:flex;gap:6px;margin-bottom:14px;}
+.tab{
+  font-size:12px;font-weight:600;
+  padding:6px 14px;border-radius:10px;
+  background:var(--surface2);color:var(--text2);
+  border:1px solid var(--border);
+}
+.tab.active{background:var(--green-dim);color:var(--green);border-color:var(--green-border);}
+
+/* stat mini card */
+.stat-mini{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:14px;padding:14px;
+}
+
+/* heatmap */
+.heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;}
+.hm-col{display:flex;flex-direction:column;gap:3px;}
+.hm-cell{width:100%;aspect-ratio:1;border-radius:3px;}
+
+/* budget cat row */
+.bcat{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.bcat:last-child{border-bottom:none;}
+.bcat-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.bcat-info{flex:1;}
+.bcat-name{font-size:13px;font-weight:600;margin-bottom:5px;}
+.bcat-nums{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--text2);
+}
+
+/* cc card visual */
+.cc-card{
+  background:linear-gradient(135deg,#1a1f71,#2d3580);
+  border-radius:16px;padding:18px;
+  position:relative;overflow:hidden;
+}
+.cc-card::before{
+  content:'';position:absolute;
+  right:-20px;top:-20px;
+  width:100px;height:100px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.06);
+}
+
+/* calendar cell */
+.cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.cal-cell{
+  aspect-ratio:1;border-radius:8px;
+  background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--text2);font-weight:500;
+}
+.cal-cell.has-tx{background:rgba(46,204,113,0.15);color:var(--green);font-weight:700;}
+.cal-cell.today{background:var(--green);color:#000;font-weight:800;}
+.cal-cell.high{background:rgba(46,204,113,0.35);color:var(--green);}
+.cal-cell.dim{opacity:0.3;}
+
+/* chart svg area */
+.chart-area{width:100%;height:110px;}
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>Expancer</h1>
+  <p>Personal Finance App — Desktop Web View · 1280px · Dark Theme · All 12 Pages</p>
+</div>
+
+<div class="screens">
+
+<!-- ═══════════════════════════════════════════ P01 DASHBOARD ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P01</span><span class="name">Dashboard</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/home</span></div>
+    </div>
+    <div class="app-shell">
+      <!-- sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item active"><div class="icon">⊞</div>Dashboard</div>
+          <div class="nav-item"><div class="icon">🥧</div>Budget</div>
+          <div class="nav-item"><div class="icon">📋</div>Transactions</div>
+          <div class="nav-item"><div class="icon">💰</div>Income</div>
+          <div class="nav-item"><div class="icon">📊</div>Statistics</div>
+          <div class="nav-item"><div class="icon">🎯</div>Goals</div>
+          <div class="nav-item"><div class="icon">📅</div>Calendar</div>
+          <div class="nav-item"><div class="icon">💳</div>Cards</div>
+          <div class="nav-item"><div class="icon">🔔</div>Notifications</div>
+          <div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <!-- main -->
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Dashboard</span>
+          <div class="header-actions">
+            <div class="ha-btn">🎤</div><div class="ha-btn">📷</div><div class="ha-btn">🔍</div>
+            <div class="ha-btn">🌙</div><div class="ha-btn active">🔔</div><div class="ha-btn">⚙️</div>
+          </div>
+        </div>
+        <div class="content-area" style="overflow:hidden;gap:10px;">
+          <!-- Customization toolbar (matches DashboardView render exactly) -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;gap:12px;flex-shrink:0;">
+            <button style="padding:10px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;cursor:pointer;">
+              🛍 Widget Store
+            </button>
+            <button style="padding:10px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;cursor:pointer;">
+              ⚙ Customize Dashboard
+            </button>
+          </div>
+          <!-- dashboard-widgets-grid: 1-col mobile, 2-col tablet, 3-col desktop -->
+          <!-- Default enabled: total-wealth, predictive-alert, sms-helper, bank-statement, monthly-summary, receipt-ocr -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;flex:1;min-height:0;overflow:hidden;">
+            <!-- total-wealth widget -->
+            <div class="card" style="display:flex;flex-direction:column;justify-content:center;min-height:100px;">
+              <div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px;">Total Wealth</div>
+              <div class="value v-xl v-amber">₹2,34,891</div>
+            </div>
+            <!-- predictive-alert widget (PredictiveAlert component) -->
+            <div class="card" style="background:rgba(241,196,15,0.06);border-color:rgba(241,196,15,0.2);min-height:100px;">
+              <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;">Budget Forecast</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Food overspend likely</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5;">At current rate, you'll exceed by ₹800 by month end.</div>
+              <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" style="width:103%;background:var(--red);"></div></div>
+            </div>
+            <!-- sms-helper widget (glass-card banner style) -->
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;min-height:88px;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="width:38px;height:38px;border-radius:10px;background:rgba(46,204,113,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📱</div>
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:var(--text);">SMS Helper</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px;">3 new spends detected</div>
+                </div>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--green);">View →</div>
+            </div>
+            <!-- bank-statement widget -->
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;min-height:88px;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="width:38px;height:38px;border-radius:10px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📄</div>
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:var(--text);">Bank Statement</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px;">Upload PDF to auto-import</div>
+                </div>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--blue);">Upload →</div>
+            </div>
+            <!-- monthly-summary widget (widget-span-full → spans all 3 cols) -->
+            <div class="card" style="grid-column:1 / -1;border:2px solid var(--green);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                <div>
+                  <div style="font-size:16px;font-weight:800;color:var(--text);">Current Month</div>
+                  <div style="display:inline-block;background:var(--green);color:#000;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:800;margin-top:4px;">₹60,000</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:11px;color:var(--text2);font-weight:600;">Spent</div>
+                  <div style="font-size:15px;font-weight:800;color:var(--red);">₹51,240</div>
+                </div>
+                <div class="badge badge-green" style="font-size:11px;padding:4px 10px;">Current</div>
+              </div>
+              <div class="progress-bar" style="height:8px;"><div class="progress-fill" style="width:85%;"></div></div>
+            </div>
+            <!-- receipt-ocr widget -->
+            <div class="card" style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;min-height:88px;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📷</div>
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:var(--text);">Receipt Scanner</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px;">Scan receipts to add transactions instantly</div>
+                </div>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--green);">Scan →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P02 TRANSACTIONS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P02</span><span class="name">Transactions</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/expenses</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div>
+          <div class="nav-item active"><div class="icon">📋</div>Transactions</div>
+          <div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Transactions</span>
+          <div class="header-actions"><div class="ha-btn">🔍</div><div class="ha-btn">↧</div><div class="ha-btn">⚙️</div></div>
+        </div>
+        <div class="content-area">
+          <!-- ExpensesView: view-content-wrapper → responsive-grid (2fr 1fr) -->
+          <!-- Left: ExpenseBreakdown from @repo/mfe-budget-planner -->
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;flex:1;min-height:0;overflow:hidden;">
+            <!-- ExpenseBreakdown component (pie + bar chart of expense history) -->
+            <div class="card" style="display:flex;flex-direction:column;gap:16px;overflow:hidden;">
+              <div style="font-size:16px;font-weight:700;">Expense Breakdown</div>
+              <!-- Bar chart (monthly) -->
+              <div class="barchart" style="height:120px;">
+                <div class="bar-col"><div class="bar-fill" style="height:45%;"></div><div class="bar-lbl">Oct</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:60%;"></div><div class="bar-lbl">Nov</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:88%;background:rgba(255,69,58,0.2);border-color:rgba(255,69,58,0.3);"></div><div class="bar-lbl">Dec</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:50%;"></div><div class="bar-lbl">Jan</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:66%;"></div><div class="bar-lbl">Feb</div></div>
+                <div class="bar-col"><div class="bar-fill cur" style="height:85%;"></div><div class="bar-lbl" style="color:var(--green);">Mar</div></div>
+              </div>
+              <div class="divider"></div>
+              <!-- Category totals table from historyData -->
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--red);"></div><span style="font-size:13px;font-weight:600;">Food</span></div><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:65%;background:var(--red);"></div></div><span class="value v-xs v-red">₹12,400</span></div></div>
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--purple);"></div><span style="font-size:13px;font-weight:600;">Shopping</span></div><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:52%;background:var(--purple);"></div></div><span class="value v-xs">₹9,800</span></div></div>
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--blue);"></div><span style="font-size:13px;font-weight:600;">Transport</span></div><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:36%;background:var(--blue);"></div></div><span class="value v-xs">₹6,800</span></div></div>
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--green);"></div><span style="font-size:13px;font-weight:600;">Health</span></div><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:17%;"></div></div><span class="value v-xs">₹3,200</span></div></div>
+              </div>
+              <div style="font-size:12px;color:var(--text2);text-align:right;">Total: <strong style="color:var(--text);">₹51,240</strong></div>
+            </div>
+            <!-- CategoryList: category-list-container -->
+            <div class="card" style="overflow:hidden;">
+              <div style="font-size:16px;font-weight:600;margin-bottom:16px;">Top Categories</div>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+                  <div style="width:36px;height:36px;border-radius:11px;background:rgba(255,69,58,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🍕</div>
+                  <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Food</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">24 transactions</div></div>
+                  <div class="value v-xs v-red">₹12,400</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+                  <div style="width:36px;height:36px;border-radius:11px;background:rgba(155,89,182,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛍️</div>
+                  <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Shopping</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">9 transactions</div></div>
+                  <div class="value v-xs">₹9,800</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+                  <div style="width:36px;height:36px;border-radius:11px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🚗</div>
+                  <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Transport</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">18 transactions</div></div>
+                  <div class="value v-xs">₹6,800</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+                  <div style="width:36px;height:36px;border-radius:11px;background:rgba(46,204,113,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">❤️</div>
+                  <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Health</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">4 transactions</div></div>
+                  <div class="value v-xs">₹3,200</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+                  <div style="width:36px;height:36px;border-radius:11px;background:rgba(241,196,15,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">⚡</div>
+                  <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Utilities</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">3 transactions</div></div>
+                  <div class="value v-xs">₹5,200</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P03 BUDGET ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P03</span><span class="name">Budget</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/budgets</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div>
+          <div class="nav-item active"><div class="icon">🥧</div>Budget</div>
+          <div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Budget · March 2025</span>
+          <div class="header-actions">
+            <div class="ha-btn">‹</div><div class="ha-btn">›</div>
+            <div class="badge badge-green" style="margin-left:8px;">+ Add Category</div>
+          </div>
+        </div>
+        <div class="content-area">
+          <!-- summary -->
+          <div class="grid3" style="flex-shrink:0;">
+            <div class="card accent-green"><div class="label">Total Budget</div><div class="value v-lg">₹60,000</div></div>
+            <div class="card accent-amber"><div class="label">Actual Spent</div><div class="value v-lg v-amber">₹51,240</div></div>
+            <div class="card accent-green"><div class="label">Remaining</div><div class="value v-lg v-green">₹8,760</div></div>
+          </div>
+          <!-- categories + mini bar chart -->
+          <div class="gridB" style="flex:1;min-height:0;">
+            <!-- category rows -->
+            <div class="card">
+              <div class="row" style="margin-bottom:14px;"><div class="section-title" style="margin:0;">Categories</div><span style="font-size:11px;color:var(--text2);">4 budgeted · 2 over</span></div>
+              <div class="bcat"><div class="bcat-icon" style="background:rgba(255,69,58,0.1);">🍕</div><div class="bcat-info"><div class="row"><div class="bcat-name">Food</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-family:var(--outfit);font-size:13px;font-weight:700;color:var(--red);">₹12,400</span><span style="font-size:11px;color:var(--text2);">/ ₹12,000</span><span class="badge badge-red">Over ₹400</span></div></div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:103%;background:var(--red);"></div></div></div></div>
+              <div class="bcat"><div class="bcat-icon" style="background:rgba(52,152,219,0.1);">🚗</div><div class="bcat-info"><div class="row"><div class="bcat-name">Transport</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-family:var(--outfit);font-size:13px;font-weight:700;color:var(--amber);">₹6,800</span><span style="font-size:11px;color:var(--text2);">/ ₹8,000</span><span class="badge badge-amber">85%</span></div></div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:85%;background:var(--amber);"></div></div></div></div>
+              <div class="bcat"><div class="bcat-icon" style="background:rgba(155,89,182,0.1);">🛍️</div><div class="bcat-info"><div class="row"><div class="bcat-name">Shopping</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-family:var(--outfit);font-size:13px;font-weight:700;">₹9,800</span><span style="font-size:11px;color:var(--text2);">/ ₹15,000</span><span class="badge badge-ghost">65%</span></div></div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:65%;"></div></div></div></div>
+              <div class="bcat"><div class="bcat-icon" style="background:rgba(46,204,113,0.1);">❤️</div><div class="bcat-info"><div class="row"><div class="bcat-name">Health</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-family:var(--outfit);font-size:13px;font-weight:700;">₹3,200</span><span style="font-size:11px;color:var(--text2);">/ ₹10,000</span><span class="badge badge-green">32%</span></div></div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:32%;"></div></div></div></div>
+              <div class="bcat"><div class="bcat-icon" style="background:rgba(52,152,219,0.1);">⚡</div><div class="bcat-info"><div class="row"><div class="bcat-name">Utilities</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-family:var(--outfit);font-size:13px;font-weight:700;">₹5,200</span><span style="font-size:11px;color:var(--text2);">/ ₹6,000</span><span class="badge badge-amber">87%</span></div></div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:87%;background:var(--amber);"></div></div></div></div>
+            </div>
+            <!-- right: carryover + unbudgeted -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card">
+                <div class="section-title">Month-over-month</div>
+                <div class="barchart" style="height:90px;">
+                  <div class="bar-col"><div class="bar-fill" style="height:50%;"></div><div class="bar-lbl">Oct</div></div>
+                  <div class="bar-col"><div class="bar-fill" style="height:65%;"></div><div class="bar-lbl">Nov</div></div>
+                  <div class="bar-col"><div class="bar-fill" style="height:90%;background:rgba(255,69,58,0.2);border-color:rgba(255,69,58,0.3);"></div><div class="bar-lbl">Dec</div></div>
+                  <div class="bar-col"><div class="bar-fill" style="height:55%;"></div><div class="bar-lbl">Jan</div></div>
+                  <div class="bar-col"><div class="bar-fill" style="height:70%;"></div><div class="bar-lbl">Feb</div></div>
+                  <div class="bar-col"><div class="bar-fill cur" style="height:85%;"></div><div class="bar-lbl" style="color:var(--green);">Mar</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="section-title">Unbudgeted Spend</div>
+                <div class="tx-row" style="padding:8px 0;"><div class="tx-icon" style="background:rgba(155,89,182,0.1);">🎵</div><div class="tx-info"><div class="tx-name">Spotify</div><div class="tx-cat">Entertainment</div></div><div class="tx-amt v-red">−₹149</div></div>
+                <div class="tx-row" style="padding:8px 0;"><div class="tx-icon" style="background:rgba(52,152,219,0.1);">📰</div><div class="tx-info"><div class="tx-name">Economic Times</div><div class="tx-cat">Subscriptions</div></div><div class="tx-amt v-red">−₹799</div></div>
+                <div class="row" style="margin-top:8px;"><span style="font-size:12px;color:var(--text2);">Total unbudgeted</span><span class="value v-sm v-red">₹14,040</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P04 GOALS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P04</span><span class="name">Goals</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/goals</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div>
+          <div class="nav-item active"><div class="icon">🎯</div>Goals</div>
+          <div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Goals</span>
+          <div class="header-actions"><div class="badge badge-green" style="padding:8px 14px;">+ New Goal</div></div>
+        </div>
+        <div class="content-area">
+          <!-- summary hero -->
+          <div class="card accent-green" style="flex-shrink:0;">
+            <div class="row">
+              <div><div class="label">Total Saved</div><div class="value v-xl v-green">₹1,84,200</div></div>
+              <div style="text-align:right;"><div class="label">Target</div><div class="value v-xl" style="color:var(--text2);">₹3,00,000</div></div>
+              <div class="badge badge-green" style="font-size:13px;padding:8px 14px;">+61% progress</div>
+            </div>
+            <div class="progress-bar" style="margin-top:14px;height:8px;"><div class="progress-fill" style="width:61%;"></div></div>
+          </div>
+          <!-- goals grid -->
+          <div class="grid3" style="flex:1;min-height:0;overflow:hidden;">
+            <!-- goal 1 -->
+            <div class="card">
+              <div class="row" style="margin-bottom:14px;">
+                <div style="width:44px;height:44px;border-radius:13px;background:rgba(52,152,219,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;">✈️</div>
+                <div style="text-align:right;"><div class="value v-sm v-blue">72%</div><div style="font-size:11px;color:var(--text2);">₹2,00,000 target</div></div>
+              </div>
+              <div class="value v-sm" style="margin-bottom:4px;">Europe Trip</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Target: Dec 2025 · 9 months left</div>
+              <div style="font-family:var(--outfit);font-size:22px;font-weight:800;margin-bottom:2px;">₹1,44,000</div>
+              <div style="font-size:12px;color:var(--text2);">₹55,800 more to goal</div>
+              <div class="progress-bar" style="margin-top:12px;height:6px;"><div class="progress-fill" style="width:72%;background:var(--blue);"></div></div>
+            </div>
+            <!-- goal 2 -->
+            <div class="card">
+              <div class="row" style="margin-bottom:14px;">
+                <div style="width:44px;height:44px;border-radius:13px;background:rgba(241,196,15,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;">🏠</div>
+                <div style="text-align:right;"><div class="value v-sm v-amber">28%</div><div style="font-size:11px;color:var(--text2);">₹10,00,000 target</div></div>
+              </div>
+              <div class="value v-sm" style="margin-bottom:4px;">Home Down Payment</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Target: Jun 2027 · 27 months left</div>
+              <div style="font-family:var(--outfit);font-size:22px;font-weight:800;margin-bottom:2px;">₹2,80,000</div>
+              <div style="font-size:12px;color:var(--text2);">₹7,20,000 more to goal</div>
+              <div class="progress-bar" style="margin-top:12px;height:6px;"><div class="progress-fill" style="width:28%;background:var(--amber);"></div></div>
+            </div>
+            <!-- goal 3 (nudge) -->
+            <div class="card" style="border-color:var(--green-border);background:rgba(46,204,113,0.05);">
+              <div class="badge badge-green" style="margin-bottom:12px;">Almost there! ₹500 to go</div>
+              <div class="row" style="margin-bottom:14px;">
+                <div style="width:44px;height:44px;border-radius:13px;background:rgba(46,204,113,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;">🚨</div>
+                <div style="text-align:right;"><div class="value v-sm v-green">97%</div><div style="font-size:11px;color:var(--text2);">₹50,000 target</div></div>
+              </div>
+              <div class="value v-sm" style="margin-bottom:4px;">Emergency Fund</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Ongoing · No deadline</div>
+              <div style="font-family:var(--outfit);font-size:22px;font-weight:800;color:var(--green);margin-bottom:2px;">₹48,500</div>
+              <div class="progress-bar" style="margin-top:12px;height:8px;"><div class="progress-fill" style="width:97%;box-shadow:0 0 10px rgba(46,204,113,0.4);"></div></div>
+              <button style="width:100%;margin-top:14px;padding:10px;background:var(--green);color:#000;border:none;border-radius:12px;font-family:var(--outfit);font-size:13px;font-weight:700;cursor:pointer;">+ Add ₹500 to complete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P05 INCOME ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P05</span><span class="name">Income & Assets</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/income</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div>
+          <div class="nav-item active"><div class="icon">💰</div>Income</div>
+          <div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header"><span class="page-title">Income & Assets</span><div class="header-actions"><div class="ha-btn">🔍</div><div class="ha-btn">⚙️</div></div></div>
+        <div class="content-area">
+          <!-- summary -->
+          <div class="card accent-green" style="flex-shrink:0;">
+            <div class="row">
+              <div><div class="label">Monthly Income</div><div class="value v-xl v-green">+₹82,500</div></div>
+              <div><div class="label">vs Last Month</div><div class="value v-md v-green">↑ +₹3,200</div><div style="font-size:11px;color:var(--text2);">+4.1%</div></div>
+              <div><div class="label">Annual Projected</div><div class="value v-md">₹9,90,000</div></div>
+              <div><div class="label">Savings Rate</div><div class="value v-md v-green">38%</div></div>
+            </div>
+            <!-- sparkline -->
+            <svg viewBox="0 0 580 40" style="width:100%;height:40px;margin-top:12px;"><path d="M0,32 Q80,20 130,28 Q200,35 260,18 Q320,6 390,14 Q450,20 510,8 Q540,4 580,10" stroke="#2ECC71" stroke-width="1.5" fill="none"/><path d="M0,32 Q80,20 130,28 Q200,35 260,18 Q320,6 390,14 Q450,20 510,8 Q540,4 580,10 L580,40 L0,40 Z" fill="rgba(46,204,113,0.06)"/></svg>
+          </div>
+          <div class="gridA" style="flex:1;min-height:0;">
+            <!-- pie + breakdown -->
+            <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+              <div class="section-title">Monthly Distribution</div>
+              <div style="display:flex;gap:20px;align-items:center;">
+                <svg viewBox="0 0 100 100" width="110" height="110" style="flex-shrink:0;"><circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="18"/><circle cx="50" cy="50" r="38" fill="none" stroke="#2ECC71" stroke-width="18" stroke-dasharray="150 88" transform="rotate(-90 50 50)"/><circle cx="50" cy="50" r="38" fill="none" stroke="#3498DB" stroke-width="18" stroke-dasharray="60 178" stroke-dashoffset="-150" transform="rotate(-90 50 50)"/><circle cx="50" cy="50" r="38" fill="none" stroke="#F1C40F" stroke-width="18" stroke-dasharray="28 210" stroke-dashoffset="-210" transform="rotate(-90 50 50)"/></svg>
+                <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+                  <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--green);"></div><span style="font-size:13px;">Salary</span></div><div style="text-align:right;"><div class="value v-sm v-green">₹52,000</div><div style="font-size:11px;color:var(--text2);">63%</div></div></div>
+                  <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--blue);"></div><span style="font-size:13px;">Freelance</span></div><div style="text-align:right;"><div class="value v-sm v-blue">₹21,500</div><div style="font-size:11px;color:var(--text2);">26%</div></div></div>
+                  <div class="row"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:3px;background:var(--amber);"></div><span style="font-size:13px;">FD Interest</span></div><div style="text-align:right;"><div class="value v-sm v-amber">₹9,000</div><div style="font-size:11px;color:var(--text2);">11%</div></div></div>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="tx-row"><div class="tx-icon" style="background:rgba(46,204,113,0.1);">💼</div><div class="tx-info"><div class="tx-name">Salary — TCS</div><div class="tx-cat">20 Mar · Regular</div></div><div class="tx-amt v-green">+₹52,000</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:rgba(52,152,219,0.1);">💻</div><div class="tx-info"><div class="tx-name">Freelance — Startup X</div><div class="tx-cat">15 Mar · Project payment</div></div><div class="tx-amt v-green">+₹21,500</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:rgba(241,196,15,0.1);">🏦</div><div class="tx-info"><div class="tx-name">FD Interest — HDFC</div><div class="tx-cat">10 Mar · Quarterly</div></div><div class="tx-amt v-green">+₹9,000</div></div>
+            </div>
+            <!-- right: trend -->
+            <div class="card">
+              <div class="section-title">6-Month Trend</div>
+              <div class="barchart" style="height:100px;">
+                <div class="bar-col"><div class="bar-fill" style="height:55%;background:rgba(46,204,113,0.15);border-color:rgba(46,204,113,0.2);"></div><div class="bar-lbl">Oct</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:60%;background:rgba(46,204,113,0.15);border-color:rgba(46,204,113,0.2);"></div><div class="bar-lbl">Nov</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:70%;background:rgba(46,204,113,0.15);border-color:rgba(46,204,113,0.2);"></div><div class="bar-lbl">Dec</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:58%;background:rgba(46,204,113,0.15);border-color:rgba(46,204,113,0.2);"></div><div class="bar-lbl">Jan</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:65%;background:rgba(46,204,113,0.15);border-color:rgba(46,204,113,0.2);"></div><div class="bar-lbl">Feb</div></div>
+                <div class="bar-col"><div class="bar-fill cur" style="height:82%;"></div><div class="bar-lbl" style="color:var(--green);">Mar</div></div>
+              </div>
+              <div class="divider" style="margin:12px 0;"></div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="row"><span style="font-size:12px;color:var(--text2);">Average monthly</span><span class="value v-sm">₹71,800</span></div>
+                <div class="row"><span style="font-size:12px;color:var(--text2);">Best month</span><span class="value v-sm v-green">₹82,500 (Mar)</span></div>
+                <div class="row"><span style="font-size:12px;color:var(--text2);">Growth YoY</span><span class="value v-sm v-green">↑ 18%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P06 STATISTICS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P06</span><span class="name">Statistics</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/statistics</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div>
+          <div class="nav-item active"><div class="icon">📊</div>Statistics</div>
+          <div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Analytics</span>
+          <div class="header-actions">
+            <div class="badge badge-green" style="padding:7px 12px;">Insights →</div>
+            <div class="badge badge-ghost" style="margin-left:6px;">Yearly</div>
+            <div class="badge badge-ghost" style="margin-left:4px;">Budget</div>
+          </div>
+        </div>
+        <div class="content-area">
+          <!-- AnalyticsView: view-content-wrapper → page title + 5 link buttons then StatsAnalytics -->
+          <!-- Header row: title left, 5 buttons right (overflowX:auto) -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-shrink:0;">
+            <div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--outfit);">Analytics</div>
+              <div style="font-size:13px;color:var(--text2);margin-top:3px;">Analyze your spending patterns</div>
+            </div>
+            <!-- 5 link buttons: Insights (primary), Yearly, Budget, Goals, Loans -->
+            <div style="display:flex;gap:8px;overflow-x:auto;">
+              <div style="padding:6px 14px;background:var(--green);color:#000;border-radius:10px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;">Insights</div>
+              <div style="padding:6px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;">Yearly</div>
+              <div style="padding:6px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;">Budget</div>
+              <div style="padding:6px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;">Goals</div>
+              <div style="padding:6px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;">Loans</div>
+            </div>
+          </div>
+          <!-- StatsAnalytics component below -->
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;flex:1;min-height:0;overflow:hidden;">
+            <div class="card" style="display:flex;flex-direction:column;gap:14px;overflow:hidden;">
+              <div class="row"><div class="section-title" style="margin:0;">Monthly Spending — 6 months</div></div>
+              <div class="barchart" style="height:110px;">
+                <div class="bar-col"><div class="bar-fill" style="height:45%;"></div><div class="bar-lbl">Oct</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:60%;"></div><div class="bar-lbl">Nov</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:82%;background:rgba(255,69,58,0.18);border-color:rgba(255,69,58,0.3);"></div><div class="bar-lbl">Dec</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:48%;"></div><div class="bar-lbl">Jan</div></div>
+                <div class="bar-col"><div class="bar-fill" style="height:65%;"></div><div class="bar-lbl">Feb</div></div>
+                <div class="bar-col"><div class="bar-fill cur" style="height:85%;"></div><div class="bar-lbl" style="color:var(--green);">Mar</div></div>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><span>🍕</span><span style="font-size:13px;font-weight:600;">Food</span></div><div style="display:flex;align-items:center;gap:8px;flex:0.7;"><div class="progress-bar" style="flex:1;"><div class="progress-fill" style="width:24%;background:var(--red);"></div></div><span style="font-size:12px;font-weight:700;color:var(--red);min-width:28px;">24%</span></div></div>
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><span>🛍️</span><span style="font-size:13px;font-weight:600;">Shopping</span></div><div style="display:flex;align-items:center;gap:8px;flex:0.7;"><div class="progress-bar" style="flex:1;"><div class="progress-fill" style="width:19%;background:var(--purple);"></div></div><span style="font-size:12px;font-weight:700;min-width:28px;">19%</span></div></div>
+                <div class="row"><div style="display:flex;align-items:center;gap:8px;"><span>🚗</span><span style="font-size:13px;font-weight:600;">Transport</span></div><div style="display:flex;align-items:center;gap:8px;flex:0.7;"><div class="progress-bar" style="flex:1;"><div class="progress-fill" style="width:13%;background:var(--blue);"></div></div><span style="font-size:12px;font-weight:700;min-width:28px;">13%</span></div></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="stat-mini"><div class="label">Avg / Month</div><div class="value v-md">₹48,200</div></div>
+              <div class="stat-mini"><div class="label">Biggest Spend</div><div class="value v-md v-red">₹12,400</div><div style="font-size:11px;color:var(--text2);">Food (Dec)</div></div>
+              <div class="stat-mini"><div class="label">Savings Rate</div><div class="value v-md v-green">38%</div></div>
+              <div class="stat-mini"><div class="label">Transactions</div><div class="value v-md">142</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P07 YEARLY OVERVIEW ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P07</span><span class="name">Yearly Overview</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/insights</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div>
+          <div class="nav-item active"><div class="icon">📅</div>Calendar</div>
+          <div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Deep Insights 2024–2025</span>
+          <div class="header-actions"><div class="ha-btn">📄</div><div class="ha-btn">⚙️</div></div>
+        </div>
+        <div class="content-area">
+          <!-- stat cards in responsive-grid (2fr 1fr) not equal 3-col -->
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;flex-shrink:0;">
+            <!-- left col: 2 cards stacked -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div class="card" style="border-color:var(--green-border);"><div class="label">Avg Balance</div><div class="value v-lg v-green">₹1,16,591</div></div>
+              <div class="card" style="border-color:rgba(255,69,58,0.2);"><div class="label">Avg Expense</div><div class="value v-lg v-red">₹1,07,526</div></div>
+            </div>
+            <!-- right col: 1 card -->
+            <div class="card" style="border-color:rgba(241,196,15,0.2);"><div class="label">Avg Income</div><div class="value v-lg v-amber">₹2,24,117</div></div>
+          </div>
+          <!-- savings insight banner -->
+          <div class="card" style="flex-shrink:0;display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(46,204,113,0.06);border-color:var(--green-border);">
+            <span style="font-size:18px;">📈</span>
+            <span style="font-size:13px;color:var(--text2);">Your savings rate is <strong style="color:var(--green);">12% higher</strong> than last year — excellent financial discipline!</span>
+          </div>
+          <!-- heatmap + chart side by side -->
+          <div class="gridA" style="flex:1;min-height:0;">
+            <div class="card">
+              <div class="row" style="margin-bottom:12px;">
+                <div class="section-title" style="margin:0;">Spending Heatmap</div>
+                <div style="display:flex;gap:6px;"><div class="badge badge-ghost">All</div><div class="badge badge-green">Food</div><div class="badge badge-ghost">Transport</div></div>
+              </div>
+              <!-- month labels -->
+              <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:4px;">
+                <span style="font-size:9px;color:var(--text3);text-align:center;">Apr</span><span style="font-size:9px;color:var(--text3);text-align:center;">May</span><span style="font-size:9px;color:var(--text3);text-align:center;">Jun</span><span style="font-size:9px;color:var(--text3);text-align:center;">Jul</span><span style="font-size:9px;color:var(--text3);text-align:center;">Aug</span><span style="font-size:9px;color:var(--text3);text-align:center;">Sep</span><span style="font-size:9px;color:var(--text3);text-align:center;">Oct</span><span style="font-size:9px;color:var(--text3);text-align:center;">Nov</span><span style="font-size:9px;color:var(--text3);text-align:center;">Dec</span><span style="font-size:9px;color:var(--text3);text-align:center;">Jan</span><span style="font-size:9px;color:var(--text3);text-align:center;">Feb</span><span style="font-size:9px;color:var(--text3);text-align:center;">Mar</span>
+              </div>
+              <div id="hm2" style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;"></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+                <span style="font-size:10px;color:var(--text3);">Less</span>
+                <div style="display:flex;gap:3px;"><div style="width:14px;height:14px;border-radius:3px;background:rgba(46,204,113,0.08);"></div><div style="width:14px;height:14px;border-radius:3px;background:rgba(46,204,113,0.2);"></div><div style="width:14px;height:14px;border-radius:3px;background:rgba(46,204,113,0.4);"></div><div style="width:14px;height:14px;border-radius:3px;background:rgba(46,204,113,0.65);"></div><div style="width:14px;height:14px;border-radius:3px;background:rgba(46,204,113,0.9);"></div></div>
+                <span style="font-size:10px;color:var(--text3);">More</span>
+              </div>
+              <!-- month strip -->
+              <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Apr</div><div style="font-size:11px;font-weight:700;">48K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">May</div><div style="font-size:11px;font-weight:700;">55K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Jun</div><div style="font-size:11px;font-weight:700;">62K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Jul</div><div style="font-size:11px;font-weight:700;">44K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Aug</div><div style="font-size:11px;font-weight:700;">58K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Sep</div><div style="font-size:11px;font-weight:700;">51K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Oct</div><div style="font-size:11px;font-weight:700;">52K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Nov</div><div style="font-size:11px;font-weight:700;">61K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Dec</div><div style="font-size:11px;font-weight:700;color:var(--red);">94K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Jan</div><div style="font-size:11px;font-weight:700;">48K</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text2);">Feb</div><div style="font-size:11px;font-weight:700;">55K</div></div>
+                <div style="text-align:center;background:var(--green-dim);border-radius:8px;"><div style="font-size:9px;color:var(--green);">Mar</div><div style="font-size:11px;font-weight:700;color:var(--green);">51K</div></div>
+              </div>
+            </div>
+            <!-- right: area chart -->
+            <div class="card">
+              <div class="section-title">Balance Trend</div>
+              <svg viewBox="0 0 320 120" style="width:100%;height:120px;" preserveAspectRatio="none">
+                <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ECC71" stop-opacity="0.25"/><stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,85 Q30,70 60,75 Q90,80 120,55 Q150,35 180,45 Q210,55 240,30 Q270,12 320,20" stroke="#2ECC71" stroke-width="2" fill="none"/>
+                <path d="M0,85 Q30,70 60,75 Q90,80 120,55 Q150,35 180,45 Q210,55 240,30 Q270,12 320,20 L320,120 L0,120Z" fill="url(#g1)"/>
+                <line x1="0" y1="120" x2="320" y2="120" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P08 REPORTS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P08</span><span class="name">Reports</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/reports</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item active"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Detailed Reports</span>
+          <div class="header-actions"><div class="ha-btn">⏬</div><div class="ha-btn">⚙️</div></div>
+        </div>
+        <div class="content-area">
+          <!-- view-page-header: title+subtitle left, Filter btn + X btn right -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+            <div>
+              <div style="font-size:20px;font-weight:700;font-family:var(--outfit);">Reports</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:3px;">Financial summaries &amp; exports</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <div style="width:48px;height:48px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;">⏬</div>
+              <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2);">✕</div>
+            </div>
+          </div>
+          <!-- responsive-grid (2fr 1fr): 2 metric cards -->
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;flex-shrink:0;">
+            <!-- left: Savings Rate card (TrendingUp icon) -->
+            <div class="card">
+              <div style="font-size:16px;margin-bottom:10px;">📈</div>
+              <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;">SAVINGS RATE</div>
+              <div style="font-family:var(--outfit);font-size:22px;font-weight:800;margin-top:4px;">32.4%</div>
+            </div>
+            <!-- right: Debt Ratio card (TrendingDown icon) -->
+            <div class="card">
+              <div style="font-size:16px;margin-bottom:10px;">📉</div>
+              <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;">DEBT RATIO</div>
+              <div style="font-family:var(--outfit);font-size:22px;font-weight:800;color:var(--red);margin-top:4px;">12.8%</div>
+            </div>
+          </div>
+          <!-- Recent Reports section -->
+          <div style="flex-shrink:0;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:14px;padding-left:4px;">Recent Reports</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <!-- report row card: 44px icon box + FileText icon + title/period/type + Download ghost btn -->
+              <div class="card" style="padding:14px 18px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                  <div style="width:44px;height:44px;border-radius:12px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📄</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:700;">March 2025 Summary</div>
+                    <div style="font-size:11px;color:var(--text2);margin-top:2px;">Mar 2025 • Monthly</div>
+                  </div>
+                </div>
+                <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2);">⬇</div>
+              </div>
+              <div class="card" style="padding:14px 18px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                  <div style="width:44px;height:44px;border-radius:12px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📄</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:700;">Q4 2024–25 Report</div>
+                    <div style="font-size:11px;color:var(--text2);margin-top:2px;">Jan–Mar 2025 • Quarterly</div>
+                  </div>
+                </div>
+                <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2);">⬇</div>
+              </div>
+            </div>
+          </div>
+          <!-- Custom Report Builder card (amber-tinted) -->
+          <div class="card" style="background:linear-gradient(135deg,rgba(241,196,15,0.05),rgba(241,196,15,0.02));border-color:rgba(241,196,15,0.1);">
+            <div style="font-size:16px;font-weight:800;margin-bottom:6px;">Custom Report Builder</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5;">Generate a tailored report for any date range and category combination.</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+              <div style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;">📅 Last 30 days</div>
+              <div style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;">⏬ All Categories</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P09 SETTINGS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P09</span><span class="name">Settings</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/settings</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div>
+          <div class="nav-item active"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header"><span class="page-title">Settings</span></div>
+        <div class="content-area">
+          <!-- profile row -->
+          <div style="display:flex;align-items:center;gap:18px;padding:6px 0 20px;border-bottom:1px solid var(--border);flex-shrink:0;">
+            <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#2ECC71,#27AE60);display:flex;align-items:center;justify-content:center;font-family:var(--outfit);font-size:24px;font-weight:900;color:#000;flex-shrink:0;">VG</div>
+            <div><div style="font-family:var(--outfit);font-size:19px;font-weight:700;">Vignesh A</div><div style="font-size:13px;color:var(--text2);margin-top:3px;">Premium Plan · vignesh@example.com</div></div>
+            <div class="badge badge-green" style="margin-left:auto;">Edit Profile →</div>
+          </div>
+          <!-- settings-layout: equal 1fr 1fr grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;min-height:0;overflow:hidden;">
+            <!-- left col: General section -->
+            <section>
+              <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:4px;">General</div>
+              <div class="card" style="padding:6px 14px;">
+                <div class="set-row"><div class="set-icon" style="background:var(--green-dim);">🗂️</div><div><div class="set-name">Categories</div><div class="set-sub">12 total</div></div><div class="chev">›</div></div>
+                <div class="set-row"><div class="set-icon" style="background:rgba(52,152,219,0.1);">🌐</div><div><div class="set-name">Language</div><div class="set-sub">English</div></div><div class="chev">›</div></div>
+                <div class="set-row"><div class="set-icon" style="background:rgba(241,196,15,0.1);">💲</div><div><div class="set-name">Currency</div><div class="set-sub">INR ₹</div></div><div class="chev">›</div></div>
+                <div class="set-row" style="border:none;"><div class="set-icon" style="background:var(--surface2);">🌙</div><div><div class="set-name">Appearance</div><div class="set-sub">Dark</div></div><div class="chev">›</div></div>
+              </div>
+            </section>
+            <!-- right col: Data & Security section -->
+            <section>
+              <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:4px;">Data & Security</div>
+              <div class="card" style="padding:6px 14px;">
+                <div class="set-row"><div class="set-icon" style="background:rgba(255,69,58,0.1);">🔒</div><div><div class="set-name">Security PIN</div><div class="set-sub" style="color:var(--green);">Enabled</div></div><div class="chev">›</div></div>
+                <div class="set-row"><div class="set-icon" style="background:rgba(52,152,219,0.1);">☁️</div><div><div class="set-name">Cloud Sync</div><div class="set-sub" style="color:var(--green);">Connected</div></div><div class="chev">›</div></div>
+                <div class="set-row"><div class="set-icon" style="background:rgba(241,196,15,0.1);">🗄️</div><div><div class="set-name">Backup & Export</div><div class="set-sub">Last: 20 Mar 2025</div></div><div class="chev">›</div></div>
+                <div class="set-row" style="border:none;"><div class="set-icon" style="background:rgba(52,152,219,0.1);">❓</div><div><div class="set-name">Help & Support</div></div><div class="chev">›</div></div>
+              </div>
+            </section>
+          </div>
+          <!-- Sign Out: full-width BELOW the settings-layout grid -->
+          <div style="padding:14px 16px;border-radius:16px;border:1px solid rgba(255,69,58,0.25);background:rgba(255,69,58,0.06);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;flex-shrink:0;">
+            <span style="font-size:14px;">🚪</span><span style="font-size:13px;font-weight:700;color:var(--red);">Sign Out</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P10 NOTIFICATIONS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P10</span><span class="name">Notifications</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/notifications</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div><div class="nav-item"><div class="icon">💳</div>Cards</div>
+          <div class="nav-item active"><div class="icon">🔔</div>Notifications</div>
+          <div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header"><span class="page-title">Notifications</span><div class="header-actions"><div class="badge badge-green" style="padding:7px 12px;">Mark all read</div></div></div>
+        <div class="content-area">
+          <!-- view-page-header -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+            <div style="font-size:20px;font-weight:700;font-family:var(--outfit);">Notifications</div>
+            <div style="color:var(--green);font-size:13px;font-weight:700;cursor:pointer;">Mark all read</div>
+          </div>
+          <!-- Bill Reminders: glass-card clickable, warning gradient, primary-color 48px icon box, Calendar icon, ArrowRight -->
+          <div style="padding:20px;border-radius:18px;background:linear-gradient(135deg,rgba(241,196,15,0.15),rgba(241,196,15,0.05));border:1px solid rgba(241,196,15,0.3);cursor:pointer;flex-shrink:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="display:flex;align-items:center;gap:16px;">
+                <!-- 48px primary-color icon box, Calendar icon -->
+                <div style="width:48px;height:48px;background:var(--green);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📅</div>
+                <div>
+                  <div style="font-size:16px;font-weight:700;">Bill Reminders</div>
+                  <div style="font-size:13px;color:var(--text2);margin-top:2px;">3 upcoming bills</div>
+                </div>
+              </div>
+              <div style="font-size:16px;color:var(--green);">→</div>
+            </div>
+          </div>
+          <!-- notification cards: each is a glass-card with 44×44px coloured icon box, title row + time, body text -->
+          <div style="display:flex;flex-direction:column;gap:2px;flex:1;overflow:hidden;">
+            <!-- notif 1: unread (surface-overlay bg, warning border) -->
+            <div style="padding:16px;border-radius:18px;display:flex;gap:16px;background:var(--surface2);border:1px solid rgba(241,196,15,0.1);margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,69,58,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--red);">🥧</div>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                  <div style="font-size:15px;font-weight:700;">Budget Alert</div>
+                  <span style="font-size:13px;color:var(--text2);">2h ago</span>
+                </div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5;">Food budget exceeded by ₹400 this month. Tap to see transactions.</div>
+              </div>
+            </div>
+            <!-- notif 2 -->
+            <div style="padding:16px;border-radius:18px;display:flex;gap:16px;background:var(--surface2);border:1px solid rgba(241,196,15,0.1);margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:12px;background:rgba(46,204,113,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--green);">🎯</div>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                  <div style="font-size:15px;font-weight:700;">Goal Milestone</div>
+                  <span style="font-size:13px;color:var(--text2);">5h ago</span>
+                </div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5;">Emergency Fund is 97% complete. Only ₹500 more to go!</div>
+              </div>
+            </div>
+            <!-- notif 3: read (surface-overlay-subtle, transparent border) -->
+            <div style="padding:16px;border-radius:18px;display:flex;gap:16px;background:rgba(255,255,255,0.03);border:1px solid transparent;margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:12px;background:rgba(52,152,219,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--blue);">📱</div>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                  <div style="font-size:15px;font-weight:700;">3 SMS Transactions</div>
+                  <span style="font-size:13px;color:var(--text2);">8h ago</span>
+                </div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5;">New transactions from HDFC Bank auto-parsed and awaiting review.</div>
+              </div>
+            </div>
+            <!-- notif 4: read -->
+            <div style="padding:16px;border-radius:18px;display:flex;gap:16px;background:rgba(255,255,255,0.03);border:1px solid transparent;">
+              <div style="width:44px;height:44px;border-radius:12px;background:rgba(155,89,182,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--purple);">⚡</div>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                  <div style="font-size:15px;font-weight:700;color:var(--text2);">Anomaly Detected</div>
+                  <span style="font-size:13px;color:var(--text2);">2d ago</span>
+                </div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5;">Unusual spend of ₹8,200 at BigBasket on 15 Mar.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P11 CARDS & LOANS ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P11</span><span class="name">Cards & Loans</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/cards</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div><div class="nav-item"><div class="icon">📅</div>Calendar</div>
+          <div class="nav-item active"><div class="icon">💳</div>Cards</div>
+          <div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header"><span class="page-title">Cards & Loans</span></div>
+        <div class="content-area">
+          <!-- tabs -->
+          <div class="tabs" style="flex-shrink:0;"><div class="tab active">Credit Cards</div><div class="tab">Debit Cards</div></div>
+          <div class="gridA" style="flex:1;min-height:0;overflow:hidden;">
+            <!-- card details -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <!-- credit card visual -->
+              <div class="cc-card">
+                <div class="row" style="margin-bottom:18px;">
+                  <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1.5px;">HDFC REGALIA</div>
+                  <span style="font-size:16px;font-weight:900;color:white;letter-spacing:1px;">VISA</span>
+                </div>
+                <div style="font-size:16px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:4px;margin-bottom:18px;">•••• •••• •••• 4829</div>
+                <div class="row">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px;">CREDIT LIMIT</div><div style="font-size:18px;font-weight:800;color:white;">₹2,50,000</div></div>
+                  <div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px;">AVAILABLE</div><div style="font-size:18px;font-weight:800;color:#6ee77a;">₹1,84,200</div></div>
+                </div>
+              </div>
+              <!-- utilisation -->
+              <div class="card">
+                <div class="row" style="margin-bottom:10px;"><div class="section-title" style="margin:0;">Utilisation</div><div class="badge badge-green">26% — Healthy</div></div>
+                <div class="progress-bar" style="height:8px;"><div class="progress-fill" style="width:26%;"></div></div>
+                <div class="grid3" style="margin-top:14px;">
+                  <div><div class="label">Spent</div><div class="value v-sm v-red">₹65,800</div></div>
+                  <div style="text-align:center;"><div class="label">Due Date</div><div class="value v-sm v-amber">Apr 5</div></div>
+                  <div style="text-align:right;"><div class="label">Min Due</div><div class="value v-sm">₹3,200</div></div>
+                </div>
+              </div>
+            </div>
+            <!-- right: loans -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card">
+                <div class="row" style="margin-bottom:14px;"><div class="section-title" style="margin:0;">Active Loans</div><div class="badge badge-ghost">+ Add Loan</div></div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="padding:12px;background:var(--surface);border-radius:14px;border:1px solid var(--border);">
+                    <div class="row" style="margin-bottom:8px;">
+                      <div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;border-radius:11px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;">🏦</div><div><div style="font-size:13px;font-weight:600;">Home Loan — SBI</div><div style="font-size:11px;color:var(--text2);">EMI: ₹28,500/mo · 8.6% p.a.</div></div></div>
+                      <div style="text-align:right;"><div class="value v-sm v-red">₹42.8L</div><div style="font-size:10px;color:var(--text2);">remaining</div></div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:35%;background:var(--blue);"></div></div>
+                    <div style="font-size:10px;color:var(--text2);margin-top:5px;">35% paid · 156 EMIs left</div>
+                  </div>
+                  <div style="padding:12px;background:var(--surface);border-radius:14px;border:1px solid var(--border);">
+                    <div class="row" style="margin-bottom:8px;">
+                      <div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;border-radius:11px;background:rgba(155,89,182,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;">🏍️</div><div><div style="font-size:13px;font-weight:600;">Bike Loan — HDFC</div><div style="font-size:11px;color:var(--text2);">EMI: ₹4,800/mo · 10.5% p.a.</div></div></div>
+                      <div style="text-align:right;"><div class="value v-sm v-red">₹1.2L</div><div style="font-size:10px;color:var(--text2);">remaining</div></div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:72%;background:var(--purple);"></div></div>
+                    <div style="font-size:10px;color:var(--text2);margin-top:5px;">72% paid · 8 EMIs left</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ P12 CALENDAR ═══ -->
+<div class="screen-block">
+  <div class="screen-tag"><span class="code">P12</span><span class="name">Financial Calendar</span></div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+      <div class="browser-url"><span class="lock">🔒</span><span>localhost:3002/personal/calendar</span></div>
+    </div>
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sidebar-logo">Expancer</div>
+        <div class="sidebar-nav">
+          <div class="nav-item"><div class="icon">⊞</div>Dashboard</div><div class="nav-item"><div class="icon">🥧</div>Budget</div><div class="nav-item"><div class="icon">📋</div>Transactions</div><div class="nav-item"><div class="icon">💰</div>Income</div><div class="nav-item"><div class="icon">📊</div>Statistics</div><div class="nav-item"><div class="icon">🎯</div>Goals</div>
+          <div class="nav-item active"><div class="icon">📅</div>Calendar</div>
+          <div class="nav-item"><div class="icon">💳</div>Cards</div><div class="nav-item"><div class="icon">🔔</div>Notifications</div><div class="nav-item"><div class="icon">⚙️</div>Settings</div>
+        </div>
+        <div class="sidebar-add"><span style="font-size:18px;font-weight:900;">+</span> Add Record</div>
+      </div>
+      <div class="main-panel">
+        <div class="app-header">
+          <span class="page-title">Financial Calendar</span>
+          <div class="header-actions"><div class="ha-btn">‹</div><span style="font-size:14px;font-weight:600;padding:0 6px;">March 2025</span><div class="ha-btn">›</div></div>
+        </div>
+        <div class="content-area">
+          <!-- FinancialCalendar: single wrapping Card padding="large" containing everything -->
+          <div class="card" style="padding:22px;flex-shrink:0;">
+            <!-- header: month title + prev/next buttons -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="font-size:15px;font-weight:700;">March 2025</div>
+              <div style="display:flex;gap:6px;">
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">‹</div>
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">›</div>
+              </div>
+            </div>
+            <!-- inline month summary: surface-overlay-subtle box -->
+            <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:var(--surface);border-radius:10px;margin-bottom:16px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--text2);">Expenses</span>
+                <span style="font-weight:700;color:var(--red);">−₹51,240</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--text2);">Income</span>
+                <span style="font-weight:700;color:var(--green);">+₹82,500</span>
+              </div>
+            </div>
+            <!-- day labels row (Mon-first: Mon Tue Wed Thu Fri Sat Sun) -->
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin-bottom:6px;">
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Mon</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Tue</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Wed</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Thu</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Fri</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Sat</div>
+              <div style="color:var(--text2);font-size:11px;font-weight:600;padding-bottom:4px;">Sun</div>
+            </div>
+            <!-- 7-col day grid (Mon-first padding for March 2025: starts Saturday → 5 pad cells) -->
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">
+              <div></div><div></div><div></div><div></div><div></div>
+              <div class="cal-cell has-tx">1</div><div class="cal-cell">2</div>
+              <div class="cal-cell has-tx">3</div><div class="cal-cell has-tx">4</div><div class="cal-cell">5</div><div class="cal-cell has-tx">6</div><div class="cal-cell">7</div><div class="cal-cell has-tx">8</div><div class="cal-cell">9</div>
+              <div class="cal-cell has-tx">10</div><div class="cal-cell has-tx" style="background:rgba(241,196,15,0.15);color:var(--amber);">11</div><div class="cal-cell">12</div><div class="cal-cell">13</div><div class="cal-cell has-tx">14</div><div class="cal-cell high">15</div><div class="cal-cell has-tx">16</div>
+              <div class="cal-cell">17</div><div class="cal-cell has-tx">18</div><div class="cal-cell has-tx">19</div><div class="cal-cell today">20</div><div class="cal-cell dim">21</div><div class="cal-cell dim">22</div><div class="cal-cell dim">23</div>
+              <div class="cal-cell dim">24</div><div class="cal-cell dim">25</div><div class="cal-cell dim">26</div><div class="cal-cell dim">27</div><div class="cal-cell dim">28</div><div class="cal-cell dim">29</div><div class="cal-cell dim">30</div>
+              <div class="cal-cell dim">31</div>
+            </div>
+          </div>
+          <!-- selected date: individual transaction Cards below the main card -->
+          <div style="font-size:13px;font-weight:700;color:var(--text2);margin:4px 0 8px;padding-left:4px;">Thursday, 20 March 2025</div>
+          <div class="card" style="padding:14px 18px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="tx-icon" style="background:rgba(255,69,58,0.1);">🍕</div>
+              <div><div class="tx-name">Swiggy</div><div class="tx-cat">Food · 7:32 PM</div></div>
+            </div>
+            <div class="tx-amt v-red">−₹480</div>
+          </div>
+          <div class="card" style="padding:14px 18px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="tx-icon" style="background:rgba(52,152,219,0.1);">🚖</div>
+              <div><div class="tx-name">Ola Cab</div><div class="tx-cat">Transport · 9:15 AM</div></div>
+            </div>
+            <div class="tx-amt v-red">−₹230</div>
+          </div>
+          <div class="card" style="padding:14px 18px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="tx-icon" style="background:rgba(241,196,15,0.1);">☕</div>
+              <div><div class="tx-name">Blue Tokai</div><div class="tx-cat">Coffee · 8:45 AM</div></div>
+            </div>
+            <div class="tx-amt v-red">−₹320</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end screens -->
+
+<script>
+const intensities=[0.08,0.2,0.15,0.35,0.1,0.25,0.4,0.15,0.9,0.2,0.3,0.65,0.12,0.35,0.5,0.2,0.45,0.1,0.6,0.3,0.8,0.4,0.15,0.55,0.2,0.1,0.65,0.4,0.2,0.5,0.15,0.7,0.35,0.25,0.6,0.45,0.5,0.25,0.1,0.6,0.3,0.4,0.2,0.55,0.15,0.7,0.4,0.3,0.15,0.45,0.3,0.1,0.55,0.2,0.65,0.35,0.25,0.5,0.9,0.2];
+const hm=document.getElem
