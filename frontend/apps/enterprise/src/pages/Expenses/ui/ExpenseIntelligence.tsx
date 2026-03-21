@@ -201,6 +201,7 @@ const ExpenseIntelligence: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
                 {/* Header Area */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -214,7 +215,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition-all active:scale-95">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition-all active:scale-95">
                             <Download className="w-4 h-4" /> Export Report
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95">
@@ -225,7 +226,7 @@ const ExpenseIntelligence: React.FC = () => {
 
                 {/* Strategic KPI Dashboard */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm group overflow-hidden relative">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm group overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
                             <DollarSign className="w-16 h-16" />
                         </div>
@@ -237,10 +238,10 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Budget Utilization</p>
                         <h3 className="text-2xl font-black tabular-nums">{Math.round((totalStats.spent / totalStats.budget) * 100)}%</h3>
-                        <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-full mt-3 overflow-hidden">
+                        <div className="w-full h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full mt-3 overflow-hidden">
                             <div
                                 className={`h-full rounded-full bg-primary`}
                                 style={{ width: `${(totalStats.spent / totalStats.budget) * 100}%` }}
@@ -248,7 +249,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm relative overflow-hidden">
                         <div className={`absolute inset-y-0 left-0 w-1 ${totalStats.leaks > 0 ? 'bg-error animate-pulse' : 'bg-success'}`} />
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Leakage Alerts</p>
                         <h3 className={`text-2xl font-black ${totalStats.leaks > 0 ? 'text-error animate-pulse' : 'text-success'}`}>
@@ -260,7 +261,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-900 text-white p-6 rounded-3xl shadow-xl border border-neutral-800 relative group overflow-hidden">
+                    <div className="bg-[var(--erp-bg)] text-main p-6 rounded-3xl shadow-xl border border-default relative group overflow-hidden">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700" />
                         <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 italic text-primary">Intelligence Advice</p>
                         <h3 className="text-xs font-black italic leading-tight text-neutral-300">
@@ -272,7 +273,7 @@ const ExpenseIntelligence: React.FC = () => {
                 </div>
 
                 {/* Main Tabs */}
-                <div className="flex border-b border-neutral-100 dark:border-neutral-800 pb-0.5 mt-4 gap-8">
+                <div className="flex border-b border-default dark:border-default pb-0.5 mt-4 gap-8">
                     <button
                         onClick={() => setViewMode('OVERVIEW')}
                         className={`pb-3 text-sm font-black transition-all relative ${viewMode === 'OVERVIEW' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
@@ -292,7 +293,7 @@ const ExpenseIntelligence: React.FC = () => {
                         className={`pb-3 text-sm font-black transition-all relative ${viewMode === 'AUDIT' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
                     >
                         Fraud & Abuse Hub
-                        <span className="ml-2 px-1.5 py-0.5 bg-error text-white text-[8px] rounded uppercase">2 Risks</span>
+                        <span className="ml-2 px-1.5 py-0.5 bg-error text-main text-[8px] rounded uppercase">2 Risks</span>
                         {viewMode === 'AUDIT' && <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />}
                     </button>
                 </div>
@@ -310,14 +311,14 @@ const ExpenseIntelligence: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search Categories or Actions..."
-                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
 
                                 {filteredAnalysis.map((item, idx) => (
-                                    <div key={idx} className={`bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] p-6 shadow-sm group hover:border-primary/40 transition-all ${item.status === 'OVER_BUDGET' ? 'border-l-4 border-l-error' :
+                                    <div key={idx} className={`bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-[2rem] p-6 shadow-sm group hover:border-primary/40 transition-all ${item.status === 'OVER_BUDGET' ? 'border-l-4 border-l-error' :
                                         item.status === 'NEAR_LIMIT' ? 'border-l-4 border-l-amber-500' : ''
                                         }`}>
                                         <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -346,21 +347,21 @@ const ExpenseIntelligence: React.FC = () => {
                                                 </div>
 
                                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                    <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl">
+                                                    <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl">
                                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Monthly Budget</p>
                                                         <p className="text-xs font-black">₹{item.monthly_budget.toLocaleString()}</p>
                                                     </div>
-                                                    <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl">
+                                                    <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl">
                                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Spent</p>
                                                         <p className="text-xs font-black">₹{item.spent.toLocaleString()}</p>
                                                     </div>
-                                                    <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl">
+                                                    <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl">
                                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Forecast</p>
                                                         <p className={`text-xs font-black ${item.forecast_end_month > item.monthly_budget ? 'text-error' : 'text-success'}`}>
                                                             ₹{item.forecast_end_month.toLocaleString()}
                                                         </p>
                                                     </div>
-                                                    <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl">
+                                                    <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl">
                                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Exp / Sales</p>
                                                         <p className="text-xs font-black tabular-nums">{item.expense_to_sales_ratio.toFixed(2)}%</p>
                                                     </div>
@@ -375,7 +376,7 @@ const ExpenseIntelligence: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-4 pt-4 border-t border-neutral-50 dark:border-neutral-800 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="mt-4 pt-4 border-t border-neutral-50 dark:border-default flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
                                             <div className="flex gap-4">
                                                 <button className="text-[10px] font-black text-neutral-400 hover:text-primary transition-colors flex items-center gap-1.5 uppercase tracking-widest">
                                                     <BarChart3 className="w-3.5 h-3.5" /> Historical Trend
@@ -384,7 +385,7 @@ const ExpenseIntelligence: React.FC = () => {
                                                     <Building2 className="w-3.5 h-3.5" /> Branch Split
                                                 </button>
                                             </div>
-                                            <button className="px-3 py-1 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all">
+                                            <button className="px-3 py-1 bg-[var(--erp-bg)] dark:bg-white text-main dark:text-neutral-900 rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all">
                                                 Enforce Cap
                                             </button>
                                         </div>
@@ -394,9 +395,9 @@ const ExpenseIntelligence: React.FC = () => {
                         )}
 
                         {viewMode === 'BRANCHES' && (
-                            <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] rounded-3xl border border-default dark:border-default overflow-hidden shadow-sm">
                                 <table className="w-full text-left">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default text-[10px] font-black text-neutral-400 uppercase tracking-widest">
                                         <tr>
                                             <th className="p-4">Branch Name</th>
                                             <th className="p-4">Total Sales</th>
@@ -410,7 +411,7 @@ const ExpenseIntelligence: React.FC = () => {
                                             const branchExpenses = transactions.filter(t => t.branch_id === branch.branch_id).reduce((s, e) => s + e.amount, 0);
                                             const ratio = (branchExpenses / branch.total_sales) * 100;
                                             return (
-                                                <tr key={idx} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                                                <tr key={idx} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-bg)]/50 transition-colors">
                                                     <td className="p-4 font-bold text-sm">{branch.branch_name}</td>
                                                     <td className="p-4 text-sm font-medium tabular-nums">₹{branch.total_sales.toLocaleString()}</td>
                                                     <td className="p-4 text-sm font-medium tabular-nums">₹{branchExpenses.toLocaleString()}</td>
@@ -429,7 +430,7 @@ const ExpenseIntelligence: React.FC = () => {
                         )}
 
                         {viewMode === 'AUDIT' && (
-                            <div className="bg-neutral-900 text-white rounded-[2.5rem] p-10 border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                            <div className="bg-[var(--erp-bg)] text-main rounded-[2.5rem] p-10 border border-default shadow-2xl relative overflow-hidden group">
                                 <ShieldAlert className="absolute -bottom-10 -right-10 w-48 h-48 text-error opacity-5 group-hover:scale-110 transition-transform duration-[1.5s]" />
                                 <div className="relative z-10">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-error/20 border border-error/30 rounded-full text-error text-[10px] font-black uppercase tracking-[0.2em] mb-8 animate-pulse">
@@ -441,14 +442,14 @@ const ExpenseIntelligence: React.FC = () => {
 
                                     <div className="space-y-6">
                                         {analysis.filter(a => a.is_split_detected || a.compliance_score < 70).map((alert, i) => (
-                                            <div key={i} className="flex gap-4 p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
+                                            <div key={i} className="flex gap-4 p-5 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
                                                 <div className="p-3.5 bg-error/20 text-error rounded-xl h-fit">
                                                     <AlertTriangle className="w-5 h-5" />
                                                 </div>
                                                 <div className="flex-1">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <span className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{alert.category}</span>
-                                                        <span className="px-2 py-0.5 bg-error text-white text-[8px] font-black rounded uppercase">Severe Alert</span>
+                                                        <span className="px-2 py-0.5 bg-error text-main text-[8px] font-black rounded uppercase">Severe Alert</span>
                                                     </div>
                                                     <p className="font-bold text-sm text-neutral-200">
                                                         {alert.is_split_detected ? "Potential Transaction Splitting behavior detected for limits bypass." : "Abnormality in receipt compliance detected."}
@@ -474,7 +475,7 @@ const ExpenseIntelligence: React.FC = () => {
                     <div className="space-y-4">
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest pl-1">Compliance Hygiene</h4>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-3xl border border-default dark:border-default p-6 shadow-sm">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6">Aggregate Audit Score</p>
                             <div className="flex items-center justify-center py-6">
                                 <div className="relative">
@@ -500,7 +501,7 @@ const ExpenseIntelligence: React.FC = () => {
                                 <p className="text-[11px] opacity-90 leading-relaxed mb-6">
                                     The Intelligence Agent has identified <span className="font-black underline underline-offset-2">₹12,400</span> in unclaimed GST due to missing receipts.
                                 </p>
-                                <button className="w-full py-4 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-neutral-50 transition-all shadow-xl shadow-black/5 active:scale-95">
+                                <button className="w-full py-4 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-[var(--erp-bg-sunken)] transition-all shadow-xl shadow-black/5 active:scale-95">
                                     Enable Auto-Reclaim
                                 </button>
                             </div>
@@ -516,7 +517,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
 
                         {/* Quick Access to Spenders */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-3xl border border-default dark:border-default p-6 shadow-sm">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4">Top Claimants</p>
                             <div className="space-y-4">
                                 {[
@@ -526,7 +527,7 @@ const ExpenseIntelligence: React.FC = () => {
                                 ].map((user, idx) => (
                                     <div key={idx} className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center font-black text-xs">
+                                            <div className="w-8 h-8 rounded-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] flex items-center justify-center font-black text-xs">
                                                 {user.name[0]}
                                             </div>
                                             <div>
@@ -542,6 +543,8 @@ const ExpenseIntelligence: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

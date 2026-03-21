@@ -17,10 +17,10 @@ const StatusButton = ({ currentStatus, targetStatus, label, icon: Icon, colorCla
         onClick={() => onClick(targetStatus)}
         className={`flex-1 flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${currentStatus === targetStatus
             ? `${colorClass} border-current`
-            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'
+            : 'bg-white dark:bg-[var(--erp-card)] border-default dark:border-default text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700'
             }`}
     >
-        <Icon className={`w-6 h-6 mb-1 ${currentStatus === targetStatus ? '' : 'text-slate-400'}`} />
+        <Icon className={`w-6 h-6 mb-1 ${currentStatus === targetStatus ? '' : 'text-muted'}`} />
         <span className="text-xs font-bold">{label}</span>
     </button>
 );
@@ -60,20 +60,20 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in">
-            <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-200 dark:border-slate-700">
-                <div className="flex justify-between items-center p-4 border-b border-slate-100 dark:border-slate-700">
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 border border-default dark:border-default">
+                <div className="flex justify-between items-center p-4 border-b border-default dark:border-default">
+                    <h3 className="text-lg font-bold text-main dark:text-main flex items-center gap-2">
                         <Clock size={18} className="text-indigo-600 dark:text-indigo-400" />
                         Attendance Log
                     </h3>
-                    <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <button onClick={onClose} className="p-1 text-muted hover:text-secondary dark:hover:text-slate-200 rounded-full hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700">
                         <X size={20} />
                     </button>
                 </div>
 
                 <div className="p-6 space-y-6">
                     <div className="text-center">
-                        <span className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        <span className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-secondary dark:text-muted px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                             {new Date(date).toDateString()}
                         </span>
                     </div>
@@ -88,28 +88,28 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     {status !== 'ABSENT' && (
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">In Time</label>
+                                <label className="block text-xs font-bold text-muted dark:text-muted uppercase mb-1">In Time</label>
                                 <input
                                     type="time"
                                     value={inTime}
                                     onChange={(e) => setInTime(e.target.value)}
-                                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-lg font-bold text-slate-700 dark:text-white bg-slate-50 dark:bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full p-2 border border-default dark:border-default rounded-lg text-lg font-bold text-secondary dark:text-main bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] outline-none focus:ring-2 focus:ring-indigo-500"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Out Time</label>
+                                <label className="block text-xs font-bold text-muted dark:text-muted uppercase mb-1">Out Time</label>
                                 <input
                                     type="time"
                                     value={outTime}
                                     onChange={(e) => setOutTime(e.target.value)}
-                                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-lg font-bold text-slate-700 dark:text-white bg-slate-50 dark:bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full p-2 border border-default dark:border-default rounded-lg text-lg font-bold text-secondary dark:text-main bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] outline-none focus:ring-2 focus:ring-indigo-500"
                                 />
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 flex justify-between gap-3">
+                <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-t border-default dark:border-default flex justify-between gap-3">
                     {initialData ? (
                         <button
                             onClick={handleClear}
@@ -123,7 +123,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     <div className="flex gap-2">
                         <button
                             onClick={onClose}
-                            className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg font-bold transition-colors"
+                            className="px-4 py-2 text-secondary dark:text-muted hover:bg-white dark:hover:bg-[var(--erp-card)] rounded-lg font-bold transition-colors"
                         >
                             Cancel
                         </button>

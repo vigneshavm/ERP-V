@@ -28,7 +28,7 @@ const NavSubmenu: React.FC<NavSubmenuProps> = ({
         <div className="space-y-0.5">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between py-2 pr-3 pl-10 border-l-2 border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+                className="w-full flex items-center justify-between py-2 pr-3 pl-10 border-l-2 border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 hover:bg-neutral-50 dark:hover:bg-[var(--erp-card)]/50 transition-colors"
             >
                 <div className="flex items-center space-x-2">
                     {/* Optional: No icon for sub-headers as per requirement "No icons for submenus", 

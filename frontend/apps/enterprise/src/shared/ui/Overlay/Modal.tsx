@@ -109,7 +109,7 @@ const Modal: React.FC<ModalProps> = ({
             className={[
               SIZE[size] || SIZE.md,
               'w-full max-h-[90dvh] flex flex-col',
-              'bg-white dark:bg-neutral-900',
+              'bg-white dark:bg-[var(--erp-bg)]',
               'border border-neutral-200 dark:border-neutral-700/60',
               'rounded-2xl shadow-2xl shadow-black/20',
             ].join(' ')}
@@ -141,7 +141,7 @@ const Modal: React.FC<ModalProps> = ({
                   className={[
                     'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg',
                     'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200',
-                    'hover:bg-neutral-100 dark:hover:bg-white/5',
+                    'hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)]',
                     'transition-colors duration-150',
                     'outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
                   ].join(' ')}

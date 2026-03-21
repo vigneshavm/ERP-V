@@ -73,10 +73,10 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-neutral-900 w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[var(--erp-bg)]/60 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-[var(--erp-bg)] w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="p-6 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-800/50">
+                <div className="p-6 border-b border-default dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">
                     <div className="flex items-center gap-4">
                         {step !== 'CATEGORIES' && (
                             <button
@@ -110,13 +110,13 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
 
                 {/* Search Bar (Only for products view) */}
                 {step === 'PRODUCTS' && (
-                    <div className="px-6 py-4 bg-white dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800">
+                    <div className="px-6 py-4 bg-white dark:bg-[var(--erp-bg)] border-b border-default dark:border-default">
                         <div className="relative">
                             <Search className="absolute left-4 top-3 w-5 h-5 text-neutral-400" />
                             <input
                                 type="text"
                                 placeholder="Search in this category..."
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-800 border-2 border-transparent focus:border-primary rounded-2xl text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-2 border-transparent focus:border-primary rounded-2xl text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 transition-all outline-none"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 autoFocus
@@ -133,12 +133,12 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                                 <button
                                     key={cat}
                                     onClick={() => handleCategorySelect(cat)}
-                                    className="group p-6 bg-neutral-50 dark:bg-neutral-800/50 hover:bg-primary rounded-3xl transition-all duration-300 flex flex-col items-center gap-4 border-2 border-transparent hover:border-primary/40 hover:shadow-xl hover:shadow-primary/20"
+                                    className="group p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 hover:bg-primary rounded-3xl transition-all duration-300 flex flex-col items-center gap-4 border-2 border-transparent hover:border-primary/40 hover:shadow-xl hover:shadow-primary/20"
                                 >
                                     <div className="w-16 h-16 bg-white dark:bg-neutral-700 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                                         <Package className="w-8 h-8 text-primary group-hover:text-primary/70" />
                                     </div>
-                                    <span className="font-bold text-neutral-700 dark:text-neutral-200 group-hover:text-white transition-colors">{cat}</span>
+                                    <span className="font-bold text-neutral-700 dark:text-neutral-200 group-hover:text-main transition-colors">{cat}</span>
                                 </button>
                             ))}
                         </div>
@@ -150,7 +150,7 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                                 <button
                                     key={sub}
                                     onClick={() => handleSubcategorySelect(sub)}
-                                    className="p-6 bg-white dark:bg-neutral-800 border-2 border-neutral-100 dark:border-neutral-700 hover:border-primary rounded-3xl transition-all flex flex-col items-center gap-3 hover:shadow-lg"
+                                    className="p-6 bg-white dark:bg-[var(--erp-card)] border-2 border-default dark:border-default hover:border-primary rounded-3xl transition-all flex flex-col items-center gap-3 hover:shadow-lg"
                                 >
                                     <LayoutGrid className="w-8 h-8 text-neutral-400" />
                                     <span className="font-bold text-neutral-700 dark:text-neutral-200 text-center">{sub}</span>
@@ -166,7 +166,7 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                                     key={product.id}
                                     onClick={() => handleAddToCart(product)}
                                     disabled={product.stockQty <= 0}
-                                    className={`text-left p-4 bg-neutral-50 dark:bg-neutral-800/50 hover:bg-white dark:hover:bg-neutral-800 border-2 border-transparent hover:border-primary rounded-2xl transition-all flex flex-col gap-2 ${product.stockQty <= 0 ? 'opacity-50 grayscale' : ''}`}
+                                    className={`text-left p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 hover:bg-white dark:hover:bg-[var(--erp-card)] border-2 border-transparent hover:border-primary rounded-2xl transition-all flex flex-col gap-2 ${product.stockQty <= 0 ? 'opacity-50 grayscale' : ''}`}
                                 >
                                     <div className="flex justify-between items-start">
                                         <h4 className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-1">{product.name}</h4>
@@ -189,7 +189,7 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                 </div>
 
                 {/* Footer Info */}
-                <div className="p-4 bg-neutral-50 dark:bg-neutral-800/30 border-t border-neutral-100 dark:border-neutral-800 flex justify-center">
+                <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/30 border-t border-default dark:border-default flex justify-center">
                     <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest flex items-center gap-2">
                         <Check className="w-3 h-3" /> Quick Add Mode Active
                     </p>

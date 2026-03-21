@@ -101,7 +101,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.name}
                             onChange={onChange}
                             required
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border border-default dark:border-default rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                             placeholder="Full Commercial Name"
                         />
                     </InputWrapper>
@@ -119,7 +119,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             onChange={onChange}
                             required
                             pattern="[0-9]{10}"
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-rose-500 focus:border-rose-500' : 'border-default dark:border-default focus:border-indigo-500'}`}
                             placeholder="10-Digit Primary Line"
                         />
                     </InputWrapper>
@@ -134,7 +134,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             name="email"
                             value={formData.email}
                             onChange={onChange}
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-rose-500 focus:border-rose-500' : 'border-default dark:border-default focus:border-indigo-500'}`}
                             placeholder="Official Digital Correspondence"
                         />
                     </InputWrapper>
@@ -153,7 +153,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                                 </div>
                             ) : (
                                 <div className="relative">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                                     <input
                                         type="text"
                                         value={referralSearch}
@@ -161,21 +161,21 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                                             setReferralSearch(e.target.value);
                                             setShowReferralDropdown(true);
                                         }}
-                                        className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                                        className="w-full pl-11 pr-4 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border border-default dark:border-default rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                                         placeholder="Search existing partners..."
                                     />
                                     {showReferralDropdown && referralSearch.length > 0 && (
-                                        <div className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                                        <div className="absolute z-20 w-full mt-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
                                             {filteredReferralCustomers.length > 0 ? (
                                                 filteredReferralCustomers.map((c) => (
                                                     <button
                                                         key={c._id}
                                                         type="button"
                                                         onClick={() => handleSelectReferrer(c)}
-                                                        className="w-full px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex flex-col gap-1 border-b border-slate-100 dark:border-slate-800 last:border-0 transition-all text-left"
+                                                        className="w-full px-6 py-4 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 flex flex-col gap-1 border-b border-default dark:border-default last:border-0 transition-all text-left"
                                                     >
-                                                        <span className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">{c.name}</span>
-                                                        <span className="text-[10px] font-bold text-slate-400">{c.phone}</span>
+                                                        <span className="text-sm font-black text-main uppercase tracking-tight">{c.name}</span>
+                                                        <span className="text-[10px] font-bold text-muted">{c.phone}</span>
                                                     </button>
                                                 ))
                                             ) : (
@@ -201,7 +201,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.address}
                             onChange={onChange}
                             rows={3}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border border-default dark:border-default rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
                             placeholder="Warehouse Access Point / Billing Logistics Center"
                         />
                     </InputWrapper>
@@ -212,7 +212,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="px-8 py-4 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all"
+                    className="px-8 py-4 border border-default dark:border-default text-secondary dark:text-muted rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[var(--erp-bg-sunken)] transition-all"
                 >
                     Abort
                 </button>

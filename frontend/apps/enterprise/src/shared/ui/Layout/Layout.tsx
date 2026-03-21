@@ -1,21 +1,20 @@
+'use client';
+/**
+ * Layout — Page content area wrapper.
+ *
+ * Sits inside TenantView's main scrolling column.
+ * Provides a consistent z-index layer above the body grid pattern.
+ */
 import React from 'react';
 
 interface LayoutProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-/**
- * Layout wrapper for pages rendered inside TenantView.
- * Note: Sidebar is NOT included here since App.tsx TenantView already provides the main layout with sidebar.
- * This component is a simple content wrapper for consistency across pages.
- */
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
-    return (
-        <div className="w-full">
-            {children}
-        </div>
-    );
-};
+const Layout: React.FC<LayoutProps> = ({ children }) => (
+  <div className="w-full relative z-10">
+    {children}
+  </div>
+);
 
 export default Layout;
-

@@ -12,7 +12,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, secondarySubtitle, description }) => {
     return (
-        <div className="min-h-screen flex bg-[#06080F] text-white transition-colors duration-300 font-[system-ui] overflow-hidden relative">
+        <div className="min-h-screen flex bg-[var(--erp-bg)] text-main transition-colors duration-300 font-[system-ui] overflow-hidden relative">
             {/* === AMBIENT BACKGROUND GRADIENTS === */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute -top-[30%] -left-[15%] w-[70%] h-[70%] bg-indigo-600/[0.07] blur-[160px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
@@ -38,20 +38,20 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                     {/* Logo */}
                     <div className="flex items-center gap-4 mb-16">
                         <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
-                            <span className="font-black text-xl text-white tracking-tighter">E</span>
+                            <span className="font-black text-xl text-main tracking-tighter">E</span>
                         </div>
                         <div>
-                            <span className="text-lg font-bold text-white/90 tracking-tight block leading-none">ERP Matrix</span>
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.25em]">Enterprise Platform</span>
+                            <span className="text-lg font-bold text-main tracking-tight block leading-none">ERP Matrix</span>
+                            <span className="text-[9px] font-bold text-muted uppercase tracking-[0.25em]">Enterprise Platform</span>
                         </div>
                     </div>
 
                     {/* Title block */}
                     <div className="max-w-sm">
-                        <h1 className="text-4xl xl:text-5xl font-black text-white leading-[1.08] tracking-tight mb-6">
+                        <h1 className="text-4xl xl:text-5xl font-black text-main leading-[1.08] tracking-tight mb-6">
                             {title}
                         </h1>
-                        <p className="text-white/35 text-sm xl:text-[15px] leading-relaxed font-medium max-w-xs">
+                        <p className="text-main/35 text-sm xl:text-[15px] leading-relaxed font-medium max-w-xs">
                             {description}
                         </p>
                     </div>
@@ -67,14 +67,14 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-2.5 px-3.5 py-2 bg-white/[0.03] border border-white/[0.06] rounded-xl backdrop-blur-sm">
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">256-bit SSL</span>
+                            <span className="text-[9px] font-bold text-main/40 uppercase tracking-[0.2em]">256-bit SSL</span>
                         </div>
                         <div className="flex items-center gap-2.5 px-3.5 py-2 bg-white/[0.03] border border-white/[0.06] rounded-xl backdrop-blur-sm">
                             <Fingerprint className="w-3.5 h-3.5 text-indigo-400" />
-                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">Enterprise Auth</span>
+                            <span className="text-[9px] font-bold text-main/40 uppercase tracking-[0.2em]">Enterprise Auth</span>
                         </div>
                     </div>
-                    <p className="text-white/20 text-[11px] font-medium">
+                    <p className="text-muted text-[11px] font-medium">
                         &copy; {new Date().getFullYear()} BizzAI Enterprise Solutions. All rights reserved.
                     </p>
                 </motion.div>
@@ -94,14 +94,14 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                             {/* Mobile logo */}
                             <div className="lg:hidden flex items-center gap-3 mb-6">
                                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                                    <span className="font-black text-base text-white">E</span>
+                                    <span className="font-black text-base text-main">E</span>
                                 </div>
-                                <span className="text-sm font-bold text-white/60 tracking-tight">ERP Matrix</span>
+                                <span className="text-sm font-bold text-main/60 tracking-tight">ERP Matrix</span>
                             </div>
 
-                            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">{subtitle}</h2>
+                            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-main leading-tight">{subtitle}</h2>
                             {secondarySubtitle && (
-                                <p className="mt-2 text-[10px] font-bold text-white/30 uppercase tracking-[0.18em]">
+                                <p className="mt-2 text-[10px] font-bold text-muted uppercase tracking-[0.18em]">
                                     {secondarySubtitle}
                                 </p>
                             )}
@@ -113,7 +113,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                     </div>
 
                     {/* Mobile footer */}
-                    <p className="lg:hidden mt-6 text-center text-white/15 text-[10px] font-medium">
+                    <p className="lg:hidden mt-6 text-center text-main/15 text-[10px] font-medium">
                         &copy; {new Date().getFullYear()} BizzAI Enterprise Solutions
                     </p>
                 </motion.div>

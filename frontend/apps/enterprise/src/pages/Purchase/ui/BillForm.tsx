@@ -142,28 +142,28 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="flex flex-col h-full bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
             {/* Top Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/50">
+            <div className="px-6 py-4 border-b border-default dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/50">
                 <div className="flex items-center gap-4">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors">
+                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-[var(--erp-card)] rounded-full transition-colors">
                         <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
                     </button>
                     <div>
-                        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Record Vendor Bill</h2>
+                        <h2 className="text-xl font-bold text-neutral-900 dark:text-main">Record Vendor Bill</h2>
                         <p className="text-xs text-neutral-500 font-medium tracking-tight">Purchase Bill & Three-Way Matching</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={runOCR}
-                        className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 text-primary font-bold text-xs rounded-lg hover:bg-neutral-200 transition-colors uppercase"
+                        className="px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-primary font-bold text-xs rounded-lg hover:bg-neutral-200 transition-colors uppercase"
                         disabled={isLoading}
                     >
                         {isLoading ? 'Processing...' : 'Auto-Extract (OCR)'}
                     </button>
                     {id && bill.status !== 'Paid' && (
-                        <div className="flex items-center gap-2 mr-2 pr-4 border-r border-neutral-200 dark:border-neutral-800">
+                        <div className="flex items-center gap-2 mr-2 pr-4 border-r border-default dark:border-default">
                             <button
                                 onClick={() => handleUpdateStatus('Hold')}
                                 className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-amber-200"
@@ -180,7 +180,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             </button>
                             <button
                                 onClick={() => handleUpdateStatus('Rejected')}
-                                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors border border-neutral-200"
+                                className="p-2 text-neutral-600 hover:bg-[var(--erp-bg-sunken)] rounded-lg transition-colors border border-default"
                                 title="Reject"
                             >
                                 <Ban className="w-4 h-4" />
@@ -190,11 +190,11 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                     <button
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
+                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-main rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
                     >
                         <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : id ? 'Update Bill' : 'Finalize Bill'}
                     </button>
-                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors">
+                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-xl transition-colors">
                         Cancel
                     </button>
                 </div>
@@ -213,7 +213,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             />
 
                             {/* Vendor Invoice Details */}
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                                 <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2 mb-4">
                                     <FileText className="w-4 h-4" /> Vendor Documents
                                 </h3>
@@ -225,7 +225,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                             value={bill.vendorInvoiceNo || ''}
                                             onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
                                             placeholder="e.g. INV-2024-001"
-                                            className="w-full px-4 py-2 mt-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-sm font-bold"
+                                            className="w-full px-4 py-2 mt-1 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-lg text-sm font-bold"
                                         />
                                     </div>
                                     <div>
@@ -234,7 +234,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                             type="date"
                                             value={bill.bill_date || ''}
                                             onChange={(e) => updateBillField('bill_date', e.target.value)}
-                                            className="w-full px-4 py-2 mt-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-sm font-bold"
+                                            className="w-full px-4 py-2 mt-1 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-lg text-sm font-bold"
                                         />
                                     </div>
                                 </div>
@@ -286,12 +286,12 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
                     {/* Attachments & Notes */}
                     <div className="space-y-6">
-                        <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm space-y-4">
                             <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
                                 <Paperclip className="w-4 h-4" /> Documents & OCR
                             </h3>
                             <div
-                                className="border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-8 text-center hover:border-brand-500/50 hover:bg-brand-500/5 transition-all cursor-pointer group"
+                                className="border-2 border-dashed border-default dark:border-default rounded-xl p-8 text-center hover:border-brand-500/50 hover:bg-brand-500/5 transition-all cursor-pointer group"
                             >
                                 <input
                                     type="file"
@@ -301,7 +301,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     accept=".pdf,image/*"
                                 />
                                 <div onClick={() => document.getElementById('bill-upload')?.click()}>
-                                    <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                                         <Plus className="w-6 h-6 text-neutral-400 group-hover:text-brand-500" />
                                     </div>
                                     <p className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Click to upload Bill PDF/Image</p>
@@ -310,13 +310,13 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {attachments.map((at, i) => (
-                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700">
+                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-xs border border-default dark:border-default">
                                         <FileText className="w-3.5 h-3.5" /> {at} <X className="w-3 h-3 cursor-pointer" onClick={() => removeAttachment(i)} />
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm space-y-4">
                             <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
                                 <FileText className="w-4 h-4" /> Bill Notes
                             </h3>
@@ -324,7 +324,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 value={bill.notes || ''}
                                 onChange={(e) => updateBillField('notes', e.target.value)}
                                 rows={4}
-                                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                                 placeholder="Any internal notes or dispute details..."
                             />
                         </div>

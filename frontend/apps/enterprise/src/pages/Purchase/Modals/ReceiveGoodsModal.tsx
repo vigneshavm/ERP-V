@@ -54,20 +54,20 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-2xl shadow-2xl border dark:border-neutral-700 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl w-full max-w-2xl shadow-2xl border dark:border-default flex flex-col max-h-[90vh]">
+                <div className="p-6 border-b border-default dark:border-default flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold mb-1">Receive Goods</h2>
                         <p className="text-sm text-neutral-500">PO #{order.po_number}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-neutral-50 dark:bg-neutral-700/50">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50">
                             <tr>
                                 <th className="p-3 rounded-l-lg">Product</th>
                                 <th className="p-3 text-right">Ordered</th>
@@ -91,7 +91,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                                             type="number"
                                             min="0"
                                             max={item.ordered}
-                                            className="w-20 px-2 py-1 text-right bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                            className="w-20 px-2 py-1 text-right bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                             value={item.received}
                                             onChange={(e) => handleQuantityChange(idx, e.target.value)}
                                         />
@@ -102,10 +102,10 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                     </table>
                 </div>
 
-                <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-b-2xl">
+                <div className="p-6 border-t border-default dark:border-default flex justify-end gap-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-b-2xl">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl font-medium hover:bg-white dark:hover:bg-neutral-700 transition-colors"
+                        className="px-6 py-2.5 border border-default dark:border-default rounded-xl font-medium hover:bg-white dark:hover:bg-neutral-700 transition-colors"
                     >
                         Cancel
                     </button>

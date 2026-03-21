@@ -33,7 +33,7 @@ const Storefront: React.FC = () => {
     } = useStorefrontLogic();
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 animate-fade-in relative">
+        <div className="flex flex-col h-full bg-[var(--erp-bg-sunken)] dark:bg-slate-950 animate-fade-in relative">
             <StorefrontHeader
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -104,7 +104,7 @@ const Storefront: React.FC = () => {
 
                     {/* Empty State */}
                     {filteredProducts.length === 0 && (
-                        <div className="py-20 text-center text-slate-400 dark:text-slate-500">
+                        <div className="py-20 text-center text-muted dark:text-muted">
                             {aiResult ? (
                                 <>
                                     <Bot className="w-16 h-16 mx-auto mb-4 opacity-20" />

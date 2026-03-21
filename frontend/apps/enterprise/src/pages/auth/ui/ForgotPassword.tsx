@@ -73,7 +73,7 @@ const ForgotPassword: React.FC = () => {
 
                             <div className="space-y-2">
                                 <h3 className="text-lg font-bold text-white">Check your inbox</h3>
-                                <p className="text-white/30 text-sm leading-relaxed max-w-xs mx-auto">
+                                <p className="text-muted text-sm leading-relaxed max-w-xs mx-auto">
                                     We've sent a password reset link to your registered email address.
                                 </p>
                             </div>
@@ -86,7 +86,7 @@ const ForgotPassword: React.FC = () => {
                                 <button
                                     onClick={handleResend}
                                     disabled={resendTimer > 0}
-                                    className="inline-flex items-center gap-2 text-[11px] font-bold text-white/30 hover:text-white/50 disabled:text-white/10 uppercase tracking-[0.15em] transition-colors"
+                                    className="inline-flex items-center gap-2 text-[11px] font-bold text-muted hover:text-muted disabled:text-white/10 uppercase tracking-[0.15em] transition-colors"
                                 >
                                     <RotateCcw className="w-3 h-3" />
                                     {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend Link'}
@@ -160,7 +160,7 @@ const ForgotPassword: React.FC = () => {
                                     <LifeBuoy className="w-4 h-4 text-indigo-400" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Need Support?</p>
+                                    <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Need Support?</p>
                                     <p className="text-[11px] text-white/15 font-medium">Contact our enterprise desk for assistance.</p>
                                 </div>
                             </div>

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDB = exports.db = void 0;
-const pg_1 = require("pg");
-const pool = new pg_1.Pool({
+import { Pool } from 'pg';
+const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT) || 5432,
     database: process.env.DB_NAME || 'budget_planner',
@@ -11,7 +8,7 @@ const pool = new pg_1.Pool({
     max: 10,
     idleTimeoutMillis: 30_000,
 });
-exports.db = {
+export const db = {
     query: (text, params) => pool.query(text, params),
     transaction: async (fn) => {
         const client = await pool.connect();
@@ -30,10 +27,9 @@ exports.db = {
         }
     },
 };
-const connectDB = async () => {
+export const connectDB = async () => {
     const client = await pool.connect();
     await client.query('SELECT 1');
     client.release();
     console.log('PostgreSQL connected (budget-planner)');
 };
-exports.connectDB = connectDB;

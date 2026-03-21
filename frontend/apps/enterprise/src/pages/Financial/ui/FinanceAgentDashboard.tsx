@@ -250,32 +250,32 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
     return (
         <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
             <div
-                className="relative h-full w-full max-w-md bg-[#0f1117] border-l border-white/10 shadow-2xl flex flex-col"
+                className="relative h-full w-full max-w-md bg-[var(--erp-bg)] border-l border-default shadow-2xl flex flex-col"
                 onClick={e => e.stopPropagation()}
                 style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16,1,0.3,1)' }}
             >
                 {/* Header */}
                 <div className={`p-6 bg-gradient-to-br ${agent.color} relative overflow-hidden`}>
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 0%, transparent 60%)' }} />
-                    <button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors">
+                    <button onClick={onClose} className="absolute top-4 right-4 text-secondary hover:text-main transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                     <div className="relative z-10">
-                        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-3 backdrop-blur-sm">
+                        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-main mb-3 backdrop-blur-sm">
                             {agent.icon}
                         </div>
-                        <h2 className="text-xl font-bold text-white">{agent.name}</h2>
-                        <p className="text-white/80 text-sm mt-1">{agent.tagline}</p>
+                        <h2 className="text-xl font-bold text-main">{agent.name}</h2>
+                        <p className="text-main/80 text-sm mt-1">{agent.tagline}</p>
                     </div>
                 </div>
 
                 {/* Body */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Capabilities</p>
+                        <p className="text-xs font-bold text-muted uppercase tracking-widest mb-3">Capabilities</p>
                         <ul className="space-y-2">
                             {agent.capabilities.map(c => (
-                                <li key={c} className="flex items-center gap-2 text-sm text-slate-300">
+                                <li key={c} className="flex items-center gap-2 text-sm text-muted">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                                     {c}
                                 </li>
@@ -284,19 +284,19 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                     </div>
 
                     <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Workflow File</p>
-                        <div className="bg-white/5 rounded-xl p-3 font-mono text-xs text-slate-400 border border-white/10">
+                        <p className="text-xs font-bold text-muted uppercase tracking-widest mb-3">Workflow File</p>
+                        <div className="bg-[var(--erp-bg-sunken)] rounded-xl p-3 font-mono text-xs text-muted border border-default">
                             withskills/_agents/workflows/{agent.workflow}.md
                         </div>
                     </div>
 
                     <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">How It Works</p>
+                        <p className="text-xs font-bold text-muted uppercase tracking-widest mb-3">How It Works</p>
                         <div className="space-y-2">
                             {['Fetch live data from finance APIs', 'Analyze using business rules', 'Generate prioritized recommendations', 'Execute actions on your approval'].map((step, i) => (
                                 <div key={i} className="flex items-start gap-3">
-                                    <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-slate-400 shrink-0 mt-0.5">{i + 1}</div>
-                                    <p className="text-sm text-slate-400">{step}</p>
+                                    <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-muted shrink-0 mt-0.5">{i + 1}</div>
+                                    <p className="text-sm text-muted">{step}</p>
                                 </div>
                             ))}
                         </div>
@@ -304,7 +304,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-white/10 space-y-3">
+                <div className="p-6 border-t border-default space-y-3">
                     {agent.tab && (
                         <button
                             onClick={() => { onNavigate(agent.tab!); onClose(); }}
@@ -316,7 +316,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                     )}
                     <button
                         onClick={onClose}
-                        className="w-full py-3 rounded-xl font-bold text-sm text-slate-400 bg-white/5 hover:bg-white/10 transition-colors"
+                        className="w-full py-3 rounded-xl font-bold text-sm text-muted bg-[var(--erp-bg-sunken)] hover:bg-white/10 transition-colors"
                     >
                         Close
                     </button>
@@ -351,7 +351,7 @@ const FinanceAgentDashboard: React.FC = () => {
     const navigateTo = (tab: AppView) => navigate(tab);
 
     return (
-        <div className="min-h-screen bg-[#09090f] text-white" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+        <div className="page-shell" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
             {/* Inject keyframe */}
             <style>{`
                 @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -368,18 +368,18 @@ const FinanceAgentDashboard: React.FC = () => {
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                            <Bot className="w-5 h-5 text-white" />
+                            <Bot className="w-5 h-5 text-main" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-white">Finance Agent Command</h1>
-                            <p className="text-xs text-slate-500">
+                            <h1 className="text-xl font-bold text-main">Finance Agent Command</h1>
+                            <p className="text-xs text-muted">
                                 Last refreshed {lastRefreshed.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={handleRefresh}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl glass text-slate-400 hover:text-white text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl glass text-muted hover:text-main text-sm font-medium transition-colors"
                     >
                         <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                         Refresh
@@ -393,16 +393,16 @@ const FinanceAgentDashboard: React.FC = () => {
                     {KPIS.map((kpi, i) => (
                         <div key={i} className="kpi-card glass rounded-2xl p-4 cursor-default">
                             <div className={`${kpi.color} mb-2`}>{kpi.icon}</div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{kpi.label}</p>
-                            <p className="text-lg font-bold text-white mt-1 leading-none">{kpi.value}</p>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider">{kpi.label}</p>
+                            <p className="text-lg font-bold text-main mt-1 leading-none">{kpi.value}</p>
                             <div className="flex items-center gap-1 mt-1">
                                 {kpi.trend === 'up' && <ArrowUpRight className="w-3 h-3 text-emerald-400" />}
                                 {kpi.trend === 'down' && <ArrowDownRight className="w-3 h-3 text-rose-400" />}
-                                <span className={`text-[10px] font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-rose-400' : 'text-slate-500'}`}>
+                                <span className={`text-[10px] font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-rose-400' : 'text-muted'}`}>
                                     {kpi.delta}
                                 </span>
                             </div>
-                            <p className="text-[9px] text-slate-600 mt-0.5">{kpi.sub}</p>
+                            <p className="text-[9px] text-secondary mt-0.5">{kpi.sub}</p>
                         </div>
                     ))}
                 </div>
@@ -413,10 +413,10 @@ const FinanceAgentDashboard: React.FC = () => {
                     <div className="lg:col-span-2 glass rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-4">
                             <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cash Flow — Last 12 Months</p>
-                                <p className="text-2xl font-bold text-white mt-0.5">₹45,750 <span className="text-sm font-normal text-emerald-400">net this month</span></p>
+                                <p className="text-xs font-bold text-muted uppercase tracking-widest">Cash Flow — Last 12 Months</p>
+                                <p className="text-2xl font-bold text-main mt-0.5">₹45,750 <span className="text-sm font-normal text-emerald-400">net this month</span></p>
                             </div>
-                            <BarChart3 className="w-5 h-5 text-slate-600" />
+                            <BarChart3 className="w-5 h-5 text-secondary" />
                         </div>
                         {/* Bar chart */}
                         <div className="flex items-end gap-1.5 h-24">
@@ -437,7 +437,7 @@ const FinanceAgentDashboard: React.FC = () => {
                                                 style={{ height: expH }}
                                             />
                                         </div>
-                                        <span className="text-[8px] text-slate-600">
+                                        <span className="text-[8px] text-secondary">
                                             {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
                                         </span>
                                     </div>
@@ -445,10 +445,10 @@ const FinanceAgentDashboard: React.FC = () => {
                             })}
                         </div>
                         <div className="flex gap-4 mt-3">
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                            <div className="flex items-center gap-1.5 text-[10px] text-muted">
                                 <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500/50" />Cash In
                             </div>
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                            <div className="flex items-center gap-1.5 text-[10px] text-muted">
                                 <div className="w-2.5 h-2.5 rounded-sm bg-rose-500/40" />Cash Out
                             </div>
                         </div>
@@ -457,7 +457,7 @@ const FinanceAgentDashboard: React.FC = () => {
                     {/* Anomaly Feed */}
                     <div className="glass rounded-2xl p-5 flex flex-col">
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Live Anomalies</p>
+                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Live Anomalies</p>
                             <span className="text-[10px] font-bold bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full">
                                 {ALERTS.filter(a => a.type !== 'ok').length} active
                             </span>
@@ -467,9 +467,9 @@ const FinanceAgentDashboard: React.FC = () => {
                                 <div key={alert.id} className="flex gap-2">
                                     <AlertIcon type={alert.type} />
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-white leading-snug truncate">{alert.title}</p>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{alert.body}</p>
-                                        <p className="text-[9px] text-slate-600 mt-0.5 flex items-center gap-1">
+                                        <p className="text-xs font-semibold text-main leading-snug truncate">{alert.title}</p>
+                                        <p className="text-[10px] text-muted mt-0.5 leading-relaxed">{alert.body}</p>
+                                        <p className="text-[9px] text-secondary mt-0.5 flex items-center gap-1">
                                             <Clock className="w-2.5 h-2.5" />{alert.time}
                                         </p>
                                     </div>
@@ -481,7 +481,7 @@ const FinanceAgentDashboard: React.FC = () => {
 
                 {/* ── Agent Cards ─────────────────────── */}
                 <div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Active Finance Agents</p>
+                    <p className="text-xs font-bold text-muted uppercase tracking-widest mb-3">Active Finance Agents</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
                         {AGENTS.map((agent, idx) => (
                             <button
@@ -495,8 +495,8 @@ const FinanceAgentDashboard: React.FC = () => {
                                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-white mb-3 shadow-lg ${agent.glowColor}`}>
                                         {agent.icon}
                                     </div>
-                                    <p className="text-sm font-bold text-white">{agent.name}</p>
-                                    <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">{agent.tagline}</p>
+                                    <p className="text-sm font-bold text-main">{agent.name}</p>
+                                    <p className="text-[10px] text-muted mt-1 leading-relaxed">{agent.tagline}</p>
                                     <div className={`flex items-center gap-1 mt-3 ${agent.accentColor} text-[10px] font-semibold`}>
                                         View workflow <ChevronRight className="w-3 h-3" />
                                     </div>
@@ -511,8 +511,8 @@ const FinanceAgentDashboard: React.FC = () => {
                     {/* Loan Health */}
                     <div className="glass rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Loan Health Monitor</p>
-                            <Layers className="w-4 h-4 text-slate-600" />
+                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Loan Health Monitor</p>
+                            <Layers className="w-4 h-4 text-secondary" />
                         </div>
                         <div className="space-y-5">
                             {LOANS.map((loan, i) => {
@@ -521,7 +521,7 @@ const FinanceAgentDashboard: React.FC = () => {
                                 return (
                                     <div key={i}>
                                         <div className="flex items-center justify-between mb-1.5">
-                                            <p className="text-sm font-semibold text-white truncate max-w-[60%]">{loan.name}</p>
+                                            <p className="text-sm font-semibold text-main truncate max-w-[60%]">{loan.name}</p>
                                             <HealthBadge health={loan.health} />
                                         </div>
                                         <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
@@ -531,8 +531,8 @@ const FinanceAgentDashboard: React.FC = () => {
                                             />
                                         </div>
                                         <div className="flex justify-between mt-1">
-                                            <span className="text-[10px] text-slate-500">{paidPct.toFixed(1)}% paid</span>
-                                            <span className="text-[10px] text-slate-500">₹{fmt(loan.pending)} pending · EMI ₹{fmt(loan.emi)}/mo</span>
+                                            <span className="text-[10px] text-muted">{paidPct.toFixed(1)}% paid</span>
+                                            <span className="text-[10px] text-muted">₹{fmt(loan.pending)} pending · EMI ₹{fmt(loan.emi)}/mo</span>
                                         </div>
                                     </div>
                                 );
@@ -549,21 +549,21 @@ const FinanceAgentDashboard: React.FC = () => {
                     {/* Bill Queue */}
                     <div className="glass rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Bill Approval Queue</p>
-                            <ReceiptText className="w-4 h-4 text-slate-600" />
+                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Bill Approval Queue</p>
+                            <ReceiptText className="w-4 h-4 text-secondary" />
                         </div>
                         <div className="space-y-2">
                             {[
                                 { supplier: 'Sharma Traders', amount: '₹34,000', age: '67 days', action: 'Pay Now', actionColor: 'text-rose-400 bg-rose-500/10' },
                                 { supplier: 'Patel Wholesale', amount: '₹18,500', age: '45 days', action: 'Pay Now', actionColor: 'text-amber-400 bg-amber-500/10' },
                                 { supplier: 'Raj Distributors', amount: '₹52,000', age: '28 days', action: 'Schedule', actionColor: 'text-sky-400 bg-sky-500/10' },
-                                { supplier: 'Metro Supplies', amount: '₹9,800', age: '15 days', action: 'Defer', actionColor: 'text-slate-400 bg-white/5' },
-                                { supplier: 'Global Foods', amount: '₹10,200', age: '8 days', action: 'Defer', actionColor: 'text-slate-400 bg-white/5' },
+                                { supplier: 'Metro Supplies', amount: '₹9,800', age: '15 days', action: 'Defer', actionColor: 'text-muted bg-[var(--erp-bg-sunken)]' },
+                                { supplier: 'Global Foods', amount: '₹10,200', age: '8 days', action: 'Defer', actionColor: 'text-muted bg-[var(--erp-bg-sunken)]' },
                             ].map((bill, i) => (
-                                <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                                <div key={i} className="flex items-center justify-between py-2 border-b border-default last:border-0">
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-white truncate">{bill.supplier}</p>
-                                        <p className="text-[10px] text-slate-500">{bill.amount} · {bill.age} old</p>
+                                        <p className="text-xs font-semibold text-main truncate">{bill.supplier}</p>
+                                        <p className="text-[10px] text-muted">{bill.amount} · {bill.age} old</p>
                                     </div>
                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2 ${bill.actionColor}`}>
                                         {bill.action}
@@ -583,16 +583,16 @@ const FinanceAgentDashboard: React.FC = () => {
                 {/* ── Footer ribbon ───────────────────── */}
                 <div className="glass rounded-2xl p-4 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shrink-0">
-                        <Bot className="w-4 h-4 text-white" />
+                        <Bot className="w-4 h-4 text-main" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-xs font-bold text-white">Finance Agent powered by Antigravity Skill Engine</p>
-                        <p className="text-[10px] text-slate-500 truncate">
+                        <p className="text-xs font-bold text-main">Finance Agent powered by Antigravity Skill Engine</p>
+                        <p className="text-[10px] text-muted truncate">
                             Skill: <span className="text-indigo-400">finance-agent</span> ·
                             Workflows: cash-flow, loan-emi, reconciliation, bill-approval, day-end
                         </p>
                     </div>
-                    <Info className="w-4 h-4 text-slate-600 shrink-0 ml-auto" />
+                    <Info className="w-4 h-4 text-secondary shrink-0 ml-auto" />
                 </div>
             </div>
 

@@ -40,12 +40,15 @@ const CustomerDetail = () => {
     if (isLoading && !customer) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex justify-center items-center py-20">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-                        <p className="text-sm font-bold text-slate-400">Authenticating Partner Profile...</p>
+                        <p className="text-sm font-bold text-muted">Authenticating Partner Profile...</p>
                     </div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -54,11 +57,11 @@ const CustomerDetail = () => {
         return (
             <Layout>
                 <div className="p-20 text-center flex flex-col items-center gap-4">
-                    <div className="w-20 h-20 rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center grayscale opacity-50">
-                        <UserCheck className="w-10 h-10 text-slate-400" />
+                    <div className="w-20 h-20 rounded-3xl bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] flex items-center justify-center grayscale opacity-50">
+                        <UserCheck className="w-10 h-10 text-muted" />
                     </div>
-                    <p className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-widest">Entry Restricted</p>
-                    <p className="text-sm text-slate-500 max-w-xs">{message || 'This consumer profile has been archived or does not exist in the current terminal.'}</p>
+                    <p className="text-lg font-black text-main uppercase tracking-widest">Entry Restricted</p>
+                    <p className="text-sm text-muted max-w-xs">{message || 'This consumer profile has been archived or does not exist in the current terminal.'}</p>
                     <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all font-medium">Return to Portfolio</button>
                 </div>
             </Layout>
@@ -75,7 +78,7 @@ const CustomerDetail = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={() => navigate(`/customers/edit/${customer._id}`)}
-                            className="flex items-center gap-2 px-6 py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all font-medium"
+                            className="flex items-center gap-2 px-6 py-2 border border-default dark:border-default text-secondary dark:text-muted rounded-xl text-sm font-bold hover:bg-[var(--erp-bg-sunken)] transition-all font-medium"
                         >
                             Modify Profile
                         </button>
@@ -114,34 +117,34 @@ const CustomerDetail = () => {
                     </div>
 
                     {/* Predictive Intelligence Gauge */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-[2.5rem] border border-default dark:border-default p-8 space-y-6 shadow-sm">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Buying Intent</h3>
+                            <h3 className="text-xs font-black text-muted uppercase tracking-widest">Buying Intent</h3>
                             <span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 text-[10px] font-black rounded-lg">High Growth</span>
                         </div>
 
                         <div className="flex items-center gap-6">
                             <div className="relative w-24 h-24 flex items-center justify-center">
                                 <svg className="w-full h-full -rotate-90">
-                                    <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-100 dark:text-slate-800" />
+                                    <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-100 dark:text-main" />
                                     <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={251.2} strokeDashoffset={251.2 * (1 - 0.82)} strokeLinecap="round" className="text-indigo-600" />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-xl font-black text-slate-800 dark:text-white">82%</span>
+                                    <span className="text-xl font-black text-main">82%</span>
                                 </div>
                             </div>
                             <div className="flex-1 space-y-2">
-                                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Probability</p>
-                                <p className="text-xs text-slate-400 leading-relaxed">System predicts a high-value purchase within 12 days based on browsing & frequency.</p>
+                                <p className="text-sm font-bold text-secondary dark:text-slate-200">Probability</p>
+                                <p className="text-xs text-muted leading-relaxed">System predicts a high-value purchase within 12 days based on browsing & frequency.</p>
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
+                        <div className="pt-4 border-t border-slate-50 dark:border-default">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Churn Risk Level</span>
+                                <span className="text-[10px] font-bold text-muted uppercase">Churn Risk Level</span>
                                 <span className="text-[10px] font-black text-emerald-500 uppercase">Minimal (4%)</span>
                             </div>
-                            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div className="w-full h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full overflow-hidden">
                                 <div className="h-full bg-emerald-500 rounded-full" style={{ width: '4%' }} />
                             </div>
                         </div>
@@ -161,9 +164,9 @@ const CustomerDetail = () => {
                 <div className="col-span-12 lg:col-span-8 space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <DetailCard title="Reachability Node" icon={MapPin}>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800/50 group-hover:border-indigo-500/30 transition-all">
-                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Facility Address</p>
-                                <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed italic">"{customer.address || 'Operational address not registered in global database.'}"</p>
+                            <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 p-6 rounded-[2rem] border border-default dark:border-default/50 group-hover:border-indigo-500/30 transition-all">
+                                <p className="text-xs font-black text-muted uppercase tracking-widest mb-3">Facility Address</p>
+                                <p className="text-sm font-bold text-secondary dark:text-muted leading-relaxed italic">"{customer.address || 'Operational address not registered in global database.'}"</p>
                             </div>
                         </DetailCard>
                         <DetailCard title="Operational Status" icon={ShieldCheck}>
@@ -175,8 +178,8 @@ const CustomerDetail = () => {
                                     </div>
                                     <ArrowUpRight className="w-4 h-4 text-emerald-400" />
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                    <div className="flex items-center gap-3 text-slate-500">
+                                <div className="flex items-center justify-between p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default">
+                                    <div className="flex items-center gap-3 text-muted">
                                         <Calendar className="w-5 h-5" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Joined {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'N/A'}</span>
                                     </div>
@@ -186,15 +189,15 @@ const CustomerDetail = () => {
                     </div>
 
                     {/* Behavior Analytics / History */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                        <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-[3rem] border border-default dark:border-default shadow-sm overflow-hidden">
+                        <div className="px-8 py-6 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">
                                     <History className="w-5 h-5" />
                                 </div>
-                                <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">Market Behavior</h3>
+                                <h3 className="text-lg font-black text-main uppercase tracking-tight">Market Behavior</h3>
                             </div>
-                            <button className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                            <button className="p-3 text-muted hover:text-indigo-600 hover:bg-white dark:hover:bg-[var(--erp-card)] rounded-xl transition-all shadow-sm border border-transparent hover:border-default dark:hover:border-default">
                                 <Download className="w-4 h-4" />
                             </button>
                         </div>
@@ -202,7 +205,7 @@ const CustomerDetail = () => {
                             {transactions && transactions.length > 0 ? (
                                 <table className="w-full text-left">
                                     <thead>
-                                        <tr className="bg-slate-50/50 dark:bg-slate-800/30 text-[9px] uppercase tracking-[0.15em] font-black text-slate-400">
+                                        <tr className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/30 text-[9px] uppercase tracking-[0.15em] font-black text-muted">
                                             <th className="px-8 py-4">Execution Date</th>
                                             <th className="px-8 py-4">Event Type</th>
                                             <th className="px-8 py-4">Market Value</th>
@@ -211,17 +214,17 @@ const CustomerDetail = () => {
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {transactions.map((tx: any, index: number) => (
-                                            <tr key={tx._id || index} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-all">
+                                            <tr key={tx._id || index} className="hover:bg-[var(--erp-bg-sunken)]/30 dark:hover:bg-[var(--erp-card)]/30 transition-all">
                                                 <td className="px-8 py-5">
-                                                    <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                                                    <p className="text-xs font-bold text-secondary dark:text-muted">
                                                         {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
                                                     </p>
                                                 </td>
-                                                <td className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-tighter">
+                                                <td className="px-8 py-5 text-[10px] font-black uppercase text-muted tracking-tighter">
                                                     {tx.type || 'Standard Capture'}
                                                 </td>
                                                 <td className="px-8 py-5">
-                                                    <p className="text-xs font-black text-slate-800 dark:text-white">₹{(tx.amount || 0).toLocaleString('en-IN')}</p>
+                                                    <p className="text-xs font-black text-main">₹{(tx.amount || 0).toLocaleString('en-IN')}</p>
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
                                                     <span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 text-[9px] font-black uppercase rounded-lg">Success</span>
@@ -232,8 +235,8 @@ const CustomerDetail = () => {
                                 </table>
                             ) : (
                                 <div className="p-20 text-center opacity-30">
-                                    <Zap className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No Historical Oscillations Recorded</p>
+                                    <Zap className="w-12 h-12 mx-auto text-muted mb-4" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted">No Historical Oscillations Recorded</p>
                                 </div>
                             )}
                         </div>

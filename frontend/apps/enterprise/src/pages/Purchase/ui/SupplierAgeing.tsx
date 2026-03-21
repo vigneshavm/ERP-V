@@ -94,11 +94,11 @@ const SupplierAgeing: React.FC = () => {
     };
 
     const MetricCard = ({ title, value, color, icon: Icon }: any) => (
-        <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm transition-all hover:border-primary/30">
+        <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default shadow-sm transition-all hover:border-primary/30">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="text-neutral-500 text-xs font-bold uppercase tracking-wider">{title}</p>
-                    <h3 className="text-2xl font-black text-neutral-900 dark:text-white mt-1">₹{value.toLocaleString()}</h3>
+                    <h3 className="text-2xl font-black text-neutral-900 dark:text-main mt-1">₹{value.toLocaleString()}</h3>
                 </div>
                 <div className={`p-2 rounded-lg bg-${color}-500/10 text-${color}-500`}>
                     <Icon size={20} />
@@ -109,7 +109,7 @@ const SupplierAgeing: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="page-shell">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -122,12 +122,12 @@ const SupplierAgeing: React.FC = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={handleExport}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-sm font-bold shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-neutral-700 dark:text-neutral-300 rounded-lg text-sm font-bold shadow-sm hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 transition-all">
                             <Download className="w-4 h-4" /> Export
                         </button>
                         <button
                             onClick={fetchAgeing}
-                            className="p-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-400 hover:text-primary rounded-lg transition-all shadow-sm">
+                            className="p-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-neutral-400 hover:text-primary rounded-lg transition-all shadow-sm">
                             <RefreshCcw className="w-4 h-4" />
                         </button>
                     </div>
@@ -142,8 +142,8 @@ const SupplierAgeing: React.FC = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default shadow-sm overflow-hidden">
+                    <div className="p-4 border-b border-default dark:border-default flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="relative w-full sm:w-96 group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-primary transition-colors" />
                             <input
@@ -151,7 +151,7 @@ const SupplierAgeing: React.FC = () => {
                                 placeholder="Filter by supplier name..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-11 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                                className="w-full pl-11 pr-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
                             />
                         </div>
                         <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ const SupplierAgeing: React.FC = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-neutral-50 dark:bg-neutral-900/50 text-[11px] uppercase tracking-widest font-black text-neutral-500 dark:text-neutral-400">
+                                <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 text-[11px] uppercase tracking-widest font-black text-neutral-500 dark:text-neutral-400">
                                     <th className="px-6 py-4">Supplier</th>
                                     <th className="px-6 py-4 text-right">0-30 Days</th>
                                     <th className="px-6 py-4 text-right">31-60 Days</th>
@@ -193,13 +193,13 @@ const SupplierAgeing: React.FC = () => {
                                     </tr>
                                 ) : (
                                     filteredData.map((row) => (
-                                        <tr key={row.supplierId} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                                        <tr key={row.supplierId} className="group hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-bg)]/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-300 font-bold text-xs group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                                                    <div className="w-8 h-8 rounded-lg bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-300 font-bold text-xs group-hover:bg-primary/10 group-hover:text-primary transition-all">
                                                         {row.businessName.charAt(0)}
                                                     </div>
-                                                    <span className="text-sm font-bold text-neutral-900 dark:text-white">{row.businessName}</span>
+                                                    <span className="text-sm font-bold text-neutral-900 dark:text-main">{row.businessName}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -222,13 +222,13 @@ const SupplierAgeing: React.FC = () => {
                                                     ₹{row.buckets["90+"].toLocaleString()}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-right bg-neutral-50/50 dark:bg-neutral-900/20">
+                                            <td className="px-6 py-4 text-right bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/20">
                                                 <span className="text-sm font-black text-primary">₹{row.totalDue.toLocaleString()}</span>
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <button
                                                     onClick={() => navigate(`/suppliers/${row.supplierId}/ledger`)}
-                                                    className="p-2 text-neutral-400 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-all"
+                                                    className="p-2 text-neutral-400 hover:text-primary hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg transition-all"
                                                     title="View Ledger"
                                                 >
                                                     <ArrowUpRight size={16} />

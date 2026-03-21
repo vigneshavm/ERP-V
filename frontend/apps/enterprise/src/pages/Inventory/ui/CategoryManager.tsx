@@ -168,7 +168,7 @@ const CategoryManager: React.FC = () => {
 
     // Render Helpers
     const getSortIcon = (field: keyof Category) => {
-        if (sortBy !== field) return <ArrowUpDown className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-50" />;
+        if (sortBy !== field) return <ArrowUpDown className="w-3 h-3 text-muted opacity-0 group-hover:opacity-50" />;
         return order === 'asc'
             ? <ArrowUp className="w-3 h-3 text-indigo-600" />
             : <ArrowDown className="w-3 h-3 text-indigo-600" />;
@@ -176,12 +176,12 @@ const CategoryManager: React.FC = () => {
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 bg-slate-50 border border-slate-200 rounded-2xl h-[500px]">
+            <div className="flex flex-col items-center justify-center p-12 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl h-[500px]">
                 <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center mb-4">
                     <AlertTriangle className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">Connection Failed</h3>
-                <p className="text-slate-500 mb-6 text-center max-w-md">
+                <h3 className="text-lg font-bold text-main mb-2">Connection Failed</h3>
+                <p className="text-muted mb-6 text-center max-w-md">
                     Unable to retrieve category data. Please ensure the backend server is running and accessible.
                 </p>
                 <div className="flex gap-3">
@@ -201,16 +201,16 @@ const CategoryManager: React.FC = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-main flex items-center gap-2">
                         <Layers className="w-6 h-6 text-indigo-600" />
                         Category Management
                     </h1>
-                    <p className="text-slate-500 text-sm mt-1">
+                    <p className="text-muted text-sm mt-1">
                         Enterprise taxonomy control and inventory grouping.
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
+                    <button className="px-4 py-2 bg-white border border-default text-secondary hover:bg-[var(--erp-bg-sunken)] rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-600/20 transition-all active:scale-95">
@@ -227,41 +227,41 @@ const CategoryManager: React.FC = () => {
                     { label: 'Stock Valuation', value: stats ? `₹${(stats.totalStockValue / 1000000).toFixed(2)}M` : '-', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
                     { label: 'Avg Items / Cat', value: stats?.avgItemsPerCategory.toLocaleString() || '-', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-50' }
                 ].map((stat, idx) => (
-                    <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div key={idx} className="bg-white p-5 rounded-2xl border border-default shadow-sm flex items-center gap-4">
                         <div className={`p-3 rounded-xl ${stat.bg}`}>
                             <stat.icon className={`w-6 h-6 ${stat.color}`} />
                         </div>
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">{stat.label}</p>
-                            <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
+                            <p className="text-xs font-bold uppercase tracking-wider text-muted mb-0.5">{stat.label}</p>
+                            <h3 className="text-2xl font-bold text-main">{stat.value}</h3>
                         </div>
                     </div>
                 ))}
             </div>
 
             {/* Main Content Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-default shadow-sm overflow-hidden">
                 {/* Controls Toolbar */}
-                <div className="p-4 border-b border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
+                <div className="p-4 border-b border-default flex flex-col md:flex-row gap-4 items-center justify-between bg-[var(--erp-bg-sunken)]/50">
                     <div className="relative w-full md:w-80">
                         <input
                             type="text"
                             placeholder="Search categories..."
-                            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm transition-all"
+                            className="w-full pl-10 pr-4 py-2 bg-white border border-default rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm transition-all"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                        <Search className="w-4 h-4 text-muted absolute left-3 top-2.5" />
                         {isLoading && search && (
                             <Loader2 className="w-3 h-3 text-indigo-600 absolute right-3 top-3 animate-spin" />
                         )}
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
+                        <button className="p-2 text-muted hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
                             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                         </button>
                         <div className="h-6 w-px bg-slate-200 mx-1" />
-                        <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 shadow-sm">
+                        <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-default rounded-lg text-xs font-bold text-secondary hover:bg-[var(--erp-bg-sunken)] shadow-sm">
                             <Filter className="w-3.5 h-3.5" /> Filters
                         </button>
                     </div>
@@ -270,7 +270,7 @@ const CategoryManager: React.FC = () => {
                 {/* Data Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-xs tracking-wider border-b border-slate-200">
+                        <thead className="bg-[var(--erp-bg-sunken)] text-muted font-bold uppercase text-xs tracking-wider border-b border-default">
                             <tr>
                                 <th className="px-6 py-4 w-12 text-center">
                                     <input
@@ -292,7 +292,7 @@ const CategoryManager: React.FC = () => {
                                 ].map((col) => (
                                     <th
                                         key={col.id}
-                                        className={`px-6 py-4 cursor-pointer group hover:bg-slate-100 transition-colors text-${col.align}`}
+                                        className={`px-6 py-4 cursor-pointer group hover:bg-[var(--erp-bg-sunken)] transition-colors text-${col.align}`}
                                         onClick={() => handleSort(col.id as keyof Category)}
                                     >
                                         <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : 'justify-start'}`}>
@@ -320,17 +320,17 @@ const CategoryManager: React.FC = () => {
                                 ))
                             ) : categories.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className="px-6 py-24 text-center text-slate-500">
-                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Search className="w-8 h-8 text-slate-300" />
+                                    <td colSpan={8} className="px-6 py-24 text-center text-muted">
+                                        <div className="w-16 h-16 bg-[var(--erp-bg-sunken)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <Search className="w-8 h-8 text-muted" />
                                         </div>
-                                        <h4 className="text-lg font-bold text-slate-700 mb-1">No results found</h4>
+                                        <h4 className="text-lg font-bold text-secondary mb-1">No results found</h4>
                                         <p className="text-sm">Try adjusting your filters or search terms.</p>
                                     </td>
                                 </tr>
                             ) : (
                                 categories.map((cat) => (
-                                    <tr key={cat.id} className="hover:bg-slate-50 transition-colors">
+                                    <tr key={cat.id} className="hover:bg-[var(--erp-bg-sunken)] transition-colors">
                                         <td className="px-6 py-4 text-center">
                                             <input
                                                 type="checkbox"
@@ -341,30 +341,30 @@ const CategoryManager: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm" style={{ backgroundColor: cat.color }}>
+                                                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-main text-xs font-bold shadow-sm" style={{ backgroundColor: cat.color }}>
                                                     {cat.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-slate-900">{cat.name}</p>
-                                                    <p className="text-xs text-slate-500 truncate max-w-[200px]">{cat.description || 'No description provided'}</p>
+                                                    <p className="font-bold text-main">{cat.name}</p>
+                                                    <p className="text-xs text-muted truncate max-w-[200px]">{cat.description || 'No description provided'}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className={`font-bold ${cat.itemCount > 0 ? 'text-indigo-600' : 'text-slate-400'}`}>
+                                            <span className={`font-bold ${cat.itemCount > 0 ? 'text-indigo-600' : 'text-muted'}`}>
                                                 {cat.itemCount.toLocaleString()}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-mono text-slate-600 font-bold">
+                                        <td className="px-6 py-4 text-right font-mono text-secondary font-bold">
                                             ₹{cat.stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold border border-slate-200">
+                                            <span className="px-2 py-1 bg-[var(--erp-bg-sunken)] text-secondary rounded text-xs font-bold border border-default">
                                                 {cat.defaultUnit || '-'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold border border-slate-200">
+                                            <span className="px-2 py-1 bg-[var(--erp-bg-sunken)] text-secondary rounded text-xs font-bold border border-default">
                                                 {cat.gstRate}%
                                             </span>
                                         </td>
@@ -381,18 +381,18 @@ const CategoryManager: React.FC = () => {
                                                 <div className={`w-2 h-2 rounded-full ${cat.pricingHealth === 'GOOD' ? 'bg-emerald-500' :
                                                     cat.pricingHealth === 'LOW_MARGIN' ? 'bg-amber-500' : 'bg-rose-500'
                                                     }`} />
-                                                <span className="text-xs font-medium text-slate-600">
+                                                <span className="text-xs font-medium text-secondary">
                                                     {cat.pricingHealth.replace('_', ' ')}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-1 mt-1">
                                                 <ShieldCheck className={`w-3 h-3 ${cat.gstCompliance === 'OK' ? 'text-emerald-500' : 'text-amber-500'}`} />
-                                                <span className="text-[10px] font-bold text-slate-400">TAX SYNC: {cat.gstCompliance}</span>
+                                                <span className="text-[10px] font-bold text-muted">TAX SYNC: {cat.gstCompliance}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2 text-slate-400">
-                                                <button className="p-2 hover:bg-white hover:text-indigo-600 rounded-lg hover:shadow-sm border border-transparent hover:border-slate-200 transition-all">
+                                            <div className="flex items-center justify-end gap-2 text-muted">
+                                                <button className="p-2 hover:bg-white hover:text-indigo-600 rounded-lg hover:shadow-sm border border-transparent hover:border-default transition-all">
                                                     <Edit className="w-4 h-4" />
                                                 </button>
                                                 <button className="p-2 hover:bg-rose-50 hover:text-rose-600 rounded-lg border border-transparent hover:border-rose-100 transition-all">
@@ -408,22 +408,22 @@ const CategoryManager: React.FC = () => {
                 </div>
 
                 {/* Pagination Toolbar */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                    <p className="text-sm text-slate-500">
-                        Page <span className="font-bold text-slate-900">{page}</span> of <span className="font-bold text-slate-900">{totalPages}</span>
+                <div className="px-6 py-4 bg-[var(--erp-bg-sunken)] border-t border-default flex items-center justify-between">
+                    <p className="text-sm text-muted">
+                        Page <span className="font-bold text-main">{page}</span> of <span className="font-bold text-main">{totalPages}</span>
                     </p>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1 || isLoading}
-                            className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
+                            className="px-4 py-2 bg-white border border-default rounded-lg text-sm font-bold text-secondary hover:bg-[var(--erp-bg-sunken)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
                         >
                             <ChevronLeft className="w-4 h-4" /> Previous
                         </button>
                         <button
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages || isLoading}
-                            className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
+                            className="px-4 py-2 bg-white border border-default rounded-lg text-sm font-bold text-secondary hover:bg-[var(--erp-bg-sunken)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
                         >
                             Next <ChevronRight className="w-4 h-4" />
                         </button>

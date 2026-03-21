@@ -96,7 +96,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-20">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
                         <Users className="w-6 h-6" />
@@ -105,21 +105,21 @@ const SuperAdminGrowthConsole: React.FC = () => {
                         <div className="flex items-center gap-2 mb-1">
                             <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider rounded">Tenant Management</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <h1 className="text-2xl font-bold text-main">
                             Growth Fleet Console
                         </h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                        <p className="text-muted dark:text-muted text-sm mt-1">
                             Manage entitlements, connections, and compliance for all tenant instances.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+            <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+                <div className="p-6 border-b border-default dark:border-default flex items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tenant Registry</h2>
-                        <p className="text-sm text-slate-500 mt-1">Select a tenant to configure architecture and routes</p>
+                        <h2 className="text-lg font-bold text-main">Tenant Registry</h2>
+                        <p className="text-sm text-muted mt-1">Select a tenant to configure architecture and routes</p>
                     </div>
                     <div className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium border border-emerald-100">
                         {tenants.length} Active Tenants
@@ -129,25 +129,25 @@ const SuperAdminGrowthConsole: React.FC = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tenant</th>
-                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Growth Status</th>
-                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Enabled Channels</th>
-                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Usage Health</th>
-                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                            <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-b border-default dark:border-default">
+                                <th className="px-6 py-3 text-xs font-semibold text-muted uppercase tracking-wider">Tenant</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-muted uppercase tracking-wider">Growth Status</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-muted uppercase tracking-wider">Enabled Channels</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-muted uppercase tracking-wider">Usage Health</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-muted uppercase tracking-wider text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {tenants.map((tenant) => (
-                                <tr key={tenant.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                <tr key={tenant.id} className="hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 font-bold text-xs">
                                                 {tenant.name.substring(0, 2).toUpperCase()}
                                             </div>
                                             <div>
-                                                <p className="font-medium text-slate-900 dark:text-white text-sm">{tenant.name}</p>
-                                                <p className="text-xs text-slate-500">ID: {tenant.id}</p>
+                                                <p className="font-medium text-main text-sm">{tenant.name}</p>
+                                                <p className="text-xs text-muted">ID: {tenant.id}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -159,25 +159,25 @@ const SuperAdminGrowthConsole: React.FC = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex flex-wrap gap-1.5">
                                             {tenant.enabledChannels.map((c: any) => (
-                                                <span key={c} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded text-[10px] font-medium uppercase border border-slate-200 dark:border-slate-700">
+                                                <span key={c} className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-secondary dark:text-muted rounded text-[10px] font-medium uppercase border border-default dark:border-default">
                                                     {c}
                                                 </span>
                                             ))}
-                                            {tenant.enabledChannels.length === 0 && <span className="text-xs text-slate-400 italic">None Enabled</span>}
+                                            {tenant.enabledChannels.length === 0 && <span className="text-xs text-muted italic">None Enabled</span>}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                            <div className="w-24 h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full overflow-hidden">
                                                 <div className={`h-full rounded-full ${tenant.health > 80 ? 'bg-emerald-500' : tenant.health > 40 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${tenant.health}%` }} />
                                             </div>
-                                            <span className="text-xs font-medium text-slate-500">{tenant.health}%</span>
+                                            <span className="text-xs font-medium text-muted">{tenant.health}%</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <button
                                             onClick={() => handleConfigureTenant(tenant)}
-                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
+                                            className="p-2 text-muted hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
                                             title="Configure Tenant"
                                         >
                                             <Settings className="w-4 h-4" />

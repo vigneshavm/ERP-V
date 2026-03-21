@@ -217,11 +217,11 @@ const Register: React.FC = () => {
                                             id="register-terms"
                                             type="checkbox"
                                             {...register('terms')}
-                                            className="peer h-4 w-4 rounded-md border-white/10 bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
+                                            className="peer h-4 w-4 rounded-md border-default bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
                                         />
                                         <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3 h-3 text-white left-0.5" />
                                     </div>
-                                    <label htmlFor="register-terms" className="text-[10px] font-medium text-white/25 leading-relaxed cursor-pointer group-hover:text-white/35 transition-colors">
+                                    <label htmlFor="register-terms" className="text-[10px] font-medium text-white/25 leading-relaxed cursor-pointer group-hover:text-main/35 transition-colors">
                                         I agree to the <a href="#" className="text-indigo-400/70 hover:text-indigo-400 underline underline-offset-2">Terms of Service</a> and <a href="#" className="text-indigo-400/70 hover:text-indigo-400 underline underline-offset-2">Privacy Policy</a>
                                     </label>
                                 </div>
@@ -241,7 +241,7 @@ const Register: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={prevStep}
-                                className="h-12 px-5 bg-white/[0.04] border border-white/[0.06] text-white/50 hover:text-white/80 hover:bg-white/[0.06] rounded-xl font-bold text-sm flex items-center gap-2 transition-all"
+                                className="h-12 px-5 bg-white/[0.04] border border-white/[0.06] text-muted hover:text-main/80 hover:bg-white/[0.06] rounded-xl font-bold text-sm flex items-center gap-2 transition-all"
                             >
                                 <ArrowLeft className="w-3.5 h-3.5" />
                                 Back

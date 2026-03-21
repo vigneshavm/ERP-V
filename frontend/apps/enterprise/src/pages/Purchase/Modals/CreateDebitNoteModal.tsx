@@ -101,15 +101,15 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
-                <div className="p-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
+                <div className="p-6 border-b border-default dark:border-default flex justify-between items-center">
                     <div>
-                        <h2 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">Create Debit Note</h2>
+                        <h2 className="text-xl font-black text-neutral-900 dark:text-main uppercase tracking-tight">Create Debit Note</h2>
                         <p className="text-xs text-neutral-500 font-medium">Issue a claim or return to a supplier</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-xl transition-colors"
+                        className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-xl transition-colors"
                     >
                         <XCircle className="w-6 h-6 text-neutral-400" />
                     </button>
@@ -120,7 +120,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         <div>
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2 block">Vendor / Supplier</label>
                             <select
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-main font-medium focus:ring-2 focus:ring-error/20"
                                 value={newNote.vendorId}
                                 onChange={(e) => setNewNote({ ...newNote, vendorId: e.target.value })}
                                 required
@@ -135,7 +135,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         <div>
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2 block">Reason</label>
                             <select
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-main font-medium focus:ring-2 focus:ring-error/20"
                                 value={newNote.reason}
                                 onChange={(e) => setNewNote({ ...newNote, reason: e.target.value as any })}
                                 required
@@ -151,7 +151,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         <div>
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2 block">Link to Bill</label>
                             <select
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-main font-medium focus:ring-2 focus:ring-error/20"
                                 value={newNote.originalBillId}
                                 onChange={(e) => {
                                     const bill = bills.find(b => b._id === e.target.value);
@@ -172,7 +172,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         <div>
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2 block">Link to GRN</label>
                             <select
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-xl text-neutral-900 dark:text-main font-medium focus:ring-2 focus:ring-error/20"
                                 value={newNote.originalGrnId}
                                 onChange={(e) => {
                                     const grn = grns.find(g => g.id === e.target.value);
@@ -204,14 +204,14 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         </div>
 
                         {newNote.items?.map((item, idx) => (
-                            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-700 space-y-4">
+                            <div key={idx} className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-4 rounded-2xl border border-default dark:border-default space-y-4">
                                 <div className="flex gap-4 items-end">
                                     <div className="flex-1">
                                         <label className="text-[10px] font-bold text-neutral-400 uppercase mb-1 block">Description</label>
                                         <input
                                             type="text"
                                             placeholder="Item name or description"
-                                            className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm"
+                                            className="w-full px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-neutral-600 rounded-xl text-sm"
                                             value={item.name}
                                             onChange={(e) => updateItem(idx, 'name', e.target.value)}
                                             required
@@ -222,7 +222,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                                         <input
                                             type="number"
                                             placeholder="Qty"
-                                            className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm text-center"
+                                            className="w-full px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-neutral-600 rounded-xl text-sm text-center"
                                             value={item.qty}
                                             onChange={(e) => updateItem(idx, 'qty', parseInt(e.target.value))}
                                             required
@@ -233,21 +233,21 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                                         <input
                                             type="number"
                                             placeholder="Amount"
-                                            className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm text-right"
+                                            className="w-full px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-neutral-600 rounded-xl text-sm text-right"
                                             value={item.amount}
                                             onChange={(e) => updateItem(idx, 'amount', parseFloat(e.target.value))}
                                             required
                                         />
                                     </div>
                                 </div>
-                                <div className="flex gap-4 items-end justify-between border-t border-neutral-100 dark:border-neutral-800 pt-4">
+                                <div className="flex gap-4 items-end justify-between border-t border-default dark:border-default pt-4">
                                     <div className="flex gap-4 items-center">
                                         <div className="w-24">
                                             <label className="text-[10px] font-bold text-neutral-400 uppercase mb-1 block">Tax %</label>
                                             <div className="relative">
                                                 <input
                                                     type="number"
-                                                    className="w-full pl-3 pr-8 py-1.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-xs"
+                                                    className="w-full pl-3 pr-8 py-1.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-neutral-600 rounded-lg text-xs"
                                                     value={item.taxRate}
                                                     onChange={(e) => updateItem(idx, 'taxRate', parseFloat(e.target.value))}
                                                 />
@@ -283,7 +283,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         <div>
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2 block">Notes / Observations</label>
                             <textarea
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm focus:ring-2 focus:ring-error/20"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-xl text-sm focus:ring-2 focus:ring-error/20"
                                 rows={3}
                                 value={newNote.notes}
                                 onChange={(e) => setNewNote({ ...newNote, notes: e.target.value })}
@@ -291,7 +291,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                             ></textarea>
                         </div>
 
-                        <div className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-4 rounded-2xl border border-default dark:border-default space-y-2">
                             <div className="flex justify-between text-xs font-medium text-neutral-500">
                                 <span>Subtotal</span>
                                 <span>₹{(newNote.subTotal || 0).toLocaleString()}</span>
@@ -300,24 +300,24 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                                 <span>Total Tax</span>
                                 <span>₹{(newNote.taxAmount || 0).toLocaleString()}</span>
                             </div>
-                            <div className="flex justify-between text-lg font-black text-error pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                            <div className="flex justify-between text-lg font-black text-error pt-2 border-t border-default dark:border-default">
                                 <span>GRAND TOTAL</span>
                                 <span>₹{(newNote.totalAmount || 0).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 flex justify-end gap-4">
+                    <div className="pt-6 border-t border-default dark:border-default flex justify-end gap-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-2 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-neutral-200"
+                            className="px-6 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-neutral-200"
                         >
                             Discard
                         </button>
                         <button
                             type="submit"
-                            className="px-8 py-2 bg-error text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-error/90 shadow-lg shadow-error/20 transform active:scale-95 transition-all"
+                            className="px-8 py-2 bg-error text-main rounded-xl text-xs font-black uppercase tracking-widest hover:bg-error/90 shadow-lg shadow-error/20 transform active:scale-95 transition-all"
                         >
                             Deploy Debit Note
                         </button>

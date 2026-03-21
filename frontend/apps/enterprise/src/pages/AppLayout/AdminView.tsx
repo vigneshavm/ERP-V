@@ -38,7 +38,7 @@ const AdminView: React.FC<AdminViewProps> = ({ setViewMode, setCurrentTenant, se
               setViewMode('LANDING');
               setIsAdminAuthenticated(false);
             }}
-            className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
+            className="px-4 py-2 bg-[var(--erp-bg-sunken)] hover:bg-white/10 text-secondary border border-default rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
           >
             <LogOut className="w-4 h-4" />
             Terminate Session

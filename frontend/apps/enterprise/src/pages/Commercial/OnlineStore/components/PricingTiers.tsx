@@ -68,8 +68,8 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                 <div
                     key={tier.id}
                     className={`relative p-8 rounded-3xl border transition-all duration-300 ${tier.popular
-                            ? 'bg-white dark:bg-slate-800 border-indigo-500 shadow-xl shadow-indigo-500/10 scale-105 z-10'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                            ? 'bg-white dark:bg-[var(--erp-card)] border-indigo-500 shadow-xl shadow-indigo-500/10 scale-105 z-10'
+                            : 'bg-white dark:bg-[var(--erp-card)] border-default dark:border-default hover:border-indigo-300'
                         }`}
                 >
                     {tier.popular && (
@@ -80,23 +80,23 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
 
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${tier.color === 'indigo' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20' :
                             tier.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20' :
-                                'bg-slate-50 text-slate-600 dark:bg-slate-700'
+                                'bg-[var(--erp-bg-sunken)] text-secondary dark:bg-slate-700'
                         }`}>
                         <tier.icon className="w-6 h-6" />
                     </div>
 
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{tier.name}</h3>
+                    <h3 className="text-xl font-bold text-main mb-2">{tier.name}</h3>
                     <div className="flex items-baseline gap-1 mb-4">
-                        <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{tier.price}</span>
-                        <span className="text-sm text-slate-500 font-medium">{tier.period}</span>
+                        <span className="text-4xl font-black text-main tracking-tight">{tier.price}</span>
+                        <span className="text-sm text-muted font-medium">{tier.period}</span>
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                    <p className="text-sm text-muted dark:text-muted mb-8 leading-relaxed">
                         {tier.description}
                     </p>
 
                     <div className="space-y-4 mb-8">
                         {tier.features.map((feature, idx) => (
-                            <div key={idx} className="flex items-start gap-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                            <div key={idx} className="flex items-start gap-3 text-sm font-medium text-secondary dark:text-muted">
                                 <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                                 {feature}
                             </div>
@@ -107,10 +107,10 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                         onClick={() => onUpgrade(tier.id)}
                         disabled={currentPlan === tier.id}
                         className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all ${currentPlan === tier.id
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                ? 'bg-[var(--erp-bg-sunken)] text-muted cursor-not-allowed'
                                 : tier.popular
                                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02]'
-                                    : 'bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-900'
+                                    : 'bg-white border-2 border-default hover:border-slate-300 text-main'
                             }`}
                     >
                         {currentPlan === tier.id ? 'Current Plan' : `Upgrade to ${tier.name}`}

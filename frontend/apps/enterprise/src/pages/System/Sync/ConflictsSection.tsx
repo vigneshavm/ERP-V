@@ -43,7 +43,7 @@ const FieldDiff: React.FC<{
                         <Check className="w-2.5 h-2.5" /> Use This
                     </span>
                 </div>
-                <p className="font-mono text-sm font-bold text-slate-900 dark:text-white">
+                <p className="font-mono text-sm font-bold text-main">
                     {localDiff.map((c, i) => (
                         <span key={i} className={c.changed ? 'bg-blue-200 dark:bg-blue-800 rounded px-0.5' : ''}>{c.char}</span>
                     ))}
@@ -64,7 +64,7 @@ const FieldDiff: React.FC<{
                         <Check className="w-2.5 h-2.5" /> Use This
                     </span>
                 </div>
-                <p className="font-mono text-sm font-bold text-slate-900 dark:text-white">
+                <p className="font-mono text-sm font-bold text-main">
                     {remoteDiff.map((c, i) => (
                         <span key={i} className={c.changed ? 'bg-violet-200 dark:bg-violet-800 rounded px-0.5' : ''}>{c.char}</span>
                     ))}
@@ -86,7 +86,7 @@ const ConflictCard: React.FC<{
     };
 
     return (
-        <div className={`bg-white dark:bg-slate-900 rounded-3xl border overflow-hidden transition-all shadow-sm ${
+        <div className={`bg-white dark:bg-[var(--erp-bg)] rounded-3xl border overflow-hidden transition-all shadow-sm ${
             resolved ? 'border-emerald-200 dark:border-emerald-800' : 'border-red-200 dark:border-red-900/50'
         }`}>
             {/* Card Header */}
@@ -108,8 +108,8 @@ const ConflictCard: React.FC<{
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <span className="font-black text-slate-900 dark:text-white">{conflict.entity}</span>
-                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-md font-mono">
+                            <span className="font-black text-main">{conflict.entity}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted rounded-md font-mono">
                                 .{conflict.field}
                             </span>
                             {resolved && (
@@ -118,13 +118,13 @@ const ConflictCard: React.FC<{
                                 </span>
                             )}
                         </div>
-                        <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-2">
+                        <p className="text-xs text-muted mt-0.5 flex items-center gap-2">
                             <Clock className="w-3 h-3" /> Detected {formatTimeAgo(conflict.occurredAt)}
                             <span className="font-mono text-[10px] opacity-50">ID: {conflict.entityId?.substring(0, 8)}</span>
                         </p>
                     </div>
                 </div>
-                {expanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                {expanded ? <ChevronUp className="w-4 h-4 text-muted" /> : <ChevronDown className="w-4 h-4 text-muted" />}
             </div>
 
             {/* Card Body */}
@@ -134,7 +134,7 @@ const ConflictCard: React.FC<{
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <Zap className="w-4 h-4 text-amber-500" />
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Field Comparison — Click to accept</span>
+                            <span className="text-[10px] font-black text-muted uppercase tracking-widest">Field Comparison — Click to accept</span>
                         </div>
                         <FieldDiff
                             field={conflict.field}
@@ -145,7 +145,7 @@ const ConflictCard: React.FC<{
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-default dark:border-default">
                         <button
                             onClick={() => handleResolve('remote')}
                             className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-200 dark:shadow-none"
@@ -154,14 +154,14 @@ const ConflictCard: React.FC<{
                         </button>
                         <button
                             onClick={() => handleResolve('local')}
-                            className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-black hover:bg-slate-50 flex items-center gap-2 transition-all"
+                            className="px-5 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-secondary dark:text-muted rounded-xl text-xs font-black hover:bg-[var(--erp-bg-sunken)] flex items-center gap-2 transition-all"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" /> Keep Local
                         </button>
-                        <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-black hover:bg-slate-50 flex items-center gap-2 transition-all">
+                        <button className="px-5 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-secondary dark:text-muted rounded-xl text-xs font-black hover:bg-[var(--erp-bg-sunken)] flex items-center gap-2 transition-all">
                             <GitMerge className="w-3.5 h-3.5" /> Smart Merge
                         </button>
-                        <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-black hover:bg-slate-50 flex items-center gap-2 transition-all">
+                        <button className="px-5 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-secondary dark:text-muted rounded-xl text-xs font-black hover:bg-[var(--erp-bg-sunken)] flex items-center gap-2 transition-all">
                             <Edit3 className="w-3.5 h-3.5" /> Manual Edit
                         </button>
                     </div>
@@ -182,8 +182,8 @@ const ConflictsSection: React.FC<ConflictsSectionProps> = ({ conflicts, formatTi
                         <AlertTriangle className="w-5 h-5 text-red-500" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-slate-900 dark:text-white">Conflict Resolution</h2>
-                        <p className="text-xs text-slate-500 font-medium mt-0.5">Review and resolve data discrepancies between devices</p>
+                        <h2 className="text-xl font-black text-main">Conflict Resolution</h2>
+                        <p className="text-xs text-muted font-medium mt-0.5">Review and resolve data discrepancies between devices</p>
                     </div>
                 </div>
                 {conflicts.length > 0 && (
@@ -198,8 +198,8 @@ const ConflictsSection: React.FC<ConflictsSectionProps> = ({ conflicts, formatTi
                     <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                     </div>
-                    <h3 className="text-lg font-black text-slate-800 dark:text-white mb-2">Perfect Harmony</h3>
-                    <p className="text-sm text-slate-500 font-medium max-w-sm mx-auto">All your data is perfectly synchronized across every connected device. No conflicts detected.</p>
+                    <h3 className="text-lg font-black text-main mb-2">Perfect Harmony</h3>
+                    <p className="text-sm text-muted font-medium max-w-sm mx-auto">All your data is perfectly synchronized across every connected device. No conflicts detected.</p>
                     <div className="flex items-center justify-center gap-2 mt-4 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
                         <Sparkles className="w-3.5 h-3.5" /> Zero Conflicts
                     </div>

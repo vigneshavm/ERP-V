@@ -30,8 +30,8 @@ const HealthGauge: React.FC<{ score: number }> = ({ score }) => {
             />
             <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
                 {/* Background tracks */}
-                <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-100 dark:text-slate-800" />
-                <circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-50 dark:text-slate-800/50" strokeDasharray="4 4" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-100 dark:text-main" />
+                <circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-50 dark:text-main/50" strokeDasharray="4 4" />
                 {/* Main progress */}
                 <circle
                     cx="60" cy="60" r="52" fill="none"
@@ -51,7 +51,7 @@ const HealthGauge: React.FC<{ score: number }> = ({ score }) => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-4xl font-black tabular-nums" style={{ color }}>{score}</span>
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-400 mt-0.5">/ 100</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-muted mt-0.5">/ 100</span>
                 <span className="text-[9px] font-black mt-2 px-3 py-1 rounded-full" style={{ backgroundColor: `${color}15`, color }}>
                     {label}
                 </span>
@@ -64,7 +64,7 @@ const HealthGauge: React.FC<{ score: number }> = ({ score }) => {
 const MetricTile: React.FC<{
     label: string; value: string | number; icon: React.ElementType; trend?: string; color: string;
 }> = ({ label, value, icon: Icon, trend, color }) => (
-    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all group relative overflow-hidden">
+    <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-3xl border border-default dark:border-default shadow-sm hover:shadow-lg transition-all group relative overflow-hidden">
         <div className="absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 opacity-5 group-hover:opacity-10 transition-opacity" style={{ backgroundColor: color }} />
         <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: `${color}12` }}>
@@ -76,8 +76,8 @@ const MetricTile: React.FC<{
                 </span>
             )}
         </div>
-        <span className="text-slate-500 dark:text-slate-400 text-xs font-bold">{label}</span>
-        <span className="block text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{typeof value === 'number' ? value.toLocaleString() : value}</span>
+        <span className="text-muted dark:text-muted text-xs font-bold">{label}</span>
+        <span className="block text-2xl font-black text-main mt-1 tabular-nums">{typeof value === 'number' ? value.toLocaleString() : value}</span>
     </div>
 );
 
@@ -92,14 +92,14 @@ const IntegrityItem: React.FC<{
     };
 
     return (
-        <div className="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <div className="p-6 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-colors">
             <div className="flex items-center justify-between mb-1">
-                <span className="font-black text-slate-900 dark:text-white">{name}</span>
+                <span className="font-black text-main">{name}</span>
                 <span className={`px-3 py-1 ${colors[statusColor]} text-[10px] font-black uppercase rounded-full tracking-widest`}>
                     {status}
                 </span>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{detail}</p>
+            <p className="text-sm text-muted dark:text-muted leading-relaxed">{detail}</p>
         </div>
     );
 };
@@ -173,38 +173,38 @@ const ArchitectureIntelligence: React.FC = () => {
     };
 
     return (
-        <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500 bg-slate-50 dark:bg-slate-950 min-h-screen">
+        <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500 bg-[var(--erp-bg-sunken)] dark:bg-slate-950 min-h-screen">
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-main dark:text-main flex items-center gap-3">
                         <ShieldCheck className="w-8 h-8 text-indigo-500" />
                         Architecture Intelligence
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-muted dark:text-muted mt-1">
                         System health cockpit and structural performance audit agent.
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                        <div className="px-4 border-r border-slate-100 dark:border-slate-800 text-center">
-                            <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">Hydration</span>
-                            <span className="text-lg font-black text-slate-900 dark:text-white">{metrics.hydrationMs}<span className="text-xs text-slate-400 ml-0.5">ms</span></span>
+                    <div className="bg-white dark:bg-[var(--erp-bg)] p-3 rounded-2xl border border-default dark:border-default shadow-sm flex items-center gap-4">
+                        <div className="px-4 border-r border-default dark:border-default text-center">
+                            <span className="block text-[9px] font-black text-muted uppercase tracking-widest">Hydration</span>
+                            <span className="text-lg font-black text-main">{metrics.hydrationMs}<span className="text-xs text-muted ml-0.5">ms</span></span>
                         </div>
-                        <div className="px-4 border-r border-slate-100 dark:border-slate-800 text-center">
-                            <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">Bundle</span>
-                            <span className="text-lg font-black text-slate-900 dark:text-white">{metrics.bundleKb}<span className="text-xs text-slate-400 ml-0.5">KB</span></span>
+                        <div className="px-4 border-r border-default dark:border-default text-center">
+                            <span className="block text-[9px] font-black text-muted uppercase tracking-widest">Bundle</span>
+                            <span className="text-lg font-black text-main">{metrics.bundleKb}<span className="text-xs text-muted ml-0.5">KB</span></span>
                         </div>
                         <div className="px-4 text-center">
-                            <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">Render</span>
-                            <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{metrics.renderFps}<span className="text-xs text-slate-400 ml-0.5">fps</span></span>
+                            <span className="block text-[9px] font-black text-muted uppercase tracking-widest">Render</span>
+                            <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{metrics.renderFps}<span className="text-xs text-muted ml-0.5">fps</span></span>
                         </div>
                     </div>
                     <button
                         onClick={handleRefresh}
-                        className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 transition-all"
+                        className="p-3 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl hover:bg-[var(--erp-bg-sunken)] transition-all"
                     >
-                        <RefreshCw className={`w-5 h-5 text-slate-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-5 h-5 text-muted ${isRefreshing ? 'animate-spin' : ''}`} />
                     </button>
                 </div>
             </header>
@@ -212,9 +212,9 @@ const ArchitectureIntelligence: React.FC = () => {
             {/* Health Gauge + Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                 {/* Gauge */}
-                <div className="lg:col-span-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col items-center justify-center">
+                <div className="lg:col-span-1 bg-white dark:bg-[var(--erp-bg)] rounded-3xl border border-default dark:border-default shadow-sm p-6 flex flex-col items-center justify-center">
                     <HealthGauge score={metrics.score} />
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">System Health</p>
+                    <p className="text-[9px] font-black text-muted uppercase tracking-widest mt-4">System Health</p>
                 </div>
 
                 {/* Data Metrics */}
@@ -229,9 +229,9 @@ const ArchitectureIntelligence: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Structural Audit Card */}
                 <section className="lg:col-span-2 space-y-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                            <h2 className="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-3xl border border-default dark:border-default overflow-hidden shadow-sm">
+                        <div className="px-6 py-5 border-b border-default dark:border-default flex items-center justify-between">
+                            <h2 className="text-lg font-black text-main dark:text-main flex items-center gap-2">
                                 <Zap className="w-5 h-5 text-amber-500" /> Infrastructure Integrity
                             </h2>
                             <span className="text-[9px] font-black text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-3 py-1 rounded-full uppercase tracking-widest">
@@ -249,7 +249,7 @@ const ArchitectureIntelligence: React.FC = () => {
                     </div>
 
                     <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-500/20">
-                        <Layers className="absolute -right-4 -bottom-4 w-40 h-40 text-white/10" />
+                        <Layers className="absolute -right-4 -bottom-4 w-40 h-40 text-main/10" />
                         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
                                 <Server className="w-8 h-8" />
@@ -269,13 +269,13 @@ const ArchitectureIntelligence: React.FC = () => {
 
                 {/* Recommendations Panel */}
                 <aside className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-                        <h2 className="text-lg font-black text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-3xl border border-default dark:border-default p-6 shadow-sm">
+                        <h2 className="text-lg font-black text-main mb-6 flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5 text-amber-500" /> Core Recommendations
                         </h2>
                         <div className="space-y-4">
                             {recommendations.map((rec) => (
-                                <div key={rec.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all cursor-pointer group">
+                                <div key={rec.id} className="p-4 rounded-2xl bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default hover:border-indigo-300 dark:hover:border-indigo-600 transition-all cursor-pointer group">
                                     <div className="flex justify-between items-start mb-2">
                                         <span className="text-[10px] font-black uppercase bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded">
                                             {rec.category}
@@ -284,8 +284,8 @@ const ArchitectureIntelligence: React.FC = () => {
                                             {rec.impact} Impact
                                         </span>
                                     </div>
-                                    <h4 className="font-black text-slate-900 dark:text-white text-sm mb-1 group-hover:text-indigo-600 transition-colors">{rec.title}</h4>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{rec.desc}</p>
+                                    <h4 className="font-black text-main text-sm mb-1 group-hover:text-indigo-600 transition-colors">{rec.title}</h4>
+                                    <p className="text-xs text-muted dark:text-muted leading-relaxed">{rec.desc}</p>
                                     <div className="mt-3 flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 font-black opacity-0 group-hover:opacity-100 transition-opacity">
                                         Details <ChevronRight className="w-3 h-3" />
                                     </div>
@@ -294,12 +294,12 @@ const ArchitectureIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-3xl border border-default dark:border-default p-6 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
                             <Info className="w-4 h-4 text-indigo-500" />
-                            <span className="text-sm font-black text-slate-800 dark:text-white">Audit Methodology</span>
+                            <span className="text-sm font-black text-main">Audit Methodology</span>
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        <p className="text-xs text-muted dark:text-muted leading-relaxed">
                             Heuristics used: Circularity Check (static analysis), Hydration Speed (product catalog size), Data Atomicity (sync patterns), Bundle Analysis (webpack stats), and Separation of Concerns (Line-count threshold for components).
                         </p>
                     </div>

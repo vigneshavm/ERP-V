@@ -20,11 +20,11 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
                 : 'hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(79,70,229,0.1)]'
                 }`}
         >
-            <div className="h-28 w-full bg-white/5 rounded-t-xl overflow-hidden relative">
+            <div className="h-28 w-full bg-[var(--erp-bg-sunken)] rounded-t-xl overflow-hidden relative">
                 {product.image ? (
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-700 group-hover:text-slate-500 transition-colors">
+                    <div className="w-full h-full flex items-center justify-center text-secondary group-hover:text-muted transition-colors">
                         <Package className="w-8 h-8" />
                     </div>
                 )}
@@ -36,10 +36,10 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
             </div>
 
             <div className="p-3 flex flex-col flex-1">
-                <h3 className="font-black text-slate-300 text-xs uppercase tracking-tight line-clamp-1 mb-0.5">{product.name}</h3>
-                {product.nameTamil && <p className="text-[10px] text-slate-500 line-clamp-1 mb-1">{product.nameTamil}</p>}
+                <h3 className="font-black text-muted text-xs uppercase tracking-tight line-clamp-1 mb-0.5">{product.name}</h3>
+                {product.nameTamil && <p className="text-[10px] text-muted line-clamp-1 mb-1">{product.nameTamil}</p>}
                 <div className="mt-auto flex justify-between items-end">
-                    <span className="text-[10px] text-slate-600 font-mono tracking-tighter">{product.sku}</span>
+                    <span className="text-[10px] text-secondary font-mono tracking-tighter">{product.sku}</span>
                     <span className="font-black text-indigo-400">₹{product.sellingPrice}</span>
                 </div>
             </div>
@@ -174,13 +174,13 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
     }, []);
 
     return (
-        <div className="flex flex-col h-full premium-bg border-r border-white/10 relative">
+        <div className="flex flex-col h-full bg-app border-r border-default relative">
             {/* Search & Filter Header */}
-            <div className="p-4 space-y-4 bg-white/5 border-b border-white/10">
+            <div className="p-4 space-y-4 bg-[var(--erp-bg-sunken)] border-b border-default">
                 {/* Search Bar */}
                 <div className="relative flex gap-2">
                     <div className="relative flex-1">
-                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-indigo-400' : 'text-slate-500'}`} />
+                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-indigo-400' : 'text-muted'}`} />
                         <input
                             ref={searchInputRef}
                             type="text"
@@ -191,7 +191,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                             onKeyDown={handleScanKeyDown}
                             autoFocus
                         />
-                        <kbd className="absolute right-2 top-2 text-[8px] bg-white/5 px-1 py-0.5 rounded text-slate-500 border border-white/10 font-mono font-black uppercase tracking-tighter">Ctrl+F</kbd>
+                        <kbd className="absolute right-2 top-2 text-[8px] bg-[var(--erp-bg-sunken)] px-1 py-0.5 rounded text-muted border border-default font-mono font-black uppercase tracking-tighter">Ctrl+F</kbd>
                     </div>
                     <button
                         onClick={() => {
@@ -202,7 +202,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                         }}
                         className={`p-2 rounded-xl border transition-all ${isManualMode
                             ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-600/30'
-                            : 'premium-card text-slate-500 hover:text-slate-300 hover:border-indigo-500/50'
+                            : 'premium-card text-muted hover:text-muted hover:border-indigo-500/50'
                             }`}
                         title="Manual Lookup Mode (F2)"
                     >
@@ -222,7 +222,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                             }}
                             className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${selectedCategory === cat
                                 ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/30'
-                                : 'premium-card text-slate-500 hover:text-slate-300'
+                                : 'premium-card text-muted hover:text-muted'
                                 }`}
                         >
                             {cat}
@@ -232,14 +232,14 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
 
                 {/* Subcategories (Conditional) */}
                 {selectedCategory !== 'All' && subcategories.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-t border-neutral-100 dark:border-neutral-700/50 pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-t border-default dark:border-default/50 pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
                         {subcategories.map(sub => (
                             <button
                                 key={sub}
                                 onClick={() => setSelectedSubcategory(sub)}
                                 className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-colors ${selectedSubcategory === sub
-                                    ? 'bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900 shadow-sm'
-                                    : 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                    ? 'bg-[var(--erp-card)] dark:bg-neutral-200 text-main dark:text-neutral-900 shadow-sm'
+                                    : 'bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-neutral-500 dark:text-neutral-400 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700'
                                     }`}
                             >
                                 {sub}
@@ -263,7 +263,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                     {filteredProducts.length > pageSize && (
                         <button
                             onClick={() => setPageSize(prev => prev + 20)}
-                            className="col-span-full py-4 text-indigo-400 font-black uppercase text-[10px] tracking-widest hover:bg-white/5 premium-card transition-all border-dashed border-white/20"
+                            className="col-span-full py-4 text-indigo-400 font-black uppercase text-[10px] tracking-widest hover:bg-[var(--erp-bg-sunken)] erp-card transition-all border-dashed border-white/20"
                         >
                             Load More (+20)
                         </button>

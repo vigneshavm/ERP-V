@@ -32,12 +32,12 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
-                <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-md rounded-3xl border border-default dark:border-default shadow-2xl overflow-hidden flex flex-col">
+                <div className="px-8 py-6 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50">
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <Tag className="w-5 h-5 text-primary" /> Migrate Category
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 rounded-full transition-all">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 text-neutral-400 rounded-full transition-all">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -54,7 +54,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                         <select
                             value={targetCategory}
                             onChange={(e) => setTargetCategory(e.target.value)}
-                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-main"
+                            className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-main"
                         >
                             <option value="">Select Category...</option>
                             {categories.filter(c => c !== 'ALL').map(cat => (
@@ -63,7 +63,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                         </select>
                     </div>
                 </div>
-                <div className="px-8 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-700/50 flex justify-end gap-3">
+                <div className="px-8 py-6 border-t border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50 flex justify-end gap-3">
                     <button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-main transition-all">Discard</button>
                     <button
                         onClick={handleConfirm}
@@ -106,12 +106,12 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
-                <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-md rounded-3xl border border-default dark:border-default shadow-2xl overflow-hidden flex flex-col">
+                <div className="px-8 py-6 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50">
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <CheckSquare className="w-5 h-5 text-emerald-600" /> Stock Audit Adjustment
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 rounded-full transition-all">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 text-neutral-400 rounded-full transition-all">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -126,7 +126,7 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
                             <button
                                 key={t}
                                 onClick={() => setType(t)}
-                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${type === t ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:border-neutral-300'}`}
+                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${type === t ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white dark:bg-[var(--erp-card)] border-default dark:border-default text-neutral-500 hover:border-neutral-300'}`}
                             >
                                 {t}
                             </button>
@@ -139,16 +139,16 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
                             type="number"
                             value={adjustment}
                             onChange={(e) => setAdjustment(parseFloat(e.target.value) || 0)}
-                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-lg font-black outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-main"
+                            className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-lg font-black outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-main"
                         />
                     </div>
                 </div>
-                <div className="px-8 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-700/50 flex justify-end gap-3">
+                <div className="px-8 py-6 border-t border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50 flex justify-end gap-3">
                     <button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-main transition-all">Discard</button>
                     <button
                         onClick={handleConfirm}
                         disabled={isSubmitting}
-                        className="px-6 py-2.5 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                        className="px-6 py-2.5 bg-[var(--erp-bg)] dark:bg-[var(--erp-bg-sunken)] text-main dark:text-neutral-900 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                     >
                         {isSubmitting ? 'Processing...' : 'Execute Audit'}
                     </button>

@@ -18,7 +18,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ setViewMode, setCurrentTenant
 
     <div className="max-w-4xl w-full text-center mb-16 relative z-10">
       <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20 rotate-3 animate-fade-in">
-        <span className="font-display font-black text-4xl text-white">E</span>
+        <span className="font-display font-black text-4xl text-main">E</span>
       </div>
       <h1 className="text-5xl md:text-6xl font-display font-black text-main mb-6 tracking-tighter animate-slide-down">
         Next-Gen <span className="text-primary">ERP</span> Matrix

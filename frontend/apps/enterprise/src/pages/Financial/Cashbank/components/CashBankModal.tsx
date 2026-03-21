@@ -25,9 +25,9 @@ const CashBankModal: React.FC<ModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-            <div className={`bg-white dark:bg-slate-900 w-full ${maxWidth} rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up`}>
-                <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--erp-bg)]/60 backdrop-blur-sm animate-fade-in">
+            <div className={`bg-white dark:bg-[var(--erp-bg)] w-full ${maxWidth} rounded-[3rem] shadow-2xl border border-default dark:border-default overflow-hidden animate-slide-up`}>
+                <div className="p-8 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-b border-default dark:border-default flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {Icon && (
                             <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600">
@@ -35,12 +35,12 @@ const CashBankModal: React.FC<ModalProps> = ({
                             </div>
                         )}
                         <div>
-                            <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{title}</h2>
-                            {subtitle && <p className="text-xs font-medium text-slate-400">{subtitle}</p>}
+                            <h2 className="text-xl font-black text-main uppercase tracking-tight">{title}</h2>
+                            {subtitle && <p className="text-xs font-medium text-muted">{subtitle}</p>}
                         </div>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
-                        <X className="w-5 h-5 text-slate-500" />
+                        <X className="w-5 h-5 text-muted" />
                     </button>
                 </div>
 
@@ -49,7 +49,7 @@ const CashBankModal: React.FC<ModalProps> = ({
                 </div>
 
                 {footer && (
-                    <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                    <div className="p-8 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-t border-default dark:border-default flex justify-end gap-3">
                         {footer}
                     </div>
                 )}

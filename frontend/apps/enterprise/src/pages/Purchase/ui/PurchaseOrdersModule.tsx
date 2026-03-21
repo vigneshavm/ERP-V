@@ -163,7 +163,7 @@ const PurchaseOrdersModule: React.FC = () => {
                                 title="Converted"
                                 value={stats.converted}
                                 icon={<Lock className="w-full h-full" />}
-                                iconBgColor="bg-neutral-100"
+                                iconBgColor="bg-[var(--erp-bg-sunken)]"
                                 iconColor="text-neutral-600"
                                 trend="Fulfilled"
                                 trendUp={true}
@@ -199,9 +199,12 @@ const PurchaseOrdersModule: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="h-full animate-fade-in pb-10">
                 {renderContent()}
             </div>
+                  </div>
+
         </Layout>
     );
 };

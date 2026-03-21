@@ -1,9 +1,18 @@
 import { useState } from 'react';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
+
+interface BackupMetadata {
+    id: number;
+    date: string;
+    size: string;
+    location: string;
+    compatible: boolean;
+    dataIncluded: string[];
+}
 
 const Restore = () => {
-    const [selectedBackup, setSelectedBackup] = useState(null);
+    const [selectedBackup, setSelectedBackup] = useState<BackupMetadata | null>(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showUpload, setShowUpload] = useState(false);
     const [restoreProgress, setRestoreProgress] = useState(0);
@@ -65,6 +74,7 @@ const Restore = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Restore"
                 description="Restore your data from previous backups"
@@ -242,6 +252,8 @@ const Restore = () => {
                     ))}
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

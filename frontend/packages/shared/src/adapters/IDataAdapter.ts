@@ -10,7 +10,11 @@ import {
     SmsTransaction,
     AnalyticsSummary,
     YearlyOverview,
-    PersonalTransactionType
+    PersonalTransactionType,
+    JournalEntry,
+    StockReport,
+    DashboardStats,
+    SupplierAnalytics
 } from './types';
 
 export interface IDataAdapter {

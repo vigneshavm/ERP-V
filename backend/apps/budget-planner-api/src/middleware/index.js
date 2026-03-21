@@ -1,30 +1,23 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validate = exports.buildPage = exports.paginate = exports.authenticate = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const errorHandler_1 = require("./errorHandler");
-const authenticate = async (req, _res, next) => {
+import jwt from 'jsonwebtoken';
+import { AppError } from './errorHandler';
+export const authenticate = async (req, _res, next) => {
     try {
         const header = req.headers.authorization;
         if (!header?.startsWith('Bearer '))
-            throw errorHandler_1.AppError.unauthorized('Missing Authorization header');
+            throw AppError.unauthorized('Missing Authorization header');
         const token = header.slice(7);
-        req.user = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
         next();
     }
     catch (err) {
-        if (err instanceof errorHandler_1.AppError)
+        if (err instanceof AppError)
             return next(err);
-        if (err instanceof jsonwebtoken_1.default.TokenExpiredError)
-            return next(errorHandler_1.AppError.unauthorized('Token expired'));
-        next(errorHandler_1.AppError.unauthorized('Invalid token'));
+        if (err instanceof jwt.TokenExpiredError)
+            return next(AppError.unauthorized('Token expired'));
+        next(AppError.unauthorized('Invalid token'));
     }
 };
-exports.authenticate = authenticate;
-const paginate = (defaultLimit = 20) => (req, _res, next) => {
+export const paginate = (defaultLimit = 20) => (req, _res, next) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || defaultLimit));
     req.pagination = {
@@ -35,8 +28,7 @@ const paginate = (defaultLimit = 20) => (req, _res, next) => {
     };
     next();
 };
-exports.paginate = paginate;
-const buildPage = (data, total, p) => ({
+export const buildPage = (data, total, p) => ({
     data,
     pagination: {
         total, page: p.page, limit: p.limit,
@@ -45,8 +37,7 @@ const buildPage = (data, total, p) => ({
         hasPrev: p.page > 1,
     },
 });
-exports.buildPage = buildPage;
-const validate = (chains) => async (req, _res, next) => {
+export const validate = (chains) => async (req, _res, next) => {
     const { validationResult } = await import('express-validator');
     await Promise.all(chains.map((c) => c.run(req)));
     const result = validationResult(req);
@@ -56,8 +47,7 @@ const validate = (chains) => async (req, _res, next) => {
             acc[f] = [...(acc[f] || []), e.msg];
             return acc;
         }, {});
-        return next(errorHandler_1.AppError.badRequest('Validation failed', errors));
+        return next(AppError.badRequest('Validation failed', errors));
     }
     next();
 };
-exports.validate = validate;

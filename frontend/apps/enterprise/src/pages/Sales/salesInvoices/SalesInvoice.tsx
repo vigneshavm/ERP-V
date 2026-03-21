@@ -105,7 +105,7 @@ const SalesInvoice = () => {
       case "unpaid":
         return "bg-rose-500/20 text-rose-400 border-rose-500/30";
       default:
-        return "bg-white/10 text-slate-400 border-white/10";
+        return "bg-white/10 text-muted border-default";
     }
   };
 
@@ -116,6 +116,7 @@ const SalesInvoice = () => {
 
   return (
     <Layout>
+      <div className="page-shell">
       <div className="max-w-7xl mx-auto animate-fade-in pb-12 premium-bg min-h-screen px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <PageHeader
           title="Sales Invoices"
@@ -146,27 +147,24 @@ const SalesInvoice = () => {
             title="Total Invoices"
             value={totalInvoices}
             icon={FileText}
-            variant="premium"
           />
           <MetricCard
             title="Amount Collected"
             value={`₹${totalPaid.toLocaleString()}`}
             icon={CheckCircle}
-            variant="premium"
             progress={totalInvoices > 0 ? (totalPaid / (totalPaid + totalDue)) * 100 : 0}
           />
           <MetricCard
             title="Outstanding Dues"
             value={`₹${totalDue.toLocaleString()}`}
             icon={AlertCircle}
-            variant="premium"
             subtext="Action Required"
             trend="down"
           />
         </div>
 
         {/* Advanced Filters */}
-        <div className="premium-card p-4 flex flex-col gap-4 mb-8">
+        <div className="erp-card p-4 flex flex-col gap-4 mb-8">
           <div className="flex flex-wrap gap-4 items-end">
             {/* Search */}
             <div className="flex-1 w-full sm:w-auto min-w-0 sm:min-w-[200px]">
@@ -178,7 +176,7 @@ const SalesInvoice = () => {
                   placeholder="Search invoice number, customer..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                  className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-lg text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
                 />
               </div>
             </div>
@@ -189,7 +187,7 @@ const SalesInvoice = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
+                className="w-full px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-lg text-sm text-muted focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
               >
                 <option value="all">All Status</option>
                 <option value="paid">Paid</option>
@@ -204,14 +202,14 @@ const SalesInvoice = () => {
               {selectedCustomer ? (
                 <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-3 py-2 rounded-lg text-sm font-black uppercase tracking-tighter animate-fade-in h-[38px]">
                   <span className="truncate max-w-[150px]">{selectedCustomer.name}</span>
-                  <button onClick={() => setSelectedCustomer(null)} className="hover:text-white transition-colors">
+                  <button onClick={() => setSelectedCustomer(null)} className="hover:text-main transition-colors">
                     <XCircle className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowCustomerModal(true)}
-                  className="w-full sm:w-auto px-4 py-2 bg-white/5 border border-white/10 text-slate-400 rounded-lg hover:bg-white/10 transition-all text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 h-[38px]"
+                  className="w-full sm:w-auto px-4 py-2 bg-[var(--erp-bg-sunken)] border border-default text-muted rounded-lg hover:bg-white/10 transition-all text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 h-[38px]"
                 >
                   <Filter className="w-4 h-4" />
                   Filter Customer
@@ -222,22 +220,22 @@ const SalesInvoice = () => {
         </div>
 
         {/* Data Table */}
-        <div className="premium-card overflow-hidden flex flex-col shadow-2xl">
+        <div className="erp-card overflow-hidden flex flex-col shadow-2xl">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500 mb-4"></div>
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest">Loading invoices...</p>
+              <p className="text-muted text-xs font-black uppercase tracking-widest">Loading invoices...</p>
             </div>
           ) : filteredInvoices.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
-              <div className="bg-white/5 p-4 rounded-full mb-4">
-                <Search className="w-8 h-8 text-slate-600" />
+              <div className="bg-[var(--erp-bg-sunken)] p-4 rounded-full mb-4">
+                <Search className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-lg font-black text-slate-300 uppercase tracking-tight">No Invoices Found</h3>
-              <p className="text-slate-500 mt-1 max-w-sm text-xs font-medium">No sales invoices match your current search or filter criteria.</p>
+              <h3 className="text-lg font-black text-muted uppercase tracking-tight">No Invoices Found</h3>
+              <p className="text-muted mt-1 max-w-sm text-xs font-medium">No sales invoices match your current search or filter criteria.</p>
               <button
                 onClick={() => { setSearchTerm(''); setStatusFilter('all'); setSelectedCustomer(null); }}
-                className="mt-6 px-6 py-2 bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all shadow-lg"
+                className="mt-6 px-6 py-2 bg-[var(--erp-bg-sunken)] border border-default text-muted text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all shadow-lg"
               >
                 Clear Filters
               </button>
@@ -247,36 +245,36 @@ const SalesInvoice = () => {
               {/* Desktop Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white/5 border-b border-white/10">
+                  <thead className="bg-[var(--erp-bg-sunken)] border-b border-default">
                     <tr>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Invoice #</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Date</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Customer</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Amount</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Paid</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Status</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest">Invoice #</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest">Customer</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest text-right">Amount</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest text-right">Paid</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest text-center">Status</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {paginatedInvoices.map((invoice) => (
-                      <tr key={invoice._id} className="hover:bg-white/5 transition-colors">
+                      <tr key={invoice._id} className="hover:bg-[var(--erp-bg-sunken)] transition-colors">
                         <td className="px-6 py-4 font-mono text-indigo-400 font-black cursor-pointer hover:text-indigo-300 transition-colors" onClick={() => navigate(`/sales/invoice/${invoice._id}`)}>
                           {invoice.invoiceNo}
                         </td>
-                        <td className="px-6 py-4 text-slate-300">
+                        <td className="px-6 py-4 text-muted">
                           <div className="font-bold">{new Date(invoice.createdAt).toLocaleDateString("en-IN")}</div>
-                          <div className="text-[10px] text-slate-500 uppercase tracking-tighter mt-0.5">{new Date(invoice.createdAt).toLocaleTimeString()}</div>
+                          <div className="text-[10px] text-muted uppercase tracking-tighter mt-0.5">{new Date(invoice.createdAt).toLocaleTimeString()}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="font-black text-slate-300 uppercase tracking-tight">
+                          <div className="font-black text-muted uppercase tracking-tight">
                             {isCustomer(invoice.customer) ? invoice.customer.name : "Walk-in Customer"}
                           </div>
                           {(isCustomer(invoice.customer) && invoice.customer.phone) && (
-                            <div className="text-[10px] text-slate-600 font-mono tracking-tighter mt-0.5">{invoice.customer.phone}</div>
+                            <div className="text-[10px] text-secondary font-mono tracking-tighter mt-0.5">{invoice.customer.phone}</div>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-right font-black text-slate-300 font-mono">
+                        <td className="px-6 py-4 text-right font-black text-muted font-mono">
                           ₹{invoice.totalAmount.toLocaleString()}
                         </td>
                         <td className="px-6 py-4 text-right font-black text-emerald-400 font-mono">
@@ -288,17 +286,17 @@ const SalesInvoice = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2 text-slate-500">
+                          <div className="flex justify-end gap-2 text-muted">
                             <button
                               onClick={() => navigate(`/sales/invoice/${invoice._id}`)}
-                              className="p-2 hover:text-indigo-400 hover:bg-white/5 rounded-lg transition-all"
+                              className="p-2 hover:text-indigo-400 hover:bg-[var(--erp-bg-sunken)] rounded-lg transition-all"
                               title="View Invoice"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirm(invoice._id || null)}
-                              className="p-2 hover:text-rose-400 hover:bg-white/5 rounded-lg transition-all"
+                              className="p-2 hover:text-rose-400 hover:bg-[var(--erp-bg-sunken)] rounded-lg transition-all"
                               title="Delete Invoice"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -314,11 +312,11 @@ const SalesInvoice = () => {
               {/* Mobile Card Stack */}
               <div className="md:hidden divide-y divide-white/5">
                 {paginatedInvoices.map((invoice) => (
-                  <div key={invoice._id} className="p-4 active:bg-white/5 transition-all" onClick={() => navigate(`/sales/invoice/${invoice._id}`)}>
+                  <div key={invoice._id} className="p-4 active:bg-[var(--erp-bg-sunken)] transition-all" onClick={() => navigate(`/sales/invoice/${invoice._id}`)}>
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <div className="font-black text-indigo-400 uppercase tracking-tight">{invoice.invoiceNo}</div>
-                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5 text-xs">
+                        <div className="text-[10px] text-muted font-bold uppercase tracking-widest mt-0.5 text-xs">
                           {isCustomer(invoice.customer) ? invoice.customer.name : "Walk-in Customer"}
                         </div>
                       </div>
@@ -326,9 +324,9 @@ const SalesInvoice = () => {
                         {invoice.paymentStatus}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center mt-3 text-[10px] text-slate-500 font-mono tracking-tighter">
+                    <div className="flex justify-between items-center mt-3 text-[10px] text-muted font-mono tracking-tighter">
                       <span>{new Date(invoice.createdAt).toLocaleDateString()}</span>
-                      <div className="text-xs font-black text-slate-300">
+                      <div className="text-xs font-black text-muted">
                         ₹{invoice.totalAmount.toLocaleString()}
                       </div>
                     </div>
@@ -338,15 +336,15 @@ const SalesInvoice = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-4 sm:px-6 py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/5">
-                  <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                    Showing <span className="text-slate-400 font-black">{startIndex + 1}</span> to <span className="text-slate-400 font-black">{Math.min(endIndex, filteredInvoices.length)}</span> of <span className="text-slate-400 font-black">{filteredInvoices.length}</span> results
+                <div className="px-4 sm:px-6 py-4 border-t border-default flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--erp-bg-sunken)]">
+                  <div className="text-[10px] font-black text-secondary uppercase tracking-widest">
+                    Showing <span className="text-muted font-black">{startIndex + 1}</span> to <span className="text-muted font-black">{Math.min(endIndex, filteredInvoices.length)}</span> of <span className="text-muted font-black">{filteredInvoices.length}</span> results
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 premium-card rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      className="px-3 py-1.5 erp-card rounded-lg text-[10px] font-black uppercase tracking-widest text-muted hover:text-muted disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     >
                       Previous
                     </button>
@@ -359,7 +357,7 @@ const SalesInvoice = () => {
                               onClick={() => setCurrentPage(page)}
                               className={`w-8 h-8 flex items-center justify-center rounded-lg text-[10px] font-black tracking-widest transition-all ${currentPage === page
                                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                                : "text-slate-500 hover:bg-white/5"
+                                : "text-muted hover:bg-[var(--erp-bg-sunken)]"
                                 }`}
                             >
                               {page}
@@ -374,7 +372,7 @@ const SalesInvoice = () => {
                     <button
                       onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 premium-card rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      className="px-3 py-1.5 erp-card rounded-lg text-[10px] font-black uppercase tracking-widest text-muted hover:text-muted disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     >
                       Next
                     </button>
@@ -388,7 +386,7 @@ const SalesInvoice = () => {
         {/* Delete Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-neutral-200 dark:border-neutral-700 animate-scale-in">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-default dark:border-default animate-scale-in">
               <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <AlertTriangle className="w-6 h-6 text-rose-600 dark:text-rose-400" />
               </div>
@@ -399,7 +397,7 @@ const SalesInvoice = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteConfirm(null)}
-                  className="flex-1 px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all"
+                  className="flex-1 px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-neutral-700 dark:text-neutral-300 font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 transition-all"
                 >
                   Cancel
                 </button>
@@ -423,6 +421,8 @@ const SalesInvoice = () => {
           setShowCustomerModal(false);
         }}
       />
+              </div>
+
     </Layout>
   );
 };

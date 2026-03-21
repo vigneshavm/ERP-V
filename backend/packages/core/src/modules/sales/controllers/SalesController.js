@@ -10,115 +10,65 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { injectable, inject } from "tsyringe";
-import { SalesService } from "../services/SalesService.js";
+import { injectable, inject } from 'tsyringe';
+import { SalesService } from '../services/SalesService.js';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { parsePagination, parseSort } from '@smarterp/shared/utils/pagination.js';
+import { AppError } from '@smarterp/shared/utils/AppError.js';
+/**
+ * SalesController
+ *
+ * Follows the same pattern as InventoryController (the canonical reference).
+ * Key changes from original:
+ *   - asyncHandler replaces every try/catch block (8 removed).
+ *   - (req as any).user replaced with typed req.user via express.d.ts.
+ *   - Manual sort-string parsing replaced with parseSort() utility.
+ *   - Inline pagination object replaced with paginated() helper.
+ *   - Inline status validation replaced with AppError throw.
+ */
 let SalesController = class SalesController {
     salesService;
     constructor(salesService) {
         this.salesService = salesService;
     }
-    getSalesInvoiceSummary = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const summary = await this.salesService.getSummary(userId);
-            res.status(200).json(summary);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    getAllSalesInvoices = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const { page = 1, limit = 50, sort = '-createdAt' } = req.query;
-            // Handle sort
-            const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
-            const sortOrder = String(sort).startsWith('-') ? -1 : 1;
-            const sortObj = {};
-            sortObj[sortField] = sortOrder;
-            const { data, total } = await this.salesService.getAllInvoicesPaginated(userId, Number(page), Number(limit), sortObj);
-            res.status(200).json({
-                success: true,
-                data,
-                pagination: {
-                    total,
-                    page: Number(page),
-                    limit: Number(limit),
-                    pages: Math.ceil(total / Number(limit))
-                }
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    getSalesInvoiceById = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const invoice = await this.salesService.getInvoiceById(req.params.id, userId);
-            res.status(200).json(invoice);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    deleteSalesInvoice = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            await this.salesService.deleteInvoice(req.params.id, userId);
-            res.status(200).json({ message: "Invoice soft-deleted successfully" });
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    markSalesInvoiceAsPaid = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const userName = req.user.name;
-            const result = await this.salesService.markAsPaid(req.params.id, userId, userName, req.body);
-            res.status(200).json(result);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    createSalesInvoice = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const tenantId = req.tenantId;
-            const invoice = await this.salesService.createInvoice(req.body, userId, tenantId);
-            res.status(201).json(invoice);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    updateInvoiceStatus = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const { status } = req.body;
-            if (!status) {
-                res.status(400).json({ message: "Status is required" });
-                return;
-            }
-            const result = await this.salesService.updateStatus(req.params.id, userId, status);
-            res.status(200).json(result);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
-    updateSalesInvoice = async (req, res, next) => {
-        try {
-            const userId = req.user._id;
-            const invoice = await this.salesService.updateInvoice(req.params.id, userId, req.body);
-            res.status(200).json(invoice);
-        }
-        catch (error) {
-            next(error);
-        }
-    };
+    getSalesInvoiceSummary = asyncHandler(async (req, res) => {
+        const summary = await this.salesService.getSummary(req.user._id);
+        ok(res, summary);
+    });
+    getAllSalesInvoices = asyncHandler(async (req, res) => {
+        const { page, limit } = parsePagination(req.query);
+        const sort = parseSort(req.query.sort);
+        const { data, total } = await this.salesService.getAllInvoicesPaginated(req.user._id, page, limit, sort);
+        paginated(res, data, total, page, limit);
+    });
+    getSalesInvoiceById = asyncHandler(async (req, res) => {
+        const invoice = await this.salesService.getInvoiceById(req.params.id, req.user._id);
+        ok(res, invoice);
+    });
+    createSalesInvoice = asyncHandler(async (req, res) => {
+        const invoice = await this.salesService.createInvoice(req.body, req.user._id, req.tenantId);
+        created(res, invoice);
+    });
+    updateSalesInvoice = asyncHandler(async (req, res) => {
+        const invoice = await this.salesService.updateInvoice(req.params.id, req.user._id, req.body);
+        ok(res, invoice);
+    });
+    updateInvoiceStatus = asyncHandler(async (req, res) => {
+        const { status } = req.body;
+        if (!status)
+            throw new AppError('Status is required', 400);
+        const result = await this.salesService.updateStatus(req.params.id, req.user._id, status);
+        ok(res, result);
+    });
+    markSalesInvoiceAsPaid = asyncHandler(async (req, res) => {
+        const result = await this.salesService.markAsPaid(req.params.id, req.user._id, req.user.name, req.body);
+        ok(res, result);
+    });
+    deleteSalesInvoice = asyncHandler(async (req, res) => {
+        await this.salesService.deleteInvoice(req.params.id, req.user._id);
+        ok(res, null, 'Invoice soft-deleted successfully');
+    });
 };
 SalesController = __decorate([
     injectable(),

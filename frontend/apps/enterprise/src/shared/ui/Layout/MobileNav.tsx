@@ -40,7 +40,7 @@ const MobileNav: React.FC = () => {
         'lg:hidden fixed bottom-0 left-0 right-0 z-[100]',
         'flex justify-around items-stretch',
         /* Surface */
-        'bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl',
+        'bg-white/90 dark:bg-[var(--erp-bg)]/90 backdrop-blur-xl',
         'border-t border-neutral-200 dark:border-neutral-800/60',
         /* Height + safe area */
         'h-16 pb-[env(safe-area-inset-bottom,0px)]',

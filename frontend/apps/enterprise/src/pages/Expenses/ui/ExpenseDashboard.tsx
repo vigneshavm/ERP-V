@@ -36,7 +36,7 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ expenses }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                 <div className="absolute -bottom-2 -right-2 p-4 opacity-5 group-hover:rotate-12 transition-transform duration-700">
                     <DollarSign className="w-16 h-16" />
                 </div>
@@ -49,20 +49,20 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ expenses }) => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                 <div className="absolute -bottom-2 -right-2 p-4 opacity-5 group-hover:rotate-12 transition-transform duration-700">
                     <Calendar className="w-16 h-16" />
                 </div>
                 <div>
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">This Month</p>
-                    <h3 className="text-2xl font-black tabular-nums text-neutral-900 dark:text-white">₹{stats.thisMonthTotal.toLocaleString()}</h3>
+                    <h3 className="text-2xl font-black tabular-nums text-neutral-900 dark:text-main">₹{stats.thisMonthTotal.toLocaleString()}</h3>
                     <div className="flex items-center gap-1.5 mt-2 text-primary font-bold text-[10px] uppercase">
                         {stats.thisMonthCount} Entries this month
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                 <div className="absolute -bottom-2 -right-2 p-4 opacity-5 group-hover:rotate-12 transition-transform duration-700">
                     <TrendingUp className="w-16 h-16" />
                 </div>
@@ -75,7 +75,7 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ expenses }) => {
                 </div>
             </div>
 
-            <div className="bg-neutral-900 text-white p-6 rounded-[2rem] shadow-xl border border-neutral-800 relative group overflow-hidden">
+            <div className="bg-[var(--erp-bg)] text-main p-6 rounded-[2rem] shadow-xl border border-default relative group overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                     <FileText className="w-16 h-16" />
                 </div>

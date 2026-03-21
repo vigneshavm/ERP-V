@@ -27,9 +27,9 @@ export const DataExportFeature: React.FC = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">Select Module</h2>
+        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-sm border border-default dark:border-default overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-default">
+                <h2 className="text-lg font-bold text-main dark:text-main uppercase tracking-tight">Select Module</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                     {modules.map((mod) => (
                         <button
@@ -37,23 +37,23 @@ export const DataExportFeature: React.FC = () => {
                             onClick={() => setConfig({ ...config, selectedModule: mod.id })}
                             className={`p-4 rounded-xl border-2 transition-all text-left ${config.selectedModule === mod.id
                                     ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
-                                    : 'border-slate-100 dark:border-slate-800 hover:border-indigo-300'
+                                    : 'border-slate-100 dark:border-default hover:border-indigo-300'
                                 }`}
                         >
                             <div className="text-2xl mb-2">{mod.icon}</div>
-                            <p className="font-black text-xs uppercase tracking-widest text-slate-900 dark:text-white">{mod.name}</p>
-                            <p className="text-[10px] text-slate-500 font-bold mt-1 line-clamp-2">{mod.description}</p>
+                            <p className="font-black text-xs uppercase tracking-widest text-main dark:text-main">{mod.name}</p>
+                            <p className="text-[10px] text-muted font-bold mt-1 line-clamp-2">{mod.description}</p>
                         </button>
                     ))}
                 </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-800/50">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-tight">Export Settings</h2>
+            <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50">
+                <h2 className="text-lg font-bold text-main dark:text-main mb-6 uppercase tracking-tight">Export Settings</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Export Format</label>
+                            <label className="block text-[10px] font-black uppercase text-muted mb-2">Export Format</label>
                             <div className="grid grid-cols-3 gap-2">
                                 {(['xlsx', 'csv', 'pdf'] as ExportFormat[]).map((fmt) => (
                                     <button
@@ -61,7 +61,7 @@ export const DataExportFeature: React.FC = () => {
                                         onClick={() => setConfig({ ...config, format: fmt })}
                                         className={`py-2 px-3 rounded-lg border-2 font-black text-[10px] uppercase transition-all ${config.format === fmt
                                                 ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
-                                                : 'border-slate-100 dark:border-slate-800 text-slate-400'
+                                                : 'border-slate-100 dark:border-default text-muted'
                                             }`}
                                     >
                                         {fmt}
@@ -71,28 +71,28 @@ export const DataExportFeature: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Start Date</label>
+                                <label className="block text-[10px] font-black uppercase text-muted mb-2">Start Date</label>
                                 <input
                                     type="date"
                                     value={config.dateRange.start}
                                     onChange={(e) => setConfig({ ...config, dateRange: { ...config.dateRange, start: e.target.value } })}
-                                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold"
+                                    className="w-full px-3 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-xs font-bold"
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">End Date</label>
+                                <label className="block text-[10px] font-black uppercase text-muted mb-2">End Date</label>
                                 <input
                                     type="date"
                                     value={config.dateRange.end}
                                     onChange={(e) => setConfig({ ...config, dateRange: { ...config.dateRange, end: e.target.value } })}
-                                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold"
+                                    className="w-full px-3 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-xs font-bold"
                                 />
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-2">Configurations</label>
+                        <label className="block text-[10px] font-black uppercase text-muted mb-2">Configurations</label>
                         <div className="space-y-3">
                             <label className="flex items-center gap-3 cursor-pointer group">
                                 <input
@@ -101,7 +101,7 @@ export const DataExportFeature: React.FC = () => {
                                     onChange={(e) => setConfig({ ...config, includeHeaders: e.target.checked })}
                                     className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
-                                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Include column headers</span>
+                                <span className="text-xs font-bold text-secondary dark:text-muted group-hover:text-indigo-600 transition-colors">Include column headers</span>
                             </label>
                             <label className="flex items-center gap-3 cursor-pointer group">
                                 <input
@@ -110,7 +110,7 @@ export const DataExportFeature: React.FC = () => {
                                     onChange={(e) => setConfig({ ...config, compressFile: e.target.checked })}
                                     className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
-                                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Compress as .zip</span>
+                                <span className="text-xs font-bold text-secondary dark:text-muted group-hover:text-indigo-600 transition-colors">Compress as .zip</span>
                             </label>
                             <label className="flex items-center gap-3 cursor-pointer group">
                                 <input
@@ -119,13 +119,13 @@ export const DataExportFeature: React.FC = () => {
                                     onChange={(e) => setConfig({ ...config, splitMonthly: e.target.checked })}
                                     className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
-                                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Split data by month</span>
+                                <span className="text-xs font-bold text-secondary dark:text-muted group-hover:text-indigo-600 transition-colors">Split data by month</span>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700">
+                <div className="mt-8 pt-8 border-t border-default dark:border-default">
                     <button
                         onClick={handleExport}
                         disabled={exporting}
@@ -138,3 +138,5 @@ export const DataExportFeature: React.FC = () => {
         </div>
     );
 };
+
+export default DataExportFeature;

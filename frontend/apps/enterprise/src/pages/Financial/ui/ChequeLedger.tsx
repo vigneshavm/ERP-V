@@ -9,11 +9,11 @@ interface ChequeLedgerProps {
 
 const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStatus }) => {
     return (
-        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-100 dark:border-neutral-700 shadow-sm">
+        <div className="bg-white dark:bg-[var(--erp-card)] p-8 rounded-[2.5rem] border border-default dark:border-default shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
-                        <tr className="text-left text-[10px] font-black uppercase tracking-widest text-neutral-400 border-b border-neutral-100 dark:border-neutral-700">
+                        <tr className="text-left text-[10px] font-black uppercase tracking-widest text-neutral-400 border-b border-default dark:border-default">
                             <th className="pb-4 pl-4">Date</th>
                             <th className="pb-4">Cheque No</th>
                             <th className="pb-4">Details</th>
@@ -24,7 +24,7 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                     </thead>
                     <tbody className="text-sm font-medium">
                         {sectorCheques.map((cheque: any) => (
-                            <tr key={cheque.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                            <tr key={cheque.id} className="group hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-bg)]/50 transition-colors">
                                 <td className="py-4 pl-4 text-neutral-500 w-32">{new Date(cheque.date).toLocaleDateString()}</td>
                                 <td className="py-4 font-mono text-xs">{cheque.number}</td>
                                 <td className="py-4">
@@ -47,13 +47,13 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => onUpdateStatus(cheque.id || cheque._id, 'CLEARED')}
-                                                className="px-3 py-1 bg-success text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
+                                                className="px-3 py-1 bg-success text-main rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
                                             >
                                                 Clear
                                             </button>
                                             <button
                                                 onClick={() => onUpdateStatus(cheque.id || cheque._id, 'BOUNCED')}
-                                                className="px-3 py-1 bg-error text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
+                                                className="px-3 py-1 bg-error text-main rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
                                             >
                                                 Bounce
                                             </button>

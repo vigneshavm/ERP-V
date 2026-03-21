@@ -32,7 +32,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
         setReturnItems(initialItems);
     }, [invoice]);
 
-    if (!invoice) return <div className="p-8 text-center text-slate-500">No invoice selected.</div>;
+    if (!invoice) return <div className="p-8 text-center text-muted">No invoice selected.</div>;
 
     const handleQuantityChange = (index: number, qty: number) => {
         const newItems = [...returnItems];
@@ -95,15 +95,15 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <h3 className="font-bold text-slate-800 dark:text-white">Select Items to Return</h3>
-                <span className="text-xs font-mono text-slate-500">Invoice #{invoice.id}</span>
+        <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default shadow-sm overflow-hidden">
+            <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default flex justify-between items-center">
+                <h3 className="font-bold text-main">Select Items to Return</h3>
+                <span className="text-xs font-mono text-muted">Invoice #{invoice.id}</span>
             </div>
 
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-medium">
+                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-muted dark:text-muted uppercase font-medium">
                         <tr>
                             <th className="p-4">Product</th>
                             <th className="p-4 text-center">Sold Qty</th>
@@ -116,12 +116,12 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                         {returnItems.map((item, index) => {
                             const isSelected = (item.quantity || 0) > 0;
                             return (
-                                <tr key={index} className={`transition-colors ${isSelected ? 'bg-indigo-50/30' : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                                <tr key={index} className={`transition-colors ${isSelected ? 'bg-indigo-50/30' : 'hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]'}`}>
                                     <td className="p-4">
-                                        <div className="font-medium text-slate-900 dark:text-white">{item.productName}</div>
-                                        <div className="text-xs text-slate-500">₹{item.unitPrice} / unit</div>
+                                        <div className="font-medium text-main">{item.productName}</div>
+                                        <div className="text-xs text-muted">₹{item.unitPrice} / unit</div>
                                     </td>
-                                    <td className="p-4 text-center font-bold text-slate-700 dark:text-slate-300">
+                                    <td className="p-4 text-center font-bold text-secondary dark:text-muted">
                                         {(item as any).maxQuantity}
                                     </td>
                                     <td className="p-4 text-center">
@@ -132,7 +132,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                                                 max={(item as any).maxQuantity}
                                                 value={item.quantity}
                                                 onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
-                                                className={`w-20 text-center py-1 rounded border focus:ring-2 focus:ring-indigo-500 outline-none ${isSelected ? 'border-indigo-300 bg-white font-bold text-indigo-700' : 'border-slate-300 bg-slate-50 dark:bg-slate-700 text-slate-500'}`}
+                                                className={`w-20 text-center py-1 rounded border focus:ring-2 focus:ring-indigo-500 outline-none ${isSelected ? 'border-indigo-300 bg-white font-bold text-indigo-700' : 'border-slate-300 bg-[var(--erp-bg-sunken)] dark:bg-slate-700 text-muted'}`}
                                             />
                                         </div>
                                     </td>
@@ -141,7 +141,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                                             disabled={!isSelected}
                                             value={item.condition}
                                             onChange={(e) => handleConditionChange(index, e.target.value as any)}
-                                            className="px-3 py-1 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-700 dark:text-white focus:outline-none disabled:opacity-50"
+                                            className="px-3 py-1 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-secondary dark:text-main focus:outline-none disabled:opacity-50"
                                         >
                                             <option value="resellable">Resellable</option>
                                             <option value="damaged">Damaged</option>
@@ -149,7 +149,7 @@ export const ReturnItemGrid: React.FC<ReturnItemGridProps> = ({ invoice, onItems
                                             <option value="expired">Expired</option>
                                         </select>
                                     </td>
-                                    <td className="p-4 text-right font-bold text-slate-900 dark:text-white">
+                                    <td className="p-4 text-right font-bold text-main">
                                         {item.lineTotal ? `₹${item.lineTotal.toFixed(2)}` : '-'}
                                     </td>
                                 </tr>

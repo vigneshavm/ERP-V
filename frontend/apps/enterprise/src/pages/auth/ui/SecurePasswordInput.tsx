@@ -73,7 +73,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
             {label && (
                 <label
                     htmlFor={id}
-                    className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-0.5 transition-colors duration-300 group-focus-within:text-indigo-400"
+                    className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] ml-0.5 transition-colors duration-300 group-focus-within:text-indigo-400"
                 >
                     {label}
                 </label>
@@ -85,7 +85,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                 </div>
 
                 {icon && (
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/20 group-focus-within:text-indigo-400 transition-colors duration-300" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted group-focus-within:text-indigo-400 transition-colors duration-300" />
                 )}
 
                 <input
@@ -109,14 +109,14 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                         error
                             ? 'border-red-500/40 focus:ring-red-500/30 focus:border-red-500/60'
                             : 'border-white/[0.07] focus:ring-indigo-500/30 focus:border-indigo-500/40'
-                    } rounded-xl ${icon ? 'pl-11' : 'pl-4'} pr-11 text-white/90 text-sm font-mono tracking-wider outline-none focus:ring-2 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12] ${className}`}
+                    } rounded-xl ${icon ? 'pl-11' : 'pl-4'} pr-11 text-main text-sm font-mono tracking-wider outline-none focus:ring-2 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12] ${className}`}
                     placeholder={placeholder}
                 />
 
                 <button
                     type="button"
                     onClick={toggleVisibility}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 transition-colors p-0.5"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-muted transition-colors p-0.5"
                     aria-label={isVisible ? 'Hide password' : 'Show password'}
                     tabIndex={-1}
                 >

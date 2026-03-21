@@ -100,7 +100,7 @@ const SmsTrackerPage: React.FC = () => {
                 <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <button
                         onClick={() => setIsExpenseFormOpen(true)}
-                        className="btn-cyber-primary px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-neutral-800 border-neutral-700 hover:bg-neutral-700"
+                        className="btn-cyber-primary px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-[var(--erp-card)] border-default hover:bg-neutral-700"
                     >
                         <Plus className="w-4 h-4" />
                         <span className="hidden sm:inline">Record</span> Expense
@@ -115,7 +115,7 @@ const SmsTrackerPage: React.FC = () => {
                     <button
                         onClick={fetchTransactions}
                         disabled={isRefreshing}
-                        className="p-2 sm:p-2.5 rounded-xl bg-white/5 border border-white/10 text-secondary hover:bg-white/10 transition-all disabled:opacity-50"
+                        className="p-2 sm:p-2.5 rounded-xl bg-[var(--erp-bg-sunken)] border border-default text-secondary hover:bg-white/10 transition-all disabled:opacity-50"
                     >
                         <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
                     </button>
@@ -146,7 +146,7 @@ const SmsTrackerPage: React.FC = () => {
                             />
                         </div>
                         <div className="flex justify-end gap-3">
-                            <button onClick={() => setShowTestInput(false)} className="px-4 py-2 text-secondary font-bold hover:bg-white/5 rounded-lg transition-colors">Cancel</button>
+                            <button onClick={() => setShowTestInput(false)} className="px-4 py-2 text-secondary font-bold hover:bg-[var(--erp-bg-sunken)] rounded-lg transition-colors">Cancel</button>
                             <button onClick={handleTestSubmit} className="btn-cyber-primary px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest whitespace-nowrap">Process & Secure</button>
                         </div>
                     </div>
@@ -155,7 +155,7 @@ const SmsTrackerPage: React.FC = () => {
 
             {/* Stats / Overview */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
-                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex items-center gap-3 sm:gap-4">
+                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-default flex items-center gap-3 sm:gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center">
                         <Layers className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
@@ -166,7 +166,7 @@ const SmsTrackerPage: React.FC = () => {
                         <div className="text-xs font-black uppercase tracking-widest text-secondary">Pending Resolution</div>
                     </div>
                 </div>
-                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex items-center gap-3 sm:gap-4">
+                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-default flex items-center gap-3 sm:gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-success/10 text-success rounded-xl flex items-center justify-center">
                         <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
@@ -177,7 +177,7 @@ const SmsTrackerPage: React.FC = () => {
                         <div className="text-xs font-black uppercase tracking-widest text-secondary">Resolved Entries</div>
                     </div>
                 </div>
-                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex items-center gap-3 sm:gap-4">
+                <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-default flex items-center gap-3 sm:gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                         <History className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
@@ -226,7 +226,7 @@ const SmsTrackerPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="py-20 flex flex-col items-center justify-center text-center">
-                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-neutral-500 mb-4">
+                        <div className="w-16 h-16 bg-[var(--erp-bg-sunken)] rounded-full flex items-center justify-center text-neutral-500 mb-4">
                             {filter === 'pending' ? <CheckCircle2 className="w-8 h-8" /> : <AlertCircle className="w-8 h-8" />}
                         </div>
                         <h3 className="text-xl font-display font-bold text-main">

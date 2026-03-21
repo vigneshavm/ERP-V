@@ -115,9 +115,12 @@ const MarketingTools: React.FC = () => {
     if (loading) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex items-center justify-center min-h-[50vh]">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -138,15 +141,15 @@ const MarketingTools: React.FC = () => {
             {/* Performance Snapshot */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 {stats.map((stat, i) => (
-                    <div key={i} className="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                    <div key={i} className="bg-white rounded-[2rem] p-6 border border-default shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-bl-full -mr-10 -mt-10 opacity-50 group-hover:scale-150 transition-transform"></div>
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="text-2xl">{stat.icon}</div>
                                 <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{stat.trend}</span>
                             </div>
-                            <h4 className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-1">{stat.label}</h4>
-                            <p className="text-3xl font-black text-gray-900 tracking-tighter">{stat.value}</p>
+                            <h4 className="text-muted text-[10px] font-black uppercase tracking-[0.2em] mb-1">{stat.label}</h4>
+                            <p className="text-3xl font-black text-main tracking-tighter">{stat.value}</p>
                         </div>
                     </div>
                 ))}
@@ -155,28 +158,28 @@ const MarketingTools: React.FC = () => {
             {/* Channels Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                 {channels.map((channel) => (
-                    <div key={channel.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-700 flex flex-col group relative overflow-hidden">
+                    <div key={channel.id} className="bg-white rounded-[2.5rem] border border-default shadow-sm hover:shadow-2xl transition-all duration-700 flex flex-col group relative overflow-hidden">
                         {/* Status Ribbon */}
-                        <div className={`absolute top-6 right -6 rotate-45 w-32 text-center text-[8px] font-black uppercase tracking-widest py-1 border shadow-sm z-20 ${channel.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'
+                        <div className={`absolute top-6 right -6 rotate-45 w-32 text-center text-[8px] font-black uppercase tracking-widest py-1 border shadow-sm z-20 ${channel.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-[var(--erp-bg-sunken)] text-muted border-default'
                             }`}>
                             {channel.status}
                         </div>
 
                         <div className="p-8 pb-4">
-                            <div className={`w-16 h-16 rounded-3xl bg-${channel.color}-50 text-3xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 group-hover:bg-${channel.color}-600 group-hover:text-white transition-all duration-500`}>
+                            <div className={`w-16 h-16 rounded-3xl bg-${channel.color}-50 text-3xl flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 group-hover:bg-${channel.color}-600 group-hover:text-main transition-all duration-500`}>
                                 {channel.icon}
                             </div>
-                            <h3 className="text-xl font-black text-gray-900 mb-3 tracking-tight italic">{channel.name}</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed font-medium mb-6">{channel.description}</p>
+                            <h3 className="text-xl font-black text-main mb-3 tracking-tight italic">{channel.name}</h3>
+                            <p className="text-muted text-sm leading-relaxed font-medium mb-6">{channel.description}</p>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
-                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100/50">
-                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Reach</p>
-                                    <p className="text-lg font-black text-gray-900">{channel.metrics.Reach}</p>
+                                <div className="p-4 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default/50">
+                                    <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Reach</p>
+                                    <p className="text-lg font-black text-main">{channel.metrics.Reach}</p>
                                 </div>
-                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100/50">
-                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Conv.</p>
-                                    <p className="text-lg font-black text-gray-900">{channel.metrics.Conversion}</p>
+                                <div className="p-4 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default/50">
+                                    <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Conv.</p>
+                                    <p className="text-lg font-black text-main">{channel.metrics.Conversion}</p>
                                 </div>
                             </div>
                         </div>
@@ -185,14 +188,14 @@ const MarketingTools: React.FC = () => {
                             {channel.isConnected ? (
                                 <button
                                     onClick={() => handleConnect(channel.id)}
-                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all shadow-xl shadow-gray-100 active:scale-95`}
+                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-white border-2 border-gray-900 text-main hover:bg-[var(--erp-bg)] hover:text-main transition-all shadow-xl shadow-gray-100 active:scale-95`}
                                 >
                                     Manage Channel ⚙️
                                 </button>
                             ) : (
                                 <button
                                     onClick={() => handleConnect(channel.id)}
-                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-gray-900 text-white hover:bg-black transition-all shadow-2xl shadow-gray-200 active:scale-95`}
+                                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-[var(--erp-bg)] text-main hover:bg-black transition-all shadow-2xl shadow-gray-200 active:scale-95`}
                                 >
                                     Activate Connector 🚀
                                 </button>
@@ -215,15 +218,15 @@ const MarketingTools: React.FC = () => {
                             "Connect <span className="text-indigo-400 italic">Meta Marketing</span> to unlock <br className="hidden md:block" /> AI-driven buyer personas."
                         </h2>
                         <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-2">
-                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Predictive Analytics</span>
-                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Churn Reduction</span>
-                            <span className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold opacity-80">Trend Analysis</span>
+                            <span className="px-4 py-2 bg-[var(--erp-bg-sunken)] rounded-xl border border-default text-xs font-bold opacity-80">Predictive Analytics</span>
+                            <span className="px-4 py-2 bg-[var(--erp-bg-sunken)] rounded-xl border border-default text-xs font-bold opacity-80">Churn Reduction</span>
+                            <span className="px-4 py-2 bg-[var(--erp-bg-sunken)] rounded-xl border border-default text-xs font-bold opacity-80">Trend Analysis</span>
                         </div>
                     </div>
                     <div className="w-full md:w-auto">
                         <button
                             onClick={() => handleConnect('meta')}
-                            className="px-10 py-5 bg-white text-gray-900 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-gray-100 transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:scale-95"
+                            className="px-10 py-5 bg-white text-main rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-[var(--erp-bg-sunken)] transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:scale-95"
                         >
                             Explore AI Insights
                         </button>

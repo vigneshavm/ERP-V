@@ -29,7 +29,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
         return (
             <div className="grid grid-cols-7 gap-1 mb-2 select-none">
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                    <div key={d} className="text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 py-1 uppercase">{d}</div>
+                    <div key={d} className="text-center text-[10px] font-bold text-muted dark:text-muted py-1 uppercase">{d}</div>
                 ))}
 
                 {blanks.map((_, i) => <div key={`blank-${i}`} className="h-9" />)}
@@ -40,8 +40,8 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                     const status = log?.status;
                     const isSelected = selectedDates.has(dateKey);
 
-                    let bgClass = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500';
-                    let textClass = 'text-slate-700 dark:text-slate-200';
+                    let bgClass = 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-default dark:border-default hover:border-blue-400 dark:hover:border-blue-500';
+                    let textClass = 'text-secondary dark:text-slate-200';
                     let icon = null;
 
                     if (status === 'PRESENT') {
@@ -89,12 +89,12 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
         <div className="flex-1 min-w-0">
             <Card className="p-4 h-full flex flex-col relative overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 text-sm">
+                    <h3 className="font-bold text-secondary dark:text-muted flex items-center gap-2 text-sm">
                         <CalendarIcon size={16} /> Attendance Log
                     </h3>
                     <button
                         onClick={onToggleSelectionMode}
-                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-[var(--erp-bg-sunken)] dark:bg-slate-700 text-secondary dark:text-muted hover:bg-slate-200 dark:hover:bg-slate-600'}`}
                     >
                         {isSelectionMode ? <CheckSquare size={14} /> : <ListChecks size={14} />}
                         {isSelectionMode ? 'Done' : 'Select'}
@@ -103,17 +103,17 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                 <div className="flex-1 overflow-auto">
                     {renderCalendar()}
                 </div>
-                <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                <div className="mt-2 pt-2 border-t border-default dark:border-default">
                     {isSelectionMode ? (
                         <div className="flex gap-1 animate-in slide-in-from-bottom-2">
                             <button onClick={() => onBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
                             <button onClick={() => onBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
                             <button onClick={() => onBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
                             <button onClick={() => onBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800 rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
-                            <button onClick={() => onBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
+                            <button onClick={() => onBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-[var(--erp-bg-sunken)] dark:bg-slate-700 text-muted hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
                         </div>
                     ) : (
-                        <div className="flex justify-center gap-3 text-[10px] text-slate-500 dark:text-slate-400">
+                        <div className="flex justify-center gap-3 text-[10px] text-muted dark:text-muted">
                             <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 rounded" /> Present</div>
                             <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-amber-100 dark:bg-amber-900/60 border border-amber-200 dark:border-amber-700 rounded" /> Half</div>
                             <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 bg-rose-50 dark:bg-rose-900/60 border border-rose-200 dark:border-rose-700 rounded" /> Absent</div>

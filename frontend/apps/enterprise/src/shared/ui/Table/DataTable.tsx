@@ -59,10 +59,10 @@ const DataTable: React.FC<DataTableProps> = ({
         return (
             <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg overflow-hidden border dark:border-[rgb(var(--color-border))]">
                 <div className="text-center py-12">
-                    <svg className="w-16 h-16 text-gray-400 dark:text-[rgb(var(--color-text-muted))] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-16 h-16 text-muted dark:text-[rgb(var(--color-text-muted))] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                     </svg>
-                    <p className="text-gray-500 dark:text-[rgb(var(--color-text-secondary))] text-lg">{emptyMessage}</p>
+                    <p className="text-muted dark:text-[rgb(var(--color-text-secondary))] text-lg">{emptyMessage}</p>
                 </div>
             </div>
         );
@@ -72,13 +72,13 @@ const DataTable: React.FC<DataTableProps> = ({
         <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg overflow-hidden border dark:border-[rgb(var(--color-border))]">
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-[rgb(var(--color-table-header))] border-b border-gray-200 dark:border-[rgb(var(--color-border))]">
+                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[rgb(var(--color-table-header))] border-b border-default dark:border-[rgb(var(--color-border))]">
                         <tr>
                             {columns.map((column) => (
                                 <th
                                     key={column.key}
                                     onClick={() => column.sortable && handleSort(column.key)}
-                                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-[rgb(var(--color-text-secondary))] uppercase ${column.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-[rgb(var(--color-input))]' : ''
+                                    className={`px-6 py-3 text-left text-xs font-medium text-muted dark:text-[rgb(var(--color-text-secondary))] uppercase ${column.sortable ? 'cursor-pointer hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[rgb(var(--color-input))]' : ''
                                         }`}
                                 >
                                     <div className="flex items-center space-x-1">
@@ -103,7 +103,7 @@ const DataTable: React.FC<DataTableProps> = ({
                             <tr
                                 key={rowIndex}
                                 onClick={() => onRowClick && onRowClick(row)}
-                                className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-[rgb(var(--color-input))]' : ''} text-gray-900 dark:text-[rgb(var(--color-text))]`}
+                                className={`${onRowClick ? 'cursor-pointer hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[rgb(var(--color-input))]' : ''} text-main dark:text-[rgb(var(--color-text))]`}
                             >
                                 {columns.map((column) => (
                                     <td key={column.key} className="px-6 py-4 whitespace-nowrap">

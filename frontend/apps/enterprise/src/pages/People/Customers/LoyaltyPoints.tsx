@@ -113,18 +113,18 @@ const LoyaltyPoints: React.FC = () => {
     const activeMembers = customerLoyalty.length;
 
     return (
-        <div className="space-y-6 animate-fade-in">
+        <div className="page-shell">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-main flex items-center gap-2">
                         <Gift className="w-6 h-6 text-primary" />
                         Loyalty Points Program
                     </h2>
                     <p className="text-neutral-500 text-sm mt-1">Reward customers and build loyalty</p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                    <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2">
@@ -135,7 +135,7 @@ const LoyaltyPoints: React.FC = () => {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs font-medium text-neutral-500 uppercase">Total Points Issued</p>
@@ -147,7 +147,7 @@ const LoyaltyPoints: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs font-medium text-neutral-500 uppercase">Points Redeemed</p>
@@ -159,7 +159,7 @@ const LoyaltyPoints: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs font-medium text-neutral-500 uppercase">Outstanding Points</p>
@@ -171,13 +171,13 @@ const LoyaltyPoints: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs font-medium text-neutral-500 uppercase">Active Members</p>
-                            <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{activeMembers}</p>
+                            <p className="text-2xl font-bold text-neutral-900 dark:text-main mt-1">{activeMembers}</p>
                         </div>
-                        <div className="p-3 bg-neutral-100 dark:bg-neutral-700 rounded-xl">
+                        <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 rounded-xl">
                             <Users className="w-6 h-6 text-neutral-600 dark:text-neutral-400" />
                         </div>
                     </div>
@@ -185,8 +185,8 @@ const LoyaltyPoints: React.FC = () => {
             </div>
 
             {/* Tiers Overview */}
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <h3 className="font-bold text-neutral-900 dark:text-white mb-4">Loyalty Tiers</h3>
+            <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
+                <h3 className="font-bold text-neutral-900 dark:text-main mb-4">Loyalty Tiers</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {LOYALTY_TIERS.map(tier => {
                         const memberCount = customerLoyalty.filter(c => c.tier.name === tier.name).length;
@@ -194,7 +194,7 @@ const LoyaltyPoints: React.FC = () => {
                             <div key={tier.name} className="p-4 rounded-xl border-2" style={{ borderColor: tier.color }}>
                                 <div className="flex items-center gap-2 mb-2">
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: tier.color }}>
-                                        <Star className="w-4 h-4 text-white" />
+                                        <Star className="w-4 h-4 text-main" />
                                     </div>
                                     <span className="font-bold" style={{ color: tier.color }}>{tier.name}</span>
                                 </div>
@@ -211,12 +211,12 @@ const LoyaltyPoints: React.FC = () => {
             </div>
 
             {/* Search */}
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                 <div className="relative max-w-md">
                     <input
                         type="text"
                         placeholder="Search member by name or phone..."
-                        className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                        className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
@@ -225,10 +225,10 @@ const LoyaltyPoints: React.FC = () => {
             </div>
 
             {/* Members Table */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default overflow-hidden">
                 <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-neutral-500 uppercase text-xs">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-neutral-500 uppercase text-xs">
                             <tr>
                                 <th className="p-4">Member</th>
                                 <th className="p-4">Tier</th>
@@ -246,20 +246,20 @@ const LoyaltyPoints: React.FC = () => {
                                 </td></tr>
                             ) : (
                                 filteredCustomers.slice(0, 20).map(customer => (
-                                    <tr key={customer.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                                    <tr key={customer.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: customer.tier.color }}>
-                                                    <span className="text-white font-bold">{customer.name.charAt(0)}</span>
+                                                    <span className="text-main font-bold">{customer.name.charAt(0)}</span>
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium text-neutral-900 dark:text-white">{customer.name}</p>
+                                                    <p className="font-medium text-neutral-900 dark:text-main">{customer.name}</p>
                                                     <p className="text-xs text-neutral-500">{customer.phone || 'No phone'}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <span className="px-2 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: customer.tier.color }}>
+                                            <span className="px-2 py-1 rounded-full text-xs font-bold text-main" style={{ backgroundColor: customer.tier.color }}>
                                                 {customer.tier.name}
                                             </span>
                                         </td>
@@ -298,17 +298,17 @@ const LoyaltyPoints: React.FC = () => {
                                 <div className="flex justify-between items-center mb-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: customer.tier.color }}>
-                                            <span className="text-white font-bold">{customer.name.charAt(0)}</span>
+                                            <span className="text-main font-bold">{customer.name.charAt(0)}</span>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-neutral-900 dark:text-white">{customer.name}</p>
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: customer.tier.color }}>
+                                            <p className="font-bold text-neutral-900 dark:text-main">{customer.name}</p>
+                                            <span className="text-[10px] px-2 py-0.5 rounded-full text-main" style={{ backgroundColor: customer.tier.color }}>
                                                 {customer.tier.name}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-700/50 p-3 rounded-lg">
+                                <div className="flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 p-3 rounded-lg">
                                     <div className="text-center">
                                         <p className="text-[10px] text-neutral-500">Earned</p>
                                         <p className="font-bold text-success">{customer.earned}</p>
@@ -330,7 +330,7 @@ const LoyaltyPoints: React.FC = () => {
 
             {/* Program Rules */}
             <div className="bg-gradient-to-r from-primary/10 to-warning/10 p-4 rounded-xl border border-primary/20">
-                <h4 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <h4 className="font-bold text-neutral-900 dark:text-main flex items-center gap-2">
                     <Settings className="w-4 h-4 text-primary" /> Program Rules
                 </h4>
                 <ul className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 space-y-1">

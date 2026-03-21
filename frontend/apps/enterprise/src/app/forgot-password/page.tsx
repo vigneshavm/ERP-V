@@ -71,8 +71,8 @@ export default function ForgotPasswordPage() {
                                 <CheckCircle2 className="w-8 h-8 text-emerald-400" />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-lg font-bold text-white">Check your inbox</h3>
-                                <p className="text-white/30 text-sm leading-relaxed max-w-xs mx-auto">
+                                <h3 className="text-lg font-bold text-main">Check your inbox</h3>
+                                <p className="text-main/30 text-sm leading-relaxed max-w-xs mx-auto">
                                     We've sent a password reset link to your registered email address.
                                 </p>
                             </div>
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
                                 <button
                                     onClick={handleResend}
                                     disabled={resendTimer > 0}
-                                    className="inline-flex items-center gap-2 text-[11px] font-bold text-white/30 hover:text-white/50 disabled:text-white/10 uppercase tracking-[0.15em] transition-colors"
+                                    className="inline-flex items-center gap-2 text-[11px] font-bold text-main/30 hover:text-main/50 disabled:text-main/10 uppercase tracking-[0.15em] transition-colors"
                                 >
                                     <RotateCcw className="w-3 h-3" />
                                     {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend Link'}
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
                                 </button>
                             </form>
                             <div className="mt-8 pt-7 border-t border-white/[0.05] text-center">
-                                <p className="text-[10px] font-bold text-white/15 uppercase tracking-[0.2em] mb-3">
+                                <p className="text-[10px] font-bold text-main/15 uppercase tracking-[0.2em] mb-3">
                                     Remembered your Key?
                                 </p>
                                 <Link
@@ -148,8 +148,8 @@ export default function ForgotPasswordPage() {
                                     <LifeBuoy className="w-4 h-4 text-indigo-400" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Need Support?</p>
-                                    <p className="text-[11px] text-white/15 font-medium">Contact our enterprise desk for assistance.</p>
+                                    <p className="text-[10px] font-bold text-main/20 uppercase tracking-[0.2em]">Need Support?</p>
+                                    <p className="text-[11px] text-main/15 font-medium">Contact our enterprise desk for assistance.</p>
                                 </div>
                             </div>
                         </motion.div>

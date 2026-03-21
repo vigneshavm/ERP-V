@@ -22,14 +22,14 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Opening Balance */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-neutral-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp className="w-4 h-4 text-slate-500 dark:text-neutral-400" />
-                        <span className="text-xs font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wide">Opening Balance</span>
+                        <TrendingUp className="w-4 h-4 text-muted dark:text-neutral-400" />
+                        <span className="text-xs font-bold text-muted dark:text-neutral-400 uppercase tracking-wide">Opening Balance</span>
                     </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.openingBalance)}</span>
+                    <span className="text-3xl font-black text-main">{formatCurrency(data.openingBalance)}</span>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
                         </div>
                         <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Debit</span>
                     </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.debit)}</span>
+                    <span className="text-3xl font-black text-main">{formatCurrency(data.totals.debit)}</span>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
                         </div>
                         <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Total Credit</span>
                     </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.credit)}</span>
+                    <span className="text-3xl font-black text-main">{formatCurrency(data.totals.credit)}</span>
                 </div>
             </div>
 
@@ -69,7 +69,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
                         <Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
                         <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">Closing Balance</span>
                     </div>
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.closingBalance)}</span>
+                    <span className="text-3xl font-black text-main">{formatCurrency(data.closingBalance)}</span>
                 </div>
             </div>
         </div>

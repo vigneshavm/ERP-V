@@ -30,7 +30,8 @@ const PurchaseEntry: React.FC = () => {
 
     return (
         <Layout>
-            <div className="flex flex-col h-full bg-slate-50/30 dark:bg-slate-950/30">
+            <div className="page-shell">
+            <div className="flex flex-col h-full bg-[var(--erp-bg-sunken)]/30 dark:bg-slate-950/30">
                 <PageHeader
                     title="Purchase Strategy & Inwarding"
                     description="Orchestrate inventory replenishment and fiscal commitments"
@@ -43,6 +44,8 @@ const PurchaseEntry: React.FC = () => {
                     />
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

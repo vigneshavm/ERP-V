@@ -86,13 +86,13 @@ const ExpenseDashboardPage = () => {
 
     return (
         <Layout>
-            <div className="premium-bg min-h-screen text-white p-6 sm:p-8 space-y-8 font-sans">
+            <div className="page-shell">
                 
                 {/* Header Section */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h1 className="text-4xl font-extrabold tracking-tight mb-1 opacity-95">Expense Tracker</h1>
-                        <p className="text-sm font-medium text-white/40 flex items-center gap-2">
+                        <p className="text-sm font-medium text-main/40 flex items-center gap-2">
                             {formatCurrency(stats.thisMonthTotal)} spent • {stats.thisMonthCount} entries this month
                         </p>
                     </div>
@@ -103,13 +103,13 @@ const ExpenseDashboardPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="p-12 text-center text-white/20 font-bold uppercase tracking-[0.2em]">Loading Analytics...</div>
+                    <div className="p-12 text-center text-muted font-bold uppercase tracking-[0.2em]">Loading Analytics...</div>
                 ) : (
                     <>
                         {/* Top Metric Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                             {/* Total Expenses MTD */}
-                            <div className="premium-card p-6 flex flex-col justify-between">
+                            <div className="erp-card p-6 flex flex-col justify-between">
                                 <span className="premium-stat-label mb-6 block">Total Expenses MTD</span>
                                 <div>
                                     <div className="premium-stat-value mb-1">{formatCurrency(stats.thisMonthTotal)}</div>
@@ -121,22 +121,22 @@ const ExpenseDashboardPage = () => {
                             </div>
 
                             {/* Largest Category */}
-                            <div className="premium-card p-6 flex flex-col justify-between">
+                            <div className="erp-card p-6 flex flex-col justify-between">
                                 <span className="premium-stat-label mb-6 block">Largest Category</span>
                                 <div>
                                     <div className="premium-stat-value mb-1">{stats.largestCategory.name}</div>
-                                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                                    <div className="text-[10px] font-bold text-main/40 uppercase tracking-wider">
                                         ₹{Number(stats.largestCategory.amount).toLocaleString()} • {stats.largestCategory.percentage}%
                                     </div>
                                 </div>
                             </div>
 
                             {/* Recurring Monthly */}
-                            <div className="premium-card p-6 flex flex-col justify-between">
+                            <div className="erp-card p-6 flex flex-col justify-between">
                                 <span className="premium-stat-label mb-6 block">Recurring Monthly</span>
                                 <div>
                                     <div className="premium-stat-value mb-1">₹68,000</div>
-                                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                                    <div className="text-[10px] font-bold text-main/40 uppercase tracking-wider">
                                         6 active subscriptions
                                     </div>
                                 </div>
@@ -146,16 +146,16 @@ const ExpenseDashboardPage = () => {
                         {/* Middle Section: Recent Expenses and By Category */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Recent Expenses Table */}
-                            <div className="lg:col-span-2 premium-card p-0 overflow-hidden">
-                                <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+                            <div className="lg:col-span-2 erp-card p-0 overflow-hidden">
+                                <div className="px-6 py-4 border-b border-default flex justify-between items-center">
                                     <h3 className="text-lg font-bold tracking-tight">Recent Expenses</h3>
-                                    <button className="text-[10px] font-bold text-white/40 hover:text-white transition-colors px-3 py-1 bg-white/5 rounded border border-white/5 uppercase tracking-widest">
+                                    <button className="text-[10px] font-bold text-main/40 hover:text-main transition-colors px-3 py-1 bg-[var(--erp-bg-sunken)] rounded border border-default uppercase tracking-widest">
                                         View All
                                     </button>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left">
-                                        <thead className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] bg-white/[0.02]">
+                                        <thead className="text-[9px] font-bold text-muted uppercase tracking-[0.2em] bg-white/[0.02]">
                                             <tr>
                                                 <th className="px-6 py-4">Date</th>
                                                 <th className="px-6 py-4">Description</th>
@@ -166,10 +166,10 @@ const ExpenseDashboardPage = () => {
                                         <tbody className="divide-y divide-white/5 text-[11px] font-bold">
                                             {expenses.slice(0, 5).map((exp, idx) => (
                                                 <tr key={idx} className="hover:bg-white/[0.01] transition-colors group">
-                                                    <td className="px-6 py-4 text-white/40 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-main/40 whitespace-nowrap">
                                                         {new Date(exp.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
                                                     </td>
-                                                    <td className="px-6 py-4 text-white/90 truncate max-w-[150px]">
+                                                    <td className="px-6 py-4 text-main truncate max-w-[150px]">
                                                         {exp.description || 'General Expense'}
                                                     </td>
                                                     <td className="px-6 py-4">
@@ -184,14 +184,14 @@ const ExpenseDashboardPage = () => {
                                                             {exp.category?.toUpperCase()}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-right text-white tracking-tight">
+                                                    <td className="px-6 py-4 text-right text-main tracking-tight">
                                                         ₹{Number(exp.amount).toLocaleString()}
                                                     </td>
                                                 </tr>
                                             ))}
                                             {expenses.length === 0 && (
                                                 <tr>
-                                                    <td colSpan={4} className="px-6 py-12 text-center text-white/10 italic">No recent entries</td>
+                                                    <td colSpan={4} className="px-6 py-12 text-center text-main/10 italic">No recent entries</td>
                                                 </tr>
                                             )}
                                         </tbody>
@@ -200,14 +200,14 @@ const ExpenseDashboardPage = () => {
                             </div>
 
                             {/* By Category Progress Chart */}
-                            <div className="premium-card p-6 flex flex-col">
+                            <div className="erp-card p-6 flex flex-col">
                                 <h3 className="text-lg font-bold mb-8 tracking-tight">By Category</h3>
                                 <div className="space-y-6 flex-1">
                                     {stats.categoryBreakdown.slice(0, 5).map((cat, idx) => (
                                         <div key={idx} className="space-y-2">
                                             <div className="flex justify-between items-end">
-                                                <span className="text-xs font-bold text-white/70">{cat.name}</span>
-                                                <span className="text-[10px] font-black text-white/40 tracking-wider">
+                                                <span className="text-xs font-bold text-secondary">{cat.name}</span>
+                                                <span className="text-[10px] font-black text-main/40 tracking-wider">
                                                     ₹{Number(cat.amount).toLocaleString()} • {cat.percentage}%
                                                 </span>
                                             </div>
@@ -223,7 +223,7 @@ const ExpenseDashboardPage = () => {
                                         </div>
                                     ))}
                                     {stats.categoryBreakdown.length === 0 && (
-                                        <div className="flex-1 flex items-center justify-center text-white/10 italic">No data</div>
+                                        <div className="flex-1 flex items-center justify-center text-main/10 italic">No data</div>
                                     )}
                                 </div>
                             </div>

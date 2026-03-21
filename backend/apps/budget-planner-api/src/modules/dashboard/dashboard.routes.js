@@ -1,48 +1,52 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const database_1 = require("../../config/database");
-const index_1 = require("../../middleware/index");
-const router = (0, express_1.Router)();
-router.use(index_1.authenticate);
-/**
- * GET /api/v1/dashboard
- * Returns profile wealth, monthly summaries (12 months), SMS transfer summary.
- */
+import { Router } from 'express';
+import { Types } from 'mongoose';
+import { User, MonthlySummary, SmsTransaction, Transaction } from '../../models/index.js';
+import { authenticate } from '../../controllers/helpers.js';
+const router = Router();
+router.use(authenticate);
+function toMonthKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
 router.get('/', async (req, res, next) => {
     try {
         const uid = req.user.sub;
-        const profileR = await database_1.db.query('SELECT total_wealth, currency FROM users WHERE id = $1', [uid]);
-        // 12-month rolling summaries
-        const summariesR = await database_1.db.query(`SELECT
-         TO_CHAR(month_date, 'Mon YYYY') AS month,
-         EXTRACT(YEAR FROM month_date)  AS year,
-         EXTRACT(MONTH FROM month_date) AS month_num,
-         total_income   AS income,
-         total_expense  AS expense,
-         budget_total   AS budget,
-         LEAST(100, ROUND((total_expense::numeric / NULLIF(budget_total,0)) * 100, 1)) AS progress,
-         (total_expense::numeric / NULLIF(budget_total,0)) > 0.9 AS show_predictive,
-         (EXTRACT(YEAR FROM month_date) = EXTRACT(YEAR FROM NOW())
-          AND EXTRACT(MONTH FROM month_date) = EXTRACT(MONTH FROM NOW())) AS is_current_month
-       FROM monthly_summaries
-       WHERE user_id = $1
-       ORDER BY month_date DESC
-       LIMIT 12`, [uid]);
-        // SMS / bank alert pending count
-        const smsR = await database_1.db.query(`SELECT COUNT(*) AS pending_count, MAX(created_at) AS last_detected
-       FROM sms_transactions WHERE user_id = $1 AND status = 'pending'`, [uid]);
+        const [profile, summaries, sms] = await Promise.all([
+            User.findById(uid).select('totalWealth currency'),
+            MonthlySummary.find({ userId: uid }).sort({ monthDate: -1 }).limit(12),
+            SmsTransaction.aggregate([
+                { $match: { userId: new Types.ObjectId(uid), status: 'pending' } },
+                { $group: { _id: null, count: { $sum: 1 }, lastDetected: { $max: '$createdAt' } } },
+            ]),
+        ]);
+        const now = new Date();
+        const monthlySummaries = summaries.map(s => {
+            const d = new Date(s.monthDate + '-01');
+            const progress = s.budgetTotal > 0
+                ? Math.min(100, Math.round((s.totalExpense / s.budgetTotal) * 1000) / 10)
+                : 0;
+            return {
+                month: d.toLocaleString('en', { month: 'short', year: 'numeric' }),
+                year: d.getFullYear(),
+                monthNum: d.getMonth() + 1,
+                income: s.totalIncome,
+                expense: s.totalExpense,
+                budget: s.budgetTotal,
+                progress,
+                showPredictive: progress > 90,
+                isCurrentMonth: d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(),
+            };
+        });
         res.json({
             success: true,
             data: {
                 profile: {
-                    totalWealth: profileR.rows[0]?.total_wealth ?? 0,
-                    currency: profileR.rows[0]?.currency ?? 'INR',
+                    totalWealth: profile?.totalWealth ?? 0,
+                    currency: profile?.currency ?? 'INR',
                 },
-                monthlySummaries: summariesR.rows,
+                monthlySummaries,
                 smsTransfers: {
-                    pendingCount: Number(smsR.rows[0]?.pending_count ?? 0),
-                    lastDetected: smsR.rows[0]?.last_detected ?? null,
+                    pendingCount: sms[0]?.count ?? 0,
+                    lastDetected: sms[0]?.lastDetected ?? null,
                 },
             },
         });
@@ -51,25 +55,28 @@ router.get('/', async (req, res, next) => {
         next(err);
     }
 });
-/**
- * GET /api/v1/dashboard/summary/:year/:month
- * Single month income/expense breakdown.
- */
 router.get('/summary/:year/:month', async (req, res, next) => {
     try {
         const { year, month } = req.params;
-        const result = await database_1.db.query(`SELECT
-         SUM(CASE WHEN t.type = 'income'  THEN t.amount ELSE 0 END) AS income,
-         SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) AS expense,
-         COUNT(*) AS transaction_count
-       FROM transactions t
-       WHERE t.user_id = $1
-         AND EXTRACT(YEAR  FROM t.date::date) = $2
-         AND EXTRACT(MONTH FROM t.date::date) = $3`, [req.user.sub, year, month]);
-        res.json({ success: true, data: result.rows[0] });
+        const y = Number(year);
+        const m = Number(month);
+        const start = new Date(y, m - 1, 1);
+        const end = new Date(y, m, 0, 23, 59, 59, 999);
+        const result = await Transaction.aggregate([
+            { $match: { userId: new Types.ObjectId(req.user.sub), date: { $gte: start, $lte: end } } },
+            {
+                $group: {
+                    _id: null,
+                    income: { $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$amount', 0] } },
+                    expense: { $sum: { $cond: [{ $eq: ['$type', 'expense'] }, '$amount', 0] } },
+                    transactionCount: { $sum: 1 },
+                },
+            },
+        ]);
+        res.json({ success: true, data: result[0] ?? { income: 0, expense: 0, transactionCount: 0 } });
     }
     catch (err) {
         next(err);
     }
 });
-exports.default = router;
+export default router;

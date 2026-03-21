@@ -36,7 +36,7 @@ const Bills: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="page-shell">
                 <PageHeader
                     title="Supplier Bills"
                     description="Record and track bills from your vendors and suppliers"

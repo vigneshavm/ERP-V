@@ -22,7 +22,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => (
     aria-hidden="true"
     className={[
       'relative overflow-hidden rounded',
-      'bg-neutral-200 dark:bg-neutral-800',
+      'bg-neutral-200 dark:bg-[var(--erp-card)]',
       /* Shimmer sweep */
       'after:absolute after:inset-0',
       'after:bg-gradient-to-r after:from-transparent after:via-white/60 dark:after:via-white/5 after:to-transparent',
@@ -34,7 +34,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => (
 );
 
 export const CardSkeleton: React.FC = () => (
-  <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-100 dark:border-neutral-800/60 shadow-sm">
+  <div className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-2xl border border-neutral-100 dark:border-neutral-800/60 shadow-sm">
     <Skeleton className="w-10 h-10 rounded-xl mb-4" />
     <Skeleton className="w-24 h-3 mb-2 rounded" />
     <Skeleton className="w-16 h-7 rounded" />
@@ -46,7 +46,7 @@ export const GridSkeleton: React.FC = () => (
     {Array.from({ length: 8 }).map((_, i) => (
       <div
         key={i}
-        className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800/60 overflow-hidden shadow-sm h-[320px]"
+        className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-neutral-100 dark:border-neutral-800/60 overflow-hidden shadow-sm h-[320px]"
       >
         <Skeleton className="aspect-[4/3] w-full rounded-none" />
         <div className="p-5 space-y-3">
@@ -67,7 +67,7 @@ export const GridSkeleton: React.FC = () => (
 );
 
 export const TableSkeleton: React.FC = () => (
-  <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800/60 overflow-hidden shadow-sm">
+  <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-neutral-100 dark:border-neutral-800/60 overflow-hidden shadow-sm">
     <div className="p-4 border-b border-neutral-50 dark:border-neutral-800 flex gap-4">
       {Array.from({ length: 5 }).map((_, i) => (
         <Skeleton key={i} className="flex-1 h-6 rounded" />
@@ -86,7 +86,7 @@ export const TableSkeleton: React.FC = () => (
 );
 
 export const FormSkeleton: React.FC = () => (
-  <div className="max-w-4xl mx-auto space-y-8 p-6 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800/60 shadow-sm">
+  <div className="max-w-4xl mx-auto space-y-8 p-6 bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-neutral-100 dark:border-neutral-800/60 shadow-sm">
     <div className="flex items-center gap-4 mb-8">
       <Skeleton className="w-14 h-14 rounded-xl" />
       <div className="space-y-2">

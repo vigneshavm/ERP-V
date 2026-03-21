@@ -91,36 +91,36 @@ const BudgetTrackerPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[80vh] bg-[#05070a]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-6">
-                    <div className="w-16 h-16 border-[6px] border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
-                    <p className="text-xs font-black text-neutral-500 uppercase tracking-[0.3em] animate-pulse">Initializing EXPANAGER...</p>
+                    <div className="erp-spinner"></div>
+                    <p className="text-xs font-black text-muted uppercase tracking-[0.3em] animate-pulse">Loading...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#05070a] text-white p-3 sm:p-4 md:p-8 font-sans selection:bg-emerald-500/30">
-            <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 lg:space-y-10 pb-32">
+        <div className="page-shell p-3 sm:p-4 md:p-8 font-sans selection:bg-emerald-500/30">
+            <div className="max-w-5xl mx-auto space-y-6 pb-8">
 
                 {/* Top Navigation */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button className="p-2 hover:bg-white/5 rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
+                        <button className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
                         <h1 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-500">EXPANAGER</h1>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Mic className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
-                        <Search className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
-                        <MoreVerticalIcon className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
+                        <Mic className="w-5 h-5 text-neutral-500 hover:text-main cursor-pointer" />
+                        <Search className="w-5 h-5 text-neutral-500 hover:text-main cursor-pointer" />
+                        <MoreVerticalIcon className="w-5 h-5 text-neutral-500 hover:text-main cursor-pointer" />
                     </div>
                 </div>
 
                 {/* Hero Section */}
                 <div className="relative overflow-hidden pt-4">
                     <div className="flex flex-col items-center justify-center w-full py-6 sm:py-8 lg:py-12 text-center">
-                        <h1 className="text-2xl sm:text-3xl md:text-6xl font-black tracking-tight text-white mb-4">
+                        <h1 className="text-2xl sm:text-3xl md:text-6xl font-black tracking-tight text-main mb-4">
                             Get deeper insights into <br className="hidden md:block" /> your data
                         </h1>
                     </div>
@@ -141,7 +141,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="hidden md:block">
-                                <div className="w-24 h-24 bg-neutral-900 rounded-3xl flex items-center justify-center p-4 border border-white/5 shadow-2xl overflow-hidden group">
+                                <div className="w-24 h-24 bg-[var(--erp-bg)] rounded-3xl flex items-center justify-center p-4 border border-default shadow-2xl overflow-hidden group">
                                     <div className="bg-amber-600/10 w-full h-full rounded-2xl flex items-center justify-center border border-amber-600/20 group-hover:scale-110 transition-transform">
                                         <Home className="w-10 h-10 text-amber-500" />
                                     </div>
@@ -151,22 +151,22 @@ const BudgetTrackerPage: React.FC = () => {
                     </div>
 
                     {/* Tab Switcher */}
-                    <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 mt-6 sm:mt-10 p-1 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 overflow-x-auto">
+                    <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 mt-6 sm:mt-10 p-1 bg-[var(--erp-bg-sunken)] rounded-xl sm:rounded-2xl border border-default overflow-x-auto">
                         <button
                             onClick={() => setActiveTab('budget')}
-                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'budget' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'budget' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-main'}`}
                         >
                             Budget
                         </button>
                         <button
                             onClick={() => setActiveTab('calendar')}
-                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'calendar' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'calendar' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-main'}`}
                         >
                             Calendar
                         </button>
                         <button
                             onClick={() => setActiveTab('stats')}
-                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'stats' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
+                            className={`px-3 sm:px-6 py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'stats' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-main'}`}
                         >
                             Insights
                         </button>
@@ -201,7 +201,7 @@ const BudgetTrackerPage: React.FC = () => {
 
                             {/* Monthly Trend Card (Legacy feel preserved but updated) */}
                             {report?.monthly_trends.slice(0, 1).map((m, idx) => (
-                                <div key={idx} className="bg-neutral-900/40 border border-white/5 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 backdrop-blur-xl mt-6 sm:mt-12">
+                                <div key={idx} className="bg-[var(--erp-bg)]/40 border border-default rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 backdrop-blur-xl mt-6 sm:mt-12">
                                     <div className="flex items-center justify-between mb-4 sm:mb-8">
                                         <h3 className="text-base sm:text-xl font-bold tracking-tight">Summary: {m.month}</h3>
                                         <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active</span>
@@ -209,7 +209,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-10">
                                         <div>
                                             <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Total Budget</p>
-                                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-4">
+                                            <div className="h-1.5 bg-[var(--erp-bg-sunken)] rounded-full overflow-hidden mb-4">
                                                 <div className="h-full bg-emerald-500 w-[75%] rounded-full shadow-[0_0_15px_#10b981]" />
                                             </div>
                                             <p className="text-lg font-black tracking-tight">₹{m.expense.toLocaleString()} <span className="text-neutral-600 text-sm font-medium">/ ₹{(m.expense * 1.2).toLocaleString()}</span></p>
@@ -242,16 +242,16 @@ const BudgetTrackerPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-neutral-900 border border-white/5 rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 lg:p-8">
+                            <div className="bg-[var(--erp-bg)] border border-default rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 lg:p-8">
                                 <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-neutral-500 mb-4 sm:mb-8">Categories</h3>
                                 <div className="space-y-6">
                                     {report?.by_category.slice(0, 5).map((cat, i) => (
                                         <div key={i} className="space-y-3">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-[11px] font-black tracking-tight uppercase text-neutral-400">{cat.category}</span>
-                                                <span className="text-[11px] font-black text-white tabular-nums">₹{cat.amount.toLocaleString()}</span>
+                                                <span className="text-[11px] font-black text-main tabular-nums">₹{cat.amount.toLocaleString()}</span>
                                             </div>
-                                            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-1 bg-[var(--erp-bg-sunken)] rounded-full overflow-hidden">
                                                 <div
                                                     className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-rose-500' : 'bg-emerald-500'}`}
                                                     style={{ width: `${cat.percentage}` }}
@@ -279,7 +279,7 @@ const BudgetTrackerPage: React.FC = () => {
             </div>
 
             {/* Floating Navigation / Action */}
-            <div className="fixed bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-6 lg:gap-8 px-5 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-6 bg-neutral-900/90 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
+            <div className="fixed bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-6 lg:gap-8 px-5 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-6 bg-[var(--erp-bg)]/90 backdrop-blur-3xl border border-default rounded-2xl sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
                 <button
                     onClick={() => setActiveTab('budget')}
                     className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'budget' ? 'text-emerald-500 scale-110' : 'text-neutral-500 opacity-40 hover:opacity-100'}`}

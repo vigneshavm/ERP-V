@@ -78,7 +78,7 @@ const EstimateList = () => {
 
     const getStatusBadge = (status: string) => {
         const badges: Record<string, { bg: string, text: string, icon: any }> = {
-            draft: { bg: 'bg-slate-100', text: 'text-slate-700', icon: Clock },
+            draft: { bg: 'bg-[var(--erp-bg-sunken)]', text: 'text-secondary', icon: Clock },
             sent: { bg: 'bg-blue-50', text: 'text-blue-700', icon: FileText },
             accepted: { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: CheckCircle },
             rejected: { bg: 'bg-red-50', text: 'text-red-700', icon: XCircle }
@@ -104,10 +104,13 @@ const EstimateList = () => {
     if (isLoading) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex flex-col items-center justify-center py-20">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                    <p className="text-slate-500 font-medium">Loading estimates...</p>
+                    <p className="text-muted font-medium">Loading estimates...</p>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -118,11 +121,11 @@ const EstimateList = () => {
                 {/* Header Section */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                        <h1 className="text-xl sm:text-2xl font-bold text-main tracking-tight flex items-center gap-2">
                             <Calculator className="w-6 h-6 text-indigo-600" />
                             Estimates
                         </h1>
-                        <p className="text-sm text-slate-500 mt-1">View and manage all estimates</p>
+                        <p className="text-sm text-muted mt-1">View and manage all estimates</p>
                     </div>
                     <button
                         onClick={() => navigate('/sales/estimate')}
@@ -134,11 +137,11 @@ const EstimateList = () => {
 
                 {/* KPI Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Estimates</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{totalEstimates}</h3>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Estimates</p>
+                                <h3 className="text-2xl font-bold text-main mt-1">{totalEstimates}</h3>
                             </div>
                             <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
                                 <FileText className="w-5 h-5" />
@@ -146,11 +149,11 @@ const EstimateList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Value</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">₹{totalValue.toLocaleString()}</h3>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Value</p>
+                                <h3 className="text-2xl font-bold text-main mt-1">₹{totalValue.toLocaleString()}</h3>
                             </div>
                             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                                 <Calculator className="w-5 h-5" />
@@ -158,10 +161,10 @@ const EstimateList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Accepted</p>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Accepted</p>
                                 <h3 className="text-2xl font-bold text-emerald-600 mt-1">{acceptedCount}</h3>
                             </div>
                             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
@@ -170,13 +173,13 @@ const EstimateList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Drafts</p>
-                                <h3 className="text-2xl font-bold text-slate-600 mt-1">{draftCount}</h3>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Drafts</p>
+                                <h3 className="text-2xl font-bold text-secondary mt-1">{draftCount}</h3>
                             </div>
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                            <div className="p-2 bg-[var(--erp-bg-sunken)] rounded-lg text-secondary">
                                 <Clock className="w-5 h-5" />
                             </div>
                         </div>
@@ -184,14 +187,14 @@ const EstimateList = () => {
                 </div>
 
                 {/* Filter Island + Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-sm border border-default overflow-hidden">
                     {/* Filter Bar */}
-                    <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50">
+                    <div className="p-4 sm:p-5 border-b border-default bg-[var(--erp-bg-sunken)]/50">
                         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
                             {/* Search */}
                             <div className="relative w-full md:max-w-md group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                    <Search className="h-5 w-5 text-muted group-focus-within:text-indigo-500 transition-colors" />
                                 </div>
                                 <input
                                     type="text"
@@ -220,8 +223,8 @@ const EstimateList = () => {
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-50 border-b border-slate-200">
-                                <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <thead className="bg-[var(--erp-bg-sunken)] border-b border-default">
+                                <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                                     <th className="px-6 py-3">Estimate #</th>
                                     <th className="px-6 py-3">Customer</th>
                                     <th className="px-6 py-3">Date</th>
@@ -235,17 +238,17 @@ const EstimateList = () => {
                                     <tr>
                                         <td colSpan={6} className="px-6 py-12 text-center">
                                             <div className="flex flex-col items-center">
-                                                <div className="bg-slate-100 p-3 rounded-full mb-3">
-                                                    <FileText className="w-6 h-6 text-slate-400" />
+                                                <div className="bg-[var(--erp-bg-sunken)] p-3 rounded-full mb-3">
+                                                    <FileText className="w-6 h-6 text-muted" />
                                                 </div>
-                                                <p className="text-slate-600 font-medium">No estimates found</p>
-                                                <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters</p>
+                                                <p className="text-secondary font-medium">No estimates found</p>
+                                                <p className="text-sm text-muted mt-1">Try adjusting your search or filters</p>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredEstimates.map((estimate) => (
-                                        <tr key={estimate._id} className="hover:bg-slate-50 transition-colors group">
+                                        <tr key={estimate._id} className="hover:bg-[var(--erp-bg-sunken)] transition-colors group">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <button
                                                     onClick={() => navigate(`/sales/estimate/${estimate._id}`)}
@@ -254,13 +257,13 @@ const EstimateList = () => {
                                                     {estimate.estimateNo}
                                                 </button>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-main">
                                                 {(typeof estimate.customer === 'object' && estimate.customer?.name) || 'Walk-in Customer'}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
                                                 {new Date(estimate.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800 text-right">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-main text-right">
                                                 ₹{estimate.totalAmount?.toFixed(2) || '0.00'}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">

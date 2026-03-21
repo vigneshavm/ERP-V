@@ -94,7 +94,7 @@ const ResetPassword: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-lg font-bold text-white">Password Updated</h3>
-                            <p className="text-white/30 text-sm">
+                            <p className="text-muted text-sm">
                                 Your credentials have been updated. Redirecting to login...
                             </p>
                         </div>
@@ -164,7 +164,7 @@ const ResetPassword: React.FC = () => {
                         <div className="mt-8 pt-7 border-t border-white/[0.05] text-center">
                             <Link
                                 to="/login"
-                                className="text-[10px] font-bold text-white/20 hover:text-white/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+                                className="text-[10px] font-bold text-muted hover:text-main/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
                             >
                                 <ArrowRight className="w-3 h-3 rotate-180" /> Abort & Return to Login
                             </Link>

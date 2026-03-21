@@ -14,19 +14,19 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
         <div className="space-y-5 animate-in slide-in-from-left-4 duration-300">
             <div className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+                    <label className="block text-sm font-medium text-secondary mb-1">Company Name</label>
                     <input
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                         value={newTenant.name}
                         onChange={e => setNewTenant({ ...newTenant, name: e.target.value })}
                         placeholder="e.g. Acme Corp"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Subdomain</label>
+                    <label className="block text-sm font-medium text-secondary mb-1">Subdomain</label>
                     <div className="flex">
                         <input
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             value={newTenant.subdomain}
                             onChange={e => {
                                 const val = e.target.value;
@@ -44,9 +44,9 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
                     </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Public Domain</label>
+                    <label className="block text-sm font-medium text-secondary mb-1">Public Domain</label>
                     <input
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                         value={newTenant.domain}
                         onChange={e => setNewTenant({ ...newTenant, domain: e.target.value })}
                         placeholder="e.g. acme.com"
@@ -55,18 +55,18 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Business / Trade Type</label>
+                        <label className="block text-sm font-medium text-secondary mb-1">Business / Trade Type</label>
                         <input
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             value={newTenant.businessType}
                             onChange={e => setNewTenant({ ...newTenant, businessType: e.target.value })}
                             placeholder="e.g. Supermarket"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Nature of Business</label>
+                        <label className="block text-sm font-medium text-secondary mb-1">Nature of Business</label>
                         <select
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                            className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                             value={newTenant.natureOfBusiness}
                             onChange={e => setNewTenant({ ...newTenant, natureOfBusiness: e.target.value })}
                         >
@@ -78,9 +78,9 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
                         </select>
                     </div>
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Sector</label>
+                        <label className="block text-sm font-medium text-secondary mb-1">Sector</label>
                         <select
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                            className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                             value={newTenant.sector}
                             onChange={e => setNewTenant({ ...newTenant, sector: e.target.value as Sector })}
                         >
@@ -88,9 +88,9 @@ export const BusinessTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ n
                         </select>
                     </div>
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Trade Description</label>
+                        <label className="block text-sm font-medium text-secondary mb-1">Trade Description</label>
                         <input
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             value={newTenant.tradeDescription}
                             onChange={e => setNewTenant({ ...newTenant, tradeDescription: e.target.value })}
                             placeholder="Optional description"

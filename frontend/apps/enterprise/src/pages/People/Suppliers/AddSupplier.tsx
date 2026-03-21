@@ -20,22 +20,25 @@ const AddSupplier: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="max-w-5xl mx-auto pb-10">
                 {/* Clean Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate('/suppliers')}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                            className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-lg transition-colors"
                         >
-                            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-neutral-400" />
+                            <ArrowLeft className="w-5 h-5 text-secondary dark:text-neutral-400" />
                         </button>
-                        <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100">Add Supplier</h1>
+                        <h1 className="text-xl font-bold text-main dark:text-neutral-100">Add Supplier</h1>
                     </div>
                 </div>
 
                 <SupplierForm mode="add" />
             </div>
+                  </div>
+
         </Layout>
     );
 };

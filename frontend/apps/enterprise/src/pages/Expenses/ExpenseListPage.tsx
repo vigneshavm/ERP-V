@@ -55,15 +55,16 @@ const ExpenseListPage = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg shadow-emerald-500/20">
-                            <Receipt className="w-6 h-6 text-white" />
+                            <Receipt className="w-6 h-6 text-main" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-black text-neutral-900 dark:text-white tracking-tight">
+                            <h1 className="text-2xl font-black text-neutral-900 dark:text-main tracking-tight">
                                 Expense List
                             </h1>
                             <p className="text-sm text-neutral-500">View and manage all expense entries</p>
@@ -72,11 +73,11 @@ const ExpenseListPage = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={refetch}
-                            className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition-all"
+                            className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition-all"
                         >
                             <RefreshCcw className="w-4 h-4" /> Refresh
                         </button>
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition-all">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition-all">
                             <Download className="w-4 h-4" /> Export
                         </button>
                         <button className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all">
@@ -87,28 +88,28 @@ const ExpenseListPage = () => {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-2xl border border-default dark:border-default shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total Entries</p>
-                        <p className="text-2xl font-black text-neutral-900 dark:text-white">{filteredExpenses.length}</p>
+                        <p className="text-2xl font-black text-neutral-900 dark:text-main">{filteredExpenses.length}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-2xl border border-default dark:border-default shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total Amount</p>
                         <p className="text-2xl font-black text-emerald-600">₹{totalAmount.toLocaleString()}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-2xl border border-default dark:border-default shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Categories</p>
-                        <p className="text-2xl font-black text-neutral-900 dark:text-white">{categories.length - 1}</p>
+                        <p className="text-2xl font-black text-neutral-900 dark:text-main">{categories.length - 1}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-2xl border border-default dark:border-default shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Avg per Entry</p>
-                        <p className="text-2xl font-black text-neutral-900 dark:text-white">₹{filteredExpenses.length > 0 ? Math.round(totalAmount / filteredExpenses.length).toLocaleString() : 0}</p>
+                        <p className="text-2xl font-black text-neutral-900 dark:text-main">₹{filteredExpenses.length > 0 ? Math.round(totalAmount / filteredExpenses.length).toLocaleString() : 0}</p>
                     </div>
                 </div>
 
                 {/* Main Table Card */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
                     {/* Toolbar */}
-                    <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 flex gap-4 items-center">
+                    <div className="p-4 border-b border-default dark:border-default flex gap-4 items-center">
                         <div className="relative flex-1 max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
@@ -116,11 +117,11 @@ const ExpenseListPage = () => {
                                 placeholder="Search expenses..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-900 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 border-0"
+                                className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 border-0"
                             />
                         </div>
 
-                        <div className="flex items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-neutral-900 rounded-xl">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                             <Filter className="w-4 h-4 text-neutral-500" />
                             <select
                                 value={filterCategory}
@@ -138,7 +139,7 @@ const ExpenseListPage = () => {
                     ) : (
                         <div className="overflow-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default">
                                     <tr>
                                         <th className="px-4 py-3 font-bold text-[10px] text-neutral-500 uppercase tracking-widest">Date</th>
                                         <th className="px-4 py-3 font-bold text-[10px] text-neutral-500 uppercase tracking-widest">Number</th>
@@ -152,7 +153,7 @@ const ExpenseListPage = () => {
                                 </thead>
                                 <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                                     {filteredExpenses.map(expense => (
-                                        <tr key={expense.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                                        <tr key={expense.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-bg)]/50 transition-colors">
                                             <td className="px-4 py-3 text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
                                                 {new Date(expense.date).toLocaleDateString()}
                                             </td>
@@ -160,7 +161,7 @@ const ExpenseListPage = () => {
                                                 {expense.expense_number}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
+                                                <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
                                                     {expense.category}
                                                 </span>
                                             </td>
@@ -170,7 +171,7 @@ const ExpenseListPage = () => {
                                             <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400">
                                                 {expense.payment_method}
                                             </td>
-                                            <td className="px-4 py-3 font-bold text-neutral-900 dark:text-white text-right">
+                                            <td className="px-4 py-3 font-bold text-neutral-900 dark:text-main text-right">
                                                 ₹{Number(expense.amount).toLocaleString()}
                                             </td>
                                             <td className="px-4 py-3 text-center">
@@ -215,6 +216,8 @@ const ExpenseListPage = () => {
                     )}
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

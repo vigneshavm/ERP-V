@@ -46,43 +46,43 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm">
                     <div className="flex justify-between items-start mb-2">
                         <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400">
                             <Tag className="w-5 h-5" />
                         </div>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Top Category</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{categoryStats[0]?.name || 'N/A'}</h3>
+                    <p className="text-xs font-bold text-muted dark:text-muted uppercase tracking-wider">Top Category</p>
+                    <h3 className="text-2xl font-bold text-main mt-1">{categoryStats[0]?.name || 'N/A'}</h3>
                     <p className="text-xs text-emerald-500 font-medium mt-1">₹{categoryStats[0]?.revenue.toLocaleString()} revenue</p>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm">
                     <div className="flex justify-between items-start mb-2">
                         <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
                             <Package className="w-5 h-5" />
                         </div>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Total Items Sold</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalItems.toLocaleString()}</h3>
+                    <p className="text-xs font-bold text-muted dark:text-muted uppercase tracking-wider">Total Items Sold</p>
+                    <h3 className="text-2xl font-bold text-main mt-1">{totalItems.toLocaleString()}</h3>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm">
                     <div className="flex justify-between items-start mb-2">
                         <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400">
                             <TrendingUp className="w-5 h-5" />
                         </div>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Revenue Share</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{totalRevenue.toLocaleString()}</h3>
+                    <p className="text-xs font-bold text-muted dark:text-muted uppercase tracking-wider">Revenue Share</p>
+                    <h3 className="text-2xl font-bold text-main mt-1">₹{totalRevenue.toLocaleString()}</h3>
                 </div>
             </div>
 
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Bar Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-6">Revenue by Category</h4>
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
+                    <h4 className="font-bold text-main mb-6">Revenue by Category</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={categoryStats} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
@@ -111,8 +111,8 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-6">Sales Volume Distribution</h4>
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
+                    <h4 className="font-bold text-main mb-6">Sales Volume Distribution</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -140,13 +140,13 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
             </div>
 
             {/* Detailed Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/20">
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Category Performance Matrix</h4>
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/20">
+                    <h4 className="font-bold text-main text-sm">Category Performance Matrix</h4>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 text-muted uppercase text-[10px] font-bold tracking-wider">
                             <tr>
                                 <th className="px-6 py-3">Category Name</th>
                                 <th className="px-6 py-3 text-center">Items Sold</th>
@@ -156,20 +156,20 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {categoryStats.map((stat, idx) => (
-                                <tr key={stat.name} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                <tr key={stat.name} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700/30 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
-                                            <span className="font-bold text-slate-900 dark:text-white">{stat.name}</span>
+                                            <span className="font-bold text-main">{stat.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-center font-mono text-slate-600 dark:text-slate-400">
+                                    <td className="px-6 py-4 text-center font-mono text-secondary dark:text-muted">
                                         {stat.items.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-bold text-slate-900 dark:text-white font-mono">
+                                    <td className="px-6 py-4 text-right font-bold text-main font-mono">
                                         ₹{stat.revenue.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-slate-500 dark:text-slate-400 font-mono">
+                                    <td className="px-6 py-4 text-right text-muted dark:text-muted font-mono">
                                         ₹{(stat.revenue / (stat.items || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                     </td>
                                 </tr>

@@ -79,7 +79,7 @@ const NavItem: React.FC<NavItemProps> = ({
           /* State */
           isActive
             ? 'bg-primary/10 dark:bg-primary/15 text-primary shadow-[0_0_0_1px_rgba(var(--color-primary),0.2)] font-extrabold'
-            : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-800 dark:hover:text-neutral-100 font-semibold',
+            : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-800 dark:hover:text-neutral-100 font-semibold',
         ].join(' ')}
       >
         {/* Active accent dot */}

@@ -95,9 +95,9 @@ const SupplierPayments: React.FC = () => {
             case 'Failed':
                 return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Failed</span>;
             case 'Reversed':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-500 border border-neutral-200 uppercase tracking-wider">Reversed</span>;
+                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-neutral-500 border border-default uppercase tracking-wider">Reversed</span>;
             default:
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-50 text-neutral-400 uppercase tracking-wider">{status}</span>;
+                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-neutral-400 uppercase tracking-wider">{status}</span>;
         }
     };
 
@@ -146,6 +146,7 @@ const SupplierPayments: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-in fade-in duration-500 pb-10">
                 <PageHeader
                     title="Supplier Payments"
@@ -190,7 +191,7 @@ const SupplierPayments: React.FC = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-bg)] p-4 rounded-2xl border border-default dark:border-default flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
                     <div className="relative w-full sm:w-96">
                         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                         <input
@@ -198,14 +199,14 @@ const SupplierPayments: React.FC = () => {
                             placeholder="Search by Payment #, Supplier, or Ref ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
+                            className="w-full pl-10 pr-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm"
                         />
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm min-w-[140px]"
+                            className="px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm min-w-[140px]"
                         >
                             <option value="all">All Status</option>
                             <option value="Cleared">Cleared</option>
@@ -213,17 +214,17 @@ const SupplierPayments: React.FC = () => {
                             <option value="Failed">Failed</option>
                             <option value="Reversed">Reversed</option>
                         </select>
-                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-500">
+                        <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-neutral-500">
                             <Filter className="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
                 {/* Table */}
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
+                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
+                            <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b dark:border-default">
                                 <tr>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Payment Details</th>
                                     <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Supplier</th>
@@ -237,12 +238,12 @@ const SupplierPayments: React.FC = () => {
                                 {filteredPayments.map((p) => (
                                     <tr
                                         key={p.id}
-                                        className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                                        className="group hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors cursor-pointer"
                                         onClick={() => navigate(`/purchase/payments/view/${p.id}`)}
                                     >
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-neutral-900 dark:text-white">{p.payment_number}</span>
+                                                <span className="font-bold text-neutral-900 dark:text-main">{p.payment_number}</span>
                                                 <span className="text-[10px] text-neutral-500 font-medium flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" /> {new Date(p.payment_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                                                 </span>
@@ -258,7 +259,7 @@ const SupplierPayments: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <span className="font-black text-neutral-900 dark:text-white">{formatCurrency(p.total_amount)}</span>
+                                            <span className="font-black text-neutral-900 dark:text-main">{formatCurrency(p.total_amount)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             {getStatusBadge(p.status)}
@@ -286,6 +287,8 @@ const SupplierPayments: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

@@ -65,7 +65,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 <MobileNav />
                 <Sidebar onLogout={onLogout} />
                 <main className="flex-1 overflow-hidden w-full bg-app relative">
-                    <div className="h-full w-full overflow-y-auto p-3 md:p-6 pb-24 lg:pb-6 custom-scrollbar text-main scroll-smooth">
+                    <div className="h-full w-full overflow-y-auto pb-24 lg:pb-6 custom-scrollbar scroll-smooth relative z-10">
                         <RouteDefinitions />
                     </div>
                 </main>

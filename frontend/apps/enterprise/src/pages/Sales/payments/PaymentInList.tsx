@@ -91,7 +91,7 @@ const PaymentInList: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="page-shell">
                 <PageHeader
                     title="Payment In"
                     description="Track and manage customer payment records"
@@ -137,9 +137,9 @@ const PaymentInList: React.FC = () => {
                     />
                 </div>
 
-                <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col">
+                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-sm border border-default dark:border-default overflow-hidden flex flex-col">
                     {/* Controls */}
-                    <div className="p-4 bg-neutral-50/50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="p-4 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50 border-b border-default dark:border-default flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 max-w-md group w-full">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors" />
                             <input
@@ -177,7 +177,7 @@ const PaymentInList: React.FC = () => {
                             </div>
                         ) : filteredPayments.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center px-4 font-outfit">
-                                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+                                <div className="w-16 h-16 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full flex items-center justify-center mb-4">
                                     <Search className="w-8 h-8 opacity-50" />
                                 </div>
                                 <p className="text-lg font-bold text-neutral-800 dark:text-neutral-200">No records found</p>
@@ -196,7 +196,7 @@ const PaymentInList: React.FC = () => {
                                 {/* Desktop Table View */}
                                 <div className="hidden md:block">
                                     <table className="w-full text-left font-outfit">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+                                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-b border-default dark:border-default">
                                             <tr>
                                                 <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Receipt No</th>
                                                 <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Date</th>
@@ -207,11 +207,11 @@ const PaymentInList: React.FC = () => {
                                                 <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider text-right">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
+                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 bg-white dark:bg-[var(--erp-bg)]">
                                             {filteredPayments.map((payment) => (
                                                 <tr
                                                     key={payment.id}
-                                                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer group"
+                                                    className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-colors cursor-pointer group"
                                                     onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
                                                 >
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-brand-600 dark:text-brand-400">
@@ -255,7 +255,7 @@ const PaymentInList: React.FC = () => {
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-wrap gap-1">
                                                             {payment.modes.map((mode, idx) => (
-                                                                <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
+                                                                <span key={idx} className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-neutral-600 dark:text-neutral-300 border border-default dark:border-default text-[10px] uppercase font-bold rounded">
                                                                     {mode}
                                                                 </span>
                                                             ))}
@@ -267,13 +267,13 @@ const PaymentInList: React.FC = () => {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
+                                                                className="p-1.5 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded text-neutral-500 hover:text-brand-600 transition-colors"
                                                                 title="View"
                                                             >
                                                                 <Eye className="w-4 h-4" />
                                                             </button>
                                                             <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
+                                                                className="p-1.5 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded text-neutral-500 hover:text-brand-600 transition-colors"
                                                                 title="Print"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
@@ -282,7 +282,7 @@ const PaymentInList: React.FC = () => {
                                                             >
                                                                 <Printer className="w-4 h-4" />
                                                             </button>
-                                                            <button className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-neutral-900 transition-colors" title="More">
+                                                            <button className="p-1.5 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded text-neutral-500 hover:text-neutral-900 transition-colors" title="More">
                                                                 <MoreHorizontal className="w-4 h-4" />
                                                             </button>
                                                         </div>
@@ -299,7 +299,7 @@ const PaymentInList: React.FC = () => {
                                         <div
                                             key={payment.id}
                                             onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                            className="p-4 active:bg-neutral-50 dark:active:bg-neutral-800 transition-colors"
+                                            className="p-4 active:bg-[var(--erp-bg-sunken)] dark:active:bg-[var(--erp-card)] transition-colors"
                                         >
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
@@ -314,7 +314,7 @@ const PaymentInList: React.FC = () => {
                                                 </div>
                                                 <div className="flex gap-1">
                                                     {payment.modes.map((mode, idx) => (
-                                                        <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
+                                                        <span key={idx} className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-neutral-600 dark:text-neutral-300 border border-default dark:border-default text-[10px] uppercase font-bold rounded">
                                                             {mode}
                                                         </span>
                                                     ))}

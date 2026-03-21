@@ -49,7 +49,7 @@ const getStatusBadge = (status: string) => {
             );
         case 'hold':
             return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-secondary border border-slate-300 uppercase tracking-wider">
                     <Clock className="w-3.5 h-3.5" />
                     Hold
                 </span>
@@ -64,7 +64,7 @@ const getStatusBadge = (status: string) => {
             );
         default:
             return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-slate-50 text-slate-700 border border-slate-200 uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-secondary border border-default uppercase tracking-wider">
                     {status || 'Unknown'}
                 </span>
             );
@@ -89,20 +89,20 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 dark:bg-neutral-900/50 border-b dark:border-neutral-700">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b dark:border-default">
                             <tr>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Bill Details</th>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Reference (PO/GRN)</th>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Supplier</th>
-                                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-right">Amount</th>
-                                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                                <th className="px-6 py-4 font-semibold text-muted uppercase tracking-wider text-right">Amount</th>
+                                <th className="px-6 py-4 font-semibold text-muted uppercase tracking-wider text-center">Status</th>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Due Date</th>
-                                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                                <th className="px-6 py-4 font-semibold text-muted uppercase tracking-wider text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
                             {bills.map((bill: any) => (
-                                <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                                <tr key={bill._id} className="group hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-indigo-600 dark:text-indigo-400">{bill.bill_number}</span>
@@ -112,7 +112,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col gap-1">
                                             {bill.po_number && (
-                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded">
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-500 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] px-2 py-0.5 rounded">
                                                     PO: {bill.po_number}
                                                 </span>
                                             )}
@@ -125,11 +125,11 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-medium text-slate-900 dark:text-white truncate max-w-[150px] inline-block">
+                                        <span className="font-medium text-main truncate max-w-[150px] inline-block">
                                             {bill.vendor_name || 'N/A'}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right font-semibold text-slate-900 dark:text-white">
+                                    <td className="px-6 py-4 text-right font-semibold text-main">
                                         {formatCurrency(bill.amount || bill.total_amount)}
                                     </td>
                                     <td className="px-6 py-4 text-center">

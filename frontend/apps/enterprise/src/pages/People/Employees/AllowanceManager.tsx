@@ -168,8 +168,8 @@ const AllowanceManager: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Allowance Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Define earnings and deductions for your staff payroll.</p>
+                    <h2 className="text-2xl font-bold text-main">Allowance Management</h2>
+                    <p className="text-muted dark:text-muted text-sm">Define earnings and deductions for your staff payroll.</p>
                 </div>
                 <button
                     onClick={handleOpenAdd}
@@ -181,12 +181,12 @@ const AllowanceManager: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 dark:border-slate-700">
+            <div className="flex border-b border-default dark:border-default">
                 <button
                     onClick={() => setActiveTab('breakdown')}
                     className={`px-6 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'breakdown'
                         ? 'border-blue-600 text-blue-600'
-                        : 'border-transparent text-slate-500 hover:text-slate-700'
+                        : 'border-transparent text-muted hover:text-secondary'
                         }`}
                 >
                     Employee Benefit Breakdown
@@ -195,7 +195,7 @@ const AllowanceManager: React.FC = () => {
                     onClick={() => setActiveTab('list')}
                     className={`px-6 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'list'
                         ? 'border-blue-600 text-blue-600'
-                        : 'border-transparent text-slate-500 hover:text-slate-700'
+                        : 'border-transparent text-muted hover:text-secondary'
                         }`}
                 >
                     Allowance Configuration
@@ -203,47 +203,47 @@ const AllowanceManager: React.FC = () => {
             </div>
 
             {loading && components.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
+                <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default border-dashed">
                     <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
-                    <p className="text-slate-500 dark:text-slate-400 font-bold">Synchronizing Components...</p>
+                    <p className="text-muted dark:text-muted font-bold">Synchronizing Components...</p>
                 </div>
             ) : (
                 <>
                     {activeTab === 'breakdown' && (
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm animate-in slide-in-from-bottom-4 duration-500">
-                            <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default overflow-hidden shadow-sm animate-in slide-in-from-bottom-4 duration-500">
+                            <div className="p-6 border-b border-default dark:border-default flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Employee Benefit Breakdown</h3>
+                                    <h3 className="text-lg font-bold text-main">Employee Benefit Breakdown</h3>
                                     <div className="flex items-center gap-3 mt-1">
-                                        <p className="text-sm text-slate-500">Overview of calculated allowances. Payments are processed via Cash.</p>
+                                        <p className="text-sm text-muted">Overview of calculated allowances. Payments are processed via Cash.</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                                    <div className="flex items-center gap-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] px-3 py-1.5 rounded-lg border border-default dark:border-default shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                                         <CalendarIcon className="w-4 h-4 text-blue-500" />
                                         <select
-                                            className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+                                            className="bg-transparent text-sm font-bold text-secondary dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedDate.month}
                                             onChange={(e) => setSelectedDate({ ...selectedDate, month: parseInt(e.target.value) })}
                                         >
                                             {Array.from({ length: 12 }, (_, i) => (
-                                                <option key={i} value={i} className="dark:bg-slate-800">{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
+                                                <option key={i} value={i} className="dark:bg-[var(--erp-card)]">{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
                                             ))}
                                         </select>
                                         <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
                                         <input
                                             type="number"
-                                            className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 w-16 outline-none text-center"
+                                            className="bg-transparent text-sm font-bold text-secondary dark:text-slate-200 w-16 outline-none text-center"
                                             value={selectedDate.year}
                                             onChange={(e) => setSelectedDate({ ...selectedDate, year: parseInt(e.target.value) })}
                                         />
                                     </div>
 
-                                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                                    <div className="flex items-center gap-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] px-3 py-1.5 rounded-lg border border-default dark:border-default shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                                         <Users className="w-4 h-4 text-blue-500" />
                                         <select
-                                            className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+                                            className="bg-transparent text-sm font-bold text-secondary dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedEmployeeId}
                                             onChange={(e) => setSelectedEmployeeId(e.target.value)}
                                         >
@@ -254,10 +254,10 @@ const AllowanceManager: React.FC = () => {
                                         </select>
                                     </div>
 
-                                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-emerald-500/20">
+                                    <div className="flex items-center gap-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] px-3 py-1.5 rounded-lg border border-default dark:border-default shadow-sm transition-all focus-within:ring-2 focus-within:ring-emerald-500/20">
                                         <TrendingUp className="w-4 h-4 text-emerald-500" />
                                         <select
-                                            className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
+                                            className="bg-transparent text-sm font-bold text-secondary dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedBenefitId}
                                             onChange={(e) => setSelectedBenefitId(e.target.value)}
                                         >
@@ -268,16 +268,16 @@ const AllowanceManager: React.FC = () => {
                                         </select>
                                     </div>
 
-                                    <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg">
+                                    <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-slate-700 p-1 rounded-lg">
                                         <button
                                             onClick={() => setPayoutFrequency('Monthly')}
-                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Monthly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Monthly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-muted dark:text-muted hover:text-secondary'}`}
                                         >
                                             Monthly
                                         </button>
                                         <button
                                             onClick={() => setPayoutFrequency('Weekly')}
-                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Weekly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Weekly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-muted dark:text-muted hover:text-secondary'}`}
                                         >
                                             Weekly
                                         </button>
@@ -288,19 +288,19 @@ const AllowanceManager: React.FC = () => {
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse min-w-[1000px]">
                                     <thead>
-                                        <tr className="bg-slate-50 dark:bg-slate-900/50">
-                                            <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Employee</th>
-                                            <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Worked Days</th>
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
+                                        <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
+                                            <th className="px-6 py-4 text-[10px] font-bold text-muted uppercase tracking-widest border-b border-default dark:border-default">Employee</th>
+                                            <th className="px-6 py-4 text-[10px] font-bold text-muted uppercase tracking-widest border-b border-default dark:border-default">Worked Days</th>
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-muted uppercase tracking-widest border-b border-default dark:border-default">Prorated Basic</th>}
                                             {earnings.filter(c => selectedBenefitId === 'ALL' || c._id === selectedBenefitId).map(c => (
-                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-emerald-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-emerald-500 uppercase tracking-widest border-b border-default dark:border-default">
                                                     {c.name} {isTeaAllowanceSelected && '(Rate)'}
                                                 </th>
                                             ))}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Selection Total</th>}
-                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Total Amount</th>}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50">Total Payout</th>}
-                                            <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Actions</th>
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-default dark:border-default bg-blue-50/30 dark:bg-blue-900/10">Selection Total</th>}
+                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-default dark:border-default bg-blue-50/30 dark:bg-blue-900/10">Total Amount</th>}
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-main uppercase tracking-widest border-b border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">Total Payout</th>}
+                                            <th className="px-6 py-4 text-[10px] font-bold text-muted uppercase tracking-widest border-b border-default dark:border-default">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -348,10 +348,10 @@ const AllowanceManager: React.FC = () => {
                                             });
 
                                             return (
-                                                <tr key={emp._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+                                                <tr key={emp._id} className="hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-bg)]/10 transition-colors">
                                                     <td className="px-6 py-4">
-                                                        <div className="font-bold text-slate-800 dark:text-white whitespace-nowrap">{emp.name}</div>
-                                                        <div className="text-[10px] font-medium text-slate-500 uppercase flex items-center gap-2 mt-0.5">
+                                                        <div className="font-bold text-main whitespace-nowrap">{emp.name}</div>
+                                                        <div className="text-[10px] font-medium text-muted uppercase flex items-center gap-2 mt-0.5">
                                                             <Shield className="w-2.5 h-2.5" /> {emp.role}
                                                         </div>
                                                     </td>
@@ -360,12 +360,12 @@ const AllowanceManager: React.FC = () => {
                                                             <span className={`px-2 py-0.5 rounded text-xs font-bold ${displayDays < daysInMonth ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}`}>
                                                                 {displayDays} {payoutFrequency === 'Monthly' ? `/ ${daysInMonth - displayDays}` : '(Fixed)'}
                                                             </span>
-                                                            <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">P / L</span>
+                                                            <span className="text-[10px] text-muted font-medium whitespace-nowrap">P / L</span>
                                                         </div>
                                                     </td>
                                                     {!isTeaAllowanceSelected && (
                                                         <td className="px-6 py-4">
-                                                            <div className="font-mono text-sm font-bold text-slate-600 dark:text-slate-400">₹{Math.round(basic).toLocaleString()}</div>
+                                                            <div className="font-mono text-sm font-bold text-secondary dark:text-muted">₹{Math.round(basic).toLocaleString()}</div>
                                                             {displayDays < daysInMonth && <div className="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">Prorated</div>}
                                                         </td>
                                                     )}
@@ -401,9 +401,9 @@ const AllowanceManager: React.FC = () => {
                                                         </div>
                                                     </td>
                                                     {!isTeaAllowanceSelected && (
-                                                        <td className="px-6 py-4 font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-900/10">
+                                                        <td className="px-6 py-4 font-bold text-main bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/10">
                                                             <div className="text-blue-600 dark:text-blue-400">₹{Math.round(totalEarningsSum + basic).toLocaleString()}</div>
-                                                            <div className="text-[9px] text-slate-400 font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">Gross Estimate</div>
+                                                            <div className="text-[9px] text-muted font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">Gross Estimate</div>
                                                         </td>
                                                     )}
                                                     <td className="px-6 py-4">
@@ -421,17 +421,17 @@ const AllowanceManager: React.FC = () => {
                                             );
                                         })}
                                     </tbody>
-                                    <tfoot className="bg-slate-50 dark:bg-slate-900/50 border-t-2 border-slate-200 dark:border-slate-700">
+                                    <tfoot className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t-2 border-default dark:border-default">
                                         <tr className="font-bold">
-                                            <td className="px-6 py-4 text-slate-800 dark:text-white uppercase tracking-wider">Total</td>
-                                            <td className="px-6 py-4 border-b border-transparent text-slate-400 font-mono text-[10px]">
+                                            <td className="px-6 py-4 text-main uppercase tracking-wider">Total</td>
+                                            <td className="px-6 py-4 border-b border-transparent text-muted font-mono text-[10px]">
                                                 {employees.filter(e => selectedEmployeeId === 'ALL' || e._id === selectedEmployeeId).reduce((sum, emp) => {
                                                     const attRecord = attendance.find((a: any) => (typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id) === emp._id);
                                                     return sum + (attRecord ? attRecord.workedDays : new Date(selectedDate.year, selectedDate.month + 1, 0).getDate());
                                                 }, 0)} d
                                             </td>
                                             {!isTeaAllowanceSelected && (
-                                                <td className="px-6 py-4 text-slate-800 dark:text-white font-mono">
+                                                <td className="px-6 py-4 text-main font-mono">
                                                     ₹{Math.round(employees.filter(e => selectedEmployeeId === 'ALL' || e._id === selectedEmployeeId).reduce((sum, emp) => {
                                                         const attRecord = attendance.find((a: any) => (typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id) === emp._id);
                                                         const daysInMonth = new Date(selectedDate.year, selectedDate.month + 1, 0).getDate();
@@ -491,7 +491,7 @@ const AllowanceManager: React.FC = () => {
                                                 }, 0)).toLocaleString()}
                                             </td>
                                             {!isTeaAllowanceSelected && (
-                                                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 font-mono bg-slate-100/50 dark:bg-slate-800/50">
+                                                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 font-mono bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">
                                                     ₹{Math.round(employees.filter(e => selectedEmployeeId === 'ALL' || e._id === selectedEmployeeId).reduce((sum, emp) => {
                                                         const structure = structures[emp._id];
                                                         const attRecord = attendance.find((a: any) => (typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id) === emp._id);
@@ -545,7 +545,7 @@ const AllowanceManager: React.FC = () => {
                                 </div>
                                 <div className="grid gap-3">
                                     {earnings.length === 0 ? (
-                                        <div className="p-8 text-center bg-white dark:bg-slate-800 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+                                        <div className="p-8 text-center bg-white dark:bg-[var(--erp-card)] rounded-xl border border-dashed border-default dark:border-default text-muted">
                                             No earnings defined.
                                         </div>
                                     ) : (
@@ -569,7 +569,7 @@ const AllowanceManager: React.FC = () => {
                                 </div>
                                 <div className="grid gap-3">
                                     {deductions.length === 0 ? (
-                                        <div className="p-8 text-center bg-white dark:bg-slate-800 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 text-slate-400">
+                                        <div className="p-8 text-center bg-white dark:bg-[var(--erp-card)] rounded-xl border border-dashed border-default dark:border-default text-muted">
                                             No deductions defined.
                                         </div>
                                     ) : (
@@ -591,23 +591,23 @@ const AllowanceManager: React.FC = () => {
 
             {/* Form Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
-                        <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--erp-bg)]/60 backdrop-blur-sm animate-in fade-in">
+                    <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-default dark:border-default">
+                        <div className="p-6 border-b border-default dark:border-default bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-main dark:text-main flex items-center gap-2">
                                 {editingId ? <Pencil className="w-5 h-5 text-blue-600" /> : <PlusCircle className="w-5 h-5 text-blue-600" />}
                                 {editingId ? 'Edit Component' : 'New Salary Component'}
                             </h3>
-                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <button onClick={() => setShowModal(false)} className="text-muted hover:text-secondary dark:hover:text-slate-200">
                                 <XCircle className="w-6 h-6" />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Component Name</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Component Name</label>
                                 <input
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     placeholder="e.g., Basic Salary, HRA, Provident Fund"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -616,9 +616,9 @@ const AllowanceManager: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Type</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Type</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                         value={formData.type}
                                         onChange={e => setFormData({ ...formData, type: e.target.value as any })}
                                     >
@@ -627,9 +627,9 @@ const AllowanceManager: React.FC = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Calculation</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Calculation</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                         value={formData.calculationType}
                                         onChange={e => setFormData({ ...formData, calculationType: e.target.value as any })}
                                     >
@@ -640,17 +640,17 @@ const AllowanceManager: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Default Value</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Default Value</label>
                                 <input
                                     type="number"
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     placeholder="0"
                                     value={formData.defaultValue}
                                     onChange={e => setFormData({ ...formData, defaultValue: parseFloat(e.target.value) || 0 })}
                                 />
                             </div>
 
-                            <div className="flex gap-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div className="flex gap-4 p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl border border-default dark:border-default">
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
                                         type="checkbox"
@@ -658,7 +658,7 @@ const AllowanceManager: React.FC = () => {
                                         checked={formData.isTaxable}
                                         onChange={e => setFormData({ ...formData, isTaxable: e.target.checked })}
                                     />
-                                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">Is Taxable</span>
+                                    <span className="text-xs font-medium text-secondary dark:text-muted group-hover:text-main dark:group-hover:text-slate-200 transition-colors">Is Taxable</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
@@ -667,7 +667,7 @@ const AllowanceManager: React.FC = () => {
                                         checked={formData.isActive}
                                         onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
                                     />
-                                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">Is Active</span>
+                                    <span className="text-xs font-medium text-secondary dark:text-muted group-hover:text-main dark:group-hover:text-slate-200 transition-colors">Is Active</span>
                                 </label>
                             </div>
 
@@ -675,7 +675,7 @@ const AllowanceManager: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                    className="flex-1 px-4 py-2 border border-default dark:border-default text-secondary dark:text-muted rounded-lg font-bold hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 transition-colors"
                                 >
                                     Cancel
                                 </button>
@@ -705,7 +705,7 @@ const ComponentCard = ({
     onDelete: () => void
 }) => {
     return (
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 group hover:shadow-md transition-all flex items-center justify-between">
+        <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl shadow-sm border border-default dark:border-default group hover:shadow-md transition-all flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${component.type === 'EARNING'
                     ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-100'
@@ -714,17 +714,17 @@ const ComponentCard = ({
                     {component.name.charAt(0)}
                 </div>
                 <div>
-                    <h4 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <h4 className="font-bold text-main dark:text-main flex items-center gap-2">
                         {component.name}
-                        {!component.isActive && <span className="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-1.5 py-0.5 rounded uppercase tracking-wider">Inactive</span>}
+                        {!component.isActive && <span className="text-[10px] bg-[var(--erp-bg-sunken)] dark:bg-slate-700 text-muted px-1.5 py-0.5 rounded uppercase tracking-wider">Inactive</span>}
                     </h4>
-                    <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        <span className="font-mono bg-slate-50 dark:bg-slate-900 px-1 rounded border border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center gap-3 text-xs text-muted dark:text-muted mt-0.5">
+                        <span className="font-mono bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] px-1 rounded border border-default dark:border-default">
                             {component.calculationType === 'FLAT' ? 'Fixed ₹' : `${component.defaultValue}% of Basic`}
                         </span>
                         {component.calculationType === 'FLAT' && <span>₹{component.defaultValue.toLocaleString()}</span>}
-                        <span className="text-slate-300 dark:text-slate-700">|</span>
-                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
+                        <span className="text-muted dark:text-secondary">|</span>
+                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-amber-600 dark:text-amber-400' : 'text-muted'}`}>
                             <CheckCircle2 className="w-3 h-3" />
                             {component.isTaxable ? 'Taxable' : 'Non-Taxable'}
                         </span>
@@ -734,13 +734,13 @@ const ComponentCard = ({
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                     onClick={onEdit}
-                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                    className="p-2 text-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
                 >
                     <Pencil className="w-4 h-4" />
                 </button>
                 <button
                     onClick={onDelete}
-                    className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
+                    className="p-2 text-muted hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

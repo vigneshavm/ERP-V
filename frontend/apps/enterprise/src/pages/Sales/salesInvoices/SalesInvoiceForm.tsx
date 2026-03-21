@@ -135,6 +135,7 @@ const SalesInvoiceForm = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="max-w-5xl mx-auto pb-20 animate-fade-in premium-bg min-h-screen px-4 pt-6">
                 <PageHeader
                     title="Create New Invoice"
@@ -142,7 +143,7 @@ const SalesInvoiceForm = () => {
                     backButton={
                         <Link
                             to="/sales"
-                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition-colors"
+                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-indigo-400 transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4" /> Back to Sales
                         </Link>
@@ -151,8 +152,8 @@ const SalesInvoiceForm = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6 mt-6">
                     {/* Section 1: Invoice Details */}
-                    <div className="premium-card p-6 shadow-2xl">
-                        <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <div className="erp-card p-6 shadow-2xl">
+                        <h3 className="text-xs font-black text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
                             <FileText className="w-4 h-4 text-indigo-400" /> Invoice Details
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -186,9 +187,9 @@ const SalesInvoiceForm = () => {
                     </div>
 
                     {/* Section 2: Customer Selection */}
-                    <div className="premium-card p-6 shadow-2xl">
+                    <div className="erp-card p-6 shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <h3 className="text-xs font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <User className="w-4 h-4 text-indigo-400" /> Customer
                             </h3>
                             {!formData.customer && (
@@ -203,15 +204,15 @@ const SalesInvoiceForm = () => {
                         </div>
 
                         {formData.customer ? (
-                            <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                            <div className="flex items-center justify-between p-4 bg-[var(--erp-bg-sunken)] rounded-xl border border-default">
                                 <div>
-                                    <p className="font-black text-slate-300 uppercase tracking-tight">{formData.customer.name}</p>
-                                    <p className="text-[10px] text-slate-600 font-mono tracking-tighter">{formData.customer.phone || formData.customer.email}</p>
+                                    <p className="font-black text-muted uppercase tracking-tight">{formData.customer.name}</p>
+                                    <p className="text-[10px] text-secondary font-mono tracking-tighter">{formData.customer.phone || formData.customer.email}</p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, customer: null })}
-                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-slate-500 text-[10px] font-black uppercase tracking-widest transition-all"
+                                    className="px-3 py-1.5 bg-[var(--erp-bg-sunken)] hover:bg-white/10 rounded-lg text-muted text-[10px] font-black uppercase tracking-widest transition-all"
                                 >
                                     Change
                                 </button>
@@ -219,7 +220,7 @@ const SalesInvoiceForm = () => {
                         ) : (
                             <div
                                 onClick={() => setShowCustomerModal(true)}
-                                className="border-2 border-dashed border-white/10 rounded-xl p-8 flex flex-col items-center justify-center text-slate-600 cursor-pointer hover:border-indigo-500/50 hover:text-indigo-400 transition-all bg-white/5"
+                                className="border-2 border-dashed border-default rounded-xl p-8 flex flex-col items-center justify-center text-secondary cursor-pointer hover:border-indigo-500/50 hover:text-indigo-400 transition-all bg-[var(--erp-bg-sunken)]"
                             >
                                 <User className="w-8 h-8 mb-2" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">Click to select a customer</span>
@@ -228,12 +229,12 @@ const SalesInvoiceForm = () => {
                     </div>
 
                     {/* Section 3: Items */}
-                    <div className="premium-card p-6 shadow-2xl overflow-hidden">
-                        <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Items Breakdown</h3>
+                    <div className="erp-card p-6 shadow-2xl overflow-hidden">
+                        <h3 className="text-xs font-black text-muted uppercase tracking-widest mb-4">Items Breakdown</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="border-b border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                    <tr className="border-b border-default text-[10px] font-black text-muted uppercase tracking-widest">
                                         <th className="px-4 py-3 min-w-[200px]">Item Name</th>
                                         <th className="px-4 py-3 w-24 text-right">Qty</th>
                                         <th className="px-4 py-3 w-32 text-right">Rate</th>
@@ -244,14 +245,14 @@ const SalesInvoiceForm = () => {
                                 </thead>
                                 <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                                     {formData.items.map((item, index) => (
-                                        <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                        <tr key={index} className="border-b border-default hover:bg-[var(--erp-bg-sunken)] transition-colors">
                                             <td className="px-4 py-3">
                                                 <input
                                                     type="text"
                                                     placeholder="Item name/description"
                                                     value={item.name}
                                                     onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black uppercase tracking-tight text-slate-300 placeholder:text-slate-600"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black uppercase tracking-tight text-muted placeholder:text-secondary"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">
@@ -260,7 +261,7 @@ const SalesInvoiceForm = () => {
                                                     min="1"
                                                     value={item.quantity}
                                                     onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-slate-300 font-mono"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">
@@ -269,7 +270,7 @@ const SalesInvoiceForm = () => {
                                                     min="0"
                                                     value={item.rate}
                                                     onChange={(e) => updateItem(index, 'rate', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-slate-300 font-mono"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">
@@ -279,7 +280,7 @@ const SalesInvoiceForm = () => {
                                                     max="100"
                                                     value={item.tax}
                                                     onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-slate-500 font-mono"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
                                                 />
                                             </td>
                                             <td className="px-4 py-3 text-right font-black text-indigo-400 font-mono">
@@ -311,56 +312,56 @@ const SalesInvoiceForm = () => {
                     {/* Section 4: Summary & Totals */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
-                            <div className="premium-card p-6 shadow-2xl h-full">
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Notes & Terms</h3>
+                            <div className="erp-card p-6 shadow-2xl h-full">
+                                <h3 className="text-[10px] font-black text-muted uppercase tracking-widest mb-4">Notes & Terms</h3>
                                 <textarea
                                     placeholder="Add notes for the customer..."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-xs font-medium text-slate-200 mb-4 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-slate-600"
+                                    className="w-full p-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-medium text-slate-200 mb-4 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-secondary"
                                 />
                                 <textarea
                                     placeholder="Terms and conditions..."
                                     value={formData.termsAndConditions}
                                     onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                    className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-xs font-medium text-slate-200 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-slate-600"
+                                    className="w-full p-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-medium text-slate-200 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-secondary"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="premium-card p-6 shadow-2xl">
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Payment Summary</h3>
+                            <div className="erp-card p-6 shadow-2xl">
+                                <h3 className="text-[10px] font-black text-muted uppercase tracking-widest mb-4">Payment Summary</h3>
 
                                 <div className="space-y-3 text-[10px] font-black uppercase tracking-widest">
-                                    <div className="flex justify-between text-slate-500 text-xs">
+                                    <div className="flex justify-between text-muted text-xs">
                                         <span>Subtotal</span>
-                                        <span className="font-mono text-slate-300">₹{calculateSubtotal().toFixed(2)}</span>
+                                        <span className="font-mono text-muted">₹{calculateSubtotal().toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between text-indigo-400 text-xs">
                                         <span>Tax (Total)</span>
                                         <span className="font-mono">+ ₹{calculateTotalTax().toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-slate-500">
+                                    <div className="flex justify-between items-center text-muted">
                                         <span className="flex items-center gap-1"><Truck className="w-3.5 h-3.5" /> Shipping</span>
                                         <input
                                             type="number"
                                             value={formData.shippingCharges}
                                             onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-white/10 focus:border-indigo-400 outline-none p-1 font-mono text-slate-300"
+                                            className="w-24 text-right bg-transparent border-b border-default focus:border-indigo-400 outline-none p-1 font-mono text-muted"
                                         />
                                     </div>
-                                    <div className="flex justify-between items-center text-slate-500">
+                                    <div className="flex justify-between items-center text-muted">
                                         <span className="flex items-center gap-1"><Percent className="w-3.5 h-3.5" /> Discount</span>
                                         <input
                                             type="number"
                                             value={formData.discount}
                                             onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-white/10 focus:border-indigo-400 outline-none p-1 text-rose-400 font-mono"
+                                            className="w-24 text-right bg-transparent border-b border-default focus:border-indigo-400 outline-none p-1 text-rose-400 font-mono"
                                         />
                                     </div>
-                                    <div className="border-t border-white/10 pt-4 flex justify-between items-end">
-                                        <span className="text-slate-400">Total Payable</span>
+                                    <div className="border-t border-default pt-4 flex justify-between items-end">
+                                        <span className="text-muted">Total Payable</span>
                                         <span className="font-black text-3xl font-mono tracking-tighter text-emerald-400">
                                             ₹{calculateTotal().toFixed(2)}
                                         </span>
@@ -373,7 +374,7 @@ const SalesInvoiceForm = () => {
                                 disabled={isLoading}
                                 className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-lg shadow-2xl shadow-indigo-600/20 hover:bg-indigo-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 overflow-hidden group relative"
                             >
-                                <div className="absolute inset-0 bg-white/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                <div className="absolute inset-0 bg-[var(--erp-bg-sunken)] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                 {isLoading ? (
                                     <>Processing</>
                                 ) : (
@@ -393,6 +394,8 @@ const SalesInvoiceForm = () => {
                     setShowCustomerModal(false);
                 }}
             />
+                  </div>
+
         </Layout>
     );
 };

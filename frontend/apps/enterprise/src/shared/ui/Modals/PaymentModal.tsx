@@ -35,7 +35,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-md shadow-2xl border dark:border-neutral-700 overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl w-full max-w-md shadow-2xl border dark:border-neutral-700 overflow-hidden flex flex-col">
                 <div className="p-6 border-b dark:border-neutral-700 flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-black uppercase tracking-tight italic">Record Payment</h2>
@@ -47,14 +47,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 p-4 bg-neutral-50 dark:bg-neutral-900 rounded-xl mb-4 text-sm font-medium">
+                    <div className="grid grid-cols-2 gap-4 p-4 bg-neutral-50 dark:bg-[var(--erp-bg)] rounded-xl mb-4 text-sm font-medium">
                         <div>
                             <p className="text-neutral-400 text-[10px] uppercase font-bold">Total Amount</p>
-                            <p className="text-neutral-900 dark:text-white">₹{totalAmount.toLocaleString()}</p>
+                            <p className="text-neutral-900 dark:text-main">₹{totalAmount.toLocaleString()}</p>
                         </div>
                         <div>
                             <p className="text-neutral-400 text-[10px] uppercase font-bold">Paid So Far</p>
-                            <p className="text-neutral-900 dark:text-white">₹{paidAmount.toLocaleString()}</p>
+                            <p className="text-neutral-900 dark:text-main">₹{paidAmount.toLocaleString()}</p>
                         </div>
                     </div>
 
@@ -67,7 +67,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                                 defaultValue={remainingAmount}
                                 step="any"
                                 max={remainingAmount}
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
+                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
                                 required
                             />
                         </div>
@@ -78,7 +78,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                                 name="paymentDate"
                                 type="date"
                                 defaultValue={new Date().toISOString().split('T')[0]}
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
+                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
                                 required
                             />
                         </div>
@@ -87,7 +87,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                             <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 block">Method</label>
                             <select
                                 name="paymentMethod"
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
+                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
                                 required
                             >
                                 <option value="Cash">Cash</option>
@@ -102,7 +102,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                             <textarea
                                 name="notes"
                                 rows={2}
-                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
+                                className="w-full px-4 py-2 bg-neutral-50 dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
                                 placeholder="Optional payment notes..."
                             />
                         </div>

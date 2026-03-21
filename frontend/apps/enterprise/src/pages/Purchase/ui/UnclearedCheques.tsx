@@ -61,6 +61,7 @@ const UnclearedCheques: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Uncleared Cheques (PDC)"
                 description="Manage post-dated cheques and their clearance status"
@@ -70,14 +71,14 @@ const UnclearedCheques: React.FC = () => {
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* Stats / Search Bar */}
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="bg-white dark:bg-[var(--erp-bg)] p-4 rounded-xl border border-default dark:border-default flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
                             <Clock size={24} />
                         </div>
                         <div>
                             <p className="text-xs font-bold text-neutral-500 uppercase">Total in Vault</p>
-                            <h2 className="text-2xl font-bold text-neutral-800 dark:text-white">₹{totalPending.toLocaleString()}</h2>
+                            <h2 className="text-2xl font-bold text-neutral-800 dark:text-main">₹{totalPending.toLocaleString()}</h2>
                         </div>
                     </div>
 
@@ -88,13 +89,13 @@ const UnclearedCheques: React.FC = () => {
                             placeholder="Search by Vendor, Chq No, Payment ID..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm border-none focus:ring-2 focus:ring-primary/50"
+                            className="w-full pl-10 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-sm border-none focus:ring-2 focus:ring-primary/50"
                         />
                     </div>
                 </div>
 
                 {/* Cheque List */}
-                <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default overflow-hidden shadow-sm">
                     {loading ? (
                         <div className="p-8 text-center text-neutral-500">Loading vault...</div>
                     ) : filteredCheques.length === 0 ? (
@@ -106,7 +107,7 @@ const UnclearedCheques: React.FC = () => {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 uppercase text-xs font-semibold">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 text-neutral-500 uppercase text-xs font-semibold">
                                     <tr>
                                         <th className="px-6 py-4">Issue Date</th>
                                         <th className="px-6 py-4">Cheque Date (Due)</th>
@@ -121,7 +122,7 @@ const UnclearedCheques: React.FC = () => {
                                         const daysToClear = Math.ceil((new Date(cheque.chequeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
 
                                         return (
-                                            <tr key={cheque._id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                                            <tr key={cheque._id} className="hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                                 <td className="px-6 py-4 text-neutral-500">
                                                     {new Date(cheque.paymentDate).toLocaleDateString()}
                                                 </td>
@@ -136,9 +137,9 @@ const UnclearedCheques: React.FC = () => {
                                                     {isDue && <span className="text-xs text-red-500 font-bold mt-1 block flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Due Now</span>}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="font-bold text-neutral-900 dark:text-white">{cheque.supplierId?.businessName || 'Unknown Vendor'}</div>
+                                                    <div className="font-bold text-neutral-900 dark:text-main">{cheque.supplierId?.businessName || 'Unknown Vendor'}</div>
                                                     <div className="text-xs text-neutral-500 flex items-center gap-2 mt-1">
-                                                        <span className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-neutral-600">{cheque.referenceNo}</span>
+                                                        <span className="font-mono bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] px-1.5 py-0.5 rounded text-neutral-600">{cheque.referenceNo}</span>
                                                         <span>•</span>
                                                         <span>{cheque.bankName}</span>
                                                     </div>
@@ -177,6 +178,8 @@ const UnclearedCheques: React.FC = () => {
                     )}
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

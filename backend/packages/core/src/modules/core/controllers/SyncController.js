@@ -4,7 +4,7 @@ import Device from "../models/Device.js";
 import Backup from "../models/Backup.js";
 import Conflict from "../models/Conflict.js";
 export const getSyncConfig = asyncHandler(async (req, res) => {
-    const tenantId = req.user?.tenantId; // Assuming middleware populates this
+    const tenantId = req.user.tenantId; // Assuming middleware populates this
     // Fetch real data
     const settings = await SyncSettings.findOne({ tenantId });
     const devices = await Device.find({ tenantId });
@@ -30,7 +30,7 @@ export const getSyncConfig = asyncHandler(async (req, res) => {
     });
 });
 export const updateSettings = asyncHandler(async (req, res) => {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user.tenantId;
     const { settings } = req.body;
     const updated = await SyncSettings.findOneAndUpdate({ tenantId }, { ...settings, tenantId }, // Ensure tenantId is set
     { new: true, upsert: true });
@@ -41,7 +41,7 @@ export const updateSettings = asyncHandler(async (req, res) => {
     });
 });
 export const getDevices = asyncHandler(async (req, res) => {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user.tenantId;
     const devices = await Device.find({ tenantId });
     res.json({ success: true, data: devices });
 });
@@ -53,7 +53,7 @@ export const addDevice = asyncHandler(async (_req, res) => {
     });
 });
 export const getBackups = asyncHandler(async (req, res) => {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user.tenantId;
     const backups = await Backup.find({ tenantId }).sort({ createdAt: -1 });
     // Using defaults instead of hardcoded true for demo
     const config = {
@@ -79,7 +79,7 @@ export const restoreBackup = asyncHandler(async (_req, res) => {
     res.json({ success: true, message: "Restore process initiated" });
 });
 export const getConflicts = asyncHandler(async (req, res) => {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user.tenantId;
     const conflicts = await Conflict.find({ tenantId });
     res.json({ success: true, data: conflicts });
 });

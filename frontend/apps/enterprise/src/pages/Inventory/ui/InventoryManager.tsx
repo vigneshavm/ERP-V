@@ -56,19 +56,19 @@ import {
 } from 'lucide-react';
 
 const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) => (
-    <div className="premium-card p-4 sm:p-5 lg:p-6 shadow-xl border border-white/5 relative overflow-hidden group">
+    <div className="erp-card p-4 sm:p-5 lg:p-6 shadow-xl border border-default relative overflow-hidden group">
         <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/5 rounded-full blur-3xl -mr-12 -mt-12 group-hover:bg-${color}-500/10 transition-all`}></div>
         <div className="flex justify-between items-start relative z-10">
             <div className="min-w-0">
-                <p className="text-slate-500 text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{title}</p>
+                <p className="text-muted text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{title}</p>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-200 mt-1 italic tracking-tight truncate font-mono">{value}</h3>
                 {subtext && (
-                    <p className={`text-[9px] sm:text-[10px] font-bold mt-1 sm:mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-slate-600'}`}>
+                    <p className={`text-[9px] sm:text-[10px] font-bold mt-1 sm:mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-secondary'}`}>
                         {subtext}
                     </p>
                 )}
             </div>
-            <div className={`p-2 sm:p-3 rounded-xl bg-white/5 border border-white/10 text-slate-400 group-hover:text-indigo-400 transition-colors flex-shrink-0`}>
+            <div className={`p-2 sm:p-3 rounded-xl bg-[var(--erp-bg-sunken)] border border-default text-muted group-hover:text-indigo-400 transition-colors flex-shrink-0`}>
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
         </div>
@@ -245,21 +245,22 @@ const InventoryManager: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in pb-16 premium-bg min-h-screen px-4 pt-6">
                 <PageHeader
                     title="Inventory Core Manager"
                     description={`Central stock authority and metadata control for ${tenant_id}`}
                     actions={
                         <div className="flex gap-2 flex-wrap">
-                            <button className="px-3 sm:px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-white/10 transition-all uppercase tracking-widest text-slate-300 shadow-sm">
-                                <Download className="w-4 h-4 text-slate-500" /> Export
+                            <button className="px-3 sm:px-4 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-white/10 transition-all uppercase tracking-widest text-muted shadow-sm">
+                                <Download className="w-4 h-4 text-muted" /> Export
                             </button>
-                            <button onClick={handleOpenAgingReport} className="px-3 sm:px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-rose-500 hover:text-white transition-all uppercase tracking-widest shadow-sm">
+                            <button onClick={handleOpenAgingReport} className="px-3 sm:px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-rose-500 hover:text-main transition-all uppercase tracking-widest shadow-sm">
                                 <AlertOctagon className="w-4 h-4" /> Stock Aging
                             </button>
                             <button
                                 onClick={() => setIsTransferModalOpen(true)}
-                                className="px-3 sm:px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest shadow-sm"
+                                className="px-3 sm:px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 sm:gap-2 hover:bg-indigo-600 hover:text-main transition-all uppercase tracking-widest shadow-sm"
                             >
                                 <ArrowRightLeft className="w-4 h-4" /> Transfer
                             </button>
@@ -299,7 +300,7 @@ const InventoryManager: React.FC = () => {
                         color="emerald"
                         trend="up"
                     />
-                    <div className="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-1 bg-slate-900 p-4 sm:p-5 lg:p-6 rounded-2xl shadow-2xl relative overflow-hidden group border border-white/10">
+                    <div className="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-1 bg-[var(--erp-bg)] p-4 sm:p-5 lg:p-6 rounded-2xl shadow-2xl relative overflow-hidden group border border-default">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition duration-700 stroke-[3] text-indigo-400" />
                         <p className="text-[9px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-1 sm:mb-2 italic">Agent Pulse</p>
                         <p className="text-sm font-bold leading-relaxed text-slate-200">
@@ -313,20 +314,20 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Controls Bar */}
-                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 sm:gap-4 lg:gap-6 premium-card p-3 sm:p-4 lg:p-6 shadow-xl border border-white/5">
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 sm:gap-4 lg:gap-6 erp-card p-3 sm:p-4 lg:p-6 shadow-xl border border-default">
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 w-full xl:w-auto items-stretch sm:items-center">
                         <div className="relative flex-1 xl:w-[450px] group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary group-focus-within:text-indigo-400 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search by SKU, Name or Barcode..."
-                                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all font-bold text-slate-200 placeholder:text-slate-600"
+                                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs sm:text-sm outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all font-bold text-slate-200 placeholder:text-secondary"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <select
-                            className="px-3 sm:px-6 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] outline-none hover:bg-white/10 transition-all text-slate-300 cursor-pointer w-full sm:w-auto appearance-none text-center min-w-[160px]"
+                            className="px-3 sm:px-6 py-2.5 sm:py-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] outline-none hover:bg-white/10 transition-all text-muted cursor-pointer w-full sm:w-auto appearance-none text-center min-w-[160px]"
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
                         >
@@ -348,14 +349,14 @@ const InventoryManager: React.FC = () => {
                         <div className="relative">
                             <button
                                 onClick={() => setShowMoreActions(!showMoreActions)}
-                                className="px-3 sm:px-6 py-2.5 sm:py-3 border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm flex items-center gap-2"
+                                className="px-3 sm:px-6 py-2.5 sm:py-3 border border-default bg-[var(--erp-bg-sunken)] hover:bg-white/10 text-muted rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] transition-all shadow-sm flex items-center gap-2"
                             >
                                 More Actions <MoreVertical className="w-4 h-4" />
                             </button>
 
                             {showMoreActions && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-700 mb-1">
+                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="px-4 py-2 border-b border-default dark:border-default mb-1">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Bulk Operations</p>
                                     </div>
                                     <button
@@ -379,7 +380,7 @@ const InventoryManager: React.FC = () => {
                                     >
                                         <CheckSquare className="w-4 h-4" /> Stock Adjustment
                                     </button>
-                                    <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
+                                    <div className="h-px bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 mx-2 my-1"></div>
                                     <button
                                         onClick={() => { setShowMoreActions(false); setShowImportModal(true); }}
                                         className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-emerald-500/5 hover:text-emerald-500 transition-all flex items-center gap-3"
@@ -393,10 +394,10 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Product Ledger */}
-                <div className="premium-card shadow-2xl border border-white/5 overflow-hidden">
+                <div className="erp-card shadow-2xl border border-default overflow-hidden">
                     <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left text-sm tabular-nums border-collapse">
-                            <thead className="bg-white/5 backdrop-blur-md border-b border-white/10 text-slate-500 font-black uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[9px] sm:text-[10px]">
+                            <thead className="bg-[var(--erp-bg-sunken)] backdrop-blur-md border-b border-default text-muted font-black uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[9px] sm:text-[10px]">
                                 <tr>
                                     <th className="px-3 sm:px-6 py-3 sm:py-5 w-10">
                                         <button onClick={toggleSelectAll} className="text-neutral-400 hover:text-primary transition-all">
@@ -433,9 +434,9 @@ const InventoryManager: React.FC = () => {
                                         const isLowStock = item.stockQty <= item.lowStockLimit;
                                         const isSelected = selectedItems.has(item._id);
                                         return (
-                                            <tr key={item._id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-all group ${isSelected ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
+                                            <tr key={item._id} className={`hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50 transition-all group ${isSelected ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
                                                 <td className="px-3 sm:px-6 py-3 sm:py-5">
-                                                    <button onClick={() => toggleSelect(item._id)} className="text-slate-600 hover:text-indigo-400 transition-all">
+                                                    <button onClick={() => toggleSelect(item._id)} className="text-secondary hover:text-indigo-400 transition-all">
                                                         {isSelected ?
                                                             <CheckSquare className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" /> :
                                                             <Square className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -444,8 +445,8 @@ const InventoryManager: React.FC = () => {
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-3 sm:py-5">
                                                     <div className="flex items-start gap-2 sm:gap-4">
-                                                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                                                            {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />}
+                                                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[var(--erp-bg-sunken)] border border-default flex items-center justify-center shrink-0 overflow-hidden">
+                                                            {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <div
@@ -455,15 +456,15 @@ const InventoryManager: React.FC = () => {
                                                                 {item.name}
                                                             </div>
                                                             <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
-                                                                <span className="text-[9px] sm:text-[10px] text-slate-500 font-black uppercase tracking-tighter">SKU: {item.sku || 'N/A'}</span>
-                                                                {item.barcode && <div className="hidden sm:flex items-center gap-1"><Barcode className="w-3 h-3 text-slate-700" /><span className="text-[10px] text-slate-600 font-mono tracking-tighter">{item.barcode}</span></div>}
+                                                                <span className="text-[9px] sm:text-[10px] text-muted font-black uppercase tracking-tighter">SKU: {item.sku || 'N/A'}</span>
+                                                                {item.barcode && <div className="hidden sm:flex items-center gap-1"><Barcode className="w-3 h-3 text-secondary" /><span className="text-[10px] text-secondary font-mono tracking-tighter">{item.barcode}</span></div>}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-3 sm:py-5 hidden md:table-cell">
                                                     <div className="flex flex-col gap-1">
-                                                        <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded text-[9px] font-black uppercase tracking-widest w-fit border border-neutral-200 dark:border-neutral-600">{item.category}</span>
+                                                        <span className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded text-[9px] font-black uppercase tracking-widest w-fit border border-default dark:border-neutral-600">{item.category}</span>
                                                         <span className="text-[10px] text-primary font-bold italic">{item.brand || 'No Brand'}</span>
                                                     </div>
                                                 </td>
@@ -473,13 +474,13 @@ const InventoryManager: React.FC = () => {
                                                             {item.stockQty} {item.unit}
                                                         </div>
                                                         <div className="flex items-center gap-1.5 mt-1">
-                                                            <Warehouse className="w-3 h-3 text-slate-600" />
-                                                            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{item.location || 'General Floor'}</span>
+                                                            <Warehouse className="w-3 h-3 text-secondary" />
+                                                            <span className="text-[10px] text-muted font-black uppercase tracking-widest">{item.location || 'General Floor'}</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-3 sm:py-5 text-right">
-                                                    <div className="font-black text-slate-600 text-[9px] sm:text-[10px] uppercase tracking-wider line-through decoration-rose-500/30 font-mono">₹{item.costPrice?.toLocaleString()}</div>
+                                                    <div className="font-black text-secondary text-[9px] sm:text-[10px] uppercase tracking-wider line-through decoration-rose-500/30 font-mono">₹{item.costPrice?.toLocaleString()}</div>
                                                     <div className="font-black text-indigo-400 text-base sm:text-xl italic tracking-tight mt-0.5 font-mono">₹{item.sellingPrice?.toLocaleString()}</div>
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-3 sm:py-5 hidden sm:table-cell text-center">
@@ -491,14 +492,14 @@ const InventoryManager: React.FC = () => {
                                                     <div className="flex items-center justify-end gap-2">
                                                         <button
                                                             onClick={() => setRowActionDropdown(rowActionDropdown === item._id ? null : item._id)}
-                                                            className={`p-2.5 rounded-xl transition-all shadow-sm ${rowActionDropdown === item._id ? 'bg-indigo-600 text-white' : 'bg-white/5 text-slate-500 hover:text-indigo-400'}`}
+                                                            className={`p-2.5 rounded-xl transition-all shadow-sm ${rowActionDropdown === item._id ? 'bg-indigo-600 text-white' : 'bg-[var(--erp-bg-sunken)] text-muted hover:text-indigo-400'}`}
                                                             title="More Actions"
                                                         >
                                                             <MoreVertical className="w-5 h-5" />
                                                         </button>
 
                                                         {rowActionDropdown === item._id && (
-                                                            <div className="absolute right-6 top-16 w-56 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200 text-left">
+                                                            <div className="absolute right-6 top-16 w-56 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200 text-left">
                                                                 <button
                                                                     onClick={() => { handleEditProduct(item); setRowActionDropdown(null); }}
                                                                     className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3"
@@ -517,7 +518,7 @@ const InventoryManager: React.FC = () => {
                                                                 >
                                                                     <Copy className="w-4 h-4" /> Duplicate SKU
                                                                 </button>
-                                                                <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
+                                                                <div className="h-px bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 mx-2 my-1"></div>
                                                                 <button
                                                                     onClick={() => handleToggleStatus(item._id)}
                                                                     className={`w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${item.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}
@@ -543,23 +544,23 @@ const InventoryManager: React.FC = () => {
                         </table>
 
                         {/* Pagination */}
-                        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-white/5 bg-white/5 backdrop-blur-md flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-6">
-                            <div className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sm:tracking-[0.3em]">Showing {items.length} of {pagination?.total || items.length} Products</div>
+                        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-default bg-[var(--erp-bg-sunken)] backdrop-blur-md flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-6">
+                            <div className="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:tracking-[0.3em]">Showing {items.length} of {pagination?.total || items.length} Products</div>
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2.5 border border-white/10 bg-white/5 text-slate-500 hover:text-indigo-400 hover:border-indigo-400/50 transition-all shadow-sm rounded-xl disabled:opacity-20"
+                                    className="p-2.5 border border-default bg-[var(--erp-bg-sunken)] text-muted hover:text-indigo-400 hover:border-indigo-400/50 transition-all shadow-sm rounded-xl disabled:opacity-20"
                                 >
                                     <ChevronLeft className="w-5 h-5" />
                                 </button>
-                                <span className="text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 bg-white/5 border border-white/10 rounded-xl shadow-inner text-slate-300 font-mono">
+                                <span className="text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl shadow-inner text-muted font-mono">
                                     Page {page.toString().padStart(2, '0')}
                                 </span>
                                 <button
                                     onClick={() => setPage(p => p + 1)}
                                     disabled={pagination ? page >= pagination.pages : items.length < 20}
-                                    className="p-2.5 border border-white/10 bg-white/5 text-slate-500 hover:text-indigo-400 hover:border-indigo-400/50 transition-all shadow-sm rounded-xl disabled:opacity-20"
+                                    className="p-2.5 border border-default bg-[var(--erp-bg-sunken)] text-muted hover:text-indigo-400 hover:border-indigo-400/50 transition-all shadow-sm rounded-xl disabled:opacity-20"
                                 >
                                     <ChevronRight className="w-5 h-5" />
                                 </button>
@@ -569,7 +570,7 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Automation Advisory */}
-                <div className="premium-card p-5 sm:p-7 lg:p-10 shadow-2xl relative overflow-hidden group border border-white/5">
+                <div className="erp-card p-5 sm:p-7 lg:p-10 shadow-2xl relative overflow-hidden group border border-default">
                     <TrendingUp className="absolute -bottom-16 -right-16 w-40 sm:w-64 h-40 sm:h-64 text-indigo-500 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000" />
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-12">
                         <div className="flex-1 text-center lg:text-left">
@@ -577,7 +578,7 @@ const InventoryManager: React.FC = () => {
                                 <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" /> Automation Pipeline Active
                             </div>
                             <h4 className="text-xl sm:text-2xl lg:text-3xl font-black mb-2 sm:mb-4 italic tracking-tight text-slate-200">Streamline your <span className="text-indigo-400 underline decoration-2 sm:decoration-4 underline-offset-4 sm:underline-offset-8">Stock Authority.</span></h4>
-                            <p className="text-sm text-slate-500 font-bold leading-relaxed italic max-w-3xl">
+                            <p className="text-sm text-muted font-bold leading-relaxed italic max-w-3xl">
                                 Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
                             </p>
                         </div>
@@ -634,21 +635,21 @@ const InventoryManager: React.FC = () => {
 
             {showAgingModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-slate-900 w-full max-w-5xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] mx-2 sm:mx-0">
-                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 lg:py-8 border-b border-white/10 flex justify-between items-center bg-white/5">
+                    <div className="bg-[var(--erp-bg)] w-full max-w-5xl rounded-3xl border border-default shadow-2xl overflow-hidden flex flex-col max-h-[90vh] mx-2 sm:mx-0">
+                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 lg:py-8 border-b border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]">
                             <div>
                                 <h3 className="text-lg sm:text-xl lg:text-2xl font-black italic flex items-center gap-2 sm:gap-3 text-slate-200">
                                     <AlertOctagon className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-rose-500" /> Dead Stock Analysis
                                 </h3>
-                                <p className="text-[9px] sm:text-[10px] font-black text-slate-500 mt-1 uppercase tracking-[0.15em] sm:tracking-[0.2em]">Items with stock age {'>'} 180 days</p>
+                                <p className="text-[9px] sm:text-[10px] font-black text-muted mt-1 uppercase tracking-[0.15em] sm:tracking-[0.2em]">Items with stock age {'>'} 180 days</p>
                             </div>
-                            <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-white/5 text-slate-500 hover:text-rose-500 rounded-full transition-all"><X className="w-6 h-6" /></button>
+                            <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-[var(--erp-bg-sunken)] text-muted hover:text-rose-500 rounded-full transition-all"><X className="w-6 h-6" /></button>
                         </div>
                         <div className="flex-1 overflow-y-auto">
                             {isLoading ? (
                                 <div className="p-32 text-center">
                                     <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent mx-auto"></div>
-                                    <p className="mt-4 font-black text-slate-500 uppercase tracking-[0.25em] text-xs">Running aging algorithm...</p>
+                                    <p className="mt-4 font-black text-muted uppercase tracking-[0.25em] text-xs">Running aging algorithm...</p>
                                 </div>
                             ) : (!agingReport || agingReport.length === 0) ? (
                                 <div className="p-32 text-center flex flex-col items-center">
@@ -656,11 +657,11 @@ const InventoryManager: React.FC = () => {
                                         <CheckSquare className="w-10 h-10 text-emerald-400 stroke-[3]" />
                                     </div>
                                     <h4 className="text-xl font-black text-slate-200 mb-2 italic tracking-tight">Inventory Healthy</h4>
-                                    <p className="font-bold text-slate-500 text-sm italic">No dead stock detected. Outstanding maintenance!</p>
+                                    <p className="font-bold text-muted text-sm italic">No dead stock detected. Outstanding maintenance!</p>
                                 </div>
                             ) : (
                                 <table className="w-full text-left text-sm border-separate border-spacing-0">
-                                    <thead className="bg-white/5 border-b border-white/10 text-slate-500 font-black uppercase tracking-[0.25em] text-[10px] sticky top-0 z-10 backdrop-blur-md">
+                                    <thead className="bg-[var(--erp-bg-sunken)] border-b border-default text-muted font-black uppercase tracking-[0.25em] text-[10px] sticky top-0 z-10 backdrop-blur-md">
                                         <tr>
                                             <th className="px-8 py-5">Product</th>
                                             <th className="px-8 py-5">Stock Age</th>
@@ -670,10 +671,10 @@ const InventoryManager: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                                         {agingReport.map((item: any) => (
-                                            <tr key={item._id} className="hover:bg-white/5 transition-all group border-b border-white/5 last:border-0">
+                                            <tr key={item._id} className="hover:bg-[var(--erp-bg-sunken)] transition-all group border-b border-default last:border-0">
                                                 <td className="px-8 py-6">
                                                     <div className="font-black text-slate-200 text-base uppercase tracking-tight group-hover:text-indigo-400 transition-colors font-mono">{item.name}</div>
-                                                    <div className="text-[10px] text-slate-600 font-black uppercase mt-1 tracking-widest">SKU: {item.sku}</div>
+                                                    <div className="text-[10px] text-secondary font-black uppercase mt-1 tracking-widest">SKU: {item.sku}</div>
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 text-rose-400 rounded-lg text-xs font-black border border-rose-500/20">
@@ -682,13 +683,13 @@ const InventoryManager: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
                                                     <div className="font-black text-slate-200 text-lg italic font-mono">₹{item.valuation?.toLocaleString()}</div>
-                                                    <div className="text-[10px] text-slate-500 font-black uppercase mt-1 tracking-widest font-mono">Qty: {item.stockQty}</div>
+                                                    <div className="text-[10px] text-muted font-black uppercase mt-1 tracking-widest font-mono">Qty: {item.stockQty}</div>
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
                                                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                                                         <button
                                                             onClick={() => handleAgingAction(item._id, 'CLEARANCE', item.sellingPrice)}
-                                                            className="px-4 py-2 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-white/10 flex items-center gap-2"
+                                                            className="px-4 py-2 bg-[var(--erp-bg-sunken)] text-muted hover:bg-white/10 hover:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-default flex items-center gap-2"
                                                         >
                                                             <Tag className="w-3 h-3" /> Clearance
                                                         </button>
@@ -706,14 +707,16 @@ const InventoryManager: React.FC = () => {
                                 </table>
                             )}
                         </div>
-                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 border-t border-white/10 bg-white/5 flex justify-end">
-                            <button onClick={() => setShowAgingModal(false)} className="px-5 sm:px-8 py-3 sm:py-4 bg-slate-200 text-slate-900 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl">
+                        <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6 border-t border-default bg-[var(--erp-bg-sunken)] flex justify-end">
+                            <button onClick={() => setShowAgingModal(false)} className="px-5 sm:px-8 py-3 sm:py-4 bg-slate-200 text-main rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl">
                                 Close Panel
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+                  </div>
+
         </Layout>
     );
 };

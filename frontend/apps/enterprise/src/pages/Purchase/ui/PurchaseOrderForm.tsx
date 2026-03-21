@@ -243,17 +243,17 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
+        <div className="flex flex-col h-full bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-sm border border-default dark:border-default">
             {/* History Modal */}
             {historyModal.show && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
-                        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
+                        <div className="p-4 border-b border-default dark:border-default flex items-center justify-between">
                             <h3 className="font-bold flex items-center gap-2">
                                 <History className="w-4 h-4 text-primary" />
                                 Price History: {historyModal.item}
                             </h3>
-                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-1 hover:bg-neutral-100 rounded-lg">
+                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-1 hover:bg-[var(--erp-bg-sunken)] rounded-lg">
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
@@ -264,7 +264,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 <p className="text-center text-neutral-500 py-4">No purchase history found.</p>
                             ) : (
                                 <table className="w-full text-sm">
-                                    <thead className="text-xs text-neutral-500 bg-neutral-50 dark:bg-neutral-800">
+                                    <thead className="text-xs text-neutral-500 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]">
                                         <tr>
                                             <th className="p-2 text-left">Date</th>
                                             <th className="p-2 text-left">Vendor</th>
@@ -288,13 +288,13 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
             )}
 
             {/* Header */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+            <div className="p-4 border-b border-default dark:border-default flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <button onClick={onBack} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
+                    <button onClick={onBack} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-lg">
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <h2 className="text-lg font-bold">{initialData ? 'Edit Purchase Order' : 'New Purchase Order'}</h2>
-                    <div className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full text-[10px] font-bold text-neutral-500 border border-neutral-200 dark:border-neutral-700">
+                    <div className="px-3 py-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full text-[10px] font-bold text-neutral-500 border border-default dark:border-default">
                         Version {header.version || 1}.0
                     </div>
                 </div>
@@ -325,7 +325,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 setItems(t.items as any);
                                 setShowTemplates(false);
                             }}
-                            className="text-left p-3 bg-white dark:bg-neutral-800 rounded-xl border border-primary/20 hover:border-primary hover:shadow-md transition-all group"
+                            className="text-left p-3 bg-white dark:bg-[var(--erp-card)] rounded-xl border border-primary/20 hover:border-primary hover:shadow-md transition-all group"
                         >
                             <div className="font-bold text-sm text-primary group-hover:underline">{t.name}</div>
                             <div className="text-xs text-neutral-500 mt-1">{t.items.length} items • {t.vendor_name}</div>
@@ -359,7 +359,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 type="text"
                                 value={header.po_number}
                                 disabled
-                                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 font-mono text-sm opacity-70"
+                                className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 font-mono text-sm opacity-70"
                             />
                         </div>
                         <div>
@@ -368,7 +368,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 type="date"
                                 value={header.po_date}
                                 onChange={e => setHeader({ ...header, po_date: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 text-sm"
                             />
                         </div>
                         <div>
@@ -377,7 +377,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 type="date"
                                 value={header.expected_delivery || ''}
                                 onChange={e => setHeader({ ...header, expected_delivery: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 text-sm"
                             />
                         </div>
                         <div>
@@ -385,7 +385,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <select
                                 value={header.vendor_id || ''}
                                 onChange={e => setHeader({ ...header, vendor_id: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 text-sm"
                             >
                                 <option value="">Select Vendor</option>
                                 {vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
@@ -398,7 +398,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 <select
                                     value={header.delivery_location}
                                     onChange={e => setHeader({ ...header, delivery_location: e.target.value })}
-                                    className="w-full pl-8 pr-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    className="w-full pl-8 pr-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
                                     <option value="Main Warehouse">Main Warehouse</option>
                                     <option value="Production Unit A">Production Unit A</option>
@@ -414,7 +414,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 value={header.delivery_address || ''}
                                 onChange={e => setHeader({ ...header, delivery_address: e.target.value })}
                                 placeholder="Plot no, Street, Landmark..."
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 text-sm"
                             />
                         </div>
                         <div>
@@ -424,7 +424,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 value={header.reference_number || ''}
                                 onChange={e => setHeader({ ...header, reference_number: e.target.value })}
                                 placeholder="e.g. QUO-2024-001"
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-2 text-sm"
                             />
                         </div>
                     </div>
@@ -433,7 +433,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-4">
-                                <h3 className="font-bold text-neutral-900 dark:text-white">Order Items</h3>
+                                <h3 className="font-bold text-neutral-900 dark:text-main">Order Items</h3>
                                 <button
                                     onClick={handleAddLot}
                                     className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 flex items-center gap-1"
@@ -447,16 +447,16 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     placeholder="Add Product..."
                                     value={productSearch}
                                     onChange={e => { setProductSearch(e.target.value); setShowProductDropdown(true); }}
-                                    className="w-full pl-8 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    className="w-full pl-8 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 />
                                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 {showProductDropdown && products.length > 0 && (
-                                    <div className="absolute top-full mt-1 w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+                                    <div className="absolute top-full mt-1 w-full bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
                                         {products.map(p => (
                                             <button
                                                 key={p.id}
                                                 onClick={() => handleAddItem(p)}
-                                                className="w-full text-left px-4 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm"
+                                                className="w-full text-left px-4 py-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 text-sm"
                                             >
                                                 <div className="font-medium">{p.name}</div>
                                                 <div className="text-xs text-neutral-500">Stock: {p.stock || 0}</div>
@@ -483,9 +483,9 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             </div>
                         )}
 
-                        <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800">
+                        <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-xl overflow-hidden border border-default dark:border-default">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default">
                                     <tr>
                                         <th className="px-4 py-3 font-semibold text-neutral-500">Product</th>
                                         <th className="px-4 py-3 font-semibold text-neutral-500 w-24">Lot #</th>
@@ -510,7 +510,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     placeholder="Lot #"
                                                     value={item.lot_number || ''}
                                                     onChange={e => updateItem(idx, { lot_number: e.target.value })}
-                                                    className="w-24 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1 text-xs"
+                                                    className="w-24 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1 text-xs"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
@@ -519,7 +519,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     min="1"
                                                     value={item.quantity}
                                                     onChange={e => updateItem(idx, { quantity: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
@@ -527,7 +527,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     type="text"
                                                     value={item.unit || 'pcs'}
                                                     onChange={e => updateItem(idx, { unit: e.target.value })}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
@@ -536,7 +536,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     min="0"
                                                     value={item.rate}
                                                     onChange={e => updateItem(idx, { rate: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
@@ -545,7 +545,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     min="0"
                                                     value={item.tax_percent}
                                                     onChange={e => updateItem(idx, { tax_percent: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
@@ -555,7 +555,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                     max="100"
                                                     value={item.discount_percent || 0}
                                                     onChange={e => updateItem(idx, { discount_percent: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded px-2 py-1"
                                                 />
                                             </td>
                                             <td className="px-4 py-2 text-neutral-500 text-xs">
@@ -598,7 +598,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <textarea
                                 value={header.notes || ''}
                                 onChange={e => setHeader({ ...header, notes: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 placeholder="Internal internal notes, internal instructions..."
                             />
                         </div>
@@ -618,7 +618,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <textarea
                                 value={header.terms_and_conditions || ''}
                                 onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                                 placeholder="External terms, warranty details, payment conditions..."
                             />
                         </div>
@@ -631,7 +631,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         </label>
                         <div className="flex flex-wrap gap-3">
                             {attachments.map((file, i) => (
-                                <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700 transition-all hover:border-primary/30 group">
+                                <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-xs border border-default dark:border-default transition-all hover:border-primary/30 group">
                                     <FileText className="w-3 h-3 text-neutral-400" />
                                     <span className="max-w-[120px] truncate">{file}</span>
                                     <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-400 hover:text-red-500">
@@ -639,7 +639,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     </button>
                                 </div>
                             ))}
-                            <label className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-neutral-900 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-lg text-xs text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all">
+                            <label className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-[var(--erp-bg)] border-2 border-dashed border-default dark:border-default rounded-lg text-xs text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all">
                                 <Plus className="w-3 h-3" />
                                 Upload Files
                                 <input type="file" multiple className="hidden" onChange={handleFileUpload} />
@@ -649,7 +649,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                 </div>
 
                 {/* Totals Panel */}
-                <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 p-6 flex flex-col justify-between">
+                <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-default dark:border-default bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-6 flex flex-col justify-between">
                     <div className="space-y-3 text-sm">
                         <div className="flex justify-between text-neutral-500">
                             <span>Subtotal</span>
@@ -660,7 +660,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <span className="text-green-600">-₹{totals.discount.toFixed(2)}</span>
                         </div>
 
-                        <div className="pt-2 mt-2 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
+                        <div className="pt-2 mt-2 border-t border-default dark:border-default space-y-2">
                             <div className="flex justify-between text-xs text-neutral-400 font-semibold uppercase tracking-wider">
                                 <span>Tax Breakdown</span>
                                 <span>{taxBreakdown.igst > 0 ? 'IGST' : 'CGST+SGST'}</span>
@@ -686,7 +686,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         </div>
 
                         <div className="h-px bg-neutral-200 dark:bg-neutral-700 my-4" />
-                        <div className="flex justify-between text-xl font-bold text-neutral-900 dark:text-white">
+                        <div className="flex justify-between text-xl font-bold text-neutral-900 dark:text-main">
                             <span>Total</span>
                             <span>₹{totals.total.toFixed(2)}</span>
                         </div>
@@ -698,23 +698,23 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
+                    <div className="mt-8 pt-6 border-t border-default dark:border-default space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 onClick={() => setHeader({ ...header, status: 'Draft' })} // Just save as draft
-                                className="py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2">
+                                className="py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2">
                                 <Plus className="w-4 h-4" /> Draft
                             </button>
                             <button
                                 onClick={() => alert('PO Sent to Vendor Email!')}
-                                className="py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
+                                className="py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
                             >
                                 <FileText className="w-4 h-4 text-primary" /> Email PO
                             </button>
                         </div>
 
                         {/* Operational Actions */}
-                        <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg space-y-2">
+                        <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg space-y-2">
                             <div className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
@@ -733,7 +733,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 <select
                                     value={(header as any).payment_method || 'Credit'}
                                     onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
-                                    className="flex-1 text-xs bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded px-2 py-1"
+                                    className="flex-1 text-xs bg-white dark:bg-[var(--erp-bg)] border border-neutral-300 dark:border-default rounded px-2 py-1"
                                 >
                                     <option value="Credit">Credit (Standard)</option>
                                     <option value="Cash">Cash (Immediate)</option>
@@ -761,8 +761,8 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
             {/* Lot Distribution Modal */}
             {lotModal.show && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95">
-                        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95">
+                        <div className="p-4 border-b border-default dark:border-default flex justify-between items-center">
                             <h3 className="font-bold text-lg">Add Lot (Batch)</h3>
                             <button onClick={() => setLotModal({ ...lotModal, show: false })}><X className="w-5 h-5" /></button>
                         </div>
@@ -772,7 +772,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     <label className="text-xs font-bold text-neutral-500 uppercase">Lot Number</label>
                                     <input
                                         type="text"
-                                        className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
+                                        className="w-full mt-1 p-2 bg-[var(--erp-bg-sunken)] border rounded-lg font-bold"
                                         placeholder="e.g. LOT-2024-001"
                                         value={lotModal.lotNumber}
                                         onChange={e => setLotModal({ ...lotModal, lotNumber: e.target.value })}
@@ -784,7 +784,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                             <label className="text-xs font-bold text-neutral-500 uppercase">Total Cost</label>
                                             <input
                                                 type="number"
-                                                className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
+                                                className="w-full mt-1 p-2 bg-[var(--erp-bg-sunken)] border rounded-lg font-bold"
                                                 placeholder="0.00"
                                                 value={lotModal.totalCost || ''}
                                                 onChange={e => setLotModal({ ...lotModal, totalCost: parseFloat(e.target.value) || 0 })}
@@ -794,7 +794,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                             <label className="text-xs font-bold text-neutral-500 uppercase">Total Qty</label>
                                             <input
                                                 type="number"
-                                                className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
+                                                className="w-full mt-1 p-2 bg-[var(--erp-bg-sunken)] border rounded-lg font-bold"
                                                 placeholder="0"
                                                 value={lotModal.totalQty || ''}
                                                 onChange={e => setLotModal({ ...lotModal, totalQty: parseFloat(e.target.value) || 0 })}
@@ -826,7 +826,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                         }}
                                     />
                                     {products.map(p => (
-                                        <div key={p.id} className="flex justify-between items-center p-2 hover:bg-neutral-50 cursor-pointer"
+                                        <div key={p.id} className="flex justify-between items-center p-2 hover:bg-[var(--erp-bg-sunken)] cursor-pointer"
                                             onClick={() => {
                                                 const existing = lotModal.items.find(i => i.product_id === p.id);
                                                 if (existing) return;
@@ -846,7 +846,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             {/* Selected Items for Lot */}
                             <div className="space-y-2">
                                 {lotModal.items.map((item, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 bg-neutral-50 p-2 rounded border">
+                                    <div key={idx} className="flex items-center gap-2 bg-[var(--erp-bg-sunken)] p-2 rounded border">
                                         <span className="flex-1 text-sm font-medium">{item.product_name}</span>
                                         <input
                                             type="number"
@@ -872,7 +872,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             </div>
 
                         </div>
-                        <div className="p-4 border-t bg-neutral-50 flex justify-end gap-2">
+                        <div className="p-4 border-t bg-[var(--erp-bg-sunken)] flex justify-end gap-2">
                             <button
                                 onClick={() => setLotModal({ ...lotModal, show: false })}
                                 className="px-4 py-2 text-neutral-600 font-bold hover:bg-neutral-200 rounded-lg"
@@ -882,7 +882,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <button
                                 onClick={confirmLotDistribution}
                                 disabled={lotModal.items.reduce((acc, i) => acc + i.quantity, 0) !== lotModal.totalQty || lotModal.items.length === 0}
-                                className="px-4 py-2 bg-primary text-white font-bold rounded-lg disabled:opacity-50"
+                                className="px-4 py-2 bg-primary text-main font-bold rounded-lg disabled:opacity-50"
                             >
                                 Distribute & Add
                             </button>

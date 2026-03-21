@@ -91,7 +91,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
     return (
         <div
             ref={posContainerRef}
-            className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-neutral-50 dark:bg-neutral-950 p-4 pb-20 lg:pb-4' : 'h-[calc(100vh-4rem)] pb-20 lg:pb-0'}`}
+            className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 p-4 pb-20 lg:pb-4' : 'h-[calc(100vh-4rem)] pb-20 lg:pb-0'}`}
         >
             {/* Sector Specific Badge */}
             <div className="absolute top-2 right-4 z-50 pointer-events-none opacity-20">
@@ -141,18 +141,18 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             <PauseCircle className="w-5 h-5" />
                         </button>
 
-                        <div className="bg-neutral-100 p-1 rounded-lg flex gap-1 ml-2">
+                        <div className="bg-[var(--erp-bg-sunken)] p-1 rounded-lg flex gap-1 ml-2">
                             {/* Sale / Return Toggle */}
                             <div className="flex bg-gray-200 p-0.5 rounded-lg mr-2">
                                 <button
                                     onClick={() => setIsReturnMode(false)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-muted hover:text-gray-700'}`}
                                 >
                                     Sale
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-muted hover:text-gray-700'}`}
                                 >
                                     Return
                                 </button>
@@ -175,7 +175,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl overflow-hidden shadow-sm">
                 {/* Main View Area */}
                 <div className={`col-span-12 lg:col-span-8 flex flex-col min-h-0 ${mobileTab === 'MAIN' ? 'flex' : 'hidden lg:flex'}`}>
                     {viewMode === 'VISUAL' ? (
@@ -203,14 +203,14 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 </div>
 
                 {/* Sidebar Area */}
-                <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-neutral-200 dark:border-neutral-800 ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
+                <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-default dark:border-default ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
                     <div className="flex overflow-hidden flex-col h-full">
                         <POSTerminalInfo
                             cashierName={user?.name}
                             counterName={activeCounterName}
                             counterId={activeCounterId}
                         />
-                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200 dark:border-neutral-800">
+                        <div className="p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b border-default dark:border-default">
                             <POSCustomerPanel
                                 activeCustomer={activeCustomer}
                                 customers={customers}
@@ -223,7 +223,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         {/* Last Bill Card */}
                         {lastBill && (
                             <div className="px-2 pb-1">
-                                <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 shadow-sm">
+                                <div className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg p-2 shadow-sm">
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Last Bill</span>
                                         <div className="flex gap-1">
@@ -257,7 +257,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             </div>
                         )}
 
-                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-200 dark:border-neutral-800">
+                        <div className="p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t border-default dark:border-default">
                             <POSFooter
                                 cartSubtotal={cartSubtotal}
                                 taxAmount={taxAmount}
@@ -286,9 +286,9 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
             </div>
 
             {/* Mobile Nav */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-2 flex justify-around">
-                <button onClick={() => setMobileTab('MAIN')} className={`px-4 py-2 rounded ${mobileTab === 'MAIN' ? 'bg-primary text-white' : 'bg-neutral-100'}`}>View</button>
-                <button onClick={() => setMobileTab('CART')} className={`px-4 py-2 rounded ${mobileTab === 'CART' ? 'bg-primary text-white' : 'bg-neutral-100'}`}>Cart</button>
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-default p-2 flex justify-around">
+                <button onClick={() => setMobileTab('MAIN')} className={`px-4 py-2 rounded ${mobileTab === 'MAIN' ? 'bg-primary text-white' : 'bg-[var(--erp-bg-sunken)]'}`}>View</button>
+                <button onClick={() => setMobileTab('CART')} className={`px-4 py-2 rounded ${mobileTab === 'CART' ? 'bg-primary text-white' : 'bg-[var(--erp-bg-sunken)]'}`}>Cart</button>
             </div>
         </div>
     );

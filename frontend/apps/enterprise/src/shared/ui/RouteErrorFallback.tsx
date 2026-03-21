@@ -28,7 +28,7 @@ const RouteErrorFallback: React.FC<RouteErrorFallbackProps> = ({ error, resetErr
           </p>
           
           {/* Error Details (Collapsible or subtle) */}
-          <div className="w-full bg-black/5 dark:bg-white/5 rounded-xl p-4 mb-8 text-left border border-default">
+          <div className="w-full bg-black/5 dark:bg-[var(--erp-bg-sunken)] rounded-xl p-4 mb-8 text-left border border-default">
             <div className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Diagnostic Log</div>
             <code className="text-xs text-secondary font-mono break-all line-clamp-2">
               {error.message || 'Unknown execution error'}
@@ -46,7 +46,7 @@ const RouteErrorFallback: React.FC<RouteErrorFallbackProps> = ({ error, resetErr
             
             <a
               href="/enterprise/dashboard"
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-default text-main rounded-xl font-bold text-sm transition-all hover:bg-white/10"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[var(--erp-bg-sunken)] border border-default text-main rounded-xl font-bold text-sm transition-all hover:bg-white/10"
             >
               <Home className="w-4 h-4" />
               Dashboard

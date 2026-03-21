@@ -54,13 +54,13 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-lg shadow-2xl border dark:border-neutral-700 flex flex-col">
-                <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl w-full max-w-lg shadow-2xl border dark:border-default flex flex-col">
+                <div className="p-6 border-b border-default dark:border-default flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold mb-1">Create Bill</h2>
                         <p className="text-sm text-neutral-500">For PO #{order.po_number}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -72,7 +72,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
                             <input
                                 type="date"
                                 required
-                                className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm"
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
                             />
@@ -81,7 +81,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
                             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Due Date</label>
                             <input
                                 type="date"
-                                className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm"
                                 value={formData.dueDate}
                                 onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
                             />
@@ -96,7 +96,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
                                 type="number"
                                 required
                                 disabled // Usually bill matches PO, but maybe editable? Let's keep editable but prefilled
-                                className="w-full pl-8 pr-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
+                                className="w-full pl-8 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm"
                                 value={formData.amount}
                                 onChange={e => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
                             />
@@ -106,7 +106,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
                     <div>
                         <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Description</label>
                         <textarea
-                            className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm"
+                            className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm"
                             rows={3}
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -117,7 +117,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                            className="px-6 py-2.5 border border-default dark:border-default rounded-xl font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 transition-colors"
                         >
                             Cancel
                         </button>

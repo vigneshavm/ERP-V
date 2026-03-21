@@ -1,5 +1,5 @@
 import express from "express";
-import { createSalesOrder, updateSalesOrder, confirmSalesOrder, getSalesOrderById, listSalesOrders, cancelSalesOrder, updateOrderStatus, convertToDeliveryChallan, convertToInvoice, } from "../controllers/SalesOrderController.js";
+import { createSalesOrder, updateSalesOrder, getSalesOrderById, listSalesOrders, cancelSalesOrder, updateOrderStatus, convertToDeliveryChallan, convertToInvoice, } from "../controllers/SalesOrderController.js";
 import { protect } from '@smarterp/shared/middlewares/authMiddleware.js';
 import { requirePermission } from '@smarterp/shared/middlewares/rbacMiddleware.js';
 import { auditUpdate } from '@smarterp/shared/middlewares/auditMiddleware.js';
@@ -10,13 +10,13 @@ router.use(protect);
 router.post("/", createSalesOrder);
 router.get("/", listSalesOrders);
 router.get("/:id", getSalesOrderById);
-router.put("/:id", auditUpdate("SalesOrder", "UPDATE_SALES_ORDER"), updateSalesOrder);
+// PUT /:id removed — PATCH /:id handles partial updates (REST-compliant).
 router.patch("/:id", auditUpdate("SalesOrder", "UPDATE_SALES_ORDER"), updateSalesOrder);
 router.patch("/:id/status", updateOrderStatus);
 // Sales Order Actions
-router.post("/:id/confirm", confirmSalesOrder);
+// POST /:id/confirm deprecated — use PATCH /:id/status { status: "confirmed" }
 router.post("/:id/cancel", requirePermission("delete:salesorder"), cancelSalesOrder);
 // Conversion Routes
-router.post("/:id/convert-to-dc", convertToDeliveryChallan);
-router.post("/:id/convert-to-invoice", convertToInvoice);
+router.post("/:id/delivery-challans", convertToDeliveryChallan); // creates DC from order
+router.post("/:id/invoices", convertToInvoice); // creates invoice from order
 export default router;

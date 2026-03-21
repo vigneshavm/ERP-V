@@ -183,6 +183,7 @@ const GoogleProfile: React.FC = () => {
     if (!loading && !profileData.isConnected) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="min-h-[85vh] flex flex-col items-center justify-center p-6 bg-gradient-to-b from-gray-50/50 to-white">
                     <div className="relative mb-12 group">
                         <div className="absolute inset-0 bg-indigo-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-700 animate-pulse"></div>
@@ -197,10 +198,10 @@ const GoogleProfile: React.FC = () => {
                         <div className="inline-flex items-center px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs font-black tracking-widest uppercase mb-6 border border-indigo-100 shadow-sm">
                             Google Integration
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight italic">
+                        <h1 className="text-4xl md:text-5xl font-black text-main mb-6 tracking-tight italic">
                             Command Your <span className="text-indigo-600">Search</span> Presence
                         </h1>
-                        <p className="text-gray-500 text-lg md:text-xl mb-12 leading-relaxed font-medium">
+                        <p className="text-muted text-lg md:text-xl mb-12 leading-relaxed font-medium">
                             Synthesize your physical presence with digital dominance. Connect your Google Business Profile to orchestrate reviews, hours, and analytics with precision.
                         </p>
 
@@ -216,22 +217,24 @@ const GoogleProfile: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="mt-16 grid grid-cols-3 gap-8 pt-12 border-t border-gray-100">
+                        <div className="mt-16 grid grid-cols-3 gap-8 pt-12 border-t border-default">
                             <div className="text-center">
-                                <div className="text-2xl font-black text-gray-900 mb-1">Instant</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Synchronization</div>
+                                <div className="text-2xl font-black text-main mb-1">Instant</div>
+                                <div className="text-xs font-bold text-muted uppercase tracking-widest">Synchronization</div>
                             </div>
-                            <div className="text-center border-x border-gray-100">
-                                <div className="text-2xl font-black text-gray-900 mb-1">Secure</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">OAuth 2.0</div>
+                            <div className="text-center border-x border-default">
+                                <div className="text-2xl font-black text-main mb-1">Secure</div>
+                                <div className="text-xs font-bold text-muted uppercase tracking-widest">OAuth 2.0</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-2xl font-black text-gray-900 mb-1">Unified</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Dashboard</div>
+                                <div className="text-2xl font-black text-main mb-1">Unified</div>
+                                <div className="text-xs font-bold text-muted uppercase tracking-widest">Dashboard</div>
                             </div>
                         </div>
                     </div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -266,14 +269,14 @@ const GoogleProfile: React.FC = () => {
             <BusinessSubNav />
 
             {/* Navigation Tabs - Refined */}
-            <div className="flex space-x-2 bg-gray-100/50 backdrop-blur-sm p-1.5 rounded-2xl mb-10 max-w-md border border-gray-200">
+            <div className="flex space-x-2 bg-[var(--erp-bg-sunken)]/50 backdrop-blur-sm p-1.5 rounded-2xl mb-10 max-w-md border border-default">
                 {['overview', 'reviews', 'posts'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
                         className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${activeTab === tab
                             ? 'bg-white text-indigo-600 shadow-xl border border-indigo-50'
-                            : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
+                            : 'text-muted hover:text-secondary hover:bg-white/50'
                             }`}
                     >
                         {tab}
@@ -284,22 +287,22 @@ const GoogleProfile: React.FC = () => {
             {activeTab === 'overview' && (
                 <>
                     {/* Profile Completeness - Refined Banner */}
-                    <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-indigo-600 to-purple-700 p-10 mb-12 shadow-2xl border border-white/10 group">
+                    <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-indigo-600 to-purple-700 p-10 mb-12 shadow-2xl border border-default group">
                         <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-white opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
                         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
                             <div className="flex flex-col md:flex-row items-center gap-8">
                                 <div className="relative w-24 h-24 flex items-center justify-center">
                                     <svg className="w-full h-full transform -rotate-90">
-                                        <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/10" />
-                                        <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={263.89} strokeDashoffset={263.89 - (263.89 * completeness) / 100} className="text-white" strokeLinecap="round" />
+                                        <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-main/10" />
+                                        <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={263.89} strokeDashoffset={263.89 - (263.89 * completeness) / 100} className="text-main" strokeLinecap="round" />
                                     </svg>
-                                    <span className="absolute font-black text-xl text-white">{completeness}%</span>
+                                    <span className="absolute font-black text-xl text-main">{completeness}%</span>
                                 </div>
                                 <div className="text-center md:text-left">
-                                    <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase mb-3 text-white border border-white/30">
+                                    <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase mb-3 text-main border border-white/30">
                                         Optimization Level
                                     </div>
-                                    <h3 className="text-3xl font-black text-white mb-2 tracking-tight">Profile Strength: Exceptional</h3>
+                                    <h3 className="text-3xl font-black text-main mb-2 tracking-tight">Profile Strength: Exceptional</h3>
                                     <p className="text-indigo-100 font-medium max-w-md opacity-80 leading-relaxed">
                                         Your business visibility is in the top 5% in your region. Complete remaining steps to reach full dominance.
                                     </p>
@@ -346,7 +349,7 @@ const GoogleProfile: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-8">
                             {/* Business Profile - Refined Card */}
-                            <div className="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                            <div className="bg-white rounded-[2rem] shadow-xl border border-default overflow-hidden transition-all duration-500 hover:shadow-2xl">
                                 <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gradient-to-r from-gray-50 to-white">
                                     <div className="flex items-center space-x-4">
                                         <div className="p-3 bg-indigo-600 text-white rounded-2xl shadow-lg ring-4 ring-indigo-50">
@@ -355,8 +358,8 @@ const GoogleProfile: React.FC = () => {
                                             </svg>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-black text-gray-900 tracking-tight uppercase">Corporate Identity</h2>
-                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Core Business parameters</p>
+                                            <h2 className="text-xl font-black text-main tracking-tight uppercase">Corporate Identity</h2>
+                                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Core Business parameters</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -370,7 +373,7 @@ const GoogleProfile: React.FC = () => {
                                         )}
                                         <button
                                             onClick={() => setIsEditing(!isEditing)}
-                                            className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
+                                            className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-main rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
                                         >
                                             {isEditing ? 'Cancel Edit' : 'Edit Identity'}
                                         </button>
@@ -422,19 +425,19 @@ const GoogleProfile: React.FC = () => {
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setProfileData({ ...profileData, website: e.target.value })}
                                             />
                                             <div>
-                                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Narrative / Description</label>
+                                                <label className="block text-xs font-black text-muted uppercase tracking-widest mb-3">Narrative / Description</label>
                                                 <textarea
                                                     value={profileData.description}
                                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setProfileData({ ...profileData, description: e.target.value })}
                                                     rows={5}
-                                                    className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-indigo-600 transition-all resize-none shadow-inner font-medium text-gray-700"
+                                                    className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-indigo-600 transition-all resize-none shadow-inner font-medium text-gray-700"
                                                     placeholder="Define your business mission..."
                                                 ></textarea>
                                             </div>
                                             <div className="flex justify-end pt-6">
                                                 <button
                                                     onClick={handleSave}
-                                                    className="px-10 py-4 bg-gray-900 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl hover:-translate-y-1 active:scale-95"
+                                                    className="px-10 py-4 bg-[var(--erp-bg)] text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl hover:-translate-y-1 active:scale-95"
                                                 >
                                                     Deploy Changes
                                                 </button>
@@ -445,26 +448,26 @@ const GoogleProfile: React.FC = () => {
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-8">
                                                 <div className="col-span-full mb-4">
                                                     <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-2 leading-none">Entity Designation</p>
-                                                    <p className="text-3xl font-black text-gray-900 tracking-tight">{profileData.businessName}</p>
+                                                    <p className="text-3xl font-black text-main tracking-tight">{profileData.businessName}</p>
                                                 </div>
-                                                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Classification</p>
-                                                    <p className="font-bold text-gray-900">{profileData.category}</p>
+                                                <div className="p-5 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default">
+                                                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Classification</p>
+                                                    <p className="font-bold text-main">{profileData.category}</p>
                                                 </div>
-                                                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100 md:col-span-2">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Primary Node Location</p>
-                                                    <p className="font-bold text-gray-900 leading-snug">{profileData.address}</p>
+                                                <div className="p-5 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default md:col-span-2">
+                                                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Primary Node Location</p>
+                                                    <p className="font-bold text-main leading-snug">{profileData.address}</p>
                                                 </div>
-                                                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Channel (Phone)</p>
-                                                    <p className="font-bold text-gray-900">{profileData.phone}</p>
+                                                <div className="p-5 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default">
+                                                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Channel (Phone)</p>
+                                                    <p className="font-bold text-main">{profileData.phone}</p>
                                                 </div>
-                                                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Endpoint (Email)</p>
-                                                    <p className="font-bold text-gray-900 truncate">{profileData.email}</p>
+                                                <div className="p-5 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default">
+                                                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Endpoint (Email)</p>
+                                                    <p className="font-bold text-main truncate">{profileData.email}</p>
                                                 </div>
-                                                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">URL Anchor</p>
+                                                <div className="p-5 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default">
+                                                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">URL Anchor</p>
                                                     <a href={`https://${profileData.website}`} target="_blank" rel="noreferrer" className="font-bold text-indigo-600 hover:text-indigo-800 flex items-center">
                                                         Visit Node
                                                         <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -484,7 +487,7 @@ const GoogleProfile: React.FC = () => {
                             </div>
 
                             {/* Operational Cycle - Refined Hours */}
-                            <div className="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                            <div className="bg-white rounded-[2rem] shadow-xl border border-default overflow-hidden transition-all duration-500 hover:shadow-2xl">
                                 <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gradient-to-r from-gray-50 to-white">
                                     <div className="flex items-center space-x-4">
                                         <div className="p-3 bg-purple-600 text-white rounded-2xl shadow-lg ring-4 ring-purple-50">
@@ -493,13 +496,13 @@ const GoogleProfile: React.FC = () => {
                                             </svg>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-black text-gray-900 tracking-tight uppercase">Operational Cycles</h2>
-                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Global Service availability</p>
+                                            <h2 className="text-xl font-black text-main tracking-tight uppercase">Operational Cycles</h2>
+                                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Global Service availability</p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => setShowHoursEditor(!showHoursEditor)}
-                                        className="px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
+                                        className="px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-main rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
                                     >
                                         {showHoursEditor ? 'Cancel Config' : 'Modify Cycles'}
                                     </button>
@@ -509,9 +512,9 @@ const GoogleProfile: React.FC = () => {
                                     {showHoursEditor ? (
                                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             {Object.entries(hours).map(([day, time]) => (
-                                                <div key={day} className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-gray-50 rounded-[1.5rem] border border-gray-100">
+                                                <div key={day} className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-[var(--erp-bg-sunken)] rounded-[1.5rem] border border-default">
                                                     <div className="w-full sm:w-32">
-                                                        <p className="font-black text-gray-900 capitalize tracking-tight">{day}</p>
+                                                        <p className="font-black text-main capitalize tracking-tight">{day}</p>
                                                     </div>
                                                     <div className="flex items-center flex-1 w-full gap-6">
                                                         <label className="flex items-center cursor-pointer group">
@@ -528,7 +531,7 @@ const GoogleProfile: React.FC = () => {
                                                                 <div className={`w-12 h-6 rounded-full transition-colors ${time.closed ? 'bg-red-500' : 'bg-gray-300'}`}></div>
                                                                 <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${time.closed ? 'translate-x-6' : ''}`}></div>
                                                             </div>
-                                                            <span className={`ml-3 text-xs font-black uppercase tracking-widest ${time.closed ? 'text-red-500' : 'text-gray-400'}`}>
+                                                            <span className={`ml-3 text-xs font-black uppercase tracking-widest ${time.closed ? 'text-red-500' : 'text-muted'}`}>
                                                                 Inactive
                                                             </span>
                                                         </label>
@@ -571,8 +574,8 @@ const GoogleProfile: React.FC = () => {
                                     ) : (
                                         <div className="space-y-4 animate-in fade-in duration-700">
                                             {Object.entries(hours).map(([day, time]) => (
-                                                <div key={day} className="flex justify-between items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-white hover:border-purple-200 hover:shadow-lg transition-all group">
-                                                    <span className="font-black text-gray-900 capitalize tracking-tight w-32 group-hover:text-purple-600 transition-colors">{day}</span>
+                                                <div key={day} className="flex justify-between items-center p-4 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default hover:bg-white hover:border-purple-200 hover:shadow-lg transition-all group">
+                                                    <span className="font-black text-main capitalize tracking-tight w-32 group-hover:text-purple-600 transition-colors">{day}</span>
                                                     <div className="flex items-center gap-4">
                                                         <span className={`text-sm font-black uppercase tracking-widest px-4 py-1.5 rounded-xl ${time.closed
                                                             ? 'bg-red-50 text-red-600 border border-red-100'
@@ -595,16 +598,16 @@ const GoogleProfile: React.FC = () => {
                         {/* Sidebar - Premium Modules */}
                         <div className="lg:col-span-1 space-y-10">
                             {/* Visual Asset Library */}
-                            <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-8 hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+                            <div className="bg-white rounded-[2.5rem] shadow-xl border border-default p-8 hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -mr-16 -mt-16 opacity-50 transition-transform group-hover:scale-150"></div>
                                 <div className="flex items-center justify-between mb-8 relative z-10">
-                                    <h2 className="text-lg font-black text-gray-900 tracking-tight uppercase px-4 py-1 bg-gray-50 rounded-full border border-gray-100">Visual Assets</h2>
+                                    <h2 className="text-lg font-black text-main tracking-tight uppercase px-4 py-1 bg-[var(--erp-bg-sunken)] rounded-full border border-default">Visual Assets</h2>
                                     <button className="text-indigo-600 text-[10px] font-black uppercase tracking-widest hover:underline">Full Archive</button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 mb-8">
                                     {photos.length > 0 ? (
                                         photos.slice(0, 4).map((photo, idx) => (
-                                            <div key={idx} className="relative aspect-[4/3] group overflow-hidden rounded-[1.5rem] shadow-inner border border-gray-100">
+                                            <div key={idx} className="relative aspect-[4/3] group overflow-hidden rounded-[1.5rem] shadow-inner border border-default">
                                                 <img src={photo.url} alt={photo.type} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125" />
                                                 <div className="absolute inset-0 bg-indigo-600/40 opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-sm flex items-center justify-center">
                                                     <button className="bg-white text-indigo-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">Preview</button>
@@ -612,14 +615,14 @@ const GoogleProfile: React.FC = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="col-span-2 py-10 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">
+                                        <div className="col-span-2 py-10 text-center text-muted text-xs font-bold uppercase tracking-widest">
                                             No assets deployed
                                         </div>
                                     )}
                                 </div>
                                 <button
                                     onClick={() => setShowPhotoUpload(true)}
-                                    className="w-full py-4 border-2 border-dashed border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300 flex items-center justify-center gap-3 active:scale-95"
+                                    className="w-full py-4 border-2 border-dashed border-default text-muted text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all duration-300 flex items-center justify-center gap-3 active:scale-95"
                                 >
                                     <svg className="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -632,43 +635,43 @@ const GoogleProfile: React.FC = () => {
                             <div className="bg-indigo-600 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl group-hover:opacity-20 transition-opacity"></div>
                                 <div className="flex items-center space-x-4 mb-8 relative z-10">
-                                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 shadow-inner">
+                                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-main border border-white/20 shadow-inner">
                                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-xl font-black text-white tracking-tight uppercase opacity-90">Global Sync Post</h2>
+                                    <h2 className="text-xl font-black text-main tracking-tight uppercase opacity-90">Global Sync Post</h2>
                                 </div>
                                 <div className="mb-8 relative z-10">
                                     <textarea
                                         rows={4}
                                         value={newPostContent}
                                         onChange={(e) => setNewPostContent(e.target.value)}
-                                        className="w-full px-6 py-5 bg-white shadow-inner rounded-[1.5rem] text-sm font-semibold focus:ring-4 focus:ring-white/20 transition-all resize-none text-gray-800 placeholder-gray-300"
+                                        className="w-full px-6 py-5 bg-white shadow-inner rounded-[1.5rem] text-sm font-semibold focus:ring-4 focus:ring-white/20 transition-all resize-none text-main placeholder-gray-300"
                                         placeholder="Orchestrate news, offers, or events..."
                                     ></textarea>
                                 </div>
                                 <button
                                     onClick={handleCreatePost}
-                                    className="w-full py-5 bg-white text-indigo-600 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-gray-50 transition-all active:scale-95 text-xs relative z-10"
+                                    className="w-full py-5 bg-white text-indigo-600 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl hover:bg-[var(--erp-bg-sunken)] transition-all active:scale-95 text-xs relative z-10"
                                 >
                                     Deploy to Network
                                 </button>
                             </div>
 
                             {/* Control Center */}
-                            <div className="bg-gray-900 rounded-[2.5rem] p-8 shadow-2xl overflow-hidden relative group">
+                            <div className="bg-[var(--erp-bg)] rounded-[2.5rem] p-8 shadow-2xl overflow-hidden relative group">
                                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <h2 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] mb-8 relative z-10">Executive Controls</h2>
+                                <h2 className="text-[10px] font-black text-muted uppercase tracking-[0.4em] mb-8 relative z-10">Executive Controls</h2>
                                 <div className="space-y-4 relative z-10">
                                     {[
                                         { label: 'View on Search Node', icon: 'M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14' },
                                         { label: 'View on Maps Matrix', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' },
                                         { label: 'Broadcast Profile', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316' }
                                     ].map((action, i) => (
-                                        <button key={i} className="w-full py-4 bg-white/5 border border-white/10 text-gray-300 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 hover:text-white transition-all flex items-center justify-between px-6 group/btn">
+                                        <button key={i} className="w-full py-4 bg-[var(--erp-bg-sunken)] border border-default text-gray-300 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 hover:text-main transition-all flex items-center justify-between px-6 group/btn">
                                             {action.label}
-                                            <svg className="w-4 h-4 text-gray-600 group-hover/btn:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-4 h-4 text-secondary group-hover/btn:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={action.icon} />
                                             </svg>
                                         </button>
@@ -682,11 +685,11 @@ const GoogleProfile: React.FC = () => {
 
             {activeTab === 'reviews' && (
                 <div className="space-y-8 animate-in fade-in duration-700">
-                    <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-10">
+                    <div className="bg-white rounded-[2.5rem] shadow-xl border border-default p-10">
                         <div className="flex items-center justify-between mb-10 border-b border-gray-50 pb-6">
                             <div>
-                                <h1 className="text-2xl font-black text-gray-900 tracking-tight uppercase">Public Sentiment</h1>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">Global Review Intelligence</p>
+                                <h1 className="text-2xl font-black text-main tracking-tight uppercase">Public Sentiment</h1>
+                                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mt-1">Global Review Intelligence</p>
                             </div>
                             <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-xl border border-indigo-100 shadow-inner">
                                 <span className="text-lg font-black text-indigo-600">4.9</span>
@@ -702,20 +705,20 @@ const GoogleProfile: React.FC = () => {
 
                         <div className="space-y-10">
                             {profileData.reviews?.map((review, idx) => (
-                                <div key={idx} className="flex gap-6 p-8 rounded-[2rem] bg-gray-50 border border-gray-100 hover:bg-white hover:border-indigo-100 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
+                                <div key={idx} className="flex gap-6 p-8 rounded-[2rem] bg-[var(--erp-bg-sunken)] border border-default hover:bg-white hover:border-indigo-100 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-100 rounded-bl-full -mr-16 -mt-16 opacity-30 group-hover:scale-150 transition-transform duration-700"></div>
                                     <div className="flex-shrink-0 relative z-10">
-                                        <div className="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-black shadow-lg ring-4 ring-indigo-50 transform group-hover:rotate-6 transition-transform">
+                                        <div className="w-16 h-16 rounded-2xl bg-indigo-600 text-main flex items-center justify-center text-2xl font-black shadow-lg ring-4 ring-indigo-50 transform group-hover:rotate-6 transition-transform">
                                             {review.reviewer.charAt(0)}
                                         </div>
                                     </div>
                                     <div className="flex-1 relative z-10">
                                         <div className="flex items-center justify-between mb-3">
                                             <div>
-                                                <h3 className="text-xl font-black text-gray-900 tracking-tight">{review.reviewer}</h3>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{new Date(review.date).toLocaleDateString()}</p>
+                                                <h3 className="text-xl font-black text-main tracking-tight">{review.reviewer}</h3>
+                                                <p className="text-[10px] font-bold text-muted uppercase tracking-widest">{new Date(review.date).toLocaleDateString()}</p>
                                             </div>
-                                            <div className="flex bg-white px-3 py-1.5 rounded-xl shadow-inner gap-1 border border-gray-100">
+                                            <div className="flex bg-white px-3 py-1.5 rounded-xl shadow-inner gap-1 border border-default">
                                                 {[...Array(5)].map((_, i) => (
                                                     <svg key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -723,7 +726,7 @@ const GoogleProfile: React.FC = () => {
                                                 ))}
                                             </div>
                                         </div>
-                                        <p className="text-gray-600 font-semibold leading-relaxed mb-6 italic opacity-85 text-lg">"{review.comment}"</p>
+                                        <p className="text-secondary font-semibold leading-relaxed mb-6 italic opacity-85 text-lg">"{review.comment}"</p>
 
                                         {review.reply ? (
                                             <div className="p-6 bg-indigo-50/50 rounded-2xl border-2 border-indigo-100/50 relative overflow-hidden">
@@ -748,8 +751,8 @@ const GoogleProfile: React.FC = () => {
                                 </div>
                             ))}
                             {(!profileData.reviews || profileData.reviews.length === 0) && (
-                                <div className="text-center py-20 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200">
-                                    <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Quiet Mode: No Review Activity Detected</p>
+                                <div className="text-center py-20 bg-[var(--erp-bg-sunken)] rounded-[2.5rem] border-2 border-dashed border-default">
+                                    <p className="text-muted font-black uppercase tracking-widest text-sm">Quiet Mode: No Review Activity Detected</p>
                                     <button onClick={handleGoogleSync} className="mt-6 text-indigo-600 font-black text-xs uppercase tracking-widest hover:underline">Request Global Feed Sync</button>
                                 </div>
                             )}
@@ -760,34 +763,34 @@ const GoogleProfile: React.FC = () => {
 
             {activeTab === 'posts' && (
                 <div className="space-y-10 animate-in fade-in duration-700">
-                    <div className="flex justify-between items-center bg-gray-900 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+                    <div className="flex justify-between items-center bg-[var(--erp-bg)] p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative z-10">
-                            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Broadcast Hub</h2>
+                            <h2 className="text-2xl font-black text-main tracking-tight uppercase">Broadcast Hub</h2>
                             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mt-1">Global Communication Feed</p>
                         </div>
-                        <button className="relative z-10 px-8 py-4 bg-white text-gray-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all active:scale-95">
+                        <button className="relative z-10 px-8 py-4 bg-white text-main rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all active:scale-95">
                             Initiate Broadcast
                         </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {profileData.posts?.map((post, idx) => (
-                            <div key={idx} className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 flex flex-col">
-                                <div className="h-60 bg-gray-900 relative overflow-hidden">
+                            <div key={idx} className="bg-white rounded-[2.5rem] shadow-xl border border-default overflow-hidden group hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 flex flex-col">
+                                <div className="h-60 bg-[var(--erp-bg)] relative overflow-hidden">
                                     {post.imageUrl ? (
                                         <img src={post.imageUrl} alt="Post" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
                                     ) : (
                                         <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-purple-800 flex items-center justify-center relative">
-                                            <svg className="w-20 h-20 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-20 h-20 text-main/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                         </div>
                                     )}
                                     <div className="absolute top-6 left-6 flex gap-2">
-                                        <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md rounded-xl text-[10px] font-black text-gray-900 uppercase tracking-widest shadow-2xl border border-white/20">{post.type}</span>
+                                        <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md rounded-xl text-[10px] font-black text-main uppercase tracking-widest shadow-2xl border border-white/20">{post.type}</span>
                                     </div>
-                                    <div className="absolute bottom-6 left-6 text-white/80 text-[10px] font-black uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg">
+                                    <div className="absolute bottom-6 left-6 text-main/80 text-[10px] font-black uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg">
                                         {new Date(post.date).toLocaleDateString()}
                                     </div>
                                 </div>
@@ -796,24 +799,24 @@ const GoogleProfile: React.FC = () => {
 
                                     <div className="mt-auto grid grid-cols-2 gap-4 pt-6 border-t border-gray-50">
                                         <div className="p-3 bg-indigo-50 rounded-2xl flex items-center justify-between group-hover:bg-indigo-600 transition-colors duration-500">
-                                            <svg className="w-4 h-4 text-indigo-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                            <span className="font-black text-indigo-900 group-hover:text-white text-xs">{post.views}</span>
+                                            <svg className="w-4 h-4 text-indigo-600 group-hover:text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                            <span className="font-black text-indigo-900 group-hover:text-main text-xs">{post.views}</span>
                                         </div>
                                         <div className="p-3 bg-purple-50 rounded-2xl flex items-center justify-between group-hover:bg-purple-600 transition-colors duration-500">
-                                            <svg className="w-4 h-4 text-purple-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-                                            <span className="font-black text-purple-900 group-hover:text-white text-xs">{post.clicks}</span>
+                                            <svg className="w-4 h-4 text-purple-600 group-hover:text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                                            <span className="font-black text-purple-900 group-hover:text-main text-xs">{post.clicks}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
                         {(!profileData.posts || profileData.posts.length === 0) && (
-                            <div className="col-span-full py-32 text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+                            <div className="col-span-full py-32 text-center bg-[var(--erp-bg-sunken)] rounded-[3rem] border-2 border-dashed border-default">
                                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl text-gray-200">
                                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                                 </div>
-                                <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Broadcast Feed Inactive</p>
-                                <p className="text-gray-400 font-bold text-xs mt-2 max-w-xs mx-auto">Commence engagement to see global search metrics</p>
+                                <p className="text-muted font-black uppercase tracking-widest text-sm">Broadcast Feed Inactive</p>
+                                <p className="text-muted font-bold text-xs mt-2 max-w-xs mx-auto">Commence engagement to see global search metrics</p>
                             </div>
                         )}
                     </div>

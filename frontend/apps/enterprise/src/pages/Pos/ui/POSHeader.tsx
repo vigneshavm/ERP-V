@@ -49,21 +49,21 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                                 title={`Switch to ${session.label} (Alt+${index + 1})`}
                                 className={`flex flex-col items-center justify-center p-2 rounded-xl font-bold transition-all border gap-1 pr-8 ${activeSessionIndex === index
                                     ? 'bg-indigo-600 border-indigo-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)]'
-                                    : 'premium-card text-slate-400 hover:text-slate-300'
+                                    : 'premium-card text-muted hover:text-muted'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm font-black tracking-tight">{session.label}</span>
                                     {totalQty > 0 && (
                                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${activeSessionIndex === index
-                                            ? 'bg-white/20 text-white'
-                                            : 'bg-white/5 text-slate-500'
+                                            ? 'bg-white/20 text-main'
+                                            : 'bg-[var(--erp-bg-sunken)] text-muted'
                                             }`}>
                                             {totalQty}
                                         </span>
                                     )}
                                 </div>
-                                <kbd className={`text-[8px] opacity-40 font-mono tracking-tighter uppercase ${activeSessionIndex === index ? 'text-white' : ''}`}>Alt+{index + 1}</kbd>
+                                <kbd className={`text-[8px] opacity-40 font-mono tracking-tighter uppercase ${activeSessionIndex === index ? 'text-main' : ''}`}>Alt+{index + 1}</kbd>
                             </button>
                             {sessions.length > 1 && (
                                 <button
@@ -72,8 +72,8 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                                         onRemoveSession(index);
                                     }}
                                     className={`absolute top-1 right-1 p-0.5 rounded-md transition-colors ${activeSessionIndex === index
-                                        ? 'text-primary hover:bg-white/10 hover:text-white'
-                                        : 'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-error'
+                                        ? 'text-primary hover:bg-white/10 hover:text-main'
+                                        : 'text-neutral-400 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 hover:text-error'
                                         }`}
                                     title="Close Tab"
                                 >
@@ -86,7 +86,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 {sessions.length < 4 && (
                     <button
                         onClick={onAddSession}
-                        className="p-3 premium-card text-slate-500 hover:text-indigo-400 rounded-xl transition-all self-end"
+                        className="p-3 erp-card text-muted hover:text-indigo-400 rounded-xl transition-all self-end"
                         title="Add New Billing Tab"
                     >
                         <Plus className="w-4 h-4" />
@@ -101,10 +101,10 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                     <select
                         value={activeCounterId}
                         onChange={(e) => onSwitchCounter(e.target.value)}
-                        className="premium-card px-3 py-2 rounded-xl text-sm font-black text-slate-300 outline-none focus:ring-1 ring-indigo-500/50"
+                        className="erp-card px-3 py-2 rounded-xl text-sm font-black text-muted outline-none focus:ring-1 ring-indigo-500/50"
                     >
                         {availableCounters.map((c: any) => (
-                            <option key={c.id} value={c.id} className="bg-neutral-900 text-white">
+                            <option key={c.id} value={c.id} className="bg-[var(--erp-bg)] text-main">
                                 {c.id} - {c.name}
                             </option>
                         ))}
@@ -124,7 +124,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
                 <button
                     onClick={onToggleFullScreen}
-                    className="hidden sm:block p-2.5 premium-card text-slate-400 hover:text-indigo-400 rounded-xl transition-all"
+                    className="hidden sm:block p-2.5 erp-card text-muted hover:text-indigo-400 rounded-xl transition-all"
                     title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
                 >
                     {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}

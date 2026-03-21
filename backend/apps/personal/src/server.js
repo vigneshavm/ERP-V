@@ -3,18 +3,23 @@ import http from "http";
 import mongoose from "mongoose";
 import connectDB from "@smarterp/shared/config/database.js";
 import logger from "@smarterp/shared/config/logger.js";
+import dotenv from "dotenv";
+import path from "path";
+import { validateEnv } from "@smarterp/shared/config/validateEnv.js";
 import { verifyEmailTransport } from "@smarterp/shared/utils/emailService.js";
-import { container } from "tsyringe";
-import { ConfigService } from "@smarterp/shared";
+// robust .env loading
+const result = dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+if (result.error) {
+    console.warn("⚠️  dotenv config failed to load .env file from CWD. Trying default...");
+    dotenv.config(); // fallback
+}
 // =======================
-// Config & Environment
+// Environment Validation
 // =======================
-const config = container.resolve(ConfigService);
-logger.info("Validating environment variables via ConfigService...");
-const PORT = process.env.PERSONAL_PORT || config.get("PORT") || 5001;
-// Log loaded env for debugging (masked)
+logger.info("Validating environment variables...");
+validateEnv();
 console.log("🔍 Checking Environment Variables for Personal API...");
-['JWT_SECRET', 'COOKIE_SECRET', 'MONGO_URI'].forEach(key => {
+["JWT_SECRET", "COOKIE_SECRET", "MONGO_URI"].forEach(key => {
     if (process.env[key]) {
         console.log(`   ✅ ${key} is set`);
     }
@@ -22,7 +27,10 @@ console.log("🔍 Checking Environment Variables for Personal API...");
         console.error(`   ❌ ${key} is MISSING`);
     }
 });
-// Email transport verification
+const PORT = process.env.PERSONAL_PORT || process.env.PORT || 5001;
+// =======================
+// Email Transport Verification
+// =======================
 verifyEmailTransport().catch(err => {
     logger.error("Email transport verification error:", err);
 });

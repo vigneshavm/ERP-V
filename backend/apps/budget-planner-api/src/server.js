@@ -1,94 +1,105 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+import app from "./app.js";
+import http from "http";
+import mongoose from "mongoose";
+import connectDB from "@smarterp/shared/config/database.js";
+import logger from "@smarterp/shared/config/logger.js";
+import dotenv from "dotenv";
+import path from "path";
+import { validateEnv } from "@smarterp/shared/config/validateEnv.js";
+import { verifyEmailTransport } from "@smarterp/shared/utils/emailService.js";
+// robust .env loading
+const result = dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+if (result.error) {
+    console.warn("⚠️  dotenv config failed to load .env file from CWD. Trying default...");
+    dotenv.config(); // fallback
+}
+// =======================
+// Environment Validation
+// =======================
+logger.info("Validating environment variables...");
+validateEnv();
+// Log loaded env for debugging (masked)
+console.log("🔍 Checking Environment Variables for Budget Planner API...");
+["JWT_SECRET", "COOKIE_SECRET", "MONGO_URI"].forEach(key => {
+    if (process.env[key]) {
+        console.log(`   ✅ ${key} is set`);
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
+    else {
+        console.error(`   ❌ ${key} is MISSING`);
+    }
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+const PORT = process.env.BUDGET_PORT || process.env.PORT || 4000;
+// =======================
+// Email Transport Verification
+// =======================
+verifyEmailTransport().catch(err => {
+    logger.error("Email transport verification error:", err);
+});
+// Connect to Database
+connectDB();
+let server = http.createServer(app);
+const startServer = (port) => {
+    server.listen(port, () => {
+        logger.info(`🚀 Budget Planner API running on port ${port}`);
+    });
+    server.on("error", (error) => {
+        if (error.syscall !== "listen") {
+            throw error;
+        }
+        if (error.code === "EADDRINUSE") {
+            logger.warn(`⚠️  Port ${port} is already in use. Trying next available port...`);
+            server.close(() => {
+                // Create a NEW server instance to ensure clean state
+                server = http.createServer(app);
+                startServer(Number(port) + 1);
+            });
+        }
+        else if (error.code === "EACCES") {
+            logger.error(`❌ Port ${port} requires elevated privileges`);
+            process.exit(1);
+        }
+        else {
+            throw error;
+        }
+    });
+    return server;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const helmet_1 = __importDefault(require("helmet"));
-const morgan_1 = __importDefault(require("morgan"));
-const database_1 = require("./config/database");
-const errorHandler_1 = require("./middleware/errorHandler");
-const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
-const MockController = __importStar(require("./modules/mock/mock.controller"));
-const dashboard_routes_1 = __importDefault(require("./modules/dashboard/dashboard.routes"));
-const expenses_routes_1 = __importDefault(require("./modules/expenses/expenses.routes"));
-const budget_routes_1 = __importDefault(require("./modules/budget/budget.routes"));
-const combined_routes_1 = require("./modules/combined.routes");
-const app = (0, express_1.default)();
-const PORT = Number(process.env.PORT) || 4000;
-const BASE = `/api/${process.env.API_VERSION || 'v1'}`;
-// ─── Global middleware ────────────────────────────────────────────────────────
-app.use((0, helmet_1.default)());
-app.use((0, cors_1.default)({
-    origin: (process.env.ALLOWED_ORIGINS || '').split(','),
-    credentials: true,
-}));
-app.use(express_1.default.json({ limit: '2mb' }));
-app.use((0, morgan_1.default)(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-// ─── Health check ─────────────────────────────────────────────────────────────
-app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'budget-planner-api', ts: new Date() }));
-// ─── Routes ───────────────────────────────────────────────────────────────────
-app.get(`${BASE}/auth/me`, MockController.getMockUser);
-app.get(`${BASE}/transactions`, MockController.getMockTransactions);
-app.get(`${BASE}/personal/reports/analytics`, MockController.getMockAnalytics);
-app.use(`${BASE}/auth`, auth_routes_1.default);
-app.use(`${BASE}/dashboards`, dashboard_routes_1.default);
-app.use(`${BASE}/expenses`, expenses_routes_1.default);
-app.use(`${BASE}/budgets`, budget_routes_1.default);
-app.use(`${BASE}/goals`, combined_routes_1.goalsRouter);
-app.use(`${BASE}/loans`, combined_routes_1.loansRouter);
-app.use(`${BASE}/accounts`, combined_routes_1.accountsRouter);
-app.use(`${BASE}/cards`, combined_routes_1.cardsRouter);
-app.use(`${BASE}/notifications`, combined_routes_1.notificationsRouter);
-app.use(`${BASE}/reports`, combined_routes_1.reportsRouter);
-app.use(`${BASE}/transactions`, combined_routes_1.transactionsRouter);
-app.use(`${BASE}/settings`, combined_routes_1.settingsRouter);
-// ─── Error handlers ───────────────────────────────────────────────────────────
-app.use(errorHandler_1.notFoundHandler);
-app.use(errorHandler_1.errorHandler);
-// ─── Start ────────────────────────────────────────────────────────────────────
-(async () => {
-    try {
-        await (0, database_1.connectDB)();
-    }
-    catch (err) {
-        console.error('Failed to connect to DB, continuing in Mock mode...', err);
-    }
-    app.listen(PORT, () => console.log(`Budget Planner API running on port ${PORT}`));
-})();
-exports.default = app;
+startServer(PORT);
+// =======================
+// Graceful Shutdown
+// =======================
+const gracefulShutdown = (signal) => {
+    logger.info(`${signal} received. Starting graceful shutdown...`);
+    // Stop accepting new connections
+    server.close(() => {
+        logger.info("HTTP server closed");
+        // Close database connections
+        mongoose.connection.close(false).then(() => {
+            logger.info("MongoDB connection closed");
+            process.exit(0);
+        }).catch((err) => {
+            logger.error("Error closing MongoDB connection", err);
+            process.exit(1);
+        });
+    });
+    // Force shutdown after 30 seconds
+    setTimeout(() => {
+        logger.error("Forced shutdown after timeout");
+        process.exit(1);
+    }, 30000);
+};
+// Handle shutdown signals
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+    logger.error(`UNHANDLED REJECTION! 💥 Shutting down...`, { error: err.message, stack: err.stack });
+    server.close(() => {
+        process.exit(1);
+    });
+});
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+    logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`, { error: err.message, stack: err.stack });
+    process.exit(1);
+});

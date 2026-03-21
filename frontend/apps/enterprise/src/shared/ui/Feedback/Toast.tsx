@@ -88,7 +88,7 @@ export const Toast: React.FC<ToastProps> = ({
       className={[
         'relative flex items-start gap-3 overflow-hidden',
         'min-w-[280px] max-w-[400px] w-full',
-        'bg-white dark:bg-neutral-900',
+        'bg-white dark:bg-[var(--erp-bg)]',
         'border border-neutral-200 dark:border-neutral-700/60',
         'rounded-xl shadow-lg shadow-black/8',
         'p-4',
@@ -119,7 +119,7 @@ export const Toast: React.FC<ToastProps> = ({
           className={[
             'flex-shrink-0 p-1 -mr-1 -mt-1 rounded-lg',
             'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200',
-            'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+            'hover:bg-neutral-100 dark:hover:bg-[var(--erp-card)]',
             'transition-colors duration-150',
             'outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
           ].join(' ')}

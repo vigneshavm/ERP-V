@@ -37,7 +37,7 @@ const REASON_LABELS: Record<string, string> = {
 };
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-    DRAFT: { label: 'Drafted', icon: FileText, color: 'text-neutral-600', bg: 'bg-neutral-100' },
+    DRAFT: { label: 'Drafted', icon: FileText, color: 'text-neutral-600', bg: 'bg-[var(--erp-bg-sunken)]' },
     SENT: { label: 'Sent', icon: Clock, color: 'text-primary', bg: 'bg-primary/10' },
     ACKNOWLEDGED: { label: 'Acknowledged', icon: CheckCircle, color: 'text-info', bg: 'bg-info/10' },
     SETTLED: { label: 'Settled', icon: CheckCircle, color: 'text-success', bg: 'bg-success/10' }
@@ -124,7 +124,7 @@ const DebitNotes: React.FC = () => {
             RETURN_SHIPPING: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
             SERVICE_CHARGE: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
             PRICE_DIFFERENCE: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-            OTHER: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400'
+            OTHER: 'bg-[var(--erp-bg-sunken)] text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400'
         };
         return <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${colors[reason] || colors.OTHER}`}>
             {REASON_LABELS[reason] || reason}
@@ -133,18 +133,18 @@ const DebitNotes: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in">
+            <div className="page-shell">
                 <PageHeader
                     title="Debit Notes"
                     description={`Track returns and claims against suppliers • ${getBranchName(currentBranchId)}`}
                     actions={
                         <>
-                            <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                            <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2">
                                 <Download className="w-4 h-4" /> Export
                             </button>
                             <button
                                 onClick={() => setShowCreateModal(true)}
-                                className="px-4 py-2 bg-error text-white rounded-lg text-sm font-bold hover:bg-error/90 flex items-center gap-2"
+                                className="px-4 py-2 bg-error text-main rounded-lg text-sm font-bold hover:bg-error/90 flex items-center gap-2"
                             >
                                 <Plus className="w-4 h-4" /> Create Debit Note
                             </button>
@@ -160,14 +160,14 @@ const DebitNotes: React.FC = () => {
                 />
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-wrap gap-4 items-end">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-[200px]">
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Search</label>
                         <div className="relative">
                             <input
                                 type="text"
                                 placeholder="DN # or Vendor..."
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
@@ -179,7 +179,7 @@ const DebitNotes: React.FC = () => {
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">From</label>
                         <input
                             type="date"
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                             value={dateFrom}
                             onChange={e => setDateFrom(e.target.value)}
                         />
@@ -189,7 +189,7 @@ const DebitNotes: React.FC = () => {
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">To</label>
                         <input
                             type="date"
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                             value={dateTo}
                             onChange={e => setDateTo(e.target.value)}
                         />
@@ -198,7 +198,7 @@ const DebitNotes: React.FC = () => {
                     <div>
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Status</label>
                         <select
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
                         >
@@ -213,7 +213,7 @@ const DebitNotes: React.FC = () => {
                     <div>
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Reason</label>
                         <select
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                             value={reasonFilter}
                             onChange={e => setReasonFilter(e.target.value)}
                         >
@@ -235,10 +235,10 @@ const DebitNotes: React.FC = () => {
                 </div>
 
                 {/* Debit Notes Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default overflow-hidden">
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 text-secondary uppercase text-xs font-medium">
+                            <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-secondary uppercase text-xs font-medium">
                                 <tr>
                                     <th className="p-4">DN #</th>
                                     <th className="p-4">Date</th>
@@ -267,7 +267,7 @@ const DebitNotes: React.FC = () => {
                                     </td></tr>
                                 ) : (
                                     filteredNotes.map(note => (
-                                        <tr key={note._id || note.noteId} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                                        <tr key={note._id || note.noteId} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50">
                                             <td className="p-4 font-mono text-xs text-error font-medium">{note.noteId}</td>
                                             <td className="p-4 text-neutral-600 dark:text-neutral-400">
                                                 {new Date(note.date).toLocaleDateString()}
@@ -277,7 +277,7 @@ const DebitNotes: React.FC = () => {
                                                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                                                         <Truck className="w-4 h-4 text-primary" />
                                                     </div>
-                                                    <span className="font-medium text-neutral-900 dark:text-white">{note.vendorName}</span>
+                                                    <span className="font-medium text-neutral-900 dark:text-main">{note.vendorName}</span>
                                                 </div>
                                             </td>
                                             <td className="p-4 font-mono text-xs text-neutral-500">{note.originalBillNumber || note.originalGrnNumber || '-'}</td>
@@ -285,7 +285,7 @@ const DebitNotes: React.FC = () => {
                                             <td className="p-4 text-right font-bold text-error">₹{note.totalAmount.toLocaleString()}</td>
                                             <td className="p-4 text-center">{getStatusBadge(note.status)}</td>
                                             <td className="p-4 text-center">
-                                                <button className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg" title="View">
+                                                <button className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg" title="View">
                                                     <Eye className="w-4 h-4 text-primary" />
                                                 </button>
                                             </td>
@@ -306,11 +306,11 @@ const DebitNotes: React.FC = () => {
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
                                             <p className="font-mono text-xs text-error font-medium">{note.noteId}</p>
-                                            <p className="font-bold text-neutral-900 dark:text-white">{note.vendorName}</p>
+                                            <p className="font-bold text-neutral-900 dark:text-main">{note.vendorName}</p>
                                         </div>
                                         {getStatusBadge(note.status)}
                                     </div>
-                                    <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-700/50 p-3 rounded-lg mt-2">
+                                    <div className="flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 p-3 rounded-lg mt-2">
                                         <div className="flex items-center gap-2">
                                             {getReasonBadge(note.reason)}
                                         </div>

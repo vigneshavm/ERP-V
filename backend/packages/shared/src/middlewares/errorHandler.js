@@ -1,24 +1,28 @@
-// import { AppError } from '@smarterp/shared/utils/AppError.js';
-const errorHandler = (err, _req, res, _next) => {
-    // Prioritize statusCode (numeric) from AppError, else check status if numeric, else 500
-    const statusCode = (typeof err.statusCode === 'number') ? err.statusCode : (typeof err.status === 'number' ? err.status : 500);
-    const status = err.status || "error"; // For response body (fail/error)
-    const message = err.message || "Internal Server Error";
-    // Log full error server-side with stack trace
-    console.error(`[Error] ${status} - ${message} - [${_req.method}] ${_req.originalUrl}`);
-    if (err.stack) {
+/**
+ * Global Express error handler.
+ *
+ * In development: returns the original error message (never the stack trace).
+ * In production:  always returns a generic message regardless of error type.
+ *
+ * Stack traces are logged server-side but never sent to the client.
+ */
+const errorHandler = (err, req, res, _next) => {
+    const statusCode = typeof err.statusCode === 'number' ? err.statusCode :
+        typeof err.status === 'number' ? err.status : 500;
+    const message = err.message || 'Internal Server Error';
+    // Server-side logging — always include full detail
+    console.error(`[Error] ${statusCode} — ${message} — [${req.method}] ${req.originalUrl}`);
+    if (err.stack)
         console.error(err.stack);
-    }
-    // CRITICAL: NEVER send stack traces or detailed errors to client
-    // Even in development, use generic messages for security
-    const isProduction = process.env.NODE_ENV === "production";
+    // Client-facing response
+    const isProduction = process.env.NODE_ENV === 'production';
+    const clientMessage = isProduction
+        ? 'An error occurred. Please try again later.'
+        : message; // Dev: show the message; never the stack
     res.status(statusCode).json({
         success: false,
-        status,
-        message: isProduction
-            ? "An error occurred. Please try again later."
-            : message, // In dev, show message but never stack
-        // Stack trace NEVER sent to client
+        status: err.status ?? 'error',
+        message: clientMessage,
     });
 };
 export default errorHandler;

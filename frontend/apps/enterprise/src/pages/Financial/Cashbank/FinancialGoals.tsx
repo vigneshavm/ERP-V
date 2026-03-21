@@ -49,13 +49,13 @@ const FinancialGoals: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#121212] text-white p-4 md:p-8 font-sans pb-32">
+        <div className="page-shell p-4 md:p-8 font-sans pb-32">
                 <div className="max-w-2xl mx-auto space-y-10">
 
                     {/* Navigation Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
+                            <button className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
                             <h1 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-400">Goals</h1>
                         </div>
                         <div className="flex items-center gap-4">
@@ -78,10 +78,10 @@ const FinancialGoals: React.FC = () => {
                             const dailyTarget = Math.round((goal.target - goal.current) / 62); // Hardcoded days for mockup match
 
                             return (
-                                <div key={goal.id} className="bg-neutral-900/60 border border-white/5 rounded-[2rem] p-6 backdrop-blur-xl hover:border-white/10 transition-all">
+                                <div key={goal.id} className="bg-[var(--erp-bg)]/60 border border-default rounded-[2rem] p-6 backdrop-blur-xl hover:border-default transition-all">
                                     <div className="flex items-start justify-between mb-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-white/5 bg-neutral-800">
+                                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-default bg-[var(--erp-card)]">
                                                 <goal.icon className="w-6 h-6 text-emerald-400" />
                                             </div>
                                             <div>
@@ -103,7 +103,7 @@ const FinancialGoals: React.FC = () => {
                                             <span>{goal.startDate}</span>
                                             <span>{goal.dueDate}</span>
                                         </div>
-                                        <div className="h-4 bg-neutral-800 rounded-full overflow-hidden">
+                                        <div className="h-4 bg-[var(--erp-card)] rounded-full overflow-hidden">
                                             <div
                                                 className="h-full bg-neutral-600 rounded-full transition-all duration-1000 flex items-center justify-end pr-2 text-[8px] font-black"
                                                 style={{ width: `${progress}%` }}
@@ -133,7 +133,7 @@ const FinancialGoals: React.FC = () => {
                     </div>
 
                     {/* App-Style Navigation Footer */}
-                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 px-10 py-6 bg-neutral-900/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl z-50">
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 px-10 py-6 bg-[var(--erp-bg)]/80 backdrop-blur-2xl border border-default rounded-[2.5rem] shadow-2xl z-50">
                         <button className="flex flex-col items-center gap-1.5 opacity-40 hover:opacity-100 transition-opacity">
                             <Home className="w-5 h-5" />
                             <span className="text-[8px] font-black uppercase tracking-widest">Overview</span>

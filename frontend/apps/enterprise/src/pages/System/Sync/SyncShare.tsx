@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
+import Layout from "@/shared/ui/Layout/Layout";
+import PageHeader from "@/shared/ui/Layout/PageHeader";
 import {
     Smartphone,
     Monitor,
@@ -17,10 +17,11 @@ import {
     Database,
     FileText,
     Users,
-    Package
+    Package,
+    LucideIcon
 } from 'lucide-react';
 
-const DeviceIcon = ({ type, className }) => {
+const DeviceIcon = ({ type, className }: { type: string; className?: string }) => {
     switch (type.toLowerCase()) {
         case 'mobile': return <Smartphone className={className} />;
         case 'desktop': return <Monitor className={className} />;
@@ -29,10 +30,10 @@ const DeviceIcon = ({ type, className }) => {
     }
 };
 
-const StatusBadge = ({ status }) => {
-    const styles = {
+const StatusBadge = ({ status }: { status: string }) => {
+    const styles: Record<string, string> = {
         active: "bg-green-100 text-green-700 border-green-200",
-        inactive: "bg-gray-100 text-gray-600 border-gray-200",
+        inactive: "bg-[var(--erp-bg-sunken)] text-secondary border-default",
         syncing: "bg-blue-100 text-blue-700 border-blue-200"
     };
 
@@ -44,7 +45,7 @@ const StatusBadge = ({ status }) => {
     );
 };
 
-const ToggleSwitch = ({ checked, onChange }) => (
+const ToggleSwitch = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
     <button
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${checked ? 'bg-indigo-600' : 'bg-gray-200'}`}
@@ -63,7 +64,12 @@ const SyncShare = () => {
         { id: 3, name: 'Manager MacBook', type: 'laptop', lastSync: '5 minutes ago', status: 'inactive', ip: '192.168.1.22' }
     ]);
 
-    const [syncSettings, setSyncSettings] = useState({
+    const [syncSettings, setSyncSettings] = useState<{
+        autoSync: boolean;
+        syncInterval: string;
+        syncOnWifi: boolean;
+        syncData: Record<string, boolean>;
+    }>({
         autoSync: true,
         syncInterval: '15',
         syncOnWifi: true,
@@ -80,14 +86,14 @@ const SyncShare = () => {
         setTimeout(() => setIsSyncing(false), 2000); // Simulate sync
     };
 
-    const handleSettingChange = (key, value) => {
+    const handleSettingChange = (key: string, value: any) => {
         setSyncSettings(prev => ({
             ...prev,
             [key]: value
         }));
     };
 
-    const handleDataToggle = (key) => {
+    const handleDataToggle = (key: string) => {
         setSyncSettings(prev => ({
             ...prev,
             syncData: {
@@ -99,6 +105,7 @@ const SyncShare = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <PageHeader
                     title="Sync & Share"
@@ -115,14 +122,14 @@ const SyncShare = () => {
                             </h3>
                             <p className="mt-4 text-indigo-100 text-sm opacity-90">Last synchronized successfully 2 mins ago across 3 devices.</p>
                         </div>
-                        <Cloud className="absolute -right-4 -bottom-4 w-32 h-32 text-white/10" />
+                        <Cloud className="absolute -right-4 -bottom-4 w-32 h-32 text-main/10" />
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-gray-500 text-sm font-medium">Active Devices</p>
-                                <h3 className="text-3xl font-bold text-gray-900 mt-2">2<span className="text-lg text-gray-400 font-normal">/3</span></h3>
+                                <p className="text-muted text-sm font-medium">Active Devices</p>
+                                <h3 className="text-3xl font-bold text-main mt-2">2<span className="text-lg text-muted font-normal">/3</span></h3>
                             </div>
                             <div className="p-3 bg-green-50 rounded-lg">
                                 <Monitor className="w-6 h-6 text-green-600" />
@@ -133,17 +140,17 @@ const SyncShare = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-gray-500 text-sm font-medium">Pending Data</p>
-                                <h3 className="text-3xl font-bold text-gray-900 mt-2">0 <span className="text-sm font-normal text-gray-500">records</span></h3>
+                                <p className="text-muted text-sm font-medium">Pending Data</p>
+                                <h3 className="text-3xl font-bold text-main mt-2">0 <span className="text-sm font-normal text-muted">records</span></h3>
                             </div>
                             <div className="p-3 bg-blue-50 rounded-lg">
                                 <Database className="w-6 h-6 text-blue-600" />
                             </div>
                         </div>
-                        <div className="mt-4 text-sm text-gray-500">
+                        <div className="mt-4 text-sm text-muted">
                             Up to date
                         </div>
                     </div>
@@ -154,11 +161,11 @@ const SyncShare = () => {
                     <div className="lg:col-span-2 space-y-6">
 
                         {/* Connected Devices */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="bg-white rounded-xl shadow-sm border border-default overflow-hidden">
+                            <div className="p-6 border-b border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50">
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-900">Connected Devices</h2>
-                                    <p className="text-sm text-gray-500">Manage access and sync status for your devices</p>
+                                    <h2 className="text-lg font-bold text-main">Connected Devices</h2>
+                                    <p className="text-sm text-muted">Manage access and sync status for your devices</p>
                                 </div>
                                 <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:underline">
                                     + Add New
@@ -166,16 +173,16 @@ const SyncShare = () => {
                             </div>
                             <div className="divide-y divide-gray-100">
                                 {devices.map((device) => (
-                                    <div key={device.id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors group">
+                                    <div key={device.id} className="p-5 flex items-center justify-between hover:bg-[var(--erp-bg-sunken)] transition-colors group">
                                         <div className="flex items-center space-x-4">
-                                            <div className="p-3 bg-gray-100 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-gray-200">
-                                                <DeviceIcon type={device.type} className="w-6 h-6 text-gray-600" />
+                                            <div className="p-3 bg-[var(--erp-bg-sunken)] rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-default">
+                                                <DeviceIcon type={device.type} className="w-6 h-6 text-secondary" />
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold text-gray-900">{device.name}</h3>
+                                                <h3 className="font-semibold text-main">{device.name}</h3>
                                                 <div className="flex items-center gap-3 mt-1">
-                                                    <span className="text-xs text-gray-500 font-mono bg-gray-100 px-1.5 py-0.5 rounded">{device.ip}</span>
-                                                    <span className="text-xs text-gray-400 flex items-center">
+                                                    <span className="text-xs text-muted font-mono bg-[var(--erp-bg-sunken)] px-1.5 py-0.5 rounded">{device.ip}</span>
+                                                    <span className="text-xs text-muted flex items-center">
                                                         <Clock className="w-3 h-3 mr-1" /> {device.lastSync}
                                                     </span>
                                                 </div>
@@ -183,7 +190,7 @@ const SyncShare = () => {
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <StatusBadge status={device.status} />
-                                            <button className="text-gray-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg">
+                                            <button className="text-muted hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg">
                                                 <Settings className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -193,10 +200,10 @@ const SyncShare = () => {
                         </div>
 
                         {/* Data Preferences */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                            <div className="p-6 border-b border-gray-100">
-                                <h2 className="text-lg font-bold text-gray-900">Synchronization Preferences</h2>
-                                <p className="text-sm text-gray-500">Choose which data modules to sync automatically</p>
+                        <div className="bg-white rounded-xl shadow-sm border border-default">
+                            <div className="p-6 border-b border-default">
+                                <h2 className="text-lg font-bold text-main">Synchronization Preferences</h2>
+                                <p className="text-sm text-muted">Choose which data modules to sync automatically</p>
                             </div>
                             <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {[
@@ -209,21 +216,21 @@ const SyncShare = () => {
                                         onClick={() => handleDataToggle(item.key)}
                                         className={`p-4 border rounded-xl cursor-pointer transition-all ${syncSettings.syncData[item.key]
                                                 ? 'border-indigo-200 bg-indigo-50/30'
-                                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                : 'border-default hover:border-gray-300 hover:bg-[var(--erp-bg-sunken)]'
                                             }`}>
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-lg ${syncSettings.syncData[item.key] ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                <div className={`p-2 rounded-lg ${syncSettings.syncData[item.key] ? 'bg-indigo-100 text-indigo-600' : 'bg-[var(--erp-bg-sunken)] text-muted'}`}>
                                                     <item.icon className="w-5 h-5" />
                                                 </div>
                                                 <div>
                                                     <h4 className={`font-semibold ${syncSettings.syncData[item.key] ? 'text-indigo-900' : 'text-gray-700'}`}>{item.label}</h4>
-                                                    <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                                                    <p className="text-xs text-muted mt-0.5">{item.desc}</p>
                                                 </div>
                                             </div>
                                             <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${syncSettings.syncData[item.key] ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 bg-white'
                                                 }`}>
-                                                {syncSettings.syncData[item.key] && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                                {syncSettings.syncData[item.key] && <CheckCircle2 className="w-3.5 h-3.5 text-main" />}
                                             </div>
                                         </div>
                                     </div>
@@ -234,17 +241,17 @@ const SyncShare = () => {
 
                     {/* Sidebar Settings */}
                     <div className="space-y-6">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                <Settings className="w-5 h-5 text-gray-500" />
+                        <div className="bg-white rounded-xl shadow-sm border border-default p-6">
+                            <h2 className="text-lg font-bold text-main mb-6 flex items-center gap-2">
+                                <Settings className="w-5 h-5 text-muted" />
                                 Sync Config
                             </h2>
 
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-medium text-gray-900">Auto-Sync</p>
-                                        <p className="text-xs text-gray-500">Sync data in background</p>
+                                        <p className="font-medium text-main">Auto-Sync</p>
+                                        <p className="text-xs text-muted">Sync data in background</p>
                                     </div>
                                     <ToggleSwitch
                                         checked={syncSettings.autoSync}
@@ -252,29 +259,29 @@ const SyncShare = () => {
                                     />
                                 </div>
 
-                                <div className="border-t border-gray-100 pt-4">
+                                <div className="border-t border-default pt-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Sync Interval</label>
                                     <div className="relative">
                                         <select
                                             value={syncSettings.syncInterval}
                                             onChange={(e) => handleSettingChange('syncInterval', e.target.value)}
-                                            className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none appearance-none cursor-pointer"
+                                            className="w-full pl-4 pr-10 py-2.5 bg-[var(--erp-bg-sunken)] border border-default rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none appearance-none cursor-pointer"
                                         >
                                             <option value="5">Every 5 minutes</option>
                                             <option value="15">Every 15 minutes</option>
                                             <option value="30">Every 30 minutes</option>
                                             <option value="60">Every hour</option>
                                         </select>
-                                        <Clock className="w-4 h-4 text-gray-500 absolute right-3 top-3 pointer-events-none" />
+                                        <Clock className="w-4 h-4 text-muted absolute right-3 top-3 pointer-events-none" />
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+                                <div className="flex items-center justify-between border-t border-default pt-4">
                                     <div className="flex items-start gap-2">
-                                        <Wifi className="w-5 h-5 text-gray-400 mt-0.5" />
+                                        <Wifi className="w-5 h-5 text-muted mt-0.5" />
                                         <div>
-                                            <p className="font-medium text-gray-900">Wi-Fi Only</p>
-                                            <p className="text-xs text-gray-500">Save mobile data</p>
+                                            <p className="font-medium text-main">Wi-Fi Only</p>
+                                            <p className="text-xs text-muted">Save mobile data</p>
                                         </div>
                                     </div>
                                     <ToggleSwitch
@@ -284,7 +291,7 @@ const SyncShare = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-gray-100">
+                            <div className="mt-8 pt-6 border-t border-default">
                                 <button
                                     onClick={handleSync}
                                     disabled={isSyncing}
@@ -296,35 +303,35 @@ const SyncShare = () => {
                                     <ArrowRightLeft className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
                                     {isSyncing ? 'Syncing...' : 'Sync Now'}
                                 </button>
-                                <p className="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1">
+                                <p className="text-center text-xs text-muted mt-3 flex items-center justify-center gap-1">
                                     <Shield className="w-3 h-3" /> End-to-end encrypted
                                 </p>
                             </div>
                         </div>
 
                         {/* Recent Activity Mini-Feed */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h3 className="font-bold text-gray-900 mb-4">Sync Log</h3>
+                        <div className="bg-white rounded-xl shadow-sm border border-default p-6">
+                            <h3 className="font-bold text-main mb-4">Sync Log</h3>
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 mt-2 bg-green-500 rounded-full flex-shrink-0"></div>
                                     <div>
                                         <p className="text-sm text-gray-700">Full inventory sync completed</p>
-                                        <p className="text-xs text-gray-400">2 minutes ago</p>
+                                        <p className="text-xs text-muted">2 minutes ago</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 mt-2 bg-blue-500 rounded-full flex-shrink-0"></div>
                                     <div>
                                         <p className="text-sm text-gray-700">New invoice template downloaded</p>
-                                        <p className="text-xs text-gray-400">15 minutes ago</p>
+                                        <p className="text-xs text-muted">15 minutes ago</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 mt-2 bg-gray-300 rounded-full flex-shrink-0"></div>
                                     <div>
                                         <p className="text-sm text-gray-700">Desktop app connected</p>
-                                        <p className="text-xs text-gray-400">1 hour ago</p>
+                                        <p className="text-xs text-muted">1 hour ago</p>
                                     </div>
                                 </div>
                             </div>
@@ -332,6 +339,8 @@ const SyncShare = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

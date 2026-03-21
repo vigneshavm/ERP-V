@@ -77,7 +77,7 @@ const DeliveryChallanList = () => {
 
     const getStatusBadge = (status: string) => {
         const badges: Record<string, { bg: string, text: string, icon: any }> = {
-            Draft: { bg: 'bg-slate-100', text: 'text-slate-700', icon: Clock },
+            Draft: { bg: 'bg-[var(--erp-bg-sunken)]', text: 'text-secondary', icon: Clock },
             Delivered: { bg: 'bg-blue-50', text: 'text-blue-700', icon: Truck },
             Converted: { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: CheckCircle }
         };
@@ -93,15 +93,15 @@ const DeliveryChallanList = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="page-shell">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                        <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
                             <Truck className="w-6 h-6 text-blue-600" />
                             Delivery Challans
                         </h1>
-                        <p className="text-sm text-slate-500 mt-1">View and manage delivery challans</p>
+                        <p className="text-sm text-muted mt-1">View and manage delivery challans</p>
                     </div>
                     <button
                         onClick={() => {
@@ -116,11 +116,11 @@ const DeliveryChallanList = () => {
 
                 {/* KPI Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Challans</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">{totalChallans}</h3>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Challans</p>
+                                <h3 className="text-2xl font-bold text-main mt-1">{totalChallans}</h3>
                             </div>
                             <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                                 <Package className="w-5 h-5" />
@@ -128,10 +128,10 @@ const DeliveryChallanList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Delivered</p>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Delivered</p>
                                 <h3 className="text-2xl font-bold text-blue-600 mt-1">{deliveredCount}</h3>
                             </div>
                             <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
@@ -140,10 +140,10 @@ const DeliveryChallanList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Converted</p>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Converted</p>
                                 <h3 className="text-2xl font-bold text-emerald-600 mt-1">{convertedCount}</h3>
                             </div>
                             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
@@ -152,13 +152,13 @@ const DeliveryChallanList = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-default hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Drafts</p>
-                                <h3 className="text-2xl font-bold text-slate-600 mt-1">{draftCount}</h3>
+                                <p className="text-xs font-bold text-muted uppercase tracking-wider">Drafts</p>
+                                <h3 className="text-2xl font-bold text-secondary mt-1">{draftCount}</h3>
                             </div>
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                            <div className="p-2 bg-[var(--erp-bg-sunken)] rounded-lg text-secondary">
                                 <Clock className="w-5 h-5" />
                             </div>
                         </div>
@@ -166,13 +166,13 @@ const DeliveryChallanList = () => {
                 </div>
 
                 {/* Filter Island + Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-sm border border-default overflow-hidden">
                     {/* Filter Bar */}
-                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+                    <div className="p-5 border-b border-default bg-[var(--erp-bg-sunken)]/50">
                         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div className="relative w-full md:max-w-md group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                    <Search className="h-5 w-5 text-muted group-focus-within:text-indigo-500 transition-colors" />
                                 </div>
                                 <input
                                     type="text"
@@ -200,21 +200,21 @@ const DeliveryChallanList = () => {
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-20">
                             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                            <p className="text-slate-500 font-medium">Loading challans...</p>
+                            <p className="text-muted font-medium">Loading challans...</p>
                         </div>
                     ) : filteredChallans.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20">
-                            <div className="bg-slate-100 p-3 rounded-full mb-3">
-                                <FileText className="w-6 h-6 text-slate-400" />
+                            <div className="bg-[var(--erp-bg-sunken)] p-3 rounded-full mb-3">
+                                <FileText className="w-6 h-6 text-muted" />
                             </div>
-                            <p className="text-slate-600 font-medium">No delivery challans found</p>
-                            <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters</p>
+                            <p className="text-secondary font-medium">No delivery challans found</p>
+                            <p className="text-sm text-muted mt-1">Try adjusting your search or filters</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50 border-b border-slate-200">
-                                    <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <thead className="bg-[var(--erp-bg-sunken)] border-b border-default">
+                                    <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                                         <th className="px-6 py-3">Challan No</th>
                                         <th className="px-6 py-3">Date</th>
                                         <th className="px-6 py-3">Customer</th>
@@ -225,7 +225,7 @@ const DeliveryChallanList = () => {
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 bg-white">
                                     {filteredChallans.map((challan) => (
-                                        <tr key={challan._id} className="hover:bg-slate-50 transition-colors group">
+                                        <tr key={challan._id} className="hover:bg-[var(--erp-bg-sunken)] transition-colors group">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <button
                                                     onClick={() => navigate(`/sales/delivery-challan/${challan._id}`)}
@@ -234,17 +234,17 @@ const DeliveryChallanList = () => {
                                                     {challan.challanNumber}
                                                 </button>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                                                 {new Date(challan.challanDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="text-sm font-medium text-slate-800">{challan.customer?.name || 'N/A'}</div>
+                                                <div className="text-sm font-medium text-main">{challan.customer?.name || 'N/A'}</div>
                                                 {challan.customer?.phone && (
-                                                    <div className="text-xs text-slate-500">{challan.customer.phone}</div>
+                                                    <div className="text-xs text-muted">{challan.customer.phone}</div>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-center">
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[var(--erp-bg-sunken)] text-secondary">
                                                     {(challan.items || []).length} items
                                                 </span>
                                             </td>
@@ -292,14 +292,14 @@ const DeliveryChallanList = () => {
                 {deleteConfirm && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
                         <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4">Confirm Delete</h3>
-                            <p className="text-slate-600 mb-6">
+                            <h3 className="text-lg font-bold text-main mb-4">Confirm Delete</h3>
+                            <p className="text-secondary mb-6">
                                 Are you sure you want to delete this delivery challan? Stock will be restored.
                             </p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setDeleteConfirm(null)}
-                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 font-medium"
+                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-[var(--erp-bg-sunken)] font-medium"
                                 >
                                     Cancel
                                 </button>
@@ -318,14 +318,14 @@ const DeliveryChallanList = () => {
                 {convertConfirm && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
                         <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4">Convert to Invoice</h3>
-                            <p className="text-slate-600 mb-6">
+                            <h3 className="text-lg font-bold text-main mb-4">Convert to Invoice</h3>
+                            <p className="text-secondary mb-6">
                                 Are you sure you want to convert this challan to an invoice? This action cannot be undone.
                             </p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setConvertConfirm(null)}
-                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 font-medium"
+                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-[var(--erp-bg-sunken)] font-medium"
                                 >
                                     Cancel
                                 </button>

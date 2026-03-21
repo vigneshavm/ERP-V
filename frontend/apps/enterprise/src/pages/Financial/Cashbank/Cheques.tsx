@@ -201,6 +201,7 @@ const Cheques: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
 
                 {/* Header */}
@@ -217,19 +218,19 @@ const Cheques: React.FC = () => {
                     <div className="flex gap-3">
                         <button
                             onClick={() => setShowClearingParams(true)}
-                            className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
+                            className="px-5 py-2.5 bg-[var(--erp-bg)] text-main dark:bg-[var(--erp-bg-sunken)] dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-[var(--erp-card)] dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
                         >
                             <Zap className="w-4 h-4" /> Parameters
                         </button>
                         <button
                             onClick={() => setShowDayEndModal(true)}
-                            className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
+                            className="px-5 py-2.5 bg-[var(--erp-bg)] text-main dark:bg-[var(--erp-bg-sunken)] dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-[var(--erp-card)] dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
                         >
                             <Calendar className="w-4 h-4" /> Day End
                         </button>
                         <button
                             onClick={() => setShowTransferModal(true)}
-                            className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
+                            className="px-5 py-2.5 bg-[var(--erp-bg)] text-main dark:bg-[var(--erp-bg-sunken)] dark:text-neutral-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-[var(--erp-card)] dark:hover:bg-neutral-200 transition active:scale-95 uppercase tracking-[0.2em]"
                         >
                             <ArrowRight className="w-4 h-4" /> Fund Transfer
                         </button>
@@ -239,7 +240,7 @@ const Cheques: React.FC = () => {
                         >
                             <Layers className="w-4 h-4" /> Bulk Payment Stream
                         </button>
-                        <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-[0.2em]">
+                        <button className="px-5 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition active:scale-95 uppercase tracking-[0.2em]">
                             <Download className="w-4 h-4 text-primary" /> Export Ledger
                         </button>
                         <button
@@ -253,12 +254,12 @@ const Cheques: React.FC = () => {
 
                 {/* KPI Pulse Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Clearing Rate</p>
                         <h3 className="text-3xl font-black text-primary italic tracking-tighter">
                             {statusCounts.all > 0 ? ((statusCounts.CLEARED / statusCounts.all) * 100).toFixed(0) : 0}%
                         </h3>
-                        <div className="mt-3 h-1 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
+                        <div className="mt-3 h-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary transition-all duration-1000"
                                 style={{ width: `${statusCounts.all > 0 ? (statusCounts.CLEARED / statusCounts.all) * 100 : 0}%` }}
@@ -266,7 +267,7 @@ const Cheques: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Pending Capital</p>
                         <h3 className="text-3xl font-black text-warning italic tracking-tighter">
                             ₹{formatCurrency(statusValues.PENDING)}
@@ -277,7 +278,7 @@ const Cheques: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Successfully Cleared</p>
                         <h3 className="text-3xl font-black text-success italic tracking-tighter">
                             ₹{formatCurrency(statusValues.CLEARED)}
@@ -288,13 +289,13 @@ const Cheques: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-main p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-20 group-hover:scale-125 transition duration-1000" />
                         <div className="relative z-10">
                             <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-2">
                                 <ShieldCheck className="w-3 h-3 fill-current" /> Effective Balance
                             </div>
-                            <h3 className="text-3xl font-black text-white italic tracking-tighter">
+                            <h3 className="text-3xl font-black text-main italic tracking-tighter">
                                 ₹{formatCurrency(effectiveBalance || 0)}
                             </h3>
                             <p className="text-[10px] font-bold text-neutral-400 mt-2 uppercase tracking-widest italic">
@@ -319,8 +320,8 @@ const Cheques: React.FC = () => {
                 )}
 
                 {/* Search & Filters */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-2xl border border-neutral-200 dark:border-neutral-700">
-                    <div className="flex p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl w-full md:w-auto">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[var(--erp-card)] p-2 rounded-2xl border border-default dark:border-default">
+                    <div className="flex p-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl w-full md:w-auto">
                         {[
                             { id: 'all', label: 'All Node' },
                             { id: 'PENDING', label: 'Pending' },
@@ -331,8 +332,8 @@ const Cheques: React.FC = () => {
                                 key={f.id}
                                 onClick={() => setStatusFilter(f.id as any)}
                                 className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f.id
-                                    ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm'
-                                    : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                                    ? 'bg-white dark:bg-[var(--erp-card)] text-primary shadow-sm'
+                                    : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-main'
                                     }`}
                             >
                                 {f.label}
@@ -348,10 +349,10 @@ const Cheques: React.FC = () => {
                                 placeholder="Search Instruments..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-black tracking-tight italic"
+                                className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-black tracking-tight italic"
                             />
                         </div>
-                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500 hover:text-primary transition shadow-sm">
+                        <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-neutral-500 hover:text-primary transition shadow-sm">
                             <Filter className="w-4 h-4" />
                         </button>
                     </div>
@@ -359,7 +360,7 @@ const Cheques: React.FC = () => {
 
                 {/* Instrument Grid */}
                 {filteredCheques.length === 0 ? (
-                    <div className="py-32 bg-white dark:bg-neutral-800 rounded-[3rem] border-2 border-dashed border-neutral-200 dark:border-neutral-700 text-center flex flex-col items-center">
+                    <div className="py-32 bg-white dark:bg-[var(--erp-card)] rounded-[3rem] border-2 border-dashed border-default dark:border-default text-center flex flex-col items-center">
                         <Layers className="w-16 h-16 text-neutral-100 dark:text-neutral-900 mb-6" />
                         <h4 className="text-xl font-black italic text-neutral-400 uppercase tracking-widest">No Instruments located in node</h4>
                         <p className="text-xs font-bold text-neutral-300 mt-2 uppercase tracking-widest italic">Clear filters or register a new transaction pulse</p>
@@ -370,9 +371,9 @@ const Cheques: React.FC = () => {
                             <div
                                 key={c.id}
                                 onClick={() => { setSelectedCheque(c); setShowDetails(true); }}
-                                className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 p-8 hover:shadow-2xl hover:border-primary/30 transition-all group cursor-pointer relative overflow-hidden"
+                                className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default p-8 hover:shadow-2xl hover:border-primary/30 transition-all group cursor-pointer relative overflow-hidden"
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-neutral-50 dark:bg-neutral-900/50 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
 
                                 <div className="relative z-10">
                                     <div className="flex items-start justify-between mb-8">
@@ -405,7 +406,7 @@ const Cheques: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 flex items-end justify-between">
+                                    <div className="pt-6 border-t border-default dark:border-default flex items-end justify-between">
                                         <div>
                                             <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Commitment Value</p>
                                             <p className={`text-2xl font-black italic tracking-tighter ${c.type === 'RECEIVED' ? 'text-success' : 'text-primary'}`}>
@@ -426,7 +427,7 @@ const Cheques: React.FC = () => {
             {/* --- MODALS --- */}
             {showAddCheque && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+                    <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-2xl rounded-[3rem] shadow-2xl border border-default dark:border-default overflow-hidden relative">
                         <Activity className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5" />
 
                         <div className="p-10">
@@ -435,7 +436,7 @@ const Cheques: React.FC = () => {
                                     <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Register Instrument</h3>
                                     <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest italic">Securing asset node in {currentSector} zone</p>
                                 </div>
-                                <button onClick={() => setShowAddCheque(false)} className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-full text-neutral-400 hover:text-error transition">
+                                <button onClick={() => setShowAddCheque(false)} className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full text-neutral-400 hover:text-error transition">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -449,7 +450,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.number}
                                             onChange={e => setFormData({ ...formData, number: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                             placeholder="CHQ-XXXXXX"
                                         />
                                     </div>
@@ -460,7 +461,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.date}
                                             onChange={e => setFormData({ ...formData, date: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -470,7 +471,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.payee}
                                             onChange={e => setFormData({ ...formData, payee: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                                             placeholder="Entity Name..."
                                         />
                                     </div>
@@ -481,7 +482,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.amount}
                                             onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                             placeholder="0.00"
                                         />
                                     </div>
@@ -491,7 +492,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.accountId}
                                             onChange={e => setFormData({ ...formData, accountId: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
+                                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
                                         >
                                             <option value="">Select Account...</option>
                                             {accounts.map(acc => (
@@ -501,11 +502,11 @@ const Cheques: React.FC = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] pl-1">Pulse Direction</label>
-                                        <div className="flex bg-neutral-50 dark:bg-neutral-900 p-1 rounded-2xl border border-neutral-100 dark:border-neutral-700">
+                                        <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-1 rounded-2xl border border-default dark:border-default">
                                             <button
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, type: 'RECEIVED' })}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'RECEIVED' ? 'bg-success text-white shadow-lg shadow-success/20' : 'text-neutral-400'}`}
+                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'RECEIVED' ? 'bg-success text-main shadow-lg shadow-success/20' : 'text-neutral-400'}`}
                                             >
                                                 Received
                                             </button>
@@ -520,7 +521,7 @@ const Cheques: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <button type="submit" className="w-full py-5 mt-6 bg-neutral-950 text-white rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700">
+                                <button type="submit" className="w-full py-5 mt-6 bg-neutral-950 text-main rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-[var(--erp-bg)] transition-all flex items-center justify-center gap-4 border border-default">
                                     <ShieldCheck className="w-5 h-5 text-primary" />
                                     Authorize Instrument Deployment
                                 </button>
@@ -532,13 +533,13 @@ const Cheques: React.FC = () => {
 
             {showDetails && selectedCheque && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-lg rounded-[3.5rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                        <div className="p-10 border-b border-neutral-50 dark:border-neutral-700 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/10">
+                    <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-lg rounded-[3.5rem] shadow-2xl border border-default dark:border-default overflow-hidden">
+                        <div className="p-10 border-b border-neutral-50 dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/10">
                             <div>
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">{selectedCheque.number}</h3>
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] italic">Authority Node Audit</p>
                             </div>
-                            <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-neutral-400 hover:text-error transition shadow-sm">
+                            <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-neutral-400 hover:text-error transition shadow-sm">
                                 <X size={20} />
                             </button>
                         </div>
@@ -553,11 +554,11 @@ const Cheques: React.FC = () => {
                             <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest italic mb-10">Commitment to {selectedCheque.payee}</p>
 
                             <div className="grid grid-cols-2 gap-4 mb-12">
-                                <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-800 text-left">
+                                <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-[2rem] border border-default dark:border-default text-left">
                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Status Protocol</p>
-                                    <p className="text-xs font-black italic text-neutral-900 dark:text-white uppercase">{selectedCheque.status}</p>
+                                    <p className="text-xs font-black italic text-neutral-900 dark:text-main uppercase">{selectedCheque.status}</p>
                                 </div>
-                                <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-800 text-left">
+                                <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-[2rem] border border-default dark:border-default text-left">
                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Entity Direction</p>
                                     <p className={`text-xs font-black italic uppercase ${selectedCheque.type === 'RECEIVED' ? 'text-success' : 'text-primary'}`}>{selectedCheque.type}</p>
                                 </div>
@@ -567,13 +568,13 @@ const Cheques: React.FC = () => {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'CLEARED')}
-                                        className="flex-1 py-5 bg-success text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-success/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                                        className="flex-1 py-5 bg-success text-main rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-success/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
                                     >
                                         <CheckCircle2 className="w-5 h-5 fill-current" /> Commit to Vault
                                     </button>
                                     <button
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'BOUNCED')}
-                                        className="flex-1 py-5 bg-error text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-error/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                                        className="flex-1 py-5 bg-error text-main rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-error/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
                                     >
                                         <XCircle className="w-5 h-5 fill-current" /> Log Rejection
                                     </button>
@@ -586,13 +587,13 @@ const Cheques: React.FC = () => {
 
             {showBulkPaymentModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-4xl rounded-[3.5rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden flex flex-col max-h-[90vh]">
-                        <div className="p-10 border-b border-neutral-50 dark:border-neutral-700 flex items-center justify-between">
+                    <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-4xl rounded-[3.5rem] shadow-2xl border border-default dark:border-default overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="p-10 border-b border-neutral-50 dark:border-default flex items-center justify-between">
                             <div>
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Bulk Payment Stream</h3>
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] italic">Dynamic Balance Validation Protocol</p>
                             </div>
-                            <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-neutral-400 hover:text-error transition">
+                            <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-neutral-400 hover:text-error transition">
                                 <X size={20} />
                             </button>
                         </div>
@@ -605,20 +606,20 @@ const Cheques: React.FC = () => {
                                         <button
                                             key={acc._id}
                                             onClick={() => setBulkPayAccountId(acc._id)}
-                                            className={`p-6 rounded-[2rem] border-2 transition-all text-left ${bulkPayAccountId === acc._id ? 'border-primary bg-primary/5 ring-8 ring-primary/5' : 'border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 hover:border-neutral-200'}`}
+                                            className={`p-6 rounded-[2rem] border-2 transition-all text-left ${bulkPayAccountId === acc._id ? 'border-primary bg-primary/5 ring-8 ring-primary/5' : 'border-default dark:border-default bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] hover:border-default'}`}
                                         >
                                             <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">{acc.bankName}</p>
-                                            <p className="text-sm font-black italic text-neutral-900 dark:text-white mb-2">{acc.accountNumber}</p>
+                                            <p className="text-sm font-black italic text-neutral-900 dark:text-main mb-2">{acc.accountNumber}</p>
                                             <p className="text-xs font-black text-primary italic">₹{formatCurrency(acc.currentBalance)}</p>
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+                            <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-[2.5rem] border border-default dark:border-default overflow-hidden">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-neutral-100/50 dark:bg-neutral-800/50">
+                                        <tr className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">
                                             <th className="px-6 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-widest">Select</th>
                                             <th className="px-6 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-widest">Supplier/Ref</th>
                                             <th className="px-6 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-widest">Pending</th>
@@ -628,7 +629,7 @@ const Cheques: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {selectedInvoices.map((inv, idx) => (
-                                            <tr key={inv.id} className={`group hover:bg-neutral-100/20 transition-colors ${inv.selected ? 'bg-primary/5' : ''}`}>
+                                            <tr key={inv.id} className={`group hover:bg-[var(--erp-bg-sunken)]/20 transition-colors ${inv.selected ? 'bg-primary/5' : ''}`}>
                                                 <td className="px-6 py-4">
                                                     <input
                                                         type="checkbox"
@@ -638,7 +639,7 @@ const Cheques: React.FC = () => {
                                                             updated[idx].selected = e.target.checked;
                                                             setSelectedInvoices(updated);
                                                         }}
-                                                        className="w-5 h-5 rounded-lg border-2 border-neutral-200 text-primary focus:ring-primary/20 transition-all cursor-pointer"
+                                                        className="w-5 h-5 rounded-lg border-2 border-default text-primary focus:ring-primary/20 transition-all cursor-pointer"
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -659,7 +660,7 @@ const Cheques: React.FC = () => {
                                                         }}
                                                         disabled={!inv.selected}
                                                         placeholder="0.00"
-                                                        className="w-32 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-xl text-xs font-black italic outline-none focus:ring-4 focus:ring-primary/10 disabled:opacity-30 transition-all font-mono"
+                                                        className="w-32 px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs font-black italic outline-none focus:ring-4 focus:ring-primary/10 disabled:opacity-30 transition-all font-mono"
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
@@ -682,10 +683,10 @@ const Cheques: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="p-10 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
+                        <div className="p-10 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t border-default dark:border-default flex items-center justify-between">
                             <div className="text-left">
                                 <p className="text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Payload Magnitude</p>
-                                <p className="text-2xl font-black italic text-neutral-900 dark:text-white">
+                                <p className="text-2xl font-black italic text-neutral-900 dark:text-main">
                                     ₹{formatCurrency(selectedInvoices.filter(i => i.selected).reduce((acc, i) => acc + (i.payAmount || 0), 0))}
                                 </p>
                             </div>
@@ -693,7 +694,7 @@ const Cheques: React.FC = () => {
                                 <button
                                     onClick={handleValidateBulk}
                                     disabled={isValidating || !bulkPayAccountId || selectedInvoices.filter(i => i.selected).length === 0}
-                                    className="px-8 py-4 bg-white dark:bg-neutral-800 border-2 border-primary text-primary rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all disabled:opacity-50 flex items-center gap-2"
+                                    className="px-8 py-4 bg-white dark:bg-[var(--erp-card)] border-2 border-primary text-primary rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-main transition-all disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {isValidating ? 'Processing Logic...' : 'Run Balance Check'}
                                 </button>
@@ -727,6 +728,8 @@ const Cheques: React.FC = () => {
             {showClearingParams && (
                 <ClearingParameters onClose={() => setShowClearingParams(false)} />
             )}
+                  </div>
+
         </Layout>
     );
 };

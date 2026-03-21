@@ -66,12 +66,12 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-center text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
+                <h2 className="text-xl font-bold text-center text-main dark:text-[rgb(var(--color-text))] mb-2">
                     Device Already Logged In
                 </h2>
 
                 {/* Message */}
-                <p className="text-center text-gray-600 dark:text-[rgb(var(--color-text-secondary))] mb-6">
+                <p className="text-center text-secondary dark:text-[rgb(var(--color-text-secondary))] mb-6">
                     This account is currently active on another device.
                 </p>
 
@@ -120,7 +120,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                     <button
                         onClick={handleCancel}
                         disabled={isLoading || isProcessing}
-                        className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gray-200 dark:bg-gray-700 text-main dark:text-gray-200 py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancel
                     </button>

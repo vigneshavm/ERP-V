@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 
 import MetricCard from '@/shared/ui/Feedback/MetricCard';
-import { Layout } from '@/shared/ui/Layout/Layout';
+import Layout from '@/shared/ui/Layout/Layout';
 
 // --- Types ---
 
@@ -147,6 +147,7 @@ const ShiftManagementIntelligence: React.FC = () => {
 
     return (
         <Layout>
+            <div className="bg-app">
             <div className="space-y-6 animate-fade-in pb-16">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -161,7 +162,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         <p className="text-neutral-500 text-sm mt-1 font-medium">Cash accountability &amp; audit trails • {tenant_id}</p>
                     </div>
                     <div className="flex gap-3">
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition-all active:scale-95 text-neutral-600 dark:text-neutral-300">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition-all active:scale-95 text-neutral-600 dark:text-neutral-300">
                             <Download className="w-4 h-4" /> Export Report
                         </button>
                         <button className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95">
@@ -196,7 +197,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         color="rose"
                         trend={summary.critical_shortage > 0 ? "down" : "neutral"}
                     />
-                    <div className="bg-neutral-900 text-white p-6 rounded-[2rem] shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-neutral-800 flex flex-col justify-between">
+                    <div className="bg-[var(--erp-bg)] text-main p-6 rounded-[2rem] shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-default flex flex-col justify-between">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700 w-24 h-24" />
                         <div>
                             <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 italic">Agent Strategy</p>
@@ -204,7 +205,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         </div>
                         <div className="mt-4 flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            <p className="text-[9px] text-white/50 font-black uppercase tracking-widest">Behavioral Sync Active</p>
+                            <p className="text-[9px] text-muted font-black uppercase tracking-widest">Behavioral Sync Active</p>
                         </div>
                     </div>
                 </div>
@@ -220,19 +221,19 @@ const ShiftManagementIntelligence: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search Shift ID, Cashier or Branch..."
-                                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
-                            <div className="flex bg-white dark:bg-neutral-800 p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div className="flex bg-white dark:bg-[var(--erp-card)] p-1.5 rounded-2xl border border-default dark:border-default shadow-sm">
                                 {(['ALL', 'OPEN', 'CLOSED'] as const).map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setStatusFilter(status)}
                                         className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all ${statusFilter === status
-                                            ? 'bg-neutral-900 text-white shadow-md'
-                                            : 'text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                            ? 'bg-[var(--erp-bg)] text-main shadow-md'
+                                            : 'text-neutral-500 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700'
                                             }`}
                                     >
                                         {status}
@@ -243,7 +244,7 @@ const ShiftManagementIntelligence: React.FC = () => {
 
                         <div className="space-y-4">
                             {filteredShifts.map(shift => (
-                                <div key={shift.shift_id} className={`bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] p-6 shadow-sm group hover:border-blue-500/30 transition-all ${shift.status === 'OPEN' ? 'border-l-4 border-l-blue-500' : ''
+                                <div key={shift.shift_id} className={`bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-[2rem] p-6 shadow-sm group hover:border-blue-500/30 transition-all ${shift.status === 'OPEN' ? 'border-l-4 border-l-blue-500' : ''
                                     }`}>
                                     <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                                         <div className="flex-1 space-y-6">
@@ -262,7 +263,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                 <div className="flex flex-col items-end gap-1">
                                                     <span className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.15em] border ${shift.status === 'OPEN'
                                                         ? 'bg-blue-50 border-blue-100 text-blue-600 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400'
-                                                        : 'bg-neutral-50 border-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:border-neutral-700'
+                                                        : 'bg-[var(--erp-bg-sunken)] border-default text-neutral-500 dark:bg-[var(--erp-card)] dark:border-default'
                                                         }`}>
                                                         {shift.status}
                                                     </span>
@@ -275,15 +276,15 @@ const ShiftManagementIntelligence: React.FC = () => {
                                             </div>
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                                <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                                                <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl border border-default dark:border-default">
                                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Cashier</p>
                                                     <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300 flex items-center gap-1.5"><UserCircle className="w-3.5 h-3.5" /> {shift.cashier}</p>
                                                 </div>
-                                                <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                                                <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl border border-default dark:border-default">
                                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Opening</p>
                                                     <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300 tabular-nums">₹{shift.expected_cash.toLocaleString()}</p>
                                                 </div>
-                                                <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                                                <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl border border-default dark:border-default">
                                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Voids / Disc</p>
                                                     <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                                                         <span className={shift.void_count > 10 ? 'text-rose-500' : ''}>{shift.void_count}</span>
@@ -291,7 +292,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                         <span>₹{shift.discount_total}</span>
                                                     </p>
                                                 </div>
-                                                <div className={`p-3 rounded-xl border ${shift.difference < 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-neutral-50 dark:bg-neutral-900/50 border-neutral-100 dark:border-neutral-800'}`}>
+                                                <div className={`p-3 rounded-xl border ${shift.difference < 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-default dark:border-default'}`}>
                                                     <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${shift.difference < 0 ? 'text-rose-500' : 'text-neutral-400'}`}>Declared</p>
                                                     <p className={`text-sm font-black tabular-nums ${shift.difference < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                         {shift.status === 'OPEN' ? '--' : `₹${shift.declared_cash.toLocaleString()}`}
@@ -328,7 +329,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                         </div>
 
                         {/* Performance Trends */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2rem] border border-default dark:border-default p-6 shadow-sm">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4">Hygiene Score</p>
                             <div className="space-y-5">
                                 {[
@@ -344,7 +345,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                 {stat.trend === 'up' ? <TrendingUp className="w-3 h-3 text-emerald-500" /> : <TrendingDown className="w-3 h-3 text-rose-500" />}
                                             </div>
                                         </div>
-                                        <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
+                                        <div className="w-full h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full rounded-full transition-all duration-1000 ${stat.score > 90 ? 'bg-emerald-500' : stat.score > 85 ? 'bg-blue-500' : 'bg-amber-500'}`}
                                                 style={{ width: `${stat.score}%` }}
@@ -356,8 +357,8 @@ const ShiftManagementIntelligence: React.FC = () => {
                         </div>
 
                         {/* Operational Guard Tip */}
-                        <div className="p-6 bg-neutral-100 dark:bg-neutral-800/50 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 flex gap-4">
-                            <div className="p-2.5 bg-white dark:bg-neutral-800 text-neutral-400 rounded-xl shrink-0 h-fit border border-neutral-100 dark:border-neutral-700 shadow-sm">
+                        <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-[2rem] border border-default dark:border-default flex gap-4">
+                            <div className="p-2.5 bg-white dark:bg-[var(--erp-card)] text-neutral-400 rounded-xl shrink-0 h-fit border border-default dark:border-default shadow-sm">
                                 <ShieldCheck className="w-5 h-5" />
                             </div>
                             <p className="text-[10px] text-neutral-500 leading-relaxed font-bold uppercase tracking-wide">
@@ -367,6 +368,8 @@ const ShiftManagementIntelligence: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

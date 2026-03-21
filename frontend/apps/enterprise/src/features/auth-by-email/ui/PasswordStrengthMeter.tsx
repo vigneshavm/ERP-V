@@ -23,7 +23,7 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({ password,
     const score = Object.values(validation).filter(Boolean).length;
 
     const strengthConfig = useMemo(() => {
-        if (score === 0) return { label: 'Enter Password', color: 'bg-white/5', textColor: 'text-white/20' };
+        if (score === 0) return { label: 'Enter Password', color: 'bg-[var(--erp-bg-sunken)]', textColor: 'text-white/20' };
         if (score <= 2) return { label: 'Weak', color: 'bg-red-500', textColor: 'text-red-400' };
         if (score <= 3) return { label: 'Fair', color: 'bg-amber-500', textColor: 'text-amber-400' };
         if (score <= 4) return { label: 'Good', color: 'bg-sky-500', textColor: 'text-sky-400' };

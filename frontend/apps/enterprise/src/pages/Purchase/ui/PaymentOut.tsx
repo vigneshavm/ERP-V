@@ -146,17 +146,18 @@ const PaymentOut: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500 pb-20">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
-                            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
+                            className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-full transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div>
-                            <h1 className="text-2xl font-black tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                            <h1 className="text-2xl font-black tracking-tight text-neutral-900 dark:text-main flex items-center gap-2">
                                 <CreditCard className="w-6 h-6 text-brand-600" />
                                 Record Supplier Payment
                             </h1>
@@ -177,7 +178,7 @@ const PaymentOut: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left: Basic Info */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default p-6 shadow-sm">
                             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                                 <Building className="w-5 h-5 text-neutral-400" />
                                 Payment Header
@@ -188,7 +189,7 @@ const PaymentOut: React.FC = () => {
                                     <select
                                         value={paymentData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
                                         <option value="">Select Supplier</option>
                                         {vendors.map(v => (
@@ -202,7 +203,7 @@ const PaymentOut: React.FC = () => {
                                         type="date"
                                         value={paymentData.payment_date}
                                         onChange={(e) => setPaymentData(prev => ({ ...prev, payment_date: e.target.value }))}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
@@ -210,7 +211,7 @@ const PaymentOut: React.FC = () => {
                                     <select
                                         value={paymentData.method}
                                         onChange={(e) => setPaymentData(prev => ({ ...prev, method: e.target.value as PaymentMethod }))}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
                                         <option value="bank_transfer">Bank Transfer</option>
                                         <option value="cheque">Cheque</option>
@@ -227,7 +228,7 @@ const PaymentOut: React.FC = () => {
                                             value={paymentData.reference_id || ''}
                                             onChange={(e) => setPaymentData(prev => ({ ...prev, reference_id: e.target.value }))}
                                             placeholder="Enter Transaction Ref"
-                                            className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                            className="w-full px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                         />
                                         <Tag className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
                                     </div>
@@ -236,8 +237,8 @@ const PaymentOut: React.FC = () => {
                         </div>
 
                         {/* Bill Allocation Section */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
-                            <div className="p-4 border-b dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
+                            <div className="p-4 border-b dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
                                 <h3 className="font-bold flex items-center gap-2">
                                     <Calculator className="w-4 h-4 text-brand-600" />
                                     Bill Allocation
@@ -248,7 +249,7 @@ const PaymentOut: React.FC = () => {
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b dark:border-default">
                                         <tr>
                                             <th className="px-6 py-3 w-10"></th>
                                             <th className="px-6 py-3 font-bold text-neutral-500 uppercase text-[10px]">Bill Details</th>
@@ -274,7 +275,7 @@ const PaymentOut: React.FC = () => {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-col">
-                                                            <span className="font-bold text-neutral-900 dark:text-white">{bill.bill_number}</span>
+                                                            <span className="font-bold text-neutral-900 dark:text-main">{bill.bill_number}</span>
                                                             <span className="text-[10px] text-neutral-500">{bill.bill_date}</span>
                                                         </div>
                                                     </td>
@@ -320,7 +321,7 @@ const PaymentOut: React.FC = () => {
 
                     {/* Right: Summary */}
                     <div className="space-y-6">
-                        <div className="bg-brand-600 rounded-2xl p-6 text-white shadow-xl shadow-brand-600/20 sticky top-6">
+                        <div className="bg-brand-600 rounded-2xl p-6 text-main shadow-xl shadow-brand-600/20 sticky top-6">
                             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                                 <DollarSign className="w-5 h-5" />
                                 Settlement Summary
@@ -347,12 +348,12 @@ const PaymentOut: React.FC = () => {
                                 <div className="pt-6 space-y-3">
                                     <button
                                         onClick={handleSave}
-                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-colors"
+                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--erp-bg-sunken)] transition-colors"
                                     >
                                         <CheckCircle2 className="w-5 h-5" />
                                         Complete Payment
                                     </button>
-                                    <button className="w-full py-3 bg-brand-700/50 hover:bg-brand-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
+                                    <button className="w-full py-3 bg-brand-700/50 hover:bg-brand-700 text-main rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
                                         <Send className="w-4 h-4" />
                                         Save & Email Advice
                                     </button>
@@ -361,7 +362,7 @@ const PaymentOut: React.FC = () => {
                         </div>
 
                         {/* Extra Notes */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default p-6 shadow-sm">
                             <h3 className="font-bold mb-4 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-neutral-400" />
                                 Private Notes
@@ -370,12 +371,14 @@ const PaymentOut: React.FC = () => {
                                 value={paymentData.notes || ''}
                                 onChange={(e) => setPaymentData(prev => ({ ...prev, notes: e.target.value }))}
                                 placeholder="Add internal notes about this payment..."
-                                className="w-full h-32 px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
+                                className="w-full h-32 px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
                             />
                         </div>
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

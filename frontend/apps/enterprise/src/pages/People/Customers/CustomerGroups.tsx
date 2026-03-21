@@ -72,11 +72,11 @@ const CustomerGroups: React.FC = () => {
     const assignedCustomers = groupsWithCounts.reduce((acc, g) => acc + g.memberCount, 0);
 
     return (
-        <div className="space-y-6 animate-fade-in">
+        <div className="page-shell">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-main flex items-center gap-2">
                         <Tag className="w-6 h-6 text-primary" />
                         Customer Groups
                     </h2>
@@ -92,31 +92,31 @@ const CustomerGroups: React.FC = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                     <p className="text-xs font-medium text-neutral-500 uppercase">Total Groups</p>
-                    <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{groups.length}</p>
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-main mt-1">{groups.length}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                     <p className="text-xs font-medium text-neutral-500 uppercase">Total Customers</p>
                     <p className="text-2xl font-bold text-primary mt-1">{totalCustomers}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                     <p className="text-xs font-medium text-neutral-500 uppercase">Assigned</p>
                     <p className="text-2xl font-bold text-success mt-1">{assignedCustomers}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                     <p className="text-xs font-medium text-neutral-500 uppercase">Unassigned</p>
                     <p className="text-2xl font-bold text-warning mt-1">{totalCustomers - assignedCustomers}</p>
                 </div>
             </div>
 
             {/* Search */}
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl border border-default dark:border-default">
                 <div className="relative max-w-md">
                     <input
                         type="text"
                         placeholder="Search groups..."
-                        className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                        className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
@@ -127,27 +127,27 @@ const CustomerGroups: React.FC = () => {
             {/* Groups List */}
             <div className="space-y-4">
                 {filteredGroups.length === 0 ? (
-                    <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-12 rounded-xl border border-default dark:border-default text-center">
                         <Tag className="w-12 h-12 mx-auto mb-4 text-neutral-300" />
                         <p className="text-neutral-500">No customer groups found</p>
                     </div>
                 ) : (
                     filteredGroups.map(group => (
-                        <div key={group.id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                        <div key={group.id} className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default overflow-hidden">
                             {/* Group Header */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
+                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50"
                                 onClick={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
                             >
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
+                                        className="w-12 h-12 rounded-xl flex items-center justify-center text-main"
                                         style={{ backgroundColor: group.color }}
                                     >
                                         {getGroupIcon(group.icon)}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-neutral-900 dark:text-white">{group.name}</h3>
+                                        <h3 className="font-bold text-neutral-900 dark:text-main">{group.name}</h3>
                                         <p className="text-sm text-neutral-500">{group.description}</p>
                                     </div>
                                 </div>
@@ -174,25 +174,25 @@ const CustomerGroups: React.FC = () => {
 
                             {/* Expanded Details */}
                             {expandedGroup === group.id && (
-                                <div className="border-t border-neutral-100 dark:border-neutral-700 p-4 bg-neutral-50 dark:bg-neutral-900">
+                                <div className="border-t border-default dark:border-default p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]">
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
+                                        <div className="bg-white dark:bg-[var(--erp-card)] p-3 rounded-lg">
                                             <p className="text-xs text-neutral-500 flex items-center gap-1">
                                                 <Users className="w-3 h-3" /> Members
                                             </p>
                                             <p className="text-lg font-bold text-primary">{group.memberCount}</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
+                                        <div className="bg-white dark:bg-[var(--erp-card)] p-3 rounded-lg">
                                             <p className="text-xs text-neutral-500 flex items-center gap-1">
                                                 <Percent className="w-3 h-3" /> Default Discount
                                             </p>
                                             <p className="text-lg font-bold text-success">{group.discountPercent}%</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
+                                        <div className="bg-white dark:bg-[var(--erp-card)] p-3 rounded-lg">
                                             <p className="text-xs text-neutral-500">Credit Limit</p>
                                             <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">₹{group.creditLimit.toLocaleString()}</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
+                                        <div className="bg-white dark:bg-[var(--erp-card)] p-3 rounded-lg">
                                             <p className="text-xs text-neutral-500">Payment Terms</p>
                                             <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">{group.paymentTerms} days</p>
                                         </div>
@@ -201,7 +201,7 @@ const CustomerGroups: React.FC = () => {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => setEditingGroup(group)}
-                                            className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center gap-2"
+                                            className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2"
                                         >
                                             <Edit className="w-4 h-4" /> Edit Group
                                         </button>
@@ -221,7 +221,7 @@ const CustomerGroups: React.FC = () => {
 
             {/* Quick Tips */}
             <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-xl border border-primary/20">
-                <h4 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <h4 className="font-bold text-neutral-900 dark:text-main flex items-center gap-2">
                     <Star className="w-4 h-4 text-primary" /> Tips for Customer Groups
                 </h4>
                 <ul className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 space-y-1">

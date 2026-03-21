@@ -59,6 +59,7 @@ const AddItem = () => {
 
   return (
     <Layout>
+      <div className="page-shell">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -342,6 +343,8 @@ const AddItem = () => {
           </form>
         </div>
       </div>
+              </div>
+
     </Layout>
   );
 };

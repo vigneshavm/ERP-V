@@ -32,19 +32,19 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-                <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[var(--erp-bg)]/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-[var(--erp-bg)] w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-default overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+                <div className="p-8 border-b border-slate-50 dark:border-default flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
                             <Package className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Lot Intelligence</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Aggregated Cost Distribution</p>
+                            <h2 className="text-xl font-black text-main dark:text-main uppercase tracking-tight">Lot Intelligence</h2>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Aggregated Cost Distribution</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 transition-all">
+                    <button onClick={onClose} className="p-3 rounded-2xl hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] text-muted transition-all">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -52,29 +52,29 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
                     <div className="grid grid-cols-3 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Lot Serial #</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Lot Serial #</label>
                             <input
                                 type="text"
                                 placeholder="LOT-2024-X"
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-sm"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-sm"
                                 value={lotData.lotNumber}
                                 onChange={(e) => setLotData({ ...lotData, lotNumber: e.target.value })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Aggregated Cost</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Aggregated Cost</label>
                             <input
                                 type="number"
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-sm"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-sm"
                                 value={lotData.totalCost}
                                 onChange={(e) => setLotData({ ...lotData, totalCost: parseFloat(e.target.value) || 0 })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Total Unit Count</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Total Unit Count</label>
                             <input
                                 type="number"
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-sm"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-sm"
                                 value={lotData.totalQty}
                                 onChange={(e) => setLotData({ ...lotData, totalQty: parseFloat(e.target.value) || 0 })}
                             />
@@ -83,7 +83,7 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
 
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Package Composition</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest">Package Composition</label>
                             <button
                                 onClick={handleAddSubItem}
                                 className="p-1 px-3 rounded-xl bg-indigo-500/10 text-indigo-500 text-[9px] font-black uppercase tracking-tighter"
@@ -98,7 +98,7 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
                                     <input
                                         type="text"
                                         placeholder="Sub-item name..."
-                                        className="flex-[2] px-5 py-3 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-xs"
+                                        className="flex-[2] px-5 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-xs"
                                         value={item.product_name}
                                         onChange={(e) => {
                                             const items = [...lotData.items];
@@ -109,7 +109,7 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
                                     <input
                                         type="number"
                                         placeholder="Qty"
-                                        className="flex-1 px-5 py-3 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-xs text-center"
+                                        className="flex-1 px-5 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-xs text-center"
                                         value={item.quantity}
                                         onChange={(e) => {
                                             const items = [...lotData.items];
@@ -129,10 +129,10 @@ const LotDistributionModal: React.FC<LotDistributionModalProps> = ({ isOpen, onC
                     </div>
                 </div>
 
-                <div className="p-8 border-t border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 flex gap-4">
+                <div className="p-8 border-t border-slate-50 dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 flex gap-4">
                     <button
                         onClick={onClose}
-                        className="flex-1 px-8 py-4 bg-white dark:bg-slate-900 text-slate-400 rounded-2xl font-black text-sm border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 transition-all"
+                        className="flex-1 px-8 py-4 bg-white dark:bg-[var(--erp-bg)] text-muted rounded-2xl font-black text-sm border-2 border-slate-100 dark:border-default hover:bg-[var(--erp-bg-sunken)] transition-all"
                     >
                         Discard Lot
                     </button>

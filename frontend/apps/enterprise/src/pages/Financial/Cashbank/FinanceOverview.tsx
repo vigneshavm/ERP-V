@@ -130,6 +130,7 @@ const FinanceOverviewPage: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
 
                 {/* Header Section */}
@@ -144,7 +145,7 @@ const FinanceOverviewPage: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                        <button className="px-5 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition active:scale-95 uppercase tracking-widest">
                             <Download className="w-4 h-4" /> Export Ledger
                         </button>
                         <button
@@ -158,8 +159,8 @@ const FinanceOverviewPage: React.FC = () => {
 
                 {/* KPI Pulse Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
-                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-neutral-50 dark:bg-neutral-900 rounded-full opacity-50 group-hover:scale-110 transition duration-700" />
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
+                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full opacity-50 group-hover:scale-110 transition duration-700" />
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Net Flow</p>
                         <h3 className={`text-3xl font-black italic tracking-tighter ${netProfit >= 0 ? 'text-primary' : 'text-error'}`}>
                             ₹{formatCurrency(netProfit)}
@@ -172,9 +173,9 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Revenue</p>
-                        <h3 className="text-3xl font-black text-neutral-900 dark:text-white italic tracking-tighter">
+                        <h3 className="text-3xl font-black text-neutral-900 dark:text-main italic tracking-tighter">
                             ₹{formatCurrency(totalSales)}
                         </h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -183,7 +184,7 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Operating Burn</p>
                         <h3 className="text-3xl font-black text-error italic tracking-tighter">
                             ₹{formatCurrency(totalExpenses + sectorLaborCost)}
@@ -194,7 +195,7 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-main p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-20 group-hover:scale-125 transition duration-1000" />
                         <div className="relative z-10">
                             <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-2">
@@ -213,8 +214,8 @@ const FinanceOverviewPage: React.FC = () => {
 
                     {/* View Controls & Main View */}
                     <div className="lg:col-span-12 space-y-4">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-2xl border border-neutral-200 dark:border-neutral-700">
-                            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl w-full md:w-auto">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[var(--erp-card)] p-2 rounded-2xl border border-default dark:border-default">
+                            <div className="flex p-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl w-full md:w-auto">
                                 {[
                                     { id: 'OVERVIEW', label: 'P&L Pulse', icon: PieChart },
                                     { id: 'EXPENSES', label: 'Burn Manager', icon: DollarSign },
@@ -224,8 +225,8 @@ const FinanceOverviewPage: React.FC = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id as any)}
                                         className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id
-                                            ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm'
-                                            : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                                            ? 'bg-white dark:bg-[var(--erp-card)] text-primary shadow-sm'
+                                            : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-main'
                                             }`}
                                     >
                                         <tab.icon className="w-4 h-4" />
@@ -240,17 +241,17 @@ const FinanceOverviewPage: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search Ledger..."
-                                        className="w-full pl-9 pr-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-medium"
+                                        className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-medium"
                                     />
                                 </div>
-                                <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500 hover:text-primary transition shadow-sm">
+                                <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-neutral-500 hover:text-primary transition shadow-sm">
                                     <Filter className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Dynamics View Container */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default overflow-hidden shadow-sm">
                             <div className="p-8">
                                 {activeTab === 'OVERVIEW' && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -285,7 +286,7 @@ const FinanceOverviewPage: React.FC = () => {
                             </div>
 
                             {/* Footer Pulse */}
-                            <div className="px-8 py-4 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+                            <div className="px-8 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t border-default dark:border-default flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
                                     <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Oracle Sync Active</span>
@@ -299,7 +300,7 @@ const FinanceOverviewPage: React.FC = () => {
                 </div>
 
                 {/* Premium Intelligence Advisory */}
-                <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                <div className="bg-neutral-950 text-main p-8 rounded-[3rem] border border-default shadow-2xl relative overflow-hidden group">
                     <TrendingUp className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-6 transition duration-1000" />
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
                         <div className="flex-1">
@@ -308,7 +309,7 @@ const FinanceOverviewPage: React.FC = () => {
                             </div>
                             <h4 className="text-3xl font-black mb-4 italic tracking-tighter">Liquid Capital <span className="text-primary underline underline-offset-8">Authority.</span></h4>
                             <p className="text-sm text-neutral-400 font-bold leading-relaxed italic max-w-2xl">
-                                Your current operating buffer is <span className="text-white">{(netProfit / 30000).toFixed(1)} months</span>.
+                                Your current operating buffer is <span className="text-main">{(netProfit / 30000).toFixed(1)} months</span>.
                                 Wings AI suggests redistributing surplus cash into short-term inventory assets for the upcoming pulse season.
                                 Avoid stagnant bank balances to maximize return on capital.
                                 </p>
@@ -337,6 +338,8 @@ const FinanceOverviewPage: React.FC = () => {
                     setNewCheque={setNewCheque as any}
                 />
             </div>
+                  </div>
+
         </Layout>
     );
 };

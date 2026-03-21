@@ -40,7 +40,7 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
     };
 
     return (
-        <div className={`glass-panel rounded-2xl overflow-hidden border transition-all duration-300 ${isExpanded ? 'border-primary/30 ring-1 ring-primary/20' : 'border-white/10 hover:border-white/20'}`}>
+        <div className={`glass-panel rounded-2xl overflow-hidden border transition-all duration-300 ${isExpanded ? 'border-primary/30 ring-1 ring-primary/20' : 'border-default hover:border-white/20'}`}>
             <div className="p-4 lg:p-5">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -83,11 +83,11 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
                 </div>
 
                 {isExpanded && (
-                    <div className="mt-6 pt-6 border-t border-white/5 animate-in slide-in-from-top-2">
+                    <div className="mt-6 pt-6 border-t border-default animate-in slide-in-from-top-2">
                         <div className="grid lg:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-secondary mb-2">Original Message</label>
-                                <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-sm italic text-secondary leading-relaxed">
+                                <div className="p-4 rounded-xl bg-[var(--erp-bg-sunken)] border border-default text-sm italic text-secondary leading-relaxed">
                                     "{rawText}"
                                 </div>
                             </div>
@@ -128,7 +128,7 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
                                         <div className="flex gap-3 pt-2">
                                             <button
                                                 onClick={() => onIgnore(_id)}
-                                                className="flex-1 px-4 py-3 rounded-xl border border-white/10 text-secondary hover:bg-error/10 hover:text-error hover:border-error/20 font-bold text-sm transition-all flex items-center justify-center gap-2"
+                                                className="flex-1 px-4 py-3 rounded-xl border border-default text-secondary hover:bg-error/10 hover:text-error hover:border-error/20 font-bold text-sm transition-all flex items-center justify-center gap-2"
                                             >
                                                 <Ban className="w-4 h-4" />
                                                 Ignore

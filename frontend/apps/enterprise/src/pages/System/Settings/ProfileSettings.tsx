@@ -130,11 +130,14 @@ const ProfileSettings: React.FC = () => {
     if (!user) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex justify-center items-center h-64">
                     <div className="text-center">
                         <p className="text-secondary">Loading profile...</p>
                     </div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }

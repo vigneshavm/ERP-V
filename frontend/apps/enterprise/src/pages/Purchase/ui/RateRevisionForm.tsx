@@ -100,6 +100,7 @@ const RateRevisionForm: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="New Rate Revision"
                 description="Request a retrospective cost increase approval"
@@ -107,7 +108,7 @@ const RateRevisionForm: React.FC = () => {
             />
 
             <div className="max-w-4xl mx-auto">
-                <form onSubmit={handleSubmit} className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default shadow-sm p-6 space-y-6">
 
                     {/* Supplier & Item Selection */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -116,7 +117,7 @@ const RateRevisionForm: React.FC = () => {
                             <select
                                 value={supplierId}
                                 onChange={e => setSupplierId(e.target.value)}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
+                                className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-neutral-300 dark:border-default rounded-lg"
                             >
                                 <option value="">-- Select Supplier --</option>
                                 {suppliers.map(s => (
@@ -133,7 +134,7 @@ const RateRevisionForm: React.FC = () => {
                                     setItemId(e.target.value);
                                     setBatchNumber('');
                                 }}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
+                                className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-neutral-300 dark:border-default rounded-lg"
                             >
                                 <option value="">-- Select Item --</option>
                                 {items.map(i => (
@@ -150,7 +151,7 @@ const RateRevisionForm: React.FC = () => {
                             <select
                                 value={batchNumber}
                                 onChange={e => setBatchNumber(e.target.value)}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
+                                className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-neutral-300 dark:border-default rounded-lg"
                             >
                                 <option value="">-- Select Batch to Revise --</option>
                                 {items.find(i => i._id === itemId)?.batches
@@ -186,7 +187,7 @@ const RateRevisionForm: React.FC = () => {
                                         type="number"
                                         value={newRate}
                                         onChange={e => setNewRate(parseFloat(e.target.value) || 0)}
-                                        className="w-full p-2 bg-white dark:bg-neutral-800 border border-indigo-300 rounded font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        className="w-full p-2 bg-white dark:bg-[var(--erp-card)] border border-indigo-300 rounded font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none"
                                     />
                                 </div>
                                 <div>
@@ -210,7 +211,7 @@ const RateRevisionForm: React.FC = () => {
                         <textarea
                             value={reason}
                             onChange={e => setReason(e.target.value)}
-                            className="w-full p-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg h-24"
+                            className="w-full p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-neutral-300 dark:border-default rounded-lg h-24"
                             placeholder="Why is the rate changing retrospectively?"
                         />
                     </div>
@@ -219,13 +220,13 @@ const RateRevisionForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => navigate('/purchase/rate-revisions')}
-                            className="px-6 py-2.5 text-neutral-600 font-bold hover:bg-neutral-100 rounded-lg"
+                            className="px-6 py-2.5 text-neutral-600 font-bold hover:bg-[var(--erp-bg-sunken)] rounded-lg"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none flex items-center gap-2"
+                            className="px-6 py-2.5 bg-indigo-600 text-main font-bold rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none flex items-center gap-2"
                         >
                             <Save size={18} />
                             Submit Request
@@ -234,6 +235,8 @@ const RateRevisionForm: React.FC = () => {
 
                 </form>
             </div>
+                  </div>
+
         </Layout>
     );
 };

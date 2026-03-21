@@ -141,6 +141,7 @@ const PettyCash: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-12">
                 {/* Header Area */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -154,7 +155,7 @@ const PettyCash: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition active:scale-95">
                             <Download className="w-4 h-4" /> Export Audit
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95">
@@ -165,25 +166,25 @@ const PettyCash: React.FC = () => {
 
                 {/* Strategic KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Receipt className="w-16 h-16" />
                         </div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Weekly Ops Spend</p>
-                        <h3 className="text-2xl font-black text-neutral-900 dark:text-white">₹{metrics.totalOperationalSpend.toLocaleString()}</h3>
+                        <h3 className="text-2xl font-black text-neutral-900 dark:text-main">₹{metrics.totalOperationalSpend.toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2">
                             <TrendingDown className="w-4 h-4 text-success" />
                             <span className="text-xs font-bold text-success">-12% from last week</span>
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Active Funds</p>
                         <h3 className="text-2xl font-black">{metrics.activeFunds} <span className="text-xs text-neutral-400 font-bold uppercase">across branches</span></h3>
                         <p className="text-xs text-neutral-500 mt-2 font-medium italic">All custodians active</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Leakage Rate</p>
                         <h3 className="text-2xl font-black text-error">{metrics.violationRate}%</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -192,7 +193,7 @@ const PettyCash: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 italic">Agent Strategy</p>
                         <p className="text-[11px] font-bold text-primary italic leading-tight mt-1">
                             "{metrics.savingsAgentAdvice}"
@@ -202,7 +203,7 @@ const PettyCash: React.FC = () => {
                 </div>
 
                 {/* Main Tabs */}
-                <div className="flex border-b border-neutral-100 dark:border-neutral-800 pb-0.5 mt-8 gap-8">
+                <div className="flex border-b border-default dark:border-default pb-0.5 mt-8 gap-8">
                     <button
                         onClick={() => setViewMode('FUNDS')}
                         className={`pb-3 text-sm font-black transition-all relative ${viewMode === 'FUNDS' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
@@ -222,7 +223,7 @@ const PettyCash: React.FC = () => {
                         className={`pb-3 text-sm font-black transition-all relative ${viewMode === 'AUDIT' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
                     >
                         Compliance & Audit Hub
-                        <span className="ml-2 px-1.5 py-0.5 bg-error text-white text-[8px] rounded uppercase shadow-sm">2 High Risk</span>
+                        <span className="ml-2 px-1.5 py-0.5 bg-error text-main text-[8px] rounded uppercase shadow-sm">2 High Risk</span>
                         {viewMode === 'AUDIT' && <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />}
                     </button>
                 </div>
@@ -239,23 +240,23 @@ const PettyCash: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search Branch or Fund Name..."
-                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm"
+                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
 
                                 {filteredFunds.map(fund => (
-                                    <div key={fund.id} className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm transition-all hover:scale-[1.005] hover:shadow-md ${fund.status === 'LOW_BALANCE' ? 'border-l-4 border-l-amber-500' :
+                                    <div key={fund.id} className={`group bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl p-5 shadow-sm transition-all hover:scale-[1.005] hover:shadow-md ${fund.status === 'LOW_BALANCE' ? 'border-l-4 border-l-amber-500' :
                                         fund.status === 'AUDIT_REQUIRED' ? 'border-l-4 border-l-error' : 'shadow-sm'
                                         }`}>
                                         <div className="flex flex-col sm:flex-row justify-between gap-4">
                                             <div className="flex items-start gap-4">
-                                                <div className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-xl transition group-hover:text-primary">
+                                                <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl transition group-hover:text-primary">
                                                     <Building2 className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-neutral-900 dark:text-white group-hover:text-primary transition-colors">{fund.name}</h4>
+                                                    <h4 className="font-bold text-neutral-900 dark:text-main group-hover:text-primary transition-colors">{fund.name}</h4>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <span className="text-[10px] font-black text-neutral-400 tracking-widest uppercase">{fund.branch}</span>
                                                         <span className="w-1 h-1 bg-neutral-300 rounded-full" />
@@ -265,7 +266,7 @@ const PettyCash: React.FC = () => {
                                             </div>
                                             <div className="text-right">
                                                 <div className="text-neutral-400 text-[10px] font-black uppercase tracking-widest mb-1">Fund Liquidity</div>
-                                                <div className={`text-2xl font-black tabular-nums ${fund.status === 'LOW_BALANCE' ? 'text-amber-600' : 'text-neutral-900 dark:text-white'}`}>
+                                                <div className={`text-2xl font-black tabular-nums ${fund.status === 'LOW_BALANCE' ? 'text-amber-600' : 'text-neutral-900 dark:text-main'}`}>
                                                     ₹{fund.current_balance.toLocaleString()}
                                                 </div>
                                                 <div className="flex items-center justify-end gap-1.5 mt-1">
@@ -278,7 +279,7 @@ const PettyCash: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl group/inner transition hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700">
+                                        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl group/inner transition hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] border border-transparent hover:border-default dark:hover:border-default">
                                             <div>
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-0.5">Burn Rate</p>
                                                 <p className="text-sm font-black italic">₹{fund.burn_rate_daily}/day</p>
@@ -314,11 +315,11 @@ const PettyCash: React.FC = () => {
                                             </div>
                                         )}
 
-                                        <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                                        <div className="mt-4 pt-4 border-t border-default dark:border-default flex items-center justify-between">
                                             <button className="text-[10px] font-black text-neutral-400 hover:text-primary transition-all flex items-center gap-1.5 uppercase tracking-widest group/btn_v">
                                                 <Eye className="w-4 h-4 transition group-hover/btn_v:scale-110" /> View Transactions
                                             </button>
-                                            <button className="p-2 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors active:scale-90">
+                                            <button className="p-2 text-neutral-400 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-lg transition-colors active:scale-90">
                                                 <MoreVertical className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -328,9 +329,9 @@ const PettyCash: React.FC = () => {
                         )}
 
                         {viewMode === 'LEDGER' && (
-                            <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default overflow-hidden shadow-sm">
                                 <table className="w-full text-left text-xs tabular-nums">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-widest">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default text-neutral-400 font-black uppercase tracking-widest">
                                         <tr>
                                             <th className="p-4">Date/Time</th>
                                             <th className="p-4">Description</th>
@@ -342,9 +343,9 @@ const PettyCash: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {recentTransactions.map(tx => (
-                                            <tr key={tx.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors group">
+                                            <tr key={tx.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/30 transition-colors group">
                                                 <td className="p-4">
-                                                    <div className="font-black text-neutral-900 dark:text-white">{tx.date.split(' ')[1]}</div>
+                                                    <div className="font-black text-neutral-900 dark:text-main">{tx.date.split(' ')[1]}</div>
                                                     <div className="text-neutral-400 font-medium">{tx.date.split(' ')[0]}</div>
                                                 </td>
                                                 <td className="p-4">
@@ -352,7 +353,7 @@ const PettyCash: React.FC = () => {
                                                     <div className="text-[9px] text-neutral-400 mt-0.5 font-black uppercase">ID: {tx.id} • {tx.custodian}</div>
                                                 </td>
                                                 <td className="p-4">
-                                                    <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded-full font-black uppercase tracking-tighter text-[10px]">
+                                                    <span className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full font-black uppercase tracking-tighter text-[10px]">
                                                         {tx.category}
                                                     </span>
                                                 </td>
@@ -377,7 +378,7 @@ const PettyCash: React.FC = () => {
                                                     )}
                                                 </td>
                                                 <td className="p-4 text-right">
-                                                    <button className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition group-hover:translate-x-1">
+                                                    <button className="p-1 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded transition group-hover:translate-x-1">
                                                         <ChevronRight className="w-4 h-4 text-neutral-400" />
                                                     </button>
                                                 </td>
@@ -385,14 +386,14 @@ const PettyCash: React.FC = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <button className="w-full py-4 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-800 text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-primary transition hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                <button className="w-full py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t border-default dark:border-default text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-primary transition hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]">
                                     Load Full Petty Cash Ledger History
                                 </button>
                             </div>
                         )}
 
                         {viewMode === 'AUDIT' && (
-                            <div className="bg-neutral-900 text-white rounded-[2.5rem] p-8 border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                            <div className="bg-[var(--erp-bg)] text-main rounded-[2.5rem] p-8 border border-default shadow-2xl relative overflow-hidden group">
                                 <ShieldAlert className="absolute -bottom-10 -right-10 w-48 h-48 text-primary/10 transition group-hover:rotate-12 group-hover:scale-110" />
                                 <div className="relative z-10">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-error/20 border border-error/30 rounded-full text-error text-[10px] font-black uppercase tracking-[0.2em] mb-6 animate-pulse shadow-sm shadow-error/20">
@@ -404,7 +405,7 @@ const PettyCash: React.FC = () => {
 
                                     <div className="space-y-4">
                                         {alerts.map((alert, i) => (
-                                            <div key={i} className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
+                                            <div key={i} className="flex gap-4 p-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
                                                 <div className={`p-3 rounded-xl h-fit shadow-inner ${alert.risk_level === 'HIGH' ? 'bg-error/20 text-error' : 'bg-warning/20 text-warning'
                                                     }`}>
                                                     <AlertCircle className="w-5 h-5 shadow-sm" />
@@ -412,7 +413,7 @@ const PettyCash: React.FC = () => {
                                                 <div className="flex-1">
                                                     <div className="flex items-center justify-between">
                                                         <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{alert.fund_id}</span>
-                                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase shadow-sm ${alert.risk_level === 'HIGH' ? 'bg-error text-white' : 'bg-warning text-neutral-900 font-bold'
+                                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase shadow-sm ${alert.risk_level === 'HIGH' ? 'bg-error text-main' : 'bg-warning text-neutral-900 font-bold'
                                                             }`}>
                                                             {alert.risk_level} Risk
                                                         </span>
@@ -438,13 +439,13 @@ const PettyCash: React.FC = () => {
                     {/* Side Intelligence Panel */}
                     <div className="space-y-4">
                         <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest pl-1">Compliance Health</h4>
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm shadow-black/5 transition hover:shadow-md">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default p-6 shadow-sm shadow-black/5 transition hover:shadow-md">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4">Receipt Compliance</p>
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-black italic">Receipts Attached</span>
                                 <span className="text-xs font-black text-primary italic">82%</span>
                             </div>
-                            <div className="w-full bg-neutral-100 dark:bg-neutral-900 h-2 rounded-full overflow-hidden mb-8 shadow-inner">
+                            <div className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] h-2 rounded-full overflow-hidden mb-8 shadow-inner">
                                 <div className="bg-primary h-full rounded-full transition-all duration-1000 shadow-sm" style={{ width: '82%' }} />
                             </div>
 
@@ -460,7 +461,7 @@ const PettyCash: React.FC = () => {
                                             <span className="font-black uppercase tracking-tighter text-neutral-700 dark:text-neutral-300">{cat.name}</span>
                                             <span className="text-neutral-400 font-bold tabular-nums italic">₹{cat.spend}/₹{cat.limit}</span>
                                         </div>
-                                        <div className="w-full bg-neutral-100 dark:bg-neutral-900 h-1.5 rounded-full overflow-hidden shadow-inner group-hover/cat:h-2 transition-all">
+                                        <div className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] h-1.5 rounded-full overflow-hidden shadow-inner group-hover/cat:h-2 transition-all">
                                             <div className={`${cat.color} h-full rounded-full transition-all duration-700`} style={{ width: `${Math.min((cat.spend / cat.limit) * 100, 100)}%` }} />
                                         </div>
                                     </div>
@@ -476,13 +477,13 @@ const PettyCash: React.FC = () => {
                                     The Agent predicts that Chennai fund will be exhausted in <span className="font-black underline scale-110 inline-block pointer-events-none">4 days</span>.
                                     Set up auto-replenishment to avoid operational delays.
                                 </p>
-                                <button className="w-full py-3 bg-white text-primary font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-neutral-50 transition-all shadow-xl shadow-black/10 active:scale-95">
+                                <button className="w-full py-3 bg-white text-primary font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-[var(--erp-bg-sunken)] transition-all shadow-xl shadow-black/10 active:scale-95">
                                     Enable Autoflow Rebuild
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex items-start gap-3 shadow-inner">
+                        <div className="p-4 rounded-2xl border border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/50 flex items-start gap-3 shadow-inner">
                             <Info className="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5" />
                             <p className="text-[10px] text-neutral-500 font-bold leading-relaxed italic">
                                 Wings-Grade petty cash monitoring ensures every rupee spent operatively is accounted for with cryptographic proof of spend links.
@@ -491,6 +492,8 @@ const PettyCash: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

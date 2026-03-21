@@ -34,7 +34,7 @@ const FormInput: React.FC<FormInputProps> = ({
                 )}
                 <input
                     id={inputId}
-                    className={`w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-[var(--erp-bg)] px-3 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                         icon ? 'pl-10' : ''
                     } ${error ? 'border-red-500 focus:ring-red-500/30' : ''} ${className}`}
                     {...props}

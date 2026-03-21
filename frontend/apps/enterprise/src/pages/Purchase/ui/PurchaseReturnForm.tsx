@@ -185,15 +185,15 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="flex flex-col h-full bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/50">
+            <div className="px-6 py-4 border-b border-default dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/50">
                 <div className="flex items-center gap-4">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors">
+                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-[var(--erp-card)] rounded-full transition-colors">
                         <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
                     </button>
                     <div>
-                        <h2 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                        <h2 className="text-xl font-bold text-neutral-900 dark:text-main flex items-center gap-2">
                             <RotateCcw className="w-5 h-5 text-neutral-500" /> Purchase Return (Debit Note)
                         </h2>
                         <p className="text-xs text-neutral-500 font-medium tracking-tight">Return items to vendor against GRN</p>
@@ -203,11 +203,11 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     <button
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
+                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-main rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
                     >
                         <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : id ? 'Update Return' : 'Finalize Return'}
                     </button>
-                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors">
+                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-xl transition-colors">
                         Cancel
                     </button>
                 </div>
@@ -218,13 +218,13 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     {/* Return Header Details */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-2 space-y-6">
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Vendor / Supplier</label>
                                     <select
                                         value={returnData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                                     >
                                         <option value="">Select Vendor</option>
                                         {vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
@@ -236,7 +236,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         value={returnData.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
                                         disabled={!returnData.vendor_id}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50"
                                     >
                                         <option value="">Select GRN</option>
                                         {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
@@ -247,7 +247,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     <select
                                         value={returnData.reason}
                                         onChange={(e) => setReturnData({ ...returnData, reason: e.target.value as ReturnReason })}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                                     >
                                         <option value="Defective">Defective / Damaged</option>
                                         <option value="Wrong Item">Wrong Item Received</option>
@@ -262,7 +262,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         type="date"
                                         value={returnData.return_date}
                                         onChange={(e) => setReturnData({ ...returnData, return_date: e.target.value })}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                                     />
                                 </div>
                             </div>
@@ -299,8 +299,8 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     </div>
 
                     {/* Items Table */}
-                    <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
+                    <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-default dark:border-default">
                             <h3 className="font-bold flex items-center gap-2 text-neutral-800 dark:text-neutral-200">
                                 Return Items
                                 <span className="text-xs text-neutral-400 font-medium">(Select items from GRN to return)</span>
@@ -308,7 +308,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b dark:border-default">
                                     <tr>
                                         <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Product / SKU</th>
                                         <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center">GRN Qty</th>
@@ -319,9 +319,9 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/50">
                                     {(returnData.items || []).map((item, idx) => (
-                                        <tr key={idx} className={`hover:bg-neutral-50/50 dark:hover:bg-neutral-900/20 transition-colors ${item.return_quantity > 0 ? 'bg-amber-50/20 dark:bg-amber-900/5' : ''}`}>
+                                        <tr key={idx} className={`hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-bg)]/20 transition-colors ${item.return_quantity > 0 ? 'bg-amber-50/20 dark:bg-amber-900/5' : ''}`}>
                                             <td className="px-6 py-4">
-                                                <div className="font-bold text-neutral-900 dark:text-white leading-none mb-1">{item.product_name}</div>
+                                                <div className="font-bold text-neutral-900 dark:text-main leading-none mb-1">{item.product_name}</div>
                                                 <div className="text-[10px] text-neutral-500 font-mono tracking-tighter uppercase">{item.sku || 'NO-SKU'}</div>
                                             </td>
                                             <td className="px-6 py-4 text-center text-neutral-400 font-medium">
@@ -332,7 +332,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                                     type="number"
                                                     value={item.return_quantity}
                                                     onChange={(e) => updateItem(idx, 'return_quantity', parseFloat(e.target.value) || 0)}
-                                                    className={`w-full text-center py-2 bg-transparent border-b ${item.return_quantity > 0 ? 'border-brand-500 font-bold text-brand-600' : 'border-neutral-200 dark:border-neutral-800 text-neutral-400'}`}
+                                                    className={`w-full text-center py-2 bg-transparent border-b ${item.return_quantity > 0 ? 'border-brand-500 font-bold text-brand-600' : 'border-default dark:border-default text-neutral-400'}`}
                                                 />
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -342,11 +342,11 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                                         type="number"
                                                         value={item.rate}
                                                         onChange={(e) => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
-                                                        className="w-20 text-right bg-transparent border-b border-dashed border-neutral-300 dark:border-neutral-700 py-1"
+                                                        className="w-20 text-right bg-transparent border-b border-dashed border-neutral-300 dark:border-default py-1"
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-white">
+                                            <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-main">
                                                 ₹{item.line_total.toFixed(2)}
                                             </td>
                                         </tr>
@@ -366,19 +366,19 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     {/* Bottom Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10">
                         <div className="space-y-6">
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
+                            <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm space-y-4">
                                 <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2 font-mono">
                                     <Paperclip className="w-4 h-4" /> Supporting Evidence
                                 </h3>
-                                <div className="border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-6 text-center hover:bg-neutral-50 cursor-pointer transition-colors">
+                                <div className="border-2 border-dashed border-default dark:border-default rounded-xl p-6 text-center hover:bg-[var(--erp-bg-sunken)] cursor-pointer transition-colors">
                                     <Plus className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
                                     <p className="text-xs font-bold text-neutral-500">Attach photos of defective items</p>
                                 </div>
                             </div>
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                                 <label className="block text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-widest">Internal Notes</label>
                                 <textarea
-                                    className="w-full p-4 text-sm bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:ring-2 focus:ring-brand-500/20"
+                                    className="w-full p-4 text-sm bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl focus:ring-2 focus:ring-brand-500/20"
                                     rows={4}
                                     placeholder="Reason details, vendor communication notes..."
                                 />
@@ -386,7 +386,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         </div>
 
                         {/* Financial Summary */}
-                        <div className="bg-neutral-900 p-8 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
+                        <div className="bg-[var(--erp-bg)] p-8 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
                             <div className="absolute bottom-0 right-0 w-48 h-48 bg-brand-500/5 rounded-full translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                             <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-[0.3em]">Refund Summary</h3>
 
@@ -399,11 +399,11 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     <span>Tax Adjustment (18%)</span>
                                     <span>₹{totals.tax.toFixed(2)}</span>
                                 </div>
-                                <div className="h-px bg-neutral-800 w-full my-6"></div>
+                                <div className="h-px bg-[var(--erp-card)] w-full my-6"></div>
                                 <div className="flex justify-between items-end">
                                     <div>
                                         <span className="block text-[10px] font-black text-brand-500 uppercase mb-2 tracking-widest">Debit Note Amount</span>
-                                        <span className="text-4xl font-black text-white">₹{totals.total.toFixed(2)}</span>
+                                        <span className="text-4xl font-black text-main">₹{totals.total.toFixed(2)}</span>
                                     </div>
                                     <div className="flex flex-col items-end gap-2">
                                         <div className="flex items-center gap-2 px-3 py-1 bg-brand-500/20 rounded-full border border-brand-500/30">
@@ -414,10 +414,10 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-neutral-800 flex items-center gap-3">
+                            <div className="pt-6 border-t border-default flex items-center gap-3">
                                 <AlertCircle className="w-5 h-5 text-amber-500" />
                                 <p className="text-[10px] text-neutral-500 font-medium leading-relaxed">
-                                    Generating this return will create a <span className="text-white font-bold underline">Debit Note</span> and reduce inventory counts for the selected items upon verification.
+                                    Generating this return will create a <span className="text-main font-bold underline">Debit Note</span> and reduce inventory counts for the selected items upon verification.
                                 </p>
                             </div>
                         </div>

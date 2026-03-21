@@ -22,7 +22,7 @@ export interface IItem extends Document {
     // WooCommerce-style Variation Support
     parentId?: Types.ObjectId | string;
     isParent: boolean;
-    model?: string;
+    itemModel?: string;
     gender?: string;
 
     valuationMethod: 'FIFO' | 'WAC';

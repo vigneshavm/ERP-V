@@ -21,6 +21,7 @@ const GRNForm: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in pb-20">
                 <PageHeader
                     title={poId ? "Create GRN" : "New Goods Receipt"}
@@ -29,7 +30,7 @@ const GRNForm: React.FC = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => navigate('/purchase/grn')}
-                                className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50"
+                                className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium hover:bg-[var(--erp-bg-sunken)]"
                             >
                                 Cancel
                             </button>
@@ -72,6 +73,8 @@ const GRNForm: React.FC = () => {
                     />
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

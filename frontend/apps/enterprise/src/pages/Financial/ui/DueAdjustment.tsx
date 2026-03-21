@@ -125,9 +125,12 @@ const DueAdjustment = () => {
     if (customerLoading && !customer) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-[rgb(var(--color-primary))]"></div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -136,7 +139,7 @@ const DueAdjustment = () => {
         return (
             <Layout>
                 <div className="text-center py-12">
-                    <p className="text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                    <p className="text-muted dark:text-[rgb(var(--color-text-secondary))]">
                         Customer not found
                     </p>
                     <button
@@ -157,7 +160,7 @@ const DueAdjustment = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(`/customers/${id}`)}
-                        className="flex items-center text-gray-600 dark:text-[rgb(var(--color-text-secondary))] hover:text-gray-900 dark:hover:text-[rgb(var(--color-text))] mb-4"
+                        className="flex items-center text-secondary dark:text-[rgb(var(--color-text-secondary))] hover:text-main dark:hover:text-[rgb(var(--color-text))] mb-4"
                     >
                         <svg
                             className="w-5 h-5 mr-2"
@@ -174,10 +177,10 @@ const DueAdjustment = () => {
                         </svg>
                         Back to Customer Details
                     </button>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
+                    <h1 className="text-3xl font-bold text-main dark:text-[rgb(var(--color-text))] mb-2">
                         Adjust Due
                     </h1>
-                    <p className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                    <p className="text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                         Adjust outstanding due for {customer.name}
                     </p>
                 </div>
@@ -186,15 +189,15 @@ const DueAdjustment = () => {
                 <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] p-6 mb-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-[rgb(var(--color-text))]">
+                            <h3 className="text-lg font-semibold text-main dark:text-[rgb(var(--color-text))]">
                                 {customer.name}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="text-sm text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                                 {customer.phone}
                             </p>
                         </div>
                         <div className="text-right">
-                            <p className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="text-sm text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                                 Outstanding Due
                             </p>
                             <p className="text-2xl font-bold text-red-600 dark:text-red-400">
@@ -216,7 +219,7 @@ const DueAdjustment = () => {
                                 Adjustment Amount <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted dark:text-[rgb(var(--color-text-secondary))]">
                                     ₹
                                 </span>
                                 <input
@@ -240,7 +243,7 @@ const DueAdjustment = () => {
                                     {errors.adjustmentAmount}
                                 </p>
                             )}
-                            <p className="mt-1 text-xs text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="mt-1 text-xs text-muted dark:text-[rgb(var(--color-text-secondary))]">
                                 Maximum: ₹{customer.dues.toFixed(2)}
                             </p>
                         </div>
@@ -297,7 +300,7 @@ const DueAdjustment = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate(`/customers/${id}`)}
-                                className="flex-1 px-6 py-3 border border-gray-300 dark:border-[rgb(var(--color-border))] text-gray-700 dark:text-[rgb(var(--color-text))] rounded-lg hover:bg-gray-50 dark:hover:bg-[rgb(var(--color-input))] transition-colors"
+                                className="flex-1 px-6 py-3 border border-gray-300 dark:border-[rgb(var(--color-border))] text-gray-700 dark:text-[rgb(var(--color-text))] rounded-lg hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[rgb(var(--color-input))] transition-colors"
                             >
                                 Cancel
                             </button>
@@ -309,7 +312,7 @@ const DueAdjustment = () => {
                                 {dueLoading ? (
                                     <>
                                         <svg
-                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-main"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
                                             viewBox="0 0 24 24"

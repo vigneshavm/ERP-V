@@ -22,8 +22,8 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
     const navigate = useNavigate();
 
     return (
-        <div className="h-full flex items-center justify-center p-6 bg-neutral-50/50 dark:bg-neutral-900/50">
-            <div className="max-w-md w-full bg-white dark:bg-neutral-800 rounded-3xl shadow-xl shadow-primary/5 border border-neutral-200 dark:border-neutral-700 p-8 text-center relative overflow-hidden">
+        <div className="h-full flex items-center justify-center p-6 bg-neutral-50/50 dark:bg-[var(--erp-bg)]/50">
+            <div className="max-w-md w-full bg-white dark:bg-[var(--erp-card)] rounded-3xl shadow-xl shadow-primary/5 border border-neutral-200 dark:border-neutral-700 p-8 text-center relative overflow-hidden">
                 {/* Decorative background blur */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full"></div>
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary/10 blur-3xl rounded-full"></div>
@@ -33,7 +33,7 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
                         <Lock className="w-10 h-10 text-primary" />
                     </div>
 
-                    <h2 className="text-2xl font-black text-neutral-900 dark:text-white mb-2">
+                    <h2 className="text-2xl font-black text-neutral-900 dark:text-main mb-2">
                         {moduleName} Module Locked
                     </h2>
 
@@ -41,7 +41,7 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
                         {description}
                     </p>
 
-                    <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 mb-8 text-left border border-neutral-100 dark:border-neutral-800">
+                    <div className="bg-neutral-50 dark:bg-[var(--erp-bg)]/50 rounded-2xl p-6 mb-8 text-left border border-neutral-100 dark:border-neutral-800">
                         <div className="text-xs font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
                             <Sparkles className="w-3 h-3" /> Included in Pro Plans
                         </div>
@@ -58,7 +58,7 @@ const UpgradeUpsell: React.FC<UpgradeUpsellProps> = ({
                     </div>
 
                     <button
-                        className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 group"
+                        className="w-full bg-primary hover:bg-primary-hover text-main font-bold py-4 px-6 rounded-2xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 group"
                         onClick={() => navigate('/settings/subscription')}
                     >
                         Learn More & Upgrade

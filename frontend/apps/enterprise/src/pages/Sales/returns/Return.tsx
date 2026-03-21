@@ -355,21 +355,21 @@ const Return = () => {
 
   return (
     <Layout>
-      <div className="space-y-6 animate-fade-in pb-10">
+      <div className="page-shell">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
               <RotateCcw className="w-6 h-6 text-indigo-600" />
               Process Return
             </h1>
-            <p className="text-sm text-slate-500 mt-1">Create a new customer return and issue credits</p>
+            <p className="text-sm text-muted mt-1">Create a new customer return and issue credits</p>
           </div>
           <div className="flex gap-3">
             {formData.selectedInvoice && (
               <button
                 onClick={clearDraft}
-                className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-secondary rounded-lg hover:bg-[var(--erp-bg-sunken)] transition-all font-medium"
               >
                 <Trash2 className="w-4 h-4" /> Clear Draft
               </button>
@@ -387,9 +387,9 @@ const Return = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* Invoice Selection */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-[var(--erp-bg-sunken)] px-6 py-3 border-b border-default">
+                <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Select Invoice
                 </h2>
               </div>
@@ -401,7 +401,7 @@ const Return = () => {
                         <p className="font-bold text-indigo-800">
                           {formData.selectedInvoice.invoiceNo}
                         </p>
-                        <p className="text-sm text-slate-600 mt-1">
+                        <p className="text-sm text-secondary mt-1">
                           {new Date(formData.selectedInvoice.createdAt).toLocaleDateString('en-IN')} • ₹{formData.selectedInvoice.totalAmount?.toFixed(2) || '0.00'}
                         </p>
                       </div>
@@ -419,7 +419,7 @@ const Return = () => {
                 ) : (
                   <button
                     onClick={() => setShowInvoiceModal(true)}
-                    className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-muted hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <FileText className="w-5 h-5" /> Click to select invoice
                   </button>
@@ -429,9 +429,9 @@ const Return = () => {
 
             {/* Customer Info */}
             {formData.customer && (
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+              <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-[var(--erp-bg-sunken)] px-6 py-3 border-b border-default">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
                   </h2>
                 </div>
@@ -441,13 +441,13 @@ const Return = () => {
                       {formData.customer.name?.charAt(0).toUpperCase() || '?'}
                     </div>
                     <div className="flex-1">
-                      <p className="text-lg font-bold text-slate-800">{formData.customer.name}</p>
-                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600">
+                      <p className="text-lg font-bold text-main">{formData.customer.name}</p>
+                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-secondary">
                         {formData.customer.phone && (
-                          <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-slate-400" /> {formData.customer.phone}</span>
+                          <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-muted" /> {formData.customer.phone}</span>
                         )}
                         {formData.customer.email && (
-                          <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-400" /> {formData.customer.email}</span>
+                          <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-muted" /> {formData.customer.email}</span>
                         )}
                       </div>
                     </div>
@@ -476,14 +476,14 @@ const Return = () => {
 
             {/* Return Items */}
             {formData.items.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Return Items</h2>
+              <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-[var(--erp-bg-sunken)] px-6 py-3 border-b border-default">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Return Items</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-200">
-                      <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <thead className="bg-[var(--erp-bg-sunken)] border-b border-default">
+                      <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                         <th className="px-4 py-3">Item</th>
                         <th className="px-4 py-3 text-right">Original</th>
                         <th className="px-4 py-3 text-right">Returned</th>
@@ -693,12 +693,12 @@ const Return = () => {
               </div>
               <div className="p-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 font-medium">Subtotal</span>
-                  <span className="font-bold text-slate-800">₹{calculateSubtotal().toFixed(2)}</span>
+                  <span className="text-muted font-medium">Subtotal</span>
+                  <span className="font-bold text-main">₹{calculateSubtotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 font-medium">Tax</span>
-                  <span className="font-bold text-slate-800">₹{calculateTax().toFixed(2)}</span>
+                  <span className="text-muted font-medium">Tax</span>
+                  <span className="font-bold text-main">₹{calculateTax().toFixed(2)}</span>
                 </div>
               </div>
               <div className="px-6 py-5 bg-rose-600 text-white">
@@ -720,7 +720,7 @@ const Return = () => {
                 </button>
                 <button
                   onClick={() => navigate("/sales/returned-items")}
-                  className="w-full py-3 border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 font-medium transition-all"
+                  className="w-full py-3 border border-slate-300 text-secondary rounded-xl hover:bg-[var(--erp-bg-sunken)] font-medium transition-all"
                 >
                   View Returned Items
                 </button>

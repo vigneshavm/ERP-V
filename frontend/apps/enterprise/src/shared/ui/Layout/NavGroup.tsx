@@ -47,7 +47,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
             'focus-visible:ring-2 focus-visible:ring-primary/60',
             isActive
               ? 'bg-primary/10 dark:bg-primary/15 text-primary'
-              : 'text-neutral-400 dark:text-neutral-500 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-700 dark:hover:text-neutral-200',
+              : 'text-neutral-400 dark:text-neutral-500 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-700 dark:hover:text-neutral-200',
           ].join(' ')}
         >
           <Icon className="w-[18px] h-[18px]" aria-hidden="true" />
@@ -66,7 +66,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className={[
-              'bg-white dark:bg-neutral-900 rounded-xl shadow-2xl',
+              'bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-2xl',
               'border border-neutral-200 dark:border-neutral-700/60',
               'p-2 min-w-[200px] backdrop-blur-xl',
             ].join(' ')}
@@ -93,7 +93,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
           'outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
           isActive
             ? 'bg-primary/10 dark:bg-primary/15 text-primary font-extrabold'
-            : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-800 dark:hover:text-neutral-100 font-bold',
+            : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-800 dark:hover:text-neutral-100 font-bold',
         ].join(' ')}
       >
         <div className="flex items-center space-x-3 overflow-hidden">

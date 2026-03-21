@@ -21,22 +21,22 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
         return (
             <div className={`group flex items-center justify-between p-6 rounded-[2rem] border transition-all duration-500 ${
                 isEnabled 
-                    ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-indigo-500' 
-                    : 'bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 opacity-60'
+                    ? 'bg-white dark:bg-[var(--erp-bg)] border-default dark:border-default shadow-sm hover:shadow-xl hover:border-indigo-500' 
+                    : 'bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 border-default dark:border-default opacity-60'
             }`}>
                 <div className="flex items-center gap-5">
                     <div className={`p-4 rounded-2xl transition-all duration-500 group-hover:scale-110 ${
                         isEnabled 
                             ? `bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400` 
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted'
                     }`}>
                         <Icon className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className={`font-black uppercase tracking-tight text-sm leading-none mb-1 ${isEnabled ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
+                        <p className={`font-black uppercase tracking-tight text-sm leading-none mb-1 ${isEnabled ? 'text-main' : 'text-muted'}`}>
                             {label}
                         </p>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-[10px] text-muted font-bold uppercase tracking-widest leading-relaxed">
                             {desc}
                         </p>
                     </div>
@@ -59,16 +59,16 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
     return (
         <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Global Governance HUD */}
-            <div className="bg-slate-900 rounded-[3rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="bg-[var(--erp-bg)] rounded-[3rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-default shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
                     <ShieldAlert className="w-64 h-64 text-red-500" />
                 </div>
                 <div className="relative z-10 w-24 h-24 rounded-[2.5rem] bg-red-600 flex items-center justify-center shrink-0 shadow-2xl shadow-red-500/30 group-hover:scale-105 transition-transform">
-                    <Shield className="w-12 h-12 text-white" />
+                    <Shield className="w-12 h-12 text-main" />
                 </div>
                 <div className="relative z-10 flex-1 text-center md:text-left">
-                    <h3 className="text-3xl font-black text-white italic uppercase tracking-tight mb-2">Management <span className="text-red-400">Governance</span></h3>
-                    <p className="text-slate-400 text-sm font-medium leading-relaxed max-w-2xl">
+                    <h3 className="text-3xl font-black text-main italic uppercase tracking-tight mb-2">Management <span className="text-red-400">Governance</span></h3>
+                    <p className="text-muted text-sm font-medium leading-relaxed max-w-2xl">
                         Define the operational boundaries of your enterprise. Protocols configured here propagate as mandatory logic constraints across all POS terminals.
                     </p>
                 </div>
@@ -81,7 +81,7 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             <section className="space-y-6">
                 <div className="flex items-center gap-4 px-2">
                     <DollarSign className="w-5 h-5 text-emerald-500" />
-                    <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em]">Inventory & Financial Constraints</h3>
+                    <h3 className="text-[11px] font-black text-muted uppercase tracking-[0.5em]">Inventory & Financial Constraints</h3>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* eslint-disable-next-line  */}
@@ -101,7 +101,7 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             <section className="space-y-6">
                 <div className="flex items-center gap-4 px-2">
                     <FileText className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em]">POS Thresholds & Integrity</h3>
+                    <h3 className="text-[11px] font-black text-muted uppercase tracking-[0.5em]">POS Thresholds & Integrity</h3>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* eslint-disable-next-line  */}
@@ -115,15 +115,15 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                 </div>
 
                 {/* Discount Ceiling Meter */}
-                <div className="mt-8 p-10 bg-white dark:bg-slate-950 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
+                <div className="mt-8 p-10 bg-white dark:bg-slate-950 rounded-[3rem] border border-default dark:border-default shadow-xl flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent pointer-events-none" />
                     <div className="flex items-center gap-8 relative z-10">
-                        <div className="w-20 h-20 rounded-[2rem] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="w-20 h-20 rounded-[2rem] bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default flex items-center justify-center group-hover:scale-110 transition-transform">
                             <DollarSign className="w-10 h-10 text-indigo-500" />
                         </div>
                         <div>
-                            <h4 className="text-xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight">Global Discount Ceiling</h4>
-                            <p className="text-xs text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Maximum allowable staff rebate percentage</p>
+                            <h4 className="text-xl font-black text-main italic uppercase tracking-tight">Global Discount Ceiling</h4>
+                            <p className="text-xs text-muted font-bold uppercase tracking-[0.2em] mt-1">Maximum allowable staff rebate percentage</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-6 relative z-10">
@@ -133,9 +133,9 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                             max="100"
                             value={misConfig.maxDiscountPercent}
                             onChange={(e) => setMaxDiscountPercent(parseInt(e.target.value) || 0)}
-                            className="w-32 px-8 py-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] text-2xl font-black text-center outline-none focus:ring-8 focus:ring-indigo-500/10 focus:border-indigo-500 dark:text-white shadow-inner transition-all"
+                            className="w-32 px-8 py-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-[2rem] text-2xl font-black text-center outline-none focus:ring-8 focus:ring-indigo-500/10 focus:border-indigo-500 dark:text-main shadow-inner transition-all"
                         />
-                        <span className="text-2xl font-black text-slate-300 uppercase tracking-tighter">%</span>
+                        <span className="text-2xl font-black text-muted uppercase tracking-tighter">%</span>
                     </div>
                 </div>
             </section>
@@ -144,7 +144,7 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             <section className="space-y-6">
                 <div className="flex items-center gap-4 px-2">
                     <Eye className="w-5 h-5 text-amber-500" />
-                    <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em]">Compliance & Sign-off Hub</h3>
+                    <h3 className="text-[11px] font-black text-muted uppercase tracking-[0.5em]">Compliance & Sign-off Hub</h3>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* eslint-disable-next-line  */}

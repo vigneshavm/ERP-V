@@ -41,12 +41,12 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="flex items-center justify-between p-6 border-b border-default dark:border-default">
+                    <h2 className="text-xl font-bold text-main dark:text-main flex items-center gap-2">
                         <Printer className="w-6 h-6 text-emerald-500" />
                         Print Labels ({products.length})
                     </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-gray-700 rounded-full transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -54,19 +54,19 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                 <div className="p-6 max-h-[60vh] overflow-y-auto">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {products.map((p, idx) => (
-                            <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50">
-                                <p className="font-bold text-gray-900 dark:text-white truncate">{p.name}</p>
-                                <p className="text-xs text-gray-500 font-mono">{p.sku}</p>
+                            <div key={idx} className="p-4 border border-default dark:border-default rounded-xl bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
+                                <p className="font-bold text-main truncate">{p.name}</p>
+                                <p className="text-xs text-muted font-mono">{p.sku}</p>
                                 <p className="mt-2 font-bold text-emerald-600">₹{p.sellingPrice || p.price}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-t border-default dark:border-default flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 text-gray-600 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                        className="px-6 py-2 text-secondary dark:text-muted font-bold hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-gray-800 rounded-lg transition-colors"
                     >
                         Cancel
                     </button>

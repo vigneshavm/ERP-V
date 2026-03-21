@@ -20,8 +20,9 @@ export const getShopSettings = asyncHandler(async (req: Request, res: Response) 
         success: true,
         data: settings
     });
+});
 
-export const updateShopSettings = asyncHandler(async (req: Request, res: Response) =>{
+export const updateShopSettings = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!._id;
     const settingsData = req.body;
 
@@ -35,3 +36,4 @@ export const updateShopSettings = asyncHandler(async (req: Request, res: Respons
         success: true,
         data: settings
     });
+});

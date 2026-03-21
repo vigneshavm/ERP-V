@@ -82,20 +82,20 @@ const ExpensesModule: React.FC = () => {
                     <PremiumExpenseDashboard expenses={expenses} />
 
                     {/* Transaction List Layer */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-neutral-50 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-neutral-50 dark:border-default flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div className="relative w-full md:w-96">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 <input
                                     type="text"
                                     placeholder="Search by ID, Category or Note..."
-                                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20"
+                                    className="w-full pl-10 pr-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
                             <div className="flex gap-2">
-                                <button className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl text-neutral-400 hover:text-primary transition-colors">
+                                <button className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-xl text-neutral-400 hover:text-primary transition-colors">
                                     <Filter className="w-5 h-5" />
                                 </button>
                             </div>
@@ -103,7 +103,7 @@ const ExpensesModule: React.FC = () => {
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-default dark:border-default">
                                     <tr>
                                         <th className="p-6">Date & ID</th>
                                         <th className="p-6">Category & Branch</th>
@@ -115,10 +115,10 @@ const ExpensesModule: React.FC = () => {
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                     {filteredExpenses.map(expense => (
-                                        <tr key={expense.id} className="group hover:bg-neutral-50 transition-colors">
+                                        <tr key={expense.id} className="group hover:bg-[var(--erp-bg-sunken)] transition-colors">
                                             <td className="p-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="p-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-xl">
+                                                    <div className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                                                         <Receipt className="w-5 h-5 text-neutral-400" />
                                                     </div>
                                                     <div>

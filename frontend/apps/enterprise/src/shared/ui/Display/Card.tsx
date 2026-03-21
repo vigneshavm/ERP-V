@@ -2,8 +2,8 @@
  * Card — Generic surface container.
  *
  * Upgrades over original:
- * - Consistent neutral tokens: bg-white dark:bg-neutral-900
- *   (original used bg-slate-800 which clashes with rest of system)
+ * - Consistent neutral tokens: bg-white dark:bg-[var(--erp-bg)]
+ *   (original used bg-[var(--erp-card)] which clashes with rest of system)
  * - Optional `hoverable` prop adds lift animation
  * - Optional `padding` prop (default true) for flexible layout use
  * - `as` prop for semantic polymorphism (article, section, etc.)
@@ -30,7 +30,7 @@ export const Card: React.FC<CardProps> = ({
   as: Tag = 'div',
 }) => {
   const baseClass = [
-    'bg-white dark:bg-neutral-900',
+    'bg-white dark:bg-[var(--erp-bg)]',
     'border border-neutral-100 dark:border-neutral-800/60',
     'rounded-2xl',
     padding ? 'p-5' : '',

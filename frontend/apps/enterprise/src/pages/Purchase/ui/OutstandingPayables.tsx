@@ -52,7 +52,7 @@ const OutstandingPayables: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
+            <div className="page-shell">
                 <PageHeader
                     title="Outstanding Payables"
                     description="Advanced tracking and aging analysis for supplier liabilities"
@@ -60,13 +60,13 @@ const OutstandingPayables: React.FC = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={exportToExcel}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition-all shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs font-bold text-secondary hover:text-emerald-600 transition-all shadow-sm"
                             >
                                 <FileSpreadsheet size={16} /> Export
                             </button>
                             <button
                                 onClick={printReport}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 transition-all shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs font-bold text-secondary hover:text-indigo-600 transition-all shadow-sm"
                             >
                                 <Printer size={16} /> Print
                             </button>
@@ -111,14 +111,14 @@ const OutstandingPayables: React.FC = () => {
 
                 {/* Empty State */}
                 {filteredBills.length === 0 && (
-                    <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mt-6">
+                    <div className="py-20 text-center bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm mt-6">
                         <div className="flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center text-slate-300">
+                            <div className="w-16 h-16 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-2xl flex items-center justify-center text-muted">
                                 <Search size={32} />
                             </div>
                             <div>
-                                <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">No matching payables</h3>
-                                <p className="text-xs text-slate-400 mt-1">Adjust your filters or search terms to find what you're looking for.</p>
+                                <h3 className="text-sm font-black text-main uppercase tracking-widest">No matching payables</h3>
+                                <p className="text-xs text-muted mt-1">Adjust your filters or search terms to find what you're looking for.</p>
                             </div>
                             <button
                                 onClick={() => { setSearchTerm(''); setStatusFilter('All'); setVendorFilter(''); }}
@@ -130,7 +130,7 @@ const OutstandingPayables: React.FC = () => {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">
+                <div className="flex justify-between items-center text-[10px] font-bold text-muted uppercase tracking-widest px-2">
                     <div>Showing {filteredBills.length} of {processedBills.length} Outstanding Items</div>
                     <div className="flex items-center gap-2">
                         System Last Updated: {new Date().toLocaleTimeString()}

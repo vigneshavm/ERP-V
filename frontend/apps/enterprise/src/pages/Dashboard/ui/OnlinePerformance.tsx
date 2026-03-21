@@ -1,5 +1,6 @@
-
 import React from 'react';
+import { useNavigation } from '@/app/providers/NavigationContext';
+import Layout, { PageShell } from "@/shared/ui/Layout";
 import {
     TrendingUp,
     Users,
@@ -34,23 +35,25 @@ const OnlinePerformance: React.FC = () => {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+        <Layout>
+            <PageShell>
+            <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">Online Performance</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Detailed analytics and conversion metrics for your digital storefront.</p>
+                    <h1 className="text-3xl font-black text-main tracking-tight leading-none">Online Performance</h1>
+                    <p className="text-muted dark:text-muted mt-2 font-medium">Detailed analytics and conversion metrics for your digital storefront.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-xs font-bold hover:bg-[var(--erp-bg-sunken)] transition-all">
                         <Calendar className="w-4 h-4" /> Last 30 Days
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all">
                         <Download className="w-4 h-4" /> Export Report
                     </button>
                     <button
-                        onClick={() => navigate('GROW_DASHBOARD')}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all text-sm font-bold ml-2"
+                        onClick={() => navigate('DASHBOARD' as any)}
+                        className="flex items-center gap-2 px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] hover:bg-slate-200 dark:hover:bg-slate-700 text-secondary dark:text-slate-200 rounded-xl transition-all text-sm font-bold ml-2"
                     >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
@@ -61,22 +64,22 @@ const OnlinePerformance: React.FC = () => {
             {/* Granular Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {metrics.map((metric, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                    <div key={idx} className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <div className="flex items-center gap-4 mb-4">
                             <div className={`w-12 h-12 ${metric.bg} rounded-2xl flex items-center justify-center ${metric.color}`}>
                                 <metric.icon className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{metric.label}</p>
+                                <p className="text-xs font-bold text-muted dark:text-muted uppercase tracking-widest">{metric.label}</p>
                                 <div className="flex items-baseline gap-2">
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-white">{metric.value}</h3>
+                                    <h3 className="text-2xl font-black text-main">{metric.value}</h3>
                                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${metric.trend === 'up' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-400/10' : 'bg-rose-100 text-rose-600 dark:bg-rose-400/10'}`}>
                                         {metric.change}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div className="h-1 lg:h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-1 lg:h-1.5 w-full bg-[var(--erp-bg-sunken)] dark:bg-slate-700 rounded-full overflow-hidden">
                             <div
                                 className={`h-full ${metric.color.replace('text', 'bg')} transition-all duration-1000 w-[65%]`}
                                 style={{ width: idx === 0 ? '78%' : idx === 1 ? '54%' : '42%' }}
@@ -88,46 +91,46 @@ const OnlinePerformance: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Trend Chart Block */}
-                <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="lg:col-span-2 bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] p-8 border border-default dark:border-default shadow-sm">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Traffic & Conversion Trends</h3>
-                            <p className="text-sm text-slate-500 font-medium">Correlation between visitor volume and successful checkouts.</p>
+                            <h3 className="text-xl font-black text-main tracking-tight">Traffic & Conversion Trends</h3>
+                            <p className="text-sm text-muted font-medium">Correlation between visitor volume and successful checkouts.</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-indigo-500" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Visitors</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Visitors</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sales</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Sales</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-80 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 animate-pulse">
-                        <TrendingUp className="w-16 h-16 mb-4 text-slate-200 dark:text-slate-800" />
-                        <p className="font-bold text-sm uppercase tracking-[0.2em] text-slate-400 opacity-60 italic">Processing Analytics Stream...</p>
-                        <p className="text-[10px] mt-2 text-slate-400 opacity-40">Connecting to E-commerce API endpoint...</p>
+                    <div className="h-80 flex flex-col items-center justify-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-3xl border-2 border-dashed border-default dark:border-default animate-pulse">
+                        <TrendingUp className="w-16 h-16 mb-4 text-slate-200 dark:text-main" />
+                        <p className="font-bold text-sm uppercase tracking-[0.2em] text-muted opacity-60 italic">Processing Analytics Stream...</p>
+                        <p className="text-[10px] mt-2 text-muted opacity-40">Connecting to E-commerce API endpoint...</p>
                     </div>
                 </div>
 
                 {/* Device & Acquisition */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="text-lg font-black text-slate-900 dark:text-white mb-6">Device Breakdown</h3>
+                    <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] p-8 border border-default dark:border-default shadow-sm">
+                        <h3 className="text-lg font-black text-main mb-6">Device Breakdown</h3>
                         <div className="space-y-6">
                             {deviceBreakdown.map((item, idx) => (
                                 <div key={idx} className="space-y-2">
                                     <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest">
                                         <div className="flex items-center gap-2">
-                                            <item.icon className="w-4 h-4 text-slate-500" />
+                                            <item.icon className="w-4 h-4 text-muted" />
                                             <span>{item.device}</span>
                                         </div>
-                                        <span className="text-slate-900 dark:text-white">{item.sessions}</span>
+                                        <span className="text-main">{item.sessions}</span>
                                     </div>
-                                    <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                    <div className="h-2 w-full bg-[var(--erp-bg-sunken)] dark:bg-slate-700 rounded-full overflow-hidden">
                                         <div className={`h-full ${item.color} rounded-full transition-all duration-1000`} style={{ width: item.sessions }} />
                                     </div>
                                 </div>
@@ -147,7 +150,9 @@ const OnlinePerformance: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
+            </PageShell>
+        </Layout>
     );
 };
 

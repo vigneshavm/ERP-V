@@ -58,10 +58,13 @@ const PaymentReceiptDetail = () => {
   if (loading || !payment) {
     return (
       <Layout>
+        <div className="page-shell">
         <div className="flex flex-col items-center justify-center py-20">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mb-4"></div>
-          <p className="text-slate-500 font-medium">Loading receipt...</p>
+          <p className="text-muted font-medium">Loading receipt...</p>
         </div>
+                </div>
+
       </Layout>
     );
   }
@@ -73,18 +76,18 @@ const PaymentReceiptDetail = () => {
         <div className="mb-8 print:hidden">
           <button
             onClick={() => navigate("/sales/payment-in-list")}
-            className="flex items-center text-slate-600 hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
+            className="flex items-center text-secondary hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Payment List
           </button>
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
                 <Receipt className="w-6 h-6 text-emerald-600" />
                 Payment Receipt
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-muted mt-1">
                 View and print payment receipt
               </p>
             </div>
@@ -99,30 +102,30 @@ const PaymentReceiptDetail = () => {
         </div>
 
         {/* Receipt Container - Optimized for Print */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:bg-white print:border-0">
+        <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:bg-white print:border-0">
           {/* Receipt Header Section */}
-          <div className="px-8 py-6 border-b-2 border-slate-200 print:px-6 print:py-4 print:border-gray-300">
+          <div className="px-8 py-6 border-b-2 border-default print:px-6 print:py-4 print:border-gray-300">
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <h2 className="text-3xl font-bold text-emerald-600 mb-1 print:text-green-700 tracking-tight">
                   PAYMENT RECEIPT
                 </h2>
-                <div className="text-base font-mono font-bold text-slate-800 print:text-black">
+                <div className="text-base font-mono font-bold text-main print:text-black">
                   Receipt #: {payment.receiptNumber}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-1 tracking-wider">
+                <div className="text-xs font-bold text-muted print:text-main uppercase mb-1 tracking-wider">
                   Receipt Date & Time
                 </div>
-                <div className="font-bold text-base text-slate-800 print:text-black">
+                <div className="font-bold text-base text-main print:text-black">
                   {new Date(payment.paymentDate).toLocaleDateString("en-IN", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",
                   })}
                 </div>
-                <div className="text-xs text-slate-500 print:text-gray-700">
+                <div className="text-xs text-muted print:text-gray-700">
                   {new Date(payment.paymentDate).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -136,20 +139,20 @@ const PaymentReceiptDetail = () => {
           <div className="grid grid-cols-2 gap-6 px-8 py-6 print:grid-cols-2 print:gap-4 print:px-6 print:py-4">
             {/* Customer Info */}
             <div>
-              <h3 className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-3 pb-2 border-b border-slate-200 print:border-gray-300 tracking-wider">
+              <h3 className="text-xs font-bold text-muted print:text-main uppercase mb-3 pb-2 border-b border-default print:border-gray-300 tracking-wider">
                 Received From
               </h3>
               <div className="space-y-2">
-                <div className="font-bold text-lg text-slate-800 print:text-black">
+                <div className="font-bold text-lg text-main print:text-black">
                   {payment.customer.name}
                 </div>
-                <div className="text-sm text-slate-600 print:text-gray-900 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-slate-400 print:hidden" />
+                <div className="text-sm text-secondary print:text-main flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-muted print:hidden" />
                   {payment.customer.phone}
                 </div>
                 {payment.customer.email && (
-                  <div className="text-sm text-slate-600 print:text-gray-900 flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-slate-400 print:hidden" />
+                  <div className="text-sm text-secondary print:text-main flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-muted print:hidden" />
                     {payment.customer.email}
                   </div>
                 )}
@@ -158,12 +161,12 @@ const PaymentReceiptDetail = () => {
 
             {/* Payment Summary */}
             <div className="text-right">
-              <h3 className="text-xs font-bold text-slate-500 print:text-gray-900 uppercase mb-3 pb-2 border-b border-slate-200 print:border-gray-300 tracking-wider">
+              <h3 className="text-xs font-bold text-muted print:text-main uppercase mb-3 pb-2 border-b border-default print:border-gray-300 tracking-wider">
                 Payment Summary
               </h3>
               <div className="space-y-2">
                 <div>
-                  <div className="text-xs text-slate-500 print:text-gray-900 mb-1">
+                  <div className="text-xs text-muted print:text-main mb-1">
                     Amount Received
                   </div>
                   <div className="font-bold text-2xl text-emerald-600 print:text-green-700">
@@ -171,8 +174,8 @@ const PaymentReceiptDetail = () => {
                   </div>
                 </div>
                 {payment.creditApplied > 0 && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 print:border-gray-300">
-                    <div className="text-xs text-slate-500 print:text-gray-700 mb-1">
+                  <div className="mt-3 pt-3 border-t border-default print:border-gray-300">
+                    <div className="text-xs text-muted print:text-gray-700 mb-1">
                       + Credit Applied
                     </div>
                     <div className="font-bold text-lg text-orange-600 print:text-orange-700">
@@ -329,7 +332,7 @@ const PaymentReceiptDetail = () => {
                           key={index}
                           className="border-b border-default print:border-gray-300"
                         >
-                          <td className="py-2 px-2 text-main print:text-gray-900">
+                          <td className="py-2 px-2 text-main print:text-main">
                             {index + 1}
                           </td>
                           <td className="py-2 px-2 text-main print:text-black font-medium">
@@ -366,14 +369,14 @@ const PaymentReceiptDetail = () => {
                   </div>
 
                   {/* <div className="flex justify-between py-2 text-sm">
-                                        <span className="text-gray-900 dark:text-gray-900 print:text-black">Allocated to Invoices:</span>
-                                        <span className="font-bold text-gray-900 dark:text-gray-200 print:text-black">
+                                        <span className="text-main dark:text-main print:text-black">Allocated to Invoices:</span>
+                                        <span className="font-bold text-main dark:text-gray-200 print:text-black">
                                             ₹{(payment.allocatedInvoices?.reduce((sum, inv) => sum + inv.allocatedAmount, 0) || 0).toFixed(2)}
                                         </span>
                                     </div> */}
 
                   {payment.creditApplied > 0 && (
-                    <div className="flex justify-between py-2 text-sm border-b border-default print:border-gray-200">
+                    <div className="flex justify-between py-2 text-sm border-b border-default print:border-default">
                       <span className="text-main print:text-black">
                         Customer Credit Applied:
                       </span>
@@ -383,7 +386,7 @@ const PaymentReceiptDetail = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-between py-0 text-sm border-t-1 border-default print:border-gray-200 pt-2">
+                  <div className="flex justify-between py-0 text-sm border-t-1 border-default print:border-default pt-2">
                     <span className="text-main print:text-black">
                       Effective Payment:
                     </span>
@@ -549,7 +552,7 @@ const PaymentReceiptDetail = () => {
               <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-3 pb-2 border-b border-default print:border-gray-300">
                 Notes
               </h3>
-              <p className="text-sm text-secondary print:text-gray-800 leading-relaxed">
+              <p className="text-sm text-secondary print:text-main leading-relaxed">
                 {payment.notes}
               </p>
             </div>
@@ -557,7 +560,7 @@ const PaymentReceiptDetail = () => {
 
           {/* Footer */}
           <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300 text-center">
-            <p className="text-sm text-main print:text-gray-900 font-medium">
+            <p className="text-sm text-main print:text-main font-medium">
               Thank you for your payment!
             </p>
             <p className="text-xs text-muted print:text-gray-700 mt-2">
@@ -640,14 +643,14 @@ const PaymentReceiptDetail = () => {
                         color: #16a34a !important;
                     }
                     
-                    .text-gray-800,
-                    .text-gray-900,
+                    .text-main,
+                    .text-main,
                     .dark\\:text-gray-200,
                     .dark\\:text-gray-300 {
                         color: #000 !important;
                     }
                     
-                    .text-gray-600,
+                    .text-secondary,
                     .text-gray-700 {
                         color: #374151 !important;
                     }

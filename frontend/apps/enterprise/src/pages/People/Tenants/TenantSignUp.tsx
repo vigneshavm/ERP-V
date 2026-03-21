@@ -170,7 +170,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-slate-900">
+        <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-[var(--erp-bg)]">
             {/* Background Effects */}
             <div className="absolute inset-0">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 blur-[150px] rounded-full" />
@@ -185,12 +185,12 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/30">
-                            <Building2 className="w-10 h-10 text-white" />
+                            <Building2 className="w-10 h-10 text-main" />
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
+                        <h1 className="text-3xl md:text-4xl font-black text-main tracking-tight mb-2">
                             Start Your Journey
                         </h1>
-                        <p className="text-slate-400 text-sm font-medium">
+                        <p className="text-muted text-sm font-medium">
                             Register your business and unlock the Growth Platform
                         </p>
                     </div>
@@ -201,7 +201,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             <div key={s} className="flex items-center gap-2">
                                 <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${step >= s
                                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                                    : 'bg-white/10 text-slate-500'
+                                    : 'bg-white/10 text-muted'
                                     }`}>
                                     {step > s ? <CheckCircle2 className="w-5 h-5" /> : s}
                                 </div>
@@ -217,27 +217,27 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     {step === 1 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Business Information</h2>
-                                <p className="text-slate-400 text-xs">Tell us about your business</p>
+                                <h2 className="text-xl font-bold text-main mb-1">Business Information</h2>
+                                <p className="text-muted text-xs">Tell us about your business</p>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Business Name</label>
+                                    <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Business Name</label>
                                     <div className="relative">
-                                        <Store className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                        <Store className="w-4 h-4 text-muted absolute left-4 top-4" />
                                         <input
                                             type="text"
                                             value={businessName}
                                             onChange={(e) => handleBusinessNameChange(e.target.value)}
                                             placeholder="Your Business Name"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Industry Sector</label>
+                                    <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Industry Sector</label>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {SECTORS.map((s) => (
                                             <button
@@ -246,7 +246,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                                 onClick={() => setSector(s.id)}
                                                 className={`p-4 rounded-2xl border text-left transition-all ${sector === s.id
                                                     ? 'bg-indigo-600/20 border-indigo-500 text-white'
-                                                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                                                    : 'bg-[var(--erp-bg-sunken)] border-default text-muted hover:bg-white/10'
                                                     }`}
                                             >
                                                 <span className="text-2xl mb-2 block">{s.icon}</span>
@@ -258,8 +258,8 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             </div>
 
                             {/* Address & Tax Details */}
-                            <div className="space-y-4 pt-4 border-t border-white/10">
-                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Location & Tax Details</h3>
+                            <div className="space-y-4 pt-4 border-t border-default">
+                                <h3 className="text-xs font-bold text-muted uppercase tracking-widest">Location & Tax Details</h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="group">
@@ -268,7 +268,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={address}
                                             onChange={(e) => setAddress(e.target.value)}
                                             placeholder="Street Address"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                     <div className="group">
@@ -277,7 +277,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={city}
                                             onChange={(e) => setCity(e.target.value)}
                                             placeholder="City"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                     <div className="group">
@@ -286,7 +286,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={state}
                                             onChange={(e) => setState(e.target.value)}
                                             placeholder="State"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                     <div className="group">
@@ -295,7 +295,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={zipCode}
                                             onChange={(e) => setZipCode(e.target.value)}
                                             placeholder="ZIP / Pincode"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -307,7 +307,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={gstIn}
                                             onChange={(e) => setGstIn(e.target.value.toUpperCase())}
                                             placeholder="GSTIN (Optional)"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                     <div className="group">
@@ -316,24 +316,24 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={pan}
                                             onChange={(e) => setPan(e.target.value.toUpperCase())}
                                             placeholder="PAN (Optional)"
-                                            className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-12 px-4 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-main text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="group">
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Store URL</label>
+                                <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Store URL</label>
                                 <div className="relative">
-                                    <Globe className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                    <Globe className="w-4 h-4 text-muted absolute left-4 top-4" />
                                     <input
                                         type="text"
                                         value={subdomain}
                                         onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
                                         placeholder="yourstore"
-                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        className="w-full h-14 pl-12 pr-28 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                     />
-                                    <span className="absolute right-4 top-4 text-slate-500 text-sm font-medium">.app.com</span>
+                                    <span className="absolute right-4 top-4 text-muted text-sm font-medium">.app.com</span>
                                 </div>
                             </div>
                         </div>
@@ -343,70 +343,70 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     {step === 2 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Owner Account</h2>
-                                <p className="text-slate-400 text-xs">Create your admin credentials</p>
+                                <h2 className="text-xl font-bold text-main mb-1">Owner Account</h2>
+                                <p className="text-muted text-xs">Create your admin credentials</p>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Full Name</label>
+                                    <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Full Name</label>
                                     <div className="relative">
-                                        <User className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                        <User className="w-4 h-4 text-muted absolute left-4 top-4" />
                                         <input
                                             type="text"
                                             value={ownerName}
                                             onChange={(e) => setOwnerName(e.target.value)}
                                             placeholder="Your Name"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="group">
-                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Email</label>
+                                        <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Email</label>
                                         <div className="relative">
-                                            <Mail className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                            <Mail className="w-4 h-4 text-muted absolute left-4 top-4" />
                                             <input
                                                 type="email"
                                                 value={ownerEmail}
                                                 onChange={(e) => setOwnerEmail(e.target.value)}
                                                 placeholder="you@business.com"
-                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                                className="w-full h-14 pl-12 pr-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                             />
                                         </div>
                                     </div>
 
                                     <div className="group">
-                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Mobile</label>
+                                        <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Mobile</label>
                                         <div className="relative">
-                                            <Phone className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                            <Phone className="w-4 h-4 text-muted absolute left-4 top-4" />
                                             <input
                                                 type="tel"
                                                 value={ownerMobile}
                                                 onChange={(e) => setOwnerMobile(e.target.value)}
                                                 placeholder="9876543210"
-                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                                className="w-full h-14 pl-12 pr-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="group">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Password</label>
+                                    <label className="block text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2 ml-1">Password</label>
                                     <div className="relative">
-                                        <Lock className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+                                        <Lock className="w-4 h-4 text-muted absolute left-4 top-4" />
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             value={ownerPassword}
                                             onChange={(e) => setOwnerPassword(e.target.value)}
                                             placeholder="••••••••"
-                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl text-white font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-12 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl text-main font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-4 text-slate-500 hover:text-indigo-400 transition-colors"
+                                            className="absolute right-4 top-4 text-muted hover:text-indigo-400 transition-colors"
                                         >
                                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
@@ -419,30 +419,30 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     {step === 3 && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Confirm & Launch</h2>
-                                <p className="text-slate-400 text-xs">Review your details and start growing</p>
+                                <h2 className="text-xl font-bold text-main mb-1">Confirm & Launch</h2>
+                                <p className="text-muted text-xs">Review your details and start growing</p>
                             </div>
 
-                            <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
+                            <div className="bg-[var(--erp-bg-sunken)] rounded-3xl p-6 border border-default space-y-4">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 bg-indigo-600/20 rounded-2xl flex items-center justify-center text-indigo-400">
                                         <Building2 className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Business</p>
-                                        <p className="text-white font-bold">{businessName}</p>
-                                        <p className="text-slate-400 text-xs">{subdomain}.app.com • {SECTORS.find(s => s.id === sector)?.name}</p>
+                                        <p className="text-[10px] font-black text-muted uppercase tracking-widest">Business</p>
+                                        <p className="text-main font-bold">{businessName}</p>
+                                        <p className="text-muted text-xs">{subdomain}.app.com • {SECTORS.find(s => s.id === sector)?.name}</p>
                                     </div>
                                 </div>
 
-                                <div className="border-t border-white/10 pt-4 flex items-center gap-4">
+                                <div className="border-t border-default pt-4 flex items-center gap-4">
                                     <div className="w-12 h-12 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400">
                                         <User className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Owner Account</p>
-                                        <p className="text-white font-bold">{ownerName}</p>
-                                        <p className="text-slate-400 text-xs">{ownerEmail} • {ownerMobile}</p>
+                                        <p className="text-[10px] font-black text-muted uppercase tracking-widest">Owner Account</p>
+                                        <p className="text-main font-bold">{ownerName}</p>
+                                        <p className="text-muted text-xs">{ownerEmail} • {ownerMobile}</p>
                                     </div>
                                 </div>
                             </div>
@@ -454,9 +454,9 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                     { icon: ShieldCheck, label: 'Secure & Scalable', color: 'text-emerald-400' },
                                     { icon: Sparkles, label: 'AI Insights', color: 'text-amber-400' }
                                 ].map((benefit, idx) => (
-                                    <div key={idx} className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <div key={idx} className="text-center p-4 bg-[var(--erp-bg-sunken)] rounded-2xl border border-default">
                                         <benefit.icon className={`w-6 h-6 ${benefit.color} mx-auto mb-2`} />
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{benefit.label}</p>
+                                        <p className="text-[9px] font-black text-muted uppercase tracking-widest">{benefit.label}</p>
                                     </div>
                                 ))}
                             </div>
@@ -477,7 +477,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             <button
                                 type="button"
                                 onClick={handleBack}
-                                className="flex-1 h-14 bg-white/10 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
+                                className="flex-1 h-14 bg-white/10 text-main rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
                             >
                                 <ArrowLeft className="w-4 h-4" /> Back
                             </button>
@@ -487,7 +487,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             <button
                                 type="button"
                                 onClick={handleNext}
-                                className="flex-1 h-14 bg-white text-slate-900 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-xl"
+                                className="flex-1 h-14 bg-white text-main rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[var(--erp-bg-sunken)] transition-all shadow-xl"
                             >
                                 Continue <ArrowRight className="w-4 h-4" />
                             </button>
@@ -511,7 +511,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     <button
                         type="button"
                         onClick={onBackToLogin}
-                        className="w-full text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors py-4 mt-4"
+                        className="w-full text-center text-[10px] font-black uppercase tracking-widest text-muted hover:text-main transition-colors py-4 mt-4"
                     >
                         Already have an account? Sign In
                     </button>

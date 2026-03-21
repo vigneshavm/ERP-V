@@ -104,7 +104,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
     const loading = isPending || isTransitionPending;
 
     return (
-        <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#06080F] overflow-hidden font-[system-ui]">
+        <div className="min-h-screen w-full flex flex-col md:flex-row bg-[var(--erp-bg)] overflow-hidden font-[system-ui]">
             {/* === LEFT — VISUAL BRANDING === */}
             <div className="hidden md:flex md:w-[55%] lg:w-[58%] relative overflow-hidden">
                 <img
@@ -126,11 +126,11 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                     <div>
                         {/* Tenant branding */}
                         <div className="flex items-center gap-3.5 mb-12">
-                            <div className="w-11 h-11 bg-white/10 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
+                            <div className="w-11 h-11 bg-white/10 backdrop-blur-xl rounded-xl flex items-center justify-center border border-default shadow-lg">
                                 <Store className="w-6 h-6 text-white/80" />
                             </div>
                             <div>
-                                <span className="text-lg font-bold text-white/90 tracking-tight block leading-none">{tenant?.name || DEFAULT_BRANDING.NAME}</span>
+                                <span className="text-lg font-bold text-main tracking-tight block leading-none">{tenant?.name || DEFAULT_BRANDING.NAME}</span>
                                 <span className="text-[9px] font-bold text-white/25 uppercase tracking-[0.25em]">{allowedSector} Platform</span>
                             </div>
                         </div>
@@ -143,7 +143,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                                 </span>{' '}
                                 Excellence
                             </h1>
-                            <p className="text-base lg:text-lg text-white/30 font-medium leading-relaxed max-w-md">
+                            <p className="text-base lg:text-lg text-muted font-medium leading-relaxed max-w-md">
                                 Management, insights, and growth tools tailored for {allowedSector.toLowerCase()} enterprises.
                             </p>
                         </div>
@@ -152,7 +152,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-2.5 px-3.5 py-2 bg-white/[0.04] border border-white/[0.06] rounded-xl backdrop-blur-sm">
                             <Fingerprint className="w-3.5 h-3.5 text-indigo-400" />
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Enterprise Auth</span>
+                            <span className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Enterprise Auth</span>
                         </div>
                         <span className="text-white/10 text-[10px] font-medium">Built for Enterprise Teams</span>
                     </div>
@@ -164,7 +164,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                 {onBack && (
                     <button
                         onClick={onBack}
-                        className="absolute top-6 left-6 p-2 text-white/25 hover:text-white/60 transition-colors group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]"
+                        className="absolute top-6 left-6 p-2 text-white/25 hover:text-main/60 transition-colors group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]"
                     >
                         <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                         Back
@@ -189,16 +189,16 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {/* Identity Input */}
                             <div className="space-y-2.5 group">
-                                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-0.5 transition-colors group-focus-within:text-indigo-400">
+                                <label className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] ml-0.5 transition-colors group-focus-within:text-indigo-400">
                                     Identity
                                 </label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/20 group-focus-within:text-indigo-400 transition-colors duration-300" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted group-focus-within:text-indigo-400 transition-colors duration-300" />
                                     <input
                                         type="text"
                                         value={identity}
                                         onChange={(e) => setIdentity(e.target.value)}
-                                        className="w-full h-13 bg-white/[0.04] border border-white/[0.07] rounded-xl pl-11 pr-4 text-white/90 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
+                                        className="w-full h-13 bg-white/[0.04] border border-white/[0.07] rounded-xl pl-11 pr-4 text-main text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
                                         placeholder="Email, ID or Mobile"
                                         required
                                     />
@@ -209,7 +209,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                             {/* Password Input */}
                             <div className="space-y-2.5 group">
                                 <div className="flex justify-between items-center ml-0.5">
-                                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] transition-colors group-focus-within:text-indigo-400">
+                                    <label className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] transition-colors group-focus-within:text-indigo-400">
                                         Security Key
                                     </label>
                                     <button
@@ -220,19 +220,19 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                                     </button>
                                 </div>
                                 <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/20 group-focus-within:text-indigo-400 transition-colors duration-300" />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted group-focus-within:text-indigo-400 transition-colors duration-300" />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full h-13 bg-white/[0.04] border border-white/[0.07] rounded-xl pl-11 pr-11 text-white/90 font-mono text-sm tracking-wider outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
+                                        className="w-full h-13 bg-white/[0.04] border border-white/[0.07] rounded-xl pl-11 pr-11 text-main font-mono text-sm tracking-wider outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition-all duration-300 placeholder:text-white/15 hover:border-white/[0.12]"
                                         placeholder="••••••••"
                                         required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 transition-colors p-0.5"
+                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-muted transition-colors p-0.5"
                                     >
                                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>

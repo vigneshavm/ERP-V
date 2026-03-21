@@ -88,31 +88,31 @@ const BatchPriceUpdate: React.FC = () => {
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-main dark:text-main flex items-center gap-2">
                     <Printer className="w-8 h-8 text-emerald-500" />
                     Batch Price Update
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-muted dark:text-muted mt-1">
                     Scan a barcode, update the price, and automatically queue labels for reprinting.
                 </p>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
                 {/* Scan Section */}
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-default dark:border-default">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Scan Barcode / Enter SKU
                     </label>
                     <form onSubmit={handleScan} className="flex gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
                             <input
                                 ref={skuInputRef}
                                 type="text"
                                 value={sku}
                                 onChange={(e) => setSku(e.target.value)}
                                 placeholder="Scan or type SKU..."
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                                className="w-full pl-10 pr-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
                         <button
@@ -134,26 +134,26 @@ const BatchPriceUpdate: React.FC = () => {
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-2 border-emerald-500/20 animation-fade-in">
                         <div className="flex items-start justify-between mb-6">
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{item.name}</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                    SKU: <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{item.sku}</span>
+                                <h3 className="text-xl font-bold text-main">{item.name}</h3>
+                                <p className="text-sm text-muted dark:text-muted mt-1">
+                                    SKU: <span className="font-mono bg-[var(--erp-bg-sunken)] dark:bg-gray-700 px-2 py-0.5 rounded">{item.sku}</span>
                                 </p>
                             </div>
                             <div className="text-right">
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Current Stock</div>
-                                <div className="text-2xl font-bold text-gray-800 dark:text-white flex items-center justify-end gap-2">
+                                <div className="text-sm text-muted dark:text-muted">Current Stock</div>
+                                <div className="text-2xl font-bold text-main dark:text-main flex items-center justify-end gap-2">
                                     <Package className="w-5 h-5 text-emerald-500" />
                                     {item.stockQty}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end bg-gray-50 dark:bg-gray-900/50 p-6 rounded-xl">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-6 rounded-xl">
                             <div>
-                                <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                <label className="block text-sm font-medium text-muted dark:text-muted mb-1">
                                     Current Selling Price
                                 </label>
-                                <div className="text-2xl font-bold text-gray-400 line-through">
+                                <div className="text-2xl font-bold text-muted line-through">
                                     ₹{item.sellingPrice}
                                 </div>
                             </div>
@@ -169,7 +169,7 @@ const BatchPriceUpdate: React.FC = () => {
                                     onChange={(e) => setNewPrice(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
                                     placeholder="0.00"
-                                    className="w-full text-2xl font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-800 border-2 border-emerald-500 rounded-lg px-4 py-3 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+                                    className="w-full text-2xl font-bold text-main bg-white dark:bg-gray-800 border-2 border-emerald-500 rounded-lg px-4 py-3 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
                                 />
                             </div>
                         </div>
@@ -182,7 +182,7 @@ const BatchPriceUpdate: React.FC = () => {
                                     setNewPrice('');
                                     skuInputRef.current?.focus();
                                 }}
-                                className="px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium transition-colors"
+                                className="px-6 py-3 text-secondary dark:text-gray-300 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-gray-700 rounded-lg font-medium transition-colors"
                             >
                                 Cancel
                             </button>

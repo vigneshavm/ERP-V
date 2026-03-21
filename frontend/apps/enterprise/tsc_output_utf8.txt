@@ -1,0 +1,136 @@
+﻿cypress.config.ts(1,30): error TS2307: Cannot find module 'cypress' or its corresponding type declarations.
+cypress.config.ts(6,21): error TS7006: Parameter 'on' implicitly has an 'any' type.
+cypress.config.ts(6,25): error TS7006: Parameter 'config' implicitly has an 'any' type.
+cypress/e2e/routing_rendering.cy.ts(1,23): error TS2688: Cannot find type definition file for 'cypress'.
+cypress/e2e/routing_rendering.cy.ts(3,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(8,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(9,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(14,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(17,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(18,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(22,7): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(26,7): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(27,11): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(35,11): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(43,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/routing_rendering.cy.ts(46,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(52,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(58,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(65,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(78,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(97,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(107,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(123,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(131,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(144,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(152,3): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(153,7): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/routing_rendering.cy.ts(156,11): error TS2304: Cannot find name 'cy'.
+cypress/e2e/routing_rendering.cy.ts(160,11): error TS2304: Cannot find name 'cy'.
+src/app/registry/ModuleRegistry.ts(73,34): error TS2322: Type 'Promise<typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/barcode-generator/ui/BarcodeGeneratorFeature")>' is not assignable to type 'Promise<{ default: ComponentType<any>; }>'.
+  Property 'default' is missing in type 'typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/barcode-generator/ui/BarcodeGeneratorFeature")' but required in type '{ default: ComponentType<any>; }'.
+src/app/registry/ModuleRegistry.ts(74,34): error TS2322: Type 'Promise<typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/bulk-import/ui/BulkImportFeature")>' is not assignable to type 'Promise<{ default: ComponentType<any>; }>'.
+  Property 'default' is missing in type 'typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/bulk-import/ui/BulkImportFeature")' but required in type '{ default: ComponentType<any>; }'.
+src/app/registry/ModuleRegistry.ts(75,34): error TS2322: Type 'Promise<typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/data-export/ui/DataExportFeature")>' is not assignable to type 'Promise<{ default: ComponentType<any>; }>'.
+  Property 'default' is missing in type 'typeof import("C:/Users/avmvi/Project/ERP/frontend/apps/enterprise/src/features/system/data-export/ui/DataExportFeature")' but required in type '{ default: ComponentType<any>; }'.
+src/app/reset-password/page.tsx(19,19): error TS18047: 'searchParams' is possibly 'null'.
+src/app/reset-password/page.tsx(20,19): error TS18047: 'searchParams' is possibly 'null'.
+src/app/store/index.ts(26,15): error TS2307: Cannot find module './thunks/saleThunks' or its corresponding type declarations.
+src/app/store/index.ts(27,15): error TS2307: Cannot find module './thunks/purchaseThunks' or its corresponding type declarations.
+src/app/store/index.ts(28,15): error TS2307: Cannot find module './thunks/customerThunks' or its corresponding type declarations.
+src/app/store/index.ts(29,15): error TS2307: Cannot find module './thunks/financeThunks' or its corresponding type declarations.
+src/app/store/index.ts(30,15): error TS2307: Cannot find module './thunks/tenantThunks' or its corresponding type declarations.
+src/features/tenant-onboarding/lib/useTenantForm.ts(57,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(59,71): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(64,58): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(65,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(69,56): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(69,110): error TS7006: Parameter '_' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(69,113): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(73,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(82,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(84,96): error TS7006: Parameter '_' implicitly has an 'any' type.
+src/features/tenant-onboarding/lib/useTenantForm.ts(84,99): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/pages/Business/ui/GoogleBusiness.tsx(12,35): error TS2307: Cannot find module '@/app/store/thunks/tenantThunks' or its corresponding type declarations.
+src/pages/Commercial/OnlineStore/OnlineStore.tsx(8,35): error TS2307: Cannot find module '@/app/store/thunks/tenantThunks' or its corresponding type declarations.
+src/pages/Expenses/ExpenseListPage.tsx(8,45): error TS18046: 'state' is of type 'unknown'.
+src/pages/Expenses/ExpenseListPage.tsx(28,24): error TS7006: Parameter 'dateString' implicitly has an 'any' type.
+src/pages/Expenses/ExpenseListPage.tsx(36,22): error TS7006: Parameter 'expense' implicitly has an 'any' type.
+src/pages/Expenses/ExpenseListPage.tsx(42,33): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/pages/Expenses/ExpenseListPage.tsx(48,25): error TS7006: Parameter 'expense' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(11,76): error TS18046: 'state' is of type 'unknown'.
+src/pages/Expenses/Expenses.tsx(12,47): error TS18046: 'state' is of type 'unknown'.
+src/pages/Expenses/Expenses.tsx(56,18): error TS2345: Argument of type 'AsyncThunkAction<Expense[], void, { state: { auth: AuthState; tenant: TenantState & { activeTenantId: string | null; }; settings: SettingsState; system: SystemState; ... 17 more ...; reports: ReportsState; }; ... 6 more ...; rejectedMeta?: unknown; }>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(57,18): error TS2345: Argument of type 'AsyncThunkAction<Account[], void, AsyncThunkConfig>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(63,33): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(66,28): error TS2345: Argument of type 'AsyncThunkAction<Expense, Partial<Expense>, { state: { auth: AuthState; tenant: TenantState & { activeTenantId: string | null; }; settings: SettingsState; ... 18 more ...; reports: ReportsState; }; ... 6 more ...; rejectedMeta?: unknown; }>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(66,42): error TS2345: Argument of type '{ expenseNo: string; date: string; category: string; amount: number; paymentMethod: string; bankAccount: string; description: string; receipt: null; }' is not assignable to parameter of type 'Partial<Expense>'.
+  Types of property 'receipt' are incompatible.
+    Type 'null' is not assignable to type 'string | undefined'.
+src/pages/Expenses/Expenses.tsx(78,22): error TS2345: Argument of type 'AsyncThunkAction<Expense[], void, { state: { auth: AuthState; tenant: TenantState & { activeTenantId: string | null; }; settings: SettingsState; system: SystemState; ... 17 more ...; reports: ReportsState; }; ... 6 more ...; rejectedMeta?: unknown; }>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(79,22): error TS2345: Argument of type 'AsyncThunkAction<Account[], void, AsyncThunkConfig>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(85,33): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(87,28): error TS2345: Argument of type 'AsyncThunkAction<string, string, { state: { auth: AuthState; tenant: TenantState & { activeTenantId: string | null; }; settings: SettingsState; system: SystemState; ... 17 more ...; reports: ReportsState; }; ... 6 more ...; rejectedMeta?: unknown; }>' is not assignable to parameter of type 'UnknownAction'.
+src/pages/Expenses/Expenses.tsx(94,44): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(94,49): error TS7006: Parameter 'exp' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(99,47): error TS7006: Parameter 'exp' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(102,16): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(102,21): error TS7006: Parameter 'exp' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(105,45): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(105,50): error TS7006: Parameter 'exp' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(109,71): error TS2571: Object is of type 'unknown'.
+src/pages/Expenses/Expenses.tsx(109,78): error TS2571: Object is of type 'unknown'.
+src/pages/Expenses/Expenses.tsx(112,47): error TS7006: Parameter 'expense' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(265,56): error TS7006: Parameter 'expense' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(274,140): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ Rent: string; Utilities: string; Salaries: string; Transportation: string; Marketing: string; 'Office Supplies': string; Maintenance: string; Insurance: string; 'Professional Fees': string; Miscellaneous: string; }'.
+src/pages/Expenses/Expenses.tsx(285,50): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ cash: Element; bank_transfer: Element; upi: Element; card: Element; cheque: Element; }'.
+src/pages/Expenses/Expenses.tsx(381,59): error TS7006: Parameter 'account' implicitly has an 'any' type.
+src/pages/Expenses/Expenses.tsx(394,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/pages/GoogleBusiness/ui/GoogleBusiness.tsx(12,35): error TS2307: Cannot find module '@/app/store/thunks/tenantThunks' or its corresponding type declarations.
+src/pages/OnlineStore/ui/index.tsx(8,35): error TS2307: Cannot find module '@/app/store/thunks/tenantThunks' or its corresponding type declarations.
+src/pages/System/Sync/Backup.tsx(32,29): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(23,23): error TS7031: Binding element 'type' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(23,29): error TS7031: Binding element 'className' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(32,24): error TS7031: Binding element 'status' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(40,109): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ active: string; inactive: string; syncing: string; }'.
+src/pages/System/Sync/SyncShare.tsx(47,25): error TS7031: Binding element 'checked' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(47,34): error TS7031: Binding element 'onChange' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(83,34): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(83,39): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(90,31): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(95,25): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(211,107): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+  No index signature with a parameter of type 'string' was found on type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(217,83): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+  No index signature with a parameter of type 'string' was found on type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(221,85): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+  No index signature with a parameter of type 'string' was found on type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(225,125): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+  No index signature with a parameter of type 'string' was found on type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(227,50): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+  No index signature with a parameter of type 'string' was found on type '{ invoices: boolean; customers: boolean; inventory: boolean; reports: boolean; }'.
+src/pages/System/Sync/SyncShare.tsx(252,52): error TS7006: Parameter 'val' implicitly has an 'any' type.
+src/pages/System/Sync/SyncShare.tsx(283,52): error TS7006: Parameter 'val' implicitly has an 'any' type.
+src/pages/Views/ui/EnterpriseMainView.tsx(34,16): error TS18047: 'searchParams' is possibly 'null'.
+src/shared/ui/Layout/ModuleRenderer.tsx(67,71): error TS2339: Property 'DailyFinanceTracker' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(71,70): error TS2339: Property 'SalesRegister' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(82,70): error TS2339: Property 'CustomerCredits' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(83,70): error TS2339: Property 'OutstandingDues' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(95,71): error TS2339: Property 'PurchaseRegister' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(106,68): error TS2551: Property 'RateRevisions' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'. Did you mean 'RateRevisionList'?
+src/shared/ui/Layout/ModuleRenderer.tsx(107,67): error TS2339: Property 'ChequesVault' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(109,61): error TS2339: Property 'VendorDetails' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(115,69): error TS2339: Property 'InventoryItems' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(116,69): error TS2339: Property 'ItemCategories' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(124,68): error TS2339: Property 'Transfers' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(126,66): error TS2339: Property 'CashBankPosition' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(131,68): error TS2339: Property 'FinanceAgentDashboard' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'.
+src/shared/ui/Layout/ModuleRenderer.tsx(144,72): error TS2551: Property 'AttendanceSummaryManager' does not exist on type '{ Login: LazyExoticComponent<FC<LoginProps>>; AdminLogin: LazyExoticComponent<FC<AdminLoginProps>>; ... 95 more ...; ReportsDashboard: LazyExoticComponent<...>; }'. Did you mean 'AttendanceSummary'?
+src/widgets/sync-manager/lib/useDBDataSync.ts(52,53): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/widgets/sync-manager/lib/useTabSync.ts(7,13): error TS2339: Property 'activeTab' does not exist on type 'UiState'.
+src/widgets/sync-manager/lib/useTabSync.ts(7,24): error TS2339: Property 'setActiveTab' does not exist on type 'UiState'.
+../../packages/shared/src/adapters/IDataAdapter.ts(63,34): error TS2304: Cannot find name 'JournalEntry'.
+../../packages/shared/src/adapters/IDataAdapter.ts(64,31): error TS2304: Cannot find name 'StockReport'.
+../../packages/shared/src/adapters/IDataAdapter.ts(65,34): error TS2304: Cannot find name 'DashboardStats'.
+../../packages/shared/src/adapters/IDataAdapter.ts(66,29): error TS2304: Cannot find name 'SupplierAnalytics'.

@@ -25,13 +25,14 @@ const TDSManager: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="TDS Management Authority"
                 description="Tax Deducted at Source tracking, compliance and returns management"
                 breadcrumbs={[{ label: 'Finance' }, { label: 'Taxation' }, { label: 'TDS' }]}
                 actions={
                     <div className="flex gap-3">
-                        <button className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition-all">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] transition-all">
                             <Download className="w-4 h-4" /> Export 26AS
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
@@ -49,43 +50,43 @@ const TDSManager: React.FC = () => {
                     { label: 'TDS Payable (Q4)', value: '₹ 4,85,000', icon: PieChart, color: 'text-amber-600', bg: 'bg-amber-50' },
                     { label: 'Compliance Rate', value: '100%', icon: ArrowUpRight, color: 'text-emerald-600', bg: 'bg-emerald-50' },
                 ].map((stat, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-[2rem] shadow-sm">
-                        <div className={`w-10 h-10 ${stat.bg} dark:bg-slate-800 rounded-xl flex items-center justify-center mb-4`}>
+                    <div key={idx} className="bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default p-6 rounded-[2rem] shadow-sm">
+                        <div className={`w-10 h-10 ${stat.bg} dark:bg-[var(--erp-card)] rounded-xl flex items-center justify-center mb-4`}>
                             <stat.icon className={`w-5 h-5 ${stat.color}`} />
                         </div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                        <p className="text-2xl font-black text-slate-900 dark:text-white">{stat.value}</p>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{stat.label}</p>
+                        <p className="text-2xl font-black text-main">{stat.value}</p>
                     </div>
                 ))}
             </div>
 
             {/* Main Content Area */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] overflow-hidden shadow-sm">
-                <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+            <div className="bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="p-6 border-b border-default dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">
                     <div className="flex gap-2">
                         <button 
                             onClick={() => setView('SUMMARY')}
-                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${view === 'SUMMARY' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${view === 'SUMMARY' ? 'bg-[var(--erp-bg)] text-main dark:bg-white dark:text-main' : 'text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]'}`}
                         >
                             Summary
                         </button>
                         <button 
                             onClick={() => setView('RECORDS')}
-                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${view === 'RECORDS' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${view === 'RECORDS' ? 'bg-[var(--erp-bg)] text-main dark:bg-white dark:text-main' : 'text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]'}`}
                         >
                             Deduction Records
                         </button>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
                             <input 
                                 type="text"
                                 placeholder="Search Section / Vendor..."
-                                className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all w-64"
+                                className="pl-10 pr-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all w-64"
                             />
                         </div>
-                        <button className="p-2 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                        <button className="p-2 border border-default dark:border-default rounded-xl text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] transition-all">
                             <Filter className="w-4 h-4" />
                         </button>
                     </div>
@@ -94,7 +95,7 @@ const TDSManager: React.FC = () => {
                 <div className="p-6">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                            <tr className="text-[10px] font-black text-muted uppercase tracking-widest border-b border-default dark:border-default">
                                 <th className="px-4 py-4">ID</th>
                                 <th className="px-4 py-4">Vendor</th>
                                 <th className="px-4 py-4">TDS Section</th>
@@ -106,11 +107,11 @@ const TDSManager: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                             {tdsRecords.map((record) => (
-                                <tr key={record.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group">
-                                    <td className="px-4 py-5 text-xs font-black text-slate-900 dark:text-white">{record.id}</td>
+                                <tr key={record.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-all group">
+                                    <td className="px-4 py-5 text-xs font-black text-main">{record.id}</td>
                                     <td className="px-4 py-5">
-                                        <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{record.vendor}</div>
-                                        <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1 mt-0.5">
+                                        <div className="text-xs font-bold text-main dark:text-slate-200">{record.vendor}</div>
+                                        <div className="text-[10px] font-bold text-muted flex items-center gap-1 mt-0.5">
                                             <Calendar className="w-3 h-3" /> {record.date}
                                         </div>
                                     </td>
@@ -119,10 +120,10 @@ const TDSManager: React.FC = () => {
                                             {record.type}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-5 text-right font-mono text-xs font-bold text-slate-600 dark:text-slate-400">
+                                    <td className="px-4 py-5 text-right font-mono text-xs font-bold text-secondary dark:text-muted">
                                         ₹ {record.amount.toLocaleString()}
                                     </td>
-                                    <td className="px-4 py-5 text-center font-mono text-xs font-black text-slate-900 dark:text-white">
+                                    <td className="px-4 py-5 text-center font-mono text-xs font-black text-main">
                                         {record.tdsRate}%
                                     </td>
                                     <td className="px-4 py-5 text-right font-mono text-xs font-black text-primary">
@@ -143,8 +144,8 @@ const TDSManager: React.FC = () => {
                     </table>
                 </div>
 
-                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/20 flex justify-between items-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                <div className="px-6 py-4 border-t border-default dark:border-default bg-[var(--erp-bg-sunken)]/30 dark:bg-[var(--erp-card)]/20 flex justify-between items-center">
+                    <p className="text-[10px] font-black text-muted uppercase tracking-widest italic">
                         Authorized TDS Ledger | System Gen: {new Date().toLocaleDateString()}
                     </p>
                     <button className="flex items-center gap-2 text-xs font-black text-primary hover:underline uppercase tracking-widest">
@@ -152,6 +153,8 @@ const TDSManager: React.FC = () => {
                     </button>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

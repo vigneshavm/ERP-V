@@ -1,4 +1,4 @@
-import asyncHandler from 'express-async-handler';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { container } from 'tsyringe';
 import { BankStatementService } from '../services/BankStatementService.js';
 /**
@@ -6,7 +6,7 @@ import { BankStatementService } from '../services/BankStatementService.js';
  */
 export const uploadStatement = asyncHandler(async (req, res) => {
     const service = container.resolve(BankStatementService);
-    const userId = req.user?._id;
+    const userId = req.user._id;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated properly' });
         return;
@@ -23,7 +23,7 @@ export const uploadStatement = asyncHandler(async (req, res) => {
  */
 export const getTransactions = asyncHandler(async (req, res) => {
     const service = container.resolve(BankStatementService);
-    const userId = req.user?._id;
+    const userId = req.user._id;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated' });
         return;

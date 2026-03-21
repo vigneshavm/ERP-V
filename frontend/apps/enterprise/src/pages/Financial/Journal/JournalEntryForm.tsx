@@ -108,7 +108,8 @@ const JournalEntryForm: React.FC = () => {
 
     return (
         <Layout>
-            <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900">
+            <div className="page-shell">
+            <div className="flex flex-col h-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]">
                 <PageHeader
                     title="New Journal Entry"
                     backButton={
@@ -126,7 +127,7 @@ const JournalEntryForm: React.FC = () => {
                     <div className="max-w-5xl mx-auto space-y-6">
 
                         {/* Header Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl shadow-sm border border-default dark:border-default">
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Date</label>
                                 <input
@@ -134,7 +135,7 @@ const JournalEntryForm: React.FC = () => {
                                     required
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
+                                    className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
                             <div>
@@ -145,7 +146,7 @@ const JournalEntryForm: React.FC = () => {
                                     placeholder="e.g., ADJ-2023-001"
                                     value={reference}
                                     onChange={e => setReference(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
+                                    className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
                             <div className="md:col-span-3">
@@ -156,14 +157,14 @@ const JournalEntryForm: React.FC = () => {
                                     placeholder="Describe the transaction..."
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
+                                    className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
                         </div>
 
                         {/* Line Items */}
-                        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Line Items</h3>
+                        <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl shadow-sm border border-default dark:border-default">
+                            <h3 className="text-lg font-bold text-neutral-900 dark:text-main mb-4">Line Items</h3>
 
                             <div className="space-y-4">
                                 {/* Header Row */}
@@ -176,12 +177,12 @@ const JournalEntryForm: React.FC = () => {
                                 </div>
 
                                 {lineItems.map((item, index) => (
-                                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-lg border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 transition-colors">
+                                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-3 rounded-lg border border-transparent hover:border-default dark:hover:border-default transition-colors">
                                         <div className="col-span-12 md:col-span-3">
                                             <input
                                                 type="text"
                                                 placeholder="Code"
-                                                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
+                                                className="w-full px-3 py-2 bg-white dark:bg-[var(--erp-card)] border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
                                                 value={item.accountId}
                                                 onChange={e => handleLineChange(item.id, 'accountId', e.target.value)}
                                             />
@@ -190,7 +191,7 @@ const JournalEntryForm: React.FC = () => {
                                             <input
                                                 type="text"
                                                 placeholder="Account Name"
-                                                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
+                                                className="w-full px-3 py-2 bg-white dark:bg-[var(--erp-card)] border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
                                                 value={item.accountName}
                                                 onChange={e => handleLineChange(item.id, 'accountName', e.target.value)}
                                             />
@@ -202,7 +203,7 @@ const JournalEntryForm: React.FC = () => {
                                                     min="0"
                                                     step="0.01"
                                                     placeholder="0.00"
-                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
+                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-[var(--erp-card)] border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
                                                     value={item.debit || ''}
                                                     onChange={e => handleLineChange(item.id, 'debit', e.target.value)}
                                                 />
@@ -215,7 +216,7 @@ const JournalEntryForm: React.FC = () => {
                                                     min="0"
                                                     step="0.01"
                                                     placeholder="0.00"
-                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
+                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-[var(--erp-card)] border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
                                                     value={item.credit || ''}
                                                     onChange={e => handleLineChange(item.id, 'credit', e.target.value)}
                                                 />
@@ -245,7 +246,7 @@ const JournalEntryForm: React.FC = () => {
                         </div>
 
                         {/* Totals Footer */}
-                        <div className={`p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 flex flex-col md:flex-row justify-between items-center gap-4 transition-colors ${isBalanced ? 'bg-white dark:bg-neutral-800' : 'bg-red-50 dark:bg-red-900/20 ring-1 ring-red-200 dark:ring-red-800'}`}>
+                        <div className={`p-6 rounded-xl shadow-sm border border-default dark:border-default flex flex-col md:flex-row justify-between items-center gap-4 transition-colors ${isBalanced ? 'bg-white dark:bg-[var(--erp-card)]' : 'bg-red-50 dark:bg-red-900/20 ring-1 ring-red-200 dark:ring-red-800'}`}>
                             <div className="flex items-center gap-3">
                                 {!isBalanced && <AlertCircle className="w-6 h-6 text-error" />}
                                 <div>
@@ -261,22 +262,22 @@ const JournalEntryForm: React.FC = () => {
                             <div className="flex items-center gap-8">
                                 <div className="text-right">
                                     <p className="text-xs text-neutral-500 uppercase font-semibold">Total Debit</p>
-                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-white">{totalDebit.toFixed(2)}</p>
+                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-main">{totalDebit.toFixed(2)}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs text-neutral-500 uppercase font-semibold">Total Credit</p>
-                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-white">{totalCredit.toFixed(2)}</p>
+                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-main">{totalCredit.toFixed(2)}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
 
-                <div className="bg-white dark:bg-neutral-800 p-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3 sticky bottom-0 z-20">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-4 border-t border-default dark:border-default flex justify-end gap-3 sticky bottom-0 z-20">
                     <button
                         type="button"
                         onClick={() => navigate('/finance/journal')}
-                        className="px-6 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
+                        className="px-6 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
                     >
                         Cancel
                     </button>
@@ -290,6 +291,8 @@ const JournalEntryForm: React.FC = () => {
                     </button>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

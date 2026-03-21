@@ -26,7 +26,6 @@ import {
   ChevronDown, Building2
 } from 'lucide-react';
 import { useUiStore } from '@/shared/lib/store/uiStore';
-import { useTheme } from '@/app/providers/ThemeContext';
 import { useConfig } from '@/app/providers/ConfigProvider';
 import { useBranchResolver } from '@/hooks/useBranchResolver';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -59,7 +58,7 @@ const IconBtn: React.FC<{
       'outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
       variant === 'danger'
         ? 'text-neutral-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400'
-        : 'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-700 dark:hover:text-neutral-200',
+        : 'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-700 dark:hover:text-neutral-200',
     ].join(' ')}
   >
     {children}
@@ -80,7 +79,7 @@ const ThemeToggleBtn: React.FC<{
     className={[
       'flex items-center gap-2.5 transition-colors duration-200 rounded-xl outline-none',
       'focus-visible:ring-2 focus-visible:ring-primary/60',
-      showLabel ? 'px-3 py-2 w-full hover:bg-neutral-100 dark:hover:bg-white/5' : 'p-2',
+      showLabel ? 'px-3 py-2 w-full hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)]' : 'p-2',
     ].join(' ')}
   >
     <motion.span
@@ -108,8 +107,7 @@ const ThemeToggleBtn: React.FC<{
 /* ─── Main Component ────────────────────────────────────────────────── */
 const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
   const dispatch = useDispatch();
-  const { user, role } = useAuthStore();
-  const { theme, toggleTheme } = useTheme();
+  const { user, role, theme } = useAuthStore();
   const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
   const { pathname } = useLocation();
   const {
@@ -210,7 +208,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
               onChange={(e) => dispatch(setBranch(e.target.value))}
               aria-label="Select branch"
               className={[
-                'w-full appearance-none bg-neutral-50 dark:bg-neutral-800/60',
+                'w-full appearance-none bg-neutral-50 dark:bg-[var(--erp-card)]/60',
                 'border border-neutral-200 dark:border-neutral-700 rounded-lg',
                 'pl-8 pr-7 py-1.5 text-[11px] font-bold text-neutral-700 dark:text-neutral-200',
                 'focus:outline-none focus:ring-2 focus:ring-primary/50',
@@ -286,7 +284,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
           /* Mobile slide */
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           /* Surface — intentional light/dark tokens */
-          'bg-white dark:bg-neutral-900',
+          'bg-white dark:bg-[var(--erp-bg)]',
           'border-r border-neutral-100 dark:border-neutral-800/60',
           /* Animation */
           'transition-all duration-300',
@@ -310,7 +308,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt="Company logo" className="w-full h-full object-contain p-1" />
               ) : (
-                <span className="font-black text-white text-sm">{initials}</span>
+                <span className="font-black text-main text-sm">{initials}</span>
               )}
             </motion.div>
             {!desktopCollapsed && (
@@ -339,7 +337,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
               aria-label={desktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               className={[
                 'hidden lg:flex items-center justify-center w-7 h-7 rounded-lg',
-                'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-700 dark:hover:text-neutral-200',
+                'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-700 dark:hover:text-neutral-200',
                 'transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
               ].join(' ')}
             >
@@ -390,7 +388,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 </div>
               )}
               {desktopCollapsed && (
-                <div className="mx-3 my-2 h-px bg-neutral-100 dark:bg-neutral-800/60" />
+                <div className="mx-3 my-2 h-px bg-neutral-100 dark:bg-[var(--erp-card)]/60" />
               )}
               {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
             </>
@@ -405,7 +403,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             <div className="flex flex-col items-center gap-1 pb-1">
               <ThemeToggleBtn
                 theme={(theme as 'light' | 'dark') || 'light'}
-                onToggle={toggleTheme}
+                onToggle={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))}
               />
               <IconBtn onClick={() => setIsChangePasswordOpen(true)} title="Change Password">
                 <Key className="w-4 h-4" aria-hidden="true" />
@@ -419,7 +417,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             <div className="space-y-0.5 pb-1">
               <ThemeToggleBtn
                 theme={(theme as 'light' | 'dark') || 'light'}
-                onToggle={toggleTheme}
+                onToggle={() => dispatch(setTheme(theme === 'light' ? 'dark' : 'light'))}
                 showLabel
               />
               <button
@@ -427,7 +425,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 className={[
                   'w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-colors duration-200',
                   'text-[11px] font-bold uppercase tracking-widest',
-                  'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-800 dark:hover:text-neutral-100',
+                  'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-[var(--erp-bg-sunken)] hover:text-neutral-800 dark:hover:text-neutral-100',
                   'outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
                 ].join(' ')}
               >

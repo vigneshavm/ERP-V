@@ -54,24 +54,24 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-emerald-500">
+                    <div className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors cursor-pointer text-emerald-500">
                         <ArrowRight className="w-5 h-5 rotate-180" />
                     </div>
                     <h2 className="text-xl font-medium text-neutral-300">Year 2024-2025</h2>
                 </div>
-                <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-neutral-500">
+                <div className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors cursor-pointer text-neutral-500">
                     <Share2 className="w-5 h-5" />
                 </div>
             </div>
 
             {/* Toggle */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-neutral-900/50 border border-white/5 rounded-2xl">
+            <div className="flex items-center gap-3 px-4 py-3 bg-[var(--erp-bg)]/50 border border-default rounded-2xl">
                 <input
                     type="checkbox"
                     id="exclude-investment"
                     checked={excludeInvestment}
                     onChange={(e) => setExcludeInvestment(e.target.checked)}
-                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-neutral-900"
+                    className="w-5 h-5 rounded border-neutral-700 bg-[var(--erp-card)] text-emerald-500 focus:ring-emerald-500 focus:ring-offset-neutral-900"
                 />
                 <label htmlFor="exclude-investment" className="text-sm font-medium text-neutral-400">
                     Exclude categories of type <span className="text-neutral-200 font-bold">INVESTMENT</span> from data calculations
@@ -148,7 +148,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                     const percentage = parseFloat(cat.percentage);
                     return (
                         <div key={idx} className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-white/5 flex items-center justify-center shrink-0">
+                            <div className="w-12 h-12 rounded-2xl bg-[var(--erp-bg)] border border-default flex items-center justify-center shrink-0">
                                 {categoryIcons[cat.category] || categoryIcons['Default']}
                             </div>
                             <div className="flex-1 space-y-2">
@@ -158,7 +158,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                                     </h4>
                                     <span className="text-lg font-bold text-neutral-200">{cat.percentage}%</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                <div className="h-1.5 w-full bg-[var(--erp-bg-sunken)] rounded-full overflow-hidden">
                                     <div
                                         className="h-full bg-emerald-500/50 rounded-full"
                                         style={{ width: `${percentage}%` }}

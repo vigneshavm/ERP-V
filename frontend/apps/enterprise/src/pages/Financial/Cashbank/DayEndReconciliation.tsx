@@ -70,6 +70,7 @@ const DayEndReconciliation: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
 
                 {/* Header */}
@@ -90,7 +91,7 @@ const DayEndReconciliation: React.FC = () => {
                                 type="date"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
-                                className="pl-10 pr-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold shadow-sm"
+                                className="pl-10 pr-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold shadow-sm"
                             />
                         </div>
                         <button
@@ -110,13 +111,13 @@ const DayEndReconciliation: React.FC = () => {
 
                         {/* Cash Tally Section */}
                         <div className="space-y-6">
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm">
                                 <h3 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2">
                                     <Calculator className="w-5 h-5 text-neutral-400" /> Cash Tally
                                 </h3>
 
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center p-4 bg-neutral-50 dark:bg-neutral-900 rounded-2xl">
+                                    <div className="flex justify-between items-center p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-2xl">
                                         <span className="text-xs font-bold text-neutral-500 uppercase">Opening Cash</span>
                                         <span className="font-mono font-bold">₹{formatCurrency(dayEndSummary.openingCash)}</span>
                                     </div>
@@ -129,7 +130,7 @@ const DayEndReconciliation: React.FC = () => {
                                         <span className="font-mono font-bold text-error">- ₹{formatCurrency(dayEndSummary.cashExpenses)}</span>
                                     </div>
 
-                                    <div className="border-t border-dashed border-neutral-200 dark:border-neutral-700 my-4"></div>
+                                    <div className="border-t border-dashed border-default dark:border-default my-4"></div>
 
                                     <div className="flex justify-between items-center px-4">
                                         <span className="text-sm font-black text-neutral-400 uppercase tracking-widest">Expected System Cash</span>
@@ -144,7 +145,7 @@ const DayEndReconciliation: React.FC = () => {
                                                 type="number"
                                                 value={physicalCash}
                                                 onChange={(e) => handleCashChange(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xl font-black outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                                className="w-full pl-12 pr-4 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-xl font-black outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -167,7 +168,7 @@ const DayEndReconciliation: React.FC = () => {
                                         <textarea
                                             value={notes}
                                             onChange={(e) => setNotes(e.target.value)}
-                                            className="w-full mt-2 p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-primary/10 resize-none h-24"
+                                            className="w-full mt-2 p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm outline-none focus:ring-4 focus:ring-primary/10 resize-none h-24"
                                             placeholder="Any discrepancies or notes..."
                                         />
                                     </div>
@@ -177,7 +178,7 @@ const DayEndReconciliation: React.FC = () => {
 
                         <div className="space-y-6">
                             {/* Supplier Alerts */}
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm">
                                 <h3 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2 text-warning">
                                     <AlertTriangle className="w-5 h-5" /> Supplier Limit Alerts
                                 </h3>
@@ -186,7 +187,7 @@ const DayEndReconciliation: React.FC = () => {
                                 ) : (
                                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                         {dayEndSummary.supplierAlerts.map(alert => (
-                                            <div key={alert.supplierId} className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-2xl flex justify-between items-center">
+                                            <div key={alert.supplierId} className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-4 rounded-2xl flex justify-between items-center">
                                                 <div>
                                                     <p className="font-bold text-sm">{alert.businessName}</p>
                                                     <p className="text-[10px] text-neutral-500 uppercase tracking-widest">
@@ -204,7 +205,7 @@ const DayEndReconciliation: React.FC = () => {
                             </div>
 
                             {/* Cheque Register */}
-                            <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm">
                                 <h3 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2 text-primary">
                                     <CheckSquare className="w-5 h-5" /> Pending Cheques
                                 </h3>
@@ -220,11 +221,11 @@ const DayEndReconciliation: React.FC = () => {
                                                     onClick={() => toggleCheque(cheque.id || cheque._id || '')}
                                                     className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-4 ${clearedCheques.includes(cheque.id || cheque._id || '')
                                                             ? 'border-success bg-success/5'
-                                                            : 'border-transparent bg-neutral-50 dark:bg-neutral-900 hover:border-neutral-200'
+                                                            : 'border-transparent bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] hover:border-default'
                                                         }`}
                                                 >
                                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${clearedCheques.includes(cheque.id || cheque._id || '')
-                                                            ? 'border-success bg-success text-white'
+                                                            ? 'border-success bg-success text-main'
                                                             : 'border-neutral-300 text-transparent'
                                                         }`}>
                                                         <CheckCircle2 size={14} />
@@ -249,6 +250,8 @@ const DayEndReconciliation: React.FC = () => {
                     </div>
                 )}
             </div>
+                  </div>
+
         </Layout>
     );
 };

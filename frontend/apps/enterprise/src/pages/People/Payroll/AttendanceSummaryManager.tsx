@@ -92,6 +92,7 @@ const AttendanceSummaryManager = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <PageHeader
                     title="Attendance Summary"
@@ -102,12 +103,12 @@ const AttendanceSummaryManager = () => {
                     ]}
                 />
 
-                <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl border border-default shadow-sm">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <Calendar size={18} className="text-gray-400" />
+                            <Calendar size={18} className="text-muted" />
                             <select
-                                className="p-2 border rounded-lg bg-gray-50 text-sm font-medium"
+                                className="p-2 border rounded-lg bg-[var(--erp-bg-sunken)] text-sm font-medium"
                                 value={selectedDate.month}
                                 onChange={(e) => setSelectedDate({ ...selectedDate, month: parseInt(e.target.value) })}
                             >
@@ -117,7 +118,7 @@ const AttendanceSummaryManager = () => {
                             </select>
                             <input
                                 type="number"
-                                className="w-24 p-2 border rounded-lg bg-gray-50 text-sm font-medium"
+                                className="w-24 p-2 border rounded-lg bg-[var(--erp-bg-sunken)] text-sm font-medium"
                                 value={selectedDate.year}
                                 onChange={(e) => setSelectedDate({ ...selectedDate, year: parseInt(e.target.value) })}
                             />
@@ -125,11 +126,11 @@ const AttendanceSummaryManager = () => {
                     </div>
                 </div>
 
-                <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="mt-6 bg-white rounded-xl shadow-sm border border-default overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-500">
+                                <tr className="bg-[var(--erp-bg-sunken)]/50 border-b border-default text-muted">
                                     <th className="px-6 py-4 font-medium">Employee</th>
                                     <th className="px-4 py-4 font-medium w-32">Total Days</th>
                                     <th className="px-4 py-4 font-medium w-32">Worked</th>
@@ -144,18 +145,18 @@ const AttendanceSummaryManager = () => {
                                     const recordEmpId = typeof record.employeeId === 'string' ? record.employeeId : record.employeeId?._id;
                                     const emp = employees.find(e => e._id === recordEmpId);
                                     return (
-                                        <tr key={record.employeeId} className="hover:bg-gray-50/30 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-gray-900">
+                                        <tr key={record.employeeId} className="hover:bg-[var(--erp-bg-sunken)]/30 transition-colors">
+                                            <td className="px-6 py-4 font-medium text-main">
                                                 {emp?.name}
-                                                <span className="block text-xs text-gray-400 font-normal">{emp?.role}</span>
+                                                <span className="block text-xs text-muted font-normal">{emp?.role}</span>
                                             </td>
-                                            <td className="px-4 py-4 text-gray-500">{record.totalDays}</td>
+                                            <td className="px-4 py-4 text-muted">{record.totalDays}</td>
                                             <td className="px-4 py-4">
                                                 <input
                                                     type="number"
                                                     value={record.workedDays}
                                                     onChange={(e) => handleUpdate(record.employeeId, 'workedDays', parseFloat(e.target.value))}
-                                                    className="w-full p-2 border border-gray-200 rounded bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-full p-2 border border-default rounded bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                                 />
                                             </td>
                                             <td className="px-4 py-4">
@@ -163,7 +164,7 @@ const AttendanceSummaryManager = () => {
                                                     type="number"
                                                     value={record.leavesTaken}
                                                     onChange={(e) => handleUpdate(record.employeeId, 'leavesTaken', parseFloat(e.target.value))}
-                                                    className="w-full p-2 border border-gray-200 rounded bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                                    className="w-full p-2 border border-default rounded bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                                 />
                                             </td>
                                             <td className="px-4 py-4">
@@ -171,10 +172,10 @@ const AttendanceSummaryManager = () => {
                                                     type="number"
                                                     value={record.overtimeHours}
                                                     onChange={(e) => handleUpdate(record.employeeId, 'overtimeHours', parseFloat(e.target.value))}
-                                                    className="w-full p-2 border border-gray-200 rounded bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full p-2 border border-default rounded bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                 />
                                             </td>
-                                            <td className="px-4 py-4 text-gray-500">
+                                            <td className="px-4 py-4 text-muted">
                                                 {(record.weeklyOffs || 0) + (record.holidays || 0)}
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -195,6 +196,8 @@ const AttendanceSummaryManager = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

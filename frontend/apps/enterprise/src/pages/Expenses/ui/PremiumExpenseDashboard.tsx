@@ -24,7 +24,7 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
     BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area
 } from 'recharts';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Expense } from "../../../features/expense-tracking/lib/useExpenses";
 
 interface PremiumExpenseDashboardProps {
@@ -41,10 +41,10 @@ const CATEGORY_MAP: Record<string, { icon: any, color: string, bgColor: string, 
     'Housing': { icon: Home, color: '#6366F1', bgColor: 'bg-indigo-500/10', textColor: 'text-indigo-600' },
     'Office': { icon: Briefcase, color: '#14B8A6', bgColor: 'bg-teal-500/10', textColor: 'text-teal-600' },
     'Travel': { icon: Globe, color: '#0EA5E9', bgColor: 'bg-sky-500/10', textColor: 'text-sky-600' },
-    'Others': { icon: DollarSign, color: '#6B7280', bgColor: 'bg-gray-500/10', textColor: 'text-gray-600' },
+    'Others': { icon: DollarSign, color: '#6B7280', bgColor: 'bg-gray-500/10', textColor: 'text-secondary' },
 };
 
-const DEFAULT_CATEGORY = { icon: Info, color: '#6B7280', bgColor: 'bg-gray-500/10', textColor: 'text-gray-600' };
+const DEFAULT_CATEGORY = { icon: Info, color: '#6B7280', bgColor: 'bg-gray-500/10', textColor: 'text-secondary' };
 
 const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expenses }) => {
     const stats = useMemo(() => {
@@ -107,7 +107,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
         return { total, monthTotal, growth, pieData, topCategories, dailyData };
     }, [expenses]);
 
-    const containerVariants: Variants = {
+    const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -117,7 +117,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
         }
     };
 
-    const itemVariants: Variants = {
+    const itemVariants = {
         hidden: { y: 20, opacity: 0 },
         visible: {
             y: 0,
@@ -136,7 +136,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <motion.div
                     variants={itemVariants}
-                    className="lg:col-span-2 bg-neutral-900 text-white rounded-[2.5rem] p-8 relative overflow-hidden group shadow-2xl shadow-neutral-900/20"
+                    className="lg:col-span-2 bg-[var(--erp-bg)] text-main rounded-[2.5rem] p-8 relative overflow-hidden group shadow-2xl shadow-neutral-900/20"
                 >
                     <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
                         <Wallet className="w-48 h-48 -mr-12 -mt-12 rotate-12" />
@@ -145,7 +145,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-2">
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Total Expense Base</span>
-                            <div className="h-px flex-1 bg-neutral-800"></div>
+                            <div className="h-px flex-1 bg-[var(--erp-card)]"></div>
                         </div>
 
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -180,7 +180,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
 
                     <div className="mt-8 flex gap-4 overflow-x-auto pb-2 custom-scrollbar no-scrollbar">
                         {['Daily', 'Weekly', 'Monthly', 'Yearly'].map((period) => (
-                            <button key={period} className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${period === 'Monthly' ? 'bg-white text-black' : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'}`}>
+                            <button key={period} className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${period === 'Monthly' ? 'bg-white text-black' : 'bg-[var(--erp-card)] text-neutral-400 hover:bg-neutral-700'}`}>
                                 {period}
                             </button>
                         ))}
@@ -189,7 +189,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
 
                 <motion.div
                     variants={itemVariants}
-                    className="bg-white dark:bg-neutral-800 rounded-[2.5rem] p-8 border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col justify-between"
+                    className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] p-8 border border-default dark:border-default shadow-sm flex flex-col justify-between"
                 >
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500">Distribution</h3>
@@ -244,7 +244,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                         variants={itemVariants}
                         key={cat.name}
                         whileHover={{ y: -5 }}
-                        className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-100 dark:border-neutral-700 shadow-sm flex flex-col items-center text-center group cursor-pointer transition-all hover:shadow-xl hover:shadow-neutral-200/50 dark:hover:shadow-black/20"
+                        className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-[2rem] border border-default dark:border-default shadow-sm flex flex-col items-center text-center group cursor-pointer transition-all hover:shadow-xl hover:shadow-neutral-200/50 dark:hover:shadow-black/20"
                     >
                         <div className={`w-12 h-12 ${cat.bgColor} rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-500`}>
                             <cat.icon className={`w-6 h-6 ${cat.textColor}`} />
@@ -258,7 +258,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
             {/* Detailed Analytics */}
             <motion.div
                 variants={itemVariants}
-                className="bg-white dark:bg-neutral-800 rounded-[2.5rem] p-8 border border-neutral-200 dark:border-neutral-700 shadow-sm"
+                className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] p-8 border border-default dark:border-default shadow-sm"
             >
                 <div className="flex items-center justify-between mb-8">
                     <div>
@@ -266,10 +266,10 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">30-Day Velocity Analysis</p>
                     </div>
                     <div className="flex gap-2">
-                        <button className="p-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl">
+                        <button className="p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                             <Calendar className="w-4 h-4 text-neutral-400" />
                         </button>
-                        <button className="p-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl">
+                        <button className="p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                             <MoreVertical className="w-4 h-4 text-neutral-400" />
                         </button>
                     </div>

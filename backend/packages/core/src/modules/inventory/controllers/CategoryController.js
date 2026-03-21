@@ -1,100 +1,22 @@
 import { CategoryService } from '../services/category.service.js';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { requireTenantId } from '@smarterp/shared/utils/tenantContext.js';
+import { parsePagination } from '@smarterp/shared/utils/pagination.js';
 const categoryService = new CategoryService();
 export class CategoryController {
-    /**
-     * @swagger
-     * /api/inventory/categories:
-     *   get:
-     *     summary: Get all inventory categories
-     *     tags: [Categories]
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: query
-     *         name: page
-     *         schema:
-     *           type: integer
-     *           default: 1
-     *         description: Page number for pagination
-     *       - in: query
-     *         name: limit
-     *         schema:
-     *           type: integer
-     *           default: 25
-     *         description: Number of items per page
-     *       - in: query
-     *         name: search
-     *         schema:
-     *           type: string
-     *         description: Search term for category names
-     *       - in: query
-     *         name: sector
-     *         schema:
-     *           type: string
-     *         description: Filter categories by sector
-     *       - in: query
-     *         name: sortBy
-     *         schema:
-     *           type: string
-     *           enum: [id, name, sector, createdAt, updatedAt]
-     *         description: Field to sort by
-     *       - in: query
-     *         name: sortOrder
-     *         schema:
-     *           type: string
-     *           enum: [asc, desc]
-     *           default: desc
-     *         description: Sort order (asc or desc)
-     *     responses:
-     *       200:
-     *         description: List of categories
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: '#/components/schemas/PaginatedCategoryResponse'
-     *       500:
-     *         description: Internal Server Error
-     */
-    getAllCategories = async (req, res) => {
-        const authReq = req;
-        try {
-            // 1. Input Sanitization & Parsing
-            const page = Math.max(1, parseInt(req.query.page) || 1);
-            const limit = Math.max(1, parseInt(req.query.limit) || 25);
-            const search = (req.query.search || '').trim();
-            const sector = (req.query.sector || '').trim();
-            const sortBy = req.query.sortBy;
-            // Support both 'sortOrder' and 'order' params
-            const sortOrderRaw = (req.query.sortOrder || req.query.order);
-            const sortOrder = (['asc', 'desc'].includes(sortOrderRaw)
-                ? sortOrderRaw
-                : 'desc');
-            const filters = { page, limit, search, sortBy, sortOrder, sector };
-            // 2. Call Service Layer
-            const tenantId = authReq.tenantId;
-            const { data, total } = await categoryService.findAll(tenantId, filters);
-            const stats = await categoryService.getStats(tenantId);
-            // 3. Construct Response Envelope
-            const totalPages = Math.ceil(total / limit);
-            const response = {
-                success: true,
-                data,
-                stats,
-                meta: {
-                    total,
-                    page,
-                    limit,
-                    totalPages
-                }
-            };
-            res.status(200).json(response);
-        }
-        catch (error) {
-            console.error('Error fetching categories:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Internal Server Error'
-            });
-        }
-    };
+    getAllCategories = asyncHandler(async (req, res) => {
+        const tenantId = requireTenantId(req);
+        const { page, limit } = parsePagination(req.query, 25);
+        const search = (req.query.search || '').trim();
+        const sector = (req.query.sector || '').trim();
+        const sortBy = req.query.sortBy;
+        const sortOrder = (['asc', 'desc'].includes(req.query.sortOrder) ? req.query.sortOrder : 'desc');
+        const filters = { page, limit, search, sortBy, sortOrder, sector };
+        const [{ data, total }, stats] = await Promise.all([
+            categoryService.findAll(tenantId, filters),
+            categoryService.getStats(tenantId),
+        ]);
+        const response = { success: true, data, stats, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+        res.status(200).json(response);
+    });
 }

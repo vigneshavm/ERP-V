@@ -36,25 +36,25 @@ interface MetricCardProps {
 const iconBg: Record<string, string> = {
   primary: 'bg-primary/10 dark:bg-primary/15 text-primary',
   emerald: 'bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  rose:    'bg-rose-500/10 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400',
-  amber:   'bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  blue:    'bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400',
-  violet:  'bg-violet-500/10 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400',
+  rose: 'bg-rose-500/10 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400',
+  amber: 'bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400',
+  blue: 'bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400',
+  violet: 'bg-violet-500/10 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400',
 };
 
 const progressColor: Record<string, string> = {
   primary: 'bg-primary',
   emerald: 'bg-emerald-500',
-  rose:    'bg-rose-500',
-  amber:   'bg-amber-500',
-  blue:    'bg-blue-500',
-  violet:  'bg-violet-500',
+  rose: 'bg-rose-500',
+  amber: 'bg-amber-500',
+  blue: 'bg-blue-500',
+  violet: 'bg-violet-500',
 };
 
 const trendColors = {
-  up:      'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10',
-  down:    'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10',
-  neutral: 'text-neutral-500 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800/50',
+  up: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10',
+  down: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10',
+  neutral: 'text-neutral-500 dark:text-neutral-400 bg-neutral-50 dark:bg-[var(--erp-card)]/50',
 } as const;
 
 const TrendIcon = { up: TrendingUp, down: TrendingDown, neutral: Minus } as const;
@@ -81,7 +81,7 @@ const AnimatedBar: React.FC<{ value: number; color: string; delay?: number }> = 
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={100}
-      className="mt-4 h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden"
+      className="mt-4 h-1.5 w-full bg-neutral-100 dark:bg-[var(--erp-card)] rounded-full overflow-hidden"
     >
       <motion.div
         style={{ width }}
@@ -114,7 +114,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       transition={{ duration: 0.3, delay, ease: 'easeOut' }}
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
       className={[
-        'relative bg-white dark:bg-neutral-900 rounded-2xl p-5',
+        'relative bg-white dark:bg-[var(--erp-bg)] rounded-2xl p-5',
         'border border-neutral-100 dark:border-neutral-800/70',
         'shadow-sm hover:shadow-md hover:shadow-primary/5',
         'transition-shadow duration-300',

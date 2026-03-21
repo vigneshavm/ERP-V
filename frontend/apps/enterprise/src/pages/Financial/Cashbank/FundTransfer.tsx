@@ -86,6 +86,7 @@ const FundTransfer: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-12">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -99,7 +100,7 @@ const FundTransfer: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-50 shadow-sm active:scale-95 transition">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm active:scale-95 transition">
                             <Download className="w-4 h-4" /> Export Ledger
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95">
@@ -110,7 +111,7 @@ const FundTransfer: React.FC = () => {
 
                 {/* Strategic KPI Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total System Liquidity</p>
                         <h3 className="text-2xl font-black">₹{(totals.totalCash / 100000).toFixed(2)}L</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -119,7 +120,7 @@ const FundTransfer: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Nodes at Risk</p>
                         <h3 className="text-2xl font-black text-error">{totals.criticalCount} <span className="text-xs text-neutral-400 font-bold uppercase">Critical</span></h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -128,7 +129,7 @@ const FundTransfer: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Failed Transfers</p>
                         <h3 className="text-2xl font-black text-amber-600">{totals.failedCount} <span className="text-xs text-neutral-400 font-bold uppercase">Today</span></h3>
                         <p className="text-xs text-neutral-500 mt-2 font-medium italic">Audit recommended</p>
@@ -138,12 +139,12 @@ const FundTransfer: React.FC = () => {
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform duration-700" />
                         <p className="text-[10px] font-black text-primary-light uppercase tracking-widest mb-1 italic">Agent Strategy</p>
                         <h3 className="text-xs font-bold leading-tight">"Move ₹3.2L from Chennai to Coimbatore now."</h3>
-                        <p className="text-[9px] text-white/60 mt-2 font-black uppercase tracking-tighter">AI Fund Flow Rebuild</p>
+                        <p className="text-[9px] text-main/60 mt-2 font-black uppercase tracking-tighter">AI Fund Flow Rebuild</p>
                     </div>
                 </div>
 
                 {/* Navigation Tabs */}
-                <div className="flex border-b border-neutral-100 dark:border-neutral-800 pb-0.5 mt-8 gap-8">
+                <div className="flex border-b border-default dark:border-default pb-0.5 mt-8 gap-8">
                     <button
                         onClick={() => setViewMode('MAP')}
                         className={`pb-3 text-sm font-black transition-all relative ${viewMode === 'MAP' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
@@ -180,7 +181,7 @@ const FundTransfer: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search Branch Node..."
-                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm"
+                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
@@ -188,14 +189,14 @@ const FundTransfer: React.FC = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {filteredBranches.map(branch => (
-                                        <div key={branch.id} className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-3xl p-6 shadow-sm group hover:border-primary/30 transition-all hover:scale-[1.01]">
+                                        <div key={branch.id} className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-3xl p-6 shadow-sm group hover:border-primary/30 transition-all hover:scale-[1.01]">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="p-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-2xl group-hover:text-primary transition-colors">
+                                                    <div className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-2xl group-hover:text-primary transition-colors">
                                                         <Building2 className="w-5 h-5" />
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-black text-neutral-900 dark:text-white leading-tight">{branch.branch_name}</h4>
+                                                        <h4 className="font-black text-neutral-900 dark:text-main leading-tight">{branch.branch_name}</h4>
                                                         <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">ID: {branch.id}</span>
                                                     </div>
                                                 </div>
@@ -208,13 +209,13 @@ const FundTransfer: React.FC = () => {
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4 mb-6">
-                                                <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl">
+                                                <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-2xl">
                                                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 flex items-center gap-1">
                                                         <Smartphone className="w-3 h-3" /> Cash Node
                                                     </p>
                                                     <p className="text-lg font-black italic tabular-nums">₹{branch.cash_holding.toLocaleString()}</p>
                                                 </div>
-                                                <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl">
+                                                <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-2xl">
                                                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 flex items-center gap-1">
                                                         <Building2 className="w-3 h-3" /> Bank Node
                                                     </p>
@@ -229,7 +230,7 @@ const FundTransfer: React.FC = () => {
                                                         {Math.floor((branch.cash_holding + branch.bank_holding) / branch.daily_burn)} Days
                                                     </span>
                                                 </div>
-                                                <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
+                                                <div className="w-full h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full overflow-hidden">
                                                     <div
                                                         className={`h-full rounded-full transition-all duration-1000 ${branch.health === 'EXCESS' ? 'bg-success w-[95%]' :
                                                             branch.health === 'STABLE' ? 'bg-indigo-500 w-[65%]' :
@@ -239,11 +240,11 @@ const FundTransfer: React.FC = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-2">
-                                                <button className="flex-1 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-900 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm active:scale-95">
+                                            <div className="mt-6 pt-4 border-t border-default dark:border-default flex items-center gap-2">
+                                                <button className="flex-1 py-2 rounded-xl bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-main transition-all shadow-sm active:scale-95">
                                                     Initiate Outflow
                                                 </button>
-                                                <button className="p-2 rounded-xl border border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 transition active:scale-90">
+                                                <button className="p-2 rounded-xl border border-default dark:border-default hover:bg-[var(--erp-bg-sunken)] transition active:scale-90">
                                                     <MoreVertical className="w-4 h-4 text-neutral-400" />
                                                 </button>
                                             </div>
@@ -254,9 +255,9 @@ const FundTransfer: React.FC = () => {
                         )}
 
                         {viewMode === 'TRANSFERS' && (
-                            <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                            <div className="bg-white dark:bg-[var(--erp-card)] rounded-3xl border border-default dark:border-default overflow-hidden shadow-sm">
                                 <table className="w-full text-left text-xs tabular-nums">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-widest">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default text-neutral-400 font-black uppercase tracking-widest">
                                         <tr>
                                             <th className="p-5">Direction / Node</th>
                                             <th className="p-5">Amount</th>
@@ -267,10 +268,10 @@ const FundTransfer: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {transfers.map(tx => (
-                                            <tr key={tx.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors group">
+                                            <tr key={tx.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50 transition-colors group">
                                                 <td className="p-5">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="p-2 bg-neutral-100 dark:bg-neutral-900 rounded-xl">
+                                                        <div className="p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                                                             <ArrowRightLeft className="w-4 h-4 text-neutral-400 group-hover:text-primary transition-colors" />
                                                         </div>
                                                         <div>
@@ -312,14 +313,14 @@ const FundTransfer: React.FC = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <button className="w-full py-4 bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-primary border-t border-neutral-100 dark:border-neutral-800 transition">
+                                <button className="w-full py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-primary border-t border-default dark:border-default transition">
                                     Load system-wide archival fund flows
                                 </button>
                             </div>
                         )}
 
                         {viewMode === 'ADVISOR' && (
-                            <div className="bg-neutral-900 text-white rounded-[2.5rem] p-10 border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                            <div className="bg-[var(--erp-bg)] text-main rounded-[2.5rem] p-10 border border-default shadow-2xl relative overflow-hidden group">
                                 <Zap className="absolute -bottom-10 -right-10 w-64 h-64 text-primary opacity-5 rotate-12 group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="relative z-10 max-w-xl">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[10px] font-black uppercase tracking-[0.2em] mb-8 animate-pulse shadow-sm shadow-primary/20">
@@ -330,12 +331,12 @@ const FundTransfer: React.FC = () => {
                                     </h3>
 
                                     <div className="space-y-6 mb-10">
-                                        <div className="flex gap-5 p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
+                                        <div className="flex gap-5 p-6 bg-[var(--erp-bg-sunken)] border border-default rounded-3xl backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
                                             <div className="p-4 bg-error/20 text-error rounded-2xl h-fit shadow-inner">
                                                 <AlertCircle className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-lg text-white mb-2">Critical Node: Coimbatore Store</h4>
+                                                <h4 className="font-black text-lg text-main mb-2">Critical Node: Coimbatore Store</h4>
                                                 <p className="text-sm text-neutral-400 leading-relaxed font-bold italic">
                                                     Available funds (₹80k) will only last <span className="text-error font-black underline">2 more days</span> based on avg daily overhead.
                                                     Failure to rebalance by tomorrow may lead to operational shutdown.
@@ -343,12 +344,12 @@ const FundTransfer: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex gap-5 p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
+                                        <div className="flex gap-5 p-6 bg-[var(--erp-bg-sunken)] border border-default rounded-3xl backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
                                             <div className="p-4 bg-success/20 text-success rounded-2xl h-fit shadow-inner">
                                                 <TrendingUp className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-lg text-white mb-2">Optimal Source: Chennai Main</h4>
+                                                <h4 className="font-black text-lg text-main mb-2">Optimal Source: Chennai Main</h4>
                                                 <p className="text-sm text-neutral-400 leading-relaxed font-bold italic">
                                                     Chennai Main holds ₹30.5L (Excess Liquidity). Moving ₹5L to Coimbatore and ₹2L to Trichy will normalize network stress without impacting Chennai’s performance.
                                                 </p>
@@ -369,7 +370,7 @@ const FundTransfer: React.FC = () => {
                         <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest pl-1">Network Protocols</h4>
 
                         {/* Transfer Locks Status */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm shadow-black/5">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-3xl border border-default dark:border-default p-6 shadow-sm shadow-black/5">
                             <div className="flex items-center justify-between mb-6">
                                 <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">security shields</span>
                                 <span className="px-2 py-0.5 bg-success/10 text-success rounded-full text-[9px] font-black uppercase shadow-sm">Active</span>
@@ -382,7 +383,7 @@ const FundTransfer: React.FC = () => {
                                     { name: 'Daily Velocity Limit', status: true },
                                     { name: 'Geofenced Rebalancing', status: false },
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-2xl transition hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700">
+                                    <div key={i} className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-2xl transition hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] border border-transparent hover:border-default dark:hover:border-default">
                                         <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">{item.name}</span>
                                         {item.status ? <Unlock className="w-3.5 h-3.5 text-success" /> : <Lock className="w-3.5 h-3.5 text-neutral-300 transition hover:text-amber-500" />}
                                     </div>
@@ -391,14 +392,14 @@ const FundTransfer: React.FC = () => {
                         </div>
 
                         {/* Fraud Intelligence Panel */}
-                        <div className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-800 relative overflow-hidden group shadow-sm">
+                        <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-6 rounded-3xl border border-default dark:border-default relative overflow-hidden group shadow-sm">
                             <ShieldAlert className="absolute -top-4 -right-4 w-24 h-24 opacity-5 group-hover:scale-110 transition-transform duration-700" />
                             <h4 className="font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
                                 Alert Stream <div className="w-2 h-2 bg-error rounded-full animate-ping" />
                             </h4>
 
                             <div className="space-y-4">
-                                <div className="p-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-error/20 hover:border-error transition">
+                                <div className="p-4 bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-sm border border-error/20 hover:border-error transition">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-[9px] font-black uppercase text-error tracking-widest">Abuse Detected</span>
                                         <Clock className="w-3 h-3 text-neutral-400" />
@@ -408,7 +409,7 @@ const FundTransfer: React.FC = () => {
                                     </p>
                                 </div>
 
-                                <div className="p-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-amber-200 hover:border-amber-500 transition">
+                                <div className="p-4 bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-sm border border-amber-200 hover:border-amber-500 transition">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-[9px] font-black uppercase text-amber-600 tracking-widest">Anomalous Time</span>
                                         <Clock className="w-3 h-3 text-neutral-400" />
@@ -429,6 +430,8 @@ const FundTransfer: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

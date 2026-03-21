@@ -26,9 +26,9 @@ export const POSHeldBillsModal: React.FC<POSHeldBillsModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
 
-                <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
+                <div className="p-4 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
                     <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
                         <Clock className="w-5 h-5 text-primary" />
                         Held Bills Queue
@@ -54,7 +54,7 @@ export const POSHeldBillsModal: React.FC<POSHeldBillsModalProps> = ({
                         sortedBills.map((bill) => (
                             <div
                                 key={bill.id}
-                                className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex justify-between items-center group"
+                                className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex justify-between items-center group"
                             >
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">

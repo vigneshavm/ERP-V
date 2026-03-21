@@ -28,27 +28,27 @@ export const ReturnSummary: React.FC<ReturnSummaryProps> = ({
     ];
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Return Summary</h3>
+        <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default shadow-sm p-6">
+            <h3 className="text-lg font-bold text-main mb-6">Return Summary</h3>
 
             <div className="space-y-3 mb-8">
-                <div className="flex justify-between text-slate-500">
+                <div className="flex justify-between text-muted">
                     <span>Items Returned</span>
                     <span>{itemsCount}</span>
                 </div>
-                <div className="flex justify-between text-slate-500">
+                <div className="flex justify-between text-muted">
                     <span>Subtotal</span>
                     <span>₹{totalRefund.toFixed(2)}</span>
                 </div>
                 {/* Tax reversal calc to be refined */}
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <span className="font-bold text-lg text-slate-900 dark:text-white">Total Refund</span>
+                <div className="pt-4 border-t border-default dark:border-default flex justify-between items-center">
+                    <span className="font-bold text-lg text-main">Total Refund</span>
                     <span className="font-bold text-2xl text-red-500">₹{totalRefund.toFixed(2)}</span>
                 </div>
             </div>
 
-            <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-3 text-sm uppercase">Refund Method</h4>
+            <h4 className="font-bold text-secondary dark:text-slate-200 mb-3 text-sm uppercase">Refund Method</h4>
             <div className="grid grid-cols-2 gap-3 mb-8">
                 {methods.map(method => {
                     const Icon = method.icon;
@@ -59,13 +59,13 @@ export const ReturnSummary: React.FC<ReturnSummaryProps> = ({
                             onClick={() => onMethodChange(method.id as any)}
                             className={`p-4 rounded-xl border text-left transition-all ${isSelected
                                 ? 'bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500'
-                                : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 hover:border-indigo-300'}`}
+                                : 'bg-white dark:bg-slate-700 border-default dark:border-slate-600 hover:border-indigo-300'}`}
                         >
-                            <div className={`flex items-center gap-2 mb-1 ${isSelected ? 'text-indigo-700' : 'text-slate-800 dark:text-white'}`}>
+                            <div className={`flex items-center gap-2 mb-1 ${isSelected ? 'text-indigo-700' : 'text-main'}`}>
                                 <Icon className="w-4 h-4" />
                                 <span className="font-bold">{method.label}</span>
                             </div>
-                            <p className="text-xs text-slate-500">{method.desc}</p>
+                            <p className="text-xs text-muted">{method.desc}</p>
                         </button>
                     )
                 })}
@@ -79,7 +79,7 @@ export const ReturnSummary: React.FC<ReturnSummaryProps> = ({
                 {isProcessing ? 'Processing Return...' : `Confirm Refund ₹${totalRefund.toFixed(2)}`}
             </button>
 
-            <p className="text-xs text-center text-slate-400 mt-4">
+            <p className="text-xs text-center text-muted mt-4">
                 This action will update inventory and create a credit note record.
             </p>
         </div>

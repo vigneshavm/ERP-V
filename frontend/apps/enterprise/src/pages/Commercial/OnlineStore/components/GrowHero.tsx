@@ -18,7 +18,7 @@ const GrowHero: React.FC<GrowHeroProps> = ({ isLoading, onActivate, currentPlan 
     // Let's create a functional component anyway to be safe and usable.
     return (
         <div className="space-y-12 pb-20">
-            <header className="relative overflow-hidden bg-[#020617] border-b border-slate-800 pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
+            <header className="relative overflow-hidden bg-[var(--erp-bg)] border-b border-default pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4F46E5]/10 blur-[120px] rounded-full -mr-48 -mt-48 motion-safe:animate-pulse transition-opacity duration-300" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#22C55E]/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-opacity duration-300" aria-hidden="true" />
 
@@ -49,7 +49,7 @@ const GrowHero: React.FC<GrowHeroProps> = ({ isLoading, onActivate, currentPlan 
                     </div>
 
                     <div className="hidden xl:block w-full max-w-md">
-                        <div className="relative aspect-square bg-[#020617] rounded-[3rem] border border-slate-800 p-8 shadow-inner overflow-hidden">
+                        <div className="relative aspect-square bg-[var(--erp-bg)] rounded-[3rem] border border-default p-8 shadow-inner overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5]/20 to-transparent" />
                             <div className="relative h-full flex flex-col justify-center items-center text-center">
                                 <ShoppingBag className="w-24 h-24 text-[#F8FAFC] mb-8" />

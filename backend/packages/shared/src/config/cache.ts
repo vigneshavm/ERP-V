@@ -141,6 +141,12 @@ export const cacheMiddleware = (ttl = 300) =>
 export const invalidateUserCache = async (userId: string, pattern = '*'): Promise<boolean> =>
     deleteCachePattern(`cache:${userId}:${pattern === '*' ? '' : pattern}`);
 
+/** Dummy redisClient for compatibility with startup.ts after Redis removal. */
+export const redisClient = {
+    status: 'ready',
+    quit: async () => {},
+};
+
 export default {
     getCache,
     setCache,
@@ -149,4 +155,5 @@ export default {
     getCacheOrFetch,
     cacheMiddleware,
     invalidateUserCache,
+    redisClient,
 };

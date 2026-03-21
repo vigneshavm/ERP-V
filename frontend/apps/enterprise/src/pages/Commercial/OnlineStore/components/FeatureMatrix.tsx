@@ -32,44 +32,44 @@ const FeatureMatrix = () => {
 
     const renderValue = (val: string | boolean) => {
         if (typeof val === 'boolean') {
-            return val ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />;
+            return val ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-muted mx-auto" />;
         }
-        return <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{val}</span>;
+        return <span className="text-sm font-medium text-secondary dark:text-muted">{val}</span>;
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Feature Comparison</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm">Detailed breakdown of platform capabilities per plan</p>
+        <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-default dark:border-default">
+                <h3 className="text-lg font-bold text-main">Feature Comparison</h3>
+                <p className="text-muted dark:text-muted text-sm">Detailed breakdown of platform capabilities per plan</p>
             </div>
 
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-slate-50 dark:bg-slate-900/50">
-                            <th className="p-4 w-1/3 text-xs font-bold text-slate-500 uppercase tracking-wider">Feature</th>
-                            <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Starter</th>
+                        <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
+                            <th className="p-4 w-1/3 text-xs font-bold text-muted uppercase tracking-wider">Feature</th>
+                            <th className="p-4 w-1/6 text-center text-xs font-bold text-muted uppercase tracking-wider">Starter</th>
                             <th className="p-4 w-1/6 text-center text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50/50 dark:bg-indigo-900/20 border-t-2 border-indigo-500">Growth</th>
-                            <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Scale</th>
+                            <th className="p-4 w-1/6 text-center text-xs font-bold text-muted uppercase tracking-wider">Scale</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                         {features.map((section, idx) => (
                             <React.Fragment key={idx}>
-                                <tr className="bg-slate-50/50 dark:bg-slate-800/50">
-                                    <td colSpan={4} className="px-4 py-2 text-xs font-black uppercase tracking-widest text-slate-400">
+                                <tr className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50">
+                                    <td colSpan={4} className="px-4 py-2 text-xs font-black uppercase tracking-widest text-muted">
                                         {section.category}
                                     </td>
                                 </tr>
                                 {section.items.map((item, itemIdx) => (
-                                    <tr key={itemIdx} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                        <td className="p-4 text-sm font-medium text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                                    <tr key={itemIdx} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700/50 transition-colors">
+                                        <td className="p-4 text-sm font-medium text-secondary dark:text-slate-200 flex items-center gap-2">
                                             {item.name}
-                                            <Info className="w-3.5 h-3.5 text-slate-300 cursor-help" />
+                                            <Info className="w-3.5 h-3.5 text-muted cursor-help" />
                                         </td>
                                         <td className="p-4 text-center">{renderValue(item.free)}</td>
-                                        <td className="p-4 text-center bg-indigo-50/10 dark:bg-indigo-900/10 font-bold border-x border-slate-100 dark:border-slate-800">
+                                        <td className="p-4 text-center bg-indigo-50/10 dark:bg-indigo-900/10 font-bold border-x border-default dark:border-default">
                                             {renderValue(item.pro)}
                                         </td>
                                         <td className="p-4 text-center">{renderValue(item.enterprise)}</td>

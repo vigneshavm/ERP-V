@@ -38,7 +38,6 @@ import {
     CheckCircle,
     X,
     Loader2,
-    Layout,
     Navigation2,
     ShieldCheck,
     Settings2,
@@ -63,6 +62,7 @@ import { GeographyTab } from "./components/GeographyTab";
 import { UserTab } from "./components/UserTab";
 import { BrandingTab } from "./components/BrandingTab";
 import { IntegrationsTab } from "./components/IntegrationsTab";
+import Layout, { PageShell } from "@/shared/ui/Layout";
 
 interface TenantManagementProps {
     onLoginAs?: (tenant: Tenant) => void;
@@ -203,19 +203,19 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
     const handleOpenEditPanel = (tenant: Tenant) => {
         setSelectedTenant(tenant);
-        tenantForm.handleStartEdit(tenant);
+        tenantForm.startEdit(tenant);
         setIsDeployView(true);
     };
 
     const handleOpenProvisionPanel = () => {
         setSelectedTenant(null);
-        tenantForm.handleCancelEdit(); // Reset form to initial state
+        tenantForm.cancelEdit(); // Reset form to initial state
         setIsDeployView(true);
     };
 
     const handlePanelSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const success = await tenantForm.handleSubmit();
+        const success = await tenantForm.submit();
         if (success) {
             setIsDeployView(false);
             setSelectedTenant(null);
@@ -235,16 +235,19 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
     if (isDeployView) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 lg:p-12 animate-in fade-in zoom-in-95 duration-500">
+            <>
+                <Layout>
+                    <PageShell>
+                    <div className="min-h-screen bg-[var(--erp-bg-sunken)] dark:bg-slate-950 p-6 lg:p-12 animate-in fade-in zoom-in-95 duration-500">
                 {/* Deployment Header */}
-                <div className="max-w-[1600px] mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="max-w-[1600px] mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                     <div className="flex items-center gap-6">
                         <button
                             onClick={() => {
                                 setIsDeployView(false);
                                 setSelectedTenant(null);
                             }}
-                            className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                            className="w-12 h-12 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-xl flex items-center justify-center text-muted hover:text-indigo-600 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 transition-all border border-default dark:border-default"
                         >
                             <ArrowRightCircle className="w-6 h-6 rotate-180" />
                         </button>
@@ -254,26 +257,26 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     {tenantForm.editingTenant ? 'Edit Mode' : 'Creation Mode'}
                                 </span>
                             </div>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                            <h2 className="text-2xl font-bold text-main">
                                 {tenantForm.editingTenant ? 'Configure Tenant' : 'Provision New Tenant'}
                             </h2>
                         </div>
                     </div>
 
                     <div className="flex gap-3">
-                        <div className="hidden lg:flex flex-col items-end justify-center mr-4 border-r border-slate-100 dark:border-slate-800 pr-6">
+                        <div className="hidden lg:flex flex-col items-end justify-center mr-4 border-r border-default dark:border-default pr-6">
                             <div className="flex items-center gap-2 mb-1">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Setup Quality</span>
+                                <span className="text-[10px] font-black text-muted uppercase tracking-widest">Setup Quality</span>
                                 <span className="text-[10px] font-black text-indigo-600 uppercase">84%</span>
                             </div>
-                            <div className="w-32 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div className="w-32 h-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full overflow-hidden">
                                 <div className="h-full bg-indigo-600 rounded-full" style={{ width: '84%' }} />
                             </div>
                         </div>
                         <button
                             type="button"
                             onClick={() => setIsDeployView(false)}
-                            className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                            className="px-6 py-2.5 bg-white dark:bg-[var(--erp-card)] text-secondary dark:text-muted rounded-xl font-bold text-sm border border-default dark:border-default hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 transition-colors"
                         >
                             Cancel
                         </button>
@@ -293,7 +296,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                 <div className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-8">
                     {/* Navigation Sidebar */}
                     <div className="xl:col-span-1 space-y-4">
-                        <div className="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-3 rounded-2xl border border-default dark:border-default shadow-sm">
                             <div className="flex flex-col gap-1">
                                 {[
                                     { id: 'business', label: 'Business Profile', icon: Building2 },
@@ -308,10 +311,10 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 ].map(tab => (
                                     <button
                                         key={tab.id}
-                                        onClick={() => tenantForm.setFormTab(tab.id as any)}
-                                        className={`w-full px-4 py-3 rounded-xl text-xs font-bold text-left transition-all flex items-center gap-3 ${tenantForm.activeTab === tab.id ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                        onClick={() => tenantForm.setActiveTab(tab.id as any)}
+                                        className={`w-full px-4 py-3 rounded-xl text-xs font-bold text-left transition-all flex items-center gap-3 ${tenantForm.activeTab === tab.id ? 'bg-indigo-50 text-indigo-700 dark:bg-[var(--erp-card)] dark:text-indigo-400' : 'text-muted hover:text-secondary hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]'}`}
                                     >
-                                        <tab.icon className={`w-4 h-4 ${tenantForm.activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}`} />
+                                        <tab.icon className={`w-4 h-4 ${tenantForm.activeTab === tab.id ? 'text-indigo-600' : 'text-muted'}`} />
                                         <span>{tab.label}</span>
                                         {tenantForm.activeTab === tab.id && <ChevronRight className="w-3 h-3 ml-auto text-indigo-400" />}
                                     </button>
@@ -322,7 +325,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
                     {/* Form Viewport */}
                     <div className="xl:col-span-3">
-                        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-8 min-h-[600px]">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm p-8 min-h-[600px]">
 
                             <form id="tenant-full-form" onSubmit={handlePanelSubmit} className="relative z-10 h-full flex flex-col">
                                 <div className="flex-1 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -334,7 +337,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                         <SystemTab
                                             newTenant={tenantForm.newTenant}
                                             setNewTenant={tenantForm.setNewTenant}
-                                            handleModuleToggle={tenantForm.handleModuleToggle}
+                                            handleModuleToggle={tenantForm.toggleModule}
                                         />
                                     )}
                                     {tenantForm.activeTab === 'geography' && (
@@ -367,13 +370,19 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     </div>
                 </div>
             </div>
+                </PageShell>
+            </Layout>
+        </>
         );
     }
 
     return (
-        <div className="max-w-[1800px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+        <>
+            <Layout>
+                <PageShell>
+                <div className="max-w-[1800px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             {/* Standard Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
                         <Building2 className="w-6 h-6" />
@@ -382,10 +391,10 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                         <div className="flex items-center gap-2 mb-1">
                             <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider rounded">Super Admin</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <h1 className="text-2xl font-bold text-main">
                             Tenant Operation Center
                         </h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                        <p className="text-muted dark:text-muted text-sm mt-1">
                             Manage and monitor your fleet of ERP instances.
                         </p>
                     </div>
@@ -394,7 +403,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => navigate('DASHBOARD')}
-                        className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl transition-all border border-slate-200 dark:border-slate-700"
+                        className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 text-secondary dark:text-muted rounded-xl transition-all border border-default dark:border-default"
                         title="Return to Dashboard"
                     >
                         <LayoutDashboard className="w-5 h-5" />
@@ -410,7 +419,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
+            <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] p-1.5 rounded-xl border border-default dark:border-default w-fit">
                 {[
                     { id: 'fleet', label: 'Tenant Fleet', icon: Building2 },
                     { id: 'control', label: 'Core Systems', icon: Settings }
@@ -418,7 +427,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTabLocal(tab.id as TabType)}
-                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-muted hover:text-secondary dark:hover:text-muted'}`}
                     >
                         <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-indigo-600' : ''}`} />
                         {tab.label}
@@ -438,26 +447,26 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             { label: 'Growth Enabled', value: metrics.growthEnabled, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', trend: 'Integrated' },
                             { label: 'System Health', value: `${metrics.healthScore}%`, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', trend: 'Score' }
                         ].map((kpi, idx) => (
-                            <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                            <div key={idx} className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-xl border border-default dark:border-default shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                                 {kpi.label === 'System Health' && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800">
+                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]">
                                         <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: kpi.value }} />
                                     </div>
                                 )}
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 rounded-lg ${kpi.bg} dark:bg-slate-800`}>
+                                    <div className={`p-3 rounded-lg ${kpi.bg} dark:bg-[var(--erp-card)]`}>
                                         <kpi.icon className={`w-6 h-6 ${kpi.color}`} />
                                     </div>
-                                    <span className={`text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${(typeof kpi.value === 'number' && kpi.value > 0) || (typeof kpi.value === 'string' && kpi.value !== '0%') ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' : 'bg-slate-100 text-slate-400'}`}>
+                                    <span className={`text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${(typeof kpi.value === 'number' && kpi.value > 0) || (typeof kpi.value === 'string' && kpi.value !== '0%') ? 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-secondary dark:text-muted' : 'bg-[var(--erp-bg-sunken)] text-muted'}`}>
                                         {kpi.trend}
                                     </span>
                                 </div>
                                 <div className="flex items-end justify-between">
                                     <div>
-                                        <h3 className="text-2xl font-black text-slate-900 dark:text-white">
+                                        <h3 className="text-2xl font-black text-main">
                                             {typeof kpi.value === 'number' ? kpi.value.toLocaleString() : kpi.value}
                                         </h3>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mt-1">{kpi.label}</p>
+                                        <p className="text-[10px] font-black text-muted uppercase tracking-[0.15em] mt-1">{kpi.label}</p>
                                     </div>
                                     {kpi.label === 'System Health' && (
                                         <div className="flex items-end gap-1 h-8 opacity-40 group-hover:opacity-100 transition-opacity">
@@ -472,13 +481,13 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     </div>
 
                     {/* Filters & Actions */}
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] p-4 rounded-2xl border border-default dark:border-default shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
                         <div className="relative flex-1 w-full md:w-auto">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                             <input
                                 type="text"
                                 placeholder="Search tenants..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                className="w-full pl-10 pr-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -488,7 +497,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             <select
                                 value={advancedFilters.sector}
                                 onChange={(e) => setAdvancedFilters(prev => ({ ...prev, sector: e.target.value }))}
-                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                                className="px-3 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
                             >
                                 {sectors.map(s => <option key={s} value={s}>{s === 'ALL' ? 'All Sectors' : s}</option>)}
                             </select>
@@ -496,17 +505,17 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             <select
                                 value={advancedFilters.region}
                                 onChange={(e) => setAdvancedFilters(prev => ({ ...prev, region: e.target.value }))}
-                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                                className="px-3 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
                             >
                                 {regions.map(r => <option key={r} value={r}>{r === 'ALL' ? 'All Regions' : r}</option>)}
                             </select>
 
-                            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] p-1 rounded-lg border border-default dark:border-default">
                                 {(['ALL', 'ACTIVE', 'SUSPENDED'] as const).map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setStatusFilter(status)}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${statusFilter === status ? 'bg-white dark:bg-slate-600 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${statusFilter === status ? 'bg-white dark:bg-slate-600 text-indigo-600 shadow-sm' : 'text-muted hover:text-secondary'}`}
                                     >
                                         {status}
                                     </button>
@@ -518,14 +527,14 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
 
                     {/* Tenant Table */}
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
                         <div className="overflow-x-auto custom-scrollbar">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                    <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-b border-default dark:border-default">
                                         <th className="px-6 py-4 w-10">
                                             <button onClick={toggleAllSelection} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.length === paginatedTenants.length ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600'}`}>
-                                                {selectedTenants.length === paginatedTenants.length && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                                                {selectedTenants.length === paginatedTenants.length && <CheckCircle className="w-3.5 h-3.5 text-main" />}
                                             </button>
                                         </th>
                                         {[
@@ -535,59 +544,59 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                             { id: 'isActive', label: 'Status' },
                                             { id: 'modules', label: 'Modules' }
                                         ].map(col => (
-                                            <th key={col.id} className="px-6 py-4 cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => handleSort(col.id as any)}>
+                                            <th key={col.id} className="px-6 py-4 cursor-pointer group hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] transition-colors" onClick={() => handleSort(col.id as any)}>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{col.label}</span>
-                                                    <RefreshCw className={`w-3 h-3 text-slate-400 group-hover:text-indigo-500 transition-all ${sortConfig?.key === col.id ? 'text-indigo-600' : 'opacity-0 group-hover:opacity-100'}`} />
+                                                    <span className="text-xs font-bold text-muted uppercase tracking-wider">{col.label}</span>
+                                                    <RefreshCw className={`w-3 h-3 text-muted group-hover:text-indigo-500 transition-all ${sortConfig?.key === col.id ? 'text-indigo-600' : 'opacity-0 group-hover:opacity-100'}`} />
                                                 </div>
                                             </th>
                                         ))}
-                                        <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold text-muted uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                     {paginatedTenants.length === 0 ? (
                                         <tr>
-                                            <td colSpan={7} className="p-20 text-center text-slate-400">
+                                            <td colSpan={7} className="p-20 text-center text-muted">
                                                 <div className="flex flex-col items-center gap-4">
-                                                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-full">
-                                                        <Search className="w-8 h-8 text-slate-300" />
+                                                    <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full">
+                                                        <Search className="w-8 h-8 text-muted" />
                                                     </div>
-                                                    <h4 className="text-lg font-bold text-slate-700 dark:text-slate-300">No Tenants Found</h4>
-                                                    <p className="text-sm text-slate-500">Try adjusting your search criteria or filters</p>
+                                                    <h4 className="text-lg font-bold text-secondary dark:text-muted">No Tenants Found</h4>
+                                                    <p className="text-sm text-muted">Try adjusting your search criteria or filters</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : (
                                         paginatedTenants.map(tenant => (
-                                            <tr key={tenant.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <tr key={tenant.id} className="group hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                                 <td className="px-6 py-4">
-                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700 group-hover:border-indigo-400'}`}>
-                                                        {selectedTenants.includes(tenant.id) && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-indigo-600 border-indigo-600' : 'border-default dark:border-default group-hover:border-indigo-400'}`}>
+                                                        {selectedTenants.includes(tenant.id) && <CheckCircle className="w-3.5 h-3.5 text-main" />}
                                                     </button>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-xl shadow-sm">
+                                                        <div className="w-10 h-10 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg flex items-center justify-center text-xl shadow-sm">
                                                             {getSectorIcon(tenant.sector)}
                                                         </div>
                                                         <div>
                                                             <div className="flex items-center gap-2">
-                                                                <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">{tenant.name}</h4>
+                                                                <h4 className="font-bold text-main group-hover:text-indigo-600 transition-colors">{tenant.name}</h4>
                                                                 {(tenant as any).isPremium && <Crown className="w-3.5 h-3.5 text-amber-500" />}
                                                             </div>
-                                                            <p className="text-xs text-slate-500 font-mono mt-0.5">{tenant.subdomain}.erp.next</p>
+                                                            <p className="text-xs text-muted font-mono mt-0.5">{tenant.subdomain}.erp.next</p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-600 dark:text-slate-300">
+                                                    <span className="px-2.5 py-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded text-xs font-bold text-secondary dark:text-muted">
                                                         {tenant.sector}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                                                        <Globe className="w-3.5 h-3.5 text-slate-400" />
+                                                    <div className="flex items-center gap-2 text-sm text-secondary dark:text-muted">
+                                                        <Globe className="w-3.5 h-3.5 text-muted" />
                                                         {tenant.region?.currency || 'USD'}
                                                     </div>
                                                 </td>
@@ -603,12 +612,12 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                 <td className="px-6 py-4">
                                                     <div className="flex -space-x-1.5">
                                                         {tenant.modules?.slice(0, 4).map((mod, i) => (
-                                                            <div key={mod} className="w-6 h-6 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[8px] font-bold text-slate-600 shadow-sm" title={mod}>
+                                                            <div key={mod} className="w-6 h-6 rounded bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default flex items-center justify-center text-[8px] font-bold text-secondary shadow-sm" title={mod}>
                                                                 {mod.charAt(0)}
                                                             </div>
                                                         ))}
                                                         {tenant.modules && tenant.modules.length > 4 && (
-                                                            <div className="w-6 h-6 rounded bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[8px] font-bold text-slate-500">
+                                                            <div className="w-6 h-6 rounded bg-[var(--erp-bg-sunken)] dark:bg-slate-700 border border-default dark:border-default flex items-center justify-center text-[8px] font-bold text-muted">
                                                                 +{tenant.modules.length - 4}
                                                             </div>
                                                         )}
@@ -618,14 +627,14 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => onLoginAs?.(tenant)}
-                                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                            className="p-2 text-muted hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                                                             title="Login as System Admin"
                                                         >
                                                             <LogIn className="w-4 h-4" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleOpenEditPanel(tenant)}
-                                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            className="p-2 text-muted hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                             title="Edit Configuration"
                                                         >
                                                             <Pencil className="w-4 h-4" />
@@ -641,15 +650,15 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
 
 
                         {/* Pagination */}
-                        <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-                            <div className="text-sm text-slate-500 dark:text-slate-400">
-                                Showing <span className="font-bold text-slate-700 dark:text-slate-300">{paginatedTenants.length}</span> of <span className="font-bold text-slate-700 dark:text-slate-300">{sortedTenants.length}</span> tenants
+                        <div className="p-4 border-t border-default dark:border-default flex items-center justify-between bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50">
+                            <div className="text-sm text-muted dark:text-muted">
+                                Showing <span className="font-bold text-secondary dark:text-muted">{paginatedTenants.length}</span> of <span className="font-bold text-secondary dark:text-muted">{sortedTenants.length}</span> tenants
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                     disabled={currentPage === 1}
-                                    className="p-2 bg-white dark:bg-slate-800 text-slate-500 hover:text-indigo-600 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="p-2 bg-white dark:bg-[var(--erp-card)] text-muted hover:text-indigo-600 rounded-lg border border-default dark:border-default disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight className="w-4 h-4 rotate-180" />
                                 </button>
@@ -657,7 +666,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     <button
                                         key={i}
                                         onClick={() => setCurrentPage(i + 1)}
-                                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+                                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-[var(--erp-card)] text-secondary dark:text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 border border-default dark:border-default'}`}
                                     >
                                         {i + 1}
                                     </button>
@@ -665,7 +674,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 <button
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="p-2 bg-white dark:bg-slate-800 text-slate-500 hover:text-indigo-600 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="p-2 bg-white dark:bg-[var(--erp-card)] text-muted hover:text-indigo-600 rounded-lg border border-default dark:border-default disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
@@ -680,47 +689,47 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                 <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
                     {/* Platform Health */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm flex items-center gap-4">
                             <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl">
                                 <Activity className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-medium">System Status</p>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Operational</h3>
+                                <p className="text-sm text-muted font-medium">System Status</p>
+                                <h3 className="text-lg font-bold text-main">Operational</h3>
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm flex items-center gap-4">
                             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl">
                                 <Server className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-medium">Active Nodes</p>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{tenants.length} / 500</h3>
+                                <p className="text-sm text-muted font-medium">Active Nodes</p>
+                                <h3 className="text-lg font-bold text-main">{tenants.length} / 500</h3>
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm flex items-center gap-4">
                             <div className="p-3 bg-violet-100 dark:bg-violet-900/30 text-violet-600 rounded-xl">
                                 <Zap className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-medium">API Latency</p>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">24ms</h3>
+                                <p className="text-sm text-muted font-medium">API Latency</p>
+                                <h3 className="text-lg font-bold text-main">24ms</h3>
                             </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Global Settings */}
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <Globe className="w-5 h-5 text-indigo-600" />
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Global Settings</h3>
+                                <h3 className="text-lg font-bold text-main">Global Settings</h3>
                             </div>
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold text-slate-700 dark:text-slate-300">New Provisioning</p>
-                                        <p className="text-xs text-slate-500">Allow creation of new tenants</p>
+                                        <p className="font-bold text-secondary dark:text-muted">New Provisioning</p>
+                                        <p className="text-xs text-muted">Allow creation of new tenants</p>
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, allowProvisioning: !prev.allowProvisioning }))}
@@ -731,8 +740,8 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold text-slate-700 dark:text-slate-300">Maintenance Mode</p>
-                                        <p className="text-xs text-slate-500">Restrict access for all non-admins</p>
+                                        <p className="font-bold text-secondary dark:text-muted">Maintenance Mode</p>
+                                        <p className="text-xs text-muted">Restrict access for all non-admins</p>
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }))}
@@ -742,11 +751,11 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     </button>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 mb-2">Default Region</label>
+                                    <label className="block text-xs font-bold text-muted mb-2">Default Region</label>
                                     <select
                                         value={sysConfig.defaultRegion}
                                         onChange={(e) => setSysConfig(prev => ({ ...prev, defaultRegion: e.target.value }))}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <option value="US-EAST">US East (N. Virginia)</option>
                                         <option value="EU-WEST">EU West (London)</option>
@@ -757,16 +766,16 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                         </div>
 
                         {/* Security Policy */}
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <ShieldCheck className="w-5 h-5 text-indigo-600" />
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Security Policy</h3>
+                                <h3 className="text-lg font-bold text-main">Security Policy</h3>
                             </div>
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold text-slate-700 dark:text-slate-300">Enforce MFA</p>
-                                        <p className="text-xs text-slate-500">Require 2FA for all admin accounts</p>
+                                        <p className="font-bold text-secondary dark:text-muted">Enforce MFA</p>
+                                        <p className="text-xs text-muted">Require 2FA for all admin accounts</p>
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, enforceMFA: !prev.enforceMFA }))}
@@ -776,20 +785,20 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     </button>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 mb-2">Session Timeout (Minutes)</label>
+                                    <label className="block text-xs font-bold text-muted mb-2">Session Timeout (Minutes)</label>
                                     <input
                                         type="number"
                                         value={sysConfig.sessionTimeout}
                                         onChange={(e) => setSysConfig(prev => ({ ...prev, sessionTimeout: parseInt(e.target.value) }))}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 mb-2">Password Complexity</label>
+                                    <label className="block text-xs font-bold text-muted mb-2">Password Complexity</label>
                                     <select
                                         value={sysConfig.passwordComplexity}
                                         onChange={(e) => setSysConfig(prev => ({ ...prev, passwordComplexity: e.target.value }))}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <option value="LOW">Low (Min 6 chars)</option>
                                         <option value="MEDIUM">Medium (Min 8 chars, Alphanumeric)</option>
@@ -801,17 +810,17 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     </div>
 
                     {/* Broadcast System */}
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <MessageSquare className="w-5 h-5 text-indigo-600" />
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">System Broadcast</h3>
+                            <h3 className="text-lg font-bold text-main">System Broadcast</h3>
                         </div>
                         <div className="flex flex-col md:flex-row gap-4">
                             <textarea
                                 value={announcement}
                                 onChange={(e) => setAnnouncement(e.target.value)}
                                 placeholder="Type a message to broadcast to all active tenant dashboards..."
-                                className="flex-1 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px] resize-none"
+                                className="flex-1 p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px] resize-none"
                             />
                             <div className="flex flex-col gap-2">
                                 <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">
@@ -819,7 +828,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 </button>
                                 <button
                                     onClick={() => setAnnouncement('')}
-                                    className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
+                                    className="px-6 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-secondary dark:text-muted rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-default dark:border-default"
                                 >
                                     Clear
                                 </button>
@@ -828,7 +837,10 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     </div>
                 </div>
             )}
-        </div >
+        </div>
+    </PageShell>
+</Layout>
+</>
     );
 };
 

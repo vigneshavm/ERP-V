@@ -1,56 +1,47 @@
-import asyncHandler from 'express-async-handler';
 import { container } from 'tsyringe';
 import { BillService } from '../services/BillService.js';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
+import { ok, created, paginated } from '@smarterp/shared/utils/response.js';
+import { parsePagination, parseSort } from '@smarterp/shared/utils/pagination.js';
+import { requireUserId } from '@smarterp/shared/utils/tenantContext.js';
+const resolve = () => container.resolve(BillService);
+/**
+ * GET /api/v1/finance/bills
+ * Paginated bill list with optional supplier/status/paymentStatus filters.
+ */
 export const getAllBills = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    const { supplier, status, paymentStatus, page = 1, limit = 50, sort = '-date' } = req.query;
-    // Handle sort
-    const sortField = String(sort).startsWith('-') ? String(sort).substring(1) : String(sort);
-    const sortOrder = String(sort).startsWith('-') ? -1 : 1;
-    const sortObj = {};
-    sortObj[sortField] = sortOrder;
-    const { data, total } = await billService.getAllBillsPaginated(req.user?._id, Number(page), Number(limit), sortObj, { supplier: supplier, status: status, paymentStatus: paymentStatus });
-    res.status(200).json({
-        success: true,
-        data,
-        pagination: {
-            total,
-            page: Number(page),
-            limit: Number(limit),
-            pages: Math.ceil(total / Number(limit))
-        }
+    const userId = requireUserId(req);
+    const { page, limit } = parsePagination(req.query, 50);
+    const sort = parseSort(req.query.sort, '-date');
+    const { supplier, status, paymentStatus } = req.query;
+    const { data, total } = await resolve().getAllBillsPaginated(userId, page, limit, sort, {
+        supplier, status, paymentStatus,
     });
+    paginated(res, data, total, page, limit);
 });
+/** POST /api/v1/finance/bills */
 export const createBill = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    const bill = await billService.createBill(req.body, req.user?._id);
-    res.status(201).json(bill);
+    const bill = await resolve().createBill(req.body, requireUserId(req));
+    created(res, bill);
 });
+/** GET /api/v1/finance/bills/:id */
 export const getBillById = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    const bill = await billService.getBillById(req.params.id, req.user?._id);
-    res.status(200).json(bill);
+    const bill = await resolve().getBillById(req.params.id, requireUserId(req));
+    ok(res, bill);
 });
+/** PUT /api/v1/finance/bills/:id */
 export const updateBill = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    const bill = await billService.updateBill(req.params.id, req.user?._id, req.body);
-    res.status(200).json(bill);
+    const bill = await resolve().updateBill(req.params.id, requireUserId(req), req.body);
+    ok(res, bill, 'Bill updated successfully');
 });
+/** DELETE /api/v1/finance/bills/:id */
 export const deleteBill = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    await billService.deleteBill(req.params.id, req.user?._id);
-    res.status(200).json({ message: 'Bill deleted' });
+    await resolve().deleteBill(req.params.id, requireUserId(req));
+    ok(res, null, 'Bill deleted');
 });
+/** PATCH /api/v1/finance/bills/:id — record a payment */
 export const updateBillPayment = asyncHandler(async (req, res) => {
-    const billService = container.resolve(BillService);
-    const result = await billService.updateBillPayment(req.params.id, req.user?._id, req.body);
-    res.status(200).json({ message: 'Payment recorded successfully', bill: result });
+    const result = await resolve().updateBillPayment(req.params.id, requireUserId(req), req.body);
+    ok(res, result, 'Payment recorded successfully');
 });
-export default {
-    getAllBills,
-    createBill,
-    getBillById,
-    updateBill,
-    deleteBill,
-    updateBillPayment,
-};
+export default { getAllBills, createBill, getBillById, updateBill, deleteBill, updateBillPayment };

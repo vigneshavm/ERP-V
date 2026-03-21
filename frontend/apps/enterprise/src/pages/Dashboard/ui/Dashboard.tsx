@@ -96,29 +96,29 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout>
-      <div className="premium-bg min-h-screen text-white p-6 sm:p-8 space-y-8 font-sans">
+      <div className="page-shell">
         
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight mb-1 opacity-95">Dashboard</h1>
-            <p className="text-sm font-medium text-white/40 flex items-center gap-2">
+            <p className="text-sm font-medium text-main/40 flex items-center gap-2">
               Neural Retail Co • {sectorName} • <span className="text-green-500 font-bold">Live</span>
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-white/30 mr-4">
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted mr-4">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
               Live • updated 2m ago
             </div>
             <button 
               onClick={handleRefresh}
-              className="px-4 py-2 premium-card text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-white/70"
+              className="px-4 py-2 erp-card text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-secondary"
             >
               <RotateCcw size={14} className={reportsLoading ? 'animate-spin text-purple-400' : ''} />
               Refresh
             </button>
-            <button className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-lg shadow-lg active:scale-95 transition-all">
+            <button className="btn btn-primary text-[10px] uppercase tracking-widest">
               <Plus size={16} />
               New Sale
             </button>
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Revenue */}
-          <div className="premium-card p-6 flex flex-col justify-between group">
+          <div className="erp-card p-6 flex flex-col justify-between group">
             <div className="flex justify-between items-start mb-6">
               <span className="premium-stat-label">Revenue MTD</span>
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 border border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Dues */}
-          <div className="premium-card p-6 flex flex-col justify-between">
+          <div className="erp-card p-6 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-6">
               <span className="premium-stat-label">Outstanding Dues</span>
               <div className="w-10 h-10 rounded-xl bg-red-400/10 flex items-center justify-center text-red-400 border border-red-400/20 shadow-[0_0_15px_rgba(248,113,113,0.1)]">
@@ -160,7 +160,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Bank */}
-          <div className="premium-card p-6 flex flex-col justify-between">
+          <div className="erp-card p-6 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-6">
               <span className="premium-stat-label">Bank Balance</span>
               <div className="w-10 h-10 rounded-xl bg-blue-400/10 flex items-center justify-center text-blue-400 border border-blue-400/20 shadow-[0_0_15px_rgba(96,165,250,0.1)]">
@@ -176,7 +176,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Stock */}
-          <div className="premium-card p-6 flex flex-col justify-between">
+          <div className="erp-card p-6 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-6">
               <span className="premium-stat-label">Stock Value</span>
               <div className="w-10 h-10 rounded-xl bg-amber-700/10 flex items-center justify-center text-amber-700 border border-amber-700/20 shadow-[0_0_15px_rgba(180,83,9,0.1)]">
@@ -185,7 +185,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div>
               <div className="premium-stat-value mb-1">{formatCurrency(totalStockValue)}</div>
-              <div className="text-[10px] font-bold text-white/30 flex items-center gap-1 uppercase tracking-wider">
+              <div className="text-[10px] font-bold text-muted flex items-center gap-1 uppercase tracking-wider">
                 142 SKUs • 3 low stock
               </div>
             </div>
@@ -195,7 +195,7 @@ const Dashboard: React.FC = () => {
         {/* Middle Section: Chart and Bank Summary */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sales Chart */}
-          <div className="lg:col-span-2 premium-card p-6 flex flex-col">
+          <div className="lg:col-span-2 erp-card p-6 flex flex-col">
             <div className="flex justify-between items-center mb-10">
               <div className="flex items-center gap-3">
                 <h3 className="text-lg font-bold tracking-tight">Sales • Last 7 Days</h3>
@@ -203,27 +203,27 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="flex gap-2">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
-                   <span key={d} className={`text-[10px] font-bold px-1 transition-all ${d === 'Sun' ? 'text-indigo-400' : 'text-white/20'}`}>{d}</span>
+                   <span key={d} className={`text-[10px] font-bold px-1 transition-all ${d === 'Sun' ? 'text-indigo-400' : 'text-muted'}`}>{d}</span>
                 ))}
               </div>
             </div>
             <div className="h-64 sm:h-72 w-full mt-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="0 0" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                  <CartesianGrid strokeDasharray="0 0" vertical={false} stroke="var(--erp-card-border)" />
                   <XAxis 
                      dataKey="name" 
                      fontSize={10} 
-                     stroke="rgba(255,255,255,0.2)" 
+                     stroke="var(--erp-txt3)" 
                      axisLine={false} 
                      tickLine={false} 
-                     tick={{ fontWeight: 700, fill: 'rgba(255,255,255,0.2)' }}
+                     tick={{ fontWeight: 700, fill: 'var(--erp-txt3)' }}
                      dy={15}
                   />
                   <Tooltip 
-                    cursor={{ fill: 'rgba(255,255,255,0.02)' }} 
-                    contentStyle={{ backgroundColor: '#09090b', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold' }}
-                    itemStyle={{ color: '#8b5cf6' }}
+                    cursor={{ fill: 'var(--erp-txt3)' }} 
+                    contentStyle={{ backgroundColor: 'var(--erp-card)', borderColor: 'var(--erp-card-border)', color: 'var(--erp-txt1)', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold' }}
+                    itemStyle={{ color: 'var(--erp-primary)' }}
                   />
                   <Bar dataKey="revenue" radius={[4, 4, 0, 0]} barSize={32}>
                     {chartData.map((entry, index) => (
@@ -236,36 +236,36 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Cash & Bank Summary */}
-          <div className="premium-card p-6 flex flex-col">
+          <div className="erp-card p-6 flex flex-col">
             <h3 className="text-lg font-bold mb-8 tracking-tight">Cash & Bank Summary</h3>
             <div className="space-y-3 flex-1">
-               <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.05] group hover:bg-white/[0.06] transition-all cursor-pointer">
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Cash in Hand</span>
-                  <span className="text-sm font-black text-green-400 tracking-tight">₹1.24L</span>
+               <div className="erp-action-item">
+                  <span className="text-xs font-bold text-muted uppercase tracking-widest">Cash in Hand</span>
+                  <span className="text-sm font-black text-[var(--erp-success)] tracking-tight">₹1.24L</span>
                </div>
-               <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.05] group hover:bg-white/[0.06] transition-all cursor-pointer">
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">HDFC Current A/C</span>
-                  <span className="text-sm font-black text-blue-400 tracking-tight">₹12.8L</span>
+               <div className="erp-action-item">
+                  <span className="text-xs font-bold text-muted uppercase tracking-widest">HDFC Current A/C</span>
+                  <span className="text-sm font-black text-[var(--erp-primary)] tracking-tight">₹12.8L</span>
                </div>
-               <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.05] group hover:bg-white/[0.06] transition-all cursor-pointer">
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">SBI Savings A/C</span>
-                  <span className="text-sm font-black text-blue-400 tracking-tight">₹4.36L</span>
+               <div className="erp-action-item">
+                  <span className="text-xs font-bold text-muted uppercase tracking-widest">SBI Savings A/C</span>
+                  <span className="text-sm font-black text-[var(--erp-primary)] tracking-tight">₹4.36L</span>
                </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section: Recent Transactions */}
-        <div className="premium-card p-0 overflow-hidden">
-          <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center">
+        <div className="erp-card p-0 overflow-hidden">
+          <div className="px-8 py-6 border-b border-default flex justify-between items-center">
             <h3 className="text-lg font-bold tracking-tight">Recent Transactions</h3>
-            <button className="text-[10px] font-bold text-white/40 hover:text-white flex items-center gap-1 transition-all px-4 py-2 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 uppercase tracking-widest">
+            <button className="text-[10px] font-bold text-main/40 hover:text-main flex items-center gap-1 transition-all px-4 py-2 bg-[var(--erp-bg-sunken)] rounded-lg border border-default hover:bg-white/10 uppercase tracking-widest">
                 View All
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] bg-white/[0.02]">
+              <thead className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] bg-white/[0.02]">
                 <tr>
                    <th className="px-8 py-5">Invoice #</th>
                    <th className="px-8 py-5">Customer</th>
@@ -284,10 +284,10 @@ const Dashboard: React.FC = () => {
                     { id: 'INV-2843', customer: 'Gupta & Sons', amount: 7300, status: 'PAID', color: 'green' }
                 ].map((tx, idx) => (
                     <tr key={idx} className="hover:bg-white/[0.01] transition-colors group">
-                       <td className="px-8 py-6 text-white/90">{tx.id}</td>
-                       <td className="px-8 py-6 text-white/70">{tx.customer}</td>
-                       <td className="px-8 py-6 text-white tracking-tighter text-sm">₹{tx.amount.toLocaleString()}</td>
-                       <td className="px-8 py-6 text-white/30 font-medium">{idx < 2 ? 'Today, 2:14pm' : idx < 4 ? 'Yesterday' : '2 days ago'}</td>
+                       <td className="px-8 py-6 text-main">{tx.id}</td>
+                       <td className="px-8 py-6 text-secondary">{tx.customer}</td>
+                       <td className="px-8 py-6 text-main tracking-tighter text-sm">₹{tx.amount.toLocaleString()}</td>
+                       <td className="px-8 py-6 text-muted font-medium">{idx < 2 ? 'Today, 2:14pm' : idx < 4 ? 'Yesterday' : '2 days ago'}</td>
                        <td className="px-8 py-6">
                            <span className={`premium-badge ${
                                tx.color === 'green' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 
@@ -298,7 +298,7 @@ const Dashboard: React.FC = () => {
                            </span>
                        </td>
                        <td className="px-8 py-6 text-right">
-                           <button className="text-[10px] font-bold uppercase text-white/40 hover:text-white px-3 py-1.5 bg-white/5 rounded-lg border border-white/5 transition-all hover:bg-white/10">
+                           <button className="text-[10px] font-bold uppercase text-main/40 hover:text-main px-3 py-1.5 bg-[var(--erp-bg-sunken)] rounded-lg border border-default transition-all hover:bg-white/10">
                                View
                            </button>
                        </td>

@@ -61,10 +61,10 @@ const WhatsAppMarketing: React.FC = () => {
                     { label: 'Messages Sent', val: '42.8K', trend: 'Monthly', icon: Send },
                     { label: 'Cost/Message', val: '₹0.48', trend: 'Stable', icon: Zap }
                 ].map((kpi, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+                    <div key={i} className="bg-white dark:bg-[var(--erp-bg)] p-8 rounded-[2.5rem] border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-all duration-700" />
                         <div className="relative z-10">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{kpi.label}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-2">{kpi.label}</p>
                             <h3 className="text-3xl font-black italic">{kpi.val}</h3>
                             <span className="text-[10px] font-bold text-emerald-500">{kpi.trend}</span>
                         </div>
@@ -73,11 +73,11 @@ const WhatsAppMarketing: React.FC = () => {
             </div>
 
             {/* Campaign Table */}
-            <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden">
+            <div className="bg-white dark:bg-[var(--erp-bg)] rounded-[3rem] p-10 border border-default dark:border-default shadow-xl overflow-hidden">
                 <div className="flex items-center justify-between mb-10">
                     <div>
                         <h3 className="text-2xl font-black italic uppercase">Broadcast <span className="text-indigo-600">Engine</span></h3>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Manage your one-to-many marketing blasts</p>
+                        <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Manage your one-to-many marketing blasts</p>
                     </div>
                     <button
                         onClick={() => setViewMode('create')}
@@ -89,24 +89,24 @@ const WhatsAppMarketing: React.FC = () => {
 
                 <div className="space-y-4">
                     {mockCampaigns.map(camp => (
-                        <div key={camp.id} className="p-6 bg-slate-50/50 dark:bg-black/20 border border-slate-100 dark:border-slate-800 rounded-3xl flex items-center justify-between group hover:border-indigo-500/30 transition-all cursor-pointer">
+                        <div key={camp.id} className="p-6 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/20 border border-default dark:border-default rounded-3xl flex items-center justify-between group hover:border-indigo-500/30 transition-all cursor-pointer">
                             <div className="flex items-center gap-6">
-                                <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-sm">
+                                <div className="w-12 h-12 bg-white dark:bg-[var(--erp-card)] rounded-2xl flex items-center justify-center shadow-sm">
                                     <MessageSquare className="w-5 h-5 text-indigo-600" />
                                 </div>
                                 <div>
-                                    <h4 className="font-black italic uppercase text-slate-900 dark:text-white">{camp.name}</h4>
-                                    <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{camp.date} • {camp.recipients.toLocaleString()} Target</p>
+                                    <h4 className="font-black italic uppercase text-main">{camp.name}</h4>
+                                    <p className="text-[10px] font-black text-muted tracking-widest uppercase">{camp.date} • {camp.recipients.toLocaleString()} Target</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-12 text-right">
                                 <div>
                                     <p className="text-lg font-black italic">{camp.revenue}</p>
-                                    <p className="text-[8px] font-black text-slate-400 tracking-widest uppercase">Revenue</p>
+                                    <p className="text-[8px] font-black text-muted tracking-widest uppercase">Revenue</p>
                                 </div>
                                 <div>
                                     <p className="text-lg font-black italic text-emerald-600">{camp.conversion}</p>
-                                    <p className="text-[8px] font-black text-slate-400 tracking-widest uppercase">Conversion</p>
+                                    <p className="text-[8px] font-black text-muted tracking-widest uppercase">Conversion</p>
                                 </div>
                                 <span className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-[0.2em] ${camp.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-indigo-500/10 text-indigo-600 animate-pulse'}`}>
                                     {camp.status}
@@ -121,10 +121,10 @@ const WhatsAppMarketing: React.FC = () => {
 
     const renderAudience = () => (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700">
-            <div className="bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden">
+            <div className="bg-[var(--erp-bg)] rounded-[3rem] p-12 text-main relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full -mr-48 -mt-48 blur-3xl" />
                 <h3 className="text-4xl font-black italic uppercase italic mb-4">Audience <span className="text-indigo-400">Architect</span></h3>
-                <p className="text-slate-400 font-bold italic mb-12">Target your customers with surgical precision based on their behavior.</p>
+                <p className="text-muted font-bold italic mb-12">Target your customers with surgical precision based on their behavior.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
@@ -133,7 +133,7 @@ const WhatsAppMarketing: React.FC = () => {
                         { title: 'Last Purchase', items: ['30 Days', '90 Days', 'Inactive'], icon: Calendar },
                         { title: 'Categories', items: ['Menswear', 'Footwear', 'Accessories'], icon: Layers }
                     ].map((filter, i) => (
-                        <div key={i} className="bg-white/5 border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 transition-colors">
+                        <div key={i} className="bg-[var(--erp-bg-sunken)] border border-default p-8 rounded-[2rem] hover:bg-white/10 transition-colors">
                             <div className="flex items-center gap-4 mb-6">
                                 <filter.icon className="w-5 h-5 text-indigo-400" />
                                 <h4 className="font-black italic uppercase tracking-widest">{filter.title}</h4>
@@ -157,22 +157,22 @@ const WhatsAppMarketing: React.FC = () => {
                 { code: 'LOYAL500', title: 'VIP Reward', stats: '150 Used', roi: '8.2x', color: 'bg-emerald-600' },
                 { code: 'BOGO2026', title: 'Weekend Blast', stats: '2042 Claims', roi: '15.8x', color: 'bg-rose-600' }
             ].map((coupon, i) => (
-                <div key={i} className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group border-b-[8px] border-b-indigo-500/10 hover:border-b-indigo-500 transition-all">
-                    <div className={`${coupon.color} w-16 h-16 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl`}>
+                <div key={i} className="bg-white dark:bg-[var(--erp-bg)] p-10 rounded-[3rem] border border-default dark:border-default shadow-xl group border-b-[8px] border-b-indigo-500/10 hover:border-b-indigo-500 transition-all">
+                    <div className={`${coupon.color} w-16 h-16 rounded-2xl flex items-center justify-center text-main mb-8 shadow-2xl`}>
                         <Percent className="w-8 h-8" />
                     </div>
                     <div className="space-y-2 mb-8 text-center">
                         <p className="text-3xl font-black tracking-tighter uppercase">{coupon.code}</p>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{coupon.title}</p>
+                        <p className="text-xs font-bold text-muted uppercase tracking-widest">{coupon.title}</p>
                     </div>
-                    <div className="flex items-center justify-between pt-8 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between pt-8 border-t border-default dark:border-default">
                         <div>
                             <p className="text-sm font-black italic">{coupon.stats}</p>
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Redemption</p>
+                            <p className="text-[8px] font-black text-muted uppercase tracking-widest">Redemption</p>
                         </div>
                         <div className="text-right">
                             <p className="text-sm font-black italic text-emerald-600">{coupon.roi}</p>
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ROI Multiplier</p>
+                            <p className="text-[8px] font-black text-muted uppercase tracking-widest">ROI Multiplier</p>
                         </div>
                     </div>
                 </div>
@@ -181,7 +181,7 @@ const WhatsAppMarketing: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-neutral-50/50 dark:bg-[#020617] relative">
+        <div className="min-h-screen bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)] relative">
             <div className="fixed inset-0 pointer-events-none opacity-40 dark:opacity-20 z-0">
                 <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[120px] rounded-full" />
@@ -192,7 +192,7 @@ const WhatsAppMarketing: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg shadow-indigo-600/20">PART A</span>
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em] flex items-center gap-2">
                                 <ShieldCheck className="w-3 h-3 text-emerald-500" /> MARKETING MODULE UNLOCKED
                             </span>
                         </div>
@@ -200,7 +200,7 @@ const WhatsAppMarketing: React.FC = () => {
                             WhatsApp <span className="text-indigo-600">Marketing</span>
                         </h1>
                     </div>
-                    <div className="flex bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xl">
+                    <div className="flex bg-white dark:bg-[var(--erp-bg)] p-2 rounded-2xl border border-default dark:border-default shadow-xl">
                         {[
                             { id: 'campaigns', label: 'Campaigns', icon: Zap },
                             { id: 'audience', label: 'Audience', icon: Users },
@@ -210,7 +210,7 @@ const WhatsAppMarketing: React.FC = () => {
                             <button
                                 key={t.id}
                                 onClick={() => setActiveTabLocal(t.id as any)}
-                                className={`px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${activeTab === t.id ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                                className={`px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${activeTab === t.id ? 'bg-[var(--erp-bg)] dark:bg-white text-main shadow-xl' : 'text-muted hover:text-main dark:hover:text-main'}`}
                             >
                                 <t.icon className="w-4 h-4" />
                                 {t.label}
@@ -224,9 +224,9 @@ const WhatsAppMarketing: React.FC = () => {
                     {activeTab === 'audience' && renderAudience()}
                     {activeTab === 'coupons' && renderCoupons()}
                     {activeTab === 'templates' && (
-                        <div className="flex flex-col items-center justify-center p-20 bg-white/50 dark:bg-slate-900/50 rounded-[4rem] border-4 border-dashed border-slate-200 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center p-20 bg-white/50 dark:bg-[var(--erp-bg)]/50 rounded-[4rem] border-4 border-dashed border-default dark:border-default">
                             <Layers className="w-16 h-16 text-slate-200 mb-6" />
-                            <h3 className="text-2xl font-black italic uppercase text-slate-400">Template Library Loading...</h3>
+                            <h3 className="text-2xl font-black italic uppercase text-muted">Template Library Loading...</h3>
                         </div>
                     )}
                 </main>

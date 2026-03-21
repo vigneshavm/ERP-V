@@ -49,19 +49,19 @@ const ExpenseCalendar: React.FC<ExpenseCalendarProps> = ({ expenses }) => {
     const monthName = viewDate.toLocaleString('default', { month: 'long' });
 
     return (
-        <div className="bg-neutral-900/40 border border-white/5 rounded-[2rem] p-6 backdrop-blur-xl">
+        <div className="bg-[var(--erp-bg)]/40 border border-default rounded-[2rem] p-6 backdrop-blur-xl">
             <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold tracking-tight">{monthName} {currentYear}</h3>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setViewDate(new Date(currentYear, currentMonth - 1))}
-                        className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                        className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors"
                     >
                         <ChevronLeft className="w-5 h-5 text-neutral-400" />
                     </button>
                     <button
                         onClick={() => setViewDate(new Date(currentYear, currentMonth + 1))}
-                        className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                        className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors"
                     >
                         <ChevronRight className="w-5 h-5 text-neutral-400" />
                     </button>
@@ -78,9 +78,9 @@ const ExpenseCalendar: React.FC<ExpenseCalendarProps> = ({ expenses }) => {
                 {days.map((d, i) => (
                     <div
                         key={i}
-                        className={`aspect-square p-2 border border-white/5 rounded-xl flex flex-col items-center justify-between transition-all hover:bg-white/5 cursor-pointer group ${!d.isCurrentMonth ? 'opacity-20' : ''}`}
+                        className={`aspect-square p-2 border border-default rounded-xl flex flex-col items-center justify-between transition-all hover:bg-[var(--erp-bg-sunken)] cursor-pointer group ${!d.isCurrentMonth ? 'opacity-20' : ''}`}
                     >
-                        <span className="text-xs font-bold text-neutral-400 group-hover:text-white">{d.day}</span>
+                        <span className="text-xs font-bold text-neutral-400 group-hover:text-main">{d.day}</span>
                         {d.expense > 0 && (
                             <span className="text-[10px] font-black text-rose-500 tabular-nums">
                                 {d.expense > 999 ? `${(d.expense / 1000).toFixed(1)}k` : d.expense}

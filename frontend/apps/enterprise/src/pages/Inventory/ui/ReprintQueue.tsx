@@ -73,18 +73,18 @@ const ReprintQueue: React.FC = () => {
         <div className="p-6 max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-main dark:text-main flex items-center gap-2">
                         <Printer className="w-8 h-8 text-emerald-500" />
                         Label Reprint Queue
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-muted dark:text-muted mt-1">
                         Items queued for updated labels (e.g., after price hikes).
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={fetchQueue}
-                        className="p-2 text-gray-500 hover:text-emerald-600 transition-colors"
+                        className="p-2 text-muted hover:text-emerald-600 transition-colors"
                         title="Refresh"
                     >
                         <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
@@ -115,43 +115,43 @@ const ReprintQueue: React.FC = () => {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
                 </div>
             ) : queue.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-                    <Printer className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Queue is Empty</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">No items are currently queued for reprinting.</p>
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-default dark:border-default p-12 text-center">
+                    <Printer className="w-16 h-16 text-gray-300 dark:text-secondary mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-main">Queue is Empty</h3>
+                    <p className="text-muted dark:text-muted mt-1">No items are currently queued for reprinting.</p>
                 </div>
             ) : (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-default dark:border-default overflow-hidden">
                     <table className="w-full text-left">
-                        <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default">
                             <tr>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Item Details</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">SKU</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Qty</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Old Price</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">New Price</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Reason</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">Item Details</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">SKU</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">Qty</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">Old Price</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">New Price</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">Reason</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                             {queue.map((item, index) => (
-                                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <tr key={index} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-gray-700/50 transition-colors">
                                     <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-white">{item.itemName}</div>
+                                        <div className="font-medium text-main">{item.itemName}</div>
                                     </td>
-                                    <td className="px-6 py-4 text-sm font-mono text-gray-500 dark:text-gray-400">
+                                    <td className="px-6 py-4 text-sm font-mono text-muted dark:text-muted">
                                         {item.sku}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
+                                    <td className="px-6 py-4 text-right font-medium text-main">
                                         {item.quantity}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-500 line-through">
+                                    <td className="px-6 py-4 text-right text-muted line-through">
                                         {item.oldPrice ? `₹${item.oldPrice}` : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                         ₹{item.newPrice}
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                    <td className="px-6 py-4 text-sm text-muted">
                                         {item.reason || '-'}
                                     </td>
                                 </tr>

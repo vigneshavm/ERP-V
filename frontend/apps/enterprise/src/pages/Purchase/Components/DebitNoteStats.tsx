@@ -11,11 +11,11 @@ interface DebitNoteStatsProps {
 const DebitNoteStats: React.FC<DebitNoteStatsProps> = ({ totalCount, totalAmount, approvedAmount, pendingCount }) => {
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-xs font-medium text-secondary uppercase tracking-wide">Total Notes</p>
-                        <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{totalCount}</p>
+                        <p className="text-2xl font-bold text-neutral-900 dark:text-main mt-1">{totalCount}</p>
                     </div>
                     <div className="p-3 bg-error/10 rounded-xl">
                         <FileText className="w-6 h-6 text-error" />
@@ -23,7 +23,7 @@ const DebitNoteStats: React.FC<DebitNoteStatsProps> = ({ totalCount, totalAmount
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Total Amount</p>
@@ -35,7 +35,7 @@ const DebitNoteStats: React.FC<DebitNoteStatsProps> = ({ totalCount, totalAmount
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-xs font-medium text-secondary uppercase tracking-wide">Settled Claims</p>
@@ -47,7 +47,7 @@ const DebitNoteStats: React.FC<DebitNoteStatsProps> = ({ totalCount, totalAmount
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-xl border border-default dark:border-default">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-xs font-medium text-secondary uppercase tracking-wide">Sent / Pending</p>

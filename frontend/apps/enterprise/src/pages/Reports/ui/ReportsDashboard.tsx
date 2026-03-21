@@ -9,7 +9,6 @@ const ReportsDashboard = () => {
         {
             title: 'Transaction Reports',
             icon: '📊',
-            color: 'bg-blue-50 border-blue-200',
             reports: [
                 { name: 'Business Snapshot', path: '/', icon: '📸' },
                 { name: 'Intelligence Hub', path: '/', icon: '⚡' },
@@ -27,7 +26,6 @@ const ReportsDashboard = () => {
         {
             title: 'Party Reports',
             icon: '👥',
-            color: 'bg-green-50 border-green-200',
             reports: [
                 { name: 'Party Statement', path: '/reports/party-statement', icon: '📄' },
                 { name: 'Party-Wise P&L', path: '/reports/party-pl', icon: '📊' },
@@ -42,7 +40,6 @@ const ReportsDashboard = () => {
         {
             title: 'GST Reports',
             icon: '🏛️',
-            color: 'bg-purple-50 border-purple-200',
             reports: [
                 { name: 'GSTR-1', path: '/reports/gstr1', icon: '📑' },
                 { name: 'GSTR-2', path: '/reports/gstr2', icon: '📑' },
@@ -54,6 +51,7 @@ const ReportsDashboard = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Reports Dashboard"
                 description="Access all business reports and analytics"
@@ -61,23 +59,23 @@ const ReportsDashboard = () => {
 
             <div className="space-y-8">
                 {reportCategories.map((category, idx) => (
-                    <div key={idx}>
-                        <div className="flex items-center space-x-3 mb-4">
+                    <div key={idx} className="erp-card p-6">
+                        <div className="flex items-center gap-3 mb-4">
                             <span className="text-3xl">{category.icon}</span>
-                            <h2 className="text-2xl font-bold text-main">{category.title}</h2>
+                            <h2 className="text-lg font-black text-main">{category.title}</h2>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mt-2">
                             {category.reports.map((report, reportIdx) => (
                                 <button
                                     key={reportIdx}
                                     onClick={() => navigate(report.path)}
-                                    className={`p-6 border-2 rounded-xl ${category.color} hover:shadow-lg transition group`}
+                                    className="erp-card-interactive p-4 text-left w-full"
                                 >
-                                    <div className="flex items-center space-x-3">
-                                        <span className="text-3xl group-hover:scale-110 transition">{report.icon}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xl group-hover:scale-110 transition">{report.icon}</span>
                                         <div className="text-left">
-                                            <h3 className="font-bold text-main">{report.name}</h3>
-                                            <p className="text-xs text-secondary">View detailed report</p>
+                                            <h3 className="text-sm font-bold text-main">{report.name}</h3>
+                                            <p className="text-[10px] text-muted">View detailed report</p>
                                         </div>
                                     </div>
                                 </button>
@@ -94,6 +92,8 @@ const ReportsDashboard = () => {
                     Create Custom Report
                 </button>
             </div>
+                  </div>
+
         </Layout>
     );
 };

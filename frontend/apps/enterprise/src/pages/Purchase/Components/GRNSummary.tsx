@@ -20,12 +20,12 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Info className="w-5 h-5 text-primary" /> Summary
                 </h3>
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-neutral-50 dark:bg-neutral-900 rounded-xl">
+                    <div className="flex justify-between items-center p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl">
                         <span className="text-sm text-neutral-500">Total Items</span>
                         <span className="font-bold">{items?.length || 0}</span>
                     </div>
@@ -40,17 +40,17 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Camera className="w-5 h-5 text-primary" /> Attachments
                 </h3>
-                <div className="border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-2xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer capitalize">
+                <div className="border-2 border-dashed border-default dark:border-default rounded-2xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer capitalize">
                     <Plus className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
                     <p className="text-xs text-neutral-500 font-medium">Upload Delivery Challan or Photos</p>
                 </div>
                 <div className="mt-4 space-y-2">
                     {attachments?.map((file, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
+                        <div key={idx} className="flex items-center justify-between p-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-lg">
                             <div className="flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-primary" />
                                 <span className="text-xs font-medium truncate max-w-[150px]">{file}</span>
@@ -61,12 +61,12 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary" /> Discrepancy Notes
                 </h3>
                 <textarea
-                    className="w-full p-4 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
+                    className="w-full p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
                     placeholder="Any shortages, damages, or notes from the delivery..."
                     value={notes || ''}
                     onChange={e => onNotesChange(e.target.value)}

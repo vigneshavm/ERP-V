@@ -17,7 +17,7 @@ interface BillFinancialSummaryProps {
 
 const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, status, paymentTerms }) => {
     return (
-        <div className="bg-neutral-900 dark:bg-black rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
+        <div className="bg-[var(--erp-bg)] dark:bg-[var(--erp-bg)] rounded-2xl p-8 text-main shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
             <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-[0.2em] mb-8">Financial Summary</h3>
 
@@ -26,7 +26,7 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
                     <span className="text-neutral-400">Subtotal</span>
                     <span>₹{totals.subtotal.toFixed(2)}</span>
                 </div>
-                <div className="h-px bg-neutral-800 w-full my-4"></div>
+                <div className="h-px bg-[var(--erp-card)] w-full my-4"></div>
                 <div className="space-y-3">
                     <div className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest">Tax Breakdown</div>
                     <div className="grid grid-cols-2 gap-4">
@@ -48,7 +48,7 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
                         </div>
                     </div>
                 </div>
-                <div className="h-px bg-neutral-800 w-full my-6"></div>
+                <div className="h-px bg-[var(--erp-card)] w-full my-6"></div>
                 <div className="flex justify-between items-end">
                     <div>
                         <span className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Total Payable</span>
@@ -61,7 +61,7 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
                         </span>
                     </div>
                 </div>
-                <div className="mt-8 pt-6 border-t border-neutral-800">
+                <div className="mt-8 pt-6 border-t border-default">
                     <div className="flex items-center gap-3 text-brand-400">
                         <Clock className="w-4 h-4" />
                         <span className="text-xs font-bold">Expect Payment: {paymentTerms}</span>

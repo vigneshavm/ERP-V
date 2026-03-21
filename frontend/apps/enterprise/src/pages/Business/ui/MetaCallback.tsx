@@ -55,13 +55,14 @@ const MetaCallback: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-                <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 max-w-md w-full text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-xl border border-default max-w-md w-full text-center">
                     {status === 'loading' && (
                         <div className="flex flex-col items-center space-y-4">
                             <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
-                            <h2 className="text-xl font-bold text-slate-800">Connecting...</h2>
-                            <p className="text-slate-500">{message}</p>
+                            <h2 className="text-xl font-bold text-main">Connecting...</h2>
+                            <p className="text-muted">{message}</p>
                         </div>
                     )}
 
@@ -70,8 +71,8 @@ const MetaCallback: React.FC = () => {
                             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
                                 <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                             </div>
-                            <h2 className="text-xl font-bold text-slate-800">Connected!</h2>
-                            <p className="text-slate-500">{message}</p>
+                            <h2 className="text-xl font-bold text-main">Connected!</h2>
+                            <p className="text-muted">{message}</p>
                         </div>
                     )}
 
@@ -80,11 +81,11 @@ const MetaCallback: React.FC = () => {
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
                                 <XCircle className="w-10 h-10 text-red-600" />
                             </div>
-                            <h2 className="text-xl font-bold text-slate-800">Connection Failed</h2>
-                            <p className="text-slate-500">{message}</p>
+                            <h2 className="text-xl font-bold text-main">Connection Failed</h2>
+                            <p className="text-muted">{message}</p>
                             <button
                                 onClick={() => navigate('/business/marketing-tools')}
-                                className="mt-4 px-6 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-colors"
+                                className="mt-4 px-6 py-2 bg-[var(--erp-bg-sunken)] text-secondary rounded-xl font-bold hover:bg-slate-200 transition-colors"
                             >
                                 Return to Marketing
                             </button>
@@ -92,6 +93,8 @@ const MetaCallback: React.FC = () => {
                     )}
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

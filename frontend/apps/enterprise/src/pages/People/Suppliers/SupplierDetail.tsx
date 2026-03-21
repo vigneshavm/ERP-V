@@ -104,12 +104,15 @@ const SupplierDetail: React.FC = () => {
   if (isLoading) {
     return (
       <Layout>
+        <div className="page-shell">
         <div className="flex justify-center items-center py-20">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-            <p className="text-sm font-bold text-slate-400">Loading supplier...</p>
+            <p className="text-sm font-bold text-muted">Loading supplier...</p>
           </div>
         </div>
+                </div>
+
       </Layout>
     );
   }
@@ -137,7 +140,7 @@ const SupplierDetail: React.FC = () => {
             <select
               value={selectedBranch}
               onChange={(e) => setSelectedBranch(e.target.value)}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 outline-none"
+              className="bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default text-secondary dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 outline-none"
             >
               <option value="">All Branches</option>
               {/* Ideally fetch branches dynamically, hardcoding for demo/MVP */}
@@ -147,7 +150,7 @@ const SupplierDetail: React.FC = () => {
             </select>
             <button
               onClick={() => navigate(`/suppliers/${supplier._id}/edit`)}
-              className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[var(--erp-bg)] dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all"
             >
               <Edit3 className="w-4 h-4" /> Edit Profile
             </button>
@@ -162,7 +165,7 @@ const SupplierDetail: React.FC = () => {
         {/* Total Invoiced */}
         <div
           onClick={() => setEditingField('invoiced')}
-          className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-[var(--erp-card)] border-2 border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-indigo-50 rounded-md text-indigo-600">
@@ -175,16 +178,16 @@ const SupplierDetail: React.FC = () => {
             </div>
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Total Invoiced</span>
           </div>
-          <span className="text-3xl font-black text-slate-900 dark:text-white">
+          <span className="text-3xl font-black text-main">
             ₹ {(supplier.totalAmount || 0).toLocaleString('en-IN')}
           </span>
-          {supplier.manualTotalInvoiced ? <span className="text-[10px] text-slate-400 block mt-1">(Includes manual adj.)</span> : null}
+          {supplier.manualTotalInvoiced ? <span className="text-[10px] text-muted block mt-1">(Includes manual adj.)</span> : null}
         </div>
 
         {/* Total Paid */}
         <div
           onClick={() => setEditingField('paid')}
-          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-emerald-50 rounded-md text-emerald-600">
@@ -197,7 +200,7 @@ const SupplierDetail: React.FC = () => {
             </div>
             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Paid</span>
           </div>
-          <span className="text-3xl font-black text-slate-900 dark:text-white">
+          <span className="text-3xl font-black text-main">
             ₹ {(supplier.totalPaid || 0).toLocaleString('en-IN')}
           </span>
         </div>
@@ -205,7 +208,7 @@ const SupplierDetail: React.FC = () => {
         {/* Net Balance */}
         <div
           onClick={() => setEditingField('outstanding')}
-          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-rose-50 rounded-md text-rose-600">
@@ -218,7 +221,7 @@ const SupplierDetail: React.FC = () => {
             </div>
             <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Outstanding Balance</span>
           </div>
-          <span className="text-3xl font-black text-slate-900 dark:text-white">
+          <span className="text-3xl font-black text-main">
             ₹ {(supplier.netBalance ?? supplier.openingBalance ?? 0).toLocaleString('en-IN')}
           </span>
         </div>
@@ -226,19 +229,19 @@ const SupplierDetail: React.FC = () => {
 
       {/* Logistics Performance & Reliability Trend */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-slate-200 dark:border-neutral-700 p-8 shadow-sm group">
+        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default p-8 shadow-sm group">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Logistics Performance</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">30-Day fulfillment cycle</p>
+                <h3 className="text-sm font-black text-main uppercase tracking-wider">Logistics Performance</h3>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-widest">30-Day fulfillment cycle</p>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-2xl font-black text-slate-900 dark:text-white">96.4%</span>
+              <span className="text-2xl font-black text-main">96.4%</span>
               <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mt-1">On-Time</p>
             </div>
           </div>
@@ -253,37 +256,37 @@ const SupplierDetail: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          <div className="flex justify-between text-[9px] font-black text-muted uppercase tracking-[0.2em]">
             <span>Feb 01</span>
             <span>Mar 08 (Intelligence Peak)</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-slate-200 dark:border-neutral-700 p-8 shadow-sm">
+        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Operational Reliability</h3>
+            <h3 className="text-sm font-black text-main uppercase tracking-wider">Operational Reliability</h3>
           </div>
 
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Procurement Efficiency</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest">Optimal Stocking cycle</p>
+                <p className="text-xs font-bold text-secondary dark:text-muted">Procurement Efficiency</p>
+                <p className="text-[10px] text-muted uppercase tracking-widest">Optimal Stocking cycle</p>
               </div>
               <span className="text-sm font-black text-indigo-600">8.4 Days</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Invoice Accuracy</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest">Minimal Discrepancies</p>
+                <p className="text-xs font-bold text-secondary dark:text-muted">Invoice Accuracy</p>
+                <p className="text-[10px] text-muted uppercase tracking-widest">Minimal Discrepancies</p>
               </div>
               <span className="text-sm font-black text-emerald-600">99.8%</span>
             </div>
-            <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
-              <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
+            <div className="pt-4 border-t border-slate-50 dark:border-default">
+              <p className="text-[10px] text-muted leading-relaxed font-medium">
                 <span className="text-indigo-600 font-bold">AI Note:</span> Supplier shows consistent behavior. Procurement optimization suggested for next cycle.
               </p>
             </div>
@@ -294,12 +297,12 @@ const SupplierDetail: React.FC = () => {
       {/* Edit Financials Modal */}
       {editingField && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+          <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+              <h3 className="text-lg font-bold text-main">
                 Edit {editingField === 'invoiced' ? 'Total Invoiced' : editingField === 'paid' ? 'Total Paid' : 'Outstanding Balance'}
               </h3>
-              <button onClick={() => setEditingField(null)} className="p-1 hover:bg-slate-100 rounded-full dark:hover:bg-slate-800">
+              <button onClick={() => setEditingField(null)} className="p-1 hover:bg-[var(--erp-bg-sunken)] rounded-full dark:hover:bg-[var(--erp-card)]">
                 <span className="sr-only">Close</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -307,8 +310,8 @@ const SupplierDetail: React.FC = () => {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase">Current Value</label>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">
+                <label className="text-xs font-bold text-muted uppercase">Current Value</label>
+                <div className="text-2xl font-black text-main">
                   ₹ {
                     editingField === 'invoiced' ? (supplier.totalAmount || 0).toLocaleString() :
                       editingField === 'paid' ? (supplier.totalPaid || 0).toLocaleString() :
@@ -322,7 +325,7 @@ const SupplierDetail: React.FC = () => {
                 <input
                   type="number"
                   autoFocus
-                  className="w-full text-xl font-bold p-3 rounded-xl border-2 border-indigo-100 focus:border-indigo-500 outline-none bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-white transition-all"
+                  className="w-full text-xl font-bold p-3 rounded-xl border-2 border-indigo-100 focus:border-indigo-500 outline-none bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] dark:border-default dark:text-main transition-all"
                   placeholder="Enter new total..."
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -330,7 +333,7 @@ const SupplierDetail: React.FC = () => {
                     }
                   }}
                 />
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-muted">
                   {editingField === 'outstanding'
                     ? "This will adjust the supplier's Opening Balance."
                     : "This will add a manual adjustment to account for historical data."}
@@ -340,7 +343,7 @@ const SupplierDetail: React.FC = () => {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEditingField(null)}
-                  className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                  className="flex-1 py-3 bg-[var(--erp-bg-sunken)] text-secondary font-bold rounded-xl hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
@@ -349,7 +352,7 @@ const SupplierDetail: React.FC = () => {
                     const input = (e.currentTarget.parentElement?.previousElementSibling?.querySelector('input') as HTMLInputElement);
                     handleSaveFinancial(parseFloat(input.value));
                   }}
-                  className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-colors"
+                  className="flex-1 py-3 bg-indigo-600 text-main font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-colors"
                 >
                   Save Changes
                 </button>
@@ -363,7 +366,7 @@ const SupplierDetail: React.FC = () => {
         {/* Main Content Area */}
         <div className="lg:col-span-8 space-y-6">
           {/* Core Identity Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden p-8 relative">
+          <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden p-8 relative">
             <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
               <Building2 className="w-48 h-48 text-indigo-500" />
             </div>
@@ -373,39 +376,39 @@ const SupplierDetail: React.FC = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-black text-slate-800 dark:text-white leading-none tracking-tight">{supplier.businessName}</h2>
-                  <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${supplier.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200'}`}>
+                  <h2 className="text-2xl font-black text-main leading-none tracking-tight">{supplier.businessName}</h2>
+                  <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${supplier.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-[var(--erp-bg-sunken)] text-muted border border-default'}`}>
                     {supplier.status}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8 mt-6">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Primary Contact Person</p>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Primary Contact Person</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-secondary dark:text-slate-200">
                       <User className="w-3.5 h-3.5 text-indigo-500" /> {supplier.contactPersonName}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Brand Affiliation</p>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Brand Affiliation</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-secondary dark:text-slate-200">
                       <Briefcase className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierGroup || 'Independent'}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Enterprise Type</p>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Enterprise Type</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-secondary dark:text-slate-200">
                       <Building2 className="w-3.5 h-3.5 text-indigo-500" /> {supplier.supplierType}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tax Identity (GST)</p>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Tax Identity (GST)</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-secondary dark:text-slate-200">
                       <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" /> {supplier.gstNo || 'Not Registered'}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Communication Channel</p>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Communication Channel</p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-secondary dark:text-slate-200">
                       <Globe className="w-3.5 h-3.5 text-indigo-500" /> {supplier.email || 'offline-only'}
                     </div>
                   </div>
@@ -416,47 +419,47 @@ const SupplierDetail: React.FC = () => {
 
           {/* Reachability & Logistics */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
+            <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Physical Presence</h3>
+                <h3 className="text-sm font-black text-main uppercase tracking-wider">Physical Presence</h3>
               </div>
-              <p className="text-xs text-slate-500 font-medium leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+              <p className="text-xs text-muted font-medium leading-relaxed bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 p-4 rounded-xl border border-default dark:border-default">
                 {supplier.physicalAddress || "No registered facility address provided."}
               </p>
             </div>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
+            <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
                   <Phone className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Tele-Response</h3>
+                <h3 className="text-sm font-black text-main uppercase tracking-wider">Tele-Response</h3>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Direct Line</span>
+                <div className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-xl border border-default dark:border-default">
+                  <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Direct Line</span>
                   <span className="text-xs font-black text-indigo-600">{supplier.contactNo}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Node</span>
-                  <span className="text-xs font-black text-slate-600 dark:text-slate-300 truncate max-w-[150px]">{supplier.email || 'N/A'}</span>
+                <div className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-xl border border-default dark:border-default">
+                  <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Email Node</span>
+                  <span className="text-xs font-black text-secondary dark:text-muted truncate max-w-[150px]">{supplier.email || 'N/A'}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Inventory/Items History */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm p-8">
+          <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none tracking-tight">Catalog Intelligence</h3>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Items regularly sourced</p>
+                  <h3 className="text-lg font-black text-main leading-none tracking-tight">Catalog Intelligence</h3>
+                  <p className="text-[11px] font-bold text-muted uppercase mt-1 tracking-wider">Items regularly sourced</p>
                 </div>
               </div>
               <button className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline">View History</button>
@@ -464,14 +467,14 @@ const SupplierDetail: React.FC = () => {
             {supplier.itemsSupplied && supplier.itemsSupplied.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {supplier.itemsSupplied.map((item, i) => (
-                  <div key={i} className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 text-center">
-                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{item}</p>
+                  <div key={i} className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/30 rounded-2xl border border-default dark:border-default text-center">
+                    <p className="text-xs font-bold text-secondary dark:text-muted">{item}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No procurement history detected</p>
+              <div className="py-12 text-center border-2 border-dashed border-default dark:border-default rounded-2xl">
+                <p className="text-xs font-bold text-muted uppercase tracking-widest">No procurement history detected</p>
               </div>
             )}
           </div>
@@ -484,21 +487,21 @@ const SupplierDetail: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Credit Limit */}
             <div className="bg-[#F8FBFF] dark:bg-blue-500/10 border border-blue-100/50 dark:border-blue-500/20 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Credit Limit</p>
+              <p className="text-[11px] font-bold text-muted dark:text-neutral-500 uppercase tracking-wider mb-1">Credit Limit</p>
               <p className="text-lg font-black text-blue-600 dark:text-blue-400">₹{(supplier.creditLimit || 0).toLocaleString()}</p>
             </div>
 
             {/* Credit Days */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Term</p>
-              <p className="text-lg font-black text-slate-700 dark:text-slate-200">{supplier.creditPeriod || 0} Days</p>
+            <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border border-default dark:border-default p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center">
+              <p className="text-[11px] font-bold text-muted dark:text-neutral-500 uppercase tracking-wider mb-1">Term</p>
+              <p className="text-lg font-black text-secondary dark:text-slate-200">{supplier.creditPeriod || 0} Days</p>
             </div>
           </div>
 
           {/* Operational Insights - Checklist Style */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-5 border-b border-slate-50 dark:border-neutral-700">
-              <h3 className="font-bold text-slate-800 dark:text-neutral-100">Performance Check</h3>
+          <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-slate-50 dark:border-default">
+              <h3 className="font-bold text-main dark:text-neutral-100">Performance Check</h3>
             </div>
 
             <div className="p-5 space-y-4">
@@ -516,7 +519,7 @@ const SupplierDetail: React.FC = () => {
                   <span className={`text-2xl font-black ${(supplier.performanceMetrics?.reliabilityScore || 100) >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>
                     {supplier.performanceMetrics?.reliabilityScore || 100}/100
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Excellent</span>
+                  <span className="text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Excellent</span>
                 </div>
                 {/* Mini Progress Bar */}
                 <div className="mt-3 w-full h-1 bg-white/50 rounded-full overflow-hidden">
@@ -528,13 +531,13 @@ const SupplierDetail: React.FC = () => {
               </div>
 
               {/* Last Update Widget */}
-              <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+              <div className="flex items-center gap-4 p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-xl border border-default dark:border-default">
+                <div className="w-10 h-10 rounded-xl bg-[var(--erp-bg-sunken)] dark:bg-slate-700 flex items-center justify-center text-muted">
                   <History className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Last Interaction</p>
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                  <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-0.5">Last Interaction</p>
+                  <p className="text-xs font-bold text-secondary dark:text-slate-200">
                     {supplier.updatedAt ? new Date(supplier.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Initial Seed'}
                   </p>
                 </div>

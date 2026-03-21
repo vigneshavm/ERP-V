@@ -12,7 +12,7 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl border dark:border-neutral-700">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl w-full max-w-sm p-6 shadow-2xl border dark:border-default">
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
                     <Trash2 className="w-6 h-6 text-red-600" />
                 </div>
@@ -27,7 +27,7 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 py-1 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-lg text-sm font-medium transition-colors"
+                        className="flex-1 py-1 px-4 bg-[var(--erp-bg-sunken)] hover:bg-slate-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-lg text-sm font-medium transition-colors"
                     >
                         Cancel
                     </button>

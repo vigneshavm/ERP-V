@@ -27,12 +27,15 @@ const EditSupplier: React.FC = () => {
     if (isLoading && !supplier) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex justify-center items-center py-20">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-                        <p className="text-sm font-medium text-slate-400 dark:text-neutral-500">Loading supplier data...</p>
+                        <p className="text-sm font-medium text-muted dark:text-neutral-500">Loading supplier data...</p>
                     </div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }

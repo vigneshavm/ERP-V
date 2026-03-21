@@ -101,7 +101,7 @@ const RestoreSection: React.FC = () => {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Recovery Vault Header Card */}
-            <div className="bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="bg-[var(--erp-bg)] rounded-[3rem] p-10 border border-default shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full -mr-40 -mt-40 blur-[100px]" />
                 <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
                     <div className="flex items-center gap-8">
@@ -109,12 +109,12 @@ const RestoreSection: React.FC = () => {
                             <RotateCcw className="w-10 h-10" />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-black text-white italic uppercase tracking-tight">Recovery <span className="text-emerald-400">Vault</span></h2>
-                            <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-md mt-1">Restore business continuity using point-in-time cryptographic snapshots.</p>
+                            <h2 className="text-3xl font-black text-main italic uppercase tracking-tight">Recovery <span className="text-emerald-400">Vault</span></h2>
+                            <p className="text-muted font-medium text-lg leading-relaxed max-w-md mt-1">Restore business continuity using point-in-time cryptographic snapshots.</p>
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                        <label className="flex-1 sm:flex-none px-8 h-16 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest border border-slate-700 transition-all flex items-center justify-center gap-3 cursor-pointer">
+                        <label className="flex-1 sm:flex-none px-8 h-16 bg-[var(--erp-card)] hover:bg-slate-700 text-main rounded-2xl font-black text-xs uppercase tracking-widest border border-default transition-all flex items-center justify-center gap-3 cursor-pointer">
                             <Upload className="w-5 h-5 text-emerald-400" /> Upload External Pack
                             <input type="file" className="hidden" accept=".backup,.zip" />
                         </label>
@@ -137,7 +137,7 @@ const RestoreSection: React.FC = () => {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-[2rem] border border-slate-200 dark:border-slate-800 w-fit shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-[var(--erp-bg)] p-2 rounded-[2rem] border border-default dark:border-default w-fit shadow-sm">
                 {[
                     { id: 'restore', label: 'Snapshot Ledger', icon: Database },
                     { id: 'logs', label: 'Recovery Audit', icon: History }
@@ -145,7 +145,7 @@ const RestoreSection: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-3 px-8 py-4 rounded-[1.5rem] text-xs font-black transition-all uppercase tracking-widest ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center gap-3 px-8 py-4 rounded-[1.5rem] text-xs font-black transition-all uppercase tracking-widest ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-xl' : 'text-muted hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]'}`}
                     >
                         <tab.icon className="w-4 h-4" />
                         {tab.label}
@@ -163,16 +163,16 @@ const RestoreSection: React.FC = () => {
                         return (
                             <div 
                                 key={backup.id}
-                                className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border p-8 transition-all duration-500 hover:shadow-2xl ${
+                                className={`group relative bg-white dark:bg-[var(--erp-bg)] rounded-[2.5rem] border p-8 transition-all duration-500 hover:shadow-2xl ${
                                     isCompatible 
-                                        ? 'border-slate-200 dark:border-slate-800' 
+                                        ? 'border-default dark:border-default' 
                                         : 'border-red-200 dark:border-red-900/30 opacity-70'
                                 }`}
                             >
                                 <div className="flex justify-between items-start mb-8">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest tabular-nums">#{backup.id.toUpperCase()}</span>
-                                        <h4 className="text-2xl font-black text-slate-800 dark:text-white tabular-nums mt-1">{backup.date} <span className="text-slate-400 font-medium italic text-lg ml-2">{backup.time}</span></h4>
+                                        <h4 className="text-2xl font-black text-main tabular-nums mt-1">{backup.date} <span className="text-muted font-medium italic text-lg ml-2">{backup.time}</span></h4>
                                     </div>
                                     <div className={`px-4 py-2 rounded-2xl flex items-center gap-2 border font-black text-[9px] uppercase tracking-widest ${
                                         isCompatible 
@@ -184,16 +184,16 @@ const RestoreSection: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-6 mb-8 border-t border-slate-50 dark:border-slate-800 pt-8">
+                                <div className="grid grid-cols-2 gap-6 mb-8 border-t border-slate-50 dark:border-default pt-8">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Storage Payload</p>
-                                        <div className="flex items-center gap-2 text-slate-900 dark:text-white font-black text-sm">
+                                        <p className="text-[9px] font-black text-muted uppercase tracking-widest">Storage Payload</p>
+                                        <div className="flex items-center gap-2 text-main font-black text-sm">
                                             <Archive className="w-4 h-4 text-indigo-500" /> {formatBytes(backup.size)}
                                         </div>
                                     </div>
                                     <div className="space-y-1 text-right">
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Vault Source</p>
-                                        <div className="flex items-center justify-end gap-2 text-slate-900 dark:text-white font-black text-sm uppercase">
+                                        <p className="text-[9px] font-black text-muted uppercase tracking-widest">Vault Source</p>
+                                        <div className="flex items-center justify-end gap-2 text-main font-black text-sm uppercase">
                                             {backup.destination.replace('_', ' ')} <DestIcon className="w-4 h-4 text-indigo-500" />
                                         </div>
                                     </div>
@@ -202,7 +202,7 @@ const RestoreSection: React.FC = () => {
                                 <div className="space-y-6">
                                     <div className="flex flex-wrap gap-2">
                                         {backup.modules.map((mod: any) => (
-                                            <span key={mod} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-100 dark:border-slate-700">{mod}</span>
+                                            <span key={mod} className="px-3 py-1.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-xl text-[10px] font-black text-muted uppercase tracking-widest border border-default dark:border-default">{mod}</span>
                                         ))}
                                     </div>
 
@@ -219,13 +219,13 @@ const RestoreSection: React.FC = () => {
                                             className={`flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
                                                 isCompatible 
                                                     ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/20' 
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed border border-slate-200 dark:border-slate-700'
+                                                    : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted cursor-not-allowed border border-default dark:border-default'
                                             }`}
                                         >
                                             <RotateCcw className={`w-4 h-4 ${isRestoring ? 'animate-spin' : ''}`} />
                                             {isCompatible ? 'Initiate Recovery' : 'Incompatible'}
                                         </button>
-                                        <button className="w-14 h-14 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-all hover:scale-[1.05]">
+                                        <button className="w-14 h-14 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl flex items-center justify-center text-muted hover:text-indigo-600 transition-all hover:scale-[1.05]">
                                             <Eye className="w-5 h-5" />
                                         </button>
                                     </div>
@@ -238,25 +238,25 @@ const RestoreSection: React.FC = () => {
 
             {/* Recovery Logs */}
             {activeTab === 'logs' && (
-                <div className="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl">
-                    <div className="p-10 border-b border-slate-100 dark:border-slate-800">
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white italic uppercase leading-none">Global <span className="text-indigo-600">Recovery Audit</span></h3>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2 px-0.5">Persistence Reconciliation History</p>
+                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-[3rem] border border-default dark:border-default overflow-hidden shadow-2xl">
+                    <div className="p-10 border-b border-default dark:border-default">
+                        <h3 className="text-2xl font-black text-main italic uppercase leading-none">Global <span className="text-indigo-600">Recovery Audit</span></h3>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mt-2 px-0.5">Persistence Reconciliation History</p>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="bg-slate-50/50 dark:bg-slate-800/50 text-left">
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Recovery Hash</th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Authorized Agent</th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Timestamp</th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Status Protocol</th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">IO Throughput</th>
+                                <tr className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50 text-left">
+                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted">Recovery Hash</th>
+                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted">Authorized Agent</th>
+                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted">Timestamp</th>
+                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted text-center">Status Protocol</th>
+                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted text-right">IO Throughput</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                                 {restoreLogs.map((log) => (
-                                    <tr key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
+                                    <tr key={log.id} className="hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/20 transition-colors group">
                                         <td className="px-8 py-6">
                                             <span className="text-xs font-black text-indigo-600 tabular-nums uppercase">#{log.id.toUpperCase()}</span>
                                         </td>
@@ -265,11 +265,11 @@ const RestoreSection: React.FC = () => {
                                                 <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
                                                     <Users className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">{log.initiatedBy}</span>
+                                                <span className="text-xs font-black text-main uppercase tracking-tight">{log.initiatedBy}</span>
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
-                                            <span className="text-xs font-black text-slate-500 tabular-nums uppercase">{log.initiatedAt}</span>
+                                            <span className="text-xs font-black text-muted tabular-nums uppercase">{log.initiatedAt}</span>
                                         </td>
                                         <td className="px-8 py-6 text-center">
                                             <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border ${
@@ -281,7 +281,7 @@ const RestoreSection: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <span className="text-xs font-black text-slate-400 tabular-nums">{log.recordsRestored.toLocaleString()} OPS • {log.duration}</span>
+                                            <span className="text-xs font-black text-muted tabular-nums">{log.recordsRestored.toLocaleString()} OPS • {log.duration}</span>
                                         </td>
                                     </tr>
                                 ))}
@@ -294,23 +294,23 @@ const RestoreSection: React.FC = () => {
             {/* Confirmation Modal - Tactical Protocol */}
             {showConfirmModal && (
                 <div className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] max-w-xl w-full p-12 border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+                    <div className="bg-white dark:bg-[var(--erp-bg)] rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] max-w-xl w-full p-12 border border-default dark:border-default relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full -mr-16 -mt-16" />
                         <div className="w-20 h-20 bg-red-500 rounded-[1.5rem] flex items-center justify-center mx-auto mb-10 text-white shadow-2xl shadow-red-500/20">
                             <AlertOctagon className="w-10 h-10" />
                         </div>
-                        <h2 className="text-3xl font-black text-slate-900 dark:text-white text-center italic uppercase leading-tight mb-4">Tactical <span className="text-red-600">Reconciliation</span></h2>
-                        <p className="text-slate-500 text-center font-medium leading-relaxed mb-10 max-w-sm mx-auto">
+                        <h2 className="text-3xl font-black text-main text-center italic uppercase leading-tight mb-4">Tactical <span className="text-red-600">Reconciliation</span></h2>
+                        <p className="text-muted text-center font-medium leading-relaxed mb-10 max-w-sm mx-auto">
                             Authorization required. This protocol will wipe all current enterprise states and redeploy from the selected seed.
                         </p>
 
-                        <div className="space-y-4 mb-10 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                        <div className="space-y-4 mb-10 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 p-6 rounded-[2rem] border border-default dark:border-default">
                             {[
                                 { icon: ShieldCheck, text: 'Auto-Snapshot Active', color: 'text-emerald-500' },
                                 { icon: Lock, text: 'Network Node Lockdown', color: 'text-amber-500' },
                                 { icon: Search, text: 'Structural Integrity Check', color: 'text-indigo-500' }
                             ].map((step, i) => (
-                                <div key={i} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">
+                                <div key={i} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-secondary dark:text-muted">
                                     <step.icon className={`w-5 h-5 ${step.color}`} /> {step.text}
                                 </div>
                             ))}
@@ -319,7 +319,7 @@ const RestoreSection: React.FC = () => {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 onClick={() => setShowConfirmModal(false)}
-                                className="flex-1 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
+                                className="flex-1 h-14 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
                             >
                                 Abort Mission
                             </button>
@@ -340,16 +340,16 @@ const RestoreSection: React.FC = () => {
                     <div className="relative mb-12">
                         <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-[80px] animate-pulse" />
                         <div className="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center relative z-10 shadow-[0_0_50px_rgba(79,70,229,0.5)]">
-                            <Loader2 className="w-12 h-12 text-white animate-spin-slow" />
+                            <Loader2 className="w-12 h-12 text-main animate-spin-slow" />
                         </div>
                     </div>
                     <div className="text-center space-y-4">
-                        <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">System <span className="text-indigo-500">Rebuilding</span></h2>
+                        <h2 className="text-4xl font-black text-main italic uppercase tracking-tighter">System <span className="text-indigo-500">Rebuilding</span></h2>
                         <div className="flex items-center justify-center gap-3">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                            <p className="text-slate-500 font-black text-[10px] uppercase tracking-[0.5em]">Persistence Recon Solidifying</p>
+                            <p className="text-muted font-black text-[10px] uppercase tracking-[0.5em]">Persistence Recon Solidifying</p>
                         </div>
-                        <p className="text-slate-500 font-medium text-sm max-w-sm mt-8 opacity-60">DO NOT DEAUTHORIZE POWER. CRYPTOGRAPHIC INTEGRITY VERIFICATION IN PROGRESS.</p>
+                        <p className="text-muted font-medium text-sm max-w-sm mt-8 opacity-60">DO NOT DEAUTHORIZE POWER. CRYPTOGRAPHIC INTEGRITY VERIFICATION IN PROGRESS.</p>
                     </div>
                 </div>
             )}

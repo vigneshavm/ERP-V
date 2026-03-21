@@ -150,7 +150,7 @@ const CashDrawerIntelligence: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition-all active:scale-95">
+                    <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition-all active:scale-95">
                         <Download className="w-4 h-4" /> Export Parity Log
                     </button>
                     <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95">
@@ -161,7 +161,7 @@ const CashDrawerIntelligence: React.FC = () => {
 
             {/* Wings KPI Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm relative group overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
                         <Banknote className="w-16 h-16" />
                     </div>
@@ -173,13 +173,13 @@ const CashDrawerIntelligence: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm">
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Total Leakage (Today)</p>
                     <h3 className="text-2xl font-black text-error animate-pulse">₹{summary.total_leakage.toLocaleString()}</h3>
                     <p className="text-[10px] text-neutral-500 mt-2 font-bold italic underline decoration-neutral-200 uppercase tracking-tighter">Physical Mismatch</p>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-3xl border border-default dark:border-default shadow-sm relative overflow-hidden">
                     <div className={`absolute inset-y-0 left-0 w-1 ${summary.critical_count > 0 ? 'bg-error animate-pulse' : 'bg-success'}`} />
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Security Risks</p>
                     <h3 className={`text-2xl font-black ${summary.critical_count > 0 ? 'text-error animate-pulse' : 'text-success'}`}>
@@ -191,11 +191,11 @@ const CashDrawerIntelligence: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-neutral-900 text-white p-6 rounded-3xl shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-neutral-800">
+                <div className="bg-[var(--erp-bg)] text-main p-6 rounded-3xl shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-default">
                     <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700" />
                     <p className="text-[10px] font-black text-primary-light uppercase tracking-widest mb-1 italic">Agent Strategy</p>
                     <h3 className="text-xs font-black italic leading-tight">"Force Safe Drop for Terminal TERM-04—Balance exceeded risk threshold."</h3>
-                    <p className="text-[9px] text-white/50 mt-2 font-black uppercase tracking-widest">Active Protection</p>
+                    <p className="text-[9px] text-muted mt-2 font-black uppercase tracking-widest">Active Protection</p>
                 </div>
             </div>
 
@@ -210,21 +210,21 @@ const CashDrawerIntelligence: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search Drawer ID, Cashier or Branch..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900 p-1 rounded-2xl">
+                        <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-1 rounded-2xl">
                             <button
                                 onClick={() => setViewMode('GRID')}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'GRID' ? 'bg-white dark:bg-neutral-800 shadow-sm text-primary' : 'text-neutral-400'}`}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'GRID' ? 'bg-white dark:bg-[var(--erp-card)] shadow-sm text-primary' : 'text-neutral-400'}`}
                             >
                                 <LayoutDashboard className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => setViewMode('ANALYTICS')}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'ANALYTICS' ? 'bg-white dark:bg-neutral-800 shadow-sm text-primary' : 'text-neutral-400'}`}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'ANALYTICS' ? 'bg-white dark:bg-[var(--erp-card)] shadow-sm text-primary' : 'text-neutral-400'}`}
                             >
                                 <TrendingUp className="w-4 h-4" />
                             </button>
@@ -233,7 +233,7 @@ const CashDrawerIntelligence: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {filteredDrawers.map(drawer => (
-                            <div key={drawer.id} className={`bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/40 transition-all ${drawer.is_locked ? 'bg-neutral-50 dark:bg-neutral-900 grayscale-[0.5]' : ''
+                            <div key={drawer.id} className={`bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/40 transition-all ${drawer.is_locked ? 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] grayscale-[0.5]' : ''
                                 }`}>
                                 <div className="flex justify-between items-start mb-8">
                                     <div className="flex items-center gap-4">
@@ -259,11 +259,11 @@ const CashDrawerIntelligence: React.FC = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mb-8">
-                                    <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-3xl">
+                                    <div className="p-5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-3xl">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Expected Float</p>
                                         <p className="text-xl font-black italic tabular-nums">₹{drawer.expected_cash.toLocaleString()}</p>
                                     </div>
-                                    <div className={`p-5 rounded-3xl border ${drawer.difference < 0 ? 'bg-error/5 border-error/10' : 'bg-neutral-50 dark:bg-neutral-900/50 border-neutral-100'}`}>
+                                    <div className={`p-5 rounded-3xl border ${drawer.difference < 0 ? 'bg-error/5 border-error/10' : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-default'}`}>
                                         <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${drawer.difference < 0 ? 'text-error' : 'text-neutral-400'}`}>Physical Cash</p>
                                         <p className={`text-xl font-black italic tabular-nums ${drawer.difference < 0 ? 'text-error' : ''}`}>
                                             {drawer.physical_cash ? `₹${drawer.physical_cash.toLocaleString()}` : '--'}
@@ -294,7 +294,7 @@ const CashDrawerIntelligence: React.FC = () => {
                                     </div>
                                 )}
 
-                                <button className="w-full mt-6 py-4 bg-neutral-900 dark:bg-black text-white text-[11px] font-black uppercase tracking-[0.15em] hover:bg-primary transition-all rounded-2xl shadow-xl shadow-black/10 active:scale-95">
+                                <button className="w-full mt-6 py-4 bg-[var(--erp-bg)] dark:bg-[var(--erp-bg)] text-white text-[11px] font-black uppercase tracking-[0.15em] hover:bg-primary transition-all rounded-2xl shadow-xl shadow-black/10 active:scale-95">
                                     Perform Safe Drop
                                 </button>
                             </div>
@@ -307,7 +307,7 @@ const CashDrawerIntelligence: React.FC = () => {
                     <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Accountability Sentinel</h4>
 
                     {/* Leakage Detector */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 p-8 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2rem] border border-default dark:border-default p-8 shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6 underline decoration-primary underline-offset-8">Live Parity Pulse</p>
                         <div className="space-y-8">
                             {[
@@ -329,7 +329,7 @@ const CashDrawerIntelligence: React.FC = () => {
                     </div>
 
                     {/* Fraud Prevention Core */}
-                    <div className="bg-neutral-900 text-white p-10 rounded-[3rem] border border-neutral-800 relative overflow-hidden group shadow-2xl">
+                    <div className="bg-[var(--erp-bg)] text-main p-10 rounded-[3rem] border border-default relative overflow-hidden group shadow-2xl">
                         <ShieldAlert className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 transition-transform duration-[1.5s]" />
                         <div className="relative z-10">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-8">
@@ -341,13 +341,13 @@ const CashDrawerIntelligence: React.FC = () => {
                             </h4>
 
                             <div className="space-y-4 mb-10">
-                                <div className="p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all cursor-pointer">
+                                <div className="p-5 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl hover:bg-white/10 transition-all cursor-pointer">
                                     <div className="flex justify-between items-start mb-2">
                                         <span className="text-[10px] font-black text-primary-light uppercase tracking-widest text-error">Lazy Drop Detected</span>
                                         <Clock className="w-4 h-4 text-neutral-500" />
                                     </div>
-                                    <p className="text-[11px] font-medium text-neutral-400 group-hover:text-white transition-colors leading-relaxed">
-                                        Terminal <span className="text-white font-black italic">POS-04 (Chennai)</span> has ₹2.45L cash. This exceeds segment safety limit by <span className="text-white font-black italic">₹45K</span>. Drawer auto-locked.
+                                    <p className="text-[11px] font-medium text-neutral-400 group-hover:text-main transition-colors leading-relaxed">
+                                        Terminal <span className="text-main font-black italic">POS-04 (Chennai)</span> has ₹2.45L cash. This exceeds segment safety limit by <span className="text-main font-black italic">₹45K</span>. Drawer auto-locked.
                                     </p>
                                 </div>
                             </div>

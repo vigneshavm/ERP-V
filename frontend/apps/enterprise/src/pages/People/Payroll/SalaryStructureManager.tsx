@@ -122,6 +122,7 @@ const SalaryStructureManager = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             {isBulkMode && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
@@ -157,7 +158,7 @@ const SalaryStructureManager = () => {
                                 checked={bulkData.confirm}
                                 onChange={e => setBulkData({ ...bulkData, confirm: e.target.checked })}
                             />
-                            <label htmlFor="confirmBulk" className="text-xs text-gray-600">
+                            <label htmlFor="confirmBulk" className="text-xs text-secondary">
                                 I confirm that I want to update/add this component for <strong>ALL active employees</strong>. This cannot be undone easily.
                             </label>
                         </div>
@@ -165,7 +166,7 @@ const SalaryStructureManager = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsBulkMode(false)}
-                                className="px-3 py-1 text-gray-500 hover:text-gray-700"
+                                className="px-3 py-1 text-muted hover:text-gray-700"
                             >
                                 Cancel
                             </button>
@@ -206,7 +207,7 @@ const SalaryStructureManager = () => {
                             </button>
                             <button
                                 onClick={() => setIsConfigMode(!isConfigMode)}
-                                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-[var(--erp-bg-sunken)] text-sm font-medium"
                             >
                                 {isConfigMode ? 'Done Configuring' : 'Manage Components'}
                             </button>
@@ -216,7 +217,7 @@ const SalaryStructureManager = () => {
 
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Sidebar / Employee Selection */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div className="bg-white rounded-xl shadow-sm border border-default p-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Select Employee</label>
                         <select
                             className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -234,17 +235,17 @@ const SalaryStructureManager = () => {
                                         <User size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">{employees.find(e => e._id === selectedEmployeeId)?.name}</p>
-                                        <p className="text-xs text-gray-500">{employees.find(e => e._id === selectedEmployeeId)?.role}</p>
+                                        <p className="font-medium text-main">{employees.find(e => e._id === selectedEmployeeId)?.name}</p>
+                                        <p className="text-xs text-muted">{employees.find(e => e._id === selectedEmployeeId)?.role}</p>
                                     </div>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-indigo-100">
                                     <div className="flex justify-between items-center text-sm mb-1">
-                                        <span className="text-gray-600">Estimated Gross</span>
-                                        <span className="font-bold text-gray-900">₹{calculateGross().toLocaleString()}</span>
+                                        <span className="text-secondary">Estimated Gross</span>
+                                        <span className="font-bold text-main">₹{calculateGross().toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="text-gray-600">Components</span>
+                                        <span className="text-secondary">Components</span>
                                         <span className="font-medium">{Object.keys(structureValues).length}</span>
                                     </div>
                                 </div>
@@ -256,20 +257,20 @@ const SalaryStructureManager = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {isConfigMode ? (
                             <div className="bg-white rounded-xl shadow-sm border border-orange-200 p-6 animate-in fade-in">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <h3 className="text-lg font-semibold text-main mb-4 flex items-center gap-2">
                                     <Plus className="w-5 h-5 text-orange-500" />
                                     Add New Salary Component
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Name</label>
+                                        <label className="text-xs font-medium text-muted uppercase">Name</label>
                                         <input
                                             value={newComponent.name} onChange={e => setNewComponent({ ...newComponent, name: e.target.value })}
                                             className="w-full mt-1 p-2 border rounded" placeholder="e.g. Basic, HRA"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Type</label>
+                                        <label className="text-xs font-medium text-muted uppercase">Type</label>
                                         <select
                                             value={newComponent.type} onChange={e => setNewComponent({ ...newComponent, type: e.target.value as any })}
                                             className="w-full mt-1 p-2 border rounded"
@@ -279,7 +280,7 @@ const SalaryStructureManager = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Default Value</label>
+                                        <label className="text-xs font-medium text-muted uppercase">Default Value</label>
                                         <input
                                             type="number"
                                             value={newComponent.defaultValue} onChange={e => setNewComponent({ ...newComponent, defaultValue: parseFloat(e.target.value) })}
@@ -295,14 +296,14 @@ const SalaryStructureManager = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div className="bg-white rounded-xl shadow-sm border border-default p-6">
                                 {selectedEmployeeId ? (
                                     <>
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Salary Breakdown</h3>
+                                        <h3 className="text-lg font-semibold text-main mb-6">Salary Breakdown</h3>
 
                                         <div className="space-y-6">
                                             <div>
-                                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Earnings</h4>
+                                                <h4 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">Earnings</h4>
                                                 <div className="space-y-3">
                                                     {components.filter(c => c.type === 'EARNING').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
@@ -310,7 +311,7 @@ const SalaryStructureManager = () => {
                                                                 {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-indigo-500">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
-                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">
                                                                     {c.calculationType === 'PERCENTAGE' ? '%' : '₹'}
                                                                 </span>
                                                                 <input
@@ -318,7 +319,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-default rounded bg-[var(--erp-bg-sunken)] focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -326,8 +327,8 @@ const SalaryStructureManager = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="pt-4 border-t border-dashed border-gray-200">
-                                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Deductions</h4>
+                                            <div className="pt-4 border-t border-dashed border-default">
+                                                <h4 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">Deductions</h4>
                                                 <div className="space-y-3">
                                                     {components.filter(c => c.type === 'DEDUCTION').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
@@ -335,7 +336,7 @@ const SalaryStructureManager = () => {
                                                                 {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-rose-500">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
-                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">
                                                                     {c.calculationType === 'PERCENTAGE' ? '%' : '₹'}
                                                                 </span>
                                                                 <input
@@ -343,7 +344,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-default rounded bg-[var(--erp-bg-sunken)] focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -352,10 +353,10 @@ const SalaryStructureManager = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+                                        <div className="mt-8 pt-6 border-t border-default flex justify-end gap-3">
                                             <button
                                                 onClick={() => setSelectedEmployeeId('')}
-                                                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                                                className="px-4 py-2 text-secondary hover:text-main"
                                             >
                                                 Cancel
                                             </button>
@@ -370,7 +371,7 @@ const SalaryStructureManager = () => {
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                                    <div className="flex flex-col items-center justify-center h-64 text-muted">
                                         <Users className="w-12 h-12 mb-3 text-gray-200" />
                                         <p>Select an employee to configure their salary structure.</p>
                                     </div>
@@ -380,6 +381,8 @@ const SalaryStructureManager = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

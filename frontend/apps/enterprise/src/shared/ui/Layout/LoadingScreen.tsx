@@ -12,7 +12,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface LoadingScreenProps {
   message?: string;
@@ -20,7 +20,7 @@ interface LoadingScreenProps {
   initial?: string;
 }
 
-const DOT_VARIANTS = {
+const DOT_VARIANTS: Variants = {
   initial: { y: 0, opacity: 0.3 },
   animate: (i: number) => ({
     y: [0, -8, 0],
@@ -29,7 +29,7 @@ const DOT_VARIANTS = {
       duration: 0.9,
       delay: i * 0.15,
       repeat: Infinity,
-      ease: 'easeInOut',
+      ease: 'easeInOut' as const,
     },
   }),
 };
@@ -59,7 +59,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={logoSrc} alt="Logo" className="w-full h-full object-contain p-2" />
       ) : (
-        <span className="text-2xl font-black text-white">{initial}</span>
+        <span className="text-2xl font-black text-main">{initial}</span>
       )}
     </motion.div>
 

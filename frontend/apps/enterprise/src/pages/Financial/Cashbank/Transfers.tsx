@@ -106,13 +106,13 @@ const Transfers: React.FC = () => {
 
     const AccountPulse: React.FC<{ account?: AccountOption; label: string; placeholder: 'fromAccount' | 'toAccount' }> = ({ account, label, placeholder }) => (
         <div className="flex-1 space-y-4">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+            <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
                 <div className={`w-1.5 h-1.5 rounded-full ${account ? 'bg-indigo-500' : 'bg-slate-300'}`}></div>
                 {label} Node
             </h3>
             <div className={`relative group transition-all duration-300 ${account ? 'scale-105' : ''}`}>
                 <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity ${account ? 'opacity-50' : 'hidden'}`}></div>
-                <div className={`relative bg-white dark:bg-slate-900 border-2 rounded-[2.5rem] p-8 transition-all ${account ? 'border-indigo-500 shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 border-dashed'}`}>
+                <div className={`relative bg-white dark:bg-[var(--erp-bg)] border-2 rounded-[2.5rem] p-8 transition-all ${account ? 'border-indigo-500 shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-default dark:border-default border-dashed'}`}>
                     <select
                         value={formData[placeholder] || ''}
                         onChange={(e) => setFormData({ ...formData, [placeholder]: e.target.value })}
@@ -126,20 +126,20 @@ const Transfers: React.FC = () => {
                     </select>
 
                     <div className="flex flex-col items-center text-center space-y-3 pointer-events-none">
-                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${account ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-300'}`}>
+                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${account ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-lg' : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted'}`}>
                             {account ? (account.isBank ? <Building2 className="w-8 h-8" /> : <Wallet className="w-8 h-8" />) : <Plus className="w-8 h-8" />}
                         </div>
                         <div>
-                            <h4 className={`text-sm font-black uppercase tracking-tight ${account ? 'text-slate-800 dark:text-white' : 'text-slate-300'}`}>
+                            <h4 className={`text-sm font-black uppercase tracking-tight ${account ? 'text-main' : 'text-muted'}`}>
                                 {account ? account.label : `Assign ${label}`}
                             </h4>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                            <p className="text-[10px] font-black text-muted uppercase tracking-widest mt-1">
                                 {account ? `${account.type} Unit` : 'Pending Allocation'}
                             </p>
                         </div>
                         {account && (
-                            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 w-full">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Available Reserve</p>
+                            <div className="mt-4 pt-4 border-t border-default dark:border-default w-full">
+                                <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Available Reserve</p>
                                 <p className={`text-lg font-black ${insufficientBalance && placeholder === 'fromAccount' ? 'text-rose-600' : 'text-emerald-600'}`}>
                                     ₹{(account.balance || 0).toLocaleString('en-IN')}
                                 </p>
@@ -153,6 +153,7 @@ const Transfers: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Internal Clearing House"
                 description="Coordinate inter-unit liquidity redistribution and capital balancing"
@@ -162,12 +163,12 @@ const Transfers: React.FC = () => {
             <div className="max-w-6xl mx-auto pb-20">
                 <form onSubmit={handleSubmit} className="space-y-12">
                     {/* Connectivity Neural Map */}
-                    <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 py-12 px-8 bg-slate-50/50 dark:bg-slate-800/20 rounded-[4rem] border border-slate-200 dark:border-slate-800 border-dashed">
+                    <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 py-12 px-8 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 rounded-[4rem] border border-default dark:border-default border-dashed">
                         {/* eslint-disable-next-line  */}
                         <AccountPulse account={selectedFrom} label="Source" placeholder="fromAccount" />
 
                         <div className="flex flex-col items-center gap-4 relative">
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${selectedFrom && selectedTo ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200 scale-125 rotate-0' : 'bg-slate-200 dark:bg-slate-700 text-slate-400 -rotate-45'}`}>
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${selectedFrom && selectedTo ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200 scale-125 rotate-0' : 'bg-slate-200 dark:bg-slate-700 text-muted -rotate-45'}`}>
                                 <ArrowRightLeft className={`w-8 h-8 ${selectedFrom && selectedTo ? 'animate-pulse' : ''}`} />
                             </div>
                             <div className="hidden md:block absolute top-1/2 left-full w-24 h-0.5 bg-gradient-to-r from-indigo-500 to-transparent -translate-y-1/2 -ml-12 pointer-events-none opacity-20"></div>
@@ -180,24 +181,24 @@ const Transfers: React.FC = () => {
 
                     {/* Execution Parameters */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3rem] p-10 shadow-sm space-y-8">
+                        <div className="lg:col-span-8 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-[3rem] p-10 shadow-sm space-y-8">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600">
                                     <Activity className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Execution Parameters</h3>
+                                <h3 className="text-xl font-black text-main uppercase tracking-tight">Execution Parameters</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Transfer Volume (₹)</label>
+                                    <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Transfer Volume (₹)</label>
                                     <div className="relative group">
-                                        <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                        <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-muted group-hover:text-indigo-500 transition-colors" />
                                         <input
                                             type="number"
                                             value={formData.amount}
                                             onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                                            className={`w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 transition-all text-2xl font-black ${insufficientBalance ? 'border-rose-200 text-rose-600' : 'border-slate-100 dark:border-slate-700 focus:border-indigo-500'}`}
+                                            className={`w-full pl-16 pr-8 py-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 transition-all text-2xl font-black ${insufficientBalance ? 'border-rose-200 text-rose-600' : 'border-default dark:border-default focus:border-indigo-500'}`}
                                             placeholder="0.00"
                                             required
                                             min="0.01"
@@ -212,14 +213,14 @@ const Transfers: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Narrative Log</label>
+                                    <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Narrative Log</label>
                                     <div className="relative group h-full">
-                                        <FileText className="absolute left-6 top-7 w-6 h-6 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                        <FileText className="absolute left-6 top-7 w-6 h-6 text-muted group-hover:text-indigo-500 transition-colors" />
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                             rows={2}
-                                            className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed"
+                                            className="w-full pl-16 pr-8 py-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-default dark:border-default rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed"
                                             placeholder="Internal transfer purpose..."
                                         />
                                     </div>
@@ -283,6 +284,8 @@ const Transfers: React.FC = () => {
                     </div>
                 </form>
             </div>
+                  </div>
+
         </Layout>
     );
 };

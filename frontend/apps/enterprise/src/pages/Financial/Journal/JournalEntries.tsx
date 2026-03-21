@@ -36,12 +36,13 @@ const JournalEntries: React.FC = () => {
 
     return (
         <Layout>
-            <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900">
+            <div className="page-shell">
+            <div className="flex flex-col h-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]">
                 <Header title="Journal Entries" />
 
                 <div className="flex-1 overflow-hidden flex flex-col p-4 md:p-6 space-y-6">
                     {/* Actions Bar */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl shadow-sm border border-default dark:border-default">
                         <div className="flex-1 w-full md:w-auto relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
@@ -49,12 +50,12 @@ const JournalEntries: React.FC = () => {
                                 placeholder="Search by description or reference..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-neutral-100 dark:bg-neutral-900 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20"
+                                className="w-full pl-10 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
                         <div className="flex gap-2 w-full md:w-auto">
                             {/* Date Filter placeholder */}
-                            <button className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium">
+                            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium">
                                 <Filter className="w-4 h-4" />
                                 <span>Filter</span>
                             </button>
@@ -69,7 +70,7 @@ const JournalEntries: React.FC = () => {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="flex-1 overflow-y-auto bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default shadow-sm">
                         {loading && entries.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-64 text-neutral-400">
                                 <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
@@ -82,7 +83,7 @@ const JournalEntries: React.FC = () => {
                             </div>
                         ) : (
                             <table className="w-full">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 sticky top-0 z-10">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 sticky top-0 z-10">
                                     <tr className="text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                                         <th className="px-6 py-4">Date</th>
                                         <th className="px-6 py-4">Reference</th>
@@ -97,23 +98,23 @@ const JournalEntries: React.FC = () => {
                                     {filteredEntries.map((entry) => {
                                         const totalAmount = entry.entries.reduce((sum, e) => sum + e.debit, 0);
                                         return (
-                                            <tr key={entry._id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
+                                            <tr key={entry._id} className="group hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 dark:text-neutral-300">
                                                     <div className="flex items-center gap-2">
                                                         <CalendarIcon className="w-4 h-4 text-neutral-400" />
                                                         {formatDate(entry.date)}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-white font-mono">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-main font-mono">
                                                     {entry.reference}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300 max-w-xs truncate">
                                                     {entry.description}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-neutral-900 dark:text-white">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-neutral-900 dark:text-main">
                                                     {totalAmount.toFixed(2)}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-neutral-900 dark:text-white">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-neutral-900 dark:text-main">
                                                     {totalAmount.toFixed(2)}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -138,6 +139,8 @@ const JournalEntries: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

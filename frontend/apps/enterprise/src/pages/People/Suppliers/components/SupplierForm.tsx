@@ -101,7 +101,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             value={formData.businessName}
                             onChange={handleChange}
                             required
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                             placeholder="e.g. Acme Corp Logistics"
                         />
                     </InputWrapper>
@@ -112,7 +112,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             name="contactPersonName"
                             value={formData.contactPersonName}
                             onChange={handleChange}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                             placeholder="Full Name"
                         />
                     </InputWrapper>
@@ -124,7 +124,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             value={formData.contactNo}
                             onChange={handleChange}
                             required
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                             placeholder="10-digit mobile number"
                         />
                     </InputWrapper>
@@ -135,7 +135,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                             placeholder="supplier@endpoint.com"
                         />
                     </InputWrapper>
@@ -150,7 +150,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             value={formData.physicalAddress}
                             onChange={handleChange}
                             rows={3}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm leading-relaxed"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm leading-relaxed"
                             placeholder="Full street address, building, and zone..."
                         />
                     </InputWrapper>
@@ -162,7 +162,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                 name="gstNo"
                                 value={formData.gstNo}
                                 onChange={handleChange}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm uppercase"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm uppercase"
                                 placeholder="15-digit GST number"
                             />
                         </InputWrapper>
@@ -172,7 +172,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                 name="supplierType"
                                 value={formData.supplierType}
                                 onChange={handleChange}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm appearance-none"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm appearance-none"
                             >
                                 <option value="manufacturer">Manufacturer</option>
                                 <option value="distributor">Distributor</option>
@@ -193,7 +193,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             name="openingBalance"
                             value={formData.openingBalance}
                             onChange={handleChange}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                         />
                     </InputWrapper>
 
@@ -202,7 +202,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             name="balanceType"
                             value={formData.balanceType}
                             onChange={handleChange}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm appearance-none"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm appearance-none"
                         >
                             <option value="payable">Payable (Credit)</option>
                             <option value="receivable">Receivable (Debit)</option>
@@ -215,7 +215,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             name="creditPeriod"
                             value={formData.creditPeriod}
                             onChange={handleChange}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
+                            className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-sm"
                         />
                     </InputWrapper>
                 </div>
@@ -225,7 +225,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 <button
                     type="button"
                     onClick={() => navigate('/suppliers')}
-                    className="px-8 py-4 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 text-slate-400 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all flex items-center gap-2"
+                    className="px-8 py-4 bg-white dark:bg-[var(--erp-bg)] border-2 border-default dark:border-default text-muted font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-[var(--erp-bg-sunken)] transition-all flex items-center gap-2"
                 >
                     <XCircle className="w-4 h-4" /> Abort Protocol
                 </button>

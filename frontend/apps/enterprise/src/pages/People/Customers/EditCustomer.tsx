@@ -60,12 +60,15 @@ const EditCustomer = () => {
     if (isLoading && !customer) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex justify-center items-center py-20">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-                        <p className="text-sm font-bold text-slate-400">Fetching Partner Intel...</p>
+                        <p className="text-sm font-bold text-muted">Fetching Partner Intel...</p>
                     </div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -79,7 +82,7 @@ const EditCustomer = () => {
                 actions={
                     <button
                         onClick={() => navigate('/customers')}
-                        className="px-6 py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all font-medium"
+                        className="px-6 py-2 border border-default dark:border-default text-secondary dark:text-muted rounded-xl text-sm font-bold hover:bg-[var(--erp-bg-sunken)] transition-all font-medium"
                     >
                         Abort Modification
                     </button>

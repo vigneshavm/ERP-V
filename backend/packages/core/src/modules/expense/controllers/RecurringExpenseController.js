@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import RecurringExpense from '../models/RecurringExpense.js';
 import Expense from '../models/Expense.js';
-import { info, error } from '@smarterp/shared/config/logger.js';
+import { info } from '@smarterp/shared/config/logger.js';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 /**
  * Calculate intelligence metrics for recurring expenses
  */
@@ -104,148 +105,124 @@ const calculateIntelligence = async (recurringExpenses, userId) => {
  * @desc Get all recurring expenses with intelligence
  * @route GET /api/recurring-expenses
  */
-export const getAllRecurringExpenses = async (req, res) => {
-    try {
-        const recurringExpenses = await RecurringExpense.find({
-            createdBy: req.user?._id,
-            is_active: true
-        }).sort({ next_due: 1 });
-        const intelligence = await calculateIntelligence(recurringExpenses, req.user?._id);
-        // Transform for frontend compatibility
-        const expenses = recurringExpenses.map((exp) => ({
-            id: exp._id,
-            category: exp.category,
-            amount: exp.amount,
-            frequency: exp.frequency,
-            vendor: exp.vendor,
-            next_due: exp.next_due,
-            branch_id: exp.branch_id,
-            branch_name: exp.branch_name,
-            description: exp.description,
-            type: exp.type || "expense",
-            accountId: exp.accountId,
-        }));
-        res.status(200).json({ expenses, intelligence });
-    }
-    catch (err) {
-        error(`Get all recurring expenses failed: ${err.message}`);
-        res.status(500).json({ message: 'Server Error', error: err.message });
-    }
-};
+export const getAllRecurringExpenses = asyncHandler(async (req, res) => {
+    const recurringExpenses = await RecurringExpense.find({
+        createdBy: req.user._id,
+        is_active: true
+    }).sort({ next_due: 1 });
+    const intelligence = await calculateIntelligence(recurringExpenses, req.user._id);
+    // Transform for frontend compatibility
+    const expenses = recurringExpenses.map((exp) => ({
+        id: exp._id,
+        category: exp.category,
+        amount: exp.amount,
+        frequency: exp.frequency,
+        vendor: exp.vendor,
+        next_due: exp.next_due,
+        branch_id: exp.branch_id,
+        branch_name: exp.branch_name,
+        description: exp.description,
+        type: exp.type || "expense",
+        accountId: exp.accountId,
+    }));
+    res.status(200).json({ expenses, intelligence });
+});
 /**
  * @desc Create new recurring expense
  * @route POST /api/recurring-expenses
  */
-export const createRecurringExpense = async (req, res) => {
-    try {
-        const { category, amount, frequency, vendor, next_due, branch_id, branch_name, description, type, accountId } = req.body;
-        if (!category || !amount || !next_due) {
-            res.status(400).json({ message: 'Category, amount, and next due date are required' });
-            return;
-        }
-        const expense = await RecurringExpense.create({
-            category,
-            amount,
-            frequency: frequency || 'MONTHLY',
-            vendor,
-            next_due,
-            branch_id,
-            branch_name,
-            description,
-            type: type || "expense",
-            accountId,
-            createdBy: req.user?._id
-        });
-        info(`Created recurring expense: ${category} - ₹${amount}`);
-        res.status(201).json({
-            id: expense._id,
-            category: expense.category,
-            amount: expense.amount,
-            frequency: expense.frequency,
-            vendor: expense.vendor,
-            next_due: expense.next_due,
-            branch_id: expense.branch_id,
-            branch_name: expense.branch_name,
-            description: expense.description,
-            type: expense.type,
-            accountId: expense.accountId,
-        });
+export const createRecurringExpense = asyncHandler(async (req, res) => {
+    const { category, amount, frequency, vendor, next_due, branch_id, branch_name, description, type, accountId } = req.body;
+    if (!category || !amount || !next_due) {
+        res.status(400).json({ message: 'Category, amount, and next due date are required' });
+        return;
     }
-    catch (err) {
-        error(`Create recurring expense failed: ${err.message}`);
-        res.status(500).json({ message: 'Server Error', error: err.message });
-    }
-};
+    const expense = await RecurringExpense.create({
+        category,
+        amount,
+        frequency: frequency || 'MONTHLY',
+        vendor,
+        next_due,
+        branch_id,
+        branch_name,
+        description,
+        type: type || "expense",
+        accountId,
+        createdBy: req.user._id
+    });
+    info(`Created recurring expense: ${category} - ₹${amount}`);
+    res.status(201).json({
+        id: expense._id,
+        category: expense.category,
+        amount: expense.amount,
+        frequency: expense.frequency,
+        vendor: expense.vendor,
+        next_due: expense.next_due,
+        branch_id: expense.branch_id,
+        branch_name: expense.branch_name,
+        description: expense.description,
+        type: expense.type,
+        accountId: expense.accountId,
+    });
+});
 /**
  * @desc Update recurring expense
  * @route PUT /api/recurring-expenses/:id
  */
-export const updateRecurringExpense = async (req, res) => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(400).json({ message: 'Invalid expense ID format' });
-            return;
-        }
-        const expense = await RecurringExpense.findOne({
-            _id: req.params.id,
-            createdBy: req.user?._id
-        });
-        if (!expense) {
-            res.status(404).json({ message: 'Recurring expense not found or unauthorized' });
-            return;
-        }
-        const updatedExpense = await RecurringExpense.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true, runValidators: true });
-        if (!updatedExpense) {
-            res.status(404).json({ message: 'Recurring expense not found' });
-            return;
-        }
-        info(`Updated recurring expense: ${updatedExpense.category}`);
-        res.status(200).json({
-            id: updatedExpense._id,
-            category: updatedExpense.category,
-            amount: updatedExpense.amount,
-            frequency: updatedExpense.frequency,
-            vendor: updatedExpense.vendor,
-            next_due: updatedExpense.next_due,
-            branch_id: updatedExpense.branch_id,
-            branch_name: updatedExpense.branch_name,
-            description: updatedExpense.description,
-            type: updatedExpense.type,
-            accountId: updatedExpense.accountId,
-        });
+export const updateRecurringExpense = asyncHandler(async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        res.status(400).json({ message: 'Invalid expense ID format' });
+        return;
     }
-    catch (err) {
-        error(`Update recurring expense failed: ${err.message}`);
-        res.status(500).json({ message: 'Server Error', error: err.message });
+    const expense = await RecurringExpense.findOne({
+        _id: req.params.id,
+        createdBy: req.user._id
+    });
+    if (!expense) {
+        res.status(404).json({ message: 'Recurring expense not found or unauthorized' });
+        return;
     }
-};
+    const updatedExpense = await RecurringExpense.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true, runValidators: true });
+    if (!updatedExpense) {
+        res.status(404).json({ message: 'Recurring expense not found' });
+        return;
+    }
+    info(`Updated recurring expense: ${updatedExpense.category}`);
+    res.status(200).json({
+        id: updatedExpense._id,
+        category: updatedExpense.category,
+        amount: updatedExpense.amount,
+        frequency: updatedExpense.frequency,
+        vendor: updatedExpense.vendor,
+        next_due: updatedExpense.next_due,
+        branch_id: updatedExpense.branch_id,
+        branch_name: updatedExpense.branch_name,
+        description: updatedExpense.description,
+        type: updatedExpense.type,
+        accountId: updatedExpense.accountId,
+    });
+});
 /**
  * @desc Delete recurring expense
  * @route DELETE /api/recurring-expenses/:id
  */
-export const deleteRecurringExpense = async (req, res) => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(400).json({ message: 'Invalid expense ID format' });
-            return;
-        }
-        const expense = await RecurringExpense.findOne({
-            _id: req.params.id,
-            createdBy: req.user?._id
-        });
-        if (!expense) {
-            res.status(404).json({ message: 'Recurring expense not found or unauthorized' });
-            return;
-        }
-        await expense.deleteOne();
-        info(`Deleted recurring expense: ${expense.category}`);
-        res.status(200).json({ message: 'Recurring expense deleted' });
+export const deleteRecurringExpense = asyncHandler(async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        res.status(400).json({ message: 'Invalid expense ID format' });
+        return;
     }
-    catch (err) {
-        error(`Delete recurring expense failed: ${err.message}`);
-        res.status(500).json({ message: 'Server Error', error: err.message });
+    const expense = await RecurringExpense.findOne({
+        _id: req.params.id,
+        createdBy: req.user._id
+    });
+    if (!expense) {
+        res.status(404).json({ message: 'Recurring expense not found or unauthorized' });
+        return;
     }
-};
+    await expense.deleteOne();
+    info(`Deleted recurring expense: ${expense.category}`);
+    res.status(200).json({ message: 'Recurring expense deleted' });
+});
 export default {
     getAllRecurringExpenses,
     createRecurringExpense,

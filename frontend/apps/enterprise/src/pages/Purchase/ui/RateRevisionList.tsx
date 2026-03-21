@@ -55,6 +55,7 @@ const RateRevisionList: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Rate Revisions"
                 description="Manage retrospective rate changes and margin adjustments"
@@ -71,7 +72,7 @@ const RateRevisionList: React.FC = () => {
             />
 
             <div className="max-w-7xl mx-auto space-y-6">
-                <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default overflow-hidden">
                     {loading ? (
                         <div className="p-8 text-center text-neutral-500">Loading revisions...</div>
                     ) : revisions.length === 0 ? (
@@ -83,7 +84,7 @@ const RateRevisionList: React.FC = () => {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 uppercase text-xs font-semibold">
+                                <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 text-neutral-500 uppercase text-xs font-semibold">
                                     <tr>
                                         <th className="px-6 py-4">Date</th>
                                         <th className="px-6 py-4">Item & Batch</th>
@@ -96,12 +97,12 @@ const RateRevisionList: React.FC = () => {
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                     {revisions.map((rev) => (
-                                        <tr key={rev._id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                                        <tr key={rev._id} className="hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                             <td className="px-6 py-4 text-neutral-500">
                                                 {new Date(rev.createdAt).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-bold text-neutral-900 dark:text-white">{rev.itemId?.name || 'Unknown Item'}</div>
+                                                <div className="font-bold text-neutral-900 dark:text-main">{rev.itemId?.name || 'Unknown Item'}</div>
                                                 <div className="text-xs text-neutral-500 font-mono mt-1">Batch: {rev.batchNumber}</div>
                                             </td>
                                             <td className="px-6 py-4 text-neutral-700 dark:text-neutral-300">
@@ -159,6 +160,8 @@ const RateRevisionList: React.FC = () => {
                     )}
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

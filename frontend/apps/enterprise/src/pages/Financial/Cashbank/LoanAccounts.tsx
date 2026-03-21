@@ -61,13 +61,14 @@ const LoanAccounts: React.FC = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-[#121212] text-white p-4 md:p-8 font-sans selection:bg-rose-500/30 pb-32">
+            <div className="page-shell">
+            <div className="page-shell p-4 md:p-8 font-sans selection:bg-rose-500/30 pb-32">
                 <div className="max-w-2xl mx-auto space-y-10">
 
                     {/* Navigation Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
+                            <button className="p-2 hover:bg-[var(--erp-bg-sunken)] rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
                             <h1 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-400">Loans</h1>
                         </div>
                         <div className="flex items-center gap-4">
@@ -84,7 +85,7 @@ const LoanAccounts: React.FC = () => {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex border-b border-white/5">
+                    <div className="flex border-b border-default">
                         {(['all', 'borrowed', 'lent'] as const).map((tab) => (
                             <button
                                 key={tab}
@@ -107,10 +108,10 @@ const LoanAccounts: React.FC = () => {
                             const dailyPaydown = Math.round(loan.balanceRemaining / 365); // Simplified calculation
 
                             return (
-                                <div key={loan.id} className="bg-neutral-900/60 border border-white/5 rounded-[2rem] p-6 backdrop-blur-xl group hover:border-white/10 transition-all">
+                                <div key={loan.id} className="bg-[var(--erp-bg)]/60 border border-default rounded-[2rem] p-6 backdrop-blur-xl group hover:border-default transition-all">
                                     <div className="flex items-start justify-between mb-6">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/5 ${isBorrowed ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-default ${isBorrowed ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
                                                 {isBorrowed ? <Car className="w-6 h-6" /> : <Gift className="w-6 h-6" />}
                                             </div>
                                             <div>
@@ -132,7 +133,7 @@ const LoanAccounts: React.FC = () => {
                                             <span>Today</span>
                                             <span>30 Jun 2026</span>
                                         </div>
-                                        <div className="h-4 bg-neutral-800 rounded-full overflow-hidden relative">
+                                        <div className="h-4 bg-[var(--erp-card)] rounded-full overflow-hidden relative">
                                             <div
                                                 className={`h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-2 text-[8px] font-black ${isBorrowed ? 'bg-fuchsia-500/30' : 'bg-rose-500/50 text-white'}`}
                                                 style={{ width: `${progress}%` }}
@@ -162,7 +163,7 @@ const LoanAccounts: React.FC = () => {
                     </div>
 
                     {/* App-Style Navigation Footer */}
-                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 px-10 py-6 bg-neutral-900/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl z-50">
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 px-10 py-6 bg-[var(--erp-bg)]/80 backdrop-blur-2xl border border-default rounded-[2.5rem] shadow-2xl z-50">
                         <button className="flex flex-col items-center gap-1.5 opacity-40 hover:opacity-100 transition-opacity">
                             <Home className="w-5 h-5" />
                             <span className="text-[8px] font-black uppercase tracking-widest">Overview</span>
@@ -178,6 +179,8 @@ const LoanAccounts: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

@@ -162,7 +162,7 @@ export default function SignUpPage() {
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-slate-900">
+        <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-[var(--erp-bg)]">
             <div className="absolute inset-0">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 blur-[150px] rounded-full" />
                 <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-500/20 blur-[120px] rounded-full" />
@@ -173,9 +173,9 @@ export default function SignUpPage() {
                 <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[2.5rem] shadow-2xl p-8 md:p-12">
                     <div className="text-center mb-10">
                         <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/30">
-                            <Building2 className="w-10 h-10 text-white" />
+                            <Building2 className="w-10 h-10 text-main" />
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
+                        <h1 className="text-3xl md:text-4xl font-black text-main tracking-tight mb-2">
                             Start Your Journey
                         </h1>
                         <p className="text-slate-400 text-sm font-medium">
@@ -203,7 +203,7 @@ export default function SignUpPage() {
                     {step === 1 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Business Information</h2>
+                                <h2 className="text-xl font-bold text-main mb-1">Business Information</h2>
                                 <p className="text-slate-400 text-xs">Tell us about your business</p>
                             </div>
                             <div className="space-y-4">
@@ -216,7 +216,7 @@ export default function SignUpPage() {
                                             value={businessName}
                                             onChange={(e) => handleBusinessNameChange(e.target.value)}
                                             placeholder="Your Business Name"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-main font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -248,28 +248,28 @@ export default function SignUpPage() {
                                         value={address}
                                         onChange={(e) => setAddress(e.target.value)}
                                         placeholder="Street Address"
-                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none"
+                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-main text-sm outline-none"
                                     />
                                     <input
                                         type="text"
                                         value={city}
                                         onChange={(e) => setCity(e.target.value)}
                                         placeholder="City"
-                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none"
+                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-main text-sm outline-none"
                                     />
                                     <input
                                         type="text"
                                         value={state}
                                         onChange={(e) => setState(e.target.value)}
                                         placeholder="State"
-                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none"
+                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-main text-sm outline-none"
                                     />
                                     <input
                                         type="text"
                                         value={zipCode}
                                         onChange={(e) => setZipCode(e.target.value)}
                                         placeholder="ZIP / Pincode"
-                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none"
+                                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-main text-sm outline-none"
                                     />
                                 </div>
                             </div>
@@ -282,7 +282,7 @@ export default function SignUpPage() {
                                         value={subdomain}
                                         onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
                                         placeholder="yourstore"
-                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none"
+                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-main font-semibold outline-none"
                                     />
                                     <span className="absolute right-4 top-4 text-slate-500 text-sm font-medium">.app.com</span>
                                 </div>
@@ -293,7 +293,7 @@ export default function SignUpPage() {
                     {step === 2 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Owner Account</h2>
+                                <h2 className="text-xl font-bold text-main mb-1">Owner Account</h2>
                                 <p className="text-slate-400 text-xs">Create your admin credentials</p>
                             </div>
                             <div className="space-y-4">
@@ -304,7 +304,7 @@ export default function SignUpPage() {
                                         value={ownerName}
                                         onChange={(e) => setOwnerName(e.target.value)}
                                         placeholder="Your Name"
-                                        className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none"
+                                        className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-main font-semibold outline-none"
                                     />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -313,14 +313,14 @@ export default function SignUpPage() {
                                         value={ownerEmail}
                                         onChange={(e) => setOwnerEmail(e.target.value)}
                                         placeholder="you@business.com"
-                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none"
+                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-main font-semibold outline-none"
                                     />
                                     <input
                                         type="tel"
                                         value={ownerMobile}
                                         onChange={(e) => setOwnerMobile(e.target.value)}
                                         placeholder="Mobile"
-                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none"
+                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-main font-semibold outline-none"
                                     />
                                 </div>
                                 <div className="relative">
@@ -329,7 +329,7 @@ export default function SignUpPage() {
                                         value={ownerPassword}
                                         onChange={(e) => setOwnerPassword(e.target.value)}
                                         placeholder="Password"
-                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-white font-mono tracking-widest outline-none"
+                                        className="w-full h-14 px-4 bg-white/5 border border-white/10 rounded-2xl text-main font-mono tracking-widest outline-none"
                                     />
                                     <button
                                         type="button"
@@ -346,7 +346,7 @@ export default function SignUpPage() {
                     {step === 3 && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="text-center mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Confirm & Launch</h2>
+                                <h2 className="text-xl font-bold text-main mb-1">Confirm & Launch</h2>
                                 <p className="text-slate-400 text-xs">Review your details and start growing</p>
                             </div>
                             <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
@@ -356,7 +356,7 @@ export default function SignUpPage() {
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Business</p>
-                                        <p className="text-white font-bold">{businessName}</p>
+                                        <p className="text-main font-bold">{businessName}</p>
                                         <p className="text-slate-400 text-xs">{subdomain}.app.com</p>
                                     </div>
                                 </div>
@@ -376,7 +376,7 @@ export default function SignUpPage() {
                             <button
                                 type="button"
                                 onClick={handleBack}
-                                className="flex-1 h-14 bg-white/10 text-white rounded-2xl font-bold flex items-center justify-center gap-2"
+                                className="flex-1 h-14 bg-white/10 text-main rounded-2xl font-bold flex items-center justify-center gap-2"
                             >
                                 <ArrowLeft className="w-4 h-4" /> Back
                             </button>
@@ -408,7 +408,7 @@ export default function SignUpPage() {
                     <button
                         type="button"
                         onClick={() => router.push('/login')}
-                        className="w-full text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors py-4 mt-4"
+                        className="w-full text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-main transition-colors py-4 mt-4"
                     >
                         Already have an account? Sign In
                     </button>

@@ -46,19 +46,19 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-                <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[var(--erp-bg)]/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-[var(--erp-bg)] w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-default overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+                <div className="p-8 border-b border-slate-50 dark:border-default flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
                             <LayoutGrid className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Expand Design Set</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Procedural Item Generation</p>
+                            <h2 className="text-xl font-black text-main dark:text-main uppercase tracking-tight">Expand Design Set</h2>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Procedural Item Generation</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 transition-all">
+                    <button onClick={onClose} className="p-3 rounded-2xl hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] text-muted transition-all">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -66,19 +66,19 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Design Identity</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Design Identity</label>
                             <input
                                 type="text"
                                 placeholder="Basic Tee, Denim Jacket..."
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-sm focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-sm focus:ring-4 focus:ring-indigo-500/10 transition-all"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Strategic Category</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Strategic Category</label>
                             <select
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-bold text-sm focus:ring-4 focus:ring-indigo-500/10 transition-all appearance-none"
+                                className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-bold text-sm focus:ring-4 focus:ring-indigo-500/10 transition-all appearance-none"
                                 value={formData.category?.name || ''}
                                 onChange={(e) => {
                                     const cat = categories.find(c => c.name === e.target.value);
@@ -94,7 +94,7 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                     <div className="grid grid-cols-2 gap-12">
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chromatic Spectrum</label>
+                                <label className="text-[10px] font-black text-muted uppercase tracking-widest">Chromatic Spectrum</label>
                                 <button
                                     onClick={() => setFormData({ ...formData, colors: [...formData.colors, ''] })}
                                     className="p-1 px-2 rounded-lg bg-indigo-500/10 text-indigo-500 text-[9px] font-black uppercase"
@@ -108,7 +108,7 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                                         <input
                                             type="text"
                                             placeholder="Color..."
-                                            className="flex-grow px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-none rounded-xl font-bold text-xs"
+                                            className="flex-grow px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-xl font-bold text-xs"
                                             value={c}
                                             onChange={(e) => {
                                                 const newColors = [...formData.colors];
@@ -129,7 +129,7 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
 
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dimension Array</label>
+                                <label className="text-[10px] font-black text-muted uppercase tracking-widest">Dimension Array</label>
                                 <button
                                     onClick={() => setFormData({ ...formData, sizes: [...formData.sizes, ''] })}
                                     className="p-1 px-2 rounded-lg bg-indigo-500/10 text-indigo-500 text-[9px] font-black uppercase"
@@ -143,7 +143,7 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                                         <input
                                             type="text"
                                             placeholder="Size..."
-                                            className="flex-grow px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-none rounded-xl font-bold text-xs"
+                                            className="flex-grow px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-xl font-bold text-xs"
                                             value={s}
                                             onChange={(e) => {
                                                 const newSizes = [...formData.sizes];
@@ -165,28 +165,28 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
 
                     <div className="grid grid-cols-3 gap-6 pt-4">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Procurement Rate</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Procurement Rate</label>
                             <input
                                 type="number"
-                                className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-black text-sm"
+                                className="w-full px-5 py-3.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-black text-sm"
                                 value={formData.rate}
                                 onChange={(e) => setFormData({ ...formData, rate: parseFloat(e.target.value) || 0 })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tax Engine %</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Tax Engine %</label>
                             <input
                                 type="number"
-                                className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-black text-sm"
+                                className="w-full px-5 py-3.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-black text-sm"
                                 value={formData.taxPercent}
                                 onChange={(e) => setFormData({ ...formData, taxPercent: parseFloat(e.target.value) || 0 })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Strategic Margin %</label>
+                            <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">Strategic Margin %</label>
                             <input
                                 type="number"
-                                className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl font-black text-sm text-emerald-500"
+                                className="w-full px-5 py-3.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 border-none rounded-2xl font-black text-sm text-emerald-500"
                                 value={formData.margin}
                                 onChange={(e) => setFormData({ ...formData, margin: parseFloat(e.target.value) || 0 })}
                             />
@@ -194,10 +194,10 @@ const DesignSetModal: React.FC<DesignSetModalProps> = ({ isOpen, onClose, onExpa
                     </div>
                 </div>
 
-                <div className="p-8 border-t border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 flex gap-4">
+                <div className="p-8 border-t border-slate-50 dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 flex gap-4">
                     <button
                         onClick={onClose}
-                        className="flex-1 px-8 py-4 bg-white dark:bg-slate-900 text-slate-400 rounded-2xl font-black text-sm border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 transition-all"
+                        className="flex-1 px-8 py-4 bg-white dark:bg-[var(--erp-bg)] text-muted rounded-2xl font-black text-sm border-2 border-slate-100 dark:border-default hover:bg-[var(--erp-bg-sunken)] transition-all"
                     >
                         Abort Expansion
                     </button>

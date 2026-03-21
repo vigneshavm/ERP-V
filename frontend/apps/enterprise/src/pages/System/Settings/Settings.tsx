@@ -228,7 +228,7 @@ const Settings: React.FC = () => {
 
         if (isLoading && activeTab === 'general') {
             return (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-400">
+                <div className="flex flex-col items-center justify-center h-64 text-muted">
                     <Loader2 className="w-8 h-8 animate-spin mb-2" />
                     <p className="text-sm font-medium">Loading settings...</p>
                 </div>
@@ -252,29 +252,42 @@ const Settings: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="System Settings"
                 description="Configure your enterprise environment, manage users, and customize your experience."
             />
 
-            <div className="flex flex-col gap-6">
-                {/* Horizontal Navigation Bar Removed */}
+            <div className="flex flex-col gap-4">
+                {/* Settings Tab Nav */}
+                <div className="flex flex-wrap gap-1 p-1 bg-[var(--erp-bg-sunken)] rounded-xl border border-default">
+                    {tabs.map(t => (
+                        <button
+                            key={t.id}
+                            onClick={() => window.history.pushState({}, '', `/settings/${t.id}`)}
+                            className={`erp-tab${activeTab === t.id ? ' active' : ''}`}
+                        >
+                            <t.icon className="w-3.5 h-3.5" />
+                            {t.label}
+                        </button>
+                    ))}
+                </div>
 
                 {/* Main Content Area */}
-                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
-                    <div className="border-b border-slate-100 dark:border-slate-800 px-8 py-6 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20 backdrop-blur-sm">
+                <div className="erp-card overflow-hidden flex flex-col min-h-[500px]">
+                    <div className="border-b border-default px-8 py-5 flex items-center justify-between bg-[var(--erp-bg-sunken)]">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-xl bg-[var(--erp-primary-soft)] flex items-center justify-center">
                                 {(() => {
                                     const Icon = tabs.find(t => t.id === activeTab)?.icon || SettingsIcon;
-                                    return <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />;
+                                    return <Icon className="w-5 h-5 text-[var(--erp-primary)]" />;
                                 })()}
                             </div>
                             <div>
-                                <h2 className="text-xl font-extrabold text-slate-800 dark:text-white leading-none">
+                                <h2 className="text-xl font-extrabold text-main leading-none">
                                     {tabs.find(t => t.id === activeTab)?.label} Settings
                                 </h2>
-                                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                                <p className="text-xs text-muted font-medium mt-1 uppercase tracking-wider">
                                     System / Configuration / {activeTab}
                                 </p>
                             </div>
@@ -282,14 +295,14 @@ const Settings: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleReset}
-                                className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 font-bold flex items-center gap-2"
+                                className="btn btn-ghost"
                             >
                                 <RotateCcw className="w-4 h-4" /> Reset
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className={`px-6 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 ${isSaved ? 'bg-emerald-600 dark:bg-emerald-600' : ''}`}
+                                className="btn btn-primary"
                             >
                                 {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                 {isSaved ? <CheckCircle className="w-4 h-4" /> : !isSaving && <Save className="w-4 h-4" />}
@@ -303,6 +316,8 @@ const Settings: React.FC = () => {
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

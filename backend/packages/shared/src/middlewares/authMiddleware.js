@@ -45,12 +45,15 @@ export const protect = async (req, res, next) => {
             }
             if (!deviceIdFromCookie || user.activeDeviceId !== deviceIdFromCookie) {
                 // Device mismatch - this device was logged out from another location
-                // Provide more specific error message based on the scenario
+                console.warn(' [31m[AUTH DEBUG] [39m Device validation failed:', {
+                    hasCookie: !!deviceIdFromCookie,
+                    cookieValue: deviceIdFromCookie ? 'hidden' : 'none',
+                    userActiveDeviceId: user.activeDeviceId ? 'present' : 'none',
+                    match: user.activeDeviceId === deviceIdFromCookie
+                });
                 const errorMessage = !deviceIdFromCookie
                     ? "Session expired. Please log in again."
                     : "This account is currently active on another device. Please log in again.";
-                // We can't attach extra properties to AppError easily without easy customization, so return response directly or use extended error.
-                // For strict compatibility, use res.status
                 return res.status(401).json({
                     message: errorMessage,
                     sessionExpired: true,
@@ -60,6 +63,7 @@ export const protect = async (req, res, next) => {
             next();
         }
         else {
+            console.warn(' [31m[AUTH DEBUG] [39m No authorization header or does not start with Bearer');
             throw new AppError("Not authorized, token missing", 401);
         }
     }
@@ -69,6 +73,10 @@ export const protect = async (req, res, next) => {
             stack: error.stack,
             token: token ? 'present (truncated: ' + token.substring(0, 10) + '...)' : 'missing'
         });
+        // Log detailed error to console in development
+        if (process.env.NODE_ENV !== 'production') {
+            console.error(' [31m[AUTH DEBUG] [39m 401 error:', error.message);
+        }
         next(new AppError("Not authorized, token failed", 401));
     }
 };

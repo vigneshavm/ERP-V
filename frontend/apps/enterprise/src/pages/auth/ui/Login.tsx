@@ -68,7 +68,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
 
                         <div>
                             <div className="flex justify-between items-center mb-2.5">
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Security Key</span>
+                                <span className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Security Key</span>
                                 <Link
                                     to="/forgot-password"
                                     className="text-[10px] font-bold text-indigo-400/70 hover:text-indigo-400 uppercase tracking-[0.15em] transition-colors"
@@ -92,11 +92,11 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                                 id="rememberMe"
                                 type="checkbox"
                                 {...register('rememberMe')}
-                                className="peer h-4 w-4 rounded-md border-white/10 bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
+                                className="peer h-4 w-4 rounded-md border-default bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/30 transition-all cursor-pointer appearance-none border checked:bg-indigo-600 checked:border-indigo-600"
                             />
                             <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3 h-3 text-white left-0.5" />
                         </div>
-                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-white/25 uppercase tracking-[0.18em] group-hover:text-white/40 transition-colors cursor-pointer">
+                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-white/25 uppercase tracking-[0.18em] group-hover:text-main/40 transition-colors cursor-pointer">
                             Remember this device
                         </label>
                     </div>
@@ -133,7 +133,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                     {isAdmin && (
                         <Link
                             to="/"
-                            className="text-[10px] font-bold text-white/20 hover:text-white/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+                            className="text-[10px] font-bold text-muted hover:text-main/40 uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
                         >
                             <ArrowRight className="w-3 h-3 rotate-180" /> Back to System Login
                         </Link>

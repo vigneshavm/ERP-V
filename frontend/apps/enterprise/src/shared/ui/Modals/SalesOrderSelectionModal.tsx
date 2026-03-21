@@ -11,7 +11,7 @@ const SalesOrderSelectionModal: React.FC<SalesOrderSelectionModalProps> = ({ isO
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Select Sales Order">
             <div className="p-4">
-                <p className="text-sm text-slate-500 mb-4">Select a sales order to link.</p>
+                <p className="text-sm text-muted mb-4">Select a sales order to link.</p>
                 <div className="space-y-2">
                     <button
                         onClick={() => onSelect({
@@ -22,7 +22,7 @@ const SalesOrderSelectionModal: React.FC<SalesOrderSelectionModalProps> = ({ isO
                                 { item: { _id: 'item1', name: 'Sample Item', sku: 'SKU001', unit: 'pcs', stock: 100 }, quantity: 10, deliveredQty: 0, rate: 50 }
                             ]
                         })}
-                        className="w-full text-left px-4 py-2 hover:bg-slate-100 rounded border border-slate-200"
+                        className="w-full text-left px-4 py-2 hover:bg-[var(--erp-bg-sunken)] rounded border border-default"
                     >
                         SO-001 (Sample Customer)
                     </button>

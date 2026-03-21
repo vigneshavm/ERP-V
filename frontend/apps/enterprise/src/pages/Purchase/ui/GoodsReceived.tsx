@@ -18,18 +18,18 @@ const GoodsReceived: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in">
+            <div className="page-shell">
                 <PageHeader
                     title="Goods Received Notes"
                     description={`Track incoming shipments and receiving verification • ${getBranchName(currentBranchId)}`}
                     actions={
                         <>
-                            <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                            <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2">
                                 <Download className="w-4 h-4" /> Export
                             </button>
                             <button
                                 onClick={() => navigate('/purchase/grn/new')}
-                                className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
+                                className="px-4 py-2 bg-success text-main rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
                             >
                                 <Plus className="w-4 h-4" /> Receive Goods
                             </button>

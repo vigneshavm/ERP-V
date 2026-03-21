@@ -65,9 +65,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-2xl rounded-3xl border border-default dark:border-default shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
+                <div className="px-8 py-6 border-b border-default dark:border-default flex justify-between items-center bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary/10 text-primary rounded-xl">
                             <Box className="w-6 h-6" />
@@ -81,7 +81,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                             </p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-rose-600 rounded-full transition-all">
+                    <button onClick={onClose} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 text-neutral-400 hover:text-rose-600 rounded-full transition-all">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -99,7 +99,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                    className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     placeholder="Blue Sky Filter..."
                                 />
                             </div>
@@ -111,7 +111,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="sku"
                                         value={formData.sku}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                         placeholder="SKU-001"
                                     />
                                 </div>
@@ -122,7 +122,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="barcode"
                                         value={formData.barcode}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                         placeholder="123456789"
                                     />
                                 </div>
@@ -135,7 +135,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                     value={formData.category}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                    className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     placeholder="Lenses"
                                 />
                             </div>
@@ -152,7 +152,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         value={formData.costPrice}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     />
                                 </div>
                                 <div>
@@ -163,7 +163,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         value={formData.sellingPrice}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     />
                                 </div>
                             </div>
@@ -175,7 +175,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="stockQty"
                                         value={formData.stockQty}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     />
                                 </div>
                                 <div>
@@ -185,7 +185,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="lowStockLimit"
                                         value={formData.lowStockLimit}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                     />
                                 </div>
                             </div>
@@ -196,7 +196,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="unit"
                                         value={formData.unit}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-[10px] font-black uppercase tracking-widest text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
                                     >
                                         <option value="pcs">Pieces (pcs)</option>
                                         <option value="kg">Kilograms (kg)</option>
@@ -212,7 +212,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         name="brand"
                                         value={formData.brand}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        className="w-full px-4 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                         placeholder="Zeiss"
                                     />
                                 </div>
@@ -230,7 +230,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                             name="secondaryUnit"
                                             value={formData.secondaryUnit || ''}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                            className="w-full px-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-[10px] font-black uppercase tracking-widest text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
                                         >
                                             <option value="">None</option>
                                             <option value="pcs">Pieces (pcs)</option>
@@ -247,7 +247,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                             name="conversionFactor"
                                             value={formData.conversionFactor || ''}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            className="w-full px-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                             placeholder="1 Box = ? Pcs"
                                         />
                                     </div>
@@ -255,7 +255,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                             </div>
 
                             {/* Tax Info */}
-                            <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-4">
+                            <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-2xl border border-default dark:border-default space-y-4">
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest px-1">Statutory Compliance (GST)</p>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
@@ -264,7 +264,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                             name="gstPercentage"
                                             value={formData.gstPercentage || 0}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                            className="w-full px-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
                                         >
                                             <option value={0}>0% (Exempt)</option>
                                             <option value={5}>5%</option>
@@ -280,7 +280,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                             name="hsnCode"
                                             value={formData.hsnCode || ''}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            className="w-full px-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                             placeholder="8471"
                                         />
                                     </div>
@@ -291,10 +291,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                 </form>
 
                 {/* Footer */}
-                <div className="px-8 py-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-700/50 flex justify-end gap-3">
+                <div className="px-8 py-6 border-t border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-neutral-700/50 flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all"
+                        className="px-6 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-neutral-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 transition-all"
                     >
                         Discard
                     </button>

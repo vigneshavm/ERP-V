@@ -62,9 +62,9 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
     onSetRedeemedPoints
 }) => {
     return (
-        <div className="flex flex-col h-full premium-bg shadow-2xl z-20 transition-all">
+        <div className="flex flex-col h-full bg-app shadow-2xl z-20 transition-all">
             {/* Customer Panel */}
-            <div className="shrink-0 p-4 border-b border-white/10 bg-white/5">
+            <div className="shrink-0 p-4 border-b border-default bg-[var(--erp-bg-sunken)]">
                 <POSCustomerPanel
                     activeCustomer={activeCustomer}
                     customers={customers}
@@ -81,15 +81,15 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                     </div>
                 ) : (
                     cart.map((item) => (
-                        <div key={item.id} className="premium-card p-2 rounded-xl flex flex-col gap-2 relative group hover:border-indigo-500/50 transition-all">
+                        <div key={item.id} className="erp-card p-2 rounded-xl flex flex-col gap-2 relative group hover:border-indigo-500/50 transition-all">
                             <div className="flex justify-between items-start">
                                 <div className="pr-6">
-                                    <p className="font-black text-slate-300 text-xs uppercase tracking-tight line-clamp-2">{item.name}</p>
-                                    <p className="text-[9px] text-slate-600 font-mono tracking-tighter">{item.sku}</p>
+                                    <p className="font-black text-muted text-xs uppercase tracking-tight line-clamp-2">{item.name}</p>
+                                    <p className="text-[9px] text-secondary font-mono tracking-tighter">{item.sku}</p>
                                     {(item.size || item.color) && (
                                         <div className="flex gap-1 mt-0.5">
-                                            {item.size && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1 rounded">Sz:{item.size}</span>}
-                                            {item.color && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1 rounded">Cl:{item.color}</span>}
+                                            {item.size && <span className="text-[9px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 px-1 rounded">Sz:{item.size}</span>}
+                                            {item.color && <span className="text-[9px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 px-1 rounded">Cl:{item.color}</span>}
                                         </div>
                                     )}
                                 </div>
@@ -100,21 +100,21 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
 
                             <button
                                 onClick={() => onRemoveFromCart(item.id)}
-                                className="absolute top-2 right-2 p-1 text-slate-600 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
+                                className="absolute top-2 right-2 p-1 text-secondary hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                             </button>
 
                             <div className="flex items-center justify-between mt-1">
-                                <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">
+                                <div className="text-[9px] text-muted font-black uppercase tracking-widest">
                                     ₹{item.price.toFixed(2)} / {item.unit}
                                 </div>
-                                <div className="flex items-center gap-1 bg-white/5 rounded-lg p-0.5 border border-white/10">
+                                <div className="flex items-center gap-1 bg-[var(--erp-bg-sunken)] rounded-lg p-0.5 border border-default">
                                     <button
                                         onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
-                                        className="w-6 h-6 flex items-center justify-center hover:bg-white/10 rounded text-slate-400 font-black transition-colors"
+                                        className="w-6 h-6 flex items-center justify-center hover:bg-white/10 rounded text-muted font-black transition-colors"
                                     >-</button>
-                                    <span className="w-8 text-center text-[10px] font-black text-slate-300">{item.qty}</span>
+                                    <span className="w-8 text-center text-[10px] font-black text-muted">{item.qty}</span>
                                     <button
                                         onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
                                         className="w-6 h-6 flex items-center justify-center hover:bg-white/10 rounded text-indigo-400 font-black transition-colors"

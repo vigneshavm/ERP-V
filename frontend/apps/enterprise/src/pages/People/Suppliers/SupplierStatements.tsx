@@ -134,10 +134,10 @@ const SupplierStatements: React.FC = () => {
 
             <SupplierSubNav />
 
-            <div className="space-y-6 animate-fade-in">
+            <div className="page-shell">
                 {/* Statement Generator */}
-                <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 print:hidden shadow-sm">
-                    <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Generate Statement</h3>
+                <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl border border-default dark:border-default print:hidden shadow-sm">
+                    <h3 className="text-lg font-bold text-neutral-900 dark:text-main mb-4">Generate Statement</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="md:col-span-2">
@@ -146,14 +146,14 @@ const SupplierStatements: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search supplier..."
-                                    className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm mb-2 focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm mb-2 focus:ring-2 focus:ring-primary outline-none"
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
                                 />
                                 <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
                             </div>
                             <select
-                                className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-primary"
+                                className="w-full px-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm outline-none focus:ring-2 focus:ring-primary"
                                 value={selectedSupplierId}
                                 onChange={e => setSelectedSupplierId(e.target.value)}
                                 size={5}
@@ -171,7 +171,7 @@ const SupplierStatements: React.FC = () => {
                             <div className="relative">
                                 <input
                                     type="date"
-                                    className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm focus:ring-2 focus:ring-primary outline-none"
                                     value={periodFrom}
                                     onChange={e => setPeriodFrom(e.target.value)}
                                 />
@@ -184,7 +184,7 @@ const SupplierStatements: React.FC = () => {
                             <div className="relative">
                                 <input
                                     type="date"
-                                    className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 border border-default dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-main text-sm focus:ring-2 focus:ring-primary outline-none"
                                     value={periodTo}
                                     onChange={e => setPeriodTo(e.target.value)}
                                 />
@@ -221,7 +221,7 @@ const SupplierStatements: React.FC = () => {
 
                 {/* Loading State */}
                 {loading && (
-                    <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-12 rounded-xl border border-default dark:border-default text-center shadow-sm">
                         <RefreshCw className="w-8 h-8 mx-auto mb-3 text-primary animate-spin" />
                         <p className="text-neutral-500 font-medium">Fetching statement data...</p>
                     </div>
@@ -229,19 +229,19 @@ const SupplierStatements: React.FC = () => {
 
                 {/* Statement Preview */}
                 {ledgerData && !loading && (
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 print:border-0 print:p-0 shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-8 rounded-xl border border-default dark:border-default print:border-0 print:p-0 shadow-sm">
                         {/* Statement Header */}
                         <div className="border-b-2 border-primary pb-4 mb-6 print:border-black">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-white print:text-black">{businessName}</h1>
-                                    <p className="text-neutral-500 text-sm print:text-gray-600">Supplier Account Statement</p>
+                                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-main print:text-black">{businessName}</h1>
+                                    <p className="text-neutral-500 text-sm print:text-secondary">Supplier Account Statement</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
+                                    <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-secondary">
                                         Statement Date: {new Date().toLocaleDateString('en-IN')}
                                     </p>
-                                    <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
+                                    <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-secondary">
                                         Period: {new Date(ledgerData.period.start).toLocaleDateString('en-IN')} — {new Date(ledgerData.period.end).toLocaleDateString('en-IN')}
                                     </p>
                                 </div>
@@ -250,14 +250,14 @@ const SupplierStatements: React.FC = () => {
 
                         {/* Supplier Details + Summary */}
                         <div className="grid grid-cols-2 gap-8 mb-6">
-                            <div className="bg-neutral-50 dark:bg-neutral-700/50 p-4 rounded-lg print:bg-gray-100">
+                            <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 p-4 rounded-lg print:bg-[var(--erp-bg-sunken)]">
                                 <h3 className="text-xs font-bold text-neutral-500 uppercase mb-2">Supplier</h3>
                                 <div className="flex items-center gap-2 mb-2">
                                     <Truck className="w-4 h-4 text-primary" />
-                                    <p className="font-bold text-neutral-900 dark:text-white print:text-black">{ledgerData.supplier.businessName}</p>
+                                    <p className="font-bold text-neutral-900 dark:text-main print:text-black">{ledgerData.supplier.businessName}</p>
                                 </div>
                             </div>
-                            <div className="bg-neutral-50 dark:bg-neutral-700/50 p-4 rounded-lg print:bg-gray-100">
+                            <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 p-4 rounded-lg print:bg-[var(--erp-bg-sunken)]">
                                 <h3 className="text-xs font-bold text-neutral-500 uppercase mb-2">Account Summary</h3>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-sm">
@@ -272,7 +272,7 @@ const SupplierStatements: React.FC = () => {
                                         <span className="text-neutral-600 dark:text-neutral-400">Total Credits:</span>
                                         <span className="font-medium text-rose-600">{formatCurrency(ledgerData.totals.credit)}</span>
                                     </div>
-                                    <div className="flex justify-between text-sm font-bold border-t border-neutral-200 dark:border-neutral-600 pt-1 mt-1">
+                                    <div className="flex justify-between text-sm font-bold border-t border-default dark:border-neutral-600 pt-1 mt-1">
                                         <span>Closing Balance:</span>
                                         <span className={ledgerData.closingBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}>
                                             {formatCurrency(ledgerData.closingBalance)}
@@ -286,47 +286,47 @@ const SupplierStatements: React.FC = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm border-collapse">
                                 <thead>
-                                    <tr className="bg-neutral-100 dark:bg-neutral-900 print:bg-gray-200">
-                                        <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Date</th>
-                                        <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Type</th>
-                                        <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Reference</th>
-                                        <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Description</th>
-                                        <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Debit (₹)</th>
-                                        <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Credit (₹)</th>
-                                        <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Balance (₹)</th>
+                                    <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] print:bg-gray-200">
+                                        <th className="p-3 text-left border border-default dark:border-default print:border-gray-300">Date</th>
+                                        <th className="p-3 text-left border border-default dark:border-default print:border-gray-300">Type</th>
+                                        <th className="p-3 text-left border border-default dark:border-default print:border-gray-300">Reference</th>
+                                        <th className="p-3 text-left border border-default dark:border-default print:border-gray-300">Description</th>
+                                        <th className="p-3 text-right border border-default dark:border-default print:border-gray-300">Debit (₹)</th>
+                                        <th className="p-3 text-right border border-default dark:border-default print:border-gray-300">Credit (₹)</th>
+                                        <th className="p-3 text-right border border-default dark:border-default print:border-gray-300">Balance (₹)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {/* Opening Balance Row */}
-                                    <tr className="bg-neutral-50/50 dark:bg-neutral-800/30">
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 text-neutral-500 font-medium">
+                                    <tr className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/30">
+                                        <td className="p-3 border border-default dark:border-default text-neutral-500 font-medium">
                                             {new Date(ledgerData.period.start).toLocaleDateString('en-IN')}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700">
+                                        <td className="p-3 border border-default dark:border-default">
                                             <span className="px-2 py-0.5 rounded-md bg-neutral-200 dark:bg-neutral-700 text-[10px] font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">OPENING</span>
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 text-neutral-400">—</td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 italic text-neutral-400 text-xs">Opening Balance Forwarded</td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 text-right text-neutral-300">—</td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 text-right text-neutral-300">—</td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 text-right font-bold text-neutral-600 dark:text-neutral-400">
+                                        <td className="p-3 border border-default dark:border-default text-neutral-400">—</td>
+                                        <td className="p-3 border border-default dark:border-default italic text-neutral-400 text-xs">Opening Balance Forwarded</td>
+                                        <td className="p-3 border border-default dark:border-default text-right text-neutral-300">—</td>
+                                        <td className="p-3 border border-default dark:border-default text-right text-neutral-300">—</td>
+                                        <td className="p-3 border border-default dark:border-default text-right font-bold text-neutral-600 dark:text-neutral-400">
                                             {formatCurrency(ledgerData.openingBalance)}
                                         </td>
                                     </tr>
 
                                     {ledgerData.transactions.length === 0 ? (
                                         <tr>
-                                            <td colSpan={7} className="p-8 text-center text-neutral-500 border border-neutral-200 dark:border-neutral-700">
+                                            <td colSpan={7} className="p-8 text-center text-neutral-500 border border-default dark:border-default">
                                                 No transactions in this period
                                             </td>
                                         </tr>
                                     ) : (
                                         ledgerData.transactions.map((t, idx) => (
-                                            <tr key={idx} className="hover:bg-neutral-50 dark:hover:bg-neutral-800 print:hover:bg-transparent">
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-neutral-600 dark:text-neutral-400">
+                                            <tr key={idx} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] print:hover:bg-transparent">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 text-neutral-600 dark:text-neutral-400">
                                                     {new Date(t.date).toLocaleDateString('en-IN')}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300">
                                                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                                                         t.type === 'PAYMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
                                                             'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
@@ -334,19 +334,19 @@ const SupplierStatements: React.FC = () => {
                                                         {t.type === 'DEBIT_NOTE' ? 'D.NOTE' : t.type}
                                                     </span>
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 font-mono text-xs">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 font-mono text-xs">
                                                     #{t.refNo}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-sm max-w-[200px] truncate" title={t.description}>
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 text-sm max-w-[200px] truncate" title={t.description}>
                                                     {t.description}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-emerald-600 dark:text-emerald-400">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 text-right font-semibold text-emerald-600 dark:text-emerald-400">
                                                     {t.debit > 0 ? formatCurrency(t.debit) : '—'}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-rose-600 dark:text-rose-400">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 text-right font-semibold text-rose-600 dark:text-rose-400">
                                                     {t.credit > 0 ? formatCurrency(t.credit) : '—'}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-bold text-neutral-900 dark:text-white">
+                                                <td className="p-3 border border-default dark:border-default print:border-gray-300 text-right font-bold text-neutral-900 dark:text-main">
                                                     {formatCurrency(t.balance)}
                                                 </td>
                                             </tr>
@@ -354,17 +354,17 @@ const SupplierStatements: React.FC = () => {
                                     )}
                                 </tbody>
                                 <tfoot>
-                                    <tr className="bg-neutral-100 dark:bg-neutral-900 font-bold print:bg-gray-200">
-                                        <td colSpan={4} className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right">
+                                    <tr className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] font-bold print:bg-gray-200">
+                                        <td colSpan={4} className="p-3 border border-default dark:border-default print:border-gray-300 text-right">
                                             Closing Balance:
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-emerald-600">
+                                        <td className="p-3 border border-default dark:border-default print:border-gray-300 text-right text-emerald-600">
                                             {formatCurrency(ledgerData.totals.debit)}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-rose-600">
+                                        <td className="p-3 border border-default dark:border-default print:border-gray-300 text-right text-rose-600">
                                             {formatCurrency(ledgerData.totals.credit)}
                                         </td>
-                                        <td className={`p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-lg font-black ${ledgerData.closingBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                                        <td className={`p-3 border border-default dark:border-default print:border-gray-300 text-right text-lg font-black ${ledgerData.closingBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                                             {formatCurrency(ledgerData.closingBalance)}
                                         </td>
                                     </tr>
@@ -373,7 +373,7 @@ const SupplierStatements: React.FC = () => {
                         </div>
 
                         {/* Footer */}
-                        <div className="mt-8 pt-4 border-t border-neutral-200 dark:border-neutral-700 text-center text-xs text-neutral-500 print:border-gray-300">
+                        <div className="mt-8 pt-4 border-t border-default dark:border-default text-center text-xs text-neutral-500 print:border-gray-300">
                             <p>This is a computer-generated statement and does not require a signature.</p>
                             <p className="mt-1">For any queries, please contact us.</p>
                         </div>
@@ -382,7 +382,7 @@ const SupplierStatements: React.FC = () => {
 
                 {/* Empty State */}
                 {!selectedSupplierId && !loading && (
-                    <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-12 rounded-xl border border-default dark:border-default text-center shadow-sm">
                         <FileText className="w-16 h-16 mx-auto mb-4 text-neutral-300" />
                         <h3 className="text-lg font-bold text-neutral-700 dark:text-neutral-300">Select a Supplier</h3>
                         <p className="text-neutral-500 mt-1">Choose a supplier and date range to generate their account statement</p>

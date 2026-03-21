@@ -118,6 +118,7 @@ const PaymentOutForm: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Record Payment"
                 description="Issue payment to supplier or settle via discount"
@@ -128,19 +129,19 @@ const PaymentOutForm: React.FC = () => {
 
                 {/* Left Column: Form Details */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl border border-default dark:border-default shadow-sm">
+                        <h3 className="font-bold text-lg mb-4 text-main dark:text-main flex items-center gap-2">
                             <User size={20} className="text-indigo-500" />
                             Payee Details
                         </h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Supplier</label>
+                                <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">Supplier</label>
                                 <select
                                     value={supplierId}
                                     onChange={e => setSupplierId(e.target.value)}
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                                 >
                                     <option value="">-- Select Supplier --</option>
                                     {suppliers.map(s => <option key={s._id} value={s._id}>{s.businessName}</option>)}
@@ -148,24 +149,24 @@ const PaymentOutForm: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Payment Date</label>
+                                <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">Payment Date</label>
                                 <input
                                     type="date"
                                     value={paymentDate}
                                     onChange={e => setPaymentDate(e.target.value)}
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                    className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg outline-none"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Amount</label>
+                                <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">Amount</label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-muted">₹</span>
                                     <input
                                         type="number"
                                         value={amount}
                                         onChange={e => setAmount(parseFloat(e.target.value) || 0)}
-                                        className="w-full pl-8 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-bold text-lg outline-none focus:border-indigo-500"
+                                        className="w-full pl-8 p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg font-bold text-lg outline-none focus:border-indigo-500"
                                         placeholder="0.00"
                                     />
                                 </div>
@@ -173,8 +174,8 @@ const PaymentOutForm: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl border border-default dark:border-default shadow-sm">
+                        <h3 className="font-bold text-lg mb-4 text-main dark:text-main flex items-center gap-2">
                             <CreditCard size={20} className="text-emerald-500" />
                             {isNonCashMode ? 'Settlement Mode' : 'Payment Mode'}
                         </h3>
@@ -188,7 +189,7 @@ const PaymentOutForm: React.FC = () => {
                                         onClick={() => setPaymentMode(m as PaymentOut['paymentMode'])}
                                         className={`px-3 py-2 text-sm font-medium rounded-lg border transition-all ${paymentMode === m
                                             ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
-                                            : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                                            : 'border-default dark:border-default text-secondary dark:text-muted hover:bg-[var(--erp-bg-sunken)]'
                                             } ${m === 'Discount Received' ? 'col-span-2' : ''}`}
                                     >
                                         {m}
@@ -199,25 +200,25 @@ const PaymentOutForm: React.FC = () => {
                             {!isNonCashMode && (
                                 <>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                        <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">
                                             {paymentMode === 'Cheque' ? 'Cheque No' : 'Transaction Ref / UTR'}
                                         </label>
                                         <input
                                             type="text"
                                             value={referenceNo}
                                             onChange={e => setReferenceNo(e.target.value)}
-                                            className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                            className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg outline-none"
                                             placeholder="e.g. 123456"
                                         />
                                     </div>
 
                                     {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer' || paymentMode === 'UPI') && (
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Source Bank Account</label>
+                                            <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">Source Bank Account</label>
                                             <select
                                                 value={bankAccountId}
                                                 onChange={e => setBankAccountId(e.target.value)}
-                                                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                                className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg outline-none"
                                             >
                                                 <option value="">-- Select Bank Account --</option>
                                                 {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
@@ -232,14 +233,14 @@ const PaymentOutForm: React.FC = () => {
                                     {paymentMode === 'Cheque' && (
                                         <div>
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cheque Date</label>
+                                                <label className="block text-sm font-medium text-secondary dark:text-muted mb-1">Cheque Date</label>
                                                 <input
                                                     type="date"
                                                     value={chequeDate}
                                                     onChange={e => setChequeDate(e.target.value)}
-                                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                                    className="w-full p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-slate-300 dark:border-default rounded-lg outline-none"
                                                 />
-                                                <p className="text-xs text-slate-400 mt-1">For Post-Dated Cheques</p>
+                                                <p className="text-xs text-muted mt-1">For Post-Dated Cheques</p>
                                             </div>
                                         </div>
                                     )}
@@ -258,12 +259,12 @@ const PaymentOutForm: React.FC = () => {
 
                 {/* Right Column: Allocation */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center justify-between">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-xl border border-default dark:border-default shadow-sm h-full flex flex-col">
+                        <h3 className="font-bold text-lg mb-4 text-main dark:text-main flex items-center justify-between">
                             <span className="flex items-center gap-2"><Banknote size={20} className="text-amber-500" /> Allocation</span>
                             <div className="flex items-center gap-3">
-                                <span className="text-sm font-normal text-slate-500">
-                                    Unallocated: <strong className={unallocated > 0 ? 'text-emerald-600' : 'text-slate-700'}>₹{unallocated.toLocaleString()}</strong>
+                                <span className="text-sm font-normal text-muted">
+                                    Unallocated: <strong className={unallocated > 0 ? 'text-emerald-600' : 'text-secondary'}>₹{unallocated.toLocaleString()}</strong>
                                 </span>
                                 <button
                                     type="button"
@@ -279,7 +280,7 @@ const PaymentOutForm: React.FC = () => {
                         </h3>
 
                         {selectedBills.length === 0 ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-60 min-h-[200px] border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
+                            <div className="flex-1 flex flex-col items-center justify-center text-muted opacity-60 min-h-[200px] border-2 border-dashed border-default dark:border-default rounded-xl">
                                 <Banknote size={48} className="mb-2" />
                                 <p>No bills selected for allocation</p>
                                 <button
@@ -296,7 +297,7 @@ const PaymentOutForm: React.FC = () => {
                         ) : (
                             <div className="overflow-x-auto flex-1">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-500">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-slate-700/50 text-muted">
                                         <tr>
                                             <th className="px-4 py-3 rounded-l-lg">Bill No</th>
                                             <th className="px-4 py-3">Date</th>
@@ -310,19 +311,19 @@ const PaymentOutForm: React.FC = () => {
                                         {selectedBills.map(bill => (
                                             <tr key={bill._id}>
                                                 <td className="px-4 py-3 font-medium">{bill.billNo}</td>
-                                                <td className="px-4 py-3 text-slate-500">{new Date(bill.date).toLocaleDateString()}</td>
-                                                <td className="px-4 py-3 text-right text-slate-600">₹{bill.amount?.toLocaleString()}</td>
+                                                <td className="px-4 py-3 text-muted">{new Date(bill.date).toLocaleDateString()}</td>
+                                                <td className="px-4 py-3 text-right text-secondary">₹{bill.amount?.toLocaleString()}</td>
                                                 <td className="px-4 py-3 text-right font-bold text-indigo-600">
                                                     ₹{allocations[bill._id || '']?.toLocaleString()}
                                                 </td>
-                                                <td className="px-4 py-3 text-right text-slate-500">
+                                                <td className="px-4 py-3 text-right text-muted">
                                                     {discounts[bill._id || ''] ? `₹${discounts[bill._id || ''].toLocaleString()}` : '-'}
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
                                                     <button
                                                         type="button"
                                                         onClick={() => removeBill(bill._id || '')}
-                                                        className="text-slate-400 hover:text-red-500 transition-colors"
+                                                        className="text-muted hover:text-red-500 transition-colors"
                                                     >
                                                         <Trash2 size={16} />
                                                     </button>
@@ -330,11 +331,11 @@ const PaymentOutForm: React.FC = () => {
                                             </tr>
                                         ))}
                                     </tbody>
-                                    <tfoot className="border-t border-slate-200 dark:border-slate-700 font-bold">
+                                    <tfoot className="border-t border-default dark:border-default font-bold">
                                         <tr>
                                             <td colSpan={3} className="px-4 py-3 text-right">Total</td>
                                             <td className="px-4 py-3 text-right text-indigo-600">₹{totalAllocated.toLocaleString()}</td>
-                                            <td className="px-4 py-3 text-right text-slate-600">₹{totalDiscount.toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-right text-secondary">₹{totalDiscount.toLocaleString()}</td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -342,17 +343,17 @@ const PaymentOutForm: React.FC = () => {
                             </div>
                         )}
 
-                        <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                        <div className="mt-6 pt-4 border-t border-default dark:border-default flex justify-end gap-3">
                             <button
                                 type="button"
                                 onClick={() => navigate('/purchase/payments')}
-                                className="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
+                                className="px-5 py-2.5 text-secondary font-bold hover:bg-[var(--erp-bg-sunken)] rounded-xl transition-all"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                                className="px-8 py-2.5 bg-indigo-600 text-main font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
                             >
                                 <CheckCircle size={18} />
                                 Save Payment
@@ -371,6 +372,8 @@ const PaymentOutForm: React.FC = () => {
                 initialAllocations={allocations}
                 initialDiscounts={discounts}
             />
+                  </div>
+
         </Layout>
     );
 };

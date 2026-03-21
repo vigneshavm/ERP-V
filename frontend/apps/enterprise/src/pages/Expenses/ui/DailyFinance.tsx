@@ -189,19 +189,20 @@ const DailyFinancePage: React.FC = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
 
                 {/* Header Section */}
                 <div className="flex items-center justify-between pb-2">
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Today's Summary</h1>
+                            <h1 className="text-xl font-bold text-main dark:text-neutral-100 tracking-tight">Today's Summary</h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-indigo-500/20">
                                     {typeof user?.tenantId === 'object' && user?.tenantId !== null ? (user.tenantId as any).name : (user?.tenantId || 'Business')}
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 capitalize">
+                                <span className="text-[10px] font-bold text-muted dark:text-neutral-500 capitalize">
                                     {getBranchName((user as any).branchId || 'All')}
                                 </span>
                             </div>
@@ -209,7 +210,7 @@ const DailyFinancePage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-[10px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider shadow-sm hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-[10px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider shadow-sm hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 transition-all active:scale-95">
                             <Download className="w-3.5 h-3.5" /> Export
                         </button>
                     </div>
@@ -224,7 +225,7 @@ const DailyFinancePage: React.FC = () => {
                                 <TrendingUp className="w-4 h-4 text-emerald-500" />
                                 <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Sales</span>
                             </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.sales)}</span>
+                            <span className="text-2xl font-black text-main">₹ {formatCurrency(summaryStats.sales)}</span>
                         </div>
                     </div>
 
@@ -235,7 +236,7 @@ const DailyFinancePage: React.FC = () => {
                                 <TrendingDown className="w-4 h-4 text-rose-500" />
                                 <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest">Total Expenses</span>
                             </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.expenses)}</span>
+                            <span className="text-2xl font-black text-main">₹ {formatCurrency(summaryStats.expenses)}</span>
                         </div>
                     </div>
 
@@ -246,7 +247,7 @@ const DailyFinancePage: React.FC = () => {
                                 <Zap className="w-4 h-4 text-indigo-500" />
                                 <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Net Profit</span>
                             </div>
-                            <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.profit)}</span>
+                            <span className="text-2xl font-black text-main">₹ {formatCurrency(summaryStats.profit)}</span>
                         </div>
                     </div>
                 </div>
@@ -258,24 +259,24 @@ const DailyFinancePage: React.FC = () => {
                     <div className="lg:col-span-2 space-y-6">
 
                         {/* Sales Flow Chart */}
-                        <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                        <div className="bg-white dark:bg-[var(--erp-card)] p-6 rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden relative group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
                             <div className="flex items-center justify-between mb-6 relative z-10">
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                                    <h3 className="text-lg font-bold text-main dark:text-neutral-100 flex items-center gap-2">
                                         <TrendingUp className="w-5 h-5 text-indigo-500" /> Sales Flow
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest">Income vs Expense Trend</p>
+                                    <p className="text-[10px] text-muted dark:text-neutral-500 font-bold uppercase tracking-widest">Income vs Expense Trend</p>
                                 </div>
 
-                                <div className="flex items-center bg-slate-50 dark:bg-neutral-900 p-1 rounded-lg border border-slate-100 dark:border-neutral-700">
+                                <div className="flex items-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-1 rounded-lg border border-default dark:border-default">
                                     {['DAILY', 'MONTHLY', 'YEARLY', 'CUSTOM'].map(p => (
                                         <button
                                             key={p}
                                             onClick={() => setPeriod(p as PeriodType)}
                                             className={`px-3 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${period === p
-                                                ? 'bg-white dark:bg-neutral-800 text-indigo-500 shadow-sm border border-slate-100 dark:border-neutral-700'
-                                                : 'text-slate-400 dark:text-neutral-500 hover:text-slate-700 dark:hover:text-neutral-300'
+                                                ? 'bg-white dark:bg-[var(--erp-card)] text-indigo-500 shadow-sm border border-default dark:border-default'
+                                                : 'text-muted dark:text-neutral-500 hover:text-secondary dark:hover:text-neutral-300'
                                                 }`}
                                         >
                                             {p === 'CUSTOM' ? 'Range' : p.charAt(0) + p.slice(1).toLowerCase()}
@@ -285,14 +286,14 @@ const DailyFinancePage: React.FC = () => {
                             </div>
 
                             {period === 'CUSTOM' && (
-                                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-slate-50 dark:bg-neutral-900 rounded-xl border border-slate-100 dark:border-neutral-700">
+                                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase">From:</span>
-                                        <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-slate-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-[10px] font-bold text-slate-700 dark:text-neutral-200" />
+                                        <span className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase">From:</span>
+                                        <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-default dark:border-default rounded-lg bg-white dark:bg-[var(--erp-card)] text-[10px] font-bold text-secondary dark:text-neutral-200" />
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase">To:</span>
-                                        <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-slate-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-[10px] font-bold text-slate-700 dark:text-neutral-200" />
+                                        <span className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase">To:</span>
+                                        <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-default dark:border-default rounded-lg bg-white dark:bg-[var(--erp-card)] text-[10px] font-bold text-secondary dark:text-neutral-200" />
                                     </div>
                                 </div>
                             )}
@@ -325,35 +326,35 @@ const DailyFinancePage: React.FC = () => {
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-neutral-600">
+                                    <div className="h-full flex flex-col items-center justify-center text-muted dark:text-neutral-600">
                                         <Layers size={48} className="mb-4 opacity-30" />
-                                        <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest text-center">No data available for this period</p>
+                                        <p className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest text-center">No data available for this period</p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
                         {/* Transaction History Table */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-                            <div className="p-5 border-b border-slate-50 dark:border-neutral-700 flex items-center justify-between">
-                                <h3 className="font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+                            <div className="p-5 border-b border-slate-50 dark:border-default flex items-center justify-between">
+                                <h3 className="font-bold text-main dark:text-neutral-100 flex items-center gap-2">
                                     <History className="w-4 h-4 text-indigo-500" /> Transaction History
                                 </h3>
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" />
                                     <input
                                         value={recentSearch}
                                         onChange={e => setRecentSearch(e.target.value)}
                                         placeholder="Search..."
-                                        className="pl-9 pr-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-lg text-[10px] font-bold text-slate-600 dark:text-neutral-300 uppercase outline-none w-44 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                        className="pl-9 pr-3 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-lg text-[10px] font-bold text-secondary dark:text-neutral-300 uppercase outline-none w-44 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                                     />
                                 </div>
                             </div>
 
                             <div className="overflow-x-auto flex-1">
                                 <table className="w-full text-left text-sm tabular-nums">
-                                    <thead className="bg-slate-50 dark:bg-neutral-900 border-b border-slate-100 dark:border-neutral-700">
-                                        <tr className="text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default">
+                                        <tr className="text-[10px] font-black text-muted dark:text-neutral-500 uppercase tracking-widest">
                                             <th className="p-5">Date</th>
                                             <th className="p-5 text-right">Income</th>
                                             <th className="p-5 text-right">Expense</th>
@@ -367,7 +368,7 @@ const DailyFinancePage: React.FC = () => {
                                                 <td colSpan={5} className="p-16 text-center">
                                                     <div className="flex flex-col items-center">
                                                         <Layers className="w-10 h-10 text-slate-200 dark:text-neutral-700 mb-3" />
-                                                        <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">No records found</p>
+                                                        <p className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">No records found</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -377,16 +378,16 @@ const DailyFinancePage: React.FC = () => {
                                                 <tr
                                                     key={t.id}
                                                     onClick={() => setSelectedRowId(t.id === selectedRowId ? null : t.id)}
-                                                    className={`hover:bg-slate-50 dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${selectedRowId === t.id ? 'bg-indigo-50/50 dark:bg-indigo-500/5' : ''}`}
+                                                    className={`hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${selectedRowId === t.id ? 'bg-indigo-50/50 dark:bg-indigo-500/5' : ''}`}
                                                 >
                                                     <td className="p-5">
                                                         <div className="flex items-center gap-3">
                                                             <div className={`w-2 h-2 rounded-full ${t.synced === false ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
                                                             <div>
-                                                                <div className="font-bold text-slate-800 dark:text-neutral-100 text-sm">
+                                                                <div className="font-bold text-main dark:text-neutral-100 text-sm">
                                                                     {new Date(t.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                                                                 </div>
-                                                                <div className="text-[9px] text-slate-400 dark:text-neutral-500 font-bold">{t.id.slice(0, 8)}</div>
+                                                                <div className="text-[9px] text-muted dark:text-neutral-500 font-bold">{t.id.slice(0, 8)}</div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -424,13 +425,13 @@ const DailyFinancePage: React.FC = () => {
                     <div className="space-y-6">
 
                         {/* Daily Entry Form */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
-                            <div className="p-5 border-b border-slate-50 dark:border-neutral-700 flex items-center justify-between">
-                                <h3 className="font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
+                            <div className="p-5 border-b border-slate-50 dark:border-default flex items-center justify-between">
+                                <h3 className="font-bold text-main dark:text-neutral-100 flex items-center gap-2">
                                     <Plus className="w-4 h-4 text-indigo-500" /> {editingId ? 'Edit Record' : 'New Entry'}
                                 </h3>
                                 {editingId && (
-                                    <button onClick={cancelEdit} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-colors">
+                                    <button onClick={cancelEdit} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-muted hover:text-rose-500 rounded-lg transition-colors">
                                         <X size={14} />
                                     </button>
                                 )}
@@ -438,44 +439,44 @@ const DailyFinancePage: React.FC = () => {
 
                             <form onSubmit={saveTransaction} className="p-5 space-y-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Date</label>
+                                    <label className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">Date</label>
                                     <div className="relative">
-                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-neutral-500" />
-                                        <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full pl-9 pr-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted dark:text-neutral-500" />
+                                        <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="w-full pl-9 pr-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold text-secondary dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Cash Sales</label>
-                                        <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                        <label className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">Cash Sales</label>
+                                        <input type="number" step="0.01" value={cash} onChange={e => setCash(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold text-secondary dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Online Sales</label>
-                                        <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                        <label className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">Online Sales</label>
+                                        <input type="number" step="0.01" value={online} onChange={e => setOnline(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold text-secondary dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                     </div>
                                 </div>
 
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Expenses</label>
-                                    <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-rose-500 tabular-nums outline-none focus:ring-2 focus:ring-rose-500/20 transition-all" />
+                                    <input type="number" step="0.01" value={exp} onChange={e => setExp(e.target.value)} placeholder="0.00" className="w-full px-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold text-rose-500 tabular-nums outline-none focus:ring-2 focus:ring-rose-500/20 transition-all" />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Cash in Drawer</label>
-                                    <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted amount" className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-bold text-slate-700 dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                    <label className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">Cash in Drawer</label>
+                                    <input type="number" step="0.01" value={drawerCash} onChange={e => setDrawerCash(e.target.value)} placeholder="Counted amount" className="w-full px-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-bold text-secondary dark:text-neutral-200 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">Notes</label>
-                                    <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." className="w-full px-3 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm font-medium text-slate-700 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                    <label className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">Notes</label>
+                                    <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." className="w-full px-3 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm font-medium text-secondary dark:text-neutral-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                 </div>
 
                                 {/* Live Preview */}
                                 <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-4 rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">Total Sales Preview</span>
-                                        <span className="text-lg font-black text-slate-900 dark:text-white">₹ {formatCurrency(currentTotalSales)}</span>
+                                        <span className="text-lg font-black text-main">₹ {formatCurrency(currentTotalSales)}</span>
                                     </div>
                                 </div>
 
@@ -495,14 +496,16 @@ const DailyFinancePage: React.FC = () => {
                         )}
 
                         {/* Records Count */}
-                        <div className="bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 p-4 rounded-xl text-center">
-                            <p className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-widest">
+                        <div className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default p-4 rounded-xl text-center">
+                            <p className="text-[10px] font-bold text-muted dark:text-neutral-500 uppercase tracking-widest">
                                 Total Records: <span className="text-indigo-500 dark:text-indigo-400 font-black">{tx.length}</span>
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
+                  </div>
+
         </Layout>
     );
 };

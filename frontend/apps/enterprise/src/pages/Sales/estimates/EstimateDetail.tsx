@@ -42,10 +42,13 @@ const EstimateDetail = () => {
   if (isLoading || !estimate) {
     return (
       <Layout>
+        <div className="page-shell">
         <div className="flex flex-col items-center justify-center py-20">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-          <p className="text-slate-500 font-medium">Loading estimate...</p>
+          <p className="text-muted font-medium">Loading estimate...</p>
         </div>
+                </div>
+
       </Layout>
     );
   }
@@ -57,18 +60,18 @@ const EstimateDetail = () => {
         <div className="mb-8 print:hidden">
           <button
             onClick={() => navigate("/sales/estimates")}
-            className="flex items-center text-slate-600 hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
+            className="flex items-center text-secondary hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Estimates
           </button>
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
                 <FileText className="w-6 h-6 text-indigo-600" />
                 Estimate Details
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-muted mt-1">
                 View and print estimate
               </p>
             </div>
@@ -83,7 +86,7 @@ const EstimateDetail = () => {
         </div>
 
         {/* Estimate Card */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
+        <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
           <EstimateTemplate estimate={estimate} />
         </div>
       </div>

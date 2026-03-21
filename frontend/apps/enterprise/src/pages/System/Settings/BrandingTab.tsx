@@ -37,18 +37,18 @@ const LiveTerminalPreview: React.FC<{
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4 text-indigo-500" />
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Terminal Preview</span>
+                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">Live Terminal Preview</span>
                 </div>
-                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] p-1 rounded-xl">
                     <button
                         onClick={() => setPreviewMode('desktop')}
-                        className={`p-2 rounded-lg transition-all ${previewMode === 'desktop' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-slate-400'}`}
+                        className={`p-2 rounded-lg transition-all ${previewMode === 'desktop' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-muted'}`}
                     >
                         <Monitor className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => setPreviewMode('mobile')}
-                        className={`p-2 rounded-lg transition-all ${previewMode === 'mobile' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-slate-400'}`}
+                        className={`p-2 rounded-lg transition-all ${previewMode === 'mobile' ? 'bg-white dark:bg-slate-700 shadow-sm text-indigo-600' : 'text-muted'}`}
                     >
                         <Smartphone className="w-4 h-4" />
                     </button>
@@ -86,7 +86,7 @@ const LiveTerminalPreview: React.FC<{
                             {logo ? (
                                 <img src={logo} alt="Logo" className="w-full h-full object-contain p-1" />
                             ) : (
-                                <span className="text-white text-[8px] font-black">{appName.substring(0, 2).toUpperCase()}</span>
+                                <span className="text-main text-[8px] font-black">{appName.substring(0, 2).toUpperCase()}</span>
                             )}
                         </div>
                         {[...Array(5)].map((_, i) => (
@@ -111,7 +111,7 @@ const LiveTerminalPreview: React.FC<{
                                         {logo ? (
                                             <img src={logo} alt="" className="w-full h-full object-contain p-0.5" />
                                         ) : (
-                                            <span className="flex items-center justify-center w-full h-full text-white text-[7px] font-black">{appName.substring(0, 2).toUpperCase()}</span>
+                                            <span className="flex items-center justify-center w-full h-full text-main text-[7px] font-black">{appName.substring(0, 2).toUpperCase()}</span>
                                         )}
                                     </div>
                                 )}
@@ -162,7 +162,7 @@ const LiveTerminalPreview: React.FC<{
                         {/* Action Button */}
                         <div className="flex justify-end">
                             <div
-                                className="px-4 py-1.5 rounded-lg text-[7px] font-black text-white tracking-widest"
+                                className="px-4 py-1.5 rounded-lg text-[7px] font-black text-main tracking-widest"
                                 style={{ backgroundColor: color }}
                             >
                                 NEW INVOICE
@@ -217,8 +217,8 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                         <Palette className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Visual Identity</h3>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Customize the interface to match your corporate brand</p>
+                        <h3 className="text-lg font-bold text-main leading-none">Visual Identity</h3>
+                        <p className="text-xs text-muted font-medium mt-1">Customize the interface to match your corporate brand</p>
                     </div>
                     {isPending && (
                         <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-full">
@@ -233,40 +233,40 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                     <div className="lg:col-span-2 space-y-8">
                         {/* Theme Toggle */}
                         <div className="space-y-4">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Enterprise Interface Theme</label>
-                            <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 w-full shadow-inner">
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1">Enterprise Interface Theme</label>
+                            <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-2 rounded-2xl border border-default dark:border-default w-full shadow-inner">
                                 <button
                                     onClick={() => handleThemeChange('light')}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'light' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'light' ? 'bg-white text-indigo-600 shadow-xl' : 'text-muted hover:text-secondary dark:text-muted'}`}
                                 >
                                     <Sun className="w-4 h-4" /> LIGHT
                                 </button>
                                 <button
                                     onClick={() => handleThemeChange('dark')}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'dark' ? 'bg-slate-800 text-white shadow-xl' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'dark' ? 'bg-[var(--erp-card)] text-main shadow-xl' : 'text-muted hover:text-secondary dark:text-muted'}`}
                                 >
                                     <Moon className="w-4 h-4" /> DARK
                                 </button>
                                 <button
                                     onClick={() => handleThemeChange('system')}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'system' ? 'bg-white dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${optimisticTheme === 'system' ? 'bg-white dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-muted hover:text-secondary dark:text-muted'}`}
                                 >
                                     <Shield className="w-4 h-4" /> SYSTEM
                                 </button>
                             </div>
                             <div className="flex items-start gap-2 ml-1">
                                 <Info className="w-3.5 h-3.5 text-blue-500 mt-0.5" />
-                                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">System theme automatically switches based on the operating system settings of the client terminal.</p>
+                                <p className="text-[10px] text-muted font-medium leading-relaxed">System theme automatically switches based on the operating system settings of the client terminal.</p>
                             </div>
                         </div>
 
                         {/* Color Palette */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Primary Signature Color</label>
+                                <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1">Primary Signature Color</label>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 rounded-full border-2 border-white dark:border-slate-700 shadow-sm transition-all" style={{ backgroundColor: optimisticColor }} />
-                                    <span className="text-[10px] font-black text-slate-500">{selectedColorName}</span>
+                                    <div className="w-4 h-4 rounded-full border-2 border-white dark:border-default shadow-sm transition-all" style={{ backgroundColor: optimisticColor }} />
+                                    <span className="text-[10px] font-black text-muted">{selectedColorName}</span>
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-3">
@@ -279,18 +279,18 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                                         title={c.name}
                                     >
                                         {optimisticColor === c.hex && (
-                                            <Check className="w-4 h-4 text-white absolute inset-0 m-auto drop-shadow" />
+                                            <Check className="w-4 h-4 text-main absolute inset-0 m-auto drop-shadow" />
                                         )}
                                         {/* Tooltip */}
-                                        <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[8px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                        <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-[var(--erp-bg)] text-main text-[8px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
                                             {c.name}
                                         </span>
                                     </button>
                                 ))}
                                 <div className="relative group">
                                     <input type="color" value={optimisticColor} onChange={e => handleColorChange(e.target.value)} className="w-10 h-10 opacity-0 absolute inset-0 cursor-pointer z-10" />
-                                    <div className="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-pink-500 hover:opacity-90 transition-opacity">
-                                        <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-slate-800 dark:text-white text-[10px] font-bold">+</div>
+                                    <div className="w-10 h-10 rounded-full border-2 border-default dark:border-default flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-pink-500 hover:opacity-90 transition-opacity">
+                                        <div className="w-8 h-8 rounded-full bg-white dark:bg-[var(--erp-bg)] flex items-center justify-center text-main text-[10px] font-bold">+</div>
                                     </div>
                                 </div>
                             </div>
@@ -298,9 +298,9 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                             {/* Color Application Preview */}
                             <div className="grid grid-cols-3 gap-2 mt-2">
                                 {['Button', 'Badge', 'Link'].map((label, i) => (
-                                    <div key={label} className="rounded-xl p-3 text-center border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                                    <div key={label} className="rounded-xl p-3 text-center border border-default dark:border-default bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20">
                                         <div
-                                            className={`mx-auto rounded-lg mb-1.5 transition-all ${i === 0 ? 'px-4 py-1.5 text-white text-[8px] font-black' : i === 1 ? 'w-fit px-3 py-1 text-[8px] font-black rounded-full mx-auto' : 'underline text-[9px] font-bold'}`}
+                                            className={`mx-auto rounded-lg mb-1.5 transition-all ${i === 0 ? 'px-4 py-1.5 text-main text-[8px] font-black' : i === 1 ? 'w-fit px-3 py-1 text-[8px] font-black rounded-full mx-auto' : 'underline text-[9px] font-bold'}`}
                                             style={{
                                                 backgroundColor: i < 2 ? (i === 0 ? optimisticColor : `${optimisticColor}20`) : 'transparent',
                                                 color: i === 0 ? '#fff' : optimisticColor,
@@ -308,7 +308,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                                         >
                                             {label}
                                         </div>
-                                        <span className="text-[8px] font-bold text-slate-400 uppercase">{label}</span>
+                                        <span className="text-[8px] font-bold text-muted uppercase">{label}</span>
                                     </div>
                                 ))}
                             </div>
@@ -333,14 +333,14 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                         <ImageIcon className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Asset Management</h3>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Manage brand logos and media resources</p>
+                        <h3 className="text-lg font-bold text-main leading-none">Asset Management</h3>
+                        <p className="text-xs text-muted font-medium mt-1">Manage brand logos and media resources</p>
                     </div>
                 </div>
 
-                <div className="bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-12">
+                <div className="bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 border border-default dark:border-default rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-12">
                     <div className="relative group">
-                        <div className="w-48 h-48 bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-105">
+                        <div className="w-48 h-48 bg-white dark:bg-[var(--erp-bg)] rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-default dark:border-default flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-105">
                             {logoUrl ? (
                                 <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-8" />
                             ) : (
@@ -351,7 +351,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                             )}
                         </div>
                         <div
-                            className="absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900 text-white"
+                            className="absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900 text-main"
                             style={{ backgroundColor: optimisticColor }}
                         >
                             <Sparkles className="w-5 h-5" />
@@ -360,28 +360,28 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
 
                     <div className="flex-1 space-y-6 text-center md:text-left">
                         <div className="space-y-2">
-                            <h4 className="text-xl font-black text-slate-800 dark:text-white leading-none">Corporate Logo</h4>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-sm">This logo appears on all login screens, dashboards, and is automatically embedded in generated PDF invoices and reports.</p>
+                            <h4 className="text-xl font-black text-main leading-none">Corporate Logo</h4>
+                            <p className="text-sm text-muted font-medium leading-relaxed max-w-sm">This logo appears on all login screens, dashboards, and is automatically embedded in generated PDF invoices and reports.</p>
                         </div>
 
                         <div className="flex flex-wrap justify-center md:justify-start gap-3">
                             <input type="file" id="logo-upload" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                             <label
                                 htmlFor="logo-upload"
-                                className="cursor-pointer inline-flex items-center gap-3 px-8 py-3.5 text-white rounded-2xl text-sm font-black transition-all shadow-lg hover:shadow-xl active:scale-95"
+                                className="cursor-pointer inline-flex items-center gap-3 px-8 py-3.5 text-main rounded-2xl text-sm font-black transition-all shadow-lg hover:shadow-xl active:scale-95"
                                 style={{ backgroundColor: optimisticColor }}
                             >
                                 <Upload className="w-4 h-4" /> UPLOAD NEW ASSET
                             </label>
-                            <button className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl text-sm font-black hover:bg-slate-50 transition-all">
+                            <button className="px-8 py-3.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default text-secondary dark:text-muted rounded-2xl text-sm font-black hover:bg-[var(--erp-bg-sunken)] transition-all">
                                 REMOVE
                             </button>
                         </div>
 
                         <div className="flex items-center justify-center md:justify-start gap-4">
-                            <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[9px] font-extrabold text-slate-500 uppercase tracking-widest">PNG / SVG</div>
-                            <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[9px] font-extrabold text-slate-500 uppercase tracking-widest">MAX 2MB</div>
-                            <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[9px] font-extrabold text-slate-500 uppercase tracking-widest">TRANSPARENT</div>
+                            <div className="px-3 py-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full text-[9px] font-extrabold text-muted uppercase tracking-widest">PNG / SVG</div>
+                            <div className="px-3 py-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full text-[9px] font-extrabold text-muted uppercase tracking-widest">MAX 2MB</div>
+                            <div className="px-3 py-1 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full text-[9px] font-extrabold text-muted uppercase tracking-widest">TRANSPARENT</div>
                         </div>
                     </div>
                 </div>

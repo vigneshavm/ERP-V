@@ -110,17 +110,17 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
     const currentStepIndex = getCurrentStepIndex();
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
+        <div className="flex flex-col h-full bg-white dark:bg-[var(--erp-bg)] rounded-xl shadow-sm border border-default dark:border-default">
             {/* Header */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+            <div className="p-4 border-b border-default dark:border-default flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
+                    <button onClick={handleBack} className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-lg">
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
                         <h2 className="text-lg font-bold flex items-center gap-2">
                             {order.po_number}
-                            <span className={`text-xs font-normal px-2 py-0.5 rounded-full border ${order.status === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700'}`}>
+                            <span className={`text-xs font-normal px-2 py-0.5 rounded-full border ${order.status === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-default dark:border-default'}`}>
                                 {order.status}
                             </span>
                         </h2>
@@ -128,7 +128,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="p-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors" title="Print">
+                    <button className="p-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-main transition-colors" title="Print">
                         <Printer className="w-5 h-5" />
                     </button>
 
@@ -189,7 +189,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             </div>
 
             {/* Stepper Status Bar */}
-            <div className="px-8 py-6 bg-neutral-50/50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto">
+            <div className="px-8 py-6 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)] border-b border-default dark:border-default overflow-x-auto">
                 <div className="flex items-center justify-between min-w-[600px]">
                     {steps.map((step, idx) => {
                         const isCompleted = currentStepIndex > idx;
@@ -205,7 +205,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                                 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400'}`}>
                                         {isCompleted ? <CheckCircle className="w-4 h-4" /> : idx + 1}
                                     </div>
-                                    <span className={`text-xs font-bold whitespace-nowrap ${isCurrent || isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>
+                                    <span className={`text-xs font-bold whitespace-nowrap ${isCurrent || isCompleted ? 'text-neutral-900 dark:text-main' : 'text-neutral-400'}`}>
                                         {step.label}
                                     </span>
                                 </div>
@@ -227,27 +227,27 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
                 {/* Info Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                    <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-lg border border-default dark:border-default">
                         <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Supplier</h3>
                         <p className="font-bold text-lg">{order.vendor_name}</p>
                     </div>
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                    <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-lg border border-default dark:border-default">
                         <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Dates</h3>
                         <div className="text-sm">
                             <div className="flex justify-between"><span>PO Date:</span> <span className="font-medium">{order.po_date}</span></div>
                             <div className="flex justify-between mt-1"><span>Expected:</span> <span className="font-medium">{order.expected_delivery || '-'}</span></div>
                         </div>
                     </div>
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                    <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-lg border border-default dark:border-default">
                         <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Total Value</h3>
                         <p className="font-bold text-2xl text-primary">₹{Number(order.total_amount).toLocaleString()}</p>
                     </div>
                 </div>
 
                 {/* Items Table */}
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden mb-6">
+                <div className="bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl overflow-hidden mb-6">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-800">
+                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]">
                             <tr>
                                 <th className="px-4 py-3 font-semibold text-neutral-500">Product</th>
                                 <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Qty</th>

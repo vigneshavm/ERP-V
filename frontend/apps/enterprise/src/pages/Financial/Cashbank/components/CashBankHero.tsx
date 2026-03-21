@@ -19,7 +19,7 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
     extraActions
 }) => {
     return (
-        <div className="premium-card p-6 sm:p-10 lg:p-12 mb-6 sm:mb-8 shadow-2xl relative overflow-hidden group border border-white/10">
+        <div className="erp-card p-6 sm:p-10 lg:p-12 mb-6 sm:mb-8 shadow-2xl relative overflow-hidden group border border-default">
             <div className={`absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 group-hover:bg-indigo-500/10 transition-all duration-700 pointer-events-none`}></div>
             <div className="absolute top-0 right-0 p-8 sm:p-12 opacity-[0.03] group-hover:opacity-[0.07] group-hover:scale-110 transition-all duration-1000 pointer-events-none">
                 <Icon className="w-48 h-48 sm:w-64 sm:h-64" />
@@ -31,7 +31,7 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
                         {title}
                     </div>
                     <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-slate-200 font-mono italic">{value}</h2>
-                    {subtitle && <p className="text-slate-500 text-xs sm:text-sm font-bold mt-2 sm:mt-3 tracking-wide">{subtitle}</p>}
+                    {subtitle && <p className="text-muted text-xs sm:text-sm font-bold mt-2 sm:mt-3 tracking-wide">{subtitle}</p>}
                     <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-6 sm:mt-8">
                         {stats}
                     </div>

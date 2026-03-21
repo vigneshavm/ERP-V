@@ -27,7 +27,7 @@ const OnlineStoreSetup: React.FC<{
 }> = ({ isLoading, onActivate, currentPlan }) => {
     return (
         <div className="space-y-12 pb-20">
-            <header className="relative overflow-hidden bg-[#020617] border-b border-slate-800 pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
+            <header className="relative overflow-hidden bg-[var(--erp-bg)] border-b border-default pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4F46E5]/10 blur-[120px] rounded-full -mr-48 -mt-48 motion-safe:animate-pulse transition-opacity duration-300" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#22C55E]/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-opacity duration-300" aria-hidden="true" />
 
@@ -50,7 +50,7 @@ const OnlineStoreSetup: React.FC<{
                         <button
                             onClick={onActivate}
                             disabled={isLoading}
-                            className="w-full sm:w-auto px-10 py-5 bg-[#4F46E5] text-white rounded-xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-200 focus:ring-4 focus:ring-[#4F46E5]/40 focus:outline-none flex items-center justify-center gap-4 group"
+                            className="w-full sm:w-auto px-10 py-5 bg-[#4F46E5] text-main rounded-xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-200 focus:ring-4 focus:ring-[#4F46E5]/40 focus:outline-none flex items-center justify-center gap-4 group"
                         >
                             {isLoading ? 'Activating...' : 'Start Free Trial'}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
@@ -58,7 +58,7 @@ const OnlineStoreSetup: React.FC<{
                     </div>
 
                     <div className="hidden xl:block w-full max-w-md">
-                        <div className="relative aspect-square bg-[#020617] rounded-[3rem] border border-slate-800 p-8 shadow-inner overflow-hidden">
+                        <div className="relative aspect-square bg-[var(--erp-bg)] rounded-[3rem] border border-default p-8 shadow-inner overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5]/20 to-transparent" />
                             <div className="relative h-full flex flex-col justify-center items-center text-center">
                                 <ShoppingBag className="w-24 h-24 text-[#F8FAFC] mb-8" />
@@ -214,21 +214,21 @@ const OnlineStore: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 animate-fade-in relative rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col h-full bg-[var(--erp-bg-sunken)] dark:bg-slate-950 animate-fade-in relative rounded-3xl overflow-hidden border border-default dark:border-default">
             {/* --- Top Navigation Bar --- */}
-            <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center gap-4">
+            <div className="sticky top-0 z-30 bg-white/80 dark:bg-[var(--erp-bg)]/80 backdrop-blur-md border-b border-default dark:border-default px-6 py-4 flex items-center gap-4">
                 <div className="flex-1 max-w-2xl relative flex items-center">
                     <input
                         type="text"
                         placeholder="Search for products..."
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-2xl text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
+                        className="w-full pl-10 pr-12 py-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-none rounded-2xl text-main outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
                     />
-                    <Search className="w-5 h-5 text-slate-400 absolute left-3" />
+                    <Search className="w-5 h-5 text-muted absolute left-3" />
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="absolute right-2 p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors"
+                        className="absolute right-2 p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-muted transition-colors"
                         title="Search by Image"
                     >
                         <ImageIcon className="w-5 h-5" />
@@ -239,7 +239,7 @@ const OnlineStore: React.FC = () => {
                 <div className="flex items-center gap-2 ml-auto">
                     <button
                         onClick={() => setShowAi(!showAi)}
-                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900'}`}
+                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-[var(--erp-card)] text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900'}`}
                     >
                         <Sparkles className="w-4 h-4" />
                         <span>AI Assistant</span>
@@ -249,22 +249,22 @@ const OnlineStore: React.FC = () => {
 
             <div className="flex flex-1 overflow-hidden relative">
                 {/* --- Sidebar Filters (Desktop) --- */}
-                <aside className={`w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 overflow-y-auto hidden md:block p-8`}>
-                    <div className="flex items-center gap-2 mb-8 text-slate-900 dark:text-white font-black text-lg">
+                <aside className={`w-72 bg-white dark:bg-[var(--erp-bg)] border-r border-default dark:border-default overflow-y-auto hidden md:block p-8`}>
+                    <div className="flex items-center gap-2 mb-8 text-main font-black text-lg">
                         <Filter className="w-5 h-5" /> Filters
                     </div>
                     {/* Filter Controls (Categories, Price, etc) - Copied from Storefront.tsx */}
                     <div className="space-y-8">
                         <div>
-                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Categories</h4>
+                            <h4 className="text-xs font-black text-muted uppercase tracking-widest mb-4">Categories</h4>
                             <div className="space-y-3">
                                 {availableCategories.map(cat => (
                                     <label key={cat} className="flex items-center gap-3 cursor-pointer group">
-                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'}`}>
-                                            {selectedCategories.includes(cat) && <Check className="w-3.5 h-3.5 text-white" />}
+                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-[var(--erp-card)]'}`}>
+                                            {selectedCategories.includes(cat) && <Check className="w-3.5 h-3.5 text-main" />}
                                         </div>
                                         <input type="checkbox" className="hidden" onChange={() => toggleCategory(cat)} checked={selectedCategories.includes(cat)} />
-                                        <span className={`text-sm ${selectedCategories.includes(cat) ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400'}`}>{cat}</span>
+                                        <span className={`text-sm ${selectedCategories.includes(cat) ? 'text-main font-bold' : 'text-secondary dark:text-muted'}`}>{cat}</span>
                                     </label>
                                 ))}
                             </div>
@@ -276,7 +276,7 @@ const OnlineStore: React.FC = () => {
                 <main className="flex-1 overflow-y-auto p-6 md:p-10">
                     {/* ... (AI Feedback Area - same as Storefront.tsx) ... */}
                     {(showAi || aiResult || visualSearchImage) && (
-                        <div className="mb-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
+                        <div className="mb-8 bg-white dark:bg-[var(--erp-bg)] rounded-[2rem] border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
                             {/* ... Content ... */}
                             <div className="p-6">
                                 {showAi && !visualSearchImage && !aiResult && !aiThinking && (
@@ -285,7 +285,7 @@ const OnlineStore: React.FC = () => {
                                             value={aiQuery}
                                             onChange={e => setAiQuery(e.target.value)}
                                             placeholder="Describe what you are looking for..."
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-24 text-slate-900 dark:text-white placeholder:text-slate-400 font-medium"
+                                            className="w-full bg-[var(--erp-bg-sunken)] dark:bg-slate-950 border border-default dark:border-default rounded-2xl p-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-24 text-main placeholder:text-muted font-medium"
                                             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAiSearch(); } }}
                                         />
                                         <button onClick={handleAiSearch} disabled={!aiQuery.trim()} className="absolute right-4 bottom-4 p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-indigo-500/20">
@@ -293,7 +293,7 @@ const OnlineStore: React.FC = () => {
                                         </button>
                                     </div>
                                 )}
-                                {aiResult && <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-medium leading-relaxed">{aiResult.text}</div>}
+                                {aiResult && <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-2xl text-sm font-medium leading-relaxed">{aiResult.text}</div>}
                             </div>
                         </div>
                     )}
@@ -301,18 +301,18 @@ const OnlineStore: React.FC = () => {
                     {/* Product Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {filteredProducts.map(product => (
-                            <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
-                                <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
+                            <div key={product.id} className="group bg-white dark:bg-[var(--erp-card)] rounded-[2rem] border border-default dark:border-default overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
+                                <div className="aspect-[4/3] bg-[var(--erp-bg-sunken)] dark:bg-slate-700 relative overflow-hidden">
                                     <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute top-4 right-4 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-red-500 transition-colors">
-                                        <Heart className="w-5 h-5 text-slate-400 hover:text-red-500" />
+                                    <div className="absolute top-4 right-4 p-3 bg-white/90 dark:bg-[var(--erp-bg)]/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-red-500 transition-colors">
+                                        <Heart className="w-5 h-5 text-muted hover:text-red-500" />
                                     </div>
                                 </div>
                                 <div className="p-6 flex flex-col flex-1">
-                                    <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
+                                    <h3 className="font-bold text-main text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
                                     <div className="mt-auto flex items-center justify-between">
-                                        <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
-                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
+                                        <span className="block text-2xl font-black text-main">₹{product.sellingPrice.toLocaleString()}</span>
+                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[var(--erp-bg)] dark:bg-[#4F46E5] text-main rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
                                             <ShoppingCart className="w-5 h-5" />
                                         </button>
                                     </div>

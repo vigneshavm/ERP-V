@@ -37,8 +37,8 @@ const Marketing: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-[#020617] p-4 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-3xl overflow-x-auto no-scrollbar max-w-full gap-1">
+            <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-[var(--erp-bg)] p-4 rounded-[2rem] border border-default dark:border-default shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] p-1.5 rounded-3xl overflow-x-auto no-scrollbar max-w-full gap-1">
                     {TABS.map(({ id, label, icon: Icon }) => (
                         <button
                             key={id}
@@ -46,7 +46,7 @@ const Marketing: React.FC = () => {
                             className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${
                                 activeTab === id
                                     ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow'
-                                    : 'text-slate-500 hover:text-slate-700'
+                                    : 'text-muted hover:text-secondary'
                             }`}
                         >
                             <Icon className="w-4 h-4" />

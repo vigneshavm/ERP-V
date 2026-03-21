@@ -49,7 +49,7 @@ export const useDBDataSync = () => {
   useSalesSync(deferredTenantId);
   useFinanceSync(deferredTenantId);
   usePurchaseSync(deferredTenantId);
-  useVisualPreferences(syncReady ? tenantId : null, syncReady ? user?.id : null);
+  useVisualPreferences(syncReady ? tenantId : undefined, syncReady ? user?.id : undefined);
 
   return { loading, error };
 };

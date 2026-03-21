@@ -13,19 +13,19 @@ const BillsFilters: React.FC<Props> = ({ searchTerm, onSearchChange, statusFilte
         <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-4 sm:p-5">
             <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
                 <div className="w-full md:w-96 relative">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                     <input
                         type="text"
                         placeholder="Search bill # or supplier..."
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm transition-shadow focus:ring-2 focus:ring-primary/20"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm transition-shadow focus:ring-2 focus:ring-primary/20"
                     />
                 </div>
                 <select
                     value={statusFilter}
                     onChange={(e) => onStatusFilterChange(e.target.value)}
-                    className="w-full md:w-auto px-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm transition-shadow focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    className="w-full md:w-auto px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-sm transition-shadow focus:ring-2 focus:ring-primary/20 cursor-pointer"
                 >
                     <option value="all">All Status</option>
                     <option value="Received">Received</option>

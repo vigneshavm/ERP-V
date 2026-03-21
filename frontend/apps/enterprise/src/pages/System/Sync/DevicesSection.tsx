@@ -22,8 +22,8 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight">Active <span className="text-indigo-600">Nodes</span></h2>
-                    <p className="text-slate-500 text-xs font-medium">Manage authorized terminals within your enterprise perimeter.</p>
+                    <h2 className="text-2xl font-black text-main italic uppercase tracking-tight">Active <span className="text-indigo-600">Nodes</span></h2>
+                    <p className="text-muted text-xs font-medium">Manage authorized terminals within your enterprise perimeter.</p>
                 </div>
                 {isOwnerOrAdmin && (
                     <button
@@ -44,10 +44,10 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
                     return (
                         <div 
                             key={device.id} 
-                            className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
+                            className={`group relative bg-white dark:bg-[var(--erp-bg)] rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
                                 isOnline 
-                                    ? 'border-slate-200 dark:border-slate-800' 
-                                    : 'border-slate-100 dark:border-slate-800/50 opacity-80'
+                                    ? 'border-default dark:border-default' 
+                                    : 'border-default dark:border-default/50 opacity-80'
                             }`}
                         >
                             {/* Header Status Bar */}
@@ -55,16 +55,16 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
                                 <div className={`px-3 py-1.5 rounded-full flex items-center gap-2 border ${
                                     isOnline 
                                         ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
-                                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400'
+                                        : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] border-default dark:border-default text-muted'
                                 }`}>
                                     <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
                                     <span className="text-[9px] font-black uppercase tracking-widest">{isOnline ? 'Live Node' : 'Disconnected'}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 tabular-nums">
+                                    <div className="text-[10px] font-black text-muted uppercase tracking-widest mr-2 tabular-nums">
                                         v{device.appVersion}
                                     </div>
-                                    <button className="p-2 text-slate-300 hover:text-indigo-500 transition-colors">
+                                    <button className="p-2 text-muted hover:text-indigo-500 transition-colors">
                                         <MoreVertical className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -76,30 +76,30 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
                                     <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 group-hover:rotate-6 ${
                                         isOnline 
                                             ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' 
-                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                            : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted'
                                     }`}>
                                         <PlatformIcon className="w-8 h-8" />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-black text-slate-900 dark:text-white leading-tight">{device.name}</h4>
-                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 opacity-60">
+                                        <h4 className="text-xl font-black text-main leading-tight">{device.name}</h4>
+                                        <p className="text-xs font-bold text-muted uppercase tracking-widest mt-1 opacity-60">
                                             {device.platform} {device.osVersion} • {device.ipAddress}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Health & Activity */}
-                                <div className="space-y-4 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                                <div className="space-y-4 pt-4 border-t border-slate-50 dark:border-default/50">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <Activity className="w-3.5 h-3.5 text-indigo-500" />
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sync Health</span>
+                                            <span className="text-[10px] font-black text-muted uppercase tracking-widest">Sync Health</span>
                                         </div>
                                         <span className={`text-sm font-black tabular-nums ${
                                             device.syncHealth > 90 ? 'text-emerald-500' : 'text-amber-500'
                                         }`}>{device.syncHealth}%</span>
                                     </div>
-                                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                    <div className="w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] h-1.5 rounded-full overflow-hidden">
                                         <div 
                                             className={`h-full transition-all duration-1000 ${
                                                 device.syncHealth > 90 ? 'bg-indigo-500' : 'bg-amber-500'
@@ -112,17 +112,17 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
                                 {/* Last Activity Footer */}
                                 <div className="flex items-center justify-between pt-2">
                                     <div className="flex items-center gap-2">
-                                        <Clock className="w-3.5 h-3.5 text-slate-300" />
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                        <Clock className="w-3.5 h-3.5 text-muted" />
+                                        <span className="text-[10px] font-black text-muted uppercase tracking-widest">
                                             {isOnline ? `Synced ${formatTimeAgo(device.lastSyncAt)}` : `Last seen ${formatTimeAgo(device.lastOnlineAt)}`}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button className="p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-400 hover:text-indigo-600 rounded-xl transition-all" title="Force Synchronize">
+                                        <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-muted hover:text-indigo-600 rounded-xl transition-all" title="Force Synchronize">
                                             <RotateCw className="w-4 h-4" />
                                         </button>
                                         {isOwnerOrAdmin && (
-                                            <button className="p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500 rounded-xl transition-all" title="Revoke Authorization">
+                                            <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] hover:bg-red-50 dark:hover:bg-red-900/30 text-muted hover:text-red-500 rounded-xl transition-all" title="Revoke Authorization">
                                                 <Power className="w-4 h-4" />
                                             </button>
                                         )}
@@ -144,16 +144,16 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({
                 {isOwnerOrAdmin && (
                     <button 
                         onClick={onAddDevice}
-                        className="relative group bg-slate-50/50 dark:bg-slate-900/30 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 p-12 flex flex-col items-center justify-center gap-6 transition-all hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 hover:border-indigo-200 dark:hover:border-indigo-800/50"
+                        className="relative group bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-bg)]/30 rounded-[2.5rem] border-2 border-dashed border-default dark:border-default p-12 flex flex-col items-center justify-center gap-6 transition-all hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 hover:border-indigo-200 dark:hover:border-indigo-800/50"
                     >
-                        <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-[2rem] shadow-sm flex items-center justify-center text-slate-300 group-hover:text-indigo-500 transition-all group-hover:scale-110">
+                        <div className="w-20 h-20 bg-white dark:bg-[var(--erp-card)] rounded-[2rem] shadow-sm flex items-center justify-center text-muted group-hover:text-indigo-500 transition-all group-hover:scale-110">
                             <Plus className="w-10 h-10" />
                         </div>
                         <div className="text-center">
-                            <h4 className="text-xl font-black text-slate-400 group-hover:text-indigo-600 transition-colors italic uppercase">Add Node</h4>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Expansion slot available</p>
+                            <h4 className="text-xl font-black text-muted group-hover:text-indigo-600 transition-colors italic uppercase">Add Node</h4>
+                            <p className="text-[10px] font-black text-muted uppercase tracking-widest mt-2">Expansion slot available</p>
                         </div>
-                        <Shield className="absolute top-8 right-8 w-6 h-6 text-slate-200 dark:text-slate-800" />
+                        <Shield className="absolute top-8 right-8 w-6 h-6 text-slate-200 dark:text-main" />
                     </button>
                 )}
             </div>

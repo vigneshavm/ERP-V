@@ -23,8 +23,8 @@ export * from '@/entities/contact/model/supplierSlice';
 export * from '@/entities/system/model/systemSlice';
 
 // --- Thunks ---
-export * from './thunks/saleThunks';
-export * from './thunks/purchaseThunks';
-export * from './thunks/customerThunks';
-export * from './thunks/financeThunks';
-export * from './thunks/tenantThunks';
+export * from '@/entities/sales/saleThunks';
+export * from '@/entities/purchase/purchaseThunks';
+export * from '@/entities/contact/customerThunks';
+export * from '@/entities/finance/financeThunks';
+export * from '@/entities/system/tenantThunks';

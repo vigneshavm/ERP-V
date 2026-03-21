@@ -49,24 +49,24 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     const qtyInputRef = React.useRef<HTMLInputElement>(null);
 
     return (
-        <tr className="hover:bg-white/5 transition-colors bg-transparent border-b border-white/5">
+        <tr className="hover:bg-[var(--erp-bg-sunken)] transition-colors bg-transparent border-b border-default">
             <td className="py-1.5 px-2 text-center text-neutral-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
             <td className="py-1.5 px-2">
-                <p className="font-black text-slate-300 text-[11px] uppercase tracking-tight">
+                <p className="font-black text-muted text-[11px] uppercase tracking-tight">
                     {item.name}
                     {item.qty < 0 && <span className="ml-2 text-[9px] uppercase font-black text-white bg-rose-600 px-1 rounded-sm">RETURN</span>}
                 </p>
-                <p className="text-[9px] text-slate-600 font-mono tracking-tighter">
+                <p className="text-[9px] text-secondary font-mono tracking-tighter">
                     {item.sku} {item.unit === 'Meter' && <span className="bg-indigo-500/10 text-indigo-400 px-1 rounded ml-1">Per Meter</span>}
                 </p>
                 {(item.size || item.color) && (
                     <div className="flex gap-2 mt-0.5">
-                        {item.size && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Size: {item.size}</span>}
-                        {item.color && <span className="text-[9px] bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Col: {item.color}</span>}
+                        {item.size && <span className="text-[9px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Size: {item.size}</span>}
+                        {item.color && <span className="text-[9px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300 font-bold">Col: {item.color}</span>}
                     </div>
                 )}
             </td>
-            <td className="py-1.5 px-2 text-center font-black font-mono text-slate-500 hidden sm:table-cell text-[10px]">
+            <td className="py-1.5 px-2 text-center font-black font-mono text-muted hidden sm:table-cell text-[10px]">
                 ₹{item.price.toFixed(2)}
             </td>
 
@@ -101,10 +101,10 @@ const CartItemRow = React.memo<CartItemRowProps>(({
 
             {/* Quantity Column */}
             <td className="py-1.5 px-2 text-center">
-                <div className="flex items-center justify-center gap-1 bg-white/5 rounded-lg p-0.5 border border-white/10 w-fit mx-auto">
+                <div className="flex items-center justify-center gap-1 bg-[var(--erp-bg-sunken)] rounded-lg p-0.5 border border-default w-fit mx-auto">
                     <button
                         onClick={() => onUpdateCartQty(item.id, item.qty - 1)}
-                        className="w-6 h-6 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded text-slate-400 text-[10px] transition-colors"
+                        className="w-6 h-6 flex items-center justify-center bg-[var(--erp-bg-sunken)] hover:bg-white/10 rounded text-muted text-[10px] transition-colors"
                         tabIndex={-1}
                     >-</button>
                     <input
@@ -121,11 +121,11 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') skuInputRef.current?.focus();
                         }}
-                        className="w-10 text-center bg-transparent border-none font-black text-slate-300 focus:ring-0 rounded h-6 text-[10px] spin-hide"
+                        className="w-10 text-center bg-transparent border-none font-black text-muted focus:ring-0 rounded h-6 text-[10px] spin-hide"
                     />
                     <button
                         onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
-                        className="w-6 h-6 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded text-slate-400 text-[10px] transition-colors"
+                        className="w-6 h-6 flex items-center justify-center bg-[var(--erp-bg-sunken)] hover:bg-white/10 rounded text-muted text-[10px] transition-colors"
                         tabIndex={-1}
                     >+</button>
                 </div>
@@ -139,7 +139,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
             <td className="py-1.5 px-2 text-center">
                 <button
                     onClick={() => onRemoveFromCart(item.id)}
-                    className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-colors"
+                    className="p-1.5 text-secondary hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-colors"
                     tabIndex={-1}
                 >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ const CartItemCard = React.memo<CartItemRowProps>(({
     onRemoveFromCart
 }) => {
     return (
-        <div className="bg-white dark:bg-neutral-800 p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-3">
+        <div className="bg-white dark:bg-[var(--erp-card)] p-3 rounded-xl border border-default dark:border-default shadow-sm flex flex-col gap-3">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">
@@ -167,8 +167,8 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                     <p className="text-xs text-neutral-500 font-mono mt-0.5">{item.sku}</p>
                     {(item.size || item.color) && (
                         <div className="flex gap-2 mt-1">
-                            {item.size && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Sz: {item.size}</span>}
-                            {item.color && <span className="text-[10px] bg-neutral-50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Col: {item.color}</span>}
+                            {item.size && <span className="text-[10px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Sz: {item.size}</span>}
+                            {item.color && <span className="text-[10px] bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-300">Col: {item.color}</span>}
                         </div>
                     )}
                 </div>
@@ -177,12 +177,12 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                 </p>
             </div>
 
-            <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50 p-2 rounded-lg">
+            <div className="flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 p-2 rounded-lg">
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-0.5 shadow-sm">
+                    <div className="flex items-center gap-1 bg-white dark:bg-[var(--erp-card)] rounded-lg border border-default dark:border-default p-0.5 shadow-sm">
                         <button
                             onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
-                            className="w-8 h-8 flex items-center justify-center text-neutral-500 active:bg-neutral-100 rounded-md"
+                            className="w-8 h-8 flex items-center justify-center text-neutral-500 active:bg-[var(--erp-bg-sunken)] rounded-md"
                         >-</button>
                         <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
                         <button
@@ -195,7 +195,7 @@ const CartItemCard = React.memo<CartItemRowProps>(({
 
                 <button
                     onClick={() => onRemoveFromCart(item.id)}
-                    className="p-2 text-error bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm"
+                    className="p-2 text-error bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg shadow-sm"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>
@@ -521,7 +521,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     }, [cart]);
 
     return (
-        <div className="col-span-12 lg:col-span-8 flex flex-col premium-bg rounded-xl border border-white/10 shadow-2xl min-h-0 transition-colors relative">
+        <div className="col-span-12 lg:col-span-8 flex flex-col bg-app rounded-xl border border-default shadow-2xl min-h-0 transition-colors relative">
 
             {/* Matrix Modal */}
             {/* Matrix Modal - Removed */}
@@ -543,23 +543,23 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
 
             {/* Search Bar Section */}
-            <div className="p-3 border-b border-white/10 bg-white/5 shrink-0 relative z-30 rounded-t-xl space-y-3">
+            <div className="p-3 border-b border-default bg-[var(--erp-bg-sunken)] shrink-0 relative z-30 rounded-t-xl space-y-3">
                 {/* Row 1: Barcode Scanner */}
                 <div className="flex items-center gap-2">
                     <label className="text-xs font-bold text-neutral-500 uppercase whitespace-nowrap hidden sm:block">Barcode:</label>
                     <div className="relative flex-1 max-w-md">
-                        <div className="absolute left-3 top-2.5 text-slate-500">
+                        <div className="absolute left-3 top-2.5 text-muted">
                             <Barcode className="w-4 h-4" />
                         </div>
                         <input
                             ref={skuInputRef}
                             type="text"
                             placeholder="Scan Barcode / SKU"
-                            className="w-full pl-9 pr-16 py-2 premium-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm uppercase tracking-tight"
+                            className="w-full pl-9 pr-16 py-2 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm uppercase tracking-tight"
                             onKeyDown={handleSkuKeyDown}
                             autoFocus
                         />
-                        <kbd className="absolute right-2 top-2 text-[8px] bg-white/5 px-1.5 py-0.5 rounded text-slate-500 border border-white/10 font-mono font-black uppercase tracking-tighter">Ctrl+B</kbd>
+                        <kbd className="absolute right-2 top-2 text-[8px] bg-[var(--erp-bg-sunken)] px-1.5 py-0.5 rounded text-muted border border-default font-mono font-black uppercase tracking-tighter">Ctrl+B</kbd>
                     </div>
                 </div>
 
@@ -596,12 +596,12 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                             />
                             {/* Type Suggestions Dropdown */}
                             {typeQuery && !selectedType && typeSuggestions.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-1 premium-card shadow-2xl z-50 max-h-60 overflow-y-auto border-white/10">
+                                <div className="absolute top-full left-0 right-0 mt-1 erp-card shadow-2xl z-50 max-h-60 overflow-y-auto border-default">
                                     {typeSuggestions.map((type, idx) => (
                                         <button
                                             key={type}
                                             onClick={() => handleSelectType(type)}
-                                            className={`w-full text-left px-3 py-2 text-[10px] uppercase font-black tracking-widest hover:bg-white/5 transition-colors ${idx === selectedTypeIndex ? 'bg-indigo-600/20 text-indigo-400' : 'text-slate-400'}`}
+                                            className={`w-full text-left px-3 py-2 text-[10px] uppercase font-black tracking-widest hover:bg-[var(--erp-bg-sunken)] transition-colors ${idx === selectedTypeIndex ? 'bg-indigo-600/20 text-indigo-400' : 'text-muted'}`}
                                         >
                                             {type}
                                         </button>
@@ -618,7 +618,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                             ref={priceInputRef}
                             type="number"
                             placeholder="0.00"
-                            className="w-full px-3 py-2 premium-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-right"
+                            className="w-full px-3 py-2 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-right"
                             value={quickEntryPrice}
                             onChange={e => setQuickEntryPrice(e.target.value)}
                             onKeyDown={(e) => {
@@ -640,7 +640,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                             <input
                                 type="number"
                                 placeholder="1.0"
-                                className="w-full px-2 py-2 premium-card bg-indigo-600/10 border-indigo-500/30 text-indigo-400 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-center"
+                                className="w-full px-2 py-2 erp-card bg-indigo-600/10 border-indigo-500/30 text-indigo-400 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-center"
                                 value={quickEntryMeter}
                                 onChange={e => setQuickEntryMeter(e.target.value)}
                                 onKeyDown={(e) => {
@@ -662,7 +662,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         <input
                             type="number"
                             placeholder="1"
-                            className="w-full px-2 py-2 premium-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-center"
+                            className="w-full px-2 py-2 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm text-center"
                             value={quickEntryQty}
                             onChange={e => setQuickEntryQty(e.target.value)}
                             onKeyDown={(e) => {
@@ -699,7 +699,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                     setQuickEntryPrice('');
                                     setQuickEntryQty('1');
                                 }}
-                                className="px-3 py-2 text-neutral-500 hover:text-error hover:bg-error/10 border border-neutral-300 dark:border-neutral-700 rounded-lg text-sm font-bold"
+                                className="px-3 py-2 text-neutral-500 hover:text-error hover:bg-error/10 border border-neutral-300 dark:border-default rounded-lg text-sm font-bold"
                                 title="Clear selection"
                             >
                                 ✕ Clear
@@ -738,8 +738,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                 ) : (
                     <>
                         {/* Desktop Table View */}
-                        <table className="hidden md:table w-full text-left text-sm text-slate-300">
-                            <thead className="bg-white/5 text-[9px] uppercase font-black tracking-widest text-slate-500 sticky top-0 z-10">
+                        <table className="hidden md:table w-full text-left text-sm text-muted">
+                            <thead className="bg-[var(--erp-bg-sunken)] text-[9px] uppercase font-black tracking-widest text-muted sticky top-0 z-10">
                                 <tr>
                                     <th className="py-2 px-2 w-12 text-center hidden md:table-cell">#</th>
                                     <th className="py-3 px-2">Item Details</th>

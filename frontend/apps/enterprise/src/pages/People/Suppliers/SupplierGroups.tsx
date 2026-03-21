@@ -96,81 +96,81 @@ const SupplierGroups: React.FC = () => {
 
             <SupplierSubNav />
 
-            <div className="space-y-6 animate-fade-in">
+            <div className="page-shell">
                 {/* Summary Cards */}
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Total Groups */}
-                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                                 <FolderPlus className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Total Groups</span>
                         </div>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{groups.length}</span>
+                        <span className="text-3xl font-black text-main">{groups.length}</span>
                     </div>
 
                     {/* Total Suppliers */}
-                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                 <Truck className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Suppliers</span>
                         </div>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers}</span>
+                        <span className="text-3xl font-black text-main">{totalSuppliers}</span>
                     </div>
 
                     {/* Assigned */}
-                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
                                 <UserPlus className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Assigned</span>
                         </div>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{assignedSuppliers}</span>
+                        <span className="text-3xl font-black text-main">{assignedSuppliers}</span>
                     </div>
 
                     {/* Unassigned */}
-                    <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
                                 <Tag className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Unassigned</span>
                         </div>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers - assignedSuppliers}</span>
+                        <span className="text-3xl font-black text-main">{totalSuppliers - assignedSuppliers}</span>
                     </div>
                 </div>
 
                 {/* Filter Bar */}
                 <div className="flex items-center justify-between">
                     <div className="relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted group-focus-within:text-indigo-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search groups..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
+                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-secondary dark:text-neutral-200 placeholder:text-muted shadow-sm"
                         />
                     </div>
                 </div>
 
                 {/* Groups Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-[var(--erp-card)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-slate-100 dark:border-neutral-700">
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Group Name</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Members</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Payment Terms</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Credit Limit</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Tags</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider text-right whitespace-nowrap">Actions</th>
+                                <tr className="border-b border-default dark:border-default">
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Group Name</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Members</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Payment Terms</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Credit Limit</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">Tags</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-muted dark:text-neutral-400 uppercase tracking-wider text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
@@ -179,7 +179,7 @@ const SupplierGroups: React.FC = () => {
                                         <td colSpan={6} className="px-6 py-16 text-center">
                                             <div className="flex flex-col items-center gap-3">
                                                 <Tag className="w-10 h-10 text-slate-200 dark:text-neutral-700" />
-                                                <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No supplier groups found</p>
+                                                <p className="text-sm font-bold text-muted dark:text-neutral-500">No supplier groups found</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -187,42 +187,42 @@ const SupplierGroups: React.FC = () => {
                                     filteredGroups.map((group) => (
                                         <tr
                                             key={group._id}
-                                            className="group hover:bg-slate-50/50 dark:hover:bg-neutral-700/30 transition-colors"
+                                            className="group hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-neutral-700/30 transition-colors"
                                             onClick={() => { setEditingGroup(group); setIsCreateModalOpen(true); }}
                                         >
                                             {/* Name */}
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm"
+                                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-main shadow-sm"
                                                         style={{ backgroundColor: group.color }}
                                                     >
                                                         {getGroupIcon(group.icon)}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-bold text-slate-800 dark:text-neutral-100">{group.name}</p>
-                                                        <p className="text-xs text-slate-500 dark:text-neutral-400 truncate max-w-[200px]">{group.description}</p>
+                                                        <p className="text-sm font-bold text-main dark:text-neutral-100">{group.name}</p>
+                                                        <p className="text-xs text-muted dark:text-neutral-400 truncate max-w-[200px]">{group.description}</p>
                                                     </div>
                                                 </div>
                                             </td>
 
                                             {/* Members */}
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 dark:bg-neutral-700 dark:text-neutral-300">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[var(--erp-bg-sunken)] text-secondary dark:bg-neutral-700 dark:text-neutral-300">
                                                     {group.memberCount} Suppliers
                                                 </span>
                                             </td>
 
                                             {/* Terms */}
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="text-sm font-medium text-slate-700 dark:text-neutral-200">
+                                                <span className="text-sm font-medium text-secondary dark:text-neutral-200">
                                                     {group.paymentTerms} Days
                                                 </span>
                                             </td>
 
                                             {/* Credit Limit */}
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="text-sm font-bold text-slate-700 dark:text-neutral-200">
+                                                <span className="text-sm font-bold text-secondary dark:text-neutral-200">
                                                     ₹ {group.creditLimit.toLocaleString('en-IN')}
                                                 </span>
                                             </td>
@@ -239,7 +239,7 @@ const SupplierGroups: React.FC = () => {
                                                         </span>
                                                     )}
                                                     {group.nature && (
-                                                        <span className="text-[10px] px-2 py-0.5 rounded border bg-slate-50 border-slate-100 text-slate-600 font-bold uppercase">
+                                                        <span className="text-[10px] px-2 py-0.5 rounded border bg-[var(--erp-bg-sunken)] border-default text-secondary font-bold uppercase">
                                                             {group.nature}
                                                         </span>
                                                     )}
@@ -251,25 +251,25 @@ const SupplierGroups: React.FC = () => {
                                                 <div className="relative">
                                                     <button
                                                         onClick={() => setOpenMenuId(openMenuId === group._id ? null : group._id)}
-                                                        className="p-1.5 text-slate-300 dark:text-neutral-600 hover:text-slate-500 dark:hover:text-neutral-400 hover:bg-slate-100 dark:hover:bg-neutral-700 rounded-lg transition-all"
+                                                        className="p-1.5 text-muted dark:text-neutral-600 hover:text-muted dark:hover:text-neutral-400 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg transition-all"
                                                     >
                                                         <MoreVertical className="w-4 h-4" />
                                                     </button>
                                                     {openMenuId === group._id && (
-                                                        <div className="absolute right-0 top-8 w-48 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-150">
+                                                        <div className="absolute right-0 top-8 w-48 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-150">
                                                             <button
                                                                 onClick={() => { setEditingGroup(group); setIsCreateModalOpen(true); setOpenMenuId(null); }}
-                                                                className="w-full px-4 py-2.5 text-left text-sm text-slate-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-secondary dark:text-neutral-300 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
                                                             >
-                                                                <Edit className="w-3.5 h-3.5 text-slate-400" /> Edit Group
+                                                                <Edit className="w-3.5 h-3.5 text-muted" /> Edit Group
                                                             </button>
                                                             <button
                                                                 onClick={() => { /* Add logic for adding suppliers */ setOpenMenuId(null); }}
-                                                                className="w-full px-4 py-2.5 text-left text-sm text-slate-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-secondary dark:text-neutral-300 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 flex items-center gap-2 font-medium"
                                                             >
-                                                                <UserPlus className="w-3.5 h-3.5 text-slate-400" /> Add Suppliers
+                                                                <UserPlus className="w-3.5 h-3.5 text-muted" /> Add Suppliers
                                                             </button>
-                                                            <div className="h-px bg-slate-100 dark:bg-neutral-700 my-1" />
+                                                            <div className="h-px bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 my-1" />
                                                             <button
                                                                 onClick={() => { handleDeleteGroup(group._id); setOpenMenuId(null); }}
                                                                 className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 font-medium"

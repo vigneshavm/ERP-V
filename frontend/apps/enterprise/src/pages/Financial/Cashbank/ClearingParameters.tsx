@@ -56,14 +56,14 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-2xl rounded-[3rem] shadow-2xl border border-default dark:border-default overflow-hidden relative">
                 <div className="p-10">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Unit Parameters</h3>
                             <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest italic">Clearing Configuration for {currentSector}</p>
                         </div>
-                        <button onClick={onClose} className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-full text-neutral-400 hover:text-error transition">
+                        <button onClick={onClose} className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full text-neutral-400 hover:text-error transition">
                             <X size={20} />
                         </button>
                     </div>
@@ -91,7 +91,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
                     ) : (
                         <div className="space-y-6">
                             {parameters.map((param) => (
-                                <div key={param._id} className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-700 flex items-center justify-between group hover:border-primary/20 transition-all">
+                                <div key={param._id} className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-[2rem] border border-default dark:border-default flex items-center justify-between group hover:border-primary/20 transition-all">
                                     <div>
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Clearing Type</p>
                                         <h4 className="text-lg font-black italic uppercase tracking-tight">{param.type}</h4>
@@ -105,7 +105,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
                                                     type="number"
                                                     value={param.clearingDays}
                                                     onChange={(e) => handleUpdate(param._id, { clearingDays: parseInt(e.target.value) })}
-                                                    className="w-16 px-3 py-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-black text-center focus:ring-2 focus:ring-primary/20 outline-none"
+                                                    className="w-16 px-3 py-1 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-lg text-sm font-black text-center focus:ring-2 focus:ring-primary/20 outline-none"
                                                 />
                                                 <span className="text-xs font-bold text-neutral-500 uppercase">Days</span>
                                             </div>

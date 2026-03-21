@@ -56,28 +56,28 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
     return (
         <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Advisory */}
-            <div className="bg-slate-900 rounded-[3rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-slate-800 shadow-2xl overflow-hidden relative group">
+            <div className="bg-[var(--erp-bg)] rounded-[3rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-default shadow-2xl overflow-hidden relative group">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
                     <Zap className="w-64 h-64 text-indigo-500" />
                 </div>
                 <div className="relative z-10 w-24 h-24 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center shrink-0 shadow-2xl shadow-indigo-500/30 group-hover:scale-105 transition-transform">
-                    <Zap className="w-12 h-12 text-white animate-pulse" />
+                    <Zap className="w-12 h-12 text-main animate-pulse" />
                 </div>
                 <div className="relative z-10 flex-1 text-center md:text-left">
-                    <h3 className="text-3xl font-black text-white italic uppercase tracking-tight mb-2">Enterprise <span className="text-indigo-400">Control Hub</span></h3>
-                    <p className="text-slate-400 text-sm font-medium leading-relaxed max-w-2xl">
+                    <h3 className="text-3xl font-black text-main italic uppercase tracking-tight mb-2">Enterprise <span className="text-indigo-400">Control Hub</span></h3>
+                    <p className="text-muted text-sm font-medium leading-relaxed max-w-2xl">
                         Orchestrate your enterprise capabilities. Enabling modules propagates features across all terminal nodes in Real-time.
                     </p>
                 </div>
-                <div className="relative z-10 flex gap-8 bg-slate-800/50 p-6 rounded-3xl border border-slate-700">
+                <div className="relative z-10 flex gap-8 bg-[var(--erp-card)]/50 p-6 rounded-3xl border border-default">
                     <div className="text-center">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Operational</p>
-                        <p className="text-2xl font-black text-white tabular-nums">{Object.values(optimisticModules).filter(Boolean).length}</p>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Operational</p>
+                        <p className="text-2xl font-black text-main tabular-nums">{Object.values(optimisticModules).filter(Boolean).length}</p>
                     </div>
                     <div className="w-[1px] h-12 bg-slate-700" />
                     <div className="text-center">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Available</p>
-                        <p className="text-2xl font-black text-slate-400 tabular-nums">{modulesList.length}</p>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Available</p>
+                        <p className="text-2xl font-black text-muted tabular-nums">{modulesList.length}</p>
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                 <section key={category} className="space-y-6">
                     <div className="flex items-center gap-4 px-2">
                         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-slate-100 dark:via-slate-800 to-transparent" />
-                        <h3 className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.5em]">{category} DOMAIN</h3>
+                        <h3 className="text-[11px] font-black text-muted dark:text-muted uppercase tracking-[0.5em]">{category} DOMAIN</h3>
                         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-slate-100 dark:via-slate-800 to-transparent" />
                     </div>
 
@@ -100,8 +100,8 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                                     key={mod.id} 
                                     className={`group p-8 rounded-[2.5rem] border transition-all duration-500 relative overflow-hidden h-full flex flex-col justify-between ${
                                         isEnabled
-                                            ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:border-indigo-500 hover:-translate-y-1'
-                                            : 'bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 opacity-60 grayscale hover:grayscale-0'
+                                            ? 'bg-white dark:bg-[var(--erp-bg)] border-default dark:border-default shadow-sm hover:shadow-2xl hover:border-indigo-500 hover:-translate-y-1'
+                                            : 'bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 border-default dark:border-default opacity-60 grayscale hover:grayscale-0'
                                     }`}
                                 >
                                     <div>
@@ -109,7 +109,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                                             <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 group-hover:rotate-6 shadow-sm ${
                                                 isEnabled
                                                     ? `bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400`
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                                    : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-muted'
                                             }`}>
                                                 <Icon className="w-8 h-8" />
                                             </div>
@@ -128,16 +128,16 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                                         </div>
                                         
                                         <h4 className={`text-xl font-black italic uppercase leading-tight mb-2 transition-colors ${
-                                            isEnabled ? 'text-slate-900 dark:text-white' : 'text-slate-500'
+                                            isEnabled ? 'text-main' : 'text-muted'
                                         }`}>
                                             {mod.name}
                                         </h4>
-                                        <p className="text-xs text-slate-500 font-medium leading-relaxed mb-8 opacity-80">
+                                        <p className="text-xs text-muted font-medium leading-relaxed mb-8 opacity-80">
                                             {mod.desc}
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-slate-800/50">
+                                    <div className="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-default/50">
                                         {isEnabled ? (
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -146,10 +146,10 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                                         ) : (
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 rounded-full bg-slate-300" />
-                                                <span className="text-[10px] font-black tracking-widest uppercase text-slate-400">Offline</span>
+                                                <span className="text-[10px] font-black tracking-widest uppercase text-muted">Offline</span>
                                             </div>
                                         )}
-                                        <button className="p-2 text-slate-300 hover:text-indigo-500 transition-colors">
+                                        <button className="p-2 text-muted hover:text-indigo-500 transition-colors">
                                             <ChevronRight className="w-5 h-5" />
                                         </button>
                                     </div>
@@ -168,12 +168,12 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
             {/* Scale-up Advisory */}
             <div className="bg-gradient-to-r from-indigo-600/5 via-indigo-600/10 to-indigo-600/5 border border-indigo-100 dark:border-indigo-900/30 rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
                 <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-14 h-14 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-center shadow-sm">
+                    <div className="w-14 h-14 bg-white dark:bg-[var(--erp-bg)] rounded-2xl flex items-center justify-center shadow-sm">
                         <Sparkles className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
                         <h4 className="text-sm font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">Enterprise Scalability</h4>
-                        <p className="text-xs font-medium text-slate-500 mt-1 max-w-md">Need cross-domain integration? Explore high-volume features in our Enterprise Suite.</p>
+                        <p className="text-xs font-medium text-muted mt-1 max-w-md">Need cross-domain integration? Explore high-volume features in our Enterprise Suite.</p>
                     </div>
                 </div>
                 <button className="relative z-10 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-600/20 transition-all active:scale-95">

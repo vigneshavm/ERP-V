@@ -74,9 +74,9 @@ const OnlineShop: React.FC = () => {
         switch (code) {
             case 'FREE':
                 return {
-                    color: 'border-gray-200',
+                    color: 'border-default',
                     bg: 'bg-white',
-                    button: 'border-gray-600 text-gray-600 hover:bg-gray-50'
+                    button: 'border-gray-600 text-secondary hover:bg-[var(--erp-bg-sunken)]'
                 };
             case 'STARTER':
                 return {
@@ -99,9 +99,9 @@ const OnlineShop: React.FC = () => {
                 };
             default:
                 return {
-                    color: 'border-gray-200',
+                    color: 'border-default',
                     bg: 'bg-white',
-                    button: 'border-gray-600 text-gray-600 hover:bg-gray-50'
+                    button: 'border-gray-600 text-secondary hover:bg-[var(--erp-bg-sunken)]'
                 };
         }
     };
@@ -139,9 +139,12 @@ const OnlineShop: React.FC = () => {
     if (loading) {
         return (
             <Layout>
+                <div className="page-shell">
                 <div className="flex items-center justify-center min-h-[60vh]">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
                 </div>
+                      </div>
+
             </Layout>
         );
     }
@@ -161,7 +164,7 @@ const OnlineShop: React.FC = () => {
             {/* <BusinessSubNav /> */}
 
             {/* Hero Section - Refined with Glassmorphism */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white mb-12 shadow-2xl border border-white/10">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white mb-12 shadow-2xl border border-default">
                 <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-indigo-400 opacity-10 rounded-full blur-3xl"></div>
 
@@ -199,15 +202,15 @@ const OnlineShop: React.FC = () => {
                             </div>
                             <div className="h-4 w-2/3 bg-white/20 rounded-md"></div>
                             <div className="flex gap-3">
-                                <div className="h-24 w-1/2 bg-white/10 rounded-xl border border-white/5"></div>
-                                <div className="h-24 w-1/2 bg-white/10 rounded-xl border border-white/5"></div>
+                                <div className="h-24 w-1/2 bg-white/10 rounded-xl border border-default"></div>
+                                <div className="h-24 w-1/2 bg-white/10 rounded-xl border border-default"></div>
                             </div>
                             <div className="space-y-2">
                                 <div className="h-3 w-3/4 bg-white/20 rounded"></div>
                                 <div className="h-3 w-full bg-white/20 rounded"></div>
                                 <div className="h-3 w-1/2 bg-white/20 rounded"></div>
                             </div>
-                            <div className="mt-auto h-10 w-full bg-indigo-500/30 rounded-xl border border-white/10"></div>
+                            <div className="mt-auto h-10 w-full bg-indigo-500/30 rounded-xl border border-default"></div>
                         </div>
                     </div>
                 </div>
@@ -216,26 +219,26 @@ const OnlineShop: React.FC = () => {
             {/* Features Section */}
             <div className="mb-20">
                 <div className="text-center mb-12">
-                    <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Scale Without Limits</h3>
-                    <p className="text-gray-500 text-lg max-w-2xl mx-auto">Enterprise-grade tools optimized for speed and conversion. Included with every plan.</p>
+                    <h3 className="text-3xl font-black text-main mb-4 tracking-tight">Scale Without Limits</h3>
+                    <p className="text-muted text-lg max-w-2xl mx-auto">Enterprise-grade tools optimized for speed and conversion. Included with every plan.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 group relative overflow-hidden">
+                        <div key={idx} className="bg-white rounded-3xl p-8 border border-default shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 group relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-[100px] -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
 
                             <div className="relative z-10">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className="p-4 bg-indigo-50 rounded-2xl text-3xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                                    <div className="p-4 bg-indigo-50 rounded-2xl text-3xl group-hover:bg-indigo-600 group-hover:text-main transition-all duration-500 shadow-inner">
                                         {feature.icon}
                                     </div>
                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-green-200 shadow-sm">
                                         {feature.status}
                                     </span>
                                 </div>
-                                <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{feature.title}</h4>
-                                <p className="text-gray-500 leading-relaxed text-sm font-medium">{feature.description}</p>
+                                <h4 className="text-xl font-bold text-main mb-3 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{feature.title}</h4>
+                                <p className="text-muted leading-relaxed text-sm font-medium">{feature.description}</p>
                             </div>
                         </div>
                     ))}
@@ -248,8 +251,8 @@ const OnlineShop: React.FC = () => {
                     <div className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-black tracking-widest uppercase mb-4 border border-indigo-100">
                         Flexible Pricing
                     </div>
-                    <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight italic">The Growth Architect</h3>
-                    <p className="text-gray-500 text-lg">Transparent pricing that scales with your ambition.</p>
+                    <h3 className="text-4xl font-black text-main mb-4 tracking-tight italic">The Growth Architect</h3>
+                    <p className="text-muted text-lg">Transparent pricing that scales with your ambition.</p>
                 </div>
 
                 <div className={`grid grid-cols-1 sm:grid-cols-2 ${availablePlans.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-8 max-w-[1400px] mx-auto px-4`}>
@@ -262,7 +265,7 @@ const OnlineShop: React.FC = () => {
                                     ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl scale-[1.03] z-20 bg-indigo-50/30'
                                     : plan.popular
                                         ? 'border-indigo-400 shadow-xl scale-[1.02] z-10 bg-white'
-                                        : 'border-gray-100 bg-white hover:border-indigo-200 hover:shadow-2xl hover:-translate-y-2'
+                                        : 'border-default bg-white hover:border-indigo-200 hover:shadow-2xl hover:-translate-y-2'
                                     }`}
                             >
                                 {isCurrent && (
@@ -301,7 +304,7 @@ const OnlineShop: React.FC = () => {
 
                                 <div className="mb-8">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h4 className={`text-xl font-black uppercase tracking-wider ${isCurrent ? 'text-indigo-600' : 'text-gray-900'}`}>
+                                        <h4 className={`text-xl font-black uppercase tracking-wider ${isCurrent ? 'text-indigo-600' : 'text-main'}`}>
                                             {plan.name}
                                         </h4>
                                         {isCurrent && (
@@ -313,17 +316,17 @@ const OnlineShop: React.FC = () => {
                                         )}
                                     </div>
                                     <div className="flex items-baseline">
-                                        <span className={`text-5xl font-black tracking-tight ${isCurrent ? 'text-indigo-700' : 'text-gray-900'}`}>
+                                        <span className={`text-5xl font-black tracking-tight ${isCurrent ? 'text-indigo-700' : 'text-main'}`}>
                                             {plan.price}
                                         </span>
-                                        <span className="text-gray-400 font-bold text-sm ml-2 uppercase tracking-widest">{plan.interval}</span>
+                                        <span className="text-muted font-bold text-sm ml-2 uppercase tracking-widest">{plan.interval}</span>
                                     </div>
                                 </div>
 
                                 <div className="flex-1 space-y-5 mb-10">
                                     {plan.features.map((feature, featureIdx) => (
                                         <li key={featureIdx} className="flex items-start list-none">
-                                            <div className={`mt-1 mr-4 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${isCurrent ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-50 text-emerald-500'}`}>
+                                            <div className={`mt-1 mr-4 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${isCurrent ? 'bg-indigo-100 text-indigo-600' : 'bg-[var(--erp-bg-sunken)] text-emerald-500'}`}>
                                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                                                 </svg>
@@ -342,7 +345,7 @@ const OnlineShop: React.FC = () => {
                                         ? 'bg-indigo-100/50 text-indigo-400 cursor-default border-2 border-indigo-100/50'
                                         : plan.popular
                                             ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-2xl shadow-indigo-200 border-2 border-indigo-600'
-                                            : 'bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-xl shadow-gray-100'
+                                            : 'bg-white border-2 border-gray-900 text-main hover:bg-[var(--erp-bg)] hover:text-main shadow-xl shadow-gray-100'
                                         }`}
                                 >
                                     {isCurrent ? 'Current Selection' : (updatingPlan === plan.name ? 'Processing...' : 'Upgrade Plan')}
@@ -352,10 +355,10 @@ const OnlineShop: React.FC = () => {
                     })}
                 </div>
 
-                <div className="mt-20 p-10 rounded-[3rem] bg-gray-50 border border-gray-100 text-center max-w-4xl mx-auto shadow-inner">
-                    <h4 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">Need a custom plan?</h4>
-                    <p className="text-gray-500 mb-8 font-medium">Join 500+ high-growth brands already using BizzAI Enterprise solutions.</p>
-                    <button className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-gray-800 transition-all hover:shadow-2xl">
+                <div className="mt-20 p-10 rounded-[3rem] bg-[var(--erp-bg-sunken)] border border-default text-center max-w-4xl mx-auto shadow-inner">
+                    <h4 className="text-2xl font-black text-main mb-4 tracking-tight">Need a custom plan?</h4>
+                    <p className="text-muted mb-8 font-medium">Join 500+ high-growth brands already using BizzAI Enterprise solutions.</p>
+                    <button className="px-10 py-4 bg-[var(--erp-bg)] text-main rounded-2xl font-black uppercase tracking-widest hover:bg-gray-800 transition-all hover:shadow-2xl">
                         Contact Sales
                     </button>
                 </div>

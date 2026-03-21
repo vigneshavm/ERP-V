@@ -1,30 +1,30 @@
-import asyncHandler from 'express-async-handler';
+import { asyncHandler } from '@smarterp/shared/utils/asyncHandler.js';
 import { container } from 'tsyringe';
 import { DueService } from '../services/DueService.js';
 export const createDueAdjustment = asyncHandler(async (req, res) => {
     const dueService = container.resolve(DueService);
-    const adjustment = await dueService.createDueAdjustment(req.body, req.user?._id, req.user?.name);
+    const adjustment = await dueService.createDueAdjustment(req.body, req.user._id, req.user.name);
     res.status(201).json({ message: 'Due adjustment created successfully', adjustment });
 });
 export const getDueAdjustments = asyncHandler(async (req, res) => {
     const dueService = container.resolve(DueService);
-    const adjustments = await dueService.getDueAdjustments(req.user?._id);
+    const adjustments = await dueService.getDueAdjustments(req.user._id);
     res.status(200).json(adjustments);
 });
 export const getCustomerDueAdjustments = asyncHandler(async (req, res) => {
     const dueService = container.resolve(DueService);
-    const result = await dueService.getCustomerDueAdjustments(req.params.customerId, req.user?._id);
+    const result = await dueService.getCustomerDueAdjustments(req.params.customerId, req.user._id);
     res.status(200).json(result);
 });
 export const getPayableDues = asyncHandler(async (req, res) => {
     const dueService = container.resolve(DueService);
-    const tenantId = req.tenantId || req.user?.tenantId;
+    const tenantId = req.tenantId || req.user.tenantId;
     const result = await dueService.getPayableDues(tenantId);
     res.status(200).json(result);
 });
 export const getReceivableDues = asyncHandler(async (req, res) => {
     const dueService = container.resolve(DueService);
-    const tenantId = req.tenantId || req.user?.tenantId;
+    const tenantId = req.tenantId || req.user.tenantId;
     const result = await dueService.getReceivableDues(tenantId);
     res.status(200).json(result);
 });

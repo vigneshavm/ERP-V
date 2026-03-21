@@ -42,9 +42,9 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex-1 flex flex-col min-h-0">
+        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default shadow-sm flex-1 flex flex-col min-h-0">
             {/* Toolbar */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex gap-4 items-center">
+            <div className="p-4 border-b border-default dark:border-default flex gap-4 items-center">
                 <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
@@ -52,7 +52,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
                         placeholder="Search expenses..."
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
                 </div>
 
@@ -71,7 +71,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
             {/* Grid */}
             <div className="flex-1 overflow-auto custom-scrollbar">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-neutral-50 dark:bg-neutral-800 sticky top-0 z-10">
+                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 font-semibold text-neutral-500">Date</th>
                             <th className="px-4 py-3 font-semibold text-neutral-500">Number</th>
@@ -85,7 +85,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
                     </thead>
                     <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
                         {filteredExpenses.map(expense => (
-                            <tr key={expense.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <tr key={expense.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-colors">
                                 <td className="px-4 py-3 text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
                                     {new Date(expense.date).toLocaleDateString()}
                                 </td>
@@ -93,7 +93,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
                                     {expense.expense_number}
                                 </td>
                                 <td className="px-4 py-3">
-                                    <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                                    <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] text-neutral-700 dark:text-neutral-300">
                                         {expense.category}
                                     </span>
                                 </td>
@@ -103,7 +103,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onEdit, onDelete, u
                                 <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400">
                                     {expense.payment_method}
                                 </td>
-                                <td className="px-4 py-3 font-bold text-neutral-900 dark:text-white text-right">
+                                <td className="px-4 py-3 font-bold text-neutral-900 dark:text-main text-right">
                                     ₹{Number(expense.amount).toLocaleString()}
                                 </td>
                                 <td className="px-4 py-3 text-center">

@@ -25,7 +25,7 @@ const SupplierSubNav: React.FC = () => {
     const links = id ? contextLinks : globalLinks;
 
     return (
-        <div className="flex flex-wrap items-center gap-2 mb-6 p-1 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl w-fit">
+        <div className="flex flex-wrap items-center gap-2 mb-6 p-1 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50 rounded-2xl w-fit">
             {links.map((link) => (
                 <NavLink
                     key={link.path}
@@ -33,8 +33,8 @@ const SupplierSubNav: React.FC = () => {
                     end={link.end}
                     className={({ isActive }) =>
                         `flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${isActive
-                            ? 'bg-white dark:bg-slate-900 text-indigo-600 shadow-sm border border-slate-200 dark:border-slate-700'
-                            : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                            ? 'bg-white dark:bg-[var(--erp-bg)] text-indigo-600 shadow-sm border border-default dark:border-default'
+                            : 'text-muted hover:text-secondary dark:hover:text-muted'
                         }`
                     }
                 >

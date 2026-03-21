@@ -64,7 +64,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
 
             <div className="max-w-4xl w-full text-center mb-12 animate-fade-in">
                 <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/20 animate-aura">
-                    <span className="font-bold text-3xl text-white">E</span>
+                    <span className="font-bold text-3xl text-main">E</span>
                 </div>
                 <h1 className="text-4xl font-black text-main mb-4 tracking-tight matrix-text-glow">Enterprise Manager</h1>
                 <p className="text-xl text-secondary max-w-2xl mx-auto">
@@ -95,14 +95,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                     className="group relative bg-primary p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-left text-white hover:scale-[1.02] overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform" />
-                    <div className="absolute top-4 right-4 text-white/50 group-hover:text-white transition-colors">
+                    <div className="absolute top-4 right-4 text-muted group-hover:text-main transition-colors">
                         <ArrowRight className="w-5 h-5" />
                     </div>
                     <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                         <UserPlus className="w-6 h-6" />
                     </div>
                     <h2 className="text-xl font-bold mb-2">Sign Up</h2>
-                    <p className="text-sm text-white/80">Start your free trial today</p>
+                    <p className="text-sm text-main/80">Start your free trial today</p>
                     <div className="mt-3 text-[10px] bg-white/20 px-2 py-1 rounded-full inline-block font-bold">
                         🎉 NO CREDIT CARD REQUIRED
                     </div>

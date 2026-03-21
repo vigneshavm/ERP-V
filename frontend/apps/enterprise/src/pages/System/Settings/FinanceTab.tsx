@@ -43,7 +43,7 @@ const CopyButton: React.FC<{ value: string }> = ({ value }) => {
     return (
         <button
             onClick={() => { navigator.clipboard.writeText(value); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-indigo-500"
+            className="p-1.5 rounded-lg hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] transition-all text-muted hover:text-indigo-500"
             title="Copy to clipboard"
         >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -65,10 +65,10 @@ const BankCardPreview: React.FC<{ bankName: string; accNo: string; ifsc: string;
     return (
         <div className="relative overflow-hidden rounded-[2rem] p-8 min-h-[220px] flex flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white shadow-2xl shadow-slate-400/20 dark:shadow-none group">
             {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-24 -mt-24 blur-[1px]" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--erp-bg-sunken)] rounded-full -mr-24 -mt-24 blur-[1px]" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 rounded-full -ml-16 -mb-16" />
             <div className="absolute top-6 right-6">
-                <Landmark className="w-10 h-10 text-white/10" />
+                <Landmark className="w-10 h-10 text-main/10" />
             </div>
 
             {/* Header */}
@@ -77,17 +77,17 @@ const BankCardPreview: React.FC<{ bankName: string; accNo: string; ifsc: string;
                     <div className="w-10 h-6 rounded bg-gradient-to-r from-amber-400 to-amber-600" />
                     <div className="w-8 h-8 rounded-full bg-red-500/30 -ml-3 border-2 border-red-400/50" />
                 </div>
-                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mt-3">Settlement Account</p>
-                <h4 className="text-lg font-black text-white/90 mt-0.5">{bankName || 'Your Bank Name'}</h4>
+                <p className="text-[10px] font-black text-main/40 uppercase tracking-[0.3em] mt-3">Settlement Account</p>
+                <h4 className="text-lg font-black text-main mt-0.5">{bankName || 'Your Bank Name'}</h4>
             </div>
 
             {/* Account Number */}
             <div className="relative z-10 my-4">
                 <div className="flex items-center gap-3">
-                    <p className="text-xl font-mono font-bold tracking-[0.15em] text-white/80">{maskedAcc}</p>
+                    <p className="text-xl font-mono font-bold tracking-[0.15em] text-main/80">{maskedAcc}</p>
                     <button
                         onClick={() => setShowFull(!showFull)}
-                        className="p-1 rounded-lg hover:bg-white/10 transition-all text-white/40 hover:text-white/80"
+                        className="p-1 rounded-lg hover:bg-white/10 transition-all text-main/40 hover:text-main/80"
                     >
                         {showFull ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -97,12 +97,12 @@ const BankCardPreview: React.FC<{ bankName: string; accNo: string; ifsc: string;
             {/* Footer */}
             <div className="relative z-10 flex items-end justify-between">
                 <div>
-                    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">Account Holder</p>
-                    <p className="text-sm font-bold text-white/70">{holderName || 'Your Name'}</p>
+                    <p className="text-[8px] font-black text-muted uppercase tracking-[0.2em]">Account Holder</p>
+                    <p className="text-sm font-bold text-secondary">{holderName || 'Your Name'}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">IFSC</p>
-                    <p className="text-sm font-mono font-bold text-white/70">{ifsc || '—'}</p>
+                    <p className="text-[8px] font-black text-muted uppercase tracking-[0.2em]">IFSC</p>
+                    <p className="text-sm font-mono font-bold text-secondary">{ifsc || '—'}</p>
                 </div>
             </div>
 
@@ -130,35 +130,35 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                         <Calculator className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Tax & Pricing Strategy</h3>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Configure default taxation and compliance IDs</p>
+                        <h3 className="text-lg font-bold text-main leading-none">Tax & Pricing Strategy</h3>
+                        <p className="text-xs text-muted font-medium mt-1">Configure default taxation and compliance IDs</p>
                     </div>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Tax Mode Card */}
-                    <div className="lg:col-span-1 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 p-6 rounded-3xl space-y-6">
+                    <div className="lg:col-span-1 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/20 border border-default dark:border-default p-6 rounded-3xl space-y-6">
                         <div>
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Default Tax Computation</label>
-                            <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest mb-3">Default Tax Computation</label>
+                            <div className="flex bg-white dark:bg-[var(--erp-bg)] p-1.5 rounded-2xl border border-default dark:border-default shadow-sm">
                                 <button
                                     onClick={() => setTaxMode('EXCLUSIVE')}
-                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
+                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-muted hover:text-main dark:text-muted font-bold'}`}
                                 >
                                     <span className="text-xs font-black">EXCLUSIVE</span>
-                                    <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'EXCLUSIVE' ? 'text-white' : ''}`}>+ Tax on Price</span>
+                                    <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'EXCLUSIVE' ? 'text-main' : ''}`}>+ Tax on Price</span>
                                 </button>
                                 <button
                                     onClick={() => setTaxMode('INCLUSIVE')}
-                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
+                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-muted hover:text-main dark:text-muted font-bold'}`}
                                 >
                                     <span className="text-xs font-black">INCLUSIVE</span>
-                                    <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'INCLUSIVE' ? 'text-white' : ''}`}>Inc. Tax in Price</span>
+                                    <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'INCLUSIVE' ? 'text-main' : ''}`}>Inc. Tax in Price</span>
                                 </button>
                             </div>
                         </div>
-                        <div className="p-4 bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                            <div className="flex gap-2 text-[10px] text-slate-500 font-medium leading-relaxed">
+                        <div className="p-4 bg-white/50 dark:bg-[var(--erp-bg)]/50 rounded-2xl border border-default dark:border-default">
+                            <div className="flex gap-2 text-[10px] text-muted font-medium leading-relaxed">
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                                 <span>This mode will be auto-calculated for all new inventory items and POS transactions.</span>
                             </div>
@@ -166,9 +166,9 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                     </div>
 
                     {/* Registration Details */}
-                    <div className="lg:col-span-2 grid md:grid-cols-2 gap-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl shadow-sm">
+                    <div className="lg:col-span-2 grid md:grid-cols-2 gap-6 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default p-8 rounded-3xl shadow-sm">
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
                                 <FileText className="w-3 h-3 text-indigo-500" /> GSTIN / VAT Number
                                 {(gstin || '').length > 0 && <CopyButton value={gstin || ''} />}
                             </label>
@@ -177,10 +177,10 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                                     type="text"
                                     value={gstin || ''}
                                     onChange={e => setGstin?.(e.target.value.toUpperCase())}
-                                    className={`w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-2 font-black text-sm text-slate-700 dark:text-white transition-all ${
+                                    className={`w-full px-4 py-3.5 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50 border rounded-2xl outline-none focus:ring-2 font-black text-sm text-secondary dark:text-main transition-all ${
                                         gstinStatus === 'valid' ? 'border-emerald-300 focus:ring-emerald-500/20 focus:border-emerald-500' :
                                         gstinStatus === 'invalid' ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' :
-                                        'border-slate-100 dark:border-slate-700 focus:ring-indigo-500/20 focus:border-indigo-500'
+                                        'border-default dark:border-default focus:ring-indigo-500/20 focus:border-indigo-500'
                                     }`}
                                     placeholder="e.g. 29ABCDE1234F1Z5"
                                     maxLength={15}
@@ -194,7 +194,7 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                             <ValidationIndicator status={gstinStatus} label="GSTIN" />
                         </div>
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
                                 <CreditCard className="w-3 h-3 text-indigo-500" /> Permanent Account (PAN)
                                 {(pan || '').length > 0 && <CopyButton value={pan || ''} />}
                             </label>
@@ -203,10 +203,10 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                                     type="text"
                                     value={pan || ''}
                                     onChange={e => setPan?.(e.target.value.toUpperCase())}
-                                    className={`w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-2 font-black text-sm text-slate-700 dark:text-white transition-all ${
+                                    className={`w-full px-4 py-3.5 bg-[var(--erp-bg-sunken)]/50 dark:bg-[var(--erp-card)]/50 border rounded-2xl outline-none focus:ring-2 font-black text-sm text-secondary dark:text-main transition-all ${
                                         panStatus === 'valid' ? 'border-emerald-300 focus:ring-emerald-500/20 focus:border-emerald-500' :
                                         panStatus === 'invalid' ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' :
-                                        'border-slate-100 dark:border-slate-700 focus:ring-indigo-500/20 focus:border-indigo-500'
+                                        'border-default dark:border-default focus:ring-indigo-500/20 focus:border-indigo-500'
                                     }`}
                                     placeholder="e.g. ABCDE1234F"
                                     maxLength={10}
@@ -237,8 +237,8 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                         <Landmark className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Settlement Banking</h3>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Official bank account for invoice payments</p>
+                        <h3 className="text-lg font-bold text-main leading-none">Settlement Banking</h3>
+                        <p className="text-xs text-muted font-medium mt-1">Official bank account for invoice payments</p>
                     </div>
                 </div>
 
@@ -256,19 +256,19 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                     {/* Input Fields */}
                     <div className="lg:col-span-3 grid md:grid-cols-2 gap-6">
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Official Bank Name</label>
-                            <input type="text" value={bankName || ''} onChange={e => setBankName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1">Official Bank Name</label>
+                            <input type="text" value={bankName || ''} onChange={e => setBankName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-main" placeholder="e.g. HDFC Bank" />
                         </div>
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Account Holder Name</label>
-                            <input type="text" value={accountHolderName || ''} onChange={e => setAccountHolderName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white" />
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1">Account Holder Name</label>
+                            <input type="text" value={accountHolderName || ''} onChange={e => setAccountHolderName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-main" />
                         </div>
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Corporate Account Number</label>
-                            <input type="text" value={accNo || ''} onChange={e => setAccNo?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white tracking-widest" placeholder="e.g. 50100..." />
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1">Corporate Account Number</label>
+                            <input type="text" value={accNo || ''} onChange={e => setAccNo?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-main tracking-widest" placeholder="e.g. 50100..." />
                         </div>
                         <div className="space-y-1">
-                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                            <label className="block text-[10px] font-extrabold text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
                                 IFSC / Routing Code
                                 {(ifsc || '').length > 0 && <CopyButton value={ifsc || ''} />}
                             </label>
@@ -277,10 +277,10 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                                     type="text"
                                     value={ifsc || ''}
                                     onChange={e => setIfsc?.(e.target.value.toUpperCase())}
-                                    className={`w-full px-5 py-4 bg-white dark:bg-slate-900 border rounded-2xl outline-none focus:ring-2 font-bold text-slate-800 dark:text-white transition-all ${
+                                    className={`w-full px-5 py-4 bg-white dark:bg-[var(--erp-bg)] border rounded-2xl outline-none focus:ring-2 font-bold text-main transition-all ${
                                         ifscStatus === 'valid' ? 'border-emerald-300 focus:ring-emerald-500/20 focus:border-emerald-500' :
                                         ifscStatus === 'invalid' ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' :
-                                        'border-slate-200 dark:border-slate-800 focus:ring-amber-500/20 focus:border-amber-500'
+                                        'border-default dark:border-default focus:ring-amber-500/20 focus:border-amber-500'
                                     }`}
                                     placeholder="e.g. HDFC0001234"
                                 />
@@ -296,15 +296,15 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                 </div>
 
                 <div className="mt-8 p-6 bg-amber-50/30 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-[2rem] flex flex-col md:flex-row items-center gap-6">
-                    <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm flex items-center justify-center shrink-0">
+                    <div className="w-16 h-16 bg-white dark:bg-[var(--erp-card)] rounded-2xl shadow-sm flex items-center justify-center shrink-0">
                         <Landmark className="w-8 h-8 text-amber-500" />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                        <p className="text-sm font-black text-slate-800 dark:text-white leading-none">Print on Sales Invoices</p>
-                        <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">By default, these banking details will be printed on the footer of all Digitally Generated GST Invoices to facilitate direct bank transfers from your clients.</p>
+                        <p className="text-sm font-black text-main leading-none">Print on Sales Invoices</p>
+                        <p className="text-xs text-muted mt-1 font-medium leading-relaxed">By default, these banking details will be printed on the footer of all Digitally Generated GST Invoices to facilitate direct bank transfers from your clients.</p>
                     </div>
-                    <div className="flex items-center gap-3 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-100 dark:border-slate-700">
-                        <span className="text-[10px] font-black text-slate-400 ml-3">STATUS</span>
+                    <div className="flex items-center gap-3 bg-white dark:bg-[var(--erp-card)] p-1.5 rounded-xl border border-default dark:border-default">
+                        <span className="text-[10px] font-black text-muted ml-3">STATUS</span>
                         <div className="px-4 py-1.5 bg-emerald-500 text-white rounded-lg text-[10px] font-black tracking-widest">ENABLED</div>
                     </div>
                 </div>

@@ -86,14 +86,14 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
             case 'Pending':
             case 'Pending Approval': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
             case 'Cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-            default: return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400';
+            default: return 'bg-[var(--erp-bg-sunken)] text-neutral-800 dark:bg-[var(--erp-card)] dark:text-neutral-400';
         }
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex-1 flex flex-col min-h-0">
+        <div className="bg-white dark:bg-[var(--erp-bg)] rounded-xl border border-default dark:border-default shadow-sm flex-1 flex flex-col min-h-0">
             {/* Toolbar */}
-            <div className="p-4 sm:p-5 border-b border-neutral-200 dark:border-neutral-800 space-y-4">
+            <div className="p-4 sm:p-5 border-b border-default dark:border-default space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
                         <div className="relative flex-1 sm:w-64">
@@ -103,7 +103,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 placeholder="Search PO # or Supplier..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                             />
                         </div>
                         {selectedOrders.length > 0 && (
@@ -118,7 +118,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                     </div>
 
                     <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <button onClick={() => handleExport('CSV')} className="p-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors border border-neutral-200 dark:border-neutral-800">
+                        <button onClick={() => handleExport('CSV')} className="p-2 text-neutral-500 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-lg transition-colors border border-default dark:border-default">
                             <Download className="w-4 h-4" />
                         </button>
                         <button
@@ -181,14 +181,14 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
             {/* List */}
             <div className="flex-1 overflow-auto custom-scrollbar">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-neutral-50 dark:bg-neutral-800 sticky top-0 z-10">
+                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] sticky top-0 z-10">
                         <tr>
                             <th className="px-6 py-3 w-10">
                                 <input
                                     type="checkbox"
                                     checked={selectedOrders.length === filteredOrders.length && filteredOrders.length > 0}
                                     onChange={toggleSelectAll}
-                                    className="rounded border-neutral-300 dark:border-neutral-700 text-primary focus:ring-primary h-4 w-4"
+                                    className="rounded border-neutral-300 dark:border-default text-primary focus:ring-primary h-4 w-4"
                                 />
                             </th>
                             <th className="px-6 py-3 font-semibold text-neutral-500 cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_date')}>
@@ -212,14 +212,14 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         {filteredOrders.map((order: PurchaseOrder) => (
                             <tr
                                 key={order.id}
-                                className={`hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer ${selectedOrders.includes(order.id) ? 'bg-primary/5' : ''}`}
+                                className={`hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]/50 transition-colors cursor-pointer ${selectedOrders.includes(order.id) ? 'bg-primary/5' : ''}`}
                             >
                                 <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                     <input
                                         type="checkbox"
                                         checked={selectedOrders.includes(order.id)}
                                         onChange={() => toggleSelect(order.id)}
-                                        className="rounded border-neutral-300 dark:border-neutral-700 text-primary focus:ring-primary h-4 w-4"
+                                        className="rounded border-neutral-300 dark:border-default text-primary focus:ring-primary h-4 w-4"
                                     />
                                 </td>
                                 <td className="px-6 py-4 text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
@@ -228,7 +228,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 <td className="px-6 py-4 font-mono text-xs font-bold text-primary">
                                     {order.po_number}
                                 </td>
-                                <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">
+                                <td className="px-6 py-4 font-medium text-neutral-900 dark:text-main">
                                     {order.vendor_name || 'Unknown Vendor'}
                                 </td>
                                 <td className="px-6 py-4 text-center">
@@ -247,7 +247,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                         <div className="flex justify-between text-[10px] font-bold text-neutral-400">
                                             <span>{Math.round(((order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.received_quantity || 0), 0) || 0) / (order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.quantity || 1), 0) || 1)) * 100)}%</span>
                                         </div>
-                                        <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                        <div className="h-1.5 w-full bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)] rounded-full overflow-hidden">
                                             <div
                                                 className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                                                 style={{ width: `${Math.round(((order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.received_quantity || 0), 0) || 0) / (order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.quantity || 1), 0) || 1)) * 100)}%` }}
@@ -255,12 +255,12 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 font-bold text-neutral-900 dark:text-white text-right">
+                                <td className="px-6 py-4 font-bold text-neutral-900 dark:text-main text-right">
                                     ₹{Number(order.total_amount).toLocaleString()}
                                 </td>
                                 <td className="px-4 sm:px-6 py-4 text-right">
                                     <div className="flex items-center justify-end gap-1 sm:gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={(e) => { e.stopPropagation(); onView(order.id); }} className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-500" title="View Details">
+                                        <button onClick={(e) => { e.stopPropagation(); onView(order.id); }} className="p-1.5 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)] rounded-md transition-colors text-neutral-500" title="View Details">
                                             <MoreHorizontal className="w-4 h-4" />
                                         </button>
                                     </div>

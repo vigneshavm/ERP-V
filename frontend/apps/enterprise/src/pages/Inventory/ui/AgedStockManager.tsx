@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/store/store";
 import { getAgingReport } from "@/entities/inventory/model/inventorySlice";
-import Layout from "@/shared/ui/Layout";
+import Layout, { PageShell } from "@/shared/ui/Layout";
 import {
     Clock,
     TrendingDown,
@@ -98,6 +98,7 @@ const AgedStockManager: React.FC = () => {
 
     return (
         <Layout>
+            <PageShell>
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -111,7 +112,7 @@ const AgedStockManager: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                        <button className="px-4 py-2 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-xl text-sm font-black flex items-center gap-2 hover:bg-[var(--erp-bg-sunken)] shadow-sm transition active:scale-95 uppercase tracking-widest">
                             <Download className="w-4 h-4" /> Export Report
                         </button>
                         <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest">
@@ -121,8 +122,8 @@ const AgedStockManager: React.FC = () => {
                 </div>
 
                 {/* KPI Pulse */}
-                < div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" >
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-3xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Trapped Capital</p>
                         <h3 className="text-3xl font-black text-error italic">₹{(metrics.trappedCapital / 100000).toFixed(2)}L</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -131,13 +132,13 @@ const AgedStockManager: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-3xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Shelf Risk Nodes</p>
                         <h3 className="text-3xl font-black text-warning italic">{metrics.shelfRiskCount}</h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold uppercase tracking-tight">Products sitting &gt; 90 days</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-[var(--erp-card)] p-5 rounded-3xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Inventory Efficiency</p>
                         <h3 className="text-3xl font-black text-success italic">{metrics.efficiencyScore}%</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -146,29 +147,29 @@ const AgedStockManager: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-5 rounded-3xl shadow-xl shadow-primary/10 relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-main p-5 rounded-3xl shadow-xl shadow-primary/10 relative overflow-hidden group">
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-10 group-hover:scale-110 transition duration-700" />
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1 italic">Agent Protocol</p>
                         <p className="text-xs font-bold leading-relaxed pr-8">Liquidate <span className="text-primary italic">120+ day stock</span> to free up cash floor space.</p>
                         <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-primary group-hover:translate-x-1 transition" />
                     </div>
-                </div >
+                </div>
 
                 {/* Filters */}
-                < div className="flex flex-col md:flex-row gap-4" >
+                <div className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                         <input
                             type="text"
                             placeholder="Search Product, SKU or Class..."
-                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
+                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <div className="w-full md:w-64">
                         <select
-                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black uppercase tracking-widest outline-none shadow-sm transition"
+                            className="w-full px-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-xs font-black uppercase tracking-widest outline-none shadow-sm transition"
                             value={ageFilter}
                             onChange={(e) => setAgeFilter(e.target.value as any)}
                         >
@@ -179,18 +180,18 @@ const AgedStockManager: React.FC = () => {
                             <option value="FRESH">Fresh (&lt; 60 Days)</option>
                         </select>
                     </div>
-                </div >
+                </div>
 
                 {/* Main Content Area */}
-                < div className="grid grid-cols-1 lg:grid-cols-3 gap-8" >
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Stock Table */}
-                    < div className="lg:col-span-2 space-y-4" >
+                    <div className="lg:col-span-2 space-y-4">
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] pl-2 mb-4">Stock Age Topology</h4>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm shadow-black/5">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default overflow-hidden shadow-sm shadow-black/5">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm tabular-nums">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-[0.2em] text-[10px]">
+                                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default text-neutral-400 font-black uppercase tracking-[0.2em] text-[10px]">
                                         <tr>
                                             <th className="p-6">Product Information</th>
                                             <th className="p-6 text-center">Age (Days)</th>
@@ -200,17 +201,17 @@ const AgedStockManager: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {filteredStock.map(a => (
-                                            <tr key={a.id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${a.days_aged >= 120 ? 'bg-error/[0.02]' : ''}`}>
+                                            <tr key={a.id} className={`hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${a.days_aged >= 120 ? 'bg-error/[0.02]' : ''}`}>
                                                 <td className="p-6">
                                                     <div className="flex items-start gap-4">
                                                         <div className={`mt-1 p-2 rounded-xl h-fit ${a.days_aged >= 120 ? 'bg-error/10 text-error' :
                                                             a.days_aged >= 90 ? 'bg-warning/10 text-warning' :
-                                                                'bg-neutral-100 dark:bg-neutral-900 text-neutral-400'
+                                                                'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-neutral-400'
                                                             }`}>
                                                             <Package className="w-5 h-5" />
                                                         </div>
                                                         <div>
-                                                            <div className="font-black text-neutral-900 dark:text-white uppercase tracking-tighter group-hover:text-primary transition-colors">{a.name}</div>
+                                                            <div className="font-black text-neutral-900 dark:text-main uppercase tracking-tighter group-hover:text-primary transition-colors">{a.name}</div>
                                                             <div className="flex items-center gap-2 mt-1">
                                                                 <span className="text-[10px] text-neutral-400 font-black">SKU: {a.sku}</span>
                                                                 <span className="w-1 h-1 bg-neutral-300 rounded-full" />
@@ -220,9 +221,9 @@ const AgedStockManager: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="p-6 text-center">
-                                                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-black italic ${a.days_aged >= 120 ? 'bg-error text-white' :
+                                                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-black italic ${a.days_aged >= 120 ? 'bg-error text-main' :
                                                         a.days_aged >= 90 ? 'bg-warning text-neutral-900' :
-                                                            'bg-neutral-100 dark:bg-neutral-900'
+                                                            'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]'
                                                         }`}>
                                                         {a.days_aged}d
                                                     </div>
@@ -250,30 +251,30 @@ const AgedStockManager: React.FC = () => {
                                     </tbody>
                                 </table>
                             </div>
-                            <button className="w-full py-5 bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] hover:text-primary border-t border-neutral-100 dark:border-neutral-800 transition hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            <button className="w-full py-5 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] hover:text-primary border-t border-default dark:border-default transition hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-card)]">
                                 Expand Deep Analysis Topology
                             </button>
                         </div>
-                    </div >
+                    </div>
 
                     {/* Right Panel: Agent Recommendations */}
-                    < div className="space-y-6" >
+                    <div className="space-y-6">
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] pl-2 mb-4">Intelligence Feed</h4>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 p-8 shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2.5rem] border border-default dark:border-default p-8 shadow-sm relative overflow-hidden group">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-error/10 border border-error/20 rounded-full text-error text-[9px] font-black uppercase tracking-[0.2em] mb-6">
                                 <AlertCircle className="w-3.5 h-3.5" /> High Risk Detected
                             </div>
 
                             <div className="space-y-6">
                                 {agedStock.filter(a => a.days_aged >= 120).slice(0, 2).map(a => (
-                                    <div key={a.id} className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-transparent hover:border-error/20 transition cursor-default">
+                                    <div key={a.id} className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-2xl border border-transparent hover:border-error/20 transition cursor-default">
                                         <div className="flex justify-between items-start mb-2">
-                                            <h5 className="text-xs font-black uppercase tracking-tight text-neutral-900 dark:text-white truncate max-w-[150px]">{a.name}</h5>
+                                            <h5 className="text-xs font-black uppercase tracking-tight text-neutral-900 dark:text-main truncate max-w-[150px]">{a.name}</h5>
                                             <span className="text-[10px] font-black text-error italic">{a.days_aged} Days Aged</span>
                                         </div>
                                         <p className="text-[10px] font-bold text-neutral-500 leading-relaxed mb-4 italic">"{a.recommendation.logic}"</p>
-                                        <button className="w-full py-2 bg-error text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-error/20">
+                                        <button className="w-full py-2 bg-error text-main rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-error/20">
                                             Liquidate Now (-{a.recommendation.discount_pct}%)
                                         </button>
                                     </div>
@@ -295,7 +296,7 @@ const AgedStockManager: React.FC = () => {
                         </div>
 
                         {/* Inventory Flow Stats */}
-                        <div className="bg-neutral-950 text-white p-8 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                        <div className="bg-neutral-950 text-main p-8 rounded-[2.5rem] border border-default shadow-2xl relative overflow-hidden group">
                             <Layers className="absolute -top-10 -right-10 w-40 h-40 text-primary opacity-5 group-hover:rotate-12 group-hover:scale-110 transition duration-1000" />
                             <div className="relative z-10">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-6">
@@ -307,18 +308,18 @@ const AgedStockManager: React.FC = () => {
                                         <span className="text-neutral-500">Avg. Inventory Age</span>
                                         <span>42 Days</span>
                                     </div>
-                                    <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                                    <div className="w-full bg-[var(--erp-bg-sunken)] h-1 rounded-full overflow-hidden">
                                         <div className="bg-primary h-full rounded-full" style={{ width: '42%' }} />
                                     </div>
                                     <div className="flex justify-between text-[11px] font-black uppercase tracking-tighter">
                                         <span className="text-neutral-500">Storage Optimization</span>
                                         <span>92%</span>
                                     </div>
-                                    <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                                    <div className="w-full bg-[var(--erp-bg-sunken)] h-1 rounded-full overflow-hidden">
                                         <div className="bg-success h-full rounded-full" style={{ width: '92%' }} />
                                     </div>
                                 </div>
-                                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-3">
+                                <div className="p-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl flex items-start gap-3">
                                     <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                     <p className="text-[10px] text-neutral-400 font-bold leading-relaxed italic">
                                         Wings-Grade Aged Analysis identifies stock that has lost 30% of its initial market relevance.
@@ -326,10 +327,11 @@ const AgedStockManager: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div >
-                </div >
-            </div >
-        </Layout >
+                    </div>
+                </div>
+            </div>
+            </PageShell>
+        </Layout>
     );
 };
 

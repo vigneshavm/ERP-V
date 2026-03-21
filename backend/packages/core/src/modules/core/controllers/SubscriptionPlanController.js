@@ -18,14 +18,8 @@ let SubscriptionPlanController = class SubscriptionPlanController {
      *         description: List of subscription plans
      */
     getPlans = async (_req, res) => {
-        try {
-            const plans = await SubscriptionPlan.find({ isActive: true }).sort({ price: 1 });
-            res.status(200).json({ success: true, data: plans });
-        }
-        catch (error) {
-            console.error('Get Subscription Plans Error:', error);
-            res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-        }
+        const plans = await SubscriptionPlan.find({ isActive: true }).sort({ price: 1 });
+        res.status(200).json({ success: true, data: plans });
     };
 };
 SubscriptionPlanController = __decorate([

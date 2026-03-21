@@ -51,8 +51,8 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     return (
-        <div className="premium-card p-3 sm:p-4 shadow-2xl flex-1 flex flex-col min-h-0 transition-all border-white/10">
-            <h3 className="text-slate-500 font-black uppercase text-[10px] tracking-widest mb-3 flex items-center gap-2">
+        <div className="erp-card p-3 sm:p-4 shadow-2xl flex-1 flex flex-col min-h-0 transition-all border-default">
+            <h3 className="text-muted font-black uppercase text-[10px] tracking-widest mb-3 flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-indigo-400" /> Settlement
             </h3>
 
@@ -61,7 +61,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <div className="mb-4 p-2.5 bg-indigo-600/5 border border-indigo-500/20 rounded-xl">
                     <div className="flex justify-between items-center mb-1.5">
                         <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Loyalty Redemption</span>
-                        <span className="text-[10px] text-slate-500">Bal: <span className="font-black text-slate-300">{activeCustomer.points} pts</span></span>
+                        <span className="text-[10px] text-muted">Bal: <span className="font-black text-muted">{activeCustomer.points} pts</span></span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             <input
                                 type="number"
                                 placeholder="Points to redeem"
-                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white/5 border border-white/10 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500/50 font-mono text-slate-200"
+                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-[var(--erp-bg-sunken)] border border-default rounded focus:outline-none focus:ring-1 focus:ring-indigo-500/50 font-mono text-slate-200"
                                 min="0"
                                 max={activeCustomer.points}
                                 onChange={(e) => {
@@ -84,7 +84,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                     onSetRedeemedPoints(val);
                                 }}
                             />
-                            <span className="absolute right-2 top-1.5 text-[10px] font-bold text-slate-400">PTS</span>
+                            <span className="absolute right-2 top-1.5 text-[10px] font-bold text-muted">PTS</span>
                         </div>
                         <button
                             onClick={() => {
@@ -113,13 +113,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
             <div className="space-y-3 mb-4">
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <span className="text-[9px] font-black text-slate-500 mb-1 block uppercase tracking-widest">Tax Mode</span>
-                        <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
+                        <span className="text-[9px] font-black text-muted mb-1 block uppercase tracking-widest">Tax Mode</span>
+                        <div className="flex bg-[var(--erp-bg-sunken)] rounded-xl p-1 border border-default">
                             {(['EXCLUSIVE', 'INCLUSIVE'] as TaxMode[]).map(mode => (
                                 <button
                                     key={mode}
                                     onClick={() => onSetTaxMode(mode)}
-                                    className={`flex-1 text-[10px] py-1.5 rounded-lg font-black uppercase tracking-widest transition-all ${taxMode === mode ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`flex-1 text-[10px] py-1.5 rounded-lg font-black uppercase tracking-widest transition-all ${taxMode === mode ? 'bg-indigo-600 text-white shadow-lg' : 'text-muted hover:text-muted'}`}
                                 >
                                     {mode === 'EXCLUSIVE' ? '+ Tax' : 'Incl.'}
                                 </button>
@@ -127,13 +127,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                         </div>
                     </div>
                     <div>
-                        <span className="text-[9px] font-black text-slate-500 mb-1 block uppercase tracking-widest">Payment</span>
-                        <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
+                        <span className="text-[9px] font-black text-muted mb-1 block uppercase tracking-widest">Payment</span>
+                        <div className="flex bg-[var(--erp-bg-sunken)] rounded-xl p-1 border border-default">
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button
                                     key={method}
                                     onClick={() => onSetPaymentMethod(method)}
-                                    className={`flex-1 py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-emerald-600 text-white shadow-lg font-black' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`flex-1 py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-emerald-600 text-white shadow-lg font-black' : 'text-muted hover:text-muted'}`}
                                     title={method}
                                 >
                                     {method === 'CASH' && <Banknote className="w-4 h-4" />}
@@ -150,16 +150,16 @@ export const POSFooter: React.FC<POSFooterProps> = ({
 
 
             <div className="mt-auto space-y-1.5">
-                <div className="flex justify-between items-center text-xs border-t border-white/10 pt-3">
-                    <span className="text-slate-500 font-black uppercase tracking-widest">Subtotal</span>
-                    <span className="text-slate-300 font-black font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
+                <div className="flex justify-between items-center text-xs border-t border-default pt-3">
+                    <span className="text-muted font-black uppercase tracking-widest">Subtotal</span>
+                    <span className="text-muted font-black font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-500 font-black uppercase tracking-widest">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
+                    <span className="text-muted font-black uppercase tracking-widest">Tax {taxMode === 'INCLUSIVE' ? '(Incl.)' : ''}</span>
                     <span className="text-indigo-400 font-black font-mono">₹{(taxAmount || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-end pt-2">
-                    <span className="text-slate-400 font-black uppercase text-[10px] tracking-widest mb-1">
+                    <span className="text-muted font-black uppercase text-[10px] tracking-widest mb-1">
                         {isRefund ? 'Refund' : 'Payable'}
                     </span>
                     <span className={`font-black text-3xl font-mono tracking-tighter ${isRefund ? 'text-rose-400' : 'text-emerald-400'}`}>
@@ -170,10 +170,10 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <button
                     onClick={onCheckout}
                     disabled={isEmpty || isProcessing}
-                    className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20 mt-3 text-lg group overflow-hidden"
+                    className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-main font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20 mt-3 text-lg group overflow-hidden"
                     title="Shortcut: Ctrl + Space"
                 >
-                    <div className="absolute inset-0 bg-white/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-[var(--erp-bg-sunken)] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                     {isProcessing ? (
                         <>
                             <Loader2 className="w-6 h-6 animate-spin" />
@@ -183,7 +183,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                         <>
                             <PackageCheck className="w-6 h-6" />
                             Finalize Bill
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/40 px-2 py-1 rounded-lg border border-white/10 font-mono tracking-tighter">Ctrl+Space</span>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/40 px-2 py-1 rounded-lg border border-default font-mono tracking-tighter">Ctrl+Space</span>
                         </>
                     )}
                 </button>

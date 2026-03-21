@@ -9,9 +9,9 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
 
     return (
         <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
+            <div className="bg-[var(--erp-bg-sunken)] p-4 rounded-lg border border-default space-y-4">
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Taxation Configuration</label>
+                    <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Taxation Configuration</label>
                     <div className="flex gap-4 mb-3">
                         {['GST', 'VAT', 'NONE'].map(sys => (
                             <label key={sys} className="flex items-center gap-2 cursor-pointer">
@@ -21,7 +21,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     onChange={() => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, taxSystem: sys as any } })}
                                     className="text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="text-sm font-medium text-slate-700">{sys}</span>
+                                <span className="text-sm font-medium text-secondary">{sys}</span>
                             </label>
                         ))}
                     </div>
@@ -30,11 +30,11 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                 {taxDetails.taxSystem !== 'NONE' && (
                     <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
+                            <label className="block text-sm font-medium text-secondary mb-1">
                                 {taxDetails.taxSystem === 'GST' ? 'GSTIN Number' : 'VAT Number'}
                             </label>
                             <input
-                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
+                                className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
                                 value={taxDetails.gstin}
                                 onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, gstin: e.target.value.toUpperCase() } })}
                                 placeholder={taxDetails.taxSystem === 'GST' ? '22AAAAA0000A1Z5' : 'VAT123456'}
@@ -42,9 +42,9 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">PAN Number</label>
+                            <label className="block text-sm font-medium text-secondary mb-1">PAN Number</label>
                             <input
-                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
+                                className="w-full px-3 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono uppercase"
                                 value={taxDetails.pan}
                                 onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, pan: e.target.value.toUpperCase() } })}
                                 placeholder="ABCDE1234F"
@@ -59,7 +59,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEInvoiceEnabled: e.target.checked } })}
                                     className="rounded text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="text-sm text-slate-700">Enable e-Invoicing</span>
+                                <span className="text-sm text-secondary">Enable e-Invoicing</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -68,7 +68,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEWayBillEnabled: e.target.checked } })}
                                     className="rounded text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="text-sm text-slate-700">Enable e-Way Bill</span>
+                                <span className="text-sm text-secondary">Enable e-Way Bill</span>
                             </label>
                         </div>
                     </div>

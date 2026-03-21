@@ -70,7 +70,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+            <div className="bg-white dark:bg-[var(--erp-card)] w-full max-w-2xl rounded-[3rem] shadow-2xl border border-default dark:border-default overflow-hidden relative">
                 <div className="p-10">
                     <div className="flex items-center justify-between mb-10">
                         <div>
@@ -79,7 +79,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                 <Calendar className="w-4 h-4" /> {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
-                        <button onClick={onClose} className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-full text-neutral-400 hover:text-error transition">
+                        <button onClick={onClose} className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full text-neutral-400 hover:text-error transition">
                             <X size={20} />
                         </button>
                     </div>
@@ -103,7 +103,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             </div>
 
                             {/* Expected vs Physical */}
-                            <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-800">
+                            <div className="p-6 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-[2rem] border border-default dark:border-default">
                                 <div className="flex items-center justify-between mb-6">
                                     <div>
                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Expected Cash in Drawer</p>
@@ -118,7 +118,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                         type="number"
                                         value={physicalCash}
                                         onChange={e => setPhysicalCash(e.target.value)}
-                                        className="w-full px-5 py-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xl font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                        className="w-full px-5 py-4 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-xl font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                         placeholder="Enter counted cash..."
                                     />
                                 </div>
@@ -155,7 +155,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
                                     rows={2}
-                                    className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all resize-none"
+                                    className="w-full px-5 py-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all resize-none"
                                     placeholder="Any discrepancies or notes..."
                                 />
                             </div>
@@ -164,7 +164,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving || !physicalCash}
-                                className="w-full py-5 bg-neutral-950 text-white rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700 disabled:opacity-50"
+                                className="w-full py-5 bg-neutral-950 text-main rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-[var(--erp-bg)] transition-all flex items-center justify-center gap-4 border border-default disabled:opacity-50"
                             >
                                 <CheckCircle2 className="w-5 h-5 text-primary" />
                                 {saving ? 'Saving...' : 'Close Day & Save Reconciliation'}

@@ -155,10 +155,10 @@ const StaffManager: React.FC = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Staff Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Manage users, roles, and terminal assignments.</p>
+                    <h2 className="text-2xl font-bold text-main">Staff Management</h2>
+                    <p className="text-muted dark:text-muted text-sm">Manage users, roles, and terminal assignments.</p>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-slate-900 rounded-lg border border-blue-100 dark:border-slate-800">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-[var(--erp-bg)] rounded-lg border border-blue-100 dark:border-default">
                     <Users className="w-4 h-4 text-blue-600" />
                     <span className="text-xs font-bold text-blue-700">{tenantEmployees.length} Active Staff</span>
                 </div>
@@ -167,35 +167,35 @@ const StaffManager: React.FC = () => {
             <div className="grid lg:grid-cols-3 gap-6">
                 {/* Form Section */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-24">
-                        <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl shadow-sm border border-default dark:border-default overflow-hidden sticky top-24">
+                        <div className="p-4 border-b border-default dark:border-default bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 font-bold text-secondary dark:text-muted flex items-center gap-2">
                             {editingEmpId ? <Pencil className="w-4 h-4 text-blue-600" /> : <Plus className="w-4 h-4 text-blue-600" />}
                             {editingEmpId ? 'Edit Staff Member' : 'Add New Staff'}
                         </div>
                         <form onSubmit={handleAddEmployee} className="p-4 space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Full Name</label>
                                 <input
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     value={newEmp.name}
                                     onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
                                     placeholder="e.g. John Doe"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Phone Number</label>
                                 <input
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     value={newEmp.mobile}
                                     onChange={e => setNewEmp({ ...newEmp, mobile: e.target.value })}
                                     placeholder="e.g. 9876543210"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Role</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Role</label>
                                 <select
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     value={newEmp.roleId}
                                     onChange={e => setNewEmp({ ...newEmp, roleId: e.target.value })}
                                 >
@@ -207,21 +207,21 @@ const StaffManager: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Joining Date</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Joining Date</label>
                                     <input
                                         required
                                         type="date"
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                         value={newEmp.joiningDate}
                                         onChange={e => setNewEmp({ ...newEmp, joiningDate: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Login PIN (4 Digits)</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Login PIN (4 Digits)</label>
                                     <input
                                         required
                                         maxLength={4}
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono tracking-widest dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono tracking-widest dark:text-main"
                                         value={newEmp.pin}
                                         onChange={e => setNewEmp({ ...newEmp, pin: e.target.value.replace(/\D/g, '') })}
                                         placeholder="1234"
@@ -231,20 +231,20 @@ const StaffManager: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Base Salary / Rate</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Base Salary / Rate</label>
                                     <input
                                         required
                                         type="number"
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                         value={newEmp.baseSalary}
                                         onChange={e => setNewEmp({ ...newEmp, baseSalary: e.target.value })}
                                         placeholder="e.g. 15000"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Wage Type</label>
+                                    <label className="block text-xs font-bold text-muted uppercase mb-1">Wage Type</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                        className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                         value={newEmp.wageType}
                                         onChange={e => setNewEmp({ ...newEmp, wageType: e.target.value })}
                                     >
@@ -255,9 +255,9 @@ const StaffManager: React.FC = () => {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Assigned Branch</label>
+                                <label className="block text-xs font-bold text-muted uppercase mb-1">Assigned Branch</label>
                                 <select
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-white"
+                                    className="w-full px-3 py-2 border border-default dark:border-default bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm dark:text-main"
                                     value={newEmp.branchId}
                                     onChange={e => setNewEmp({ ...newEmp, branchId: e.target.value, assignedCounterId: '' })}
                                 >
@@ -273,7 +273,7 @@ const StaffManager: React.FC = () => {
                                 <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg animate-in fade-in slide-in-from-top-2">
                                     <label className="block text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Terminal Assignment</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-indigo-900 dark:text-indigo-300"
+                                        className="w-full px-3 py-2 border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-[var(--erp-bg)] rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-indigo-900 dark:text-indigo-300"
                                         value={newEmp.assignedCounterId}
                                         onChange={e => setNewEmp({ ...newEmp, assignedCounterId: e.target.value })}
                                     >
@@ -286,10 +286,10 @@ const StaffManager: React.FC = () => {
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 rounded-lg border border-default dark:border-default">
                                 <div className="flex items-center gap-2">
-                                    <ShieldCheck className={`w-4 h-4 ${newEmp.is2faEnabled ? 'text-emerald-500' : 'text-slate-400'}`} />
-                                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Enable 2FA Protection</span>
+                                    <ShieldCheck className={`w-4 h-4 ${newEmp.is2faEnabled ? 'text-emerald-500' : 'text-muted'}`} />
+                                    <span className="text-xs font-bold text-secondary dark:text-muted">Enable 2FA Protection</span>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input
@@ -307,7 +307,7 @@ const StaffManager: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={handleCancelEditEmp}
-                                        className="flex-1 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 py-2 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                                        className="flex-1 border border-default dark:border-default text-secondary dark:text-muted py-2 rounded-lg font-medium hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-slate-700 transition"
                                     >
                                         Cancel
                                     </button>
@@ -326,58 +326,58 @@ const StaffManager: React.FC = () => {
                 {/* List Section */}
                 <div className="lg:col-span-2 space-y-4">
                     {isLoadingEmployees ? (
-                        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
+                        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default border-dashed">
                             <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
-                            <p className="text-slate-500 dark:text-slate-400 font-bold">Synchronizing Staff Members...</p>
+                            <p className="text-muted dark:text-muted font-bold">Synchronizing Staff Members...</p>
                         </div>
                     ) : tenantEmployees.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
-                            <Users className="w-12 h-12 text-slate-300 mb-4" />
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white">No Staff Members Found</h3>
-                            <p className="text-slate-500 dark:text-slate-400 max-w-xs text-center mt-2">Add employees to enable store operations and logins.</p>
+                        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default border-dashed">
+                            <Users className="w-12 h-12 text-muted mb-4" />
+                            <h3 className="text-lg font-bold text-main">No Staff Members Found</h3>
+                            <p className="text-muted dark:text-muted max-w-xs text-center mt-2">Add employees to enable store operations and logins.</p>
                         </div>
                     ) : (
                         <div className="grid gap-3">
                             {tenantEmployees.map(emp => (
-                                <div key={emp.id} className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all flex items-center justify-between group">
+                                <div key={emp.id} className="bg-white dark:bg-[var(--erp-card)] p-4 rounded-xl shadow-sm border border-default dark:border-default hover:shadow-md transition-all flex items-center justify-between group">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 transition-colors">
+                                        <div className="w-10 h-10 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-full flex items-center justify-center text-muted dark:text-muted font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 transition-colors">
                                             {emp.name.charAt(0)}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
+                                                <h4 className="font-bold text-main">{emp.name}</h4>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/30 text-secondary dark:text-muted border-default dark:border-default'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>
-                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted dark:text-muted mt-1">
                                                 {emp.phone_number && <span className="font-mono">{emp.phone_number}</span>}
-                                                {emp.phone_number && <span className="text-slate-300 dark:text-slate-700">|</span>}
-                                                <span className="font-mono uppercase tracking-wider bg-slate-50 dark:bg-slate-900 px-1 rounded border border-slate-100 dark:border-slate-700 text-[10px]">PIN: {emp.pin}</span>
+                                                {emp.phone_number && <span className="text-muted dark:text-secondary">|</span>}
+                                                <span className="font-mono uppercase tracking-wider bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] px-1 rounded border border-default dark:border-default text-[10px]">PIN: {emp.pin}</span>
                                                 {emp.branch_id && (
                                                     <>
-                                                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                        <span className="text-muted dark:text-secondary">|</span>
                                                         <span className="text-blue-600 dark:text-blue-400 font-medium">{branches.find((b: any) => b.id === emp.branch_id)?.name || 'Unknown Branch'}</span>
                                                     </>
                                                 )}
                                                 {emp.assigned_counter_id && (
                                                     <>
-                                                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                        <span className="text-muted dark:text-secondary">|</span>
                                                         <span className="font-bold text-indigo-600 dark:text-indigo-400">Terminal: {emp.assigned_counter_id}</span>
                                                     </>
                                                 )}
-                                                <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                                                <span className="text-muted dark:text-secondary">|</span>
+                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted'}`}>
                                                     <ShieldCheck className="w-3 h-3" />
                                                     {emp.is2faEnabled ? '2FA ON' : '2FA OFF'}
                                                 </span>
-                                                <span className="text-slate-300 dark:text-slate-700">|</span>
+                                                <span className="text-muted dark:text-secondary">|</span>
                                                 <span className="text-indigo-600 dark:text-indigo-400 font-bold">
                                                     ₹{emp.baseSalary || emp.dailyRate}/ {emp.wageType?.toLowerCase()}
                                                 </span>
-                                                <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className="text-slate-500 dark:text-slate-400">
+                                                <span className="text-muted dark:text-secondary">|</span>
+                                                <span className="text-muted dark:text-muted">
                                                     Joined: {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : 'N/A'}
                                                 </span>
                                             </div>
@@ -386,13 +386,13 @@ const StaffManager: React.FC = () => {
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => handleStartEditEmp(emp)}
-                                            className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                                            className="p-2 text-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
                                         >
                                             <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteEmployee(emp.id)}
-                                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                            className="p-2 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>

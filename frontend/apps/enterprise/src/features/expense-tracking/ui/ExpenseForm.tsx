@@ -72,7 +72,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl w-full max-w-lg border border-neutral-200 dark:border-neutral-700 flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl shadow-2xl w-full max-w-lg border border-neutral-200 dark:border-neutral-700 flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
                     <h2 className="text-lg font-bold">{editingExpense ? 'Edit Expense' : 'New Expense Entry'}</h2>
                     <button onClick={onClose} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full">
@@ -88,7 +88,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                                 type="text"
                                 value={formData.expense_number}
                                 disabled
-                                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm font-mono opacity-70 cursor-not-allowed"
+                                className="w-full bg-neutral-100 dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm font-mono opacity-70 cursor-not-allowed"
                             />
                         </div>
                         <div>
@@ -98,7 +98,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                                 required
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
                             />
                         </div>
                     </div>
@@ -109,7 +109,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                             <select
                                 value={formData.category}
                                 onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
                             >
                                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
@@ -119,7 +119,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                             <select
                                 value={formData.payment_method}
                                 onChange={e => setFormData({ ...formData, payment_method: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
                             >
                                 {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
                             </select>
@@ -134,7 +134,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                             min="1"
                             value={formData.amount}
                             onChange={e => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                            className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-xl font-bold text-primary"
+                            className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-xl font-bold text-primary"
                         />
                     </div>
 
@@ -144,7 +144,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                             rows={3}
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                            className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
                             placeholder="Details about this expense..."
                         />
                     </div>
@@ -154,7 +154,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
                             type="text"
                             value={formData.reference}
                             onChange={e => setFormData({ ...formData, reference: e.target.value })}
-                            className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                            className="w-full bg-white dark:bg-[var(--erp-bg)] border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
                             placeholder="Invoice #, Transaction ID"
                         />
                     </div>

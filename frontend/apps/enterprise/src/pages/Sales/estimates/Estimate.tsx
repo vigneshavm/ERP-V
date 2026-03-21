@@ -224,22 +224,23 @@ const Estimate = () => {
 
   return (
     <Layout>
+      <div className="page-shell">
       <div className="max-w-7xl mx-auto animate-fade-in pb-10">
         <div className="print:hidden">
           {/* Header */}
           <div className="mb-6 flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
                 <Calculator className="w-6 h-6 text-indigo-600" />
                 Create Estimate / Proforma
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-muted mt-1">
                 Price approximation for customers
               </p>
             </div>
             <button
               onClick={() => navigate("/sales/estimates")}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 font-medium shadow-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-main rounded-lg hover:bg-slate-700 font-medium shadow-sm transition-all"
             >
               <FileText className="w-4 h-4" />
               View Estimates
@@ -250,9 +251,9 @@ const Estimate = () => {
             {/* Left Side - Products */}
             <div className="lg:col-span-2 space-y-4">
               {/* Customer Selection */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+              <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-[var(--erp-bg-sunken)] px-6 py-3 border-b border-default">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
                   </h2>
                 </div>
@@ -262,14 +263,14 @@ const Estimate = () => {
                     <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-main font-bold shadow-lg">
                             {customer.name?.charAt(0).toUpperCase() || '?'}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-800">
+                            <div className="font-bold text-main">
                               {customer.name}
                             </div>
-                            <div className="text-sm text-slate-600 flex items-center gap-1">
+                            <div className="text-sm text-secondary flex items-center gap-1">
                               <Phone className="w-3 h-3" /> {customer.phone}
                             </div>
                           </div>
@@ -285,7 +286,7 @@ const Estimate = () => {
                   ) : (
                     <button
                       onClick={() => setShowCustomerSelect(true)}
-                      className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
+                      className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-muted hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
                     >
                       <User className="w-5 h-5" /> Walk-in Customer (Click to select)
                     </button>
@@ -317,9 +318,9 @@ const Estimate = () => {
               </div>
 
               {/* Product Search */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Products</h2>
+              <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-[var(--erp-bg-sunken)] px-6 py-3 border-b border-default">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Products</h2>
                 </div>
                 <div className="p-6">
                   <div className="relative mb-4">
@@ -330,7 +331,7 @@ const Estimate = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-slate-300 bg-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all"
                     />
-                    <Search className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                    <Search className="absolute left-3 top-2.5 w-5 h-5 text-muted" />
                   </div>
 
                   {/* Products Grid */}
@@ -339,19 +340,19 @@ const Estimate = () => {
                       <button
                         key={item._id}
                         onClick={() => addToCart(item)}
-                        className="p-4 border-2 border-slate-200 rounded-xl text-left transition hover:border-indigo-500 hover:shadow-md bg-white"
+                        className="p-4 border-2 border-default rounded-xl text-left transition hover:border-indigo-500 hover:shadow-md bg-white"
                       >
-                        <div className="font-bold text-slate-800 mb-1 truncate text-sm">
+                        <div className="font-bold text-main mb-1 truncate text-sm">
                           {item.name}
                         </div>
                         <div className="text-lg font-bold text-indigo-600">
                           ₹{item.sellingPrice}
                         </div>
-                        <div className="text-xs text-slate-500 mt-1">
+                        <div className="text-xs text-muted mt-1">
                           Stock: {item.stockQty} {item.unit}
                         </div>
                         {item.sku && (
-                          <div className="text-xs text-slate-400 mt-1">
+                          <div className="text-xs text-muted mt-1">
                             SKU: {item.sku}
                           </div>
                         )}
@@ -380,7 +381,7 @@ const Estimate = () => {
                       cart.map((item) => (
                         <div
                           key={item.itemId}
-                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[rgb(var(--color-input))] rounded-lg"
+                          className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[rgb(var(--color-input))] rounded-lg"
                         >
                           <div className="flex-1">
                             <div className="font-medium text-maindark:text-[rgb(var(--color-text))] text-sm">
@@ -472,7 +473,7 @@ const Estimate = () => {
                   {/* Totals */}
                   <div className="border-t border-default dark:border-[rgb(var(--color-border))] pt-4 mb-4 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                      <span className="text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                         Subtotal:
                       </span>
                       <span className="font-medium text-maindark:text-[rgb(var(--color-text))]">
@@ -480,7 +481,7 @@ const Estimate = () => {
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                      <span className="text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                         Discount:
                       </span>
                       <span className="font-medium text-red-600 dark:text-red-400">
@@ -502,7 +503,7 @@ const Estimate = () => {
                     <button
                       onClick={handlePrintPreview}
                       disabled={cart.length === 0}
-                      className="w-full py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 font-medium disabled:opacity-50 flex justify-center items-center gap-2"
+                      className="w-full py-3 bg-gray-800 text-main rounded-lg hover:bg-[var(--erp-bg)] font-medium disabled:opacity-50 flex justify-center items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -529,7 +530,7 @@ const Estimate = () => {
                     <button
                       onClick={handleClear}
                       disabled={cart.length === 0}
-                      className="w-full py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-3 bg-gray-600 text-main rounded-lg hover:bg-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Clear Cart
                     </button>
@@ -549,7 +550,7 @@ const Estimate = () => {
                     </h3>
                     <button
                       onClick={() => setShowCustomerSelect(false)}
-                      className="text-muted dark:text-[rgb(var(--color-text-muted))] hover:text-gray-600 dark:hover:text-[rgb(var(--color-text))]"
+                      className="text-muted dark:text-[rgb(var(--color-text-muted))] hover:text-secondary dark:hover:text-[rgb(var(--color-text))]"
                     >
                       <svg
                         className="w-6 h-6"
@@ -587,7 +588,7 @@ const Estimate = () => {
                           <div className="font-medium text-maindark:text-[rgb(var(--color-text))]">
                             {c.name}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                          <div className="text-sm text-secondary dark:text-[rgb(var(--color-text-secondary))]">
                             {c.phone}
                           </div>
                         </button>
@@ -611,6 +612,8 @@ const Estimate = () => {
                 }
             `}</style>
       </div>
+              </div>
+
     </Layout>
   );
 };

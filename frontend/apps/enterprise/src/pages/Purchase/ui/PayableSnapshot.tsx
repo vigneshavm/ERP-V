@@ -33,11 +33,11 @@ const PayableSnapshot: React.FC = () => {
     }, [currentBranchId]);
 
     if (loading) {
-        return <div className="flex h-screen items-center justify-center bg-neutral-900 text-white"><RefreshCw className="w-8 h-8 animate-spin" /></div>;
+        return <div className="flex h-screen items-center justify-center bg-[var(--erp-bg)] text-main"><RefreshCw className="w-8 h-8 animate-spin" /></div>;
     }
 
     if (!data) {
-        return <div className="p-4 text-center text-white">Failed to load data.</div>;
+        return <div className="p-4 text-center text-main">Failed to load data.</div>;
     }
 
     const { payables, overdue } = data;
@@ -46,14 +46,14 @@ const PayableSnapshot: React.FC = () => {
     const topOverdueSuppliers = overdue || []; // Array of { businessName, totalAmount, ... }
 
     return (
-        <div className="min-h-screen bg-neutral-900 text-white p-4 font-sans max-w-md mx-auto">
+        <div className="page-shell p-4 font-sans max-w-md mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 font-bold text-xs">P</div>
                     <h1 className="text-xl font-bold tracking-tight">Payable Snapshot</h1>
                 </div>
-                <button onClick={loadData} className="p-2 bg-neutral-800 rounded-full hover:bg-neutral-700">
+                <button onClick={loadData} className="p-2 bg-[var(--erp-card)] rounded-full hover:bg-neutral-700">
                     <RefreshCw className="w-4 h-4 text-neutral-400" />
                 </button>
             </div>
@@ -66,7 +66,7 @@ const PayableSnapshot: React.FC = () => {
                         <span className="text-xs font-bold uppercase text-indigo-200 tracking-wider">Total Payable</span>
                         <TrendingUp className="w-4 h-4 text-indigo-300" />
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">
+                    <div className="text-3xl font-bold text-main mb-1">
                         ₹{totalPayable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                     </div>
                     <div className="text-xs text-indigo-200 opacity-80">
@@ -76,14 +76,14 @@ const PayableSnapshot: React.FC = () => {
 
                 {/* Overdue Alert */}
                 <div className="p-6 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl shadow-lg border border-red-500/30 relative overflow-hidden">
-                    <div className="absolute right-0 top-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <div className="absolute right-0 top-0 w-24 h-24 bg-[var(--erp-bg-sunken)] rounded-full blur-2xl -mr-10 -mt-10"></div>
                     <div className="flex items-start justify-between mb-2">
                         <span className="text-xs font-bold uppercase text-red-200 tracking-wider flex items-center gap-1.5">
                             <AlertTriangle className="w-3 h-3" /> Critical Overdue
                         </span>
                         <TrendingDown className="w-4 h-4 text-red-300" />
                     </div>
-                    <div className="text-3xl font-bold text-white mb-1">
+                    <div className="text-3xl font-bold text-main mb-1">
                         ₹{totalOverdue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                     </div>
                     <div className="text-xs text-red-200 opacity-80">
@@ -98,13 +98,13 @@ const PayableSnapshot: React.FC = () => {
                     </h3>
                     <div className="space-y-3">
                         {topOverdueSuppliers.slice(0, 5).map((sup: any, idx: number) => (
-                            <div key={idx} className="p-4 bg-neutral-800 rounded-xl border border-neutral-700/50 flex items-center justify-between">
+                            <div key={idx} className="p-4 bg-[var(--erp-card)] rounded-xl border border-default/50 flex items-center justify-between">
                                 <div>
                                     <div className="font-bold text-sm text-neutral-200">{sup.supplierName || sup.businessName}</div>
                                     <div className="text-xs text-red-400 font-medium mt-0.5">{sup.daysOverdue || '0'} days overdue</div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="font-bold text-white">₹{(sup.totalAmount || sup.amount || 0).toLocaleString()}</div>
+                                    <div className="font-bold text-main">₹{(sup.totalAmount || sup.amount || 0).toLocaleString()}</div>
                                     <button className="text-[10px] bg-white text-black font-bold px-2 py-1 rounded mt-1 hover:bg-neutral-200">
                                         PAY NOW
                                     </button>
@@ -112,7 +112,7 @@ const PayableSnapshot: React.FC = () => {
                             </div>
                         ))}
                         {topOverdueSuppliers.length === 0 && (
-                            <div className="p-8 text-center text-neutral-500 text-sm bg-neutral-800/50 rounded-xl border border-dashed border-neutral-800">
+                            <div className="p-8 text-center text-neutral-500 text-sm bg-[var(--erp-card)]/50 rounded-xl border border-dashed border-default">
                                 No critical overdue payments found.
                             </div>
                         )}
@@ -121,7 +121,7 @@ const PayableSnapshot: React.FC = () => {
             </div>
 
             <div className="mt-8 text-center">
-                <button className="text-xs font-bold text-neutral-500 hover:text-white transition-colors">
+                <button className="text-xs font-bold text-neutral-500 hover:text-main transition-colors">
                     View Full Report
                 </button>
             </div>

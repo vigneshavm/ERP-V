@@ -32,31 +32,31 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden">
-                <div className="p-8 text-center border-b border-slate-700 bg-slate-800/50">
+        <div className="min-h-screen bg-[var(--erp-bg)] flex items-center justify-center p-4">
+            <div className="max-w-md w-full bg-[var(--erp-card)] rounded-2xl shadow-2xl border border-default overflow-hidden">
+                <div className="p-8 text-center border-b border-default bg-[var(--erp-card)]/50">
                     <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/30">
                         <Shield className="w-8 h-8 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-1">System Access</h2>
-                    <p className="text-slate-400 text-sm">Restricted to Authorized Personnel Only</p>
+                    <p className="text-muted text-sm">Restricted to Authorized Personnel Only</p>
                 </div>
 
                 <div className="p-8">
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div>
-                            <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+                            <label className="block text-muted text-xs font-bold uppercase tracking-wider mb-2">
                                 Admin Security PIN
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-slate-500" />
+                                    <Lock className="h-5 w-5 text-muted" />
                                 </div>
                                 <input
                                     type="password"
                                     value={pin}
                                     onChange={(e) => setPin(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm"
+                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-[var(--erp-bg)]/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm"
                                     placeholder="Enter 4-digit PIN"
                                     maxLength={8}
                                     autoFocus
@@ -82,7 +82,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                             <button
                                 type="button"
                                 onClick={onCancel}
-                                className="w-full flex justify-center py-3 px-4 border border-slate-700 rounded-xl shadow-sm text-sm font-bold text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-slate-500 transition-all"
+                                className="w-full flex justify-center py-3 px-4 border border-default rounded-xl shadow-sm text-sm font-bold text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-slate-500 transition-all"
                             >
                                 Return to Landing Page
                             </button>
@@ -90,8 +90,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                     </form>
                 </div>
 
-                <div className="bg-slate-900/50 p-4 text-center border-t border-slate-700">
-                    <p className="text-xs text-slate-500">Secure Environment • v2.4.0</p>
+                <div className="bg-[var(--erp-bg)]/50 p-4 text-center border-t border-default">
+                    <p className="text-xs text-muted">Secure Environment • v2.4.0</p>
                 </div>
             </div>
         </div>

@@ -64,6 +64,7 @@ const Customers = () => {
 
     return (
         <Layout>
+            <div className="page-shell">
             <PageHeader
                 title="Customer Portfolio"
                 description="Monitor market exposure, collection cycles, and partner relations"
@@ -72,7 +73,7 @@ const Customers = () => {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate('/customers/with-dues')}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:bg-white/10 transition-all font-mono italic"
+                            className="flex items-center gap-2 px-6 py-2.5 bg-[var(--erp-bg-sunken)] border border-default text-muted rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:bg-white/10 transition-all font-mono italic"
                         >
                             <CreditCard className="w-4 h-4 text-amber-400" /> Collection Audit
                         </button>
@@ -90,7 +91,7 @@ const Customers = () => {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {stats.map((stat, i) => (
-                        <div key={i} className="premium-card p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group border border-white/5">
+                        <div key={i} className="erp-card p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group border border-default">
                             <div className="absolute top-0 right-0 p-8 sm:p-10 opacity-[0.03] group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                                 <stat.icon className={`w-28 h-28 ${stat.color}`} />
                             </div>
@@ -100,7 +101,7 @@ const Customers = () => {
                                 </div>
                                 <div className="flex items-end justify-between">
                                     <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] italic">{stat.label}</p>
+                                        <p className="text-[10px] font-black text-muted uppercase tracking-[0.25em] italic">{stat.label}</p>
                                         <p className="text-3xl sm:text-4xl font-black text-slate-100 mt-1 font-mono italic">{stat.value}</p>
                                     </div>
                                     <span className={`text-[9px] font-black px-3 py-1.5 rounded-xl ${stat.bg} ${stat.color} uppercase tracking-widest border ${stat.border} italic font-mono`}>
@@ -113,26 +114,26 @@ const Customers = () => {
                 </div>
 
                 {/* Main Content Card */}
-                <div className="premium-card rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/5">
-                    <div className="p-6 sm:p-8 border-b border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6 bg-white/5 backdrop-blur-xl">
+                <div className="erp-card rounded-[2.5rem] shadow-2xl overflow-hidden border border-default">
+                    <div className="p-6 sm:p-8 border-b border-default flex flex-col sm:flex-row justify-between items-center gap-6 bg-[var(--erp-bg-sunken)] backdrop-blur-xl">
                         <div className="relative w-full sm:w-[500px] group">
-                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary group-focus-within:text-indigo-400 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search strategic partners by name, CID, or communication node..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-1 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all font-black text-xs text-slate-200 placeholder:text-slate-600 tracking-wide"
+                                className="w-full pl-12 pr-6 py-4 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl outline-none focus:ring-1 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all font-black text-xs text-slate-200 placeholder:text-secondary tracking-wide"
                             />
                         </div>
                         <div className="flex items-center gap-3">
-                            <button className="p-3.5 text-slate-500 hover:text-indigo-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10">
+                            <button className="p-3.5 text-muted hover:text-indigo-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10">
                                 <RefreshCcw className="w-4 h-4" />
                             </button>
-                            <button className="p-3.5 text-slate-500 hover:text-indigo-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10">
+                            <button className="p-3.5 text-muted hover:text-indigo-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10">
                                 <Download className="w-4 h-4" />
                             </button>
-                            <button className="p-3.5 text-slate-500 hover:text-indigo-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10">
+                            <button className="p-3.5 text-muted hover:text-indigo-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10">
                                 <MoreVertical className="w-4 h-4" />
                             </button>
                         </div>
@@ -141,7 +142,7 @@ const Customers = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-white/5 backdrop-blur-md text-[10px] uppercase tracking-[0.25em] font-black text-slate-500">
+                                <tr className="bg-[var(--erp-bg-sunken)] backdrop-blur-md text-[10px] uppercase tracking-[0.25em] font-black text-muted">
                                     <th className="px-8 py-6">Strategic Partner</th>
                                     <th className="px-8 py-6">Communication Node</th>
                                     <th className="px-8 py-6">Risk Quotient</th>
@@ -155,7 +156,7 @@ const Customers = () => {
                                         <td colSpan={5} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6">
                                                 <div className="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin shadow-lg shadow-indigo-500/20"></div>
-                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] animate-pulse italic">Synchronizing Global Records...</p>
+                                                <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] animate-pulse italic">Synchronizing Global Records...</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -163,31 +164,31 @@ const Customers = () => {
                                     <tr>
                                         <td colSpan={5} className="px-8 py-20 text-center">
                                             <div className="flex flex-col items-center gap-4 opacity-50 grayscale">
-                                                <Users className="w-16 h-16 text-slate-300" />
-                                                <p className="text-xs font-black text-slate-500 uppercase tracking-widest leading-relaxed">No Consumer Patterns Detected<br /><span className="text-[10px] font-normal lowercase italic text-slate-400">Modify your search parameters for broader analysis</span></p>
+                                                <Users className="w-16 h-16 text-muted" />
+                                                <p className="text-xs font-black text-muted uppercase tracking-widest leading-relaxed">No Consumer Patterns Detected<br /><span className="text-[10px] font-normal lowercase italic text-muted">Modify your search parameters for broader analysis</span></p>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : filteredCustomers.map((customer) => (
-                                    <tr key={customer._id} className="group hover:bg-white/5 transition-all duration-300 border-b border-white/5 last:border-0 cursor-default">
+                                    <tr key={customer._id} className="group hover:bg-[var(--erp-bg-sunken)] transition-all duration-300 border-b border-default last:border-0 cursor-default">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-5">
-                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 border border-white/10 flex items-center justify-center text-indigo-400 font-black text-lg shadow-xl group-hover:scale-110 transition-all duration-500 group-hover:border-indigo-500/30 font-mono italic">
+                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 border border-default flex items-center justify-center text-indigo-400 font-black text-lg shadow-xl group-hover:scale-110 transition-all duration-500 group-hover:border-indigo-500/30 font-mono italic">
                                                     {customer.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-black text-slate-200 leading-none mb-1.5 uppercase tracking-wide group-hover:text-indigo-400 transition-colors">{customer.name}</p>
-                                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] font-mono italic">CID-{customer._id.slice(-8).toUpperCase()}</p>
+                                                    <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] font-mono italic">CID-{customer._id.slice(-8).toUpperCase()}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="space-y-2">
-                                                <div className="flex items-center gap-3 text-slate-400">
-                                                    <Phone className="w-3.5 h-3.5 text-slate-600" />
+                                                <div className="flex items-center gap-3 text-muted">
+                                                    <Phone className="w-3.5 h-3.5 text-secondary" />
                                                     <span className="text-[11px] font-black font-mono tracking-tight">{customer.phone}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-slate-600">
+                                                <div className="flex items-center gap-3 text-secondary">
                                                     <Mail className="w-3.5 h-3.5" />
                                                     <span className="text-[10px] font-bold italic tracking-wide lowercase">{customer.email || 'offline-only'}</span>
                                                 </div>
@@ -201,7 +202,7 @@ const Customers = () => {
                                                     </span>
                                                     {customer.dues > 0 && <span className="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em] animate-pulse flex items-center gap-1.5 italic"><ArrowUpRight className="w-3 h-3" /> Critical</span>}
                                                 </div>
-                                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
+                                                <div className="w-full h-1.5 bg-[var(--erp-bg-sunken)] rounded-full overflow-hidden shadow-inner border border-default">
                                                     <div
                                                         className={`h-full rounded-full transition-all duration-1000 ${customer.dues > 0 ? 'bg-gradient-to-r from-rose-500 to-rose-600 shadow-lg shadow-rose-500/50' : 'bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/50'}`}
                                                         style={{ width: customer.dues > 100000 ? '100%' : `${Math.max(5, (customer.dues / 100000) * 100)}%` }}
@@ -219,21 +220,21 @@ const Customers = () => {
                                             <div className="flex items-center justify-end gap-3">
                                                 <button
                                                     onClick={() => navigate(`/customers/${customer._id}`)}
-                                                    className="p-3 text-slate-500 hover:text-indigo-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-indigo-500/30"
+                                                    className="p-3 text-muted hover:text-indigo-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-indigo-500/30"
                                                     title="Risk Profile"
                                                 >
                                                     <Eye className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => navigate(`/customers/edit/${customer._id}`)}
-                                                    className="p-3 text-slate-500 hover:text-blue-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-blue-500/30"
+                                                    className="p-3 text-muted hover:text-blue-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-blue-500/30"
                                                     title="Modify Node"
                                                 >
                                                     <TrendingUp className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => setDeleteConfirm(customer._id)}
-                                                    className="p-3 text-slate-500 hover:text-rose-400 bg-white/5 border border-white/10 rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-rose-500/30"
+                                                    className="p-3 text-muted hover:text-rose-400 bg-[var(--erp-bg-sunken)] border border-default rounded-2xl transition-all shadow-lg hover:bg-white/10 hover:border-rose-500/30"
                                                     title="Termination"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -262,7 +263,7 @@ const Customers = () => {
                         </div>
                         <div className="space-y-3">
                             <p className="text-xl font-black text-slate-200 leading-tight uppercase tracking-tight italic">Terminate Partner Link?</p>
-                            <p className="text-[11px] text-slate-500 font-bold leading-relaxed tracking-wide">
+                            <p className="text-[11px] text-muted font-bold leading-relaxed tracking-wide">
                                 Terminating this consumer record will archive all associated marketplace behaviors. Historical transaction integrity will be preserved for auditing in the fiscal ledger.
                             </p>
                         </div>
@@ -270,7 +271,7 @@ const Customers = () => {
                     <div className="flex gap-4">
                         <button
                             onClick={() => setDeleteConfirm(null)}
-                            className="flex-1 px-6 py-4 bg-white/5 border border-white/10 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] hover:bg-white/10 transition-all shadow-xl font-mono italic"
+                            className="flex-1 px-6 py-4 bg-[var(--erp-bg-sunken)] border border-default text-muted rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] hover:bg-white/10 transition-all shadow-xl font-mono italic"
                         >
                             Abort Process
                         </button>
@@ -283,6 +284,8 @@ const Customers = () => {
                     </div>
                 </div>
             </Modal>
+                  </div>
+
         </Layout>
     );
 };

@@ -1,51 +1,41 @@
 import Redis from 'ioredis';
 import crypto from 'crypto';
 import { error as logError, warn } from '@smarterp/shared/config/logger.js';
-// Redis client for distributed rate limiting
-// Cast to any to avoid "not constructable" error if default export mismatch occurs
+// Redis client for distributed rate limiting.
+// Graceful degradation: if Redis is unavailable the in-memory fallback below
+// keeps rate limiting active on the local instance (non-distributed but still effective).
 const RedisClass = Redis;
-// const redisClient = new RedisClass({
-//     host: process.env.REDIS_HOST || 'localhost',
-//     port: parseInt(process.env.REDIS_PORT || '6379'),
-//     password: process.env.REDIS_PASSWORD || undefined,
-//     retryStrategy: (times: number) => {
-//         if (times > 3) return null;
-//         return Math.min(times * 50, 200);
-//     },
-//     maxRetriesPerRequest: 3,
-//     lazyConnect: true,
-//     enableOfflineQueue: false, // Don't queue commands when offline
-// });
-const redisClient = {
-    on: () => { },
-    connect: async () => { },
-    get: async () => null,
-    setex: async () => { },
-    del: async () => { },
-    sadd: async () => { },
-    expire: async () => { },
-    scard: async () => 0,
-};
+const redisClient = new RedisClass({
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD || undefined,
+    retryStrategy: (times) => {
+        if (times > 3)
+            return null; // stop retrying after 3 attempts
+        return Math.min(times * 50, 200);
+    },
+    maxRetriesPerRequest: 3,
+    lazyConnect: true,
+    enableOfflineQueue: false, // don't queue commands when offline
+});
 let isRedisAvailable = false;
-let redisErrorLogged = false; // Track if we've already logged the Redis error
-// redisClient.on('connect', () => {
-//     console.log('✅ Redis connected (rate limiting)');
-//     isRedisAvailable = true;
-//     redisErrorLogged = false; // Reset error flag on successful connection
-// });
-// redisClient.on('error', (err: any) => {
-//     // Only log the first Redis error to prevent log spam
-//     if (!redisErrorLogged && process.env.NODE_ENV !== 'test') {
-//         logError('Redis error (rate limiting):', err.message);
-//         warn('Redis unavailable - rate limiting will use in-memory fallback');
-//         redisErrorLogged = true;
-//     }
-//     isRedisAvailable = false;
-// });
-// // Attempt connection (non-blocking)
-// redisClient.connect().catch((_err: any) => {
-//     // Error will be logged by the 'error' event handler
-// });
+let redisErrorLogged = false;
+redisClient.on('connect', () => {
+    console.log('✅ Redis connected (rate limiting)');
+    isRedisAvailable = true;
+    redisErrorLogged = false;
+});
+redisClient.on('error', (err) => {
+    // Log once — don't spam on every reconnect attempt
+    if (!redisErrorLogged && process.env.NODE_ENV !== 'test') {
+        logError('Redis error (rate limiting):', err.message);
+        warn('Redis unavailable — rate limiting falling back to in-memory store (single-instance only)');
+        redisErrorLogged = true;
+    }
+    isRedisAvailable = false;
+});
+// Non-blocking connect — errors handled by the 'error' event above
+redisClient.connect().catch((_err) => { });
 // In-memory fallback store (per-instance only)
 const memoryStore = new Map();
 /**

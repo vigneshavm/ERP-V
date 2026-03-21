@@ -232,7 +232,7 @@ const BankStatementView: React.FC = () => {
                         <div className={`w-14 h-14 rounded-2xl ${dragging ? 'bg-primary' : 'bg-primary-soft'} flex items-center justify-center transition-colors duration-200`}>
                             {loading
                                 ? <RefreshCw className="w-7 h-7 text-primary [animation:bs-spin-slow_0.9s_linear_infinite]" />
-                                : <FileText className={`w-7 h-7 ${dragging ? 'text-white' : 'text-primary'}`} />}
+                                : <FileText className={`w-7 h-7 ${dragging ? 'text-main' : 'text-primary'}`} />}
                         </div>
                         <div>
                             <p className="font-semibold text-main text-sm">
