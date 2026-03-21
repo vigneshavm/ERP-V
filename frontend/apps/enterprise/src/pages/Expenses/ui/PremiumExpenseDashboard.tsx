@@ -24,7 +24,7 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
     BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area
 } from 'recharts';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Expense } from "../../../features/expense-tracking/lib/useExpenses";
 
 interface PremiumExpenseDashboardProps {
@@ -107,7 +107,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
         return { total, monthTotal, growth, pieData, topCategories, dailyData };
     }, [expenses]);
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -117,7 +117,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { y: 20, opacity: 0 },
         visible: {
             y: 0,
