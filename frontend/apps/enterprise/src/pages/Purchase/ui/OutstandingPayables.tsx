@@ -1,7 +1,7 @@
 import React from 'react';
-import { FileSpreadsheet, Printer, Search } from 'lucide-react';
+import { FileSpreadsheet, Printer, Search, ShieldCheck, Database, Zap, Download } from 'lucide-react';
 import Layout from "@/shared/ui/Layout/Layout";
-import PageHeader from "@/shared/ui/Layout/PageHeader";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import { useOutstandingPayables } from '../hooks/useOutstandingPayables';
 import PayablesStats from '../Components/PayablesStats';
 import PayablesAgingProfile from '../Components/PayablesAgingProfile';
@@ -52,28 +52,40 @@ const OutstandingPayables: React.FC = () => {
 
     return (
         <Layout>
-            <div className="page-shell">
-                <PageHeader
-                    title="Outstanding Payables"
-                    description="Advanced tracking and aging analysis for supplier liabilities"
-                    actions={
-                        <div className="flex gap-2">
-                            <button
-                                onClick={exportToExcel}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs font-bold text-secondary hover:text-emerald-600 transition-all shadow-sm"
-                            >
-                                <FileSpreadsheet size={16} /> Export
-                            </button>
-                            <button
-                                onClick={printReport}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl text-xs font-bold text-secondary hover:text-indigo-600 transition-all shadow-sm"
-                            >
-                                <Printer size={16} /> Print
-                            </button>
+            <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Cinematic Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-md border border-indigo-500/20">Fiscal Strategy</span>
+                            <span className="text-neutral-300 dark:text-neutral-700">/</span>
+                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Liability Command</span>
                         </div>
-                    }
-                />
+                        <h2 className="text-4xl font-black text-neutral-900 dark:text-main tracking-tight leading-none flex items-center gap-3">
+                            Outstanding Matrix <Database className="w-8 h-8 text-indigo-500" />
+                        </h2>
+                        <p className="text-sm text-neutral-500 font-medium italic mt-3">
+                            Precision tracking and ageing analysis for global supplier liabilities.
+                        </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={exportToExcel}
+                            className="p-3.5 bg-white dark:bg-neutral-900 border border-default dark:border-neutral-800 text-neutral-400 hover:text-emerald-500 rounded-2xl transition-all shadow-sm group"
+                        >
+                            <FileSpreadsheet className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        </button>
+                        <button
+                            onClick={printReport}
+                            className="p-3.5 bg-white dark:bg-neutral-900 border border-default dark:border-neutral-800 text-neutral-400 hover:text-blue-500 rounded-2xl transition-all shadow-sm group"
+                        >
+                            <Printer className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        </button>
+                    </div>
+                </div>
 
+                {/* KPI Matrix */}
                 <PayablesStats
                     totalPayable={totalPayable}
                     totalOverdue={totalOverdue}
@@ -82,64 +94,86 @@ const OutstandingPayables: React.FC = () => {
                     criticalVendorsCount={criticalVendorsCount}
                 />
 
+                {/* Ageing Profile Island */}
                 <PayablesAgingProfile
                     agingAnalysis={agingAnalysis}
                     totalPayable={totalPayable}
                 />
 
-                <PayablesFilters
-                    viewMode={viewMode}
-                    onViewModeChange={setViewMode}
-                    searchTerm={searchTerm}
-                    onSearchTermChange={setSearchTerm}
-                    statusFilter={statusFilter}
-                    onStatusFilterChange={setStatusFilter}
-                    vendorFilter={vendorFilter}
-                    onVendorFilterChange={setVendorFilter}
-                    suppliers={suppliers}
-                />
+                {/* Registry Matrix Island */}
+                <div className="space-y-8">
+                     <PayablesFilters
+                        viewMode={viewMode}
+                        onViewModeChange={setViewMode}
+                        searchTerm={searchTerm}
+                        onSearchTermChange={setSearchTerm}
+                        statusFilter={statusFilter}
+                        onStatusFilterChange={setStatusFilter}
+                        vendorFilter={vendorFilter}
+                        onVendorFilterChange={setVendorFilter}
+                        suppliers={suppliers}
+                    />
 
-                <PayablesTable
-                    viewMode={viewMode}
-                    filteredBills={filteredBills}
-                    vendorSummary={vendorSummary}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    onSort={handleSort}
-                    onQuickPayment={handleQuickPayment}
-                />
+                    {isLoading ? (
+                         <div className="erp-card rounded-[3rem] p-32 flex flex-col items-center justify-center border-none shadow-sm">
+                            <div className="w-16 h-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin mb-6" />
+                            <p className="text-sm font-black uppercase tracking-widest text-neutral-400 animate-pulse italic">Synchronizing Liability Matrix...</p>
+                        </div>
+                    ) : (
+                        <PayablesTable
+                            viewMode={viewMode}
+                            filteredBills={filteredBills}
+                            vendorSummary={vendorSummary}
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={handleSort}
+                            onQuickPayment={handleQuickPayment}
+                        />
+                    )}
+                </div>
 
-                {/* Empty State */}
-                {filteredBills.length === 0 && (
-                    <div className="py-20 text-center bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm mt-6">
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-card)]/50 rounded-2xl flex items-center justify-center text-muted">
-                                <Search size={32} />
+                 {/* Empty Registry State */}
+                 {!isLoading && filteredBills.length === 0 && (
+                    <div className="erp-card rounded-[3rem] py-32 text-center border-none shadow-sm">
+                        <div className="flex flex-col items-center">
+                            <div className="p-8 bg-neutral-50 dark:bg-neutral-900 rounded-[3rem] text-neutral-200 mb-6">
+                                <Search className="w-16 h-16" />
                             </div>
-                            <div>
-                                <h3 className="text-sm font-black text-main uppercase tracking-widest">No matching payables</h3>
-                                <p className="text-xs text-muted mt-1">Adjust your filters or search terms to find what you're looking for.</p>
-                            </div>
+                            <h3 className="text-xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic">Vortex: Node Null</h3>
+                            <p className="text-sm font-bold text-neutral-500 mt-2 italic">Zero liability detected in current audit parameters.</p>
                             <button
                                 onClick={() => { setSearchTerm(''); setStatusFilter('All'); setVendorFilter(''); }}
-                                className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest px-4 py-2 border border-emerald-200 rounded-lg"
+                                className="mt-8 px-8 py-3 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:scale-105 transition-transform"
                             >
-                                Reset All Filters
+                                Reset Analysis Matrix
                             </button>
                         </div>
                     </div>
                 )}
 
-                <div className="flex justify-between items-center text-[10px] font-bold text-muted uppercase tracking-widest px-2">
-                    <div>Showing {filteredBills.length} of {processedBills.length} Outstanding Items</div>
+                {/* Registry Log Footer */}
+                <div className="flex items-center justify-between px-8 py-4 bg-white/50 dark:bg-neutral-900/50 rounded-2xl border border-default dark:border-neutral-800">
+                    <div className="text-[9px] font-black uppercase tracking-widest text-neutral-400 italic">
+                        Auditing {filteredBills.length} <span className="text-indigo-500">/</span> {processedBills.length} Transaction Segments
+                    </div>
                     <div className="flex items-center gap-2">
-                        System Last Updated: {new Date().toLocaleTimeString()}
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic">Matrix Synchronized: {new Date().toLocaleTimeString()}</span>
                     </div>
                 </div>
-            </div>
+
+                {/* Global Verification Footprint */}
+                <div className="mt-8 flex items-center justify-center gap-6 opacity-30 group pb-24">
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                    <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">Fiscal Protocol Shield Verified • BizzAI Intelligence Core</span>
+                    </div>
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                </div>
+            </PageShell>
         </Layout>
     );
 };
 
 export default OutstandingPayables;
-

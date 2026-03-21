@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck } from 'lucide-react';
+import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck, Sparkles, TrendingUp, Zap } from 'lucide-react';
 import { TaxMode, PaymentMethod } from "@repo/shared";
 import { Customer } from "@repo/shared";
 import { LoyaltyConfig } from '@/entities/session/model/loyalty';
@@ -51,9 +51,12 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     return (
-        <div className="erp-card p-3 sm:p-4 shadow-2xl flex-1 flex flex-col min-h-0 transition-all border-default">
-            <h3 className="text-muted font-black uppercase text-[10px] tracking-widest mb-3 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-indigo-400" /> Settlement
+        <div className="erp-card p-4 sm:p-6 shadow-2xl flex-1 flex flex-col min-h-0 transition-all border-default rounded-[2.5rem] bg-gradient-to-br from-[var(--erp-card)] to-[var(--erp-bg-sunken)]">
+            <h3 className="text-muted font-black uppercase text-[10px] tracking-widest mb-4 flex items-center gap-2">
+                <div className="p-1.5 bg-indigo-500/10 rounded-lg">
+                    <CreditCard className="w-4 h-4 text-indigo-400" />
+                </div>
+                Settlement Intelligence
             </h3>
 
             {/* Redemption Section */}
@@ -170,20 +173,25 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <button
                     onClick={onCheckout}
                     disabled={isEmpty || isProcessing}
-                    className="relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-main font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20 mt-3 text-lg group overflow-hidden"
+                    className="relative w-full py-5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest rounded-3xl flex items-center justify-center gap-3 transition-all shadow-2xl shadow-indigo-600/30 mt-4 text-xl group overflow-hidden"
                     title="Shortcut: Ctrl + Space"
                 >
-                    <div className="absolute inset-0 bg-[var(--erp-bg-sunken)] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
                     {isProcessing ? (
                         <>
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                            Processing
+                            <Loader2 className="w-7 h-7 animate-spin" />
+                            <span className="animate-pulse">Authorizing...</span>
                         </>
                     ) : (
                         <>
-                            <PackageCheck className="w-6 h-6" />
+                            <div className="relative">
+                                <PackageCheck className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                                <div className="absolute -top-1 -right-1">
+                                    <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+                                </div>
+                            </div>
                             Finalize Bill
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/40 px-2 py-1 rounded-lg border border-default font-mono tracking-tighter">Ctrl+Space</span>
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] opacity-40 font-black tracking-tighter bg-black/20 px-2 py-1 rounded-lg">Ctrl + Space</span>
                         </>
                     )}
                 </button>

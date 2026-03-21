@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import Layout from "@/shared/ui/Layout/Layout";
 import MetricCard from "@/shared/ui/Feedback/MetricCard";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import { formatCurrency } from "@/shared/lib/utils/helpers";
 
 // --- Types ---
@@ -156,8 +157,7 @@ const POSOrdersIntelligence: React.FC = () => {
 
     return (
         <Layout>
-            <div className="bg-app">
-            <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
+            <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
@@ -174,10 +174,10 @@ const POSOrdersIntelligence: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-[var(--erp-bg-sunken)] transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 erp-card rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-[var(--erp-bg-sunken)] transition-all active:scale-95 border-none">
                             <Download className="w-4 h-4 text-primary" /> Export Audit Log
                         </button>
-                        <button className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/25 hover:opacity-90 transition-all active:scale-95">
                             <RefreshCcw className="w-4 h-4" /> Refresh Engine
                         </button>
                     </div>
@@ -248,11 +248,11 @@ const POSOrdersIntelligence: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Main Content Pane */}
-                    <div className="lg:col-span-2 space-y-4">
+                    <div className="lg:col-span-2 space-y-8">
                         {viewMode === 'OVERVIEW' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {branchSummary.map(b => (
-                                    <div key={b.branch} className="bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/40 transition-all hover:scale-[1.01]">
+                                    <div key={b.branch} className="erp-card !p-8 shadow-sm group hover:border-primary/40 transition-all hover:scale-[1.01] rounded-[2.5rem]">
                                         <div className="flex justify-between items-start mb-8">
                                             <div className="flex items-center gap-4">
                                                 <div className="p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-2xl text-neutral-400 group-hover:text-primary transition-colors">
@@ -310,19 +310,19 @@ const POSOrdersIntelligence: React.FC = () => {
                         {viewMode === 'AUDIT' && (
                             <div className="space-y-4">
                                 <div className="relative mb-6">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                     <input
                                         type="text"
                                         placeholder="Search Bill ID, Branch or Risk..."
-                                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-[var(--erp-card)] border border-default dark:border-default rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                        className="w-full pl-12 pr-6 py-4 erp-card border-none rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/10 shadow-inner bg-white dark:bg-neutral-900"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
 
-                                <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2rem] border border-default dark:border-default overflow-hidden shadow-sm">
-                                    <table className="w-full text-left text-xs tabular-nums">
-                                        <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] border-b border-default dark:border-default text-neutral-400 font-black uppercase tracking-[0.15em]">
+                                <div className="erp-card rounded-[2.5rem] overflow-hidden shadow-2xl border-none">
+                                    <table className="w-full text-left text-xs tabular-nums border-collapse">
+                                        <thead className="bg-[var(--erp-bg-sunken)]/50 border-b border-default text-neutral-500 font-black uppercase tracking-[0.15em]">
                                             <tr>
                                                 <th className="p-5">Bill / Time</th>
                                                 <th className="p-5">Value (Incl. Tax)</th>
@@ -363,7 +363,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                                 </tr>
                                             ) : (
                                                 filteredOrders.map(order => (
-                                                    <tr key={order.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-[var(--erp-bg)]/50 transition-colors group">
+                                                    <tr key={order.id} className="hover:bg-indigo-500/5 transition-all group border-b border-default last:border-0">
                                                         <td className="p-5">
                                                             <div className="flex items-center gap-4">
                                                                 <div className={`p-2 rounded-xl ${order.risk_level === 'LOW' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}`}>
@@ -461,8 +461,10 @@ const POSOrdersIntelligence: React.FC = () => {
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest pl-1">Operational Sentinel</h4>
 
                         {/* Security & Integrity Filters */}
-                        <div className="bg-white dark:bg-[var(--erp-card)] rounded-[2rem] border border-default dark:border-default p-6 shadow-sm">
-                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6">Security Shield Status</p>
+                        <div className="erp-card rounded-[2.5rem] p-8 shadow-sm">
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                                <ShieldAlert className="w-4 h-4 text-primary" /> Security Shield
+                            </p>
                             <div className="space-y-3">
                                 {[
                                     { name: 'Tax Parity Check', status: true },
@@ -470,9 +472,9 @@ const POSOrdersIntelligence: React.FC = () => {
                                     { name: 'Stock Sync Auditor', status: true },
                                     { name: 'Loyalty Fraud Detect', status: false },
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default">
+                                    <div key={i} className="flex items-center justify-between p-4 bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/30 rounded-2xl border border-default transition-colors hover:bg-white/5">
                                         <span className="text-[11px] font-black uppercase tracking-tight text-neutral-700 dark:text-neutral-300">{item.name}</span>
-                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${item.status ? 'bg-success' : 'bg-neutral-200'}`}>
+                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${item.status ? 'bg-success' : 'bg-neutral-600'}`}>
                                             <div className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${item.status ? 'left-5' : 'left-1'}`} />
                                         </div>
                                     </div>
@@ -524,9 +526,7 @@ const POSOrdersIntelligence: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-                  </div>
-
+            </PageShell>
         </Layout>
     );
 };

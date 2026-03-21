@@ -49,7 +49,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     const qtyInputRef = React.useRef<HTMLInputElement>(null);
 
     return (
-        <tr className="hover:bg-[var(--erp-bg-sunken)] transition-colors bg-transparent border-b border-default">
+        <tr className="hover:bg-indigo-500/5 transition-all bg-transparent border-b border-default group">
             <td className="py-1.5 px-2 text-center text-neutral-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
             <td className="py-1.5 px-2">
                 <p className="font-black text-muted text-[11px] uppercase tracking-tight">
@@ -521,7 +521,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     }, [cart]);
 
     return (
-        <div className="col-span-12 lg:col-span-8 flex flex-col bg-app rounded-xl border border-default shadow-2xl min-h-0 transition-colors relative">
+        <div className="col-span-12 lg:col-span-8 flex flex-col bg-app rounded-[2.5rem] border border-default shadow-2xl min-h-0 transition-colors relative overflow-hidden">
 
             {/* Matrix Modal */}
             {/* Matrix Modal - Removed */}
@@ -543,7 +543,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
 
             {/* Search Bar Section */}
-            <div className="p-3 border-b border-default bg-[var(--erp-bg-sunken)] shrink-0 relative z-30 rounded-t-xl space-y-3">
+            <div className="p-4 sm:p-6 border-b border-default bg-[var(--erp-bg-sunken)]/50 shrink-0 relative z-30 rounded-t-[2.5rem] space-y-4">
                 {/* Row 1: Barcode Scanner */}
                 <div className="flex items-center gap-2">
                     <label className="text-xs font-bold text-neutral-500 uppercase whitespace-nowrap hidden sm:block">Barcode:</label>
@@ -554,8 +554,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         <input
                             ref={skuInputRef}
                             type="text"
-                            placeholder="Scan Barcode / SKU"
-                            className="w-full pl-9 pr-16 py-2 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm uppercase tracking-tight"
+                            placeholder="Scan Barcode / SKU..."
+                            className="w-full pl-10 pr-16 py-3 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-2 focus:ring-indigo-500/20 transition-all font-black text-sm uppercase tracking-tight rounded-2xl shadow-inner bg-white dark:bg-neutral-900"
                             onKeyDown={handleSkuKeyDown}
                             autoFocus
                         />

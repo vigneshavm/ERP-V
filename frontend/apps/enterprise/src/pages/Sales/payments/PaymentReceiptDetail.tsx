@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "@/shared/api/api";
 import { toast } from "react-toastify";
 import Layout from "@/shared/ui/Layout/Layout";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import {
   ArrowLeft,
   Printer,
@@ -17,12 +18,18 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-  Clock
+  Clock,
+  Sparkles,
+  ShieldCheck,
+  Calendar,
+  Wallet,
+  Zap,
+  Target,
+  ArrowRightCircle,
+  IndianRupee
 } from 'lucide-react';
 
-
-
-const PaymentReceiptDetail = () => {
+const PaymentReceiptDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -55,615 +62,390 @@ const PaymentReceiptDetail = () => {
     window.print();
   };
 
-  if (loading || !payment) {
+  if (loading || !payment || !payment.customer) {
     return (
       <Layout>
-        <div className="page-shell">
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mb-4"></div>
-          <p className="text-muted font-medium">Loading receipt...</p>
-        </div>
-                </div>
-
+        <PageShell className="flex flex-col items-center justify-center py-40">
+            <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+                <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-emerald-500 animate-pulse" />
+            </div>
+            <p className="mt-6 text-sm font-black uppercase tracking-widest text-neutral-400 animate-pulse">Materializing Fiscal Artifact...</p>
+        </PageShell>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto animate-fade-in pb-10">
-        {/* Header - Hidden on print */}
-        <div className="mb-8 print:hidden">
-          <button
-            onClick={() => navigate("/sales/payment-in-list")}
-            className="flex items-center text-secondary hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Payment List
-          </button>
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
-                <Receipt className="w-6 h-6 text-emerald-600" />
-                Payment Receipt
-              </h1>
-              <p className="text-sm text-muted mt-1">
-                View and print payment receipt
-              </p>
+      <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl mx-auto w-full">
+        {/* Immersive Cinematic Header */}
+        <div className="erp-card rounded-[3.5rem] p-12 bg-neutral-900 text-white shadow-2xl relative overflow-hidden group print:hidden">
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 group-hover:rotate-12 transition-transform duration-1000">
+                <IndianRupee className="w-80 h-80" />
             </div>
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm font-medium"
-              onClick={handlePrint}
-            >
-              <Printer className="w-4 h-4" />
-              Print Receipt
-            </button>
-          </div>
-        </div>
-
-        {/* Receipt Container - Optimized for Print */}
-        <div className="bg-white border border-default rounded-2xl shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:bg-white print:border-0">
-          {/* Receipt Header Section */}
-          <div className="px-8 py-6 border-b-2 border-default print:px-6 print:py-4 print:border-gray-300">
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex-1">
-                <h2 className="text-3xl font-bold text-emerald-600 mb-1 print:text-green-700 tracking-tight">
-                  PAYMENT RECEIPT
-                </h2>
-                <div className="text-base font-mono font-bold text-main print:text-black">
-                  Receipt #: {payment.receiptNumber}
-                </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <div className="text-xs font-bold text-muted print:text-main uppercase mb-1 tracking-wider">
-                  Receipt Date & Time
-                </div>
-                <div className="font-bold text-base text-main print:text-black">
-                  {new Date(payment.paymentDate).toLocaleDateString("en-IN", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </div>
-                <div className="text-xs text-muted print:text-gray-700">
-                  {new Date(payment.paymentDate).toLocaleTimeString("en-IN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Customer and Payment Summary Section */}
-          <div className="grid grid-cols-2 gap-6 px-8 py-6 print:grid-cols-2 print:gap-4 print:px-6 print:py-4">
-            {/* Customer Info */}
-            <div>
-              <h3 className="text-xs font-bold text-muted print:text-main uppercase mb-3 pb-2 border-b border-default print:border-gray-300 tracking-wider">
-                Received From
-              </h3>
-              <div className="space-y-2">
-                <div className="font-bold text-lg text-main print:text-black">
-                  {payment.customer.name}
-                </div>
-                <div className="text-sm text-secondary print:text-main flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-muted print:hidden" />
-                  {payment.customer.phone}
-                </div>
-                {payment.customer.email && (
-                  <div className="text-sm text-secondary print:text-main flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted print:hidden" />
-                    {payment.customer.email}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Summary */}
-            <div className="text-right">
-              <h3 className="text-xs font-bold text-muted print:text-main uppercase mb-3 pb-2 border-b border-default print:border-gray-300 tracking-wider">
-                Payment Summary
-              </h3>
-              <div className="space-y-2">
-                <div>
-                  <div className="text-xs text-muted print:text-main mb-1">
-                    Amount Received
-                  </div>
-                  <div className="font-bold text-2xl text-emerald-600 print:text-green-700">
-                    ₹{payment.totalAmount.toFixed(2)}
-                  </div>
-                </div>
-                {payment.creditApplied > 0 && (
-                  <div className="mt-3 pt-3 border-t border-default print:border-gray-300">
-                    <div className="text-xs text-muted print:text-gray-700 mb-1">
-                      + Credit Applied
-                    </div>
-                    <div className="font-bold text-lg text-orange-600 print:text-orange-700">
-                      ₹{payment.creditApplied.toFixed(2)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Payment Methods Section */}
-          <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-            <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-4 flex items-center">
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              Payment Method(s)
-            </h3>
-            <div className="space-y-2">
-              {payment.paymentMethods.map((pm: { method: string; reference?: string; amount: number; chequeNumber?: string; chequeDate?: string; chequeBank?: string; cardType?: string }, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex justify-between items-start py-3 px-4 bg-surface print:bg-white print:border print:border-gray-300 rounded border border-default"
-                >
-                  <div className="flex items-start flex-1">
-                    <div className="w-8 h-8 bg-card print:bg-white rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                      <svg
-                        className="w-4 h-4 text-blue-600 dark:text-blue-400 print:text-blue-700"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        {pm.method === "cash" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                          />
-                        )}
-                        {pm.method === "card" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                          />
-                        )}
-                        {pm.method === "upi" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                          />
-                        )}
-                        {pm.method === "cheque" && (
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        )}
-                        {!["cash", "card", "upi", "cheque"].includes(
-                          pm.method
-                        ) && (
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                            />
-                          )}
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-bold text-main print:text-black capitalize">
-                        {pm.method}
-                      </div>
-                      {pm.reference && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-0.5">
-                          Ref: {pm.reference}
-                        </div>
-                      )}
-                      {pm.chequeNumber && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-1 space-y-0.5">
-                          <div>Cheque #{pm.chequeNumber}</div>
-                          {pm.chequeDate && (
-                            <div>
-                              Date:{" "}
-                              {new Date(pm.chequeDate).toLocaleDateString(
-                                "en-IN"
-                              )}
-                            </div>
-                          )}
-                          {pm.chequeBank && <div>Bank: {pm.chequeBank}</div>}
-                        </div>
-                      )}
-                      {pm.cardType && (
-                        <div className="text-xs text-secondary print:text-gray-700 mt-0.5">
-                          {pm.cardType}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="font-bold text-blue-600 dark:text-blue-400 print:text-blue-700 text-base ml-4 flex-shrink-0">
-                    ₹{pm.amount.toFixed(2)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Allocated Invoices */}
-          {payment.allocatedInvoices &&
-            payment.allocatedInvoices.length > 0 && (
-              <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-                <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-4">
-                  Payment Allocated To
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b-2 border-default print:border-gray-300">
-                        <th className="text-left py-2 px-2 font-bold text-main print:text-black">
-                          #
-                        </th>
-                        <th className="text-left py-2 px-2 font-bold text-main print:text-black">
-                          Invoice No
-                        </th>
-                        <th className="text-right py-2 px-2 font-bold text-main print:text-black">
-                          Invoice Total
-                        </th>
-                        <th className="text-right py-2 px-2 font-bold text-main print:text-black">
-                          Amount Paid
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {payment.allocatedInvoices.map((allocation: { invoice?: { invoiceNo: string; totalAmount: number }; allocatedAmount: number }, index: number) => (
-                        <tr
-                          key={index}
-                          className="border-b border-default print:border-gray-300"
+            
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
+                <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-8">
+                        <button
+                            onClick={() => navigate("/sales/payment-in-list")}
+                            className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all active:scale-95"
                         >
-                          <td className="py-2 px-2 text-main print:text-main">
-                            {index + 1}
-                          </td>
-                          <td className="py-2 px-2 text-main print:text-black font-medium">
-                            {allocation.invoice?.invoiceNo || "N/A"}
-                          </td>
-                          <td className="py-2 px-2 text-right text-main print:text-black">
-                            ₹
-                            {allocation.invoice?.totalAmount?.toFixed(2) ||
-                              "0.00"}
-                          </td>
-                          <td className="py-2 px-2 text-right font-bold text-green-600 dark:text-green-400 print:text-green-700">
-                            ₹{allocation.allocatedAmount.toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-          {/* Summary and Status Section */}
-          <div className="px-8 py-6 border-t border-default bg-card print:px-6 print:py-4 print:bg-white print:border-gray-300">
-            <div className="flex justify-center">
-              <div className="w-full md:w-144">
-                <div className="space-y-6 bg-surface print:bg-white p-8 rounded-lg shadow-sm border border-default print:border print:border-gray-300 text-xl">
-                  <div className="flex justify-between py-3 text-base">
-                    <span className="text-main print:text-black">
-                      Total Payment Received:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹{payment.totalAmount.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* <div className="flex justify-between py-2 text-sm">
-                                        <span className="text-main dark:text-main print:text-black">Allocated to Invoices:</span>
-                                        <span className="font-bold text-main dark:text-gray-200 print:text-black">
-                                            ₹{(payment.allocatedInvoices?.reduce((sum, inv) => sum + inv.allocatedAmount, 0) || 0).toFixed(2)}
-                                        </span>
-                                    </div> */}
-
-                  {payment.creditApplied > 0 && (
-                    <div className="flex justify-between py-2 text-sm border-b border-default print:border-default">
-                      <span className="text-main print:text-black">
-                        Customer Credit Applied:
-                      </span>
-                      <span className="font-bold text-main print:text-black">
-                        ₹{payment.creditApplied.toFixed(2)}
-                      </span>
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <span className="w-1 h-1 rounded-full bg-white/30" />
+                        <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/20 backdrop-blur-md rounded-xl border border-emerald-500/20">
+                            <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300">Fiscal Artifact</span>
+                        </div>
                     </div>
-                  )}
-
-                  <div className="flex justify-between py-0 text-sm border-t-1 border-default print:border-default pt-2">
-                    <span className="text-main print:text-black">
-                      Effective Payment:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹
-                      {(payment.totalAmount + payment.creditApplied).toFixed(2)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between -mt-1 text-sm">
-                    <span className="text-main print:text-black">
-                      Allocated to Invoices:
-                    </span>
-                    <span className="font-bold text-main print:text-black">
-                      ₹
-                      {payment.allocatedInvoices
-                        .reduce((sum: number, inv: { allocatedAmount: number }) => sum + inv.allocatedAmount, 0)
-                        .toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Status Box */}
-                  {(() => {
-                    const currentDues = payment.customerCurrentDues || 0;
-                    const effectivePayment =
-                      payment.totalAmount + payment.creditApplied;
-                    const duesBeforePayment = currentDues + effectivePayment;
-
-                    if (
-                      effectivePayment > duesBeforePayment &&
-                      duesBeforePayment > 0
-                    ) {
-                      const excessAmount = effectivePayment - duesBeforePayment;
-                      return (
-                        <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 print:border-emerald-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-emerald-600 dark:text-emerald-400 print:text-emerald-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-emerald-900 dark:text-emerald-300 print:text-emerald-900 text-sm mb-1">
-                                Excess Amount Credited
-                              </div>
-                              <p className="text-xs text-emerald-700 dark:text-emerald-400 print:text-emerald-800 leading-relaxed">
-                                ₹{excessAmount.toFixed(2)} added to customer
-                                credit
-                              </p>
+                    
+                    <h1 className="text-6xl font-black tracking-tighter mb-4 flex items-baseline gap-4 leading-none">
+                        {payment.receiptNumber}
+                        <span className="text-xl font-bold text-white/40 tracking-normal italic font-serif">Inflow Record</span>
+                    </h1>
+                    
+                    <div className="flex flex-wrap items-center gap-8 mt-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/5">
+                                <User className="w-6 h-6 text-emerald-400" />
                             </div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (
-                      Math.abs(effectivePayment - duesBeforePayment) < 0.01 &&
-                      duesBeforePayment > 0
-                    ) {
-                      return (
-                        <div className="mt-4 p-3 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700 print:border-teal-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-teal-600 dark:text-teal-400 print:text-teal-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-teal-900 dark:text-teal-300 print:text-teal-900 text-sm mb-1">
-                                Dues Fully Repaid
-                              </div>
-                              <p className="text-xs text-teal-700 dark:text-teal-400 print:text-teal-800 leading-relaxed">
-                                All pending dues have been cleared
-                              </p>
+                            <div>
+                                <p className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] mb-1.5 leading-none">Source Entity</p>
+                                <p className="text-lg font-black uppercase tracking-tight leading-none text-white italic">
+                                    {payment.customer.name}
+                                </p>
                             </div>
-                          </div>
                         </div>
-                      );
-                    }
-
-                    if (
-                      effectivePayment < duesBeforePayment &&
-                      duesBeforePayment > 0
-                    ) {
-                      const remainingDues =
-                        duesBeforePayment - effectivePayment;
-                      return (
-                        <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 print:border-amber-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-amber-600 dark:text-amber-400 print:text-amber-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-amber-900 dark:text-amber-300 print:text-amber-900 text-sm mb-1">
-                                Partial Payment
-                              </div>
-                              <p className="text-xs text-amber-700 dark:text-amber-400 print:text-amber-800 leading-relaxed">
-                                Remaining balance: ₹{remainingDues.toFixed(2)}
-                              </p>
+                        <div className="w-px h-10 bg-white/10 hidden sm:block" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/5">
+                                <Calendar className="w-6 h-6 text-emerald-400" />
                             </div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (duesBeforePayment <= 0) {
-                      return (
-                        <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 print:border-indigo-600 print:bg-white rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <svg
-                              className="w-5 h-5 text-indigo-600 dark:text-indigo-400 print:text-indigo-700 flex-shrink-0 mt-0.5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.018a1 1 0 01-.999 1H3.455a1 1 0 01-.999-1V6.517a3.066 3.066 0 012.812-3.062p"
-                              />
-                            </svg>
-                            <div className="flex-1">
-                              <div className="font-semibold text-indigo-900 dark:text-indigo-300 print:text-indigo-900 text-sm mb-1">
-                                Advance Payment
-                              </div>
-                              <p className="text-xs text-indigo-700 dark:text-indigo-400 print:text-indigo-800 leading-relaxed">
-                                ₹
-                                {(
-                                  payment.totalAmount + payment.creditApplied
-                                ).toFixed(2)}{" "}
-                                credited for future invoices
-                              </p>
+                            <div>
+                                <p className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] mb-1.5 leading-none">Settlement Cycle</p>
+                                <p className="text-lg font-black uppercase tracking-tight leading-none text-white italic">
+                                    {new Date(payment.paymentDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </p>
                             </div>
-                          </div>
                         </div>
-                      );
-                    }
-                    return null;
-                  })()}
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Notes Section */}
-          {payment.notes && (
-            <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300">
-              <h3 className="text-xs font-bold text-secondary print:text-gray-700 uppercase mb-3 pb-2 border-b border-default print:border-gray-300">
-                Notes
-              </h3>
-              <p className="text-sm text-secondary print:text-main leading-relaxed">
-                {payment.notes}
-              </p>
+                <div className="flex flex-col items-end gap-6 self-end lg:self-center">
+                    <div className="text-right">
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-2 italic">Total Collection</p>
+                        <h2 className="text-5xl font-black text-emerald-400 tracking-tighter italic">₹{payment.totalAmount.toLocaleString()}</h2>
+                    </div>
+                    <button
+                        onClick={handlePrint}
+                        className="px-10 py-5 bg-white text-neutral-900 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all flex items-center gap-4 shadow-2xl"
+                    >
+                        <Printer className="w-5 h-5" /> 
+                        <span>Materialize Receipt</span>
+                    </button>
+                </div>
             </div>
-          )}
-
-          {/* Footer */}
-          <div className="px-8 py-6 border-t border-default print:px-6 print:py-4 print:border-gray-300 text-center">
-            <p className="text-sm text-main print:text-main font-medium">
-              Thank you for your payment!
-            </p>
-            <p className="text-xs text-muted print:text-gray-700 mt-2">
-              This is a computer-generated receipt.
-            </p>
-            {payment.createdAt && (
-              <p className="text-xs text-muted print:text-gray-700 mt-2">
-                Created on {new Date(payment.createdAt).toLocaleString("en-IN")}
-              </p>
-            )}
-          </div>
         </div>
 
-        {/* Additional Info - Hidden on print */}
-        <div className="mt-6 bg-card border border-default rounded-lg p-4 print:hidden">
-          <div className="flex items-start gap-3">
-            <svg
-              className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div className="flex-1">
-              <h4 className="text-sm font-semibold text-main mb-1">
-                Receipt Information
-              </h4>
-              <p className="text-sm text-secondary">
-                Deposited to:{" "}
-                {payment.depositAccount === "cash"
-                  ? "Cash in Hand"
-                  : "Bank Account"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        <div className="grid grid-cols-12 gap-8 mb-24">
+            {/* Payment Intelligence Sidebar */}
+            <div className="col-span-12 lg:col-span-4 space-y-8">
+                {/* Protocol Methods Card */}
+                <div className="erp-card rounded-[3rem] p-10 shadow-sm border-none bg-white dark:bg-neutral-900 flex flex-col gap-10">
+                    <h3 className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[0.3em] flex items-center gap-3 italic">
+                        <Target className="w-4 h-4 text-emerald-500" /> Inflow Protocol(s)
+                    </h3>
+                    
+                    <div className="space-y-4">
+                        {payment.paymentMethods.map((pm: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="group/pm p-6 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[2rem] border border-default dark:border-neutral-800 hover:border-emerald-500/20 transition-all flex items-center justify-between"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-white dark:bg-neutral-900 rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm border border-default dark:border-neutral-800 group-hover/pm:scale-110 transition-transform">
+                                        {pm.method === "cash" && <Banknote className="w-6 h-6" />}
+                                        {pm.method === "card" && <CreditCard className="w-6 h-6" />}
+                                        {pm.method === "upi" && <Smartphone className="w-6 h-6" />}
+                                        {!["cash", "card", "upi"].includes(pm.method) && <Wallet className="w-6 h-6" />}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-black text-neutral-900 dark:text-main uppercase tracking-tight italic leading-none mb-1.5">{pm.method}</p>
+                                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest leading-none italic">{pm.reference || 'DIRECT SETTLEMENT'}</p>
+                                    </div>
+                                </div>
+                                <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 italic">
+                                    ₹{pm.amount.toLocaleString()}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
 
-      {/* Print Styles */}
-      <style>{`
-                @media print {
-                    * {
-                        -webkit-print-color-adjust: exact !important;
-                        color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                    }
+                    <div className="p-6 bg-emerald-500/5 rounded-[2rem] border border-emerald-500/10 mt-auto">
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic">Net Inflow Pulse</span>
+                            <span className="text-base font-black text-emerald-600 italic">₹{payment.totalAmount.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full h-1 bg-emerald-500/10 rounded-full overflow-hidden mt-3">
+                            <div className="h-full bg-emerald-500 w-full animate-pulse" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Entity Context Card */}
+                <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none group">
+                    <h3 className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-8 flex items-center gap-2 italic">
+                        <User className="w-4 h-4 text-emerald-500/50" /> Entity Context
+                    </h3>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-4 p-5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-2xl border border-default dark:border-neutral-800">
+                             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 border border-emerald-500/20 font-black">
+                                {payment.customer.name.charAt(0)}
+                             </div>
+                             <div>
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 italic">Participant</p>
+                                <p className="text-base font-black text-neutral-900 dark:text-main uppercase tracking-tight italic leading-none">{payment.customer.name}</p>
+                             </div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4">
+                            <div className="flex items-center gap-4 text-neutral-600 dark:text-neutral-400 border-b border-default dark:border-neutral-800 pb-4 last:border-0">
+                                <Phone className="w-4 h-4 text-neutral-400" />
+                                <p className="text-xs font-black font-mono tracking-tight">{payment.customer.phone}</p>
+                            </div>
+                            {payment.customer.email && (
+                            <div className="flex items-center gap-4 text-neutral-600 dark:text-neutral-400 border-b border-default dark:border-neutral-800 pb-4 last:border-0">
+                                <Mail className="w-4 h-4 text-neutral-400" />
+                                <p className="text-xs font-black font-mono tracking-tight italic">{payment.customer.email}</p>
+                            </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="col-span-12 lg:col-span-8 space-y-8">
+                {/* Allocation Matrix */}
+                <div className="erp-card rounded-[3.5rem] p-1 shadow-2xl border-none overflow-hidden bg-white dark:bg-neutral-900 relative">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-20" />
+                    <div className="p-10">
+                        <div className="flex items-center gap-4 mb-10 px-2">
+                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                <Target className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-2xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic leading-none">Allocation Ledger</h3>
+                        </div>
+
+                        {payment.allocatedInvoices && payment.allocatedInvoices.length > 0 ? (
+                            <div className="overflow-x-auto px-1">
+                                <table className="w-full text-left border-separate border-spacing-y-4">
+                                    <thead>
+                                        <tr className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400">
+                                            <th className="px-8 py-2">Target Node</th>
+                                            <th className="px-8 py-2 text-right">Node Total</th>
+                                            <th className="px-8 py-2 text-right">Settle Vector</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {payment.allocatedInvoices.map((allocation: any, index: number) => (
+                                            <tr key={index} className="group/row hover:transform hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+                                                onClick={() => navigate(`/sales/invoice/${allocation.invoice?._id}`)}
+                                            >
+                                                <td className="px-2 py-1">
+                                                    <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[1.5rem] p-6 border border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all flex items-center gap-4">
+                                                        <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-default dark:border-neutral-800 text-teal-500">
+                                                            <FileText className="w-5 h-5" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-base font-black text-neutral-900 dark:text-neutral-100 uppercase tracking-tight italic leading-none mb-1">{allocation.invoice?.invoiceNo || 'DIRECT'}</p>
+                                                            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic leading-none">FISCAL TARGET NODE</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-2 py-1 text-right">
+                                                    <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[1.5rem] p-6 border border-default dark:border-neutral-800 transition-all font-mono font-bold text-neutral-500 italic text-sm">
+                                                        ₹{allocation.invoice?.totalAmount?.toLocaleString() || '0.00'}
+                                                    </div>
+                                                </td>
+                                                <td className="px-2 py-1 text-right">
+                                                    <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[1.5rem] p-6 border border-default dark:border-neutral-800 transition-all font-mono font-black text-emerald-600 dark:text-emerald-400 italic text-xl">
+                                                        ₹{allocation.allocatedAmount.toLocaleString()}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="p-20 text-center bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[2.5rem] border border-dashed border-default dark:border-neutral-800">
+                                <Zap className="w-12 h-12 text-amber-500 mx-auto mb-4 opacity-50" />
+                                <h4 className="text-xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic">Unallocated Advance Node</h4>
+                                <p className="text-sm font-bold text-neutral-500 mt-2 italic max-w-sm mx-auto">
+                                    This collection is currently floating in the fiscal matrix as a credit for future settlements.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Fiscal Health & Dues Section */}
+                <div className="erp-card rounded-[3rem] p-10 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/30 border border-default dark:border-neutral-800 shadow-inner group">
+                    <h3 className="text-[10px] font-black text-neutral-400 dark:text-white/20 uppercase tracking-[0.3em] mb-10 flex items-center gap-3 italic">
+                        <CheckCircle className="w-4 h-4 text-emerald-500" /> Reconciliation State
+                    </h3>
                     
-                    body {
-                        background: white !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                    }
-                    
-                    nav, aside, .print\\:hidden, button:not(.print\\:block) {
-                        display: none !important;
-                    }
-                    
-                    .max-w-5xl {
-                        max-width: 100% !important;
-                    }
-                    
-                    .bg-white {
-                        background: white !important;
-                        box-shadow: none !important;
-                    }
-                    
-                    .border-gray-300 {
-                        border-color: #d1d5db !important;
-                    }
-                    
-                    .text-green-600,
-                    .text-green-700,
-                    .dark\\:text-green-500 {
-                        color: #16a34a !important;
-                    }
-                    
-                    .text-main,
-                    .text-main,
-                    .dark\\:text-gray-200,
-                    .dark\\:text-gray-300 {
-                        color: #000 !important;
-                    }
-                    
-                    .text-secondary,
-                    .text-gray-700 {
-                        color: #374151 !important;
-                    }
-                    
-                    table {
-                        width: 100% !important;
-                    }
-                    
-                    th, td {
-                        border-color: #d1d5db !important;
-                    }
-                }
-            `}</style>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="erp-card rounded-[2rem] p-8 shadow-sm border-none bg-white dark:bg-neutral-900 group/health">
+                             <div className="flex justify-between items-center mb-8">
+                                <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500">
+                                    <Wallet className="w-6 h-6" />
+                                </div>
+                                <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic group-hover/health:text-emerald-500 transition-colors">Net Pulse</span>
+                             </div>
+                             <div className="space-y-4">
+                                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-tight italic">
+                                    <span className="text-neutral-500">Payment Inflow</span>
+                                    <span className="text-neutral-900 dark:text-main">₹{payment.totalAmount.toLocaleString()}</span>
+                                </div>
+                                {payment.creditApplied > 0 && (
+                                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-tight italic">
+                                    <span className="text-orange-500">Credit Inbound</span>
+                                    <span className="text-orange-500">+₹{payment.creditApplied.toLocaleString()}</span>
+                                </div>
+                                )}
+                                <div className="h-px bg-default dark:bg-neutral-800 w-full" />
+                                <div className="flex justify-between items-center text-lg font-black uppercase tracking-tighter italic">
+                                    <span className="text-neutral-900 dark:text-main">Effective Power</span>
+                                    <span className="text-emerald-600 dark:text-emerald-400">₹{(payment.totalAmount + payment.creditApplied).toLocaleString()}</span>
+                                </div>
+                             </div>
+                        </div>
+
+                        <div className="flex flex-col justify-center">
+                            {(() => {
+                                const currentDues = payment.customerCurrentDues || 0;
+                                const effectivePayment = payment.totalAmount + payment.creditApplied;
+                                const duesBeforePayment = currentDues + effectivePayment;
+
+                                if (effectivePayment > duesBeforePayment && duesBeforePayment > 0) {
+                                    const excessAmount = effectivePayment - duesBeforePayment;
+                                    return (
+                                        <div className="p-8 rounded-[2rem] bg-emerald-600 text-white shadow-xl shadow-emerald-600/20 animate-in zoom-in-95 duration-500">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <Sparkles className="w-8 h-8 text-white animate-pulse" />
+                                                <h4 className="text-xl font-black uppercase tracking-tighter italic leading-none">Surplus Credit Node</h4>
+                                            </div>
+                                            <p className="text-sm font-medium opacity-80 uppercase tracking-tight italic mb-6">
+                                                Collection exceeded all liabilities. Surplus cached in customer ledger.
+                                            </p>
+                                            <div className="text-3xl font-black italic tracking-tighter leading-none">
+                                                +₹{excessAmount.toLocaleString()}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                if (Math.abs(effectivePayment - duesBeforePayment) < 0.01 && duesBeforePayment > 0) {
+                                    return (
+                                        <div className="p-8 rounded-[2rem] bg-teal-600 text-white shadow-xl shadow-teal-600/20 animate-in zoom-in-95 duration-500">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <CheckCircle className="w-8 h-8 text-white" />
+                                                <h4 className="text-xl font-black uppercase tracking-tighter italic leading-none">Zero Debt Protocol</h4>
+                                            </div>
+                                            <p className="text-sm font-medium opacity-80 uppercase tracking-tight italic">
+                                                This cycle successfully purged all outstanding target dues for this entity.
+                                            </p>
+                                        </div>
+                                    );
+                                }
+
+                                if (effectivePayment < duesBeforePayment && duesBeforePayment > 0) {
+                                    const remainingDues = duesBeforePayment - effectivePayment;
+                                    return (
+                                        <div className="p-8 rounded-[2rem] bg-amber-500 text-white shadow-xl shadow-amber-500/20 animate-in zoom-in-95 duration-500">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <AlertCircle className="w-8 h-8 text-white" />
+                                                <h4 className="text-xl font-black uppercase tracking-tighter italic leading-none">Partial Settle State</h4>
+                                            </div>
+                                            <p className="text-sm font-medium opacity-80 uppercase tracking-tight italic mb-6">
+                                                Liabilities persist. Net outstanding balance detected in ledger.
+                                            </p>
+                                            <div className="text-3xl font-black italic tracking-tighter leading-none">
+                                                -₹{remainingDues.toLocaleString()}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <div className="p-8 rounded-[2rem] bg-indigo-600 text-white shadow-xl shadow-indigo-600/20 animate-in zoom-in-95 duration-500">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <Zap className="w-8 h-8 text-white" />
+                                            <h4 className="text-xl font-black uppercase tracking-tighter italic leading-none">Advance Position</h4>
+                                        </div>
+                                        <p className="text-sm font-medium opacity-80 uppercase tracking-tight italic">
+                                            Pre-paid liquidity node available for future fiscal allocations.
+                                        </p>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Internal Supplemental Observations */}
+                {payment.notes && (
+                    <div className="erp-card rounded-[2.5rem] p-10 shadow-sm border-none bg-neutral-900 text-white relative overflow-hidden group/notes">
+                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover/notes:scale-110 transition-transform">
+                            <FileText className="w-40 h-40" />
+                        </div>
+                        <h3 className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-6 flex items-center gap-2 italic relative z-10">
+                            Supplemental Observations Ledger
+                        </h3>
+                        <p className="text-sm font-medium text-white/70 leading-relaxed italic relative z-10 border-l-2 border-white/10 pl-6 uppercase tracking-tight">
+                            {payment.notes}
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {/* Branded verification footprint */}
+        <div className="mt-8 flex items-center justify-center gap-6 opacity-30 group pb-24 print:hidden">
+            <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+            <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[9px] font-black uppercase tracking-[0.3em]">Fiscal Integrity Secured • Receipt Verified Immutable</span>
+            </div>
+            <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+        </div>
+
+        {/* Print Ledger Styles */}
+        <style>{`
+            @media print {
+                @page { margin: 0; size: auto; }
+                body { background: white !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact !important; }
+                body * { visibility: hidden !important; }
+                .page-shell, .page-shell * { visibility: visible !important; }
+                .bg-app { background: white !important; }
+                .erp-card { border: none !important; box-shadow: none !important; border-radius: 0 !important; color: black !important; background: white !important; }
+                .dark .erp-card { background: white !important; color: black !important; border: 1px solid #eee !important; min-height: auto !important; }
+                .dark h1, .dark h2, .dark h3, .dark span, .dark p, .dark td, .dark th { color: black !important; }
+                .page-shell { position: absolute; left: 0; top: 0; width: 100%; padding: 0 !important; margin: 0 !important; display: block !important; }
+                .print\\:hidden, button, .sparkles, footer, .opacity-30 { display: none !important; }
+                h1 { font-size: 2.5rem !important; margin-bottom: 0.5rem !important; }
+                .text-emerald-600, .text-emerald-400 { color: #059669 !important; }
+                .text-emerald-600, .text-emerald-400 { color: #059669 !important; }
+                .bg-neutral-900 { border-bottom: 2px solid #eee !important; padding: 2rem !important; }
+                table { border-spacing: 0 !important; }
+                td, th { border-bottom: 1px solid #eee !important; padding: 1rem !important; }
+                .bg-[var(--erp-bg-sunken)] { background: #f9fafb !important; }
+            }
+        `}</style>
+      </PageShell>
     </Layout>
   );
 };

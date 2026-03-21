@@ -1,18 +1,15 @@
 import { logger } from '@/shared/lib/logger';
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "@/shared/ui/Layout/Layout";
-import PageHeader from "@/shared/ui/Layout/PageHeader";
-import { StatsCard } from "@repo/ui";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import {
-    RotateCcw, Plus, Search, Filter, ArrowRight, Clock,
-    CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,
-    Search as SearchIcon
+    RotateCcw, Search, Filter, ArrowDownLeft, Clock,
+    CheckCircle, ShieldCheck, DollarSign, ChevronRight,
+    Search as SearchIcon, Truck, Zap
 } from 'lucide-react';
 import api from "@/shared/api/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "@/entities/purchase/model/purchase";
-import { toast } from 'react-toastify';
 
 const PurchaseReturns: React.FC = () => {
     const navigate = useNavigate();
@@ -29,8 +26,6 @@ const PurchaseReturns: React.FC = () => {
                 setReturns(data || []);
             } catch (err) {
                 logger.error("Failed to fetch returns", err);
-                // toast.error("Failed to load purchase returns");
-                // Mocking data if API fails
                 setReturns([
                     {
                         id: '1',
@@ -72,25 +67,6 @@ const PurchaseReturns: React.FC = () => {
         fetchReturns();
     }, []);
 
-    const getStatusBadge = (status: PurchaseReturnStatus) => {
-        switch (status) {
-            case 'Initiated':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-wider">Initiated</span>;
-            case 'In-Transit':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100 uppercase tracking-wider">In-Transit</span>;
-            case 'Received by Vendor':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wider">At Vendor</span>;
-            case 'Processed':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider">Processed</span>;
-            case 'Credited':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500 text-white shadow-sm uppercase tracking-wider flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Credited</span>;
-            case 'Cancelled':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-neutral-500 border border-default uppercase tracking-wider">Cancelled</span>;
-            default:
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--erp-bg-sunken)] text-neutral-400 uppercase tracking-wider">{status}</span>;
-        }
-    };
-
     const filteredReturns = useMemo(() => {
         return returns.filter(r => {
             const matchesSearch =
@@ -116,163 +92,247 @@ const PurchaseReturns: React.FC = () => {
     }, [returns]);
 
     const formatCurrency = (val: number) =>
-        new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+        `₹ ${val.toLocaleString('en-IN')}`;
 
     return (
         <Layout>
-            <div className="page-shell">
-            <div className="space-y-6 animate-in fade-in duration-500 pb-10">
-                <PageHeader
-                    title="Purchase Returns"
-                    description="Track return authorizations, shipping status, and debit note credits from vendors."
-                    actions={
-                        <button
-                            onClick={() => navigate('/purchase/returns/new')}
-                            className="btn btn-primary bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/20 px-6"
-                        >
-                            <RotateCcw className="w-4 h-4" />
-                            Initiate Return
-                        </button>
-                    }
-                />
-
-                {/* KPI Section */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatsCard
-                        title="Total Returns"
-                        value={stats.total}
-                        icon={<RotateCcw className="w-full h-full" />}
-                        iconBgColor="bg-brand-50"
-                        iconColor="text-brand-600"
-                    />
-                    <StatsCard
-                        title="Total Refund Value"
-                        value={formatCurrency(stats.totalAmount)}
-                        icon={<DollarSign className="w-full h-full" />}
-                        iconBgColor="bg-emerald-50"
-                        iconColor="text-emerald-600"
-                    />
-                    <StatsCard
-                        title="Pending Credits"
-                        value={formatCurrency(stats.pendingAmount)}
-                        icon={<Clock className="w-full h-full" />}
-                        iconBgColor="bg-amber-50"
-                        iconColor="text-amber-600"
-                    />
-                    <StatsCard
-                        title="Processed (Credited)"
-                        value={stats.total - returns.filter(r => r.status !== 'Credited').length}
-                        icon={<CheckCircle className="w-full h-full" />}
-                        iconBgColor="bg-indigo-50"
-                        iconColor="text-indigo-600"
-                    />
+            <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Cinematic Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-black uppercase tracking-widest rounded-md border border-rose-500/20">Supply Chain Recovery</span>
+                            <span className="text-neutral-300 dark:text-neutral-700">/</span>
+                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Return Protocols</span>
+                        </div>
+                        <h2 className="text-4xl font-black text-neutral-900 dark:text-main tracking-tight leading-none flex items-center gap-3">
+                            Reverse Logistics <RotateCcw className="w-8 h-8 text-rose-500" />
+                        </h2>
+                        <p className="text-sm text-neutral-500 font-medium italic mt-3">
+                            Orchestrate return authorizations and credit settlements with precision.
+                        </p>
+                    </div>
+                    
+                    <button
+                        onClick={() => navigate('/purchase/returns/new')}
+                        className="px-8 py-4 bg-rose-600 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-rose-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                    >
+                        <RotateCcw className="w-5 h-5" /> 
+                        <span>Initiate Return</span>
+                    </button>
                 </div>
 
-                {/* Filters */}
-                <div className="bg-white dark:bg-[var(--erp-bg)] p-4 rounded-2xl border border-default dark:border-default flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
-                    <div className="relative w-full sm:w-96">
-                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                        <input
-                            type="text"
-                            placeholder="Search by Return No, Vendor, or GRN..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm"
-                        />
-                    </div>
-                    <div className="flex gap-2 w-full sm:w-auto">
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-sm min-w-[140px]"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="Initiated">Initiated</option>
-                            <option value="In-Transit">In-Transit</option>
-                            <option value="Received by Vendor">At Vendor</option>
-                            <option value="Credited">Credited</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                        <button className="p-2.5 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950 border border-default dark:border-default rounded-xl text-neutral-500">
-                            <Filter className="w-5 h-5" />
-                        </button>
-                    </div>
+                {/* KPI Matrix */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatsComponent label="Active Returns" value={stats.total} icon={RotateCcw} color="blue" sub="Managed Lifecycle" />
+                    <StatsComponent label="Aggregate Recovery" value={formatCurrency(stats.totalAmount)} icon={DollarSign} color="rose" sub="Capital Recovery" />
+                    <StatsComponent label="Pending Credits" value={formatCurrency(stats.pendingAmount)} icon={Clock} color="amber" sub="In-Transit Claims" />
+                    <StatsComponent label="Settled Delta" value={stats.total - returns.filter(r => r.status !== 'Credited').length} icon={CheckCircle} color="emerald" sub="Verified Credits" />
                 </div>
 
-                {/* Table */}
-                <div className="bg-white dark:bg-[var(--erp-bg)] rounded-2xl border border-default dark:border-default shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)]/50 border-b dark:border-default">
-                                <tr>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Return Details</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Vendor / Supplier</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Orig. Document</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Reason</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-right">Refund Amount</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center">Status</th>
-                                    <th className="px-6 py-4"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {filteredReturns.map((r) => (
-                                    <tr
-                                        key={r.id}
-                                        className="group hover:bg-[var(--erp-bg-sunken)]/50 dark:hover:bg-[var(--erp-card)]/50 transition-colors cursor-pointer"
-                                        onClick={() => navigate(`/purchase/returns/view/${r.id}`)}
-                                    >
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-neutral-900 dark:text-main">{r.return_number}</span>
-                                                <span className="text-[10px] text-neutral-500 font-medium">{new Date(r.return_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
+                {/* Operations Island */}
+                <div className="erp-card rounded-[3rem] p-4 shadow-sm border-none overflow-hidden relative group">
+                    <div className="p-4">
+                        <div className="flex items-center gap-4 mb-8 px-4">
+                            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 shadow-sm">
+                                <Truck className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic leading-none text-brand-colors">Recovery Command</h3>
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic leading-none">Filtering and Intercepting Return Protocols</p>
+                            </div>
+                        </div>
+
+                        {/* Search & Filter Bar */}
+                        <div className="p-4 bg-[var(--erp-bg-sunken)] dark:bg-neutral-950/50 rounded-[2.5rem] flex flex-col lg:flex-row gap-6 items-center justify-between border border-default dark:border-neutral-800 mb-8">
+                            <div className="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
+                                <div className="relative w-full md:w-80 group/search">
+                                    <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                        <SearchIcon className="h-4 w-4 text-neutral-400 group-focus-within/search:text-rose-500 transition-colors" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Search Return No, Vendor, GRN..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="block w-full pl-12 pr-4 py-3.5 bg-white dark:bg-neutral-900 border-none rounded-2xl text-xs font-bold placeholder:text-neutral-500 focus:ring-2 focus:ring-rose-500/20 outline-none transition-all shadow-sm italic uppercase tracking-tight"
+                                    />
+                                </div>
+
+                                <div className="flex items-center p-1 bg-white dark:bg-neutral-900 rounded-2xl border border-default dark:border-neutral-800 shadow-sm w-full md:w-auto overflow-hidden">
+                                    {['all', 'Initiated', 'In-Transit', 'Credited'].map((status) => (
+                                        <button
+                                            key={status}
+                                            onClick={() => setStatusFilter(status)}
+                                            className={`flex-1 md:flex-none px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${statusFilter === status
+                                                ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20'
+                                                : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white dark:text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                                                }`}
+                                        >
+                                            {status === 'all' ? 'Universal' : status}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <button className="px-5 py-3.5 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-2xl flex items-center gap-3 shadow-md hover:scale-[1.02] transition-transform cursor-pointer group">
+                                <Zap className="w-4 h-4 group-hover:text-rose-500 transition-colors" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] italic leading-none whitespace-nowrap">Rapid Actions</span>
+                            </button>
+                        </div>
+
+                        {/* Returns Matrix */}
+                        <div className="overflow-x-auto px-2">
+                             <table className="w-full text-left border-separate border-spacing-y-4">
+                               <thead>
+                                 <tr className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">
+                                   <th className="px-8 py-2">Return Identity</th>
+                                   <th className="px-8 py-2">Trading Partner</th>
+                                   <th className="px-8 py-2">Reference</th>
+                                   <th className="px-8 py-2">Disposition</th>
+                                   <th className="px-8 py-2 text-right">Recovery Amount</th>
+                                   <th className="px-8 py-2 text-center">Protocol State</th>
+                                   <th className="px-8 py-2 text-right">Commands</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 {isLoading ? (
+                                   <tr>
+                                     <td colSpan={7} className="px-8 py-32 text-center">
+                                       <div className="flex flex-col items-center">
+                                         <div className="w-16 h-16 rounded-full border-4 border-rose-500/20 border-t-rose-500 animate-spin mb-6" />
+                                         <p className="text-sm font-black uppercase tracking-widest text-neutral-400 animate-pulse italic">Synchronizing Recovery Matrix...</p>
+                                       </div>
+                                     </td>
+                                   </tr>
+                                 ) : filteredReturns.length === 0 ? (
+                                   <tr>
+                                     <td colSpan={7} className="px-8 py-32 text-center">
+                                       <div className="flex flex-col items-center">
+                                         <div className="p-8 bg-neutral-50 dark:bg-neutral-900 rounded-[3rem] text-neutral-200 mb-6">
+                                           <RotateCcw className="w-16 h-16" />
+                                         </div>
+                                         <h3 className="text-xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic">Vortex: Return Null</h3>
+                                         <p className="text-sm font-bold text-neutral-500 mt-2 italic">No return protocols detected in current registry.</p>
+                                       </div>
+                                     </td>
+                                   </tr>
+                                 ) : (
+                                   filteredReturns.map((r) => (
+                                     <tr
+                                       key={r.id}
+                                       className="group/row hover:transform hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+                                       onClick={() => navigate(`/purchase/returns/view/${r.id}`)}
+                                     >
+                                       <td className="px-2 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 rounded-l-[1.5rem] p-6 border-y border-l border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all">
+                                            <div className="text-sm font-black text-neutral-900 dark:text-neutral-100 uppercase tracking-tighter italic leading-none mb-1 group-hover/row:text-rose-500">
+                                              {r.return_number}
                                             </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="font-semibold text-neutral-700 dark:text-neutral-300">{r.vendor_name}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md inline-block w-fit">GRN: {r.grn_number}</span>
-                                                {r.po_number && <span className="text-[9px] text-neutral-400 font-medium">PO: {r.po_number}</span>}
+                                            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic leading-none">
+                                              {new Date(r.return_date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </span>
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all font-bold text-xs text-neutral-600 dark:text-neutral-400 uppercase tracking-widest italic">
+                                            {r.vendor_name}
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all flex flex-col gap-1">
+                                            <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 italic">
+                                                <FileText className="w-3 h-3" /> GRN: {r.grn_number}
                                             </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${r.reason === 'Defective' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-[var(--erp-bg-sunken)] text-neutral-600 border-default'}`}>
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all">
+                                            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${r.reason === 'Defective' ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 border-rose-500/20' : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-500 border-default'}`}>
                                                 {r.reason}
                                             </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="font-bold text-neutral-900 dark:text-main">{formatCurrency(r.total_amount)}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {getStatusBadge(r.status)}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="p-2 text-neutral-400 group-hover:text-brand-600 transition-colors">
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-right">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all font-mono font-black text-neutral-900 dark:text-neutral-300 italic text-sm">
+                                            {formatCurrency(r.total_amount)}
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-center">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all flex justify-center">
+                                            <StatusBadge status={r.status} />
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-right">
+                                         <div className="bg-white dark:bg-neutral-900 rounded-r-[1.5rem] p-6 border-y border-r border-default dark:border-neutral-800 group-hover/row:border-rose-500/20 transition-all">
+                                            <button className="p-3 bg-neutral-50 dark:bg-neutral-800 text-neutral-400 group-hover/row:text-rose-500 rounded-xl transition-all shadow-sm">
                                                 <ChevronRight className="w-5 h-5" />
                                             </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {filteredReturns.length === 0 && (
-                                    <tr>
-                                        <td colSpan={7} className="px-6 py-20 text-center">
-                                            <div className="flex flex-col items-center justify-center opacity-40">
-                                                <RotateCcw className="w-12 h-12 mb-3" />
-                                                <p className="font-bold text-sm uppercase tracking-widest">No Returns Found</p>
-                                                <p className="text-xs">Start by initiating a return against a GRN</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                         </div>
+                                       </td>
+                                     </tr>
+                                   ))
+                                 )}
+                               </tbody>
+                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Global Verification Footprint */}
+                <div className="mt-8 flex items-center justify-center gap-6 opacity-30 group pb-24">
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                    <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">Recovery Protocol Shield Verified • BizzAI Intelligence Core</span>
+                    </div>
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                </div>
+            </PageShell>
+        </Layout>
+    );
+};
+
+const StatsComponent = ({ label, value, icon: Icon, color, sub }: any) => {
+    return (
+        <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none text-neutral-900 dark:text-white">
+                <Icon className="w-24 h-24" />
+            </div>
+            <div className="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                    <p className="text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1 italic">{label}</p>
+                    <h3 className="text-3xl font-black text-neutral-900 dark:text-main tracking-tighter italic">
+                        {value}
+                    </h3>
+                </div>
+                <div className="mt-8 flex flex-col gap-2">
+                    <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest leading-none">{sub}</p>
+                    <div className="flex items-center gap-2">
+                        <span className={`w-1.5 h-1.5 rounded-full bg-${color === 'blue' ? 'blue' : color === 'emerald' ? 'emerald' : 'rose'}-500 animate-pulse`} />
+                        <span className="text-[8px] font-black text-neutral-400 uppercase tracking-widest leading-none italic">Active Sync</span>
                     </div>
                 </div>
             </div>
-                  </div>
+        </div>
+    );
+};
 
-        </Layout>
+const StatusBadge = ({ status }: { status: PurchaseReturnStatus }) => {
+    const config: any = {
+        'Initiated': { color: 'blue', icon: RotateCcw },
+        'In-Transit': { color: 'amber', icon: Truck },
+        'Received by Vendor': { color: 'indigo', icon: ShieldCheck },
+        'Processed': { color: 'emerald', icon: CheckCircle },
+        'Credited': { color: 'emerald', icon: CheckCircle, filled: true },
+        'Cancelled': { color: 'neutral', icon: RotateCcw },
+    };
+    const { color, icon: Icon, filled } = config[status] || config['Initiated'];
+    
+    return (
+        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 ${filled ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : `bg-${color === 'neutral' ? 'neutral-100 dark:bg-neutral-800' : `${color}-500/10 text-${color}-600 dark:text-${color}-400 border border-${color}-500/20 font-bold`}`}`}>
+            <Icon className="w-3 h-3" /> {status}
+        </span>
     );
 };
 

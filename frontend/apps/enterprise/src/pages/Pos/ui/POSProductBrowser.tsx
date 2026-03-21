@@ -15,12 +15,12 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
         <button
             onClick={() => onAddToCart(product)}
             disabled={product.stockQty <= 0}
-            className={`text-left group relative flex flex-col premium-card transition-all duration-300 ${product.stockQty <= 0
-                ? 'opacity-40 grayscale cursor-not-allowed'
-                : 'hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(79,70,229,0.1)]'
+            className={`text-left group relative flex flex-col erp-card transition-all duration-300 rounded-3xl overflow-hidden ${product.stockQty <= 0
+                ? 'opacity-40 grayscale cursor-not-allowed shadow-none'
+                : 'hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-600/20 hover:-translate-y-1'
                 }`}
         >
-            <div className="h-28 w-full bg-[var(--erp-bg-sunken)] rounded-t-xl overflow-hidden relative">
+            <div className="h-28 w-full bg-[var(--erp-bg-sunken)] overflow-hidden relative">
                 {product.image ? (
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                 ) : (
@@ -35,17 +35,17 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
                 </div>
             </div>
 
-            <div className="p-3 flex flex-col flex-1">
-                <h3 className="font-black text-muted text-xs uppercase tracking-tight line-clamp-1 mb-0.5">{product.name}</h3>
-                {product.nameTamil && <p className="text-[10px] text-muted line-clamp-1 mb-1">{product.nameTamil}</p>}
+            <div className="p-3.5 flex flex-col flex-1">
+                <h3 className="font-black text-muted text-xs uppercase tracking-tight line-clamp-1 mb-0.5 group-hover:text-indigo-400 transition-colors">{product.name}</h3>
+                {product.nameTamil && <p className="text-[10px] text-muted line-clamp-1 mb-1 font-medium">{product.nameTamil}</p>}
                 <div className="mt-auto flex justify-between items-end">
-                    <span className="text-[10px] text-secondary font-mono tracking-tighter">{product.sku}</span>
-                    <span className="font-black text-indigo-400">₹{product.sellingPrice}</span>
+                    <span className="text-[10px] text-secondary font-mono tracking-tighter opacity-60">{product.sku}</span>
+                    <span className="font-black text-indigo-400 text-sm">₹{product.sellingPrice}</span>
                 </div>
             </div>
 
-            <div className="absolute inset-0 bg-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                {product.stockQty > 0 && <div className="bg-indigo-600 text-white p-2 rounded-full shadow-lg shadow-indigo-600/30"><Check className="w-5 h-5" /></div>}
+            <div className="absolute inset-0 bg-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {product.stockQty > 0 && <div className="bg-indigo-600 text-white p-2.5 rounded-full shadow-2xl shadow-indigo-600/50 scale-75 group-hover:scale-100 transition-transform"><Check className="w-5 h-5" /></div>}
             </div>
         </button>
     );
@@ -184,8 +184,8 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                         <input
                             ref={searchInputRef}
                             type="text"
-                            placeholder={isManualMode ? "Manual Mode: Type Name or Pattern..." : "Scan Barcode (or Ctrl+F)"}
-                            className={`w-full pl-10 pr-14 py-2 premium-card border-none text-slate-200 placeholder-slate-600 focus:ring-1 focus:ring-indigo-500/50 transition-all font-black text-sm uppercase tracking-tight ${isManualMode ? 'bg-indigo-600/10 text-indigo-400' : ''}`}
+                            placeholder={isManualMode ? "Type Name or Pattern..." : "Scan Barcode (or Ctrl+F)"}
+                            className={`w-full pl-10 pr-14 py-3 erp-card border-none text-slate-200 placeholder-slate-600 focus:ring-2 focus:ring-indigo-500/20 transition-all font-black text-sm uppercase tracking-tight rounded-2xl shadow-inner bg-white dark:bg-neutral-900 ${isManualMode ? 'bg-indigo-600/10 text-indigo-400 border-indigo-500/20' : ''}`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleScanKeyDown}

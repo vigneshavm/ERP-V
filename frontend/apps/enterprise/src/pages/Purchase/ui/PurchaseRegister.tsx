@@ -2,11 +2,9 @@ import { useNavigation } from '@/app/providers/NavigationContext';
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "@/app/store/store";
 import { getAllPurchases } from "@/entities/purchase/model/purchaseSlice";
-import { useUiStore } from "@/shared/lib/store/uiStore";
-import { PurchaseOrder, PurchaseOrderStatus } from "@repo/shared";
+import { PurchaseOrder } from "@repo/shared";
 import { useBranchResolver } from "@/hooks/useBranchResolver";
 import {
     Search,
@@ -21,30 +19,30 @@ import {
     CheckCircle,
     Clock,
     XCircle,
-    Truck,
     RefreshCw,
-    User,
     ChevronLeft,
     ChevronRight,
     FileSpreadsheet,
     ArrowUpDown,
     ArrowUp,
     CheckSquare,
-    ArrowDown
+    ArrowDown,
+    ShieldCheck,
+    Database,
+    Zap,
+    Building2,
+    CalendarDays
 } from 'lucide-react';
 import Layout from "@/shared/ui/Layout/Layout";
-import PageHeader from "@/shared/ui/Layout/PageHeader";
-import { StatsCard } from "@repo/ui";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const { navigate } = useNavigation();
 const PurchaseRegister: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { orders, isProcessing } = useSelector((state: RootState) => state.purchase);
     const { getBranchName } = useBranchResolver();
-    
 
     // Filter State
     const [searchTerm, setSearchTerm] = useState('');
@@ -52,17 +50,14 @@ const PurchaseRegister: React.FC = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [vendorFilter, setVendorFilter] = useState('ALL');
-    const [amountMin, setAmountMin] = useState('');
-    const [amountMax, setAmountMax] = useState('');
 
     // View Mode State
     const [viewMode, setViewMode] = useState<'ALL' | 'BILLED' | 'UNBILLED' | 'DRAFT'>('ALL');
-
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     // Sort State
     const [sortColumn, setSortColumn] = useState<string>('date');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+    const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
@@ -84,28 +79,25 @@ const PurchaseRegister: React.FC = () => {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
         } else {
             setSortColumn(column);
-            setSortDirection('asc'); // Default new column to asc, or maybe desc for date? let's stick to standard toggle
+            setSortDirection('asc');
         }
     };
 
-    // Derived Data for Filters 
-    // Handle the fact that vendorId is populated in the backend
     const uniqueVendors = useMemo(() => {
         const vendorNames = orders.map(o => {
             if (o.vendorId && typeof o.vendorId === 'object') {
-                return o.vendorId.businessName || o.vendorId.name;
+                return (o.vendorId as any).businessName || (o.vendorId as any).name;
             }
             return o.vendor_name;
         });
         return Array.from(new Set(vendorNames)).filter((v): v is string => !!v).sort();
     }, [orders]);
 
-    // Filtering Logic
     const filteredOrders = useMemo(() => {
         return orders.filter(order => {
             let vName = '';
             if (order.vendorId && typeof order.vendorId === 'object') {
-                vName = order.vendorId.businessName || order.vendorId.name || '';
+                vName = (order.vendorId as any).businessName || (order.vendorId as any).name || '';
             } else {
                 vName = order.vendor_name || '';
             }
@@ -114,32 +106,19 @@ const PurchaseRegister: React.FC = () => {
             const pDate = order.date || order.po_date;
             const tAmount = order.totalAmount || order.total_amount || 0;
 
-            // Search
             if (searchTerm) {
                 const search = searchTerm.toLowerCase();
-                if (!vName.toLowerCase().includes(search) &&
-                    !pNumber.toLowerCase().includes(search)) {
-                    return false;
-                }
+                if (!vName.toLowerCase().includes(search) && !pNumber.toLowerCase().includes(search)) return false;
             }
 
-            // Status
             if (statusFilter !== 'ALL' && order.status !== statusFilter) return false;
-
-            // Vendor
             if (vendorFilter !== 'ALL' && vName !== vendorFilter) return false;
-
-            // Date Range
             if (dateFrom && new Date(pDate) < new Date(dateFrom)) return false;
             if (dateTo) {
                 const nextDay = new Date(dateTo);
                 nextDay.setDate(nextDay.getDate() + 1);
                 if (new Date(pDate) >= nextDay) return false;
             }
-
-            // Amount Range
-            if (amountMin && tAmount < parseFloat(amountMin)) return false;
-            if (amountMax && tAmount > parseFloat(amountMax)) return false;
 
             return true;
         }).sort((a, b) => {
@@ -156,159 +135,66 @@ const PurchaseRegister: React.FC = () => {
                     valB = new Date((b as any).createdAt || b.created_at || b.date || b.po_date || 0).getTime();
                     break;
                 case 'vendor':
-                    if (a.vendorId && typeof a.vendorId === 'object') {
-                        valA = (a.vendorId.businessName || a.vendorId.name || '').toLowerCase();
-                    } else {
-                        valA = (a.vendor_name || '').toLowerCase();
-                    }
-                    if (b.vendorId && typeof b.vendorId === 'object') {
-                        valB = (b.vendorId.businessName || b.vendorId.name || '').toLowerCase();
-                    } else {
-                        valB = (b.vendor_name || '').toLowerCase();
-                    }
-                    break;
-                case 'items':
-                    valA = a.items.length;
-                    valB = b.items.length;
+                    valA = ((a.vendorId as any)?.businessName || a.vendor_name || '').toLowerCase();
+                    valB = ((b.vendorId as any)?.businessName || b.vendor_name || '').toLowerCase();
                     break;
                 case 'amount':
                     valA = a.totalAmount || a.total_amount || 0;
                     valB = b.totalAmount || b.total_amount || 0;
                     break;
-                case 'status':
-                    valA = a.status || '';
-                    valB = b.status || '';
-                    break;
                 default:
                     return 0;
             }
 
-            if (sortDirection === 'asc') {
-                return valA > valB ? 1 : -1;
-            } else {
-                return valA < valB ? 1 : -1;
-            }
+            if (sortDirection === 'asc') return valA > valB ? 1 : -1;
+            return valA < valB ? 1 : -1;
         });
-    }, [orders, searchTerm, statusFilter, dateFrom, dateTo, vendorFilter, amountMin, amountMax, sortColumn, sortDirection]);
+    }, [orders, searchTerm, statusFilter, dateFrom, dateTo, vendorFilter, sortColumn, sortDirection]);
 
-    // Apply View Mode
     const displayOrders = useMemo(() => {
         switch (viewMode) {
             case 'BILLED':
-                return filteredOrders.filter(o =>
-                    o.status === 'COMPLETED' ||
-                    o.status === 'Billed' ||
-                    o.status === 'Paid' ||
-                    o.status === 'Converted'
-                );
+                return filteredOrders.filter(o => ['COMPLETED', 'Billed', 'Paid', 'Converted'].includes(o.status || ''));
             case 'UNBILLED':
-                return filteredOrders.filter(o =>
-                    o.status === 'Pending' ||
-                    o.status === 'Pending Approval' ||
-                    o.status === 'Approved' ||
-                    o.status === 'Partial Receipt' || // Corrected from Partially Received
-                    o.status === 'Fully Received' ||
-                    o.status === 'RECEIVED'
-                );
+                return filteredOrders.filter(o => ['Pending', 'Pending Approval', 'Approved', 'Partial Receipt', 'Fully Received', 'RECEIVED'].includes(o.status || ''));
             case 'DRAFT':
                 return filteredOrders.filter(o => o.status === 'Draft');
-            case 'ALL':
             default:
                 return filteredOrders;
         }
     }, [filteredOrders, viewMode]);
 
-    // Pagination Logic
     const totalPages = Math.ceil(displayOrders.length / itemsPerPage);
     const paginatedOrders = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
         return displayOrders.slice(start, start + itemsPerPage);
     }, [displayOrders, currentPage, itemsPerPage]);
 
-    // Stats (Calculated on Base Filtered Orders, NOT affected by 'Billed Only' toggle)
     const totalPurchasesValue = filteredOrders.reduce((acc, o) => acc + (o.totalAmount || o.total_amount || 0), 0);
-    const totalBilledValue = filteredOrders
-        .filter(o => o.status === 'COMPLETED')
-        .reduce((acc, o) => acc + (o.totalAmount || o.total_amount || 0), 0);
-
-    const pendingCount = filteredOrders.filter(o => o.status === 'Pending' || o.status === 'Pending Approval' || o.status === 'Draft').length;
-    const approvedCount = filteredOrders.filter(o => o.status === 'Approved' || o.status === 'Fully Received').length;
-
-    const getStatusBadge = (status: string) => {
-        const s = status.toUpperCase();
-        switch (s) {
-            case 'APPROVED':
-            case 'COMPLETED':
-            case 'PAID':
-                return (
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
-                        <CheckCircle className="w-3 h-3" /> {status}
-                    </span>
-                );
-            case 'PENDING':
-            case 'PENDING APPROVAL':
-            case 'DRAFT':
-                return (
-                    <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
-                        <Clock className="w-3 h-3" /> {status}
-                    </span>
-                );
-            case 'REJECTED':
-            case 'CANCELLED':
-                return (
-                    <span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
-                        <XCircle className="w-3 h-3" /> {status}
-                    </span>
-                );
-            case 'BILLED':
-                return (
-                    <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 w-fit mx-auto">
-                        <FileText className="w-3 h-3" /> Billed
-                    </span>
-                );
-            default:
-                return <span className="px-2 py-0.5 bg-[var(--erp-bg-sunken)] text-muted border border-default text-[10px] font-black uppercase tracking-widest rounded-full w-fit mx-auto">{status}</span>;
-        }
-    };
-
-    const handleView = (order: PurchaseOrder) => {
-        if (!order) return;
-        navigate(`/purchase/orders/${order._id || order.id}`);
-    };
+    const totalBilledValue = filteredOrders.filter(o => o.status === 'COMPLETED').reduce((acc, o) => acc + (o.totalAmount || o.total_amount || 0), 0);
+    const pendingCount = filteredOrders.filter(o => ['Pending', 'Pending Approval', 'Draft'].includes(o.status || '')).length;
 
     const handleExportPDF = () => {
         const doc = new jsPDF();
         doc.text("Purchase Register", 14, 15);
-
-        const tableData = displayOrders.map(o => {
-            const vName = (o.vendorId && typeof o.vendorId === 'object') ? (o.vendorId.businessName || o.vendorId.name) : (o.vendor_name || 'N/A');
-            return [
-                new Date(o.date || o.po_date).toLocaleDateString(),
-                o.purchaseNumber || o.po_number || 'N/A',
-                vName || 'N/A',
-                o.status,
-                o.items.length.toString(),
-                `Rs. ${(o.totalAmount || o.total_amount || 0).toLocaleString()}`
-            ];
-        });
-
+        const tableData = displayOrders.map(o => [
+            new Date(o.date || o.po_date).toLocaleDateString(),
+            o.purchaseNumber || o.po_number || 'N/A',
+            ((o.vendorId as any)?.businessName || o.vendor_name || 'N/A'),
+            o.status,
+            `Rs. ${(o.totalAmount || o.total_amount || 0).toLocaleString()}`
+        ]);
         autoTable(doc, {
-            head: [['Date', 'Number #', 'Vendor', 'Status', 'Items', 'Amount']],
+            head: [['Date', 'Number #', 'Vendor', 'Status', 'Amount']],
             body: tableData,
             startY: 20,
         });
-
         doc.save('purchase_register.pdf');
     };
 
     const handleExportCSV = () => {
-        const headers = ["Date,Number #,Vendor,Status,Items,Amount,Created By"];
-        const rows = displayOrders.map(o => {
-            const vName = (o.vendorId && typeof o.vendorId === 'object') ? (o.vendorId.businessName || o.vendorId.name) : (o.vendor_name || 'N/A');
-            const created = (o.createdBy && typeof o.createdBy === 'object') ? o.createdBy.name : (o.created_by || '-');
-            return `${new Date(o.date || o.po_date).toLocaleDateString()},${o.purchaseNumber || o.po_number},"${vName}",${o.status},${o.items.length},${o.totalAmount || o.total_amount || 0},${created}`;
-        });
-
+        const headers = ["Date,Number #,Vendor,Status,Amount"];
+        const rows = displayOrders.map(o => `${new Date(o.date || o.po_date).toLocaleDateString()},${o.purchaseNumber || o.po_number},"${((o.vendorId as any)?.businessName || o.vendor_name || 'N/A')}",${o.status},${o.totalAmount || o.total_amount || 0}`);
         const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -319,282 +205,289 @@ const PurchaseRegister: React.FC = () => {
         document.body.removeChild(link);
     };
 
-
     return (
         <Layout>
-            <div className="page-shell">
-            <div className="space-y-6 animate-fade-in pb-10 h-full flex flex-col premium-bg min-h-screen px-4 pt-6">
-                <PageHeader
-                    title="Purchase Register"
-                    description="Comprehensive record and audit trail of all purchases"
-                    actions={
-                        <div className="flex gap-2">
-                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl hover:bg-white/10 text-muted transition-all">
-                                <RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />
-                            </button>
-                            <button onClick={handleExportCSV} className="px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-[10px] font-black uppercase tracking-widest text-muted hover:bg-white/10 flex items-center gap-2 transition-all">
-                                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" /> Excel
-                            </button>
-                            <button onClick={handleExportPDF} className="px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-[10px] font-black uppercase tracking-widest text-muted hover:bg-white/10 flex items-center gap-2 transition-all">
-                                <FileText className="w-3.5 h-3.5 text-rose-400" /> PDF
-                            </button>
-                            <select
-                                value={viewMode}
-                                onChange={(e) => setViewMode(e.target.value as any)}
-                                className="px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-[10px] font-black uppercase tracking-widest text-muted hover:bg-white/10 outline-none focus:ring-1 focus:ring-indigo-500/50 appearance-none min-w-[140px] text-center transition-all cursor-pointer"
-                            >
-                                <option value="ALL">All Orders</option>
-                                <option value="BILLED">Billed</option>
-                                <option value="UNBILLED">Unbilled</option>
-                                <option value="DRAFT">Drafts</option>
-                            </select>
-                            <button
-                                onClick={() => navigate('PURCHASE_ENTRY')}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition-all"
-                            >
-                                <Plus className="w-4 h-4" /> New Purchase
-                            </button>
+            <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                 {/* Cinematic Header */}
+                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-md border border-blue-500/20">Audit Intelligence</span>
+                            <span className="text-neutral-300 dark:text-neutral-700">/</span>
+                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Procurement Register</span>
                         </div>
-                    }
-                />
-
-                {/* KPI Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="erp-card p-4 shadow-xl border border-default relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <TrendingUp className="w-12 h-12 text-indigo-400" />
-                        </div>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Total Value</p>
-                        <p className="text-2xl font-black text-slate-200 font-mono">₹{totalPurchasesValue.toLocaleString()}</p>
+                        <h2 className="text-4xl font-black text-neutral-900 dark:text-main tracking-tight leading-none flex items-center gap-3">
+                            Fiscal Ledger <FileText className="w-8 h-8 text-blue-500" />
+                        </h2>
+                        <p className="text-sm text-neutral-500 font-medium italic mt-3">
+                            Comprehensive record and audit trail of entire procurement pipeline.
+                        </p>
                     </div>
-
-                    <div className="erp-card p-4 shadow-xl border border-default relative overflow-hidden group text-right">
-                        <div className="absolute top-0 left-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <CheckSquare className="w-12 h-12 text-emerald-400" />
-                        </div>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Total Billed</p>
-                        <p className="text-2xl font-black text-emerald-400 font-mono text-main">₹{totalBilledValue.toLocaleString()}</p>
-                    </div>
-
-                    <div className="erp-card p-4 shadow-xl border border-default relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <FileText className="w-12 h-12 text-indigo-400" />
-                        </div>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Transactions</p>
-                        <p className="text-2xl font-black text-slate-200 font-mono">{filteredOrders.length}</p>
-                    </div>
-
-                    <div className="erp-card p-4 shadow-xl border border-default relative overflow-hidden group text-right">
-                        <div className="absolute top-0 left-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Clock className="w-12 h-12 text-amber-400" />
-                        </div>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Pending</p>
-                        <p className="text-2xl font-black text-amber-400 font-mono text-main">{pendingCount}</p>
+                    
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleExportCSV}
+                            className="p-3.5 bg-white dark:bg-neutral-900 border border-default dark:border-neutral-800 text-neutral-400 hover:text-blue-500 rounded-2xl transition-all shadow-sm group"
+                        >
+                            <FileSpreadsheet className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        </button>
+                        <button
+                            onClick={handleExportPDF}
+                            className="p-3.5 bg-white dark:bg-neutral-900 border border-default dark:border-neutral-800 text-neutral-400 hover:text-rose-500 rounded-2xl transition-all shadow-sm group"
+                        >
+                            <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        </button>
+                        <button
+                            onClick={() => navigate('/purchase/new')}
+                            className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                        >
+                            <Plus className="w-5 h-5" /> 
+                            <span>Record Purchase</span>
+                        </button>
                     </div>
                 </div>
 
-                {/* Advanced Filters */}
-                <div className="erp-card p-4 shadow-xl border border-default">
-                    <div className="flex flex-wrap gap-4 items-end">
-                        <div className="flex-1 min-w-[200px]">
-                            <label className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5 block">Search Procurement</label>
-                            <div className="relative group">
-                                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-secondary group-focus-within:text-indigo-400 transition-colors" />
-                                <input 
-                                    type="text" 
-                                    placeholder="Search PO # or Vendor..." 
-                                    value={searchTerm} 
-                                    onChange={e => setSearchTerm(e.target.value)} 
-                                    className="w-full pl-9 pr-4 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-medium text-slate-200 placeholder:text-secondary focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all" 
-                                />
-                            </div>
+                {/* KPI Matrix */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <RegisterStats label="Aggregate Volume" value={`₹ ${totalPurchasesValue.toLocaleString()}`} icon={TrendingUp} color="blue" sub="Total Inbound" />
+                    <RegisterStats label="Liquidated Claims" value={`₹ ${totalBilledValue.toLocaleString()}`} icon={CheckSquare} color="emerald" sub="Verified Settlements" />
+                    <RegisterStats label="Transaction Count" value={filteredOrders.length} icon={Database} color="indigo" sub="Registry Nodes" />
+                    <RegisterStats label="Stasis Protocols" value={pendingCount} icon={Clock} color="amber" sub="Pending Verification" />
+                </div>
+
+                {/* Command Filter Matrix */}
+                <div className="erp-card rounded-[3rem] p-8 border-none shadow-sm space-y-8 relative overflow-hidden group">
+                     <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+                        <Filter className="w-64 h-64 text-blue-500" />
+                    </div>
+
+                    <div className="flex items-center gap-4 px-2">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-sm">
+                            <Zap className="w-5 h-5" />
                         </div>
-                        <div className="w-48">
-                            <label className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5 block">Vendor</label>
-                            <select 
-                                value={vendorFilter} 
-                                onChange={e => setVendorFilter(e.target.value)} 
-                                className="w-full px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-black uppercase tracking-tight text-muted focus:ring-1 focus:ring-indigo-500/50 outline-none cursor-pointer appearance-none transition-all"
+                        <div>
+                            <h3 className="text-2xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic leading-none text-brand-colors">Registry Command</h3>
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic leading-none">Filtering and Intercepting Audit Protocols</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="relative group/search">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within/search:text-blue-500 transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Search PO # or Vendor..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-[1.5rem] text-xs font-bold placeholder:text-neutral-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all shadow-inner uppercase tracking-tight italic"
+                            />
+                        </div>
+
+                        <div className="relative">
+                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                            <select
+                                value={vendorFilter}
+                                onChange={(e) => setVendorFilter(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-[1.5rem] text-xs font-bold focus:ring-2 focus:ring-blue-500/10 outline-none transition-all shadow-inner appearance-none uppercase tracking-widest italic text-neutral-600 dark:text-neutral-400 cursor-pointer"
                             >
-                                <option value="ALL">All Vendors</option>
+                                <option value="ALL">Universal Vendors</option>
                                 {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
                             </select>
                         </div>
-                        <div className="w-40">
-                            <label className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5 block">Status</label>
-                            <select 
-                                value={statusFilter} 
-                                onChange={e => setStatusFilter(e.target.value)} 
-                                className="w-full px-3 py-2 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-black uppercase tracking-tight text-muted focus:ring-1 focus:ring-indigo-500/50 outline-none cursor-pointer appearance-none transition-all"
+
+                        <div className="relative">
+                            <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-[1.5rem] text-xs font-bold focus:ring-2 focus:ring-blue-500/10 outline-none transition-all shadow-inner appearance-none uppercase tracking-widest italic text-neutral-600 dark:text-neutral-400 cursor-pointer"
                             >
-                                <option value="ALL">All Status</option>
+                                <option value="ALL">Universal Status</option>
                                 <option value="COMPLETED">Completed</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Pending">Pending</option>
                                 <option value="DRAFT">Draft</option>
-                                <option value="CANCELLED">Cancelled</option>
                             </select>
                         </div>
-                        <div className="flex gap-2">
-                            <div className="w-36">
-                                <label className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5 block">From</label>
-                                <input 
-                                    type="date" 
-                                    value={dateFrom} 
-                                    onChange={e => setDateFrom(e.target.value)} 
-                                    className="w-full px-3 py-1.5 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-black text-muted focus:ring-1 focus:ring-indigo-500/50 outline-none invert dark:invert-0 brightness-200 dark:brightness-100" 
+
+                        <div className="flex gap-4">
+                            <div className="relative flex-1">
+                                <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                                <input
+                                    type="date"
+                                    value={dateFrom}
+                                    onChange={(e) => setDateFrom(e.target.value)}
+                                    className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-[1.5rem] text-xs font-bold focus:ring-2 focus:ring-blue-500/10 outline-none transition-all shadow-inner uppercase tracking-widest italic text-neutral-600 dark:text-neutral-400 dark:invert-0 brightness-110"
                                 />
                             </div>
-                            <div className="w-36">
-                                <label className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5 block">To</label>
-                                <input 
-                                    type="date" 
-                                    value={dateTo} 
-                                    onChange={e => setDateTo(e.target.value)} 
-                                    className="w-full px-3 py-1.5 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-black text-muted focus:ring-1 focus:ring-indigo-500/50 outline-none invert dark:invert-0 brightness-200 dark:brightness-100" 
+                            <div className="relative flex-1">
+                                <input
+                                    type="date"
+                                    value={dateTo}
+                                    onChange={(e) => setDateTo(e.target.value)}
+                                    className="w-full px-4 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-[1.5rem] text-xs font-bold focus:ring-2 focus:ring-blue-500/10 outline-none transition-all shadow-inner uppercase tracking-widest italic text-neutral-600 dark:text-neutral-400 dark:invert-0 brightness-110"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Table */}
-                <div className="erp-card shadow-2xl border border-default flex-1 flex flex-col overflow-hidden">
-                    <div className="flex-1 overflow-auto custom-scrollbar">
-                        <table className="w-full text-left text-sm border-separate border-spacing-0">
-                            <thead className="bg-[var(--erp-bg-sunken)] backdrop-blur-md sticky top-0 z-10">
-                                <tr>
-                                    <th className="px-6 py-4 cursor-pointer hover:bg-[var(--erp-bg-sunken)] transition-colors" onClick={() => handleSort('number')}>
-                                        <div className="flex items-center gap-2 text-[10px] font-black text-muted uppercase tracking-widest">
-                                            PO Number
-                                            {sortColumn === 'number' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
-                                            {sortColumn !== 'number' && <ArrowUpDown className="w-3 h-3 text-secondary" />}
-                                        </div>
+                {/* Audit Ledger Matrix */}
+                <div className="erp-card rounded-[3rem] p-4 shadow-sm border-none overflow-hidden relative group">
+                    <div className="overflow-x-auto px-2">
+                        <table className="w-full text-left border-separate border-spacing-y-4">
+                            <thead>
+                                <tr className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">
+                                    <th className="px-8 py-2 cursor-pointer hover:text-blue-500" onClick={() => handleSort('number')}>
+                                        Protocol No <SortArrow active={sortColumn === 'number'} direction={sortDirection} />
                                     </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:bg-[var(--erp-bg-sunken)] transition-colors" onClick={() => handleSort('date')}>
-                                        <div className="flex items-center gap-2 text-[10px] font-black text-muted uppercase tracking-widest">
-                                            Date
-                                            {sortColumn === 'date' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
-                                            {sortColumn !== 'date' && <ArrowUpDown className="w-3 h-3 text-secondary" />}
-                                        </div>
+                                    <th className="px-8 py-2 cursor-pointer hover:text-blue-500" onClick={() => handleSort('date')}>
+                                        Timestamp <SortArrow active={sortColumn === 'date'} direction={sortDirection} />
                                     </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:bg-[var(--erp-bg-sunken)] transition-colors" onClick={() => handleSort('vendor')}>
-                                        <div className="flex items-center gap-2 text-[10px] font-black text-muted uppercase tracking-widest">
-                                            Vendor / Supplier
-                                            {sortColumn === 'vendor' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
-                                            {sortColumn !== 'vendor' && <ArrowUpDown className="w-3 h-3 text-secondary" />}
-                                        </div>
+                                    <th className="px-8 py-2 cursor-pointer hover:text-blue-500" onClick={() => handleSort('vendor')}>
+                                        Entity designation <SortArrow active={sortColumn === 'vendor'} direction={sortDirection} />
                                     </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:bg-[var(--erp-bg-sunken)] transition-colors text-center" onClick={() => handleSort('items')}>
-                                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-muted uppercase tracking-widest">
-                                            SKUs
-                                            {sortColumn === 'items' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
-                                            {sortColumn !== 'items' && <ArrowUpDown className="w-3 h-3 text-secondary" />}
-                                        </div>
+                                    <th className="px-8 py-2 text-right cursor-pointer hover:text-blue-500" onClick={() => handleSort('amount')}>
+                                        Net Value <SortArrow active={sortColumn === 'amount'} direction={sortDirection} />
                                     </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:bg-[var(--erp-bg-sunken)] transition-colors text-right" onClick={() => handleSort('amount')}>
-                                        <div className="flex items-center justify-end gap-2 text-[10px] font-black text-muted uppercase tracking-widest">
-                                            Net Amount
-                                            {sortColumn === 'amount' && (sortDirection === 'asc' ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />)}
-                                            {sortColumn !== 'amount' && <ArrowUpDown className="w-3 h-3 text-secondary" />}
-                                        </div>
-                                    </th>
-                                    <th className="px-6 py-4 text-center text-[10px] font-black text-muted uppercase tracking-widest">
-                                        Status
-                                    </th>
-                                    <th className="px-6 py-4 text-center text-[10px] font-black text-muted uppercase tracking-widest">Action</th>
+                                    <th className="px-8 py-2 text-center">Protocol State</th>
+                                    <th className="px-8 py-2 text-right">Commands</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-default">
-                                {paginatedOrders.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-muted">No records found</td></tr>
-                                ) : (
-                                    paginatedOrders.map(order => {
-                                        let vName = '';
-                                        if (order.vendorId && typeof order.vendorId === 'object') {
-                                            vName = order.vendorId.businessName || order.vendorId.name || '';
-                                        } else {
-                                            vName = order.vendor_name || 'N/A';
-                                        }
-
-                                        return (
-                                            <tr key={order._id || order.id} className="hover:bg-[var(--erp-bg-sunken)] transition-colors group">
-                                                <td className="px-6 py-4">
-                                                    <span className="font-mono text-[11px] font-black text-indigo-400 uppercase tracking-tighter">
-                                                        #{order.purchaseNumber || order.po_number || 'N/A'}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-[11px] font-black text-muted uppercase tracking-tight">
-                                                            {new Date(order.date || order.po_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                        </span>
-                                                        <span className="text-[9px] text-secondary font-mono">
-                                                            {new Date((order as any).createdAt || (order as any).created_at || order.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className="text-[11px] font-black text-slate-200 uppercase tracking-tight line-clamp-1">
-                                                        {vName}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <span className="text-[11px] font-black text-muted font-mono">{order.items.length}</span>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <span className="text-[11px] font-black text-slate-200 font-mono">
-                                                        ₹{(order.totalAmount || order.total_amount || 0).toLocaleString()}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-center">{getStatusBadge(order.status)}</td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <button onClick={() => handleView(order)} className="p-2 hover:bg-indigo-500/10 rounded-lg text-muted hover:text-indigo-400 transition-all">
-                                                        <Eye className="w-4 h-4" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                )}
+                            <tbody>
+                                {paginatedOrders.map((o) => (
+                                    <tr key={o._id} className="group/row hover:transform hover:-translate-y-1 transition-all duration-500 cursor-pointer" onClick={() => navigate(`/purchase/orders/${o._id}`)}>
+                                        <td className="px-2 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 rounded-l-[1.5rem] p-6 border-y border-l border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all font-mono font-black text-blue-500 tracking-tighter text-xs uppercase italic">
+                                            #{o.purchaseNumber || o.po_number || 'N/A'}
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all">
+                                            <div className="text-[10px] font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-tight italic leading-none">
+                                                {new Date(o.date || o.po_date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </div>
+                                            <span className="text-[8px] font-bold text-neutral-400 uppercase tracking-widest mt-1 italic block leading-none">
+                                                Registry Logged
+                                            </span>
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all font-black text-xs text-neutral-600 dark:text-neutral-400 uppercase tracking-widest italic">
+                                            {((o.vendorId as any)?.businessName || o.vendor_name || 'N/A')}
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-right">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all font-mono font-black text-neutral-900 dark:text-neutral-300 italic text-sm">
+                                            ₹ {(o.totalAmount || o.total_amount || 0).toLocaleString()}
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-center">
+                                         <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all flex justify-center">
+                                            <StatusLabel status={o.status} />
+                                         </div>
+                                       </td>
+                                       <td className="px-0 py-1 text-right">
+                                         <div className="bg-white dark:bg-neutral-900 rounded-r-[1.5rem] p-6 border-y border-r border-default dark:border-neutral-800 group-hover/row:border-blue-500/20 transition-all">
+                                            <button className="p-3 bg-neutral-50 dark:bg-neutral-800 text-neutral-400 group-hover/row:text-blue-500 rounded-xl transition-all shadow-sm">
+                                                <Eye className="w-5 h-5" />
+                                            </button>
+                                         </div>
+                                       </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
 
-                    {/* Pagination */}
-                    <div className="px-6 py-4 border-t border-default flex items-center justify-between bg-[var(--erp-bg-sunken)] backdrop-blur-md">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted">
-                            Showing {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, displayOrders.length)} <span className="text-secondary">/</span> {displayOrders.length} records
+                    {/* Pagination Matrix */}
+                    <div className="px-8 py-6 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-neutral-400 italic">
+                            Auditing {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, displayOrders.length)} <span className="text-blue-500">/</span> {displayOrders.length} Transaction Records
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2 border border-default rounded-xl hover:bg-white/10 disabled:opacity-20 text-muted transition-all"
+                                className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-default dark:border-neutral-800 rounded-xl hover:bg-blue-500 hover:text-white disabled:opacity-20 transition-all"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <span className="text-[10px] font-black uppercase tracking-widest px-4 text-muted">
-                                Page {currentPage} <span className="text-secondary">OF</span> {totalPages || 1}
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] px-6 text-neutral-600 italic">
+                                Page {currentPage} <span className="text-neutral-300 dark:text-neutral-800 mx-1">/</span> {totalPages || 1}
                             </span>
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2 border border-default rounded-xl hover:bg-white/10 disabled:opacity-20 text-muted transition-all"
+                                className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-default dark:border-neutral-800 rounded-xl hover:bg-blue-500 hover:text-white disabled:opacity-20 transition-all"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
-                  </div>
 
+                {/* Global Verification Footprint */}
+                <div className="mt-8 flex items-center justify-center gap-6 opacity-30 group pb-24">
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                    <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">Audit Protocol Shield Verified • BizzAI Intelligence Core</span>
+                    </div>
+                    <div className="h-px w-20 bg-neutral-400 dark:bg-neutral-600" />
+                </div>
+            </PageShell>
         </Layout>
     );
 };
 
+const RegisterStats = ({ label, value, icon: Icon, color, sub }: any) => {
+    return (
+        <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none text-neutral-900 dark:text-white">
+                <Icon className="w-24 h-24" />
+            </div>
+            <div className="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                    <p className="text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1 italic">{label}</p>
+                    <h3 className="text-3xl font-black text-neutral-900 dark:text-main tracking-tighter italic whitespace-nowrap">
+                        {value}
+                    </h3>
+                </div>
+                <div className="mt-8 flex flex-col gap-2">
+                    <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest leading-none">{sub}</p>
+                    <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[8px] font-black text-neutral-400 uppercase tracking-widest leading-none italic">Active Matrix</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const StatusLabel = ({ status }: { status?: string }) => {
+    const s = (status || 'UNKNOWN').toUpperCase();
+    let config: any = {
+        'COMPLETED': { color: 'emerald', icon: CheckCircle },
+        'PAID': { color: 'emerald', icon: CheckCircle },
+        'APPROVED': { color: 'blue', icon: CheckCircle },
+        'PENDING': { color: 'amber', icon: Clock },
+        'DRAFT': { color: 'neutral', icon: Clock },
+    };
+    const { color, icon: Icon } = config[s] || { color: 'neutral', icon: Database };
+    
+    return (
+        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 bg-${color === 'neutral' ? 'neutral-100 dark:bg-neutral-800 text-neutral-500' : `${color}-500/10 text-${color}-600 dark:text-${color}-400 border border-${color}-500/20`}`}>
+            <Icon className="w-3 h-3" /> {s}
+        </span>
+    );
+};
+
+const SortArrow = ({ active, direction }: any) => {
+    if (!active) return <ArrowUpDown className="w-3 h-3 text-neutral-300 dark:text-neutral-700 ml-1 inline" />;
+    return direction === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-500 ml-1 inline" /> : <ArrowDown className="w-3 h-3 text-blue-500 ml-1 inline" />;
+};
+
 export default PurchaseRegister;
-
-

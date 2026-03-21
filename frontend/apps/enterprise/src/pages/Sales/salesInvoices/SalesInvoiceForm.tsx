@@ -4,13 +4,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSalesInvoice, reset } from "@/entities/sales/model/salesInvoiceSlice";
 import Layout from "@/shared/ui/Layout/Layout";
 import PageHeader from "@/shared/ui/Layout/PageHeader";
+import PageShell from "@/shared/ui/Layout/PageShell";
 import FormInput from "@/shared/ui/Form/Input";
 import CustomerSelectionModal from "@/shared/ui/Modals/CustomerSelectionModal";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { Plus, Trash2, Save, User, Calendar, Receipt, Percent, Truck, FileText, ArrowLeft } from "lucide-react";
+import { 
+    Plus, 
+    Trash2, 
+    Save, 
+    User, 
+    Calendar, 
+    Receipt, 
+    Percent, 
+    Truck, 
+    FileText, 
+    ArrowLeft,
+    ChevronDown,
+    ShoppingBag,
+    CreditCard,
+    CheckCircle2
+} from "lucide-react";
 import { toast } from "react-toastify";
 
-// Types (Adjust based on your actual types/sales.ts)
+// Types
 interface InvoiceItem {
     name: string;
     quantity: number;
@@ -28,8 +44,7 @@ const SalesInvoiceForm = () => {
 
     // Form State
     const [formData, setFormData] = useState({
-        // eslint-disable-next-line react-hooks/purity -- TODO(TS-FIX): Phase 2/3 fix
-        invoiceNo: `INV-${Date.now()}`, // Temporary ID generation
+        invoiceNo: `INV-${Date.now()}`, 
         invoiceDate: new Date().toISOString().split("T")[0],
         dueDate: "",
         customer: null as any,
@@ -56,7 +71,7 @@ const SalesInvoiceForm = () => {
         if (isSuccess) {
             toast.success("Invoice created successfully!");
             dispatch(reset());
-            navigate("/sales"); // Go back to list
+            navigate("/sales"); 
         }
         if (isError) {
             toast.error(message || "Failed to create invoice");
@@ -119,15 +134,13 @@ const SalesInvoiceForm = () => {
             return;
         }
 
-        // Adapt payload to your API requirements
         const payload = {
             ...formData,
-            customer: formData.customer._id, // Assuming customer object has _id
+            customer: formData.customer._id, 
             totalAmount: calculateTotal(),
             subtotal: calculateSubtotal(),
             tax: calculateTotalTax(),
-            status: "unpaid", // Default status
-            // validUntil: formData.dueDate // Check API field name
+            status: "unpaid",
         };
 
         dispatch(createSalesInvoice(payload));
@@ -135,162 +148,231 @@ const SalesInvoiceForm = () => {
 
     return (
         <Layout>
-            <div className="page-shell">
-            <div className="max-w-5xl mx-auto pb-20 animate-fade-in premium-bg min-h-screen px-4 pt-6">
-                <PageHeader
-                    title="Create New Invoice"
-                    description="Draft and issue a new sales invoice"
-                    backButton={
-                        <Link
-                            to="/sales"
-                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-indigo-400 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4" /> Back to Sales
-                        </Link>
-                    }
-                />
-
-                <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-                    {/* Section 1: Invoice Details */}
-                    <div className="erp-card p-6 shadow-2xl">
-                        <h3 className="text-xs font-black text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-indigo-400" /> Invoice Details
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <FormInput
-                                label="Invoice Number"
-                                name="invoiceNo"
-                                value={formData.invoiceNo}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, invoiceNo: e.target.value })}
-                                icon={<Receipt className="w-4 h-4" />}
-                                required
-                                disabled // Auto-generated usually
-                            />
-                            <FormInput
-                                label="Invoice Date"
-                                type="date"
-                                name="invoiceDate"
-                                value={formData.invoiceDate}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, invoiceDate: e.target.value })}
-                                icon={<Calendar className="w-4 h-4" />}
-                                required
-                            />
-                            <FormInput
-                                label="Due Date"
-                                type="date"
-                                name="dueDate"
-                                value={formData.dueDate}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, dueDate: e.target.value })}
-                                icon={<Calendar className="w-4 h-4" />}
-                            />
+            <PageShell className="bg-app flex-1 flex flex-col min-h-0 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-md border border-indigo-500/20">Sales Transaction</span>
+                            <span className="text-neutral-300 dark:text-neutral-700">/</span>
+                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Register v4.2</span>
                         </div>
-                    </div>
-
-                    {/* Section 2: Customer Selection */}
-                    <div className="erp-card p-6 shadow-2xl">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xs font-black text-muted uppercase tracking-widest flex items-center gap-2">
-                                <User className="w-4 h-4 text-indigo-400" /> Customer
-                            </h3>
-                            {!formData.customer && (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCustomerModal(true)}
-                                    className="text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-300"
-                                >
-                                    Select Customer
-                                </button>
-                            )}
-                        </div>
-
-                        {formData.customer ? (
-                            <div className="flex items-center justify-between p-4 bg-[var(--erp-bg-sunken)] rounded-xl border border-default">
-                                <div>
-                                    <p className="font-black text-muted uppercase tracking-tight">{formData.customer.name}</p>
-                                    <p className="text-[10px] text-secondary font-mono tracking-tighter">{formData.customer.phone || formData.customer.email}</p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, customer: null })}
-                                    className="px-3 py-1.5 bg-[var(--erp-bg-sunken)] hover:bg-white/10 rounded-lg text-muted text-[10px] font-black uppercase tracking-widest transition-all"
-                                >
-                                    Change
-                                </button>
-                            </div>
-                        ) : (
-                            <div
-                                onClick={() => setShowCustomerModal(true)}
-                                className="border-2 border-dashed border-default rounded-xl p-8 flex flex-col items-center justify-center text-secondary cursor-pointer hover:border-indigo-500/50 hover:text-indigo-400 transition-all bg-[var(--erp-bg-sunken)]"
+                        <h2 className="text-4xl font-black text-neutral-900 dark:text-main tracking-tight leading-none flex items-center gap-3">
+                            Sales Register <Receipt className="w-8 h-8 text-indigo-500" />
+                        </h2>
+                        <div className="flex items-center gap-4 mt-3">
+                             <Link
+                                to="/sales"
+                                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-indigo-500 transition-colors"
                             >
-                                <User className="w-8 h-8 mb-2" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Click to select a customer</span>
+                                <ArrowLeft className="w-4 h-4" /> Back to Summary
+                            </Link>
+                            <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-800" />
+                            <p className="text-sm text-neutral-500 font-medium italic">
+                                Draft and issue high-fidelity sales invoices.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="px-4 py-2 erp-card rounded-xl border-indigo-500/20 bg-indigo-500/[0.03] flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Live Sync Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+                    {/* Top Row: Meta and Customer */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Section 1: Customer Selection */}
+                        <div className="lg:col-span-7 erp-card rounded-[2.5rem] p-8 shadow-sm border-none relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                <User className="w-32 h-32" />
                             </div>
-                        )}
+                            
+                            <div className="flex justify-between items-center mb-8 relative z-10">
+                                <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                    <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-500"><User className="w-4 h-4" /></div>
+                                    Customer Intelligence
+                                </h3>
+                                {formData.customer && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCustomerModal(true)}
+                                        className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400 transition-colors"
+                                    >
+                                        Switch Profile
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="relative z-10">
+                                {formData.customer ? (
+                                    <div className="flex items-center justify-between p-6 bg-indigo-500/[0.03] dark:bg-neutral-900/50 rounded-2xl border border-indigo-500/10 group-hover:bg-white dark:group-hover:bg-neutral-900 transition-all">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
+                                                <span className="text-xl font-black">{formData.customer.name.charAt(0)}</span>
+                                            </div>
+                                            <div>
+                                                <p className="text-lg font-black text-neutral-900 dark:text-neutral-100 uppercase tracking-tight leading-none mb-1">{formData.customer.name}</p>
+                                                <p className="text-[11px] text-neutral-500 font-bold flex items-center gap-2 italic">
+                                                    {formData.customer.phone || formData.customer.email || "No contact info"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-1">
+                                            <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase tracking-widest rounded">Verified</span>
+                                            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-tight">VIP Ledger</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => setShowCustomerModal(true)}
+                                        className="border-2 border-dashed border-default rounded-[2rem] p-12 flex flex-col items-center justify-center text-neutral-400 cursor-pointer hover:border-indigo-500/30 hover:bg-indigo-500/[0.02] hover:text-indigo-500 transition-all group/select bg-[var(--erp-bg-sunken)] dark:bg-neutral-900/30"
+                                    >
+                                        <div className="p-4 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm mb-4 group-hover/select:scale-110 transition-transform border border-default">
+                                            <Plus className="w-6 h-6" />
+                                        </div>
+                                        <span className="text-sm font-black uppercase tracking-[0.2em]">Select Customer Account</span>
+                                        <p className="text-[10px] font-bold mt-2 text-neutral-500 uppercase italic">Binding transaction to identity...</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Section 2: Invoice Metadata */}
+                        <div className="lg:col-span-5 erp-card rounded-[2.5rem] p-8 shadow-sm border-none bg-neutral-900 text-white relative flex flex-col justify-between group">
+                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:rotate-12 transition-transform duration-700">
+                                <FileText className="w-32 h-32 text-indigo-400" />
+                            </div>
+                            
+                            <div className="relative z-10 flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                        <Receipt className="w-4 h-4" /> Invoice Identity
+                                    </h3>
+                                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest italic leading-none">Automated Sequence</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-2xl font-black tracking-tighter leading-none mb-1">{formData.invoiceNo}</p>
+                                    <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Serial Master</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mt-8 relative z-10">
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                                        <Calendar className="w-3 h-3 text-indigo-400" /> Issue Date
+                                    </p>
+                                    <input
+                                        type="date"
+                                        value={formData.invoiceDate}
+                                        onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
+                                        className="bg-transparent border-none p-0 text-sm font-black outline-none w-full text-white cursor-pointer color-scheme-dark"
+                                    />
+                                </div>
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                                        <Calendar className="w-3 h-3 text-rose-400" /> Due Date
+                                    </p>
+                                    <input
+                                        type="date"
+                                        value={formData.dueDate}
+                                        onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                                        className="bg-transparent border-none p-0 text-sm font-black outline-none w-full text-white cursor-pointer color-scheme-dark"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Section 3: Items */}
-                    <div className="erp-card p-6 shadow-2xl overflow-hidden">
-                        <h3 className="text-xs font-black text-muted uppercase tracking-widest mb-4">Items Breakdown</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
+                    {/* Section 3: Items Breakdown */}
+                    <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none overflow-hidden relative group">
+                        <div className="flex justify-between items-center mb-8 px-2">
+                            <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-500"><ShoppingBag className="w-4 h-4" /></div>
+                                Commodity Inventory Breakdown
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={addItem}
+                                className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                            >
+                                <Plus className="w-4 h-4" /> Append Line Item
+                            </button>
+                        </div>
+
+                        <div className="overflow-x-auto px-1">
+                            <table className="w-full text-left border-separate border-spacing-y-3">
                                 <thead>
-                                    <tr className="border-b border-default text-[10px] font-black text-muted uppercase tracking-widest">
-                                        <th className="px-4 py-3 min-w-[200px]">Item Name</th>
-                                        <th className="px-4 py-3 w-24 text-right">Qty</th>
-                                        <th className="px-4 py-3 w-32 text-right">Rate</th>
-                                        <th className="px-4 py-3 w-24 text-right">Tax (%)</th>
-                                        <th className="px-4 py-3 w-32 text-right">Amount</th>
-                                        <th className="px-4 py-3 w-16"></th>
+                                    <tr className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">
+                                        <th className="px-6 py-2">Line Item / SKU Details</th>
+                                        <th className="px-6 py-2 w-28 text-right">Quantity</th>
+                                        <th className="px-6 py-2 w-36 text-right">Unit Rate</th>
+                                        <th className="px-6 py-2 w-28 text-right">Tax (%)</th>
+                                        <th className="px-6 py-2 w-40 text-right">Net Value</th>
+                                        <th className="px-6 py-2 w-16 text-center"></th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                                <tbody>
                                     {formData.items.map((item, index) => (
-                                        <tr key={index} className="border-b border-default hover:bg-[var(--erp-bg-sunken)] transition-colors">
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Item name/description"
-                                                    value={item.name}
-                                                    onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black uppercase tracking-tight text-muted placeholder:text-secondary"
-                                                />
+                                        <tr key={index} className="group/row hover:transform hover:-translate-y-0.5 transition-all duration-300">
+                                            <td className="px-2 py-1">
+                                                <div className="flex items-center gap-3 bg-[var(--erp-bg-sunken)] dark:bg-neutral-900/50 rounded-2xl p-4 border border-default dark:border-neutral-800 focus-within:ring-1 focus-within:ring-indigo-500/20 focus-within:bg-white dark:focus-within:bg-neutral-900 transition-all">
+                                                    <div className="p-2 bg-white dark:bg-neutral-800 rounded-lg text-neutral-400"><FileText className="w-4 h-4" /></div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Line item description..."
+                                                        value={item.name}
+                                                        onChange={(e) => updateItem(index, 'name', e.target.value)}
+                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black uppercase tracking-tight text-neutral-700 dark:text-neutral-200 placeholder:text-neutral-500"
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="number"
-                                                    min="1"
-                                                    value={item.quantity}
-                                                    onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
-                                                />
+                                            <td className="px-2 py-1">
+                                                <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-900/50 rounded-2xl p-4 border border-default dark:border-neutral-800 focus-within:ring-1 focus-within:ring-indigo-500/20 focus-within:bg-white dark:focus-within:bg-neutral-900 transition-all">
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        value={item.quantity}
+                                                        onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
+                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-neutral-700 dark:text-neutral-100 font-mono"
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    value={item.rate}
-                                                    onChange={(e) => updateItem(index, 'rate', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
-                                                />
+                                            <td className="px-2 py-1">
+                                                <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-900/50 rounded-2xl p-4 border border-default dark:border-neutral-800 focus-within:ring-1 focus-within:ring-indigo-500/20 focus-within:bg-white dark:focus-within:bg-neutral-900 transition-all">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={item.rate}
+                                                        onChange={(e) => updateItem(index, 'rate', Number(e.target.value))}
+                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-neutral-700 dark:text-neutral-100 font-mono"
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="100"
-                                                    value={item.tax}
-                                                    onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-muted font-mono"
-                                                />
+                                            <td className="px-2 py-1">
+                                                <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-900/50 rounded-2xl p-4 border border-default dark:border-neutral-800 focus-within:ring-1 focus-within:ring-indigo-500/20 focus-within:bg-white dark:focus-within:bg-neutral-900 transition-all">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        value={item.tax}
+                                                        onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
+                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-right text-indigo-500 font-mono"
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="px-4 py-3 text-right font-black text-indigo-400 font-mono">
-                                                ₹{item.amount.toFixed(2)}
+                                            <td className="px-6 py-1 text-right">
+                                                <span className="text-lg font-black text-neutral-900 dark:text-neutral-100 font-mono italic">
+                                                    ₹{item.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                </span>
                                             </td>
-                                            <td className="px-4 py-3 text-center">
+                                            <td className="px-2 py-1 text-center">
                                                 <button
                                                     type="button"
                                                     onClick={() => removeItem(index)}
-                                                    className="text-neutral-400 hover:text-rose-500 transition-colors p-1"
+                                                    className="p-3 bg-rose-500/5 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all active:scale-90"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -300,71 +382,86 @@ const SalesInvoiceForm = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <button
-                            type="button"
-                            onClick={addItem}
-                            className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-300 transition-colors px-4"
-                        >
-                            <Plus className="w-4 h-4" /> Add Item
-                        </button>
                     </div>
 
-                    {/* Section 4: Summary & Totals */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                            <div className="erp-card p-6 shadow-2xl h-full">
-                                <h3 className="text-[10px] font-black text-muted uppercase tracking-widest mb-4">Notes & Terms</h3>
-                                <textarea
-                                    placeholder="Add notes for the customer..."
-                                    value={formData.notes}
-                                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full p-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-medium text-slate-200 mb-4 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-secondary"
-                                />
-                                <textarea
-                                    placeholder="Terms and conditions..."
-                                    value={formData.termsAndConditions}
-                                    onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                    className="w-full p-3 bg-[var(--erp-bg-sunken)] border border-default rounded-xl text-xs font-medium text-slate-200 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none h-24 placeholder:text-secondary"
-                                />
+                    {/* Section 4: Summary & Global Parameters */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-20">
+                        {/* Note/Terms Column */}
+                        <div className="md:col-span-7 space-y-6">
+                            <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none bg-indigo-600 text-white relative group overflow-hidden">
+                                <FileText className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700 w-32 h-32" />
+                                <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <FileText className="w-4 h-4" /> Legal & Tactical Notes
+                                </h3>
+                                <div className="space-y-4 relative z-10">
+                                    <textarea
+                                        placeholder="Add critical internal notes here..."
+                                        value={formData.notes}
+                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                        className="w-full p-5 bg-white/10 border border-white/20 rounded-2xl text-xs font-bold text-white placeholder:text-indigo-200/50 focus:bg-white/15 outline-none resize-none h-24 transition-all"
+                                    />
+                                    <textarea
+                                        placeholder="Terms and conditions for invoice display..."
+                                        value={formData.termsAndConditions}
+                                        onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
+                                        className="w-full p-5 bg-white/10 border border-white/20 rounded-2xl text-[10px] font-bold text-indigo-100 placeholder:text-indigo-200/50 focus:bg-white/15 outline-none resize-none h-24 transition-all uppercase tracking-tight"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="erp-card p-6 shadow-2xl">
-                                <h3 className="text-[10px] font-black text-muted uppercase tracking-widest mb-4">Payment Summary</h3>
+                        {/* Totals Column */}
+                        <div className="md:col-span-5 flex flex-col gap-6">
+                            <div className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none bg-white dark:bg-neutral-900 group">
+                                <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                                    <CreditCard className="w-4 h-4 text-indigo-500" /> Fiscal Liquidity Summary
+                                </h3>
 
-                                <div className="space-y-3 text-[10px] font-black uppercase tracking-widest">
-                                    <div className="flex justify-between text-muted text-xs">
-                                        <span>Subtotal</span>
-                                        <span className="font-mono text-muted">₹{calculateSubtotal().toFixed(2)}</span>
+                                <div className="space-y-5 text-[11px] font-black uppercase tracking-[0.1em]">
+                                    <div className="flex justify-between items-center text-neutral-500">
+                                        <span>Consolidated Subtotal</span>
+                                        <span className="font-mono text-neutral-900 dark:text-neutral-100">₹{calculateSubtotal().toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                     </div>
-                                    <div className="flex justify-between text-indigo-400 text-xs">
-                                        <span>Tax (Total)</span>
-                                        <span className="font-mono">+ ₹{calculateTotalTax().toFixed(2)}</span>
+                                    <div className="flex justify-between items-center text-indigo-500">
+                                        <span>Aggregated Sales Tax</span>
+                                        <span className="font-mono">+ ₹{calculateTotalTax().toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-muted">
-                                        <span className="flex items-center gap-1"><Truck className="w-3.5 h-3.5" /> Shipping</span>
-                                        <input
-                                            type="number"
-                                            value={formData.shippingCharges}
-                                            onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-default focus:border-indigo-400 outline-none p-1 font-mono text-muted"
-                                        />
+                                    
+                                    <div className="h-px bg-default dark:bg-neutral-800 my-2" />
+
+                                    <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-400">
+                                        <span className="flex items-center gap-2"><Truck className="w-4 h-4 text-neutral-400" /> Logistics Surcharge</span>
+                                        <div className="bg-[var(--erp-bg-sunken)] dark:bg-neutral-800 px-3 py-1 rounded-lg border border-default dark:border-neutral-700">
+                                            <input
+                                                type="number"
+                                                value={formData.shippingCharges}
+                                                onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
+                                                className="w-20 text-right bg-transparent border-none outline-none p-0 font-mono text-neutral-900 dark:text-neutral-100 text-xs"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between items-center text-muted">
-                                        <span className="flex items-center gap-1"><Percent className="w-3.5 h-3.5" /> Discount</span>
-                                        <input
-                                            type="number"
-                                            value={formData.discount}
-                                            onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-default focus:border-indigo-400 outline-none p-1 text-rose-400 font-mono"
-                                        />
+                                    <div className="flex justify-between items-center text-rose-500">
+                                        <span className="flex items-center gap-2"><Percent className="w-4 h-4 text-rose-400" /> Discretionary Rebate</span>
+                                        <div className="bg-rose-500/5 px-3 py-1 rounded-lg border border-rose-500/10">
+                                            <input
+                                                type="number"
+                                                value={formData.discount}
+                                                onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
+                                                className="w-20 text-right bg-transparent border-none outline-none p-0 font-mono text-rose-600 dark:text-rose-400 text-xs font-black"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="border-t border-default pt-4 flex justify-between items-end">
-                                        <span className="text-muted">Total Payable</span>
-                                        <span className="font-black text-3xl font-mono tracking-tighter text-emerald-400">
-                                            ₹{calculateTotal().toFixed(2)}
-                                        </span>
+
+                                    <div className="pt-6 mt-4 border-t-2 border-dashed border-default dark:border-neutral-800 flex justify-between items-end">
+                                        <div>
+                                            <span className="text-neutral-400 text-[9px] block mb-1">Total Fiscal Obligation</span>
+                                            <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">Grand Total</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-4xl font-black text-emerald-500 dark:text-emerald-400 font-mono tracking-tighter italic">
+                                                ₹{calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -372,30 +469,33 @@ const SalesInvoiceForm = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-lg shadow-2xl shadow-indigo-600/20 hover:bg-indigo-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 overflow-hidden group relative"
+                                className="w-full py-5 bg-neutral-900 dark:bg-indigo-600 text-white rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-xl shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-4 group relative overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-[var(--erp-bg-sunken)] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                 {isLoading ? (
-                                    <>Processing</>
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Finalizing Transaction...
+                                    </>
                                 ) : (
-                                    <><Save className="w-6 h-6" /> Save & Create Invoice</>
+                                    <>
+                                        <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                                        Commit & Issue Invoice
+                                    </>
                                 )}
                             </button>
                         </div>
                     </div>
                 </form>
-            </div>
 
-            <CustomerSelectionModal
-                isOpen={showCustomerModal}
-                onClose={() => setShowCustomerModal(false)}
-                onSelect={(customer: any) => {
-                    setFormData({ ...formData, customer });
-                    setShowCustomerModal(false);
-                }}
-            />
-                  </div>
-
+                <CustomerSelectionModal
+                    isOpen={showCustomerModal}
+                    onClose={() => setShowCustomerModal(false)}
+                    onSelect={(customer: any) => {
+                        setFormData({ ...formData, customer });
+                        setShowCustomerModal(false);
+                    }}
+                />
+            </PageShell>
         </Layout>
     );
 };

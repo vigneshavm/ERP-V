@@ -1,102 +1,141 @@
 import React from 'react';
-import { Truck, CheckCircle, AlertTriangle, Clock, Eye, Receipt, ClipboardCheck } from 'lucide-react';
-import { GoodsReceivedNote } from '@/pages/Purchase/hooks/useGRNData';
-import { useBranchResolver } from "@/hooks/useBranchResolver";
+import { 
+    Eye, 
+    FileText, 
+    MoreVertical, 
+    Truck, 
+    CheckCircle, 
+    Clock, 
+    AlertTriangle, 
+    ChevronRight,
+    ArrowUpRight,
+    Box,
+    Building2,
+    Database,
+    ShieldCheck
+} from 'lucide-react';
 
 interface GRNTableProps {
-    records: GoodsReceivedNote[];
+    records: any[];
     onView: (id: string) => void;
-    onCreateBill: (id: string) => void;
+    onCreateBill?: (id: string) => void;
 }
 
 const GRNTable: React.FC<GRNTableProps> = ({ records, onView, onCreateBill }) => {
-    const { getBranchName } = useBranchResolver();
-
+    
     const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'COMPLETE':
-                return <span className="px-2 py-1 bg-success/10 text-success text-xs font-bold rounded-full flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" /> Complete
-                </span>;
-            case 'PARTIAL':
-                return <span className="px-2 py-1 bg-warning/10 text-warning text-xs font-bold rounded-full flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" /> Partial
-                </span>;
-            case 'PENDING':
-                return <span className="px-2 py-1 bg-[var(--erp-bg-sunken)] dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 text-xs font-bold rounded-full flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> Pending
-                </span>;
-            default:
-                return null;
-        }
+        const s = status.toUpperCase();
+        const configs: any = {
+            'RECEIVED': { color: 'emerald', icon: CheckCircle, label: 'Fulfilled' },
+            'PENDING': { color: 'amber', icon: Clock, label: 'In-Transit' },
+            'VERIFIED': { color: 'blue', icon: ShieldCheck, label: 'Audited' },
+            'DISPUTED': { color: 'rose', icon: AlertTriangle, label: 'Variance' },
+        };
+        const config = configs[s] || { color: 'neutral', icon: FileText, label: status };
+        
+        return (
+            <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 bg-${config.color}-500/10 text-${config.color}-600 dark:text-${config.color}-400 border border-${config.color}-500/20`}>
+                <config.icon className="w-3 h-3" /> {config.label}
+            </span>
+        );
     };
 
     return (
-        <div className="bg-white dark:bg-[var(--erp-card)] rounded-xl border border-default dark:border-default overflow-hidden">
-            <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-[var(--erp-bg-sunken)] dark:bg-[var(--erp-bg)] text-secondary uppercase text-xs font-medium">
-                        <tr>
-                            <th className="p-4">GRN #</th>
-                            <th className="p-4">PO Reference</th>
-                            <th className="p-4">Vendor</th>
-                            <th className="p-4">Received Date</th>
-                            <th className="p-4">Branch</th>
-                            <th className="p-4 text-center">Items</th>
-                            <th className="p-4 text-center">Status</th>
-                            <th className="p-4 text-center">Action</th>
+        <div className="erp-card rounded-[3rem] p-4 shadow-sm border-none overflow-hidden relative group">
+            <div className="overflow-x-auto px-2">
+                <table className="w-full text-left border-separate border-spacing-y-4">
+                    <thead>
+                        <tr className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">
+                            <th className="px-8 py-2">Receipt Identity</th>
+                            <th className="px-8 py-2">Vendor / PO Reference</th>
+                            <th className="px-8 py-2 text-center">Manifest Scope</th>
+                            <th className="px-8 py-2 text-right">Aggregate Value</th>
+                            <th className="px-8 py-2 text-center">Protocol State</th>
+                            <th className="px-8 py-2 text-right">Commands</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                    <tbody>
                         {records.length === 0 ? (
-                            <tr><td colSpan={8} className="p-8 text-center text-neutral-500">
-                                <div className="flex flex-col items-center gap-2">
-                                    <ClipboardCheck className="w-8 h-8 text-neutral-300" />
-                                    <p>No goods received notes found</p>
-                                </div>
-                            </td></tr>
+                            <tr>
+                                <td colSpan={6} className="px-8 py-32 text-center">
+                                    <div className="flex flex-col items-center">
+                                        <div className="p-8 bg-neutral-50 dark:bg-neutral-900 rounded-[3rem] text-neutral-200 mb-6">
+                                            <Box className="w-16 h-16" />
+                                        </div>
+                                        <h3 className="text-xl font-black text-neutral-900 dark:text-main uppercase tracking-tighter italic">Vortex: Receipt Null</h3>
+                                        <p className="text-sm font-bold text-neutral-500 mt-2 italic">No inbound manifestations detected in current cycle.</p>
+                                    </div>
+                                </td>
+                            </tr>
                         ) : (
-                            records.map(grn => (
-                                <tr key={grn.id} className="hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700/50">
-                                    <td className="p-4 font-mono text-xs text-success font-medium">{grn.id}</td>
-                                    <td className="p-4 font-mono text-xs text-primary">{grn.poNumber}</td>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                                <Truck className="w-4 h-4 text-primary" />
+                            records.map((r) => (
+                                <tr
+                                    key={r._id}
+                                    className="group/row hover:transform hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+                                    onClick={() => onView(r._id)}
+                                >
+                                    <td className="px-2 py-1">
+                                        <div className="bg-white dark:bg-neutral-900 rounded-l-[1.5rem] p-6 border-y border-l border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all">
+                                            <div className="text-sm font-black text-neutral-900 dark:text-neutral-100 uppercase tracking-tighter italic leading-none mb-1 group-hover/row:text-emerald-500">
+                                                #{r.grnNumber}
                                             </div>
-                                            <span className="font-medium text-neutral-900 dark:text-main">{grn.vendorName}</span>
+                                            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic leading-none">
+                                                Logged {new Date(r.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
+                                            </span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-secondary">
-                                        {new Date(grn.receivedDate).toLocaleDateString()}
+                                    <td className="px-0 py-1">
+                                        <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all">
+                                            <div className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-widest italic truncate max-w-[180px]">
+                                                {r.vendorId?.businessName || r.vendorName}
+                                            </div>
+                                            <div className="flex items-center gap-1.5 mt-1">
+                                                <FileText className="w-3 h-3 text-blue-500" />
+                                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">PO: {r.poNumber || 'CASHREC'}</span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td className="p-4 text-neutral-500">{getBranchName(grn.branchId)}</td>
-                                    <td className="p-4 text-center">
-                                        <span className={`font-bold ${grn.receivedItems < grn.expectedItems ? 'text-warning' : 'text-success'}`}>
-                                            {grn.receivedItems}
-                                        </span>
-                                        <span className="text-neutral-400"> / {grn.expectedItems}</span>
+                                    <td className="px-0 py-1 text-center">
+                                        <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-[10px] font-black text-neutral-700 dark:text-neutral-300 italic tracking-widest uppercase">Items</span>
+                                                    <span className="text-[8px] font-bold text-neutral-400 uppercase tracking-widest italic">Inventory Units</span>
+                                                </div>
+                                                <span className="text-2xl font-black text-neutral-900 dark:text-main italic tracking-tighter">{r.items?.length || 0}</span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        {getStatusBadge(grn.status)}
+                                    <td className="px-0 py-1 text-right">
+                                        <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all font-mono font-black text-neutral-900 dark:text-neutral-300 italic text-sm">
+                                            ₹ {(r.totalAmount || 0).toLocaleString('en-IN')}
+                                        </div>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <div className="flex justify-center gap-1">
-                                            <button
-                                                onClick={() => onView(grn.id)}
-                                                className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg"
-                                                title="View Details"
-                                            >
-                                                <Eye className="w-4 h-4 text-primary" />
-                                            </button>
-                                            <button
-                                                onClick={() => onCreateBill(grn.id)}
-                                                className="p-2 hover:bg-[var(--erp-bg-sunken)] dark:hover:bg-neutral-700 rounded-lg"
-                                                title="Create Bill from GRN"
-                                            >
-                                                <Receipt className="w-4 h-4 text-success" />
-                                            </button>
+                                    <td className="px-0 py-1 text-center">
+                                        <div className="bg-white dark:bg-neutral-900 p-6 border-y border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all flex justify-center">
+                                            {getStatusBadge(r.status || 'PENDING')}
+                                        </div>
+                                    </td>
+                                    <td className="px-0 py-1 text-right">
+                                        <div className="bg-white dark:bg-neutral-900 rounded-r-[1.5rem] p-6 border-y border-r border-default dark:border-neutral-800 group-hover/row:border-emerald-500/20 transition-all">
+                                            <div className="flex justify-end gap-3" onClick={(e) => e.stopPropagation()}>
+                                                <button
+                                                    onClick={() => onView(r._id)}
+                                                    className="p-3 bg-neutral-50 dark:bg-neutral-800 text-neutral-400 group-hover:bg-blue-600 group-hover:text-white rounded-xl transition-all shadow-sm active:scale-95"
+                                                    title="Registry View"
+                                                >
+                                                    <Eye className="w-4 h-4" />
+                                                </button>
+                                                {onCreateBill && r.status === 'RECEIVED' && (
+                                                    <button
+                                                        onClick={() => onCreateBill(r._id)}
+                                                        className="p-3 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm active:scale-95"
+                                                        title="Liquidate to Bill"
+                                                    >
+                                                        <FileText className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -104,33 +143,6 @@ const GRNTable: React.FC<GRNTableProps> = ({ records, onView, onCreateBill }) =>
                         )}
                     </tbody>
                 </table>
-            </div>
-
-            {/* Mobile View */}
-            <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-700">
-                {records.length === 0 ? (
-                    <div className="p-8 text-center text-neutral-500">No GRN records</div>
-                ) : (
-                    records.map(grn => (
-                        <div key={grn.id} className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <p className="font-mono text-xs text-success font-medium">{grn.id}</p>
-                                    <p className="font-bold text-neutral-900 dark:text-main">{grn.vendorName}</p>
-                                    <p className="text-xs text-neutral-500">PO: {grn.poNumber}</p>
-                                </div>
-                                {getStatusBadge(grn.status)}
-                            </div>
-                            <div className="flex justify-between items-center bg-[var(--erp-bg-sunken)] dark:bg-neutral-700/50 p-3 rounded-lg mt-2">
-                                <div className="text-sm">
-                                    <span className="font-bold text-primary">{grn.receivedItems}</span>
-                                    <span className="text-neutral-400"> / {grn.expectedItems} items</span>
-                                </div>
-                                <p className="text-xs text-neutral-500">{new Date(grn.receivedDate).toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                    ))
-                )}
             </div>
         </div>
     );

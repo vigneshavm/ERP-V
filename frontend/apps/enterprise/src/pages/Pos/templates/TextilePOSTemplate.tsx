@@ -10,6 +10,7 @@ import { POSFooter } from '../ui/POSFooter';
 import { POSHeldBillsModal } from '../ui/POSHeldBillsModal';
 import { POSTerminalInfo } from '../ui/POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../ui/POSCategoryBrowserModal';
+import PageShell from "@/shared/ui/Layout/PageShell";
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -136,7 +137,8 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                     <div className="flex gap-2 mr-2">
                         <button
                             onClick={() => setIsHeldBillsOpen(true)}
-                            className="p-2 bg-primary/10 text-primary rounded-lg flex items-center gap-2"
+                            className="p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center gap-2 hover:bg-indigo-500/20 transition-all border border-indigo-500/20"
+                            title="Held Bills"
                         >
                             <PauseCircle className="w-5 h-5" />
                         </button>
@@ -174,8 +176,8 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                     </div>
                 </div>
             </div>
-
-            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-xl overflow-hidden shadow-sm">
+            <PageShell className="flex-1 flex flex-col min-h-0 !p-0 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-white dark:bg-[var(--erp-bg)] border border-default dark:border-default rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                 {/* Main View Area */}
                 <div className={`col-span-12 lg:col-span-8 flex flex-col min-h-0 ${mobileTab === 'MAIN' ? 'flex' : 'hidden lg:flex'}`}>
                     {viewMode === 'VISUAL' ? (
@@ -290,6 +292,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 <button onClick={() => setMobileTab('MAIN')} className={`px-4 py-2 rounded ${mobileTab === 'MAIN' ? 'bg-primary text-white' : 'bg-[var(--erp-bg-sunken)]'}`}>View</button>
                 <button onClick={() => setMobileTab('CART')} className={`px-4 py-2 rounded ${mobileTab === 'CART' ? 'bg-primary text-white' : 'bg-[var(--erp-bg-sunken)]'}`}>Cart</button>
             </div>
+            </PageShell>
         </div>
     );
 };

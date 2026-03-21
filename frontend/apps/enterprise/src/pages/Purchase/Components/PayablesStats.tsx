@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, AlertCircle, Clock, Building2, TrendingUp } from 'lucide-react';
+import { DollarSign, AlertCircle, Clock, Building2, TrendingUp, ShieldCheck } from 'lucide-react';
 import { AgedBill } from '../hooks/useOutstandingPayables';
 
 interface PayablesStatsProps {
@@ -17,59 +17,37 @@ const PayablesStats: React.FC<PayablesStatsProps> = ({
     dueSoonAmount,
     criticalVendorsCount
 }) => {
+    const statItems = [
+        { label: 'Aggregate Liability', value: `₹ ${totalPayable.toLocaleString('en-IN')}`, icon: DollarSign, color: 'blue', sub: `${processedBills.length} Pending Nodes` },
+        { label: 'Critical Overdue', value: `₹ ${totalOverdue.toLocaleString('en-IN')}`, icon: AlertCircle, color: 'rose', sub: 'Immediate Settlement' },
+        { label: 'Upcoming (7D)', value: `₹ ${dueSoonAmount.toLocaleString('en-IN')}`, icon: Clock, color: 'amber', sub: 'Provision Required' },
+        { label: 'Exposed Entities', value: criticalVendorsCount, icon: Building2, color: 'indigo', sub: 'High-Risk Partners' }
+    ];
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
-                <div className="flex justify-between items-start mb-2">
-                    <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600">
-                        <DollarSign size={20} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {statItems.map((item, i) => (
+                <div key={i} className="erp-card rounded-[2.5rem] p-8 shadow-sm border-none relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none text-neutral-900 dark:text-white">
+                        <item.icon className="w-24 h-24" />
                     </div>
-                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">Total Liability</span>
-                </div>
-                <div className="text-2xl font-black text-main">₹{totalPayable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                <div className="mt-2 flex items-center gap-1 text-[10px] text-muted font-medium">
-                    <TrendingUp size={12} className="text-emerald-500" /> Across {processedBills.length} pending bills
-                </div>
-            </div>
-
-            <div className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-rose-500" />
-                <div className="flex justify-between items-start mb-2">
-                    <div className="p-2 bg-rose-50 dark:bg-rose-900/20 rounded-lg text-rose-600">
-                        <AlertCircle size={20} />
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                        <div>
+                            <p className="text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1 italic">{item.label}</p>
+                            <h3 className="text-3xl font-black text-neutral-900 dark:text-main tracking-tighter italic whitespace-nowrap">
+                                {item.value}
+                            </h3>
+                        </div>
+                        <div className="mt-8 flex flex-col gap-2">
+                            <p className={`text-[8px] font-black text-${item.color === 'blue' ? 'blue' : item.color === 'rose' ? 'rose' : item.color === 'amber' ? 'amber' : 'indigo'}-500 uppercase tracking-widest leading-none`}>{item.sub}</p>
+                            <div className="flex items-center gap-2">
+                                <span className={`w-1.5 h-1.5 rounded-full bg-${item.color === 'blue' ? 'blue' : item.color === 'rose' ? 'rose' : item.color === 'amber' ? 'amber' : 'indigo'}-500 animate-pulse`} />
+                                <span className="text-[8px] font-black text-neutral-400 uppercase tracking-widest leading-none italic">Active Matrix</span>
+                            </div>
+                        </div>
                     </div>
-                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">Total Overdue</span>
                 </div>
-                <div className="text-2xl font-black text-rose-600">₹{totalOverdue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                <div className="mt-2 text-[10px] text-rose-500/80 font-bold uppercase tracking-tighter">Immediate Attention Required</div>
-            </div>
-
-            <div className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-                <div className="flex justify-between items-start mb-2">
-                    <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-600">
-                        <Clock size={20} />
-                    </div>
-                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">Due in 7 Days</span>
-                </div>
-                <div className="text-2xl font-black text-amber-600">₹{dueSoonAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                <div className="mt-2 text-[10px] text-muted font-medium italic">Payment run preparation recommended</div>
-            </div>
-
-            <div className="bg-white dark:bg-[var(--erp-bg)] p-5 rounded-2xl border border-default dark:border-default shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
-                <div className="flex justify-between items-start mb-2">
-                    <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600">
-                        <Building2 size={20} />
-                    </div>
-                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">Critical Vendors</span>
-                </div>
-                <div className="text-2xl font-black text-main">
-                    {criticalVendorsCount}
-                </div>
-                <div className="mt-2 text-[10px] text-muted font-medium">With overdue balances</div>
-            </div>
+            ))}
         </div>
     );
 };
