@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Trash2, Plus, Search, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, RotateCcw, Truck, Ban } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Plus, Search, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, RotateCcw, Truck, Ban, ShieldCheck, Zap, Info, Activity, ChevronDown } from 'lucide-react';
 import { PurchaseReturn, PurchaseReturnItem, ReturnReason, PurchaseReturnStatus, GRN, PurchaseOrder } from "../../types/purchase";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
+import Layout from "../../components/shared/Layout/Layout";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 
 interface Props {
     onBack?: () => void;
@@ -44,7 +45,6 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     setReturnData(data);
                 } catch (err) {
                     console.error("Failed to fetch return", err);
-                    toast.error("Failed to load return details");
                 }
             };
             fetchReturn();
@@ -102,13 +102,13 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         if (grn) {
             const returnItems: PurchaseReturnItem[] = grn.items.map(item => ({
                 id: Math.random().toString(36).substr(2, 9),
-                itemId: item.productId, // Ensure backend receives this for stock adjustment
+                itemId: item.productId,
                 product_id: item.productId,
                 product_name: item.productName,
                 sku: item.sku,
                 grn_quantity: item.acceptedQty,
-                return_quantity: 0, // Default to 0, user specifies what to return
-                rate: 0, // In real app, fetch from PO/GRN
+                return_quantity: 0,
+                rate: 0,
                 tax_percent: 18,
                 line_total: 0
             }));
@@ -128,7 +128,6 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         const newItems = [...(returnData.items || [])] as PurchaseReturnItem[];
         const item = { ...newItems[index], [field]: value };
 
-        // Validation: Return qty cannot exceed GRN qty
         if (field === 'return_quantity') {
             if (value > item.grn_quantity) {
                 toast.warning(`Cannot return more than received (${item.grn_quantity})`);
@@ -136,7 +135,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
             }
         }
 
-        item.line_total = item.return_quantity * item.rate;
+        item.line_total = (item.return_quantity || 0) * (item.rate || 0);
         newItems[index] = item;
         setReturnData(prev => ({ ...prev, items: newItems as any }));
     };
@@ -159,17 +158,12 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
 
         setIsLoading(true);
         try {
-            const payload = {
+            await onSave({
                 ...returnData,
                 total_amount: totals.total,
                 tax_amount: totals.tax
-            };
-            console.log("Saving Return:", payload);
+            });
             toast.success("Purchase Return initiated successfully");
-
-            // Trigger Inventory Impact Notification
-            toast.info("Stock levels will be adjusted upon processing.");
-
             navigate('/purchase/returns');
         } catch (err) {
             toast.error("Failed to save return");
@@ -180,250 +174,248 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
 
     const handleUpdateStatus = (newStatus: PurchaseReturnStatus) => {
         setReturnData(prev => ({ ...prev, status: newStatus }));
-        toast.info(`Return status updated to ${newStatus}`);
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/50">
-                <div className="flex items-center gap-4">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-                    </button>
-                    <div>
-                        <h2 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                            <RotateCcw className="w-5 h-5 text-neutral-500" /> Purchase Return (Debit Note)
-                        </h2>
-                        <p className="text-xs text-neutral-500 font-medium tracking-tight">Return items to vendor against GRN</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={handleSave}
-                        disabled={isLoading}
-                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
-                    >
-                        <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : id ? 'Update Return' : 'Finalize Return'}
-                    </button>
-                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors">
-                        Cancel
-                    </button>
-                </div>
-            </div>
+        <Layout>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title={id ? "Refactor Reversal Node" : "Reversal Node Initialization"}
+                    description="Record institutional reversal protocols (Debit Notes) against verified GRNs."
+                    breadcrumbs={[
+                        { label: 'Procurement', link: '/purchase' },
+                        { label: 'Returns Archive', link: '/purchase/returns' },
+                        { label: id ? 'Refactor' : 'New Reversal' }
+                    ]}
+                    actions={
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={handleBack}
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                            >
+                                <ArrowLeft className="w-4 h-4" /> Abort
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isLoading}
+                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
+                            >
+                                <Save className="w-4 h-4" /> {id ? 'Update Node' : 'Initialize Reversal'}
+                            </button>
+                        </div>
+                    }
+                />
 
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                <div className="max-w-6xl mx-auto space-y-8">
-                    {/* Return Header Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="md:col-span-2 space-y-6">
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Main Workspace */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-10">
+                                <Activity className="w-5 h-5 text-primary" /> Institutional Parameters
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
-                                    <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Vendor / Supplier</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
                                     <select
                                         value={returnData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                     >
-                                        <option value="">Select Vendor</option>
+                                        <option value="">Select entity...</option>
                                         {vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Linked GRN</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Linked GRN Node</label>
                                     <select
                                         value={returnData.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
                                         disabled={!returnData.vendor_id}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30 cursor-pointer"
                                     >
-                                        <option value="">Select GRN</option>
+                                        <option value="">Select node...</option>
                                         {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Return Reason</label>
-                                    <select
-                                        value={returnData.reason}
-                                        onChange={(e) => setReturnData({ ...returnData, reason: e.target.value as ReturnReason })}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                    >
-                                        <option value="Defective">Defective / Damaged</option>
-                                        <option value="Wrong Item">Wrong Item Received</option>
-                                        <option value="Excess Quantity">Excess Quantity</option>
-                                        <option value="Quality Issues">Quality Issues</option>
-                                        <option value="Others">Others</option>
-                                    </select>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Incident Vector (Reason)</label>
+                                    <div className="relative">
+                                        <select
+                                            value={returnData.reason}
+                                            onChange={(e) => setReturnData({ ...returnData, reason: e.target.value as ReturnReason })}
+                                            className="w-full pl-6 pr-12 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-rose-500/10 outline-none appearance-none cursor-pointer"
+                                        >
+                                            <option value="Defective">Defective / Damaged</option>
+                                            <option value="Wrong Item">Wrong Item Received</option>
+                                            <option value="Excess Quantity">Excess Quantity</option>
+                                            <option value="Quality Issues">Quality Issues</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Return Date</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
                                     <input
                                         type="date"
                                         value={returnData.return_date}
                                         onChange={(e) => setReturnData({ ...returnData, return_date: e.target.value })}
-                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 outline-none"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Status / Tracking Panel */}
-                        <div className="bg-brand-50/30 dark:bg-brand-900/10 p-6 rounded-2xl border border-brand-100 dark:border-brand-900/30 space-y-4">
-                            <h3 className="text-xs font-bold text-brand-700 uppercase tracking-widest flex items-center gap-2">
-                                <Truck className="w-4 h-4" /> Return Lifecycle
-                            </h3>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-neutral-500">Current Status</span>
-                                    <span className="px-2 py-0.5 bg-brand-100 text-brand-700 rounded-full font-bold text-[10px]">{returnData.status}</span>
-                                </div>
-                                {id && (
-                                    <div className="grid grid-cols-2 gap-2 pt-2">
-                                        <button onClick={() => handleUpdateStatus('In-Transit')} className="text-[10px] py-1.5 bg-white border border-brand-200 rounded font-bold hover:bg-brand-50">Mark In-Transit</button>
-                                        <button onClick={() => handleUpdateStatus('Received by Vendor')} className="text-[10px] py-1.5 bg-white border border-brand-200 rounded font-bold hover:bg-brand-50">Mark Received</button>
-                                    </div>
-                                )}
+                        {/* Reversal Ledger Workspace */}
+                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                            <div className="p-10 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                                <h3 className="text-sm font-black uppercase tracking-widest">Reversal Node Allocation</h3>
+                                <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest opacity-60">Source: {returnData.grn_number || 'No Node Linked'}</span>
                             </div>
-                            <div className="pt-4 border-t border-brand-100/50">
-                                <label className="block text-[10px] font-bold text-brand-600 mb-1 uppercase">Tracking Number</label>
-                                <input
-                                    type="text"
-                                    value={returnData.tracking_number || ''}
-                                    onChange={(e) => setReturnData({ ...returnData, tracking_number: e.target.value })}
-                                    placeholder="Carrier tracking code..."
-                                    className="w-full px-3 py-2 bg-white dark:bg-neutral-950 border border-brand-200 dark:border-brand-900/50 rounded-lg text-xs"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Items Table */}
-                    <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
-                            <h3 className="font-bold flex items-center gap-2 text-neutral-800 dark:text-neutral-200">
-                                Return Items
-                                <span className="text-xs text-neutral-400 font-medium">(Select items from GRN to return)</span>
-                            </h3>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
-                                    <tr>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Product / SKU</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center">GRN Qty</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center w-32">Return Qty</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-right">Unit Rate</th>
-                                        <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-right">Refund Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/50">
-                                    {(returnData.items || []).map((item, idx) => (
-                                        <tr key={idx} className={`hover:bg-neutral-50/50 dark:hover:bg-neutral-900/20 transition-colors ${item.return_quantity > 0 ? 'bg-amber-50/20 dark:bg-amber-900/5' : ''}`}>
-                                            <td className="px-6 py-4">
-                                                <div className="font-bold text-neutral-900 dark:text-white leading-none mb-1">{item.product_name}</div>
-                                                <div className="text-[10px] text-neutral-500 font-mono tracking-tighter uppercase">{item.sku || 'NO-SKU'}</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-center text-neutral-400 font-medium">
-                                                {item.grn_quantity}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <input
-                                                    type="number"
-                                                    value={item.return_quantity}
-                                                    onChange={(e) => updateItem(idx, 'return_quantity', parseFloat(e.target.value) || 0)}
-                                                    className={`w-full text-center py-2 bg-transparent border-b ${item.return_quantity > 0 ? 'border-brand-500 font-bold text-brand-600' : 'border-neutral-200 dark:border-neutral-800 text-neutral-400'}`}
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-1 font-medium">
-                                                    <span className="text-neutral-400 text-xs">₹</span>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                                        <tr>
+                                            <th className="px-8 py-5">Product SKU</th>
+                                            <th className="px-8 py-5 text-center">GRN Intake</th>
+                                            <th className="px-8 py-5 text-center w-40">Reversal Qty</th>
+                                            <th className="px-8 py-5 text-right">Unit Rate</th>
+                                            <th className="px-8 py-5 text-right">Node Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                        {(returnData.items || []).map((item, idx) => (
+                                            <tr key={idx} className={`group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all ${item.return_quantity > 0 ? 'bg-rose-50/20 dark:bg-rose-900/5' : ''}`}>
+                                                <td className="px-8 py-6">
+                                                    <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter leading-none mb-1">{item.product_name}</p>
+                                                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest opacity-60">{item.sku || 'NO-SKU'}</p>
+                                                </td>
+                                                <td className="px-8 py-6 text-center">
+                                                    <span className="text-[10px] font-black text-neutral-400 tabular-nums">{item.grn_quantity}</span>
+                                                </td>
+                                                <td className="px-8 py-6">
                                                     <input
                                                         type="number"
-                                                        value={item.rate}
-                                                        onChange={(e) => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
-                                                        className="w-20 text-right bg-transparent border-b border-dashed border-neutral-300 dark:border-neutral-700 py-1"
+                                                        value={item.return_quantity}
+                                                        onChange={(e) => updateItem(idx, 'return_quantity', parseFloat(e.target.value) || 0)}
+                                                        className={`w-full text-center py-2.5 bg-neutral-100 dark:bg-neutral-900 border border-transparent rounded-xl text-xs font-black tabular-nums focus:ring-2 focus:ring-primary/20 outline-none transition-all ${item.return_quantity > 0 ? 'text-primary' : 'text-neutral-400'}`}
                                                     />
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-white">
-                                                ₹{item.line_total.toFixed(2)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!returnData.items || returnData.items.length === 0) && (
-                                        <tr>
-                                            <td colSpan={5} className="px-6 py-16 text-center text-neutral-400 italic font-medium">
-                                                Select a vendor and GRN to load items for return.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                                </td>
+                                                <td className="px-8 py-6 text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <span className="text-[10px] font-black text-neutral-400">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            value={item.rate}
+                                                            onChange={(e) => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
+                                                            className="w-24 text-right bg-transparent border-b border-dashed border-neutral-300 dark:border-neutral-700 py-1 text-xs font-black tabular-nums focus:border-primary outline-none"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6 text-right">
+                                                    <span className="text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tight">₹{item.line_total.toFixed(2)}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {(!returnData.items || returnData.items.length === 0) && (
+                                            <tr>
+                                                <td colSpan={5} className="px-8 py-32 text-center">
+                                                    <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
+                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                            <Info className="w-10 h-10" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-black text-sm uppercase tracking-widest text-center">No Nodes Allocated</p>
+                                                            <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">Select an institutional vendor and linked GRN to initialize reversal nodes.</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bottom Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10">
-                        <div className="space-y-6">
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
-                                <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2 font-mono">
-                                    <Paperclip className="w-4 h-4" /> Supporting Evidence
-                                </h3>
-                                <div className="border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-6 text-center hover:bg-neutral-50 cursor-pointer transition-colors">
-                                    <Plus className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-                                    <p className="text-xs font-bold text-neutral-500">Attach photos of defective items</p>
+                    {/* Operational Intel Sidebar */}
+                    <div className="lg:col-span-4 space-y-10">
+                        {/* Financial Aggregate */}
+                        <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                            <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+                                <Zap className="w-48 h-48" />
+                            </div>
+                            <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] relative z-10">Refund Protocol</h3>
+                            
+                            <div className="space-y-6 relative z-10">
+                                <div className="flex justify-between items-center text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                    <span>Subtotal</span>
+                                    <span className="tabular-nums">₹{totals.subtotal.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                    <span>Tax Reversal (18%)</span>
+                                    <span className="tabular-nums">₹{totals.tax.toFixed(2)}</span>
+                                </div>
+                                <div className="h-px bg-white/5 w-full my-6"></div>
+                                <div>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Total Debit Quantum</p>
+                                    <p className="text-5xl font-black tracking-tighter text-white tabular-nums">₹{totals.total.toFixed(2)}</p>
+                                </div>
+                                <div className="p-6 bg-white/5 rounded-[2rem] border border-white/5 animate-pulse">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-primary" />
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Awaiting Institutional Credit</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                <label className="block text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-widest">Internal Notes</label>
-                                <textarea
-                                    className="w-full p-4 text-sm bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:ring-2 focus:ring-brand-500/20"
-                                    rows={4}
-                                    placeholder="Reason details, vendor communication notes..."
-                                />
+
+                            <div className="pt-6 border-t border-white/5 flex items-start gap-4 relative z-10 opacity-60 italic">
+                                <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                                <p className="text-[10px] font-black leading-relaxed text-neutral-400">
+                                    Generating this reversal node will initialize a <span className="text-white underline">Debit Note</span> and decrement institutional vault counts upon authorization.
+                                </p>
                             </div>
                         </div>
 
-                        {/* Financial Summary */}
-                        <div className="bg-neutral-900 p-8 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
-                            <div className="absolute bottom-0 right-0 w-48 h-48 bg-brand-500/5 rounded-full translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-                            <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-[0.3em]">Refund Summary</h3>
-
-                            <div className="space-y-5">
-                                <div className="flex justify-between text-neutral-400 text-sm font-medium">
-                                    <span>Return Subtotal</span>
-                                    <span>₹{totals.subtotal.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between text-neutral-400 text-sm font-medium">
-                                    <span>Tax Adjustment (18%)</span>
-                                    <span>₹{totals.tax.toFixed(2)}</span>
-                                </div>
-                                <div className="h-px bg-neutral-800 w-full my-6"></div>
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <span className="block text-[10px] font-black text-brand-500 uppercase mb-2 tracking-widest">Debit Note Amount</span>
-                                        <span className="text-4xl font-black text-white">₹{totals.total.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-2">
-                                        <div className="flex items-center gap-2 px-3 py-1 bg-brand-500/20 rounded-full border border-brand-500/30">
-                                            <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
-                                            <span className="text-[10px] font-bold text-brand-400 uppercase">Awaiting Credit</span>
-                                        </div>
+                        {/* Lifecycle Control */}
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <Truck className="w-5 h-5" /> Logistics Protocol
+                            </h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Protocol State</label>
+                                    <div className="px-5 py-2.5 bg-primary/5 text-primary border border-primary/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-center">
+                                        {returnData.status}
                                     </div>
                                 </div>
+                                <div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Transit Node ID (Tracking)</label>
+                                    <input
+                                        type="text"
+                                        value={returnData.tracking_number || ''}
+                                        onChange={(e) => setReturnData({ ...returnData, tracking_number: e.target.value })}
+                                        placeholder="Carrier code..."
+                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                    />
+                                </div>
                             </div>
+                        </div>
 
-                            <div className="pt-6 border-t border-neutral-800 flex items-center gap-3">
-                                <AlertCircle className="w-5 h-5 text-amber-500" />
-                                <p className="text-[10px] text-neutral-500 font-medium leading-relaxed">
-                                    Generating this return will create a <span className="text-white font-bold underline">Debit Note</span> and reduce inventory counts for the selected items upon verification.
-                                </p>
-                            </div>
+                        {/* Narrative Node */}
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <FileText className="w-5 h-5" /> Institutional Narrative
+                            </h3>
+                            <textarea
+                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-3xl text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none h-40"
+                                placeholder="Audit trail remarks, incident details..."
+                            />
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 

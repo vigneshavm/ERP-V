@@ -36,6 +36,10 @@ export const useTabSync = () => {
             }
         } else if (path.startsWith('/people/attendance')) {
             if (activeTab !== 'ATTENDANCE_BOARD') dispatch(setActiveTab('ATTENDANCE_BOARD'));
+        } else if (path === '/purchase/orders/new') {
+            if (activeTab !== 'PURCHASE_ORDER_FORM') dispatch(setActiveTab('PURCHASE_ORDER_FORM'));
+        } else if (path.startsWith('/purchase/orders/')) {
+            if (activeTab !== 'PURCHASE_ORDER_DETAILS') dispatch(setActiveTab('PURCHASE_ORDER_DETAILS'));
         } else if (path.startsWith('/finance/sms-tracker')) {
             if (activeTab !== 'SMS_TRACKER') dispatch(setActiveTab('SMS_TRACKER'));
         } else if (path.startsWith('/finance/budget-tracker')) {

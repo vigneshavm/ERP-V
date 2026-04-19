@@ -269,7 +269,7 @@ export const LaborManager = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full flex flex-col">
+      <div className="flex flex-col h-full pt-8">
         <PageHeader
           title="Staff Management"
           description="Manage all your office and field staff in one place."
@@ -279,7 +279,7 @@ export const LaborManager = () => {
           ]}
         />
 
-        <div className="flex flex-col lg:flex-row h-full lg:h-[calc(100vh-14rem)] gap-6 animate-in fade-in relative mt-6">
+        <div className="flex flex-col lg:flex-row h-full lg:h-[calc(100vh-14rem)] gap-6 animate-in fade-in relative">
           {editingDate && (
             <TimeEntryModal
               key={`${editingDate}-${selectedLaborerId}`}

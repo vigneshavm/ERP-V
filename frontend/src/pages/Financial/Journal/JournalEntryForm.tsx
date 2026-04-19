@@ -3,20 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { ArrowLeft, Save, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, AlertCircle, Info } from 'lucide-react';
 import { RootState } from '../../../redux/store';
 import { createJournalEntry } from '../../../redux/slices/journalEntrySlice';
-// import { toast } from 'react-hot-toast';
-
-// Temporary Toast Replacement
-const toast = {
-    success: (msg: string) => alert(`Success: ${msg}`),
-    error: (msg: string) => alert(`Error: ${msg}`)
-};
+import { toast } from 'react-toastify';
 
 interface JELineItem {
     id: number;
-    accountId: string; // Initially just string input, later dropdown
+    accountId: string;
     accountName: string;
     debit: number;
     credit: number;
@@ -38,7 +32,7 @@ const JournalEntryForm: React.FC = () => {
     const totalDebit = lineItems.reduce((sum, item) => sum + (item.debit || 0), 0);
     const totalCredit = lineItems.reduce((sum, item) => sum + (item.credit || 0), 0);
     const difference = totalDebit - totalCredit;
-    const isBalanced = Math.abs(difference) < 0.01;
+    const isBalanced = Math.abs(difference) < 0.01 && (totalDebit > 0 || totalCredit > 0);
 
     const handleAddLine = () => {
         setLineItems([...lineItems, {
@@ -52,7 +46,7 @@ const JournalEntryForm: React.FC = () => {
 
     const handleRemoveLine = (id: number) => {
         if (lineItems.length <= 2) {
-            toast.error("Journal entry needs at least 2 lines");
+            toast.error("Journal entry requires at least 2 balanced lines.");
             return;
         }
         setLineItems(lineItems.filter(item => item.id !== id));
@@ -61,11 +55,8 @@ const JournalEntryForm: React.FC = () => {
     const handleLineChange = (id: number, field: keyof JELineItem, value: any) => {
         setLineItems(lineItems.map(item => {
             if (item.id === id) {
-                // If existing debit value > 0 and user types in credit, clear debit (and vice-versa)
-                // Assuming standard behavior where a line is either Dr or Cr
                 if (field === 'debit' && Number(value) > 0) return { ...item, [field]: Number(value), credit: 0 };
                 if (field === 'credit' && Number(value) > 0) return { ...item, [field]: Number(value), debit: 0 };
-
                 return { ...item, [field]: value };
             }
             return item;
@@ -76,12 +67,12 @@ const JournalEntryForm: React.FC = () => {
         e.preventDefault();
 
         if (!isBalanced) {
-            toast.error(`Entry is not balanced. Difference: ${difference.toFixed(2)}`);
+            toast.error(`Ledger imbalance detected. Variance: ₹${Math.abs(difference).toFixed(2)}`);
             return;
         }
 
         if (lineItems.some(i => !i.accountId || !i.accountName)) {
-            toast.error("Please fill in account details for all lines");
+            toast.error("All line items must have a valid account code and name.");
             return;
         }
 
@@ -90,7 +81,7 @@ const JournalEntryForm: React.FC = () => {
             reference,
             description,
             entries: lineItems.map(item => ({
-                accountId: item.accountId, // You might map checking account ID vs name
+                accountId: item.accountId,
                 accountName: item.accountName,
                 debit: Number(item.debit),
                 credit: Number(item.credit)
@@ -99,89 +90,97 @@ const JournalEntryForm: React.FC = () => {
 
         try {
             await dispatch(createJournalEntry(payload)).unwrap();
-            toast.success("Journal Entry Posted Successfully");
+            toast.success("Journal transaction posted successfully.");
             navigate('/finance/journal');
         } catch (err: any) {
-            toast.error(err || "Failed to post entry");
+            toast.error(err || "Failed to post ledger entry.");
         }
     };
 
     return (
         <Layout>
-            <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900">
+            <div className="pt-8 space-y-10 pb-32">
                 <PageHeader
-                    title="New Journal Entry"
-                    backButton={
+                    title="Ledger Entry Creation"
+                    description="Manual adjustment or institutional transaction recording."
+                    breadcrumbs={[
+                        { label: 'General Journal', link: '/finance/journal' },
+                        { label: 'New Transaction' }
+                    ]}
+                    actions={
                         <button
                             onClick={() => navigate('/finance/journal')}
-                            className="flex items-center gap-2 text-neutral-500 hover:text-neutral-700 transition-colors"
+                            className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest"
                         >
-                            <ArrowLeft size={20} />
-                            <span>Back to Journal</span>
+                            <ArrowLeft className="w-4 h-4" /> Discard
                         </button>
                     }
                 />
 
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-6 pb-20">
-                    <div className="max-w-5xl mx-auto space-y-6">
+                <form onSubmit={handleSubmit} className="max-w-6xl mx-auto space-y-8">
+                    {/* Primary Meta Data */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="md:col-span-1">
+                            <label className="block text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Fiscal Date</label>
+                            <input
+                                type="date"
+                                required
+                                value={date}
+                                onChange={e => setDate(e.target.value)}
+                                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 font-bold transition-all"
+                            />
+                        </div>
+                        <div className="md:col-span-1">
+                            <label className="block text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Reference ID</label>
+                            <input
+                                type="text"
+                                required
+                                placeholder="e.g., ADJ-0224-01"
+                                value={reference}
+                                onChange={e => setReference(e.target.value)}
+                                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 font-mono font-bold tracking-tighter uppercase transition-all"
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Transaction Narration</label>
+                            <input
+                                type="text"
+                                required
+                                placeholder="Describe the adjustment or entry..."
+                                value={description}
+                                onChange={e => setDescription(e.target.value)}
+                                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 font-bold italic transition-all"
+                            />
+                        </div>
+                    </div>
 
-                        {/* Header Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Date</label>
-                                <input
-                                    type="date"
-                                    required
-                                    value={date}
-                                    onChange={e => setDate(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Reference #</label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="e.g., ADJ-2023-001"
-                                    value={reference}
-                                    onChange={e => setReference(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
-                                />
-                            </div>
-                            <div className="md:col-span-3">
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Description</label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Describe the transaction..."
-                                    value={description}
-                                    onChange={e => setDescription(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20"
-                                />
+                    {/* Transaction Ledger Table */}
+                    <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+                            <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Transaction Ledger</h3>
+                            <div className="flex items-center gap-2 text-[10px] font-black text-neutral-400 uppercase italic">
+                                <Info className="w-3.5 h-3.5" /> Use unique account codes
                             </div>
                         </div>
 
-                        {/* Line Items */}
-                        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700">
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Line Items</h3>
+                        <div className="p-4 space-y-4">
+                            {/* Column Headers */}
+                            <div className="hidden md:grid grid-cols-12 gap-6 px-4 py-2 text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                <div className="col-span-3">Account Code</div>
+                                <div className="col-span-3">Entity Description</div>
+                                <div className="col-span-2 text-right">Debit (INR)</div>
+                                <div className="col-span-2 text-right">Credit (INR)</div>
+                                <div className="col-span-2"></div>
+                            </div>
 
-                            <div className="space-y-4">
-                                {/* Header Row */}
-                                <div className="hidden md:grid grid-cols-12 gap-4 text-xs font-semibold text-neutral-500 uppercase px-2">
-                                    <div className="col-span-3">Account Code</div>
-                                    <div className="col-span-3">Account Name</div>
-                                    <div className="col-span-2 text-right">Debit</div>
-                                    <div className="col-span-2 text-right">Credit</div>
-                                    <div className="col-span-2"></div>
-                                </div>
-
-                                {lineItems.map((item, index) => (
-                                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-lg border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 transition-colors">
+                            <div className="space-y-3">
+                                {lineItems.map((item) => (
+                                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-neutral-50/50 dark:bg-neutral-900/30 p-4 rounded-3xl border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800 transition-all">
                                         <div className="col-span-12 md:col-span-3">
                                             <input
                                                 type="text"
-                                                placeholder="Code"
-                                                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
+                                                placeholder="CODE-001"
+                                                className="w-full px-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold tracking-tight uppercase focus:ring-2 focus:ring-primary/20"
                                                 value={item.accountId}
                                                 onChange={e => handleLineChange(item.id, 'accountId', e.target.value)}
                                             />
@@ -190,105 +189,100 @@ const JournalEntryForm: React.FC = () => {
                                             <input
                                                 type="text"
                                                 placeholder="Account Name"
-                                                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20"
+                                                className="w-full px-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20"
                                                 value={item.accountName}
                                                 onChange={e => handleLineChange(item.id, 'accountName', e.target.value)}
                                             />
                                         </div>
                                         <div className="col-span-6 md:col-span-2">
-                                            <div className="relative">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    step="0.01"
-                                                    placeholder="0.00"
-                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
-                                                    value={item.debit || ''}
-                                                    onChange={e => handleLineChange(item.id, 'debit', e.target.value)}
-                                                />
-                                            </div>
+                                            <input
+                                                type="number"
+                                                placeholder="0.00"
+                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 focus:ring-2 focus:ring-primary/20"
+                                                value={item.debit || ''}
+                                                onChange={e => handleLineChange(item.id, 'debit', e.target.value)}
+                                            />
                                         </div>
                                         <div className="col-span-6 md:col-span-2">
-                                            <div className="relative">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    step="0.01"
-                                                    placeholder="0.00"
-                                                    className="w-full pl-3 pr-3 py-2 text-right bg-white dark:bg-neutral-800 border-none rounded-md text-sm ring-1 ring-neutral-200 dark:ring-neutral-700 focus:ring-2 focus:ring-primary/20 font-mono"
-                                                    value={item.credit || ''}
-                                                    onChange={e => handleLineChange(item.id, 'credit', e.target.value)}
-                                                />
-                                            </div>
+                                            <input
+                                                type="number"
+                                                placeholder="0.00"
+                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-rose-600 dark:text-rose-400 focus:ring-2 focus:ring-primary/20"
+                                                value={item.credit || ''}
+                                                onChange={e => handleLineChange(item.id, 'credit', e.target.value)}
+                                            />
                                         </div>
                                         <div className="col-span-12 md:col-span-2 flex justify-end">
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveLine(item.id)}
-                                                className="p-2 text-neutral-400 hover:text-error hover:bg-error/10 rounded-lg transition-colors"
+                                                className="p-2.5 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-all"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
                                 ))}
+                            </div>
 
-                                <button
-                                    type="button"
-                                    onClick={handleAddLine}
-                                    className="flex items-center gap-2 text-primary hover:text-primary-dark font-medium text-sm px-2 py-1"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Add Line Item
-                                </button>
+                            <button
+                                type="button"
+                                onClick={handleAddLine}
+                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-dark p-4 group transition-all"
+                            >
+                                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20">
+                                    <Plus className="w-3.5 h-3.5" />
+                                </div>
+                                Append Ledger Node
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Finalization Controller */}
+                    <div className={`p-8 rounded-[3rem] border shadow-2xl flex flex-col md:flex-row justify-between items-center gap-8 transition-all duration-500 ${isBalanced ? 'bg-neutral-900 text-white border-neutral-800' : 'bg-rose-50 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/30 ring-4 ring-rose-500/10'}`}>
+                        <div className="flex items-center gap-4">
+                            {!isBalanced ? (
+                                <div className="w-12 h-12 bg-rose-500/20 rounded-2xl flex items-center justify-center text-rose-500 animate-pulse">
+                                    <AlertCircle className="w-6 h-6" />
+                                </div>
+                            ) : (
+                                <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-500">
+                                    <Save className="w-6 h-6" />
+                                </div>
+                            )}
+                            <div>
+                                <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${isBalanced ? 'text-neutral-400' : 'text-rose-500'}`}>
+                                    {isBalanced ? 'Institutional Balance Confirmed' : 'Ledger Imbalance Detected'}
+                                </p>
+                                <p className={`text-sm font-bold mt-1 ${isBalanced ? 'text-white' : 'text-rose-700 dark:text-rose-400 italic'}`}>
+                                    {isBalanced ? 'Ready for immutable ledger commitment.' : `Variance detected: ₹${Math.abs(difference).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                                </p>
                             </div>
                         </div>
 
-                        {/* Totals Footer */}
-                        <div className={`p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 flex flex-col md:flex-row justify-between items-center gap-4 transition-colors ${isBalanced ? 'bg-white dark:bg-neutral-800' : 'bg-red-50 dark:bg-red-900/20 ring-1 ring-red-200 dark:ring-red-800'}`}>
-                            <div className="flex items-center gap-3">
-                                {!isBalanced && <AlertCircle className="w-6 h-6 text-error" />}
-                                <div>
-                                    <p className={`text-sm font-medium ${isBalanced ? 'text-neutral-500' : 'text-error'}`}>
-                                        {isBalanced ? 'Balanced' : 'Unbalanced Entry'}
-                                    </p>
-                                    {!isBalanced && (
-                                        <p className="text-xs text-error">Difference: {difference.toFixed(2)}</p>
-                                    )}
-                                </div>
+                        <div className="flex items-center gap-12">
+                            <div className="text-right">
+                                <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Total Debits</p>
+                                <p className="text-2xl font-black font-mono tracking-tighter tabular-nums text-emerald-500">₹{totalDebit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
                             </div>
+                            <div className="text-right">
+                                <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Total Credits</p>
+                                <p className="text-2xl font-black font-mono tracking-tighter tabular-nums text-rose-500">₹{totalCredit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+                            </div>
+                        </div>
 
-                            <div className="flex items-center gap-8">
-                                <div className="text-right">
-                                    <p className="text-xs text-neutral-500 uppercase font-semibold">Total Debit</p>
-                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-white">{totalDebit.toFixed(2)}</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-xs text-neutral-500 uppercase font-semibold">Total Credit</p>
-                                    <p className="text-xl font-bold font-mono text-neutral-900 dark:text-white">{totalCredit.toFixed(2)}</p>
-                                </div>
-                            </div>
+                        <div className="shrink-0">
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading || !isBalanced}
+                                className={`flex items-center gap-3 px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 ${isBalanced ? 'bg-primary text-white hover:bg-primary/90 shadow-primary/20' : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'}`}
+                            >
+                                {loading ? 'Committing...' : 'Commit Transaction'}
+                                <Save className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
                 </form>
-
-                <div className="bg-white dark:bg-neutral-800 p-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3 sticky bottom-0 z-20">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/finance/journal')}
-                        className="px-6 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg font-bold transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading || !isBalanced}
-                        className="flex items-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold transition-colors shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {loading ? 'Posting...' : 'Post Entry'}
-                        <Save className="w-4 h-4" />
-                    </button>
-                </div>
             </div>
         </Layout>
     );

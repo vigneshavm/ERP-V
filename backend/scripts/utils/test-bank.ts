@@ -1,9 +1,9 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import app from './src/app.js';
-import User from './src/modules/core/models/User.js';
-import Tenant from './src/modules/core/models/Tenant.js';
+import app from '../../src/app.js';
+import User from '../../src/modules/core/models/User.js';
+import Tenant from '../../src/modules/core/models/Tenant.js';
 import { jsPDF } from 'jspdf';
 import fs from 'fs';
 import path from 'path';

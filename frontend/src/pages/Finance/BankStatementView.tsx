@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Upload, FileText, TrendingUp, TrendingDown, Activity, RefreshCw, CheckCircle2, Clock3, ChevronUp, ChevronDown } from 'lucide-react';
+import { Upload, FileText, TrendingUp, TrendingDown, Activity, RefreshCw, CheckCircle2, Clock3, ChevronUp, ChevronDown, Download, Info } from 'lucide-react';
 import { bankStatementService, BankStatementTransaction } from '../../services/bankStatementService';
 import { toast } from 'react-toastify';
+import Layout from '../../components/shared/Layout/Layout';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 /* ─── Summary card ─────────────────────────────────────────────────────────── */
 interface SummaryCardProps {
@@ -9,21 +11,19 @@ interface SummaryCardProps {
     value: string;
     sub: string;
     icon: React.ReactNode;
-    accent: string;       // tailwind bg class for icon circle
-    textAccent: string;   // tailwind text class for value
-    delay: number;
+    colorClass: string;
+    bgClass: string;
 }
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ label, value, sub, icon, accent, textAccent, delay }) => (
-    <div
-        className="bg-card border border-default rounded-2xl p-5 flex items-start gap-4 shadow-sm"
-        style={{ animation: `bs-rise 0.5s ease-out ${delay}ms both` }}
-    >
-        <div className={`${accent} p-3 rounded-xl flex-shrink-0`}>{icon}</div>
+const SummaryCard: React.FC<SummaryCardProps> = ({ label, value, sub, icon, colorClass, bgClass }) => (
+    <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] p-6 shadow-sm flex items-start gap-4 group hover:border-primary/20 transition-all duration-500">
+        <div className={`p-3.5 rounded-2xl ${bgClass} ${colorClass} shrink-0 shadow-sm group-hover:scale-110 transition-transform`}>
+            {icon}
+        </div>
         <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-0.5">{label}</p>
-            <p className={`text-2xl font-bold ${textAccent} leading-none`}>{value}</p>
-            <p className="text-xs text-muted mt-1">{sub}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-1">{label}</p>
+            <p className={`text-2xl font-black tracking-tighter tabular-nums leading-none ${colorClass}`}>{value}</p>
+            <p className="text-[10px] font-bold text-neutral-500 mt-2 italic">{sub}</p>
         </div>
     </div>
 );
@@ -114,165 +114,130 @@ const BankStatementView: React.FC = () => {
 
     const SortIcon = ({ field }: { field: 'date' | 'amount' }) => (
         sortField === field
-            ? (sortDir === 'desc' ? <ChevronDown className="w-3.5 h-3.5 inline ml-1" /> : <ChevronUp className="w-3.5 h-3.5 inline ml-1" />)
-            : <span className="w-3.5 h-3.5 inline-block ml-1 opacity-25">↕</span>
+            ? (sortDir === 'desc' ? <ChevronDown className="w-4 h-4 inline ml-1.5" /> : <ChevronUp className="w-4 h-4 inline ml-1.5" />)
+            : <span className="w-4 h-4 inline-block ml-1.5 opacity-20">↕</span>
     );
 
     return (
-        <>
-            {/* ── Injected keyframes ─────────────────────────────────────────── */}
-            <style>{`
-                @keyframes bs-rise {
-                    from { opacity: 0; transform: translateY(18px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes bs-spin-slow {
-                    to { transform: rotate(360deg); }
-                }
-                @keyframes bs-pulse-ring {
-                    0%   { box-shadow: 0 0 0 0 rgba(var(--color-primary)/0.35); }
-                    70%  { box-shadow: 0 0 0 10px rgba(var(--color-primary)/0); }
-                    100% { box-shadow: 0 0 0 0 rgba(var(--color-primary)/0); }
-                }
-                .bs-row:nth-child(odd)  { background: rgba(var(--color-primary)/0.025); }
-                .bs-row:hover           { background: rgba(var(--color-primary)/0.06); }
-                .bs-drop-active         { box-shadow: 0 0 0 3px rgb(var(--color-primary)); }
-            `}</style>
+        <Layout>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Statement Intelligence"
+                    description="AI-powered extraction and institutional transaction mapping."
+                    breadcrumbs={[
+                        { label: 'Home', link: '/dashboard' },
+                        { label: 'Finance', link: '/finance' },
+                        { label: 'Statements' }
+                    ]}
+                    actions={
+                        <div className="flex gap-3">
+                            <button
+                                onClick={loadTransactions}
+                                disabled={fetching}
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest disabled:opacity-50"
+                            >
+                                <RefreshCw className={`w-4 h-4 ${fetching ? 'animate-spin' : ''}`} /> Sync Data
+                            </button>
+                            <input
+                                type="file"
+                                className="hidden"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept=".pdf,image/*"
+                            />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={loading}
+                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest disabled:opacity-50"
+                            >
+                                {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                {loading ? 'Analyzing...' : 'Upload Statement'}
+                            </button>
+                        </div>
+                    }
+                />
 
-            <div className="space-y-6" style={{ animation: 'bs-rise 0.4s ease-out both' }}>
-
-                {/* ── Header ─────────────────────────────────────────────────── */}
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                    <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-1">Finance</p>
-                        <h1 className="text-3xl font-extrabold tracking-tight text-main">Bank Statements</h1>
-                        <p className="text-sm text-muted mt-1">AI-powered extraction &amp; transaction intelligence</p>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                            onClick={loadTransactions}
-                            disabled={fetching}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-default text-sm font-medium text-secondary hover:bg-primary-soft hover:text-primary hover:border-primary/30 transition-all duration-200"
-                        >
-                            <RefreshCw className={`w-4 h-4 ${fetching ? '[animation:bs-spin-slow_1s_linear_infinite]' : ''}`} />
-                            Refresh
-                        </button>
-
-                        <input
-                            type="file"
-                            accept="application/pdf,image/*"
-                            className="hidden"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                        />
-                        <button
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={loading}
-                            style={loading ? {} : { animation: 'bs-pulse-ring 2s infinite' }}
-                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold shadow-md hover:opacity-90 disabled:opacity-50 transition-all duration-200"
-                        >
-                            {loading
-                                ? <RefreshCw className="w-4 h-4 [animation:bs-spin-slow_0.8s_linear_infinite]" />
-                                : <Upload className="w-4 h-4" />}
-                            {loading ? 'Analysing…' : 'Upload Statement'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* ── Summary Cards ───────────────────────────────────────────── */}
+                {/* KPI Overview Pulse */}
                 {transactions.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <SummaryCard
-                            label="Total Credits"
+                            label="Consolidated Credits"
                             value={fmt(totalCredit)}
-                            sub={`${transactions.filter(t => t.type === 'credit').length} transactions`}
-                            icon={<TrendingUp className="w-5 h-5 text-success" />}
-                            accent="bg-success-soft"
-                            textAccent="text-success"
-                            delay={0}
+                            sub={`${transactions.filter(t => t.type === 'credit').length} inbound nodes`}
+                            icon={<TrendingUp className="w-6 h-6" />}
+                            colorClass="text-emerald-500"
+                            bgClass="bg-emerald-50 dark:bg-emerald-900/20"
                         />
                         <SummaryCard
-                            label="Total Debits"
+                            label="Consolidated Debits"
                             value={fmt(totalDebit)}
-                            sub={`${transactions.filter(t => t.type === 'debit').length} transactions`}
-                            icon={<TrendingDown className="w-5 h-5 text-error" />}
-                            accent="bg-error-soft"
-                            textAccent="text-error"
-                            delay={80}
+                            sub={`${transactions.filter(t => t.type === 'debit').length} outbound nodes`}
+                            icon={<TrendingDown className="w-6 h-6" />}
+                            colorClass="text-rose-500"
+                            bgClass="bg-rose-50 dark:bg-rose-900/20"
                         />
                         <SummaryCard
-                            label="Net Flow"
+                            label="Net Capital Flow"
                             value={fmt(Math.abs(netFlow))}
-                            sub={netFlow >= 0 ? '▲ Net positive cash flow' : '▼ Net negative outflow'}
-                            icon={<Activity className="w-5 h-5 text-primary" />}
-                            accent="bg-primary-soft"
-                            textAccent={netFlow >= 0 ? 'text-success' : 'text-error'}
-                            delay={160}
+                            sub={netFlow >= 0 ? '▲ Net surplus position' : '▼ Net deficit position'}
+                            icon={<Activity className="w-6 h-6" />}
+                            colorClass={netFlow >= 0 ? 'text-emerald-500' : 'text-rose-500'}
+                            bgClass={netFlow >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-rose-50 dark:bg-rose-900/20'}
                         />
                     </div>
                 )}
 
-                {/* ── Drag-&-Drop Upload Zone ─────────────────────────────────── */}
+                {/* Drop Zone Intel */}
                 <div
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onClick={() => !loading && fileInputRef.current?.click()}
-                    className={[
-                        'relative border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-200 text-center select-none',
+                    className={`relative border-2 border-dashed rounded-[3rem] p-12 cursor-pointer transition-all duration-700 text-center flex flex-col items-center gap-6 group overflow-hidden ${
                         dragging
-                            ? 'border-primary bg-primary-soft bs-drop-active scale-[1.01]'
-                            : 'border-default hover:border-primary/50 hover:bg-primary-soft/40',
-                        loading ? 'pointer-events-none opacity-60' : '',
-                    ].join(' ')}
-                    style={{ animation: 'bs-rise 0.45s ease-out 0.1s both' }}
+                            ? 'border-primary bg-primary/5 scale-[1.02] shadow-2xl'
+                            : 'border-neutral-200 dark:border-neutral-800 hover:border-primary/40 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30'
+                    } ${loading ? 'pointer-events-none opacity-40' : ''}`}
                 >
-                    <div className="flex flex-col items-center gap-3">
-                        <div className={`w-14 h-14 rounded-2xl ${dragging ? 'bg-primary' : 'bg-primary-soft'} flex items-center justify-center transition-colors duration-200`}>
-                            {loading
-                                ? <RefreshCw className="w-7 h-7 text-primary [animation:bs-spin-slow_0.9s_linear_infinite]" />
-                                : <FileText className={`w-7 h-7 ${dragging ? 'text-white' : 'text-primary'}`} />}
-                        </div>
-                        <div>
-                            <p className="font-semibold text-main text-sm">
-                                {loading ? 'Processing with Gemini AI…' : dragging ? 'Drop to upload' : 'Drag & drop a PDF or image here'}
-                            </p>
-                            {!loading && (
-                                <p className="text-xs text-muted mt-0.5">
-                                    or <span className="text-primary font-medium underline underline-offset-2">browse files</span> · PDF, JPG, PNG up to 10 MB
-                                </p>
-                            )}
-                        </div>
+                    <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-700 ${dragging ? 'bg-primary text-white' : 'bg-primary/10 text-primary'} shadow-xl group-hover:scale-110`}>
+                        {loading ? <RefreshCw className="w-10 h-10 animate-spin" /> : <FileText className="w-10 h-10" />}
                     </div>
+                    <div>
+                        <p className="text-xl font-black text-neutral-900 dark:text-white tracking-tighter italic">
+                            {loading ? 'Executing Gemini AI Protocols...' : dragging ? 'Release to Initialize Upload' : 'Deploy Bank Statement for Analysis'}
+                        </p>
+                        {!loading && (
+                            <p className="text-xs font-bold text-neutral-400 mt-2 uppercase tracking-widest italic">
+                                Supports PDF, JPG, PNG · Maximum Payload 10MB
+                            </p>
+                        )}
+                    </div>
+                    {/* Background glow */}
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-[80px] group-hover:bg-primary/20 transition-all duration-700" />
                 </div>
 
-                {/* ── Transactions Panel ───────────────────────────────────────── */}
-                <div
-                    className="bg-card border border-default rounded-2xl shadow-sm overflow-hidden"
-                    style={{ animation: 'bs-rise 0.5s ease-out 0.2s both' }}
-                >
-                    {/* Panel header with filter tabs */}
-                    <div className="px-5 py-4 border-b border-default flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <h2 className="font-bold text-main text-base tracking-tight">
-                            Extracted Transactions
+                {/* Transactions Archive */}
+                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Institutional Records</h2>
                             {!fetching && transactions.length > 0 && (
-                                <span className="ml-2 text-xs font-normal text-muted">({displayed.length} shown)</span>
+                                <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-900 text-[10px] font-black text-neutral-400 rounded-full">
+                                    {displayed.length} NODES
+                                </span>
                             )}
-                        </h2>
+                        </div>
 
-                        {/* Filter pills */}
-                        <div className="flex items-center gap-1 bg-surface rounded-lg p-1 self-start sm:self-auto">
+                        <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800">
                             {(['all', 'credit', 'debit'] as const).map(type => (
                                 <button
                                     key={type}
                                     onClick={() => setFilterType(type)}
-                                    className={[
-                                        'px-3 py-1 rounded-md text-xs font-semibold capitalize transition-all duration-150',
+                                    className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                                         filterType === type
-                                            ? 'bg-card shadow text-main'
-                                            : 'text-muted hover:text-main',
-                                    ].join(' ')}
+                                            ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm ring-1 ring-neutral-200 dark:ring-neutral-700'
+                                            : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
+                                    }`}
                                 >
                                     {type}
                                 </button>
@@ -281,114 +246,89 @@ const BankStatementView: React.FC = () => {
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm">
-                            {/* Table header */}
-                            <thead>
-                                <tr className="border-b border-default">
+                        <table className="w-full text-left">
+                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
+                                <tr>
                                     <th
-                                        className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted cursor-pointer select-none hover:text-primary transition-colors"
+                                        className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors"
                                         onClick={() => toggleSort('date')}
                                     >
-                                        Date <SortIcon field="date" />
+                                        Fiscal Date <SortIcon field="date" />
                                     </th>
-                                    <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted">Description</th>
-                                    <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted">Type</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Narration</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Classification</th>
                                     <th
-                                        className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted cursor-pointer select-none hover:text-primary transition-colors text-right"
+                                        className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors"
                                         onClick={() => toggleSort('amount')}
                                     >
-                                        Amount <SortIcon field="amount" />
+                                        Quantum <SortIcon field="amount" />
                                     </th>
-                                    <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted hidden md:table-cell">Balance</th>
-                                    <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted text-center">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right hidden md:table-cell">Residual Balance</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Status</th>
                                 </tr>
                             </thead>
-
-                            <tbody>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                 {fetching ? (
-                                    /* ── Skeleton ── */
                                     Array.from({ length: 5 }).map((_, i) => (
-                                        <tr key={i} className="border-b border-default last:border-0">
-                                            {[5, 8, 3, 4, 3, 3].map((w, j) => (
-                                                <td key={j} className="px-5 py-4">
-                                                    <div
-                                                        className="h-3 rounded-full bg-surface animate-pulse"
-                                                        style={{ width: `${w * 10}%`, animationDelay: `${i * 60 + j * 30}ms` }}
-                                                    />
-                                                </td>
-                                            ))}
+                                        <tr key={i} className="animate-pulse">
+                                            <td className="px-8 py-6"><div className="h-2 w-20 bg-neutral-100 dark:bg-neutral-900 rounded-full" /></td>
+                                            <td className="px-8 py-6"><div className="h-2 w-48 bg-neutral-100 dark:bg-neutral-900 rounded-full" /></td>
+                                            <td className="px-8 py-6"><div className="h-4 w-16 bg-neutral-100 dark:bg-neutral-900 rounded-full" /></td>
+                                            <td className="px-8 py-6"><div className="h-2 w-24 bg-neutral-100 dark:bg-neutral-900 rounded-full ml-auto" /></td>
+                                            <td className="px-8 py-6"><div className="h-2 w-24 bg-neutral-100 dark:bg-neutral-900 rounded-full ml-auto" /></td>
+                                            <td className="px-8 py-6"><div className="h-4 w-20 bg-neutral-100 dark:bg-neutral-900 rounded-full mx-auto" /></td>
                                         </tr>
                                     ))
                                 ) : displayed.length === 0 ? (
-                                    /* ── Empty state ── */
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-16 text-center">
-                                            <div className="flex flex-col items-center gap-3">
-                                                <div className="w-16 h-16 rounded-2xl bg-primary-soft flex items-center justify-center">
-                                                    <FileText className="w-8 h-8 text-primary" />
+                                        <td colSpan={6} className="px-8 py-24 text-center">
+                                            <div className="flex flex-col items-center gap-6 max-w-sm mx-auto opacity-40">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                    <Info className="w-10 h-10" />
                                                 </div>
-                                                <p className="font-semibold text-main">No transactions yet</p>
-                                                <p className="text-sm text-muted max-w-xs">
-                                                    Upload a PDF or image bank statement above. Gemini AI will extract and categorise every transaction automatically.
-                                                </p>
+                                                <div>
+                                                    <p className="text-sm font-black uppercase tracking-widest">Vault Empty</p>
+                                                    <p className="text-xs font-bold mt-2 italic leading-relaxed">Gemini AI is ready. Upload a bank statement to begin extraction protocols.</p>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
                                     displayed.map((tx, idx) => (
-                                        <tr
-                                            key={tx._id}
-                                            className="bs-row border-b border-default last:border-0 transition-colors duration-150"
-                                            style={{ animation: `bs-rise 0.35s ease-out ${idx * 35}ms both` }}
-                                        >
-                                            {/* Date */}
-                                            <td className="px-5 py-3.5 text-muted text-xs font-mono whitespace-nowrap">
-                                                {fmtDate(tx.date)}
+                                        <tr key={tx._id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
+                                            <td className="px-8 py-6 whitespace-nowrap">
+                                                <span className="text-xs font-black text-neutral-500 font-mono tracking-tighter uppercase">{fmtDate(tx.date)}</span>
                                             </td>
-
-                                            {/* Description */}
-                                            <td className="px-5 py-3.5 max-w-[200px]">
-                                                <p className="text-main font-medium truncate" title={tx.description}>{tx.description}</p>
+                                            <td className="px-8 py-6 max-w-xs">
+                                                <p className="text-xs font-bold text-neutral-900 dark:text-white truncate uppercase tracking-tighter" title={tx.description}>{tx.description}</p>
                                                 {tx.reference && (
-                                                    <p className="text-xs text-muted mt-0.5 font-mono truncate">Ref: {tx.reference}</p>
+                                                    <p className="text-[10px] font-black text-neutral-400 mt-1 font-mono uppercase tracking-widest">REF: {tx.reference}</p>
                                                 )}
                                             </td>
-
-                                            {/* Type badge */}
-                                            <td className="px-5 py-3.5">
-                                                <span className={[
-                                                    'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide',
+                                            <td className="px-8 py-6">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
                                                     tx.type === 'credit'
-                                                        ? 'bg-success-soft text-success'
-                                                        : 'bg-error-soft text-error',
-                                                ].join(' ')}>
+                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
+                                                        : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400'
+                                                }`}>
                                                     {tx.type === 'credit' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                                                     {tx.type}
                                                 </span>
                                             </td>
-
-                                            {/* Amount */}
-                                            <td className={[
-                                                'px-5 py-3.5 text-right font-bold tabular-nums whitespace-nowrap text-sm',
-                                                tx.type === 'credit' ? 'text-success' : 'text-error',
-                                            ].join(' ')}>
-                                                {tx.type === 'credit' ? '+' : '−'}{fmt(tx.amount)}
+                                            <td className={`px-8 py-6 text-right whitespace-nowrap text-sm font-black tabular-nums ${tx.type === 'credit' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                {tx.type === 'credit' ? '+' : '−'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </td>
-
-                                            {/* Balance */}
-                                            <td className="px-5 py-3.5 text-muted text-xs font-mono hidden md:table-cell whitespace-nowrap">
-                                                {tx.balance != null ? fmt(tx.balance) : '—'}
+                                            <td className="px-8 py-6 text-right whitespace-nowrap text-xs font-black text-neutral-400 font-mono hidden md:table-cell tabular-nums">
+                                                {tx.balance != null ? tx.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—'}
                                             </td>
-
-                                            {/* Status */}
-                                            <td className="px-5 py-3.5 text-center">
+                                            <td className="px-8 py-6 text-center">
                                                 {tx.status === 'reconciled' ? (
-                                                    <span className="inline-flex items-center gap-1 text-success text-xs font-semibold">
+                                                    <span className="inline-flex items-center gap-1.5 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
                                                         <CheckCircle2 className="w-3.5 h-3.5" />
-                                                        Reconciled
+                                                        Locked
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1 text-warning text-xs font-semibold">
+                                                    <span className="inline-flex items-center gap-1.5 text-amber-500 text-[10px] font-black uppercase tracking-widest">
                                                         <Clock3 className="w-3.5 h-3.5" />
                                                         Pending
                                                     </span>
@@ -401,19 +341,24 @@ const BankStatementView: React.FC = () => {
                         </table>
                     </div>
 
-                    {/* Footer totals row */}
+                    {/* Ledger Intelligence Summary Footer */}
                     {displayed.length > 0 && (
-                        <div className="px-5 py-3 border-t border-default bg-surface flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-xs font-semibold text-muted">
-                            <span>{displayed.length} transaction{displayed.length !== 1 ? 's' : ''}</span>
-                            <div className="flex gap-6">
-                                <span>Credits: <span className="text-success">{fmt(displayed.filter(t => t.type === 'credit').reduce((s, t) => s + t.amount, 0))}</span></span>
-                                <span>Debits: <span className="text-error">{fmt(displayed.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0))}</span></span>
+                        <div className="px-8 py-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-wrap items-center justify-between gap-8 text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                            <div className="flex items-center gap-4">
+                                <span className="text-neutral-500">{displayed.length} NODES AUDITED</span>
+                                <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
+                                <span>CREDITS: <span className="text-emerald-500">₹{displayed.filter(t => t.type === 'credit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
+                                <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
+                                <span>DEBITS: <span className="text-rose-500">₹{displayed.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
                             </div>
+                            <button className="flex items-center gap-2 hover:text-primary transition-colors italic">
+                                <Download className="w-3.5 h-3.5" /> Generate Intelligence Report
+                            </button>
                         </div>
                     )}
                 </div>
             </div>
-        </>
+        </Layout>
     );
 };
 

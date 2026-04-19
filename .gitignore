@@ -44,6 +44,7 @@ dist/
 dist-ssr/
 build/
 out/
+.next/
 build/Release
 bin/
 obj/

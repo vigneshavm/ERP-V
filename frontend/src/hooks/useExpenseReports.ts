@@ -41,7 +41,12 @@ export const useExpenseReports = () => {
             const response = await api.get(url, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setReport(response.data);
+            const data = response.data;
+            if (data && typeof data === 'object' && 'total_expense' in data) {
+                setReport(data);
+            } else {
+                throw new Error('Invalid report data format');
+            }
             setError(null);
         } catch (err: any) {
             console.error('Error fetching expense reports:', err);

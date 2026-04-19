@@ -16,10 +16,13 @@ import {
     Search,
     Filter,
     Calendar as CalendarIcon,
-    LayoutDashboard
+    LayoutDashboard,
+    MoreVertical
 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Layout from "../../components/shared/Layout";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 import ExpenseForm from '../../components/Finance/ExpenseForm';
 import { useExpenses } from '../../hooks/useExpenses';
 import ExpenseCalendar from '../../components/Finance/ExpenseCalendar';
@@ -90,104 +93,95 @@ const BudgetTrackerPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[80vh] bg-[#05070a]">
-                <div className="flex flex-col items-center gap-6">
+            <Layout>
+                <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
                     <div className="w-16 h-16 border-[6px] border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
-                    <p className="text-xs font-black text-neutral-500 uppercase tracking-[0.3em] animate-pulse">Initializing EXPANAGER...</p>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Initializing EXPANAGER...</p>
                 </div>
-            </div>
+            </Layout>
         );
     }
 
     return (
-            <div className="min-h-screen bg-[#05070a] text-white p-4 md:p-8 font-sans selection:bg-emerald-500/30">
-                <div className="max-w-5xl mx-auto space-y-10 pb-32">
-
-                    {/* Top Navigation */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors"><ChevronRight className="w-6 h-6 rotate-180" /></button>
-                            <h1 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-500">EXPANAGER</h1>
+        <Layout>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Budget Surveillance"
+                    description="Deconstruct institutional expenditure and optimize fiscal allocation."
+                    breadcrumbs={[
+                        { label: 'Home', link: '/dashboard' },
+                        { label: 'Finance', link: '/finance' },
+                        { label: 'Budget' }
+                    ]}
+                    actions={
+                        <div className="flex gap-3">
+                            <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                                <Search className="w-4 h-4" /> Deep Search
+                            </button>
+                            <button
+                                onClick={() => setIsFormOpen(true)}
+                                className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-700 transition active:scale-95 uppercase tracking-widest"
+                            >
+                                <Plus className="w-5 h-5" /> Record Expense
+                            </button>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <Mic className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
-                            <Search className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
-                            <MoreVerticalIcon className="w-5 h-5 text-neutral-500 hover:text-white cursor-pointer" />
+                    }
+                />
+
+                <div className="space-y-10">
+                    {/* Hero KPI Section */}
+                    <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800 p-12 relative overflow-hidden group">
+                        <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-neutral-500 font-black uppercase tracking-[0.2em] text-[10px] mb-4">
+                                    <span>Aggregate Burn</span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-3xl font-black text-neutral-400">₹</span>
+                                    <h2 className="text-7xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">
+                                        {report?.total_expense.toLocaleString('en-IN')}
+                                    </h2>
+                                </div>
+                                <p className="text-sm font-bold text-neutral-500 italic">Fiscal Period: {report?.report_period}</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-2xl">
+                                {[
+                                    { id: 'budget', label: 'Surveillance', icon: LayoutDashboard },
+                                    { id: 'calendar', label: 'Temporal', icon: CalendarIcon },
+                                    { id: 'stats', label: 'Intelligence', icon: PieChart }
+                                ].map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id as any)}
+                                        className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id 
+                                            ? 'bg-white dark:bg-neutral-700 text-emerald-500 shadow-md scale-105' 
+                                            : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Hero Section */}
-                    <div className="relative overflow-hidden pt-4">
-                        <div className="flex flex-col items-center justify-center w-full py-12 text-center">
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-4">
-                                Get deeper insights into <br className="hidden md:block" /> your data
-                            </h1>
-                        </div>
-
-                        <div className="flex flex-col items-start gap-2">
-                            <div className="flex items-center gap-2 text-neutral-500 font-bold mb-2">
-                                <span className="text-xs uppercase tracking-widest">Monthly Overview</span>
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
-                            </div>
-
-                            <div className="flex items-end justify-between w-full">
-                                <div>
-                                    <div className="flex items-start gap-1">
-                                        <span className="text-3xl font-medium text-neutral-500 mt-2">₹</span>
-                                        <h2 className="text-6xl md:text-8xl font-medium tracking-tight tabular-nums expanager-text-gradient">
-                                            {report?.total_expense.toLocaleString('en-IN')}
-                                        </h2>
-                                    </div>
-                                </div>
-                                <div className="hidden md:block">
-                                    <div className="w-24 h-24 bg-neutral-900 rounded-3xl flex items-center justify-center p-4 border border-white/5 shadow-2xl overflow-hidden group">
-                                        <div className="bg-amber-600/10 w-full h-full rounded-2xl flex items-center justify-center border border-amber-600/20 group-hover:scale-110 transition-transform">
-                                            <Home className="w-10 h-10 text-amber-500" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tab Switcher */}
-                        <div className="flex items-center gap-8 mt-10 p-1 bg-white/5 rounded-2xl border border-white/5">
-                            <button
-                                onClick={() => setActiveTab('budget')}
-                                className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'budget' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
-                            >
-                                Budget
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('calendar')}
-                                className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'calendar' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
-                            >
-                                Calendar
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('stats')}
-                                className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'stats' ? 'bg-emerald-500 text-neutral-950 shadow-lg' : 'text-neutral-500 hover:text-white'}`}
-                            >
-                                Insights
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Dynamic Content Based on Tab */}
+                    {/* Dynamic Content */}
                     {activeTab === 'budget' && (
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-fade-in">
-                            {/* Left Side: Recent Transactions & Timeline */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            {/* Left Side: Transactions */}
                             <div className="lg:col-span-8 space-y-8">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500">Recent Transactions</h3>
-                                    <div className="flex items-center gap-2">
-                                        <ChevronRight className="w-4 h-4 text-emerald-500 rotate-180" />
-                                        <span className="text-xs font-black tracking-widest text-neutral-500">JUNE 2025</span>
-                                        <ChevronRight className="w-4 h-4 text-emerald-500" />
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Transaction Ledger</h3>
+                                    <div className="flex items-center gap-4 text-emerald-500">
+                                        <ChevronRight className="w-4 h-4 rotate-180 cursor-pointer" />
+                                        <span className="text-[10px] font-black tracking-widest uppercase">June 2025</span>
+                                        <ChevronRight className="w-4 h-4 cursor-pointer" />
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    {expenses.slice(0, 10).map((exp, idx) => (
+                                <div className="space-y-3">
+                                    {expenses.slice(0, 8).map((exp, idx) => (
                                         <ExpenseListItem
                                             key={exp.id || idx}
                                             category={exp.category}
@@ -198,61 +192,65 @@ const BudgetTrackerPage: React.FC = () => {
                                     ))}
                                 </div>
 
-                                {/* Monthly Trend Card (Legacy feel preserved but updated) */}
+                                {/* Monthly Trend Card */}
                                 {report?.monthly_trends.slice(0, 1).map((m, idx) => (
-                                    <div key={idx} className="bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl mt-12">
+                                    <div key={idx} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-10 shadow-sm">
                                         <div className="flex items-center justify-between mb-8">
-                                            <h3 className="text-xl font-bold tracking-tight">Summary: {m.month}</h3>
-                                            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active</span>
+                                            <h3 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">Consolidated Summary: {m.month}</h3>
+                                            <span className="px-4 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-10">
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Total Budget</p>
-                                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-4">
-                                                    <div className="h-full bg-emerald-500 w-[75%] rounded-full shadow-[0_0_15px_#10b981]" />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                            <div className="space-y-4">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Resource Utilization</p>
+                                                <div className="h-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-emerald-500 w-[75%] rounded-full shadow-lg shadow-emerald-500/20" />
                                                 </div>
-                                                <p className="text-lg font-black tracking-tight">₹{m.expense.toLocaleString()} <span className="text-neutral-600 text-sm font-medium">/ ₹{(m.expense * 1.2).toLocaleString()}</span></p>
+                                                <p className="text-2xl font-black text-neutral-900 dark:text-white tabular-nums">
+                                                    ₹{m.expense.toLocaleString()} 
+                                                    <span className="text-neutral-400 text-sm font-bold ml-2">/ ₹{(m.expense * 1.2).toLocaleString()}</span>
+                                                </p>
                                             </div>
-                                            <div className="flex flex-col justify-end items-end">
-                                                <div className="flex items-center gap-2 text-emerald-500 mb-1">
-                                                    <ShieldCheck className="w-4 h-4" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest">Safe Spend</span>
+                                            <div className="flex flex-col justify-center items-end text-right">
+                                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500 mb-2">
+                                                    <ShieldCheck className="w-5 h-5" />
+                                                    <span className="text-xs font-black uppercase tracking-widest">Operational Safety</span>
                                                 </div>
-                                                <p className="text-[10px] text-neutral-500 text-right font-medium">You are currently 25% under budget</p>
+                                                <p className="text-[10px] text-neutral-500 font-bold uppercase leading-relaxed max-w-[200px]">You are currently 25% under the allocated fiscal threshold.</p>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* Right Side: Category Breakdown & Nudges */}
+                            {/* Right Side: Intelligence & Categories */}
                             <div className="lg:col-span-4 space-y-8">
-                                <div className="expanager-glass rounded-[2rem] p-8 expanager-glow-border">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-4 flex items-center gap-2">
-                                        <Zap className="w-4 h-4 fill-emerald-500" /> Intelligence
+                                <div className="bg-neutral-950 text-white rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
+                                    <Zap className="absolute -top-6 -right-6 w-24 h-24 text-emerald-500 opacity-10 group-hover:scale-125 transition duration-1000" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-6 flex items-center gap-2">
+                                        <Zap className="w-4 h-4 fill-emerald-500" /> Oracle Insights
                                     </p>
                                     <div className="space-y-6">
-                                        {report?.audit_flags.slice(0, 2).map((flag, i) => (
-                                            <div key={i} className="flex gap-3">
-                                                <div className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                                <p className="text-xs font-bold leading-relaxed text-neutral-300">"{flag}"</p>
+                                        {report?.audit_flags.slice(0, 3).map((flag, i) => (
+                                            <div key={i} className="flex gap-4 items-start">
+                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 shadow-[0_0_10px_#10b981]" />
+                                                <p className="text-xs font-bold leading-relaxed text-neutral-400 italic">"{flag}"</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="bg-neutral-900 border border-white/5 rounded-[2rem] p-8">
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-neutral-500 mb-8">Categories</h3>
-                                    <div className="space-y-6">
+                                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-10 shadow-sm">
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-10">Sector Breakdown</h3>
+                                    <div className="space-y-8">
                                         {report?.by_category.slice(0, 5).map((cat, i) => (
-                                            <div key={i} className="space-y-3">
+                                            <div key={i} className="space-y-3 group">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-[11px] font-black tracking-tight uppercase text-neutral-400">{cat.category}</span>
-                                                    <span className="text-[11px] font-black text-white tabular-nums">₹{cat.amount.toLocaleString()}</span>
+                                                    <span className="text-[10px] font-black tracking-widest uppercase text-neutral-500 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">{cat.category}</span>
+                                                    <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">₹{cat.amount.toLocaleString()}</span>
                                                 </div>
-                                                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                                                <div className="h-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
                                                     <div
-                                                        className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                        className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-rose-500' : 'bg-emerald-500 shadow-lg shadow-emerald-500/20'}`}
                                                         style={{ width: `${cat.percentage}` }}
                                                     />
                                                 </div>
@@ -265,73 +263,26 @@ const BudgetTrackerPage: React.FC = () => {
                     )}
 
                     {activeTab === 'calendar' && (
-                        <div className="animate-fade-in">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <ExpenseCalendar expenses={expenses} />
                         </div>
                     )}
 
                     {activeTab === 'stats' && (
-                        <div className="animate-fade-in">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <ExperienceInsights data={report} />
                         </div>
                     )}
                 </div>
-
-                {/* Floating Navigation / Action */}
-                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-8 px-10 py-6 bg-neutral-900/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
-                    <button
-                        onClick={() => setActiveTab('budget')}
-                        className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'budget' ? 'text-emerald-500 scale-110' : 'text-neutral-500 opacity-40 hover:opacity-100'}`}
-                    >
-                        <LayoutDashboard className="w-5 h-5" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">Overview</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('calendar')}
-                        className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'calendar' ? 'text-emerald-500 scale-110' : 'text-neutral-500 opacity-40 hover:opacity-100'}`}
-                    >
-                        <CalendarIcon className="w-5 h-5" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">Calendar</span>
-                    </button>
-
-                    <button
-                        onClick={() => setIsFormOpen(true)}
-                        className="w-16 h-16 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 rounded-full -mt-20 flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all outline-none border-[6px] border-[#05070a]"
-                    >
-                        <Plus className="w-8 h-8 stroke-[4]" />
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('stats')}
-                        className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'stats' ? 'text-emerald-500 scale-110' : 'text-neutral-500 opacity-40 hover:opacity-100'}`}
-                    >
-                        <PieChart className="w-5 h-5" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">Stats</span>
-                    </button>
-
-                    <button className="flex flex-col items-center gap-1.5 opacity-40 hover:opacity-100 transition-opacity">
-                        <TrendingUp className="w-5 h-5 text-neutral-500" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-neutral-500">History</span>
-                    </button>
-                </div>
-
-                <ExpenseForm
-                    isOpen={isFormOpen}
-                    onClose={() => setIsFormOpen(false)}
-                    onSave={handleCreateExpense}
-                />
             </div>
-        </Layout >
+
+            <ExpenseForm
+                isOpen={isFormOpen}
+                onClose={() => setIsFormOpen(false)}
+                onSave={handleCreateExpense}
+            />
+        </Layout>
     );
 };
-
-const MoreVerticalIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="12" cy="5" r="1" />
-        <circle cx="12" cy="19" r="1" />
-    </svg>
-);
 
 export default BudgetTrackerPage;

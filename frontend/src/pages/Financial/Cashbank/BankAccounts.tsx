@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout";
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import CashBankModal from './components/CashBankModal';
 import CashBankInput from './components/CashBankInput';
 import CashBankFormSection from './components/CashBankFormSection';
@@ -98,115 +99,88 @@ const BankAccounts: React.FC = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-[#05070a] text-white p-4 md:p-8 font-sans selection:bg-emerald-500/30">
-                <div className="max-w-4xl mx-auto space-y-10 pb-32">
-
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors" onClick={() => navigate(-1)}>
-                                <ChevronLeft className="w-6 h-6" />
-                            </button>
-                            <h1 className="text-xl font-bold tracking-tight">Select Account</h1>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Edit3 className="w-5 h-5 text-rose-400 cursor-pointer hover:text-rose-300" />
-                            <MoreVertical className="w-5 h-5 text-neutral-500 cursor-pointer hover:text-white" />
-                        </div>
-                    </div>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Banking Relationships"
+                    description="Configure and monitor institutional liquidity nodes and bank accounts."
+                    breadcrumbs={[
+                        { label: 'Home', link: '/dashboard' },
+                        { label: 'Finance', link: '/finance' },
+                        { label: 'Accounts' }
+                    ]}
+                    actions={
+                        <button
+                            onClick={() => setShowAddAccount(true)}
+                            className="px-6 py-3 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
+                        >
+                            <Plus className="w-5 h-5" /> Initialize New Unit
+                        </button>
+                    }
+                />
 
                     {/* Hero Section */}
-                    <div className="relative flex flex-col items-center">
-                        <div className="flex items-center gap-8 w-full justify-center">
+                    <div className="relative flex flex-col items-center py-10 bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800">
+                        <div className="flex flex-col md:flex-row items-center gap-12 w-full justify-center px-8">
                             <div className="flex flex-col items-center text-center">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <ChevronLeft className="w-4 h-4 text-neutral-600" />
-                                    <span className="text-sm font-medium text-neutral-400">2025</span>
-                                    <ChevronRight className="w-4 h-4 text-neutral-600" />
-                                </div>
                                 <div className="flex flex-col items-start gap-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Expense</span>
-                                    <span className="text-lg font-bold text-rose-500">₹{totalExpense.toLocaleString('en-IN')}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Outflow</span>
+                                    <span className="text-2xl font-black text-rose-500 tracking-tighter">₹{totalExpense.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
 
                             {/* Circular Statistics */}
-                            <div className="relative w-56 h-56 flex items-center justify-center">
-                                <svg className="w-full h-full -rotate-90">
+                            <div className="relative w-64 h-64 flex items-center justify-center">
+                                <svg className="w-full h-full -rotate-90 drop-shadow-2xl">
                                     <circle
-                                        cx="112"
-                                        cy="112"
-                                        r="100"
+                                        cx="128"
+                                        cy="128"
+                                        r="110"
                                         stroke="currentColor"
-                                        strokeWidth="8"
+                                        strokeWidth="12"
                                         fill="transparent"
-                                        className="text-neutral-900"
+                                        className="text-neutral-200 dark:text-neutral-800"
                                     />
                                     <circle
-                                        cx="112"
-                                        cy="112"
-                                        r="100"
+                                        cx="128"
+                                        cy="128"
+                                        r="110"
                                         stroke="currentColor"
-                                        strokeWidth="8"
+                                        strokeWidth="12"
                                         fill="transparent"
-                                        strokeDasharray={2 * Math.PI * 100}
-                                        strokeDashoffset={2 * Math.PI * 100 * (1 - 0.65)}
+                                        strokeDasharray={2 * Math.PI * 110}
+                                        strokeDashoffset={2 * Math.PI * 110 * (1 - 0.65)}
                                         strokeLinecap="round"
-                                        className="text-emerald-500/40"
-                                    />
-                                    <circle
-                                        cx="112"
-                                        cy="112"
-                                        r="100"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        fill="transparent"
-                                        strokeDasharray={2 * Math.PI * 100}
-                                        strokeDashoffset={2 * Math.PI * 100 * (1 - 0.65)}
-                                        strokeLinecap="round"
-                                        className="text-emerald-500"
+                                        className="text-primary"
                                     />
                                 </svg>
                                 <div className="absolute flex flex-col items-center justify-center text-center">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Grand Total</span>
-                                    <h2 className="text-3xl font-black text-white mb-2">₹{totalBalance.toLocaleString('en-IN')}</h2>
-                                    <div className="flex flex-col items-center gap-1 opacity-60">
-                                        <Activity className="w-4 h-4 text-emerald-500" />
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-neutral-500">Statistics</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Portfolio Value</span>
+                                    <h2 className="text-4xl font-black text-neutral-900 dark:text-white tracking-tighter mb-1">₹{totalBalance.toLocaleString('en-IN')}</h2>
+                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                                        <Activity className="w-3.5 h-3.5 text-primary" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-primary">Stable</span>
                                     </div>
-                                </div>
-                                <div className="absolute -bottom-8 w-full text-center">
-                                    <p className="text-[8px] font-black uppercase tracking-tight text-neutral-600">Global Budget Information</p>
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-center text-center">
-                                <div className="flex items-center gap-2 mb-4 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                                    <span className="text-[10px] font-bold text-neutral-400">Yearly</span>
-                                    <ChevronDown className="w-3 h-3 text-neutral-400" />
-                                </div>
                                 <div className="flex flex-col items-end gap-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Income</span>
-                                    <span className="text-lg font-bold text-emerald-500">₹{totalIncome.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div className="flex gap-4 mt-4">
-                                    <Search className="w-4 h-4 text-neutral-500" />
-                                    <FileText className="w-4 h-4 text-neutral-500" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Inflow</span>
+                                    <span className="text-2xl font-black text-emerald-500 tracking-tighter">₹{totalIncome.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full h-px bg-white/5" />
+                    <div className="w-full h-px bg-neutral-200 dark:bg-neutral-800" />
 
                     {/* Account List */}
                     <div className="space-y-4">
                         {accounts.map(acc => (
                             <div
                                 key={acc._id}
-                                className="group relative bg-[#0f1115] hover:bg-[#16191f] border border-white/5 rounded-3xl p-6 transition-all cursor-pointer overflow-hidden"
-                                onClick={() => navigate(`/cashbank/ledger/${acc._id}`)}
-                            >
+                                className="group relative bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-8 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-xl"
+                                onClick={() => navigate(`/cashbank/ledger/${acc._id}`)}>
                                 <div className="flex items-center justify-between relative z-10">
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-black text-neutral-200 uppercase tracking-tight">{acc.bankName}</h3>
@@ -256,8 +230,6 @@ const BankAccounts: React.FC = () => {
                             <h4 className="text-sm font-black uppercase tracking-widest text-neutral-500">Initialize New Unit</h4>
                         </div>
                     </div>
-                </div>
-
                 {/* Floating Action Button (Alternative Add Account) */}
                 <button
                     onClick={() => setShowAddAccount(true)}

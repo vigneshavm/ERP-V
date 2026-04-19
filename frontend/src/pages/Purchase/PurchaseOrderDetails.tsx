@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock } from 'lucide-react';
+import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock, Info, Clock, Activity, FileText, CheckCircle2, XCircle, ChevronRight, Zap, ShieldCheck } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
 
 import CreateBillModal from './Modals/CreateBillModal';
 import ReceiveGoodsModal from './Modals/ReceiveGoodsModal';
-import { useParams, useNavigate } from 'react-router-dom'; // Ensure useParams is imported
+import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../redux/store';
 import { fetchPurchaseById, resetSelectedOrder, updateOrder } from '../../redux/slices/purchaseSlice';
 
@@ -21,7 +20,6 @@ interface Props {
 }
 
 const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propItems, onBack, onApprove, onConvert, onUpdateStatus }) => {
-    console.log("PurchaseOrderDetails loaded - Version with ReceiveGoodsModal fix");
     const { role } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -38,18 +36,13 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
         if (id && !propOrder) {
             dispatch(fetchPurchaseById(id));
         }
-
-        return () => {
-            // Optional: clear selected order on unmount if you want fresh state every time
-            // dispatch(resetSelectedOrder());
-        };
     }, [id, propOrder, dispatch]);
 
     const handleBack = () => {
         if (onBack) {
             onBack();
         } else {
-            navigate('/purchase/register');
+            navigate('/purchase/orders');
         }
     };
 
@@ -72,18 +65,32 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
     const handleReceiveConfirm = (receivedItems: any[], status: 'Partial Receipt' | 'Fully Received') => {
         if (!order) return;
-        // In a real app, we would send receivedItems to backend to create a GRN
-        // For now, we update the status
         onUpdateStatus?.(order.id, status);
         setShowReceiveModal(false);
     };
 
     if (isProcessing && !order) {
-        return <div className="p-8 text-center text-neutral-500">Loading Order Details...</div>;
+        return (
+            <div className="flex justify-center items-center py-40">
+                <div className="flex flex-col items-center gap-6">
+                    <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Decompressing Node Intel...</p>
+                </div>
+            </div>
+        );
     }
 
     if (!order) {
-        return <div className="p-8 text-center text-neutral-500">No Order Found</div>;
+        return (
+            <div className="p-20 text-center">
+                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <Info className="w-10 h-10 text-neutral-400" />
+                </div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-neutral-900 dark:text-white">Node Not Found</h3>
+                <p className="text-xs font-bold text-neutral-500 mt-2 italic leading-relaxed">The requested procurement node does not exist in the institutional archive.</p>
+                <button onClick={handleBack} className="mt-8 text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Return to Register</button>
+            </div>
+        );
     }
 
     // Lifecycle Steps
@@ -108,51 +115,53 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
     const currentStepIndex = getCurrentStepIndex();
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
-            {/* Header */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
-                        <ArrowLeft className="w-5 h-5" />
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            {/* Context Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-6">
+                    <button onClick={handleBack} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                        <ArrowLeft className="w-5 h-5 text-neutral-500" />
                     </button>
                     <div>
-                        <h2 className="text-lg font-bold flex items-center gap-2">
-                            {order.po_number}
-                            <span className={`text-xs font-normal px-2 py-0.5 rounded-full border ${order.status === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700'}`}>
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-3xl font-black tracking-tighter text-neutral-900 dark:text-white uppercase">
+                                #{order.po_number}
+                            </h2>
+                            <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full ${order.status === 'Cancelled' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20' : 'bg-primary/10 text-primary'}`}>
                                 {order.status}
                             </span>
-                        </h2>
-                        <p className="text-xs text-neutral-500">Created on {new Date(order.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Node initialized on {new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button className="p-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors" title="Print">
-                        <Printer className="w-5 h-5" />
+
+                <div className="flex items-center gap-3">
+                    <button className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                        <Printer className="w-5 h-5 text-neutral-400" />
                     </button>
 
-                    {/* Dynamic Action Buttons */}
                     {canSubmit && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'Pending Approval')}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow hover:bg-blue-700 transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                         >
-                            <CheckCircle className="w-4 h-4" /> Submit for Approval
+                            <CheckCircle2 className="w-4 h-4" /> Submit Protocol
                         </button>
                     )}
 
                     {canApprove && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                             <button
-                                onClick={() => onUpdateStatus?.(order.id, 'Draft')} // Reject back to draft
-                                className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg font-bold hover:bg-red-100 transition-all"
+                                onClick={() => onUpdateStatus?.(order.id, 'Draft')}
+                                className="px-6 py-3 bg-rose-50 text-rose-600 dark:bg-rose-900/20 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-2"
                             >
-                                Reject
+                                <XCircle className="w-4 h-4" /> Reject Node
                             </button>
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'Approved')}
-                                className="px-4 py-2 bg-green-600 text-white rounded-lg font-bold shadow hover:bg-green-700 transition-all flex items-center gap-2"
+                                className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
                             >
-                                <CheckCircle className="w-4 h-4" /> Approve
+                                <CheckCircle2 className="w-4 h-4" /> Authorize Node
                             </button>
                         </div>
                     )}
@@ -160,35 +169,35 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canReceive && (
                         <button
                             onClick={() => setShowReceiveModal(true)}
-                            className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold shadow hover:bg-orange-700 transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-indigo-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-indigo-600 transition hover:scale-105 active:scale-95"
                         >
-                            <FileOutput className="w-4 h-4" /> Receive Items
+                            <FileOutput className="w-4 h-4" /> Initialize Receipt
                         </button>
                     )}
 
                     {canBill && (
                         <button
                             onClick={() => setShowBillModal(true)}
-                            className="px-4 py-2 bg-purple-600 text-white rounded-lg font-bold shadow hover:bg-purple-700 transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-purple-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-500/20 flex items-center gap-2 hover:bg-purple-600 transition hover:scale-105 active:scale-95"
                         >
-                            <FileOutput className="w-4 h-4" /> Create Bill
+                            <FileText className="w-4 h-4" /> Generate Invoice
                         </button>
                     )}
 
                     {canPay && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'Paid')}
-                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold shadow hover:bg-emerald-700 transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
                         >
-                            <CheckCircle className="w-4 h-4" /> Mark Paid
+                            <ShieldCheck className="w-4 h-4" /> Resolve Settlement
                         </button>
                     )}
                 </div>
             </div>
 
-            {/* Stepper Status Bar */}
-            <div className="px-8 py-6 bg-neutral-50/50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto">
-                <div className="flex items-center justify-between min-w-[600px]">
+            {/* Cyber-Carbon Node Stepper */}
+            <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-x-auto custom-scrollbar">
+                <div className="flex items-center justify-between min-w-[800px]">
                     {steps.map((step, idx) => {
                         const isCompleted = currentStepIndex > idx;
                         const isCurrent = currentStepIndex === idx;
@@ -196,21 +205,26 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                         return (
                             <React.Fragment key={step.label}>
-                                <div className="flex flex-col items-center gap-2 relative z-10">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300
-                                        ${isCompleted ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110' :
-                                            isCurrent ? (isCancelled ? 'bg-red-500 text-white' : 'bg-primary text-white ring-4 ring-primary/20 scale-110') :
-                                                'bg-neutral-200 dark:bg-neutral-700 text-neutral-400'}`}>
-                                        {isCompleted ? <CheckCircle className="w-4 h-4" /> : idx + 1}
+                                <div className="flex flex-col items-center gap-4 relative z-10">
+                                    <div className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center text-xs font-black transition-all duration-700
+                                        ${isCompleted ? 'bg-primary text-white shadow-xl shadow-primary/30 rotate-[360deg]' :
+                                            isCurrent ? (isCancelled ? 'bg-rose-500 text-white' : 'bg-primary text-white ring-8 ring-primary/10 scale-110') :
+                                                'bg-neutral-50 dark:bg-neutral-900 text-neutral-300 dark:text-neutral-600 border border-neutral-100 dark:border-neutral-800'}`}>
+                                        {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : idx + 1}
                                     </div>
-                                    <span className={`text-xs font-bold whitespace-nowrap ${isCurrent || isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>
-                                        {step.label}
-                                    </span>
+                                    <div className="text-center">
+                                        <p className={`text-[10px] font-black uppercase tracking-widest ${isCurrent || isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>
+                                            {step.label}
+                                        </p>
+                                        {isCurrent && !isCancelled && (
+                                            <div className="w-1.5 h-1.5 bg-primary rounded-full mx-auto mt-2 animate-ping" />
+                                        )}
+                                    </div>
                                 </div>
                                 {idx < steps.length - 1 && (
-                                    <div className="flex-1 h-0.5 mx-4 bg-neutral-200 dark:bg-neutral-700 relative">
+                                    <div className="flex-1 h-0.5 mx-6 bg-neutral-100 dark:bg-neutral-900 relative">
                                         <div
-                                            className="absolute inset-y-0 left-0 bg-primary transition-all duration-500"
+                                            className="absolute inset-y-0 left-0 bg-primary transition-all duration-1000 ease-out"
                                             style={{ width: isCompleted ? '100%' : '0%' }}
                                         />
                                     </div>
@@ -221,59 +235,123 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                {/* Info Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Supplier</h3>
-                        <p className="font-bold text-lg">{order.vendor_name}</p>
-                    </div>
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Dates</h3>
-                        <div className="text-sm">
-                            <div className="flex justify-between"><span>PO Date:</span> <span className="font-medium">{order.po_date}</span></div>
-                            <div className="flex justify-between mt-1"><span>Expected:</span> <span className="font-medium">{order.expected_delivery || '-'}</span></div>
+            {/* Node Intel Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-8 space-y-8">
+                    {/* Items Workspace */}
+                    <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                            <h3 className="text-sm font-black uppercase tracking-widest">Allocated SKU Nodes</h3>
+                            <span className="px-3 py-1 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black text-neutral-400 uppercase tracking-widest rounded-full">{items.length} Units</span>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                                    <tr>
+                                        <th className="px-8 py-5">Product Node</th>
+                                        <th className="px-8 py-5 text-center">Fulfillment</th>
+                                        <th className="px-8 py-5 text-right">Unit Rate</th>
+                                        <th className="px-8 py-5 text-center">Fiscal Tax</th>
+                                        <th className="px-8 py-5 text-right">Node Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                    {items.map((item, idx) => (
+                                        <tr key={idx} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                            <td className="px-8 py-6">
+                                                <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{item.product_name}</p>
+                                                <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">Institutional SKU</p>
+                                            </td>
+                                            <td className="px-8 py-6 text-center">
+                                                <div className="flex flex-col items-center gap-1.5">
+                                                    <span className="text-[10px] font-black text-neutral-900 dark:text-white tabular-nums">{item.quantity} {item.unit || 'pcs'}</span>
+                                                    <div className="w-16 h-1 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-primary" style={{ width: '100%' }} />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">₹{item.rate.toLocaleString()}</span>
+                                            </td>
+                                            <td className="px-8 py-6 text-center">
+                                                <span className="px-2 py-0.5 bg-neutral-50 dark:bg-neutral-900 text-[9px] font-black text-neutral-400 uppercase tracking-widest rounded-full">{item.tax_percent}%</span>
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <span className="text-sm font-black text-primary tabular-nums">₹{item.line_total.toLocaleString()}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Total Value</h3>
-                        <p className="font-bold text-2xl text-primary">₹{Number(order.total_amount).toLocaleString()}</p>
-                    </div>
+
+                    {/* Narrative Node */}
+                    {order.notes && (
+                        <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-6 opacity-10">
+                                <FileText className="w-20 h-20 text-amber-500" />
+                            </div>
+                            <h4 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest mb-4">Protocol Narrative</h4>
+                            <p className="text-xs font-bold text-amber-800 dark:text-amber-300 italic leading-relaxed pl-6 border-l-2 border-amber-500/30">
+                                {order.notes}
+                            </p>
+                        </div>
+                    )}
                 </div>
 
-                {/* Items Table */}
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden mb-6">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-800">
-                            <tr>
-                                <th className="px-4 py-3 font-semibold text-neutral-500">Product</th>
-                                <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Qty</th>
-                                <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Rate</th>
-                                <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Tax</th>
-                                <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                            {items.map((item, idx) => (
-                                <tr key={idx}>
-                                    <td className="px-4 py-3 font-medium">{item.product_name}</td>
-                                    <td className="px-4 py-3 text-right text-neutral-600">{item.quantity}</td>
-                                    <td className="px-4 py-3 text-right text-neutral-600">₹{item.rate}</td>
-                                    <td className="px-4 py-3 text-right text-neutral-600">{item.tax_percent}%</td>
-                                    <td className="px-4 py-3 text-right font-bold">₹{item.line_total}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {order.notes && (
-                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/30 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
-                        <span className="font-bold block mb-1">Notes:</span>
-                        {order.notes}
+                <div className="lg:col-span-4 space-y-8">
+                    {/* Institutional Intelligence */}
+                    <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                        <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
+                            <ShieldCheck className="w-48 h-48" />
+                        </div>
+                        <div className="relative z-10">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 mb-10">Operational Intel</h4>
+                            <div className="space-y-8">
+                                <div className="flex items-start gap-5">
+                                    <div className="p-3 bg-white/5 rounded-2xl">
+                                        <Activity className="w-5 h-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Institutional Vendor</p>
+                                        <p className="text-sm font-black text-white uppercase tracking-tighter mt-1">{order.vendor_name}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-5">
+                                    <div className="p-3 bg-white/5 rounded-2xl">
+                                        <Clock className="w-5 h-5 text-amber-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">ETA Constraint</p>
+                                        <p className="text-sm font-black text-white uppercase tracking-tighter mt-1">{order.expected_delivery || 'No ETA Provided'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-5">
+                                    <div className="p-3 bg-white/5 rounded-2xl">
+                                        <Zap className="w-5 h-5 text-emerald-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Fiscal Aggregate</p>
+                                        <p className="text-2xl font-black text-primary tracking-tighter mt-1 tabular-nums">₹{Number(order.total_amount).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                )}
+
+                    <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+                                <ShieldCheck className="w-6 h-6" />
+                            </div>
+                            <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Protocol Validator</h4>
+                        </div>
+                        <p className="text-[10px] text-neutral-500 font-bold leading-relaxed italic border-l-2 border-primary/20 pl-4">
+                            All procurement parameters have been synchronized with the institutional supply-chain ledger. Audit integrity is currently verified.
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {/* Modals */}
@@ -290,7 +368,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                 order={order}
                 onBillCreated={handleBillCreated}
             />
-        </div >
+        </div>
     );
 };
 

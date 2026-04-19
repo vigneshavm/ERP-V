@@ -60,8 +60,11 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/purchase/grn/view/:id" element={
                 <Suspense fallback={<div>Loading GRN Details...</div>}><LazyModules.GRNForm /></Suspense>
             } />
+            <Route path="/purchase/orders/new" element={
+                <Suspense fallback={<div>Loading Order Form...</div>}><LazyModules.PurchaseOrdersModule /></Suspense>
+            } />
             <Route path="/purchase/orders/:id" element={
-                <Suspense fallback={<div>Loading Order Details...</div>}><LazyModules.PurchaseOrderDetails /></Suspense>
+                <Suspense fallback={<div>Loading Order Details...</div>}><LazyModules.PurchaseOrdersModule /></Suspense>
             } />
             <Route path="/purchase/bills/new" element={
                 <Suspense fallback={<div>Loading Bill Form...</div>}><LazyModules.BillForm /></Suspense>

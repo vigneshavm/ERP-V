@@ -7,7 +7,7 @@ import { getAccounts } from '../../redux/slices/cashbankSlice';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { User, CreditCard, Banknote, CheckCircle, Plus, Trash2 } from 'lucide-react';
+import { User, CreditCard, Banknote, CheckCircle, Plus, Trash2, ArrowLeft, Save, ShieldCheck, Zap, Info, Activity, Clock, ChevronDown } from 'lucide-react';
 import { toast } from 'react-toastify';
 import BillSelectionModal from './Modals/BillSelectionModal';
 import { Bill } from '../../redux/slices/billSlice';
@@ -28,6 +28,7 @@ const PaymentOutForm: React.FC = () => {
     const [bankAccountId, setBankAccountId] = useState('');
     const [chequeDate, setChequeDate] = useState('');
     const [notes, setNotes] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     // Allocation State
     const [selectedBills, setSelectedBills] = useState<Bill[]>([]);
@@ -68,8 +69,6 @@ const PaymentOutForm: React.FC = () => {
         setAllocations(newAllocations);
         setDiscounts(newDiscounts);
 
-        // Update amount? Maybe keep amount as is, or reduce it?
-        // Usually if I remove a bill, I expect the total payment amount to drop.
         const totalAllocated = Object.values(newAllocations).reduce((a, b) => a + b, 0);
         setAmount(totalAllocated);
     };
@@ -82,34 +81,37 @@ const PaymentOutForm: React.FC = () => {
         e.preventDefault();
         if (!supplierId) return toast.error("Select Supplier");
         if (amount <= 0) return toast.error("Enter valid amount");
-        // if (totalAllocated > amount) return toast.error("Allocation exceeds payment amount"); 
-        // Allow unallocated amount (advance payment), but not negative unallocated.
         if (unallocated < 0) return toast.error("Allocation exceeds payment amount");
 
-        const paymentData: PaymentOut = {
-            supplierId,
-            paymentDate,
-            amount,
-            paymentMode,
-            referenceNo,
-            bankAccountId: (['Cheque', 'Bank Transfer', 'UPI'].includes(paymentMode)) ? bankAccountId : undefined,
-            chequeDate: paymentMode === 'Cheque' ? chequeDate : undefined,
-            notes,
-            allocations: Object.entries(allocations)
-                .filter(([_, val]) => val > 0)
-                .map(([billId, val]) => ({
-                    billId,
-                    amount: val,
-                    discount: discounts[billId] || 0
-                }))
-        };
+        setIsSaving(true);
+        try {
+            const paymentData: PaymentOut = {
+                supplierId,
+                paymentDate,
+                amount,
+                paymentMode,
+                referenceNo,
+                bankAccountId: (['Cheque', 'Bank Transfer', 'UPI'].includes(paymentMode)) ? bankAccountId : undefined,
+                chequeDate: paymentMode === 'Cheque' ? chequeDate : undefined,
+                notes,
+                allocations: Object.entries(allocations)
+                    .filter(([_, val]) => val > 0)
+                    .map(([billId, val]) => ({
+                        billId,
+                        amount: val,
+                        discount: discounts[billId] || 0
+                    }))
+            };
 
-        const res = await dispatch(createPayment(paymentData));
-        if (createPayment.fulfilled.match(res)) {
-            toast.success('Payment Recorded Successfully');
-            navigate('/purchase/payments');
-        } else {
-            toast.error(res.payload as string || 'Failed to record payment');
+            const res = await dispatch(createPayment(paymentData));
+            if (createPayment.fulfilled.match(res)) {
+                toast.success('Payment Recorded Successfully');
+                navigate('/purchase/payments');
+            } else {
+                toast.error(res.payload as string || 'Failed to record payment');
+            }
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -117,250 +119,280 @@ const PaymentOutForm: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
-                title="Record Payment"
-                description="Issue payment to supplier or settle via discount"
-                breadcrumbs={[{ label: 'Payments', link: '/purchase/payments' }, { label: 'New' }]}
-            />
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Initialize Settlement Node"
+                    description="Record institutional fiscal outflows and resolve supplier liabilities with node-level allocation."
+                    breadcrumbs={[
+                        { label: 'Procurement', link: '/purchase' },
+                        { label: 'Settlement Archive', link: '/purchase/payments' },
+                        { label: 'New Settlement' }
+                    ]}
+                    actions={
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => navigate('/purchase/payments')}
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isSaving}
+                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
+                            >
+                                {isSaving ? <Activity className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Settlement Node
+                            </button>
+                        </div>
+                    }
+                />
 
-            <form onSubmit={handleSubmit} className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Left Column: Form Details */}
+                    <div className="lg:col-span-4 space-y-10">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-8">
+                                <User className="w-5 h-5 text-primary" /> Institutional Payee
+                            </h3>
 
-                {/* Left Column: Form Details */}
-                <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2">
-                            <User size={20} className="text-indigo-500" />
-                            Payee Details
-                        </h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supplier Entity</label>
+                                    <select
+                                        value={supplierId}
+                                        onChange={e => setSupplierId(e.target.value)}
+                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                                    >
+                                        <option value="">Select Entity...</option>
+                                        {suppliers.map(s => <option key={s._id} value={s._id}>{s.businessName}</option>)}
+                                    </select>
+                                </div>
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Supplier</label>
-                                <select
-                                    value={supplierId}
-                                    onChange={e => setSupplierId(e.target.value)}
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                >
-                                    <option value="">-- Select Supplier --</option>
-                                    {suppliers.map(s => <option key={s._id} value={s._id}>{s.businessName}</option>)}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Payment Date</label>
-                                <input
-                                    type="date"
-                                    value={paymentDate}
-                                    onChange={e => setPaymentDate(e.target.value)}
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Amount</label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
-                                    <input
-                                        type="number"
-                                        value={amount}
-                                        onChange={e => setAmount(parseFloat(e.target.value) || 0)}
-                                        className="w-full pl-8 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-bold text-lg outline-none focus:border-indigo-500"
-                                        placeholder="0.00"
-                                    />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
+                                        <input
+                                            type="date"
+                                            value={paymentDate}
+                                            onChange={e => setPaymentDate(e.target.value)}
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Quantum (INR)</label>
+                                        <input
+                                            type="number"
+                                            value={amount}
+                                            onChange={e => setAmount(parseFloat(e.target.value) || 0)}
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black tabular-nums focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2">
-                            <CreditCard size={20} className="text-emerald-500" />
-                            {isNonCashMode ? 'Settlement Mode' : 'Payment Mode'}
-                        </h3>
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-700">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-8">
+                                <CreditCard className="w-5 h-5 text-emerald-500" /> Settlement Mechanism
+                            </h3>
 
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-2">
-                                {['Bank Transfer', 'Cheque', 'UPI', 'Cash', 'Discount Received'].map(m => (
-                                    <button
-                                        type="button"
-                                        key={m}
-                                        onClick={() => setPaymentMode(m as PaymentOut['paymentMode'])}
-                                        className={`px-3 py-2 text-sm font-medium rounded-lg border transition-all ${paymentMode === m
-                                            ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
-                                            : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
-                                            } ${m === 'Discount Received' ? 'col-span-2' : ''}`}
-                                    >
-                                        {m}
-                                    </button>
-                                ))}
-                            </div>
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-2 gap-3">
+                                    {['Bank Transfer', 'Cheque', 'UPI', 'Cash', 'Discount Received'].map(m => (
+                                        <button
+                                            type="button"
+                                            key={m}
+                                            onClick={() => setPaymentMode(m as PaymentOut['paymentMode'])}
+                                            className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ${paymentMode === m
+                                                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                                                : 'bg-neutral-50 dark:bg-neutral-900 border-transparent text-neutral-400 hover:text-neutral-600'
+                                                } ${m === 'Discount Received' ? 'col-span-2' : ''}`}
+                                        >
+                                            {m}
+                                        </button>
+                                    ))}
+                                </div>
 
-                            {!isNonCashMode && (
-                                <>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                            {paymentMode === 'Cheque' ? 'Cheque No' : 'Transaction Ref / UTR'}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={referenceNo}
-                                            onChange={e => setReferenceNo(e.target.value)}
-                                            className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                            placeholder="e.g. 123456"
-                                        />
-                                    </div>
-
-                                    {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer' || paymentMode === 'UPI') && (
+                                {!isNonCashMode && (
+                                    <div className="space-y-6 animate-in fade-in duration-500">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Source Bank Account</label>
-                                            <select
-                                                value={bankAccountId}
-                                                onChange={e => setBankAccountId(e.target.value)}
-                                                className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
-                                            >
-                                                <option value="">-- Select Bank Account --</option>
-                                                {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
-                                                    <option key={acc._id} value={acc._id}>
-                                                        {acc.bankName} - {acc.accountType} (****{acc.accountNumber?.slice(-4)})
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">
+                                                {paymentMode === 'Cheque' ? 'Instrument Node # (Cheque)' : 'Institutional Reference / UTR'}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={referenceNo}
+                                                onChange={e => setReferenceNo(e.target.value)}
+                                                className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                                placeholder="e.g. 123456"
+                                            />
                                         </div>
-                                    )}
 
-                                    {paymentMode === 'Cheque' && (
-                                        <div>
+                                        {(paymentMode === 'Cheque' || paymentMode === 'Bank Transfer' || paymentMode === 'UPI') && (
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cheque Date</label>
+                                                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Source Institutional Account</label>
+                                                <select
+                                                    value={bankAccountId}
+                                                    onChange={e => setBankAccountId(e.target.value)}
+                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                                                >
+                                                    <option value="">Select Account...</option>
+                                                    {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
+                                                        <option key={acc._id} value={acc._id}>
+                                                            {acc.bankName} (****{acc.accountNumber?.slice(-4)})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {paymentMode === 'Cheque' && (
+                                            <div>
+                                                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Post-Dated Node (Cheque Date)</label>
                                                 <input
                                                     type="date"
                                                     value={chequeDate}
                                                     onChange={e => setChequeDate(e.target.value)}
-                                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none"
+                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                                 />
-                                                <p className="text-xs text-slate-400 mt-1">For Post-Dated Cheques</p>
                                             </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                                        )}
+                                    </div>
+                                )}
 
-                            {isNonCashMode && (
-                                <div className="p-3 bg-amber-50 text-amber-700 rounded-lg text-sm border border-amber-200">
-                                    <p className="font-bold">Discount Settlement</p>
-                                    <p>Select bills to apply discount against. This will reduce the bill balance without reducing bank/cash balance.</p>
-                                </div>
-                            )}
+                                {isNonCashMode && (
+                                    <div className="p-6 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-[2rem] animate-in slide-in-from-top-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <ShieldCheck className="w-4 h-4 text-amber-500" />
+                                            <p className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest">Discount Settlement Protocol</p>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-amber-800 dark:text-amber-500 italic leading-relaxed">
+                                            Settling via discount reduces bill liability without affecting institutional vault/bank nodes.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Right Column: Allocation */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-                        <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center justify-between">
-                            <span className="flex items-center gap-2"><Banknote size={20} className="text-amber-500" /> Allocation</span>
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm font-normal text-slate-500">
-                                    Unallocated: <strong className={unallocated > 0 ? 'text-emerald-600' : 'text-slate-700'}>₹{unallocated.toLocaleString()}</strong>
-                                </span>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (!supplierId) return toast.error("Please select a supplier first");
-                                        setIsBillModalOpen(true);
-                                    }}
-                                    className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 rounded-lg font-bold transition-all flex items-center gap-2 text-sm"
-                                >
-                                    <Plus size={16} /> Select Bills
-                                </button>
+                    {/* Right Column: Allocation */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                            <div className="p-10 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                                <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
+                                    <Banknote className="w-5 h-5 text-amber-500" /> Liability Allocation Ledger
+                                </h3>
+                                <div className="flex items-center gap-6">
+                                    <div className="text-right">
+                                        <p className="text-[8px] font-black text-neutral-400 uppercase tracking-widest mb-1">Unallocated Node Quantum</p>
+                                        <p className={`text-xl font-black tabular-nums tracking-tighter ${unallocated > 0 ? 'text-emerald-500' : 'text-neutral-900 dark:text-white'}`}>₹{unallocated.toLocaleString()}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (!supplierId) return toast.error("Please select a supplier first");
+                                            setIsBillModalOpen(true);
+                                        }}
+                                        className="px-5 py-2.5 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all flex items-center gap-2"
+                                    >
+                                        <Plus className="w-4 h-4" /> Select Bills
+                                    </button>
+                                </div>
                             </div>
-                        </h3>
 
-                        {selectedBills.length === 0 ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-60 min-h-[200px] border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
-                                <Banknote size={48} className="mb-2" />
-                                <p>No bills selected for allocation</p>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (!supplierId) return toast.error("Please select a supplier first");
-                                        setIsBillModalOpen(true);
-                                    }}
-                                    className="mt-4 text-indigo-600 font-bold hover:underline"
-                                >
-                                    Select Bills
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto flex-1">
-                                <table className="w-full text-left text-sm">
-                                    <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-500">
+                            <div className="overflow-x-auto min-h-[300px]">
+                                <table className="w-full text-left">
+                                    <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
                                         <tr>
-                                            <th className="px-4 py-3 rounded-l-lg">Bill No</th>
-                                            <th className="px-4 py-3">Date</th>
-                                            <th className="px-4 py-3 text-right">Total</th>
-                                            <th className="px-4 py-3 text-right">Allocated</th>
-                                            <th className="px-4 py-3 text-right">Discount</th>
-                                            <th className="px-4 py-3 rounded-r-lg w-10">Action</th>
+                                            <th className="px-8 py-5">Liability Node (Bill)</th>
+                                            <th className="px-8 py-5">Fiscal Date</th>
+                                            <th className="px-8 py-5 text-right">Node Total</th>
+                                            <th className="px-8 py-5 text-right">Allocated Quantum</th>
+                                            <th className="px-8 py-5 text-right">Institutional Discount</th>
+                                            <th className="px-8 py-5 w-20"></th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                                        {selectedBills.map(bill => (
-                                            <tr key={bill._id}>
-                                                <td className="px-4 py-3 font-medium">{bill.billNo}</td>
-                                                <td className="px-4 py-3 text-slate-500">{new Date(bill.date).toLocaleDateString()}</td>
-                                                <td className="px-4 py-3 text-right text-slate-600">₹{bill.amount?.toLocaleString()}</td>
-                                                <td className="px-4 py-3 text-right font-bold text-indigo-600">
-                                                    ₹{allocations[bill._id || '']?.toLocaleString()}
-                                                </td>
-                                                <td className="px-4 py-3 text-right text-slate-500">
-                                                    {discounts[bill._id || ''] ? `₹${discounts[bill._id || ''].toLocaleString()}` : '-'}
-                                                </td>
-                                                <td className="px-4 py-3 text-center">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeBill(bill._id || '')}
-                                                        className="text-slate-400 hover:text-red-500 transition-colors"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
+                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                        {selectedBills.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={6} className="px-8 py-32 text-center">
+                                                    <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
+                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                            <Banknote className="w-10 h-10" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-black text-sm uppercase tracking-widest text-center">Allocation Queue Empty</p>
+                                                            <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">Initialize allocation by selecting institutional liability nodes (bills).</p>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            selectedBills.map(bill => (
+                                                <tr key={bill._id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                                    <td className="px-8 py-6 whitespace-nowrap">
+                                                        <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">#{bill.billNo}</span>
+                                                    </td>
+                                                    <td className="px-8 py-6 whitespace-nowrap">
+                                                        <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                                            {new Date(bill.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right text-xs font-black text-neutral-400 tabular-nums">
+                                                        ₹{bill.amount?.toLocaleString()}
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <span className="text-sm font-black text-primary tabular-nums">₹{allocations[bill._id || '']?.toLocaleString()}</span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <span className="text-xs font-black text-emerald-500 tabular-nums">
+                                                            {discounts[bill._id || ''] ? `-₹${discounts[bill._id || ''].toLocaleString()}` : '—'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeBill(bill._id || '')}
+                                                            className="p-2 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
-                                    <tfoot className="border-t border-slate-200 dark:border-slate-700 font-bold">
-                                        <tr>
-                                            <td colSpan={3} className="px-4 py-3 text-right">Total</td>
-                                            <td className="px-4 py-3 text-right text-indigo-600">₹{totalAllocated.toLocaleString()}</td>
-                                            <td className="px-4 py-3 text-right text-slate-600">₹{totalDiscount.toLocaleString()}</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
+                                    {selectedBills.length > 0 && (
+                                        <tfoot className="bg-neutral-50/30 dark:bg-neutral-900/30 font-black">
+                                            <tr>
+                                                <td colSpan={3} className="px-8 py-6 text-[10px] text-neutral-400 uppercase tracking-widest text-right">Aggregate Allocation</td>
+                                                <td className="px-8 py-6 text-right text-lg text-primary tabular-nums tracking-tighter">₹{totalAllocated.toLocaleString()}</td>
+                                                <td className="px-8 py-6 text-right text-sm text-emerald-500 tabular-nums tracking-tighter">₹{totalDiscount.toLocaleString()}</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    )}
                                 </table>
                             </div>
-                        )}
+                        </div>
 
-                        <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={() => navigate('/purchase/payments')}
-                                className="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
-                            >
-                                <CheckCircle size={18} />
-                                Save Payment
-                            </button>
+                        {/* Audit Narrative Node */}
+                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-8 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <Info className="w-5 h-5 text-neutral-400" /> Settlement Narrative & Notes
+                            </h3>
+                            <textarea
+                                value={notes}
+                                onChange={e => setNotes(e.target.value)}
+                                rows={4}
+                                className="w-full px-8 py-6 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-[2rem] text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                placeholder="Audit trail remarks, payment justifications, dispute resolutions..."
+                            />
                         </div>
                     </div>
                 </div>
-
-            </form>
+            </div>
 
             <BillSelectionModal
                 isOpen={isBillModalOpen}

@@ -71,7 +71,7 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
                 {/* Main Content */}
                 <main className="flex-1 overflow-hidden w-full bg-app relative">
-                    <div className="h-full w-full overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 custom-scrollbar text-main">
+                    <div className="h-full w-full overflow-y-auto custom-scrollbar text-main">
                         <RouteDefinitions renderContent={renderContent} />
                     </div>
                 </main>

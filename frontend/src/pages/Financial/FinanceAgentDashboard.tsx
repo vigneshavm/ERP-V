@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from '../../redux/slices/uiSlice';
 import { AppView } from '../../types/common';
+import Layout from "../../components/shared/Layout";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
     TrendingUp, TrendingDown, Zap, RefreshCw, AlertTriangle,
     CheckCircle2, CreditCard, Building2, Landmark, FileText,
     ArrowUpRight, ArrowDownRight, Activity, ChevronRight,
     Clock, CircleDollarSign, BarChart3, Layers, Bot,
     CalendarClock, ShieldCheck, ReceiptText, Banknote, X,
-    CircleCheck, CircleAlert, Info
+    CircleCheck, CircleAlert, Info, Search, Filter
 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
    Types
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 interface Agent {
     id: string;
     name: string;
@@ -54,31 +56,8 @@ interface LoanBar {
 }
 
 /* ─────────────────────────────────────────────
-   Sparkline (pure SVG)
-───────────────────────────────────────────── */
-const Sparkline: React.FC<{ data: number[]; color: string; height?: number }> = ({
-    data, color, height = 40
-}) => {
-    if (!data.length) return null;
-    const w = 120, h = height;
-    const min = Math.min(...data), max = Math.max(...data);
-    const range = max - min || 1;
-    const pts = data.map((v, i) => {
-        const x = (i / (data.length - 1)) * w;
-        const y = h - ((v - min) / range) * (h - 4) - 2;
-        return `${x},${y}`;
-    }).join(' ');
-    return (
-        <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} fill="none">
-            <polyline points={pts} stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx={pts.split(' ').pop()!.split(',')[0]} cy={pts.split(' ').pop()!.split(',')[1]} r="3" fill={color} />
-        </svg>
-    );
-};
-
-/* ─────────────────────────────────────────────
    Mock data generators
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 const mockCashFlow = [42, 38, 55, 50, 61, 57, 70, 66, 74, 71, 82, 78];
 const mockExpenses = [30, 33, 29, 35, 32, 40, 37, 42, 39, 45, 41, 48];
 
@@ -152,7 +131,7 @@ const KPIS: KPI[] = [
         trend: 'up',
         delta: '+4.2%',
         icon: <Landmark className="w-5 h-5" />,
-        color: 'text-emerald-400',
+        color: 'text-emerald-500',
     },
     {
         label: "Today's Cash In",
@@ -161,7 +140,7 @@ const KPIS: KPI[] = [
         trend: 'up',
         delta: '+35.6%',
         icon: <ArrowUpRight className="w-5 h-5" />,
-        color: 'text-sky-400',
+        color: 'text-sky-500',
     },
     {
         label: "Today's Cash Out",
@@ -170,7 +149,7 @@ const KPIS: KPI[] = [
         trend: 'down',
         delta: '+9.7%',
         icon: <ArrowDownRight className="w-5 h-5" />,
-        color: 'text-rose-400',
+        color: 'text-rose-500',
     },
     {
         label: 'Active Loans',
@@ -179,7 +158,7 @@ const KPIS: KPI[] = [
         trend: 'neutral',
         delta: '₹42,000 / mo',
         icon: <CreditCard className="w-5 h-5" />,
-        color: 'text-violet-400',
+        color: 'text-violet-500',
     },
     {
         label: 'Unreconciled Items',
@@ -188,7 +167,7 @@ const KPIS: KPI[] = [
         trend: 'down',
         delta: 'Action needed',
         icon: <Activity className="w-5 h-5" />,
-        color: 'text-orange-400',
+        color: 'text-orange-500',
     },
     {
         label: 'Bills Overdue',
@@ -197,7 +176,7 @@ const KPIS: KPI[] = [
         trend: 'down',
         delta: '2 at risk of penalty',
         icon: <FileText className="w-5 h-5" />,
-        color: 'text-amber-400',
+        color: 'text-amber-500',
     },
 ];
 
@@ -220,21 +199,21 @@ const fmt = (n: number) => new Intl.NumberFormat('en-IN').format(n);
 
 /* ─────────────────────────────────────────────
    Sub-components
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 const AlertIcon: React.FC<{ type: Alert['type'] }> = ({ type }) => {
-    if (type === 'critical') return <CircleAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />;
-    if (type === 'warning') return <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />;
-    return <CircleCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />;
+    if (type === 'critical') return <CircleAlert className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />;
+    if (type === 'warning') return <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />;
+    return <CircleCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />;
 };
 
 const HealthBadge: React.FC<{ health: LoanBar['health'] }> = ({ health }) => {
     const map = {
-        good: 'bg-emerald-900/60 text-emerald-400 border-emerald-700',
-        risk: 'bg-amber-900/60 text-amber-400 border-amber-700',
-        critical: 'bg-rose-900/60 text-rose-400 border-rose-700',
+        good: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800',
+        risk: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800',
+        critical: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800',
     };
     return (
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${map[health]}`}>
+        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border uppercase tracking-widest ${map[health]}`}>
             {health}
         </span>
     );
@@ -242,41 +221,40 @@ const HealthBadge: React.FC<{ health: LoanBar['health'] }> = ({ health }) => {
 
 /* ─────────────────────────────────────────────
    Agent Detail Drawer
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNavigate: (tab: AppView) => void }> = ({
     agent, onClose, onNavigate
 }) => {
     if (!agent) return null;
     return (
-        <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm" onClick={onClose}>
             <div
-                className="relative h-full w-full max-w-md bg-[#0f1117] border-l border-white/10 shadow-2xl flex flex-col"
+                className="relative h-full w-full max-w-md bg-white dark:bg-neutral-900 border-l border-neutral-200 dark:border-neutral-800 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
                 onClick={e => e.stopPropagation()}
-                style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16,1,0.3,1)' }}
             >
                 {/* Header */}
-                <div className={`p-6 bg-gradient-to-br ${agent.color} relative overflow-hidden`}>
+                <div className={`p-8 bg-gradient-to-br ${agent.color} relative overflow-hidden`}>
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 0%, transparent 60%)' }} />
-                    <button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors">
-                        <X className="w-5 h-5" />
+                    <button onClick={onClose} className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors">
+                        <X className="w-6 h-6" />
                     </button>
                     <div className="relative z-10">
-                        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-3 backdrop-blur-sm">
+                        <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-4 backdrop-blur-sm">
                             {agent.icon}
                         </div>
-                        <h2 className="text-xl font-bold text-white">{agent.name}</h2>
-                        <p className="text-white/80 text-sm mt-1">{agent.tagline}</p>
+                        <h2 className="text-2xl font-black text-white tracking-tighter uppercase">{agent.name}</h2>
+                        <p className="text-white/80 text-sm mt-1 font-medium italic">{agent.tagline}</p>
                     </div>
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-8 space-y-8">
                     <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Capabilities</p>
-                        <ul className="space-y-2">
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-4">Core Capabilities</p>
+                        <ul className="space-y-3">
                             {agent.capabilities.map(c => (
-                                <li key={c} className="flex items-center gap-2 text-sm text-slate-300">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                <li key={c} className="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400 font-bold italic">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                                     {c}
                                 </li>
                             ))}
@@ -284,19 +262,19 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                     </div>
 
                     <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Workflow File</p>
-                        <div className="bg-white/5 rounded-xl p-3 font-mono text-xs text-slate-400 border border-white/10">
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-4">Intelligence Protocol</p>
+                        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-4 font-mono text-xs text-neutral-500 border border-neutral-200 dark:border-neutral-700 italic">
                             withskills/_agents/workflows/{agent.workflow}.md
                         </div>
                     </div>
 
-                    <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">How It Works</p>
-                        <div className="space-y-2">
-                            {['Fetch live data from finance APIs', 'Analyze using business rules', 'Generate prioritized recommendations', 'Execute actions on your approval'].map((step, i) => (
-                                <div key={i} className="flex items-start gap-3">
-                                    <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-slate-400 shrink-0 mt-0.5">{i + 1}</div>
-                                    <p className="text-sm text-slate-400">{step}</p>
+                    <div className="space-y-4">
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Operational Logic</p>
+                        <div className="space-y-4">
+                            {['Fetch live data from treasury nodes', 'Analyze via capital allocation rules', 'Generate prioritized fiscal recommendations', 'Execute movements on your approval'].map((step, i) => (
+                                <div key={i} className="flex items-start gap-4 group">
+                                    <div className="w-6 h-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-black text-neutral-400 shrink-0 group-hover:bg-primary/20 group-hover:text-primary transition-colors">{i + 1}</div>
+                                    <p className="text-sm text-neutral-500 font-bold italic leading-relaxed">{step}</p>
                                 </div>
                             ))}
                         </div>
@@ -304,21 +282,21 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-white/10 space-y-3">
+                <div className="p-8 border-t border-neutral-100 dark:border-neutral-800 space-y-4">
                     {agent.tab && (
                         <button
                             onClick={() => { onNavigate(agent.tab!); onClose(); }}
-                            className={`w-full py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r ${agent.color} hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
+                            className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-white bg-neutral-900 dark:bg-white dark:text-neutral-900 hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl`}
                         >
-                            <Zap className="w-4 h-4" />
-                            Open in ERP Module
+                            <Zap className="w-4 h-4 fill-current" />
+                            Launch Intelligence Unit
                         </button>
                     )}
                     <button
                         onClick={onClose}
-                        className="w-full py-3 rounded-xl font-bold text-sm text-slate-400 bg-white/5 hover:bg-white/10 transition-colors"
+                        className="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                     >
-                        Close
+                        Close Command
                     </button>
                 </div>
             </div>
@@ -328,19 +306,12 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
 
 /* ─────────────────────────────────────────────
    Main Dashboard
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 const FinanceAgentDashboard: React.FC = () => {
     const dispatch = useDispatch();
     const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [lastRefreshed, setLastRefreshed] = useState(new Date());
-    const [pulseIndex, setPulseIndex] = useState(0);
-
-    // Cycle agent pulse every 4 seconds for animated effect
-    useEffect(() => {
-        const t = setInterval(() => setPulseIndex(p => (p + 1) % AGENTS.length), 4000);
-        return () => clearInterval(t);
-    }, []);
 
     const handleRefresh = () => {
         setRefreshing(true);
@@ -350,154 +321,141 @@ const FinanceAgentDashboard: React.FC = () => {
     const navigateTo = (tab: AppView) => dispatch(setActiveTab(tab));
 
     return (
-        <div className="min-h-screen bg-[#09090f] text-white" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
-            {/* Inject keyframe */}
-            <style>{`
-                @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-                @keyframes pulse-ring { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); } 50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); } }
-                .agent-ring { animation: pulse-ring 2s infinite; }
-                .glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
-                .kpi-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
-                .agent-card:hover { transform: translateY(-3px); }
-                .kpi-card, .agent-card { transition: all 0.25s ease; }
-            `}</style>
-
-            {/* ── Header ─────────────────────────────── */}
-            <div className="px-6 pt-6 pb-4">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                            <Bot className="w-5 h-5 text-white" />
+        <Layout>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Finance Agent Command"
+                    description={`Autonomous treasury surveillance active. Last pulse: ${lastRefreshed.toLocaleTimeString()}`}
+                    breadcrumbs={[{ label: 'Home', link: '/dashboard' }, { label: 'Finance' }, { label: 'Agents' }]}
+                    actions={
+                        <div className="flex gap-3">
+                            <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                                <Search className="w-4 h-4" /> Global Audit
+                            </button>
+                            <button
+                                onClick={handleRefresh}
+                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
+                            >
+                                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> Sync Nodes
+                            </button>
                         </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-white">Finance Agent Command</h1>
-                            <p className="text-xs text-slate-500">
-                                Last refreshed {lastRefreshed.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleRefresh}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl glass text-slate-400 hover:text-white text-sm font-medium transition-colors"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                        Refresh
-                    </button>
-                </div>
-            </div>
+                    }
+                />
 
-            <div className="px-6 pb-8 space-y-6">
-                {/* ── KPI Strip ──────────────────────────── */}
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                {/* KPI Pulse Row */}
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
                     {KPIS.map((kpi, i) => (
-                        <div key={i} className="kpi-card glass rounded-2xl p-4 cursor-default">
-                            <div className={`${kpi.color} mb-2`}>{kpi.icon}</div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{kpi.label}</p>
-                            <p className="text-lg font-bold text-white mt-1 leading-none">{kpi.value}</p>
-                            <div className="flex items-center gap-1 mt-1">
-                                {kpi.trend === 'up' && <ArrowUpRight className="w-3 h-3 text-emerald-400" />}
-                                {kpi.trend === 'down' && <ArrowDownRight className="w-3 h-3 text-rose-400" />}
-                                <span className={`text-[10px] font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-rose-400' : 'text-slate-500'}`}>
+                        <div key={i} className="bg-white dark:bg-neutral-800 p-5 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/30 transition-all duration-500">
+                            <div className={`${kpi.color} mb-3 opacity-80`}>{kpi.icon}</div>
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">{kpi.label}</p>
+                            <p className="text-xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums leading-none">{kpi.value}</p>
+                            <div className="flex items-center gap-1.5 mt-2">
+                                {kpi.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
+                                {kpi.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />}
+                                <span className={`text-[10px] font-black uppercase tracking-tight ${kpi.trend === 'up' ? 'text-emerald-500' : kpi.trend === 'down' ? 'text-rose-500' : 'text-neutral-500'}`}>
                                     {kpi.delta}
                                 </span>
                             </div>
-                            <p className="text-[9px] text-slate-600 mt-0.5">{kpi.sub}</p>
                         </div>
                     ))}
                 </div>
 
-                {/* ── Cash Flow Chart + Anomaly Feed ──── */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    {/* Chart */}
-                    <div className="lg:col-span-2 glass rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-4">
+                {/* ── Main Intel Grids ──── */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Chart & Flow Analysis */}
+                    <div className="lg:col-span-2 bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="flex items-center justify-between mb-8">
                             <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cash Flow — Last 12 Months</p>
-                                <p className="text-2xl font-bold text-white mt-0.5">₹45,750 <span className="text-sm font-normal text-emerald-400">net this month</span></p>
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Temporal Cash Flow — 12M Audit</p>
+                                <h3 className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter mt-1 italic">
+                                    ₹45,750 <span className="text-sm font-bold text-emerald-500 ml-2">▲ Net Surplus</span>
+                                </h3>
                             </div>
-                            <BarChart3 className="w-5 h-5 text-slate-600" />
+                            <BarChart3 className="w-6 h-6 text-neutral-300 dark:text-neutral-700" />
                         </div>
-                        {/* Bar chart */}
-                        <div className="flex items-end gap-1.5 h-24">
+                        
+                        <div className="flex items-end gap-2 h-32 mb-6">
                             {mockCashFlow.map((v, i) => {
                                 const exp = mockExpenses[i];
-                                const net = v - exp;
-                                const barH = (v / 100) * 80 + 10;
-                                const expH = (exp / 100) * 80 + 10;
+                                const barH = (v / 100) * 100;
+                                const expH = (exp / 100) * 100;
                                 return (
-                                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5 group" title={`In: ₹${v}k / Out: ₹${exp}k`}>
-                                        <div className="w-full relative flex flex-col-reverse" style={{ height: 80 }}>
-                                            <div
-                                                className="w-full rounded-t bg-emerald-500/40 group-hover:bg-emerald-500/70 transition-colors"
-                                                style={{ height: barH }}
-                                            />
-                                            <div
-                                                className="absolute bottom-0 w-full rounded-t bg-rose-500/30 group-hover:bg-rose-500/50 transition-colors"
-                                                style={{ height: expH }}
-                                            />
+                                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group" title={`Inflow: ₹${v}k / Outflow: ₹${exp}k`}>
+                                        <div className="w-full relative flex flex-col-reverse bg-neutral-100 dark:bg-neutral-900/50 rounded-t-lg overflow-hidden" style={{ height: 100 }}>
+                                            <div className="w-full bg-primary/20 group-hover:bg-primary/40 transition-all duration-500" style={{ height: `${barH}%` }} />
+                                            <div className="absolute bottom-0 w-full bg-rose-500/20 group-hover:bg-rose-500/40 transition-all duration-500" style={{ height: `${expH}%` }} />
                                         </div>
-                                        <span className="text-[8px] text-slate-600">
+                                        <span className="text-[9px] font-black text-neutral-400">
                                             {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
                                         </span>
                                     </div>
                                 );
                             })}
                         </div>
-                        <div className="flex gap-4 mt-3">
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                                <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500/50" />Cash In
+                        
+                        <div className="flex gap-6 pt-4 border-t border-neutral-50 dark:border-neutral-700/50">
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-neutral-400 tracking-widest">
+                                <div className="w-2.5 h-2.5 rounded-sm bg-primary/40" /> Liquidity Inflow
                             </div>
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                                <div className="w-2.5 h-2.5 rounded-sm bg-rose-500/40" />Cash Out
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-neutral-400 tracking-widest">
+                                <div className="w-2.5 h-2.5 rounded-sm bg-rose-500/40" /> Operational Burn
                             </div>
                         </div>
                     </div>
 
-                    {/* Anomaly Feed */}
-                    <div className="glass rounded-2xl p-5 flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Live Anomalies</p>
-                            <span className="text-[10px] font-bold bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full">
-                                {ALERTS.filter(a => a.type !== 'ok').length} active
-                            </span>
-                        </div>
-                        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar" style={{ maxHeight: 200 }}>
-                            {ALERTS.map(alert => (
-                                <div key={alert.id} className="flex gap-2">
-                                    <AlertIcon type={alert.type} />
-                                    <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-white leading-snug truncate">{alert.title}</p>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{alert.body}</p>
-                                        <p className="text-[9px] text-slate-600 mt-0.5 flex items-center gap-1">
-                                            <Clock className="w-2.5 h-2.5" />{alert.time}
-                                        </p>
+                    {/* Live Anomaly Feed */}
+                    <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 shadow-2xl flex flex-col relative overflow-hidden group">
+                        <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 transition duration-1000" />
+                        <div className="relative z-10 h-full flex flex-col">
+                            <div className="flex items-center justify-between mb-8">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                                    <Activity className="w-4 h-4 animate-pulse" /> Live Anomaly Stream
+                                </p>
+                                <span className="text-[10px] font-black bg-rose-500 text-white px-2 py-0.5 rounded-full">
+                                    {ALERTS.filter(a => a.type !== 'ok').length} CRITICAL
+                                </span>
+                            </div>
+                            
+                            <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                                {ALERTS.map(alert => (
+                                    <div key={alert.id} className="flex gap-4 group/item">
+                                        <div className="mt-1">
+                                            <AlertIcon type={alert.type} />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-black text-white leading-tight group-hover/item:text-primary transition-colors cursor-default">{alert.title}</p>
+                                            <p className="text-xs text-neutral-400 mt-1 font-medium leading-relaxed italic">{alert.body}</p>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <Clock className="w-3 h-3 text-neutral-600" />
+                                                <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest">{alert.time}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* ── Agent Cards ─────────────────────── */}
-                <div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Active Finance Agents</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
-                        {AGENTS.map((agent, idx) => (
+                {/* ── Active Agents Grid ──── */}
+                <div className="space-y-6">
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Deployed Intelligence Units</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+                        {AGENTS.map((agent) => (
                             <button
                                 key={agent.id}
                                 onClick={() => setActiveAgent(agent)}
-                                className={`agent-card glass rounded-2xl p-5 text-left relative overflow-hidden group cursor-pointer ${idx === pulseIndex ? 'agent-ring' : ''}`}
+                                className="group relative bg-white dark:bg-neutral-800 p-6 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 text-left overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl active:scale-95"
                             >
-                                {/* Gradient glow BG */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl`} />
+                                <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} opacity-0 group-hover:opacity-5 transition-all duration-500`} />
                                 <div className="relative z-10">
-                                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-white mb-3 shadow-lg ${agent.glowColor}`}>
+                                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-white mb-4 shadow-lg ${agent.glowColor} group-hover:scale-110 transition-transform`}>
                                         {agent.icon}
                                     </div>
-                                    <p className="text-sm font-bold text-white">{agent.name}</p>
-                                    <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">{agent.tagline}</p>
-                                    <div className={`flex items-center gap-1 mt-3 ${agent.accentColor} text-[10px] font-semibold`}>
-                                        View workflow <ChevronRight className="w-3 h-3" />
+                                    <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{agent.name}</p>
+                                    <p className="text-[10px] text-neutral-500 mt-2 leading-relaxed italic font-medium">{agent.tagline}</p>
+                                    <div className={`flex items-center gap-1.5 mt-5 ${agent.accentColor} text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all`}>
+                                        Execute <ChevronRight className="w-3 h-3" />
                                     </div>
                                 </div>
                             </button>
@@ -505,33 +463,34 @@ const FinanceAgentDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ── Loan Health + Bill Queue ─────────── */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Loan Health */}
-                    <div className="glass rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Loan Health Monitor</p>
-                            <Layers className="w-4 h-4 text-slate-600" />
+                {/* ── Secondary Analysis ──── */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Loan Health Dashboard */}
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="flex items-center justify-between mb-8">
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+                                <CreditCard className="w-4 h-4" /> Capital Liability Surveillance
+                            </p>
+                            <Layers className="w-5 h-5 text-neutral-200 dark:text-neutral-700" />
                         </div>
-                        <div className="space-y-5">
+                        <div className="space-y-8">
                             {LOANS.map((loan, i) => {
                                 const paidPct = ((loan.principal - loan.pending) / loan.principal) * 100;
-                                const barColor = loan.health === 'good' ? '#10b981' : loan.health === 'risk' ? '#f59e0b' : '#ef4444';
                                 return (
-                                    <div key={i}>
-                                        <div className="flex items-center justify-between mb-1.5">
-                                            <p className="text-sm font-semibold text-white truncate max-w-[60%]">{loan.name}</p>
+                                    <div key={i} className="group">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{loan.name}</p>
                                             <HealthBadge health={loan.health} />
                                         </div>
-                                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div className="w-full h-2 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
                                             <div
-                                                className="h-full rounded-full transition-all duration-700"
-                                                style={{ width: `${paidPct}%`, background: barColor }}
+                                                className={`h-full rounded-full transition-all duration-1000 ${loan.health === 'good' ? 'bg-emerald-500' : loan.health === 'risk' ? 'bg-amber-500' : 'bg-rose-500'}`}
+                                                style={{ width: `${paidPct}%` }}
                                             />
                                         </div>
-                                        <div className="flex justify-between mt-1">
-                                            <span className="text-[10px] text-slate-500">{paidPct.toFixed(1)}% paid</span>
-                                            <span className="text-[10px] text-slate-500">₹{fmt(loan.pending)} pending · EMI ₹{fmt(loan.emi)}/mo</span>
+                                        <div className="flex justify-between mt-2">
+                                            <span className="text-[10px] font-black text-neutral-400 uppercase">{paidPct.toFixed(1)}% REPAID</span>
+                                            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest tabular-nums italic">PENDING: ₹{fmt(loan.pending)}</span>
                                         </div>
                                     </div>
                                 );
@@ -539,32 +498,33 @@ const FinanceAgentDashboard: React.FC = () => {
                         </div>
                         <button
                             onClick={() => setActiveAgent(AGENTS.find(a => a.id === 'loan-emi')!)}
-                            className="mt-4 w-full py-2.5 rounded-xl text-xs font-bold text-violet-400 bg-violet-500/10 hover:bg-violet-500/20 transition-colors border border-violet-500/20"
+                            className="mt-10 w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 bg-violet-50 dark:bg-violet-900/10 hover:bg-violet-100 dark:hover:bg-violet-900/20 transition-all border border-violet-100 dark:border-violet-800/50"
                         >
-                            Open Loan EMI Agent →
+                            Review Detailed Schedules →
                         </button>
                     </div>
 
-                    {/* Bill Queue */}
-                    <div className="glass rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Bill Approval Queue</p>
-                            <ReceiptText className="w-4 h-4 text-slate-600" />
+                    {/* Bill Approval Queue */}
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="flex items-center justify-between mb-8">
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+                                <ReceiptText className="w-4 h-4" /> Pending Disbursement Queue
+                            </p>
+                            <Filter className="w-5 h-5 text-neutral-200 dark:text-neutral-700" />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             {[
-                                { supplier: 'Sharma Traders', amount: '₹34,000', age: '67 days', action: 'Pay Now', actionColor: 'text-rose-400 bg-rose-500/10' },
-                                { supplier: 'Patel Wholesale', amount: '₹18,500', age: '45 days', action: 'Pay Now', actionColor: 'text-amber-400 bg-amber-500/10' },
-                                { supplier: 'Raj Distributors', amount: '₹52,000', age: '28 days', action: 'Schedule', actionColor: 'text-sky-400 bg-sky-500/10' },
-                                { supplier: 'Metro Supplies', amount: '₹9,800', age: '15 days', action: 'Defer', actionColor: 'text-slate-400 bg-white/5' },
-                                { supplier: 'Global Foods', amount: '₹10,200', age: '8 days', action: 'Defer', actionColor: 'text-slate-400 bg-white/5' },
+                                { supplier: 'Sharma Traders', amount: '₹34,000', age: '67 days', action: 'Pay Now', actionColor: 'text-rose-600 bg-rose-50' },
+                                { supplier: 'Patel Wholesale', amount: '₹18,500', age: '45 days', action: 'Pay Now', actionColor: 'text-amber-600 bg-amber-50' },
+                                { supplier: 'Raj Distributors', amount: '₹52,000', age: '28 days', action: 'Schedule', actionColor: 'text-sky-600 bg-sky-50' },
+                                { supplier: 'Metro Supplies', amount: '₹9,800', age: '15 days', action: 'Defer', actionColor: 'text-neutral-500 bg-neutral-100' },
                             ].map((bill, i) => (
-                                <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                                <div key={i} className="flex items-center justify-between py-3 border-b border-neutral-50 dark:border-neutral-700/50 last:border-0 group">
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-white truncate">{bill.supplier}</p>
-                                        <p className="text-[10px] text-slate-500">{bill.amount} · {bill.age} old</p>
+                                        <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter group-hover:text-primary transition-colors">{bill.supplier}</p>
+                                        <p className="text-[10px] text-neutral-400 font-bold mt-0.5">{bill.amount} · <span className="text-neutral-500">{bill.age} overdue</span></p>
                                     </div>
-                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2 ${bill.actionColor}`}>
+                                    <span className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest shrink-0 ml-2 ${bill.actionColor} dark:bg-neutral-900 dark:text-neutral-400`}>
                                         {bill.action}
                                     </span>
                                 </div>
@@ -572,26 +532,26 @@ const FinanceAgentDashboard: React.FC = () => {
                         </div>
                         <button
                             onClick={() => navigateTo('PURCHASE_BILLS')}
-                            className="mt-4 w-full py-2.5 rounded-xl text-xs font-bold text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 transition-colors border border-orange-500/20"
+                            className="mt-10 w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/5 hover:bg-primary/10 transition-all border border-primary/10"
                         >
-                            Open Bills Module →
+                            Launch Payments Gateway →
                         </button>
                     </div>
                 </div>
 
-                {/* ── Footer ribbon ───────────────────── */}
-                <div className="glass rounded-2xl p-4 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shrink-0">
-                        <Bot className="w-4 h-4 text-white" />
+                {/* Intelligence Advisory */}
+                <div className="bg-neutral-900 dark:bg-neutral-100 p-8 rounded-[3rem] shadow-2xl flex items-center gap-6 group">
+                    <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                        <Bot className="w-6 h-6 text-white" />
                     </div>
-                    <div className="min-w-0">
-                        <p className="text-xs font-bold text-white">Finance Agent powered by Antigravity Skill Engine</p>
-                        <p className="text-[10px] text-slate-500 truncate">
-                            Skill: <span className="text-indigo-400">finance-agent</span> ·
-                            Workflows: cash-flow, loan-emi, reconciliation, bill-approval, day-end
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs font-black text-white dark:text-neutral-900 uppercase tracking-widest">Autonomous Intelligence Unit Active</p>
+                        <p className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold mt-1 italic leading-relaxed">
+                            Command Engine: <span className="text-primary underline underline-offset-4">antigravity-v2</span> · 
+                            Protocols: cash-flow, loan-emi, bank-reconcile, disbursement-approval
                         </p>
                     </div>
-                    <Info className="w-4 h-4 text-slate-600 shrink-0 ml-auto" />
+                    <Info className="w-5 h-5 text-neutral-600 hidden md:block" />
                 </div>
             </div>
 
@@ -603,7 +563,7 @@ const FinanceAgentDashboard: React.FC = () => {
                     onNavigate={navigateTo}
                 />
             )}
-        </div>
+        </Layout>
     );
 };
 

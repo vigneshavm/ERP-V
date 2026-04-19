@@ -35,9 +35,12 @@ const ExpenseCategoriesManager: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Partial<ExpenseCategory> | null>(null);
 
-    const filteredCategories = categories.filter(cat =>
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredCategories = useMemo(() => {
+        if (!Array.isArray(categories)) return [];
+        return categories.filter(cat =>
+            cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [categories, searchTerm]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();

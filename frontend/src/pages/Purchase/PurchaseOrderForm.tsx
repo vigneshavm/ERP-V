@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-
+import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
 
 interface Props {
@@ -15,12 +14,13 @@ interface Props {
 
 const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async () => { }, initialData }) => {
     const { currentBranchId } = useBranchResolver();
+    const [isSaving, setIsSaving] = useState(false);
     const [header, setHeader] = useState<Partial<PurchaseOrder>>({
         po_date: new Date().toISOString().split('T')[0],
         status: 'Draft',
         notes: '',
         branch_id: currentBranchId || undefined,
-        po_number: '', // Will be auto-gen on save if empty, or prefilled
+        po_number: '',
         delivery_location: 'Main Warehouse',
         delivery_address: '',
         reference_number: '',
@@ -75,7 +75,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
         const loadVendors = async () => {
             try {
                 const { data } = await api.get('/suppliers');
-                if (data) setVendors(data);
+                if (data) {
+                    const vendorList = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
+                    setVendors(vendorList);
+                }
             } catch (err) {
                 console.error("Failed to fetch suppliers", err);
             }
@@ -88,10 +91,11 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
         if (!productSearch) return;
         const search = async () => {
             try {
-                // Assuming backend search endpoint or using inventory list
                 const { data } = await api.get('/inventory', { params: { search: productSearch } });
-                // If the API returns full objects, we might need to map them if structure differs
-                if (data) setProducts(data);
+                if (data) {
+                    const productList = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
+                    setProducts(productList);
+                }
             } catch (err) {
                 console.error("Failed to search products", err);
             }
@@ -109,7 +113,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
         const checkSupplier = async () => {
             setLoadingSupplier(true);
             try {
-                // Fetch analytics for this specific supplier
                 const { data } = await api.get(`/suppliers/analytics?supplierId=${header.vendor_id}`);
                 if (data && data.success && data.data && data.data.length > 0) {
                     setSupplierStatus(data.data[0]);
@@ -120,7 +123,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                 setLoadingSupplier(false);
             }
         };
-        const timeout = setTimeout(checkSupplier, 500); // Debounce
+        const timeout = setTimeout(checkSupplier, 500);
         return () => clearTimeout(timeout);
     }, [header.vendor_id]);
 
@@ -143,7 +146,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
             setHeader(initialData);
             if (initialData.items) setItems(initialData.items);
         } else {
-            // Mock PO Number for display
             const year = new Date().getFullYear();
             const rand = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
             setHeader(h => ({ ...h, po_number: `PO-${year}-${rand}` }));
@@ -165,30 +167,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
         setLotModal({ show: true, lotNumber: '', totalCost: 0, totalQty: 0, items: [] });
     };
 
-    const confirmLotDistribution = () => {
-        if (!lotModal.totalQty || !lotModal.totalCost) return;
-
-        const unitRate = parseFloat((lotModal.totalCost / lotModal.totalQty).toFixed(2));
-
-        // Add items to the main list
-        const newItems = lotModal.items.map(i => ({
-            ...i,
-            quantity: i.quantity,
-            rate: unitRate,
-            amount: i.quantity * unitRate,
-            line_total: i.quantity * unitRate, // Ignoring tax for simplicity in this helper, or we should ask tax?
-            // Let's assume tax is 0 or same as item default for now, can be edited later
-            tax_percent: 0,
-            discount_amount: 0,
-            discount_percent: 0,
-            tax_amount: 0,
-            lot_number: lotModal.lotNumber
-        }));
-
-        setItems([...items, ...newItems]);
-        setLotModal({ ...lotModal, show: false });
-    };
-
     const handleSubmit = async () => {
         if (!header.vendor_id) {
             alert('Please select a supplier');
@@ -199,14 +177,17 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
             return;
         }
 
-        // Sanitize header to remove non-DB fields that might have come from initialData
-        const { items: _items, vendor_name, ...sanitizedHeader } = header as any;
-
-        await onSave({
-            ...sanitizedHeader,
-            tax_breakdown: taxBreakdown,
-            amount_in_words: amountInWords
-        }, items);
+        setIsSaving(true);
+        try {
+            const { items: _items, vendor_name, ...sanitizedHeader } = header as any;
+            await onSave({
+                ...sanitizedHeader,
+                tax_breakdown: taxBreakdown,
+                amount_in_words: amountInWords
+            }, items);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     // --- Utilities ---
@@ -228,10 +209,8 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
     };
 
     const taxBreakdown = useMemo(() => {
-        // Mock logic: If vendor_id ends in '1', assume intra-state (CGST+SGST), else inter-state (IGST)
         const isIntraState = header.vendor_id?.toString().endsWith('1');
         const totalTax = totals.tax;
-
         if (isIntraState) {
             return { cgst: totalTax / 2, sgst: totalTax / 2, igst: 0, vat: 0 };
         }
@@ -240,42 +219,43 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
     const amountInWords = useMemo(() => numberToWords(Math.round(totals.total)), [totals.total]);
 
-
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
+        <div className="flex flex-col h-screen bg-neutral-50 dark:bg-neutral-900">
             {/* History Modal */}
             {historyModal.show && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
-                        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                            <h3 className="font-bold flex items-center gap-2">
-                                <History className="w-4 h-4 text-primary" />
-                                Price History: {historyModal.item}
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-300">
+                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
+                            <h3 className="text-sm font-black flex items-center gap-3 uppercase tracking-widest">
+                                <History className="w-5 h-5 text-primary" /> Price History: <span className="text-primary">{historyModal.item}</span>
                             </h3>
-                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-1 hover:bg-neutral-100 rounded-lg">
+                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-xl transition-all">
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
-                        <div className="p-4 max-h-80 overflow-y-auto">
+                        <div className="p-8 max-h-96 overflow-y-auto custom-scrollbar">
                             {historyModal.loading ? (
-                                <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+                                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
                             ) : historyModal.data.length === 0 ? (
-                                <p className="text-center text-neutral-500 py-4">No purchase history found.</p>
+                                <div className="text-center py-12 opacity-40">
+                                    <Info className="w-12 h-12 mx-auto mb-4" />
+                                    <p className="text-xs font-black uppercase tracking-widest">No node history found.</p>
+                                </div>
                             ) : (
-                                <table className="w-full text-sm">
-                                    <thead className="text-xs text-neutral-500 bg-neutral-50 dark:bg-neutral-800">
+                                <table className="w-full text-left">
+                                    <thead className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
                                         <tr>
-                                            <th className="p-2 text-left">Date</th>
-                                            <th className="p-2 text-left">Vendor</th>
-                                            <th className="p-2 text-right">Rate</th>
+                                            <th className="pb-4">Fiscal Date</th>
+                                            <th className="pb-4">Vendor</th>
+                                            <th className="pb-4 text-right">Rate</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                                         {historyModal.data.map((h, i) => (
-                                            <tr key={i}>
-                                                <td className="p-2">{new Date(h.date).toLocaleDateString()}</td>
-                                                <td className="p-2 text-xs truncate max-w-[100px]" title={h.vendorName}>{h.vendorName}</td>
-                                                <td className="p-2 text-right font-medium">₹{h.rate}</td>
+                                            <tr key={i} className="group">
+                                                <td className="py-4 text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter tabular-nums">{new Date(h.date).toLocaleDateString()}</td>
+                                                <td className="py-4 text-[10px] font-black text-neutral-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
+                                                <td className="py-4 text-right text-xs font-black text-primary tabular-nums">₹{h.rate}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -286,36 +266,36 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                 </div>
             )}
 
-            {/* Header */}
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <button onClick={onBack} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
-                        <ArrowLeft className="w-5 h-5" />
-                    </button>
-                    <h2 className="text-lg font-bold">{initialData ? 'Edit Purchase Order' : 'New Purchase Order'}</h2>
-                    <div className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full text-[10px] font-bold text-neutral-500 border border-neutral-200 dark:border-neutral-700">
-                        Version {header.version || 1}.0
+            <PageHeader
+                title={initialData ? 'Refactor Order' : 'Institutional Order'}
+                description="Initialize procurement nodes with verified supply-chain parameters."
+                actions={
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setShowTemplates(!showTemplates)}
+                            className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                        >
+                            <Copy className="w-4 h-4 text-primary" /> {showTemplates ? 'Cancel Template' : 'Use Template'}
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isSaving}
+                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 disabled:opacity-50"
+                        >
+                            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Node
+                        </button>
                     </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setShowTemplates(!showTemplates)}
-                        className="px-4 py-2 text-primary hover:bg-primary/5 rounded-lg font-semibold flex items-center gap-2 border border-primary/20"
-                    >
-                        <Copy className="w-4 h-4" /> {showTemplates ? 'Close Templates' : 'Use Template'}
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        className="px-6 py-2 bg-primary text-white rounded-lg font-bold shadow-lg hover:bg-primary/90 flex items-center gap-2"
-                    >
-                        <Save className="w-4 h-4" /> Save Order
-                    </button>
-                </div>
-            </div>
+                }
+                breadcrumbs={[
+                    { label: 'Procurement', link: '/purchase' },
+                    { label: 'Orders', link: '/purchase/orders' },
+                    { label: initialData ? 'Refactor' : 'New' }
+                ]}
+            />
 
             {/* Template Selector */}
             {showTemplates && !initialData && (
-                <div className="p-4 bg-primary/5 border-b border-primary/10 grid grid-cols-1 md:grid-cols-3 gap-4 animate-in slide-in-from-top-2">
+                <div className="mx-8 mt-6 p-6 bg-primary/5 border border-primary/10 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-4 duration-500">
                     {templates.map((t, i) => (
                         <button
                             key={i}
@@ -324,141 +304,145 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 setItems(t.items as any);
                                 setShowTemplates(false);
                             }}
-                            className="text-left p-3 bg-white dark:bg-neutral-800 rounded-xl border border-primary/20 hover:border-primary hover:shadow-md transition-all group"
+                            className="text-left p-6 bg-white dark:bg-neutral-800 rounded-3xl border border-primary/20 hover:border-primary hover:shadow-xl transition-all group"
                         >
-                            <div className="font-bold text-sm text-primary group-hover:underline">{t.name}</div>
-                            <div className="text-xs text-neutral-500 mt-1">{t.items.length} items • {t.vendor_name}</div>
+                            <div className="font-black text-xs text-primary uppercase tracking-widest group-hover:underline">{t.name}</div>
+                            <div className="text-[10px] font-bold text-neutral-400 mt-2 uppercase tracking-widest">{t.items.length} Nodes • {t.vendor_name}</div>
                         </button>
                     ))}
                 </div>
             )}
 
-            {/* Supplier Warning Alert */}
+            {/* Supplier Warning Node */}
             {supplierStatus && (supplierStatus.overdueCount > 0 || supplierStatus.isCreditRisk) && (
-                <div className="mx-6 mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3 animate-in slide-in-from-top-2">
-                    <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                <div className="mx-8 mt-6 p-6 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="p-4 bg-rose-500 text-white rounded-2xl shadow-lg shadow-rose-500/20">
+                        <AlertTriangle className="w-6 h-6" />
+                    </div>
                     <div>
-                        <h4 className="text-sm font-bold text-red-800 dark:text-red-300">Supplier Alert</h4>
-                        <p className="text-xs text-red-700 dark:text-red-400 mt-1">
-                            {supplierStatus.overdueCount > 0 && `This supplier has ${supplierStatus.overdueCount} overdue bills totaling ₹${supplierStatus.overdueAmount?.toFixed(2)}.`}
-                            {supplierStatus.isCreditRisk && ` Credit limit exceeded (Usage: ${supplierStatus.creditUtilization?.toFixed(1)}%).`}
+                        <h4 className="text-[10px] font-black text-rose-800 dark:text-rose-400 uppercase tracking-widest">Supplier Risk Surveillance</h4>
+                        <p className="text-xs font-bold text-rose-700 dark:text-rose-300 mt-1 italic leading-relaxed">
+                            {supplierStatus.overdueCount > 0 && `Institutional overdue detected: ${supplierStatus.overdueCount} bills totaling ₹${supplierStatus.overdueAmount?.toFixed(2)}.`}
+                            {supplierStatus.isCreditRisk && ` Credit utilization threshold breached (${supplierStatus.creditUtilization?.toFixed(1)}%).`}
                         </p>
                     </div>
                 </div>
             )}
 
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                {/* Scrollable Form Area */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                    {/* Top Inputs */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">PO Number</label>
-                            <input
-                                type="text"
-                                value={header.po_number}
-                                disabled
-                                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 font-mono text-sm opacity-70"
-                            />
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden p-8 gap-8">
+                {/* Scrollable Form Arena */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-10 pr-4">
+                    {/* Primary Params Group */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div className="md:col-span-1">
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Protocol #</label>
+                            <div className="px-5 py-3 bg-neutral-100 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black text-neutral-500 font-mono tracking-tighter opacity-70">
+                                {header.po_number}
+                            </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Date</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
                             <input
                                 type="date"
                                 value={header.po_date}
                                 onChange={e => setHeader({ ...header, po_date: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Expected By</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">ETA Constraint</label>
                             <input
                                 type="date"
                                 value={header.expected_delivery || ''}
                                 onChange={e => setHeader({ ...header, expected_delivery: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Supplier</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
                             <select
                                 value={header.vendor_id || ''}
                                 onChange={e => setHeader({ ...header, vendor_id: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             >
-                                <option value="">Select Vendor</option>
-                                {vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+                                <option value="">Select entity...</option>
+                                {Array.isArray(vendors) && vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
                             </select>
                         </div>
+                    </div>
+
+                    {/* Logistics Group */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Delivery Location</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supply Hub</label>
                             <div className="relative">
-                                <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 <select
                                     value={header.delivery_location}
                                     onChange={e => setHeader({ ...header, delivery_location: e.target.value })}
-                                    className="w-full pl-8 pr-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
                                 >
                                     <option value="Main Warehouse">Main Warehouse</option>
                                     <option value="Production Unit A">Production Unit A</option>
                                     <option value="Retail Outlet - Center">Retail Outlet - Center</option>
                                     <option value="Third-party Logistics (3PL)">Third-party Logistics (3PL)</option>
                                 </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                             </div>
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Delivery Address (Specifics)</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Coordinate Precision (Address)</label>
                             <input
                                 type="text"
                                 value={header.delivery_address || ''}
                                 onChange={e => setHeader({ ...header, delivery_address: e.target.value })}
-                                placeholder="Plot no, Street, Landmark..."
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                placeholder="Plot, Sector, Landmark..."
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1">Reference Number</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Ref Oracle ID</label>
                             <input
                                 type="text"
                                 value={header.reference_number || ''}
                                 onChange={e => setHeader({ ...header, reference_number: e.target.value })}
-                                placeholder="e.g. QUO-2024-001"
-                                className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 text-sm"
+                                placeholder="e.g. QUO-2024-X"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
 
-                    {/* Items Section */}
-                    <div className="mb-8">
-                        <div className="flex items-center justify-between mb-4">
+                    {/* Inventory Node Table */}
+                    <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-700 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
-                                <h3 className="font-bold text-neutral-900 dark:text-white">Order Items</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest">Inventory Nodes</h3>
                                 <button
                                     onClick={handleAddLot}
-                                    className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 flex items-center gap-1"
+                                    className="px-4 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-indigo-100 transition-all"
                                 >
-                                    <Plus className="w-3 h-3" /> Add Lot
+                                    <Plus className="w-3.5 h-3.5" /> Bulk Lot
                                 </button>
                             </div>
-                            <div className="relative w-64">
+                            <div className="relative w-full md:w-80">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 <input
                                     type="text"
-                                    placeholder="Add Product..."
+                                    placeholder="Add SKU node..."
                                     value={productSearch}
                                     onChange={e => { setProductSearch(e.target.value); setShowProductDropdown(true); }}
-                                    className="w-full pl-8 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 />
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 {showProductDropdown && products.length > 0 && (
-                                    <div className="absolute top-full mt-1 w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+                                    <div className="absolute top-full mt-3 w-full bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl shadow-2xl z-[55] overflow-hidden animate-in fade-in slide-in-from-top-2">
                                         {products.map(p => (
                                             <button
                                                 key={p.id}
                                                 onClick={() => handleAddItem(p)}
-                                                className="w-full text-left px-4 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-sm"
+                                                className="w-full text-left px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700 border-b border-neutral-50 dark:border-neutral-700 last:border-none transition-colors"
                                             >
-                                                <div className="font-medium">{p.name}</div>
-                                                <div className="text-xs text-neutral-500">Stock: {p.stock || 0}</div>
+                                                <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{p.name}</p>
+                                                <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest">Vault Stock: {p.stock || 0} {p.unit || 'pcs'}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -466,114 +450,78 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             </div>
                         </div>
 
-                        {/* Suggestions from History */}
-                        {header.vendor_id && (
-                            <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
-                                <span className="text-[10px] font-bold text-neutral-400 uppercase whitespace-nowrap">Suggested for this Vendor:</span>
-                                {products.slice(0, 3).map(p => (
-                                    <button
-                                        key={p.id}
-                                        onClick={() => handleAddItem(p)}
-                                        className="px-3 py-1 bg-primary/5 text-primary text-xs rounded-full border border-primary/20 hover:bg-primary/10 transition-colors whitespace-nowrap"
-                                    >
-                                        + {p.name}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-700">
                                     <tr>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500">Product</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-24">Lot #</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-24">Qty</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-20">Unit</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-32">Rate</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-24">Tax %</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-24">Disc %</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 w-28">Disc Amt</th>
-                                        <th className="px-4 py-3 font-semibold text-neutral-500 text-right">Total</th>
-                                        <th className="px-4 py-3 w-10"></th>
-                                        <th className="px-4 py-3 w-10"></th>
+                                        <th className="px-8 py-5">Product SKU</th>
+                                        <th className="px-8 py-5 w-24">Lot #</th>
+                                        <th className="px-8 py-5 w-28 text-center">Quantity</th>
+                                        <th className="px-8 py-5 w-24 text-center">Unit</th>
+                                        <th className="px-8 py-5 w-32 text-right">Rate</th>
+                                        <th className="px-8 py-5 w-20 text-center">Tax %</th>
+                                        <th className="px-8 py-5 w-32 text-right">Node Total</th>
+                                        <th className="px-8 py-5 w-16 text-center">Info</th>
+                                        <th className="px-8 py-5 w-16 text-center">Del</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                                     {items.map((item, idx) => (
-                                        <tr key={idx}>
-                                            <td className="px-4 py-2 font-medium">{item.product_name}</td>
-                                            <td className="px-4 py-2">
+                                        <tr key={idx} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                            <td className="px-8 py-5">
+                                                <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{item.product_name}</span>
+                                            </td>
+                                            <td className="px-8 py-5">
                                                 <input
                                                     type="text"
-                                                    placeholder="Lot #"
                                                     value={item.lot_number || ''}
                                                     onChange={e => updateItem(idx, 'lot_number', e.target.value)}
-                                                    className="w-24 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1 text-xs"
+                                                    className="w-20 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    placeholder="LOT-X"
                                                 />
                                             </td>
-                                            <td className="px-4 py-2">
+                                            <td className="px-8 py-5">
                                                 <input
                                                     type="number"
-                                                    min="1"
                                                     value={item.quantity}
                                                     onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
-                                            <td className="px-4 py-2">
+                                            <td className="px-8 py-5">
                                                 <input
                                                     type="text"
                                                     value={item.unit || 'pcs'}
                                                     onChange={e => updateItem(idx, 'unit', e.target.value)}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-center focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
-                                            <td className="px-4 py-2">
+                                            <td className="px-8 py-5">
                                                 <input
                                                     type="number"
-                                                    min="0"
                                                     value={item.rate}
                                                     onChange={e => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-right tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
-                                            <td className="px-4 py-2">
+                                            <td className="px-8 py-5">
                                                 <input
                                                     type="number"
-                                                    min="0"
                                                     value={item.tax_percent}
                                                     onChange={e => updateItem(idx, 'tax_percent', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
+                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
-                                            <td className="px-4 py-2">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="100"
-                                                    value={item.discount_percent || 0}
-                                                    onChange={e => updateItem(idx, 'discount_percent', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-1"
-                                                />
+                                            <td className="px-8 py-5 text-right font-black text-xs text-neutral-900 dark:text-white tabular-nums">
+                                                ₹{item.line_total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </td>
-                                            <td className="px-4 py-2 text-neutral-500 text-xs">
-                                                ₹{item.discount_amount.toFixed(2)}
-                                            </td>
-                                            <td className="px-4 py-2 text-right font-bold">
-                                                {item.line_total.toFixed(2)}
-                                            </td>
-                                            <td className="px-4 py-2 text-center">
-                                                <button
-                                                    onClick={() => handleShowHistory(item.product_id || '', item.product_name)}
-                                                    className="text-neutral-400 hover:text-primary"
-                                                    title="View Price History"
-                                                >
+                                            <td className="px-8 py-5 text-center">
+                                                <button onClick={() => handleShowHistory(item.product_id || '', item.product_name)} className="p-2 text-neutral-300 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
                                                     <History className="w-4 h-4" />
                                                 </button>
                                             </td>
-                                            <td className="px-4 py-2 text-center">
-                                                <button onClick={() => removeItem(idx)} className="text-neutral-400 hover:text-red-500">
+                                            <td className="px-8 py-5 text-center">
+                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </td>
@@ -581,7 +529,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     ))}
                                     {items.length === 0 && (
                                         <tr>
-                                            <td colSpan={9} className="py-8 text-center text-neutral-400">No items added yet. Search products above.</td>
+                                            <td colSpan={9} className="py-24 text-center opacity-30">
+                                                <Package className="w-12 h-12 mx-auto mb-4" />
+                                                <p className="text-xs font-black uppercase tracking-widest">No nodes allocated to this protocol.</p>
+                                            </td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -589,308 +540,199 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-xs font-semibold text-neutral-500 uppercase mb-1 flex items-center gap-1.5">
-                                <FileText className="w-3 h-3" /> Notes & Comments
-                            </label>
+                    {/* Operational Intelligence Group */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                            <div className="flex items-center gap-3">
+                                <FileText className="w-5 h-5 text-neutral-400" />
+                                <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Institutional Narrative (Notes)</h4>
+                            </div>
                             <textarea
                                 value={header.notes || ''}
                                 onChange={e => setHeader({ ...header, notes: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                placeholder="Internal internal notes, internal instructions..."
+                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-3xl p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                placeholder="Internal protocol instructions, quality constraints, audit remarks..."
                             />
                         </div>
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="block text-xs font-semibold text-neutral-500 uppercase flex items-center gap-1.5">
-                                    <FileText className="w-3 h-3 text-emerald-500" /> Terms & Conditions
-                                </label>
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                                    <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Governance Clauses (T&C)</h4>
+                                </div>
                                 <select
                                     onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                    className="text-[10px] bg-transparent border-none text-primary font-bold cursor-pointer focus:ring-0"
+                                    className="text-[9px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full outline-none cursor-pointer"
                                 >
-                                    <option value="">Apply Template...</option>
+                                    <option value="">Apply Clause...</option>
                                     {termsTemplates.map(t => <option key={t.name} value={t.content}>{t.name}</option>)}
                                 </select>
                             </div>
                             <textarea
                                 value={header.terms_and_conditions || ''}
                                 onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                placeholder="External terms, warranty details, payment conditions..."
+                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-3xl p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
+                                placeholder="Mandatory procurement clauses, liability limitations, payment constraints..."
                             />
                         </div>
                     </div>
 
-                    {/* Attachments Section */}
-                    <div className="mt-8">
-                        <label className="block text-xs font-semibold text-neutral-500 uppercase mb-3 flex items-center gap-1.5">
-                            <Paperclip className="w-3 h-3" /> Attachments (Quotations, Specs)
+                    {/* Evidence Attachment Row */}
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700">
+                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6 block flex items-center gap-3">
+                            <Paperclip className="w-5 h-5" /> Audit Evidence (Quotations, Specs)
                         </label>
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-4">
                             {attachments.map((file, i) => (
-                                <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700 transition-all hover:border-primary/30 group">
-                                    <FileText className="w-3 h-3 text-neutral-400" />
-                                    <span className="max-w-[120px] truncate">{file}</span>
-                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-400 hover:text-red-500">
-                                        <X className="w-3 h-3" />
+                                <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group transition-all hover:border-primary/20">
+                                    <FileText className="w-4 h-4 text-neutral-400" />
+                                    <span className="max-w-[150px] truncate">{file}</span>
+                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-300 hover:text-rose-500 transition-colors">
+                                        <X className="w-4 h-4" />
                                     </button>
                                 </div>
                             ))}
-                            <label className="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-neutral-900 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-lg text-xs text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all">
-                                <Plus className="w-3 h-3" />
-                                Upload Files
+                            <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-neutral-800 border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-2xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
+                                <Plus className="w-4 h-4" /> Upload Node Intel
                                 <input type="file" multiple className="hidden" onChange={handleFileUpload} />
                             </label>
                         </div>
                     </div>
                 </div>
 
-                {/* Totals Panel */}
-                <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 p-6 flex flex-col justify-between">
-                    <div className="space-y-3 text-sm">
-                        <div className="flex justify-between text-neutral-500">
-                            <span>Subtotal</span>
-                            <span>₹{totals.subtotal.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-neutral-500">
-                            <span>Discount</span>
-                            <span className="text-green-600">-₹{totals.discount.toFixed(2)}</span>
-                        </div>
-
-                        <div className="pt-2 mt-2 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
-                            <div className="flex justify-between text-xs text-neutral-400 font-semibold uppercase tracking-wider">
-                                <span>Tax Breakdown</span>
-                                <span>{taxBreakdown.igst > 0 ? 'IGST' : 'CGST+SGST'}</span>
-                            </div>
-                            {taxBreakdown.cgst > 0 && (
-                                <>
-                                    <div className="flex justify-between text-neutral-500 text-xs">
-                                        <span>CGST (at 50% of total tax)</span>
-                                        <span>₹{taxBreakdown.cgst.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-neutral-500 text-xs">
-                                        <span>SGST (at 50% of total tax)</span>
-                                        <span>₹{taxBreakdown.sgst.toFixed(2)}</span>
-                                    </div>
-                                </>
-                            )}
-                            {taxBreakdown.igst > 0 && (
-                                <div className="flex justify-between text-neutral-500 text-xs">
-                                    <span>IGST (100%)</span>
-                                    <span>₹{taxBreakdown.igst.toFixed(2)}</span>
+                {/* Fiscal Summary Sidebar */}
+                <div className="w-full md:w-96 space-y-8">
+                    <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-2xl space-y-8 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                        
+                        <div>
+                            <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-10">Fiscal Aggregate</h4>
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-center text-xs font-black text-neutral-400 uppercase tracking-widest">
+                                    <span>Subtotal</span>
+                                    <span className="text-neutral-900 dark:text-white tabular-nums">₹{totals.subtotal.toLocaleString()}</span>
                                 </div>
-                            )}
+                                <div className="flex justify-between items-center text-xs font-black text-neutral-400 uppercase tracking-widest">
+                                    <span>Institutional Discount</span>
+                                    <span className="text-emerald-500 tabular-nums">-₹{totals.discount.toLocaleString()}</span>
+                                </div>
+                                
+                                <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 space-y-4">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-neutral-400 uppercase tracking-widest italic opacity-60">
+                                        <span>Tax Protocol</span>
+                                        <span>{taxBreakdown.igst > 0 ? 'IGST (Inter-State)' : 'CGST+SGST (Intra)'}</span>
+                                    </div>
+                                    {taxBreakdown.cgst > 0 && (
+                                        <>
+                                            <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                                <span>Central GST (50%)</span>
+                                                <span className="tabular-nums">₹{taxBreakdown.cgst.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                                <span>State GST (50%)</span>
+                                                <span className="tabular-nums">₹{taxBreakdown.sgst.toLocaleString()}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                    {taxBreakdown.igst > 0 && (
+                                        <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                            <span>Integrated GST</span>
+                                            <span className="tabular-nums">₹{taxBreakdown.igst.toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="pt-10 border-t border-neutral-100 dark:border-neutral-700">
+                                    <div className="flex justify-between items-end mb-8">
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Quantum</p>
+                                        <h3 className="text-4xl font-black text-primary tracking-tighter tabular-nums">₹{totals.total.toLocaleString()}</h3>
+                                    </div>
+                                    <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-700">
+                                        <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-2">Lexical Amount</p>
+                                        <p className="text-[11px] font-black text-neutral-600 dark:text-neutral-400 italic leading-relaxed tracking-tight">{amountInWords}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="h-px bg-neutral-200 dark:bg-neutral-700 my-4" />
-                        <div className="flex justify-between text-xl font-bold text-neutral-900 dark:text-white">
-                            <span>Total</span>
-                            <span>₹{totals.total.toFixed(2)}</span>
-                        </div>
-                        <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
-                            <div className="text-[10px] font-bold text-primary uppercase mb-1">Amount in Words</div>
-                            <div className="text-xs font-medium text-neutral-600 dark:text-neutral-400 italic font-mono leading-tight">
-                                {amountInWords}
+                        <div className="space-y-4 pt-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <button
+                                    onClick={() => setHeader({ ...header, status: 'Draft' })}
+                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                >
+                                    <FileText className="w-4 h-4" /> Draft
+                                </button>
+                                <button
+                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                >
+                                    <Truck className="w-4 h-4" /> Dispatch
+                                </button>
                             </div>
+
+                            <div className="p-6 bg-primary/5 rounded-[2.5rem] border border-primary/10 space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        id="billLater"
+                                        checked={header.status === 'RECEIVED'}
+                                        onChange={e => setHeader({ ...header, status: e.target.checked ? 'RECEIVED' : 'COMPLETED' })}
+                                        className="w-5 h-5 rounded-lg border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
+                                    />
+                                    <label htmlFor="billLater" className="text-[10px] font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest cursor-pointer">
+                                        Immediate Receipt Node
+                                    </label>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                        <CreditCard className="w-3 h-3" /> Settlement Mode
+                                    </label>
+                                    <select
+                                        value={(header as any).payment_method || 'Credit'}
+                                        onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
+                                        className="w-full bg-white dark:bg-neutral-800 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none"
+                                    >
+                                        <option value="Credit">Institutional Credit</option>
+                                        <option value="Cash">Cash Transaction</option>
+                                        <option value="UPI">Digital (UPI/Bank)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isSaving}
+                                className="w-full py-5 bg-primary text-white rounded-[2rem] text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                            >
+                                {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />} 
+                                {header.status === 'RECEIVED' ? 'Finalize Receipt' : 'Complete Protocol'}
+                            </button>
                         </div>
                     </div>
-
-                    <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => setHeader({ ...header, status: 'Draft' })} // Just save as draft
-                                className="py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2">
-                                <Plus className="w-4 h-4" /> Draft
-                            </button>
-                            <button
-                                onClick={() => alert('PO Sent to Vendor Email!')}
-                                className="py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg font-bold text-sm hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
-                            >
-                                <FileText className="w-4 h-4 text-primary" /> Email PO
-                            </button>
+                    
+                    <div className="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-[3rem] border border-amber-100 dark:border-amber-900/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Zap className="w-5 h-5 text-amber-500 animate-pulse" />
+                            <h5 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest">Protocol Optimizer</h5>
                         </div>
-
-                        {/* Operational Actions */}
-                        <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg space-y-2">
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="billLater"
-                                    checked={header.status === 'RECEIVED'}
-                                    onChange={e => setHeader({ ...header, status: e.target.checked ? 'RECEIVED' : 'COMPLETED' })}
-                                    className="rounded text-primary focus:ring-primary"
-                                />
-                                <label htmlFor="billLater" className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-                                    Urgent: Goods Received, Bill Later
-                                </label>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <label className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Payment:</label>
-                                <select
-                                    value={(header as any).payment_method || 'Credit'}
-                                    onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
-                                    className="flex-1 text-xs bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded px-2 py-1"
-                                >
-                                    <option value="Credit">Credit (Standard)</option>
-                                    <option value="Cash">Cash (Immediate)</option>
-                                    <option value="UPI">UPI / Online</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => {
-                                // Ensure status is set correctly before submitting
-                                // If "Bill Later" is checked, status is RECEIVED. Else COMPLETED.
-                                // Defaulting to COMPLETED if not Draft/Received
-                                const finalStatus = header.status === 'RECEIVED' ? 'RECEIVED' : 'COMPLETED';
-                                onSave({ ...header, status: finalStatus }, items);
-                            }}
-                            className="w-full py-3 bg-primary text-white rounded-lg font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2"
-                        >
-                            <Save className="w-4 h-4" /> {header.status === 'RECEIVED' ? 'Receive Goods Only' : 'Complete & Bill'}
-                        </button>
+                        <p className="text-[10px] text-amber-800 dark:text-amber-500 font-bold italic leading-relaxed pl-4 border-l-2 border-amber-500/30">
+                            Ensure all SKU nodes are verified against supplier quotations to prevent institutional fiscal discrepancies.
+                        </p>
                     </div>
                 </div>
             </div>
-
-            {/* Lot Distribution Modal */}
-            {lotModal.show && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95">
-                        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
-                            <h3 className="font-bold text-lg">Add Lot (Batch)</h3>
-                            <button onClick={() => setLotModal({ ...lotModal, show: false })}><X className="w-5 h-5" /></button>
-                        </div>
-                        <div className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase">Lot Number</label>
-                                    <input
-                                        type="text"
-                                        className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
-                                        placeholder="e.g. LOT-2024-001"
-                                        value={lotModal.lotNumber}
-                                        onChange={e => setLotModal({ ...lotModal, lotNumber: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <label className="text-xs font-bold text-neutral-500 uppercase">Total Cost</label>
-                                            <input
-                                                type="number"
-                                                className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
-                                                placeholder="0.00"
-                                                value={lotModal.totalCost || ''}
-                                                onChange={e => setLotModal({ ...lotModal, totalCost: parseFloat(e.target.value) || 0 })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-neutral-500 uppercase">Total Qty</label>
-                                            <input
-                                                type="number"
-                                                className="w-full mt-1 p-2 bg-neutral-50 border rounded-lg font-bold"
-                                                placeholder="0"
-                                                value={lotModal.totalQty || ''}
-                                                onChange={e => setLotModal({ ...lotModal, totalQty: parseFloat(e.target.value) || 0 })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-300 flex justify-between">
-                                <span>Calculated Unit Rate:</span>
-                                <span className="font-bold">
-                                    ₹{lotModal.totalQty > 0 ? (lotModal.totalCost / lotModal.totalQty).toFixed(2) : '0.00'} / unit
-                                </span>
-                            </div>
-
-                            <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase mb-2 block">Select Items in this Lot</label>
-                                <div className="border rounded-lg p-2 max-h-48 overflow-y-auto">
-                                    <input
-                                        type="text"
-                                        placeholder="Search products to add..."
-                                        className="w-full p-2 mb-2 text-sm border-b"
-                                        onChange={async (e) => {
-                                            if (e.target.value.length > 2) {
-                                                const { data } = await api.get('/inventory', { params: { search: e.target.value } });
-                                                if (data) setProducts(data);
-                                            }
-                                        }}
-                                    />
-                                    {products.map(p => (
-                                        <div key={p.id} className="flex justify-between items-center p-2 hover:bg-neutral-50 cursor-pointer"
-                                            onClick={() => {
-                                                const existing = lotModal.items.find(i => i.product_id === p.id);
-                                                if (existing) return;
-                                                setLotModal({
-                                                    ...lotModal,
-                                                    items: [...lotModal.items, { product_id: p.id, product_name: p.name, quantity: 1 }]
-                                                });
-                                            }}
-                                        >
-                                            <span className="text-sm">{p.name}</span>
-                                            <Plus className="w-4 h-4 text-neutral-400" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Selected Items for Lot */}
-                            <div className="space-y-2">
-                                {lotModal.items.map((item, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 bg-neutral-50 p-2 rounded border">
-                                        <span className="flex-1 text-sm font-medium">{item.product_name}</span>
-                                        <input
-                                            type="number"
-                                            className="w-20 p-1 text-sm border rounded"
-                                            value={item.quantity}
-                                            onChange={(e) => {
-                                                const newItems = [...lotModal.items];
-                                                newItems[idx].quantity = parseFloat(e.target.value) || 0;
-                                                setLotModal({ ...lotModal, items: newItems });
-                                            }}
-                                        />
-                                        <button onClick={() => {
-                                            const newItems = lotModal.items.filter((_, i) => i !== idx);
-                                            setLotModal({ ...lotModal, items: newItems });
-                                        }}><X className="w-4 h-4 text-red-500" /></button>
-                                    </div>
-                                ))}
-                                <div className="text-right text-xs text-neutral-500">
-                                    Current Qty Sum: <span className={lotModal.items.reduce((acc, i) => acc + i.quantity, 0) !== lotModal.totalQty ? "text-red-500 font-bold" : "text-green-600 font-bold"}>
-                                        {lotModal.items.reduce((acc, i) => acc + i.quantity, 0)}
-                                    </span> / {lotModal.totalQty}
-                                </div>
-                            </div>
-
-                        </div>
-                        <div className="p-4 border-t bg-neutral-50 flex justify-end gap-2">
-                            <button
-                                onClick={() => setLotModal({ ...lotModal, show: false })}
-                                className="px-4 py-2 text-neutral-600 font-bold hover:bg-neutral-200 rounded-lg"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={confirmLotDistribution}
-                                disabled={lotModal.items.reduce((acc, i) => acc + i.quantity, 0) !== lotModal.totalQty || lotModal.items.length === 0}
-                                className="px-4 py-2 bg-primary text-white font-bold rounded-lg disabled:opacity-50"
-                            >
-                                Distribute & Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
 
 export default PurchaseOrderForm;
+
+function ShieldCheck({ className }: { className?: string }) {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+            <path d="m9 12 2 2 4-4"/>
+        </svg>
+    );
+}

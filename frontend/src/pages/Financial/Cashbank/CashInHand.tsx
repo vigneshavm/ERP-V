@@ -101,7 +101,8 @@ const CashInHand: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
+            <div className="pt-8 space-y-8 pb-20">
+                <PageHeader
                 title="Vault Surveillance"
                 description="High-fidelity monitoring of physical capital and direct fiscal clearing"
                 breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Vault' }]}
@@ -344,7 +345,8 @@ const CashInHand: React.FC = () => {
                     </div>
                 )}
             </div>
-        </Layout>
+        </div>
+    </Layout>
     );
 };
 

@@ -97,7 +97,8 @@ const AccountLedger: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
+            <div className="pt-8 space-y-6 pb-20">
+                <PageHeader
                 title={`${ledgerData.account.bankName} - Ledger`}
                 description={ledgerData.account._id === 'cash'
                     ? `Account: Cash | Type: ${ledgerData.account.accountType}`
@@ -304,6 +305,7 @@ const AccountLedger: React.FC = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
                 </div>
             </div>
         </Layout>

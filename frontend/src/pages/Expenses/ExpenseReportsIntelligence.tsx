@@ -65,7 +65,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                             Expense Reports Intelligence
                         </h2>
                         <p className="text-sm text-neutral-500 mt-0.5">
-                            Auditable insights for <span className="font-black text-primary">{report.report_period}</span>
+                            Auditable insights for <span className="font-black text-primary">{report?.report_period || 'Current Period'}</span>
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -85,7 +85,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                             <Scale className="w-20 h-20" />
                         </div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Gross Burn</p>
-                        <h3 className="text-2xl font-black tabular-nums">₹{report.total_expense.toLocaleString()}</h3>
+                        <h3 className="text-2xl font-black tabular-nums">₹{(report?.total_expense || 0).toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2 text-error font-bold text-[10px] uppercase">
                             <TrendingUp className="w-3.5 h-3.5" /> +8% vs Prev Period
                         </div>
@@ -93,13 +93,17 @@ const ExpenseReportsIntelligence: React.FC = () => {
 
                     <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Fixed Cost Ratio</p>
-                        <h3 className="text-2xl font-black">{Math.round((report.by_category.filter(c => c.type === 'FIXED').reduce((s, c) => s + c.amount, 0) / report.total_expense) * 100)}%</h3>
+                        <h3 className="text-2xl font-black">
+                            {report?.total_expense && report.total_expense > 0 
+                                ? Math.round(((report.by_category?.filter(c => c.type === 'FIXED').reduce((s, c) => s + c.amount, 0) || 0) / report.total_expense) * 100)
+                                : 0}%
+                        </h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold uppercase tracking-tight">Focusing on scalability</p>
                     </div>
 
                     <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative border-l-4 border-l-error">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Audit Flags</p>
-                        <h3 className="text-2xl font-black text-error">{report.audit_flags.length} ACTIVE</h3>
+                        <h3 className="text-2xl font-black text-error">{(report?.audit_flags?.length || 0)} ACTIVE</h3>
                         <div className="flex items-center gap-1.5 mt-2 text-neutral-500 font-bold text-[10px] uppercase">
                             <ShieldAlert className="w-3.5 h-3.5 text-error" /> Compliance Required
                         </div>
@@ -125,7 +129,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                 <span className="text-[10px] font-medium text-neutral-400 italic">Top 80% contributors highlighted</span>
                             </div>
                             <div className="space-y-6">
-                                {report.by_category.map((cat, idx) => (
+                                {report?.by_category?.map((cat, idx) => (
                                     <div key={idx} className="group">
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="flex items-center gap-3">
@@ -158,7 +162,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                     <Building2 className="w-4 h-4 text-neutral-300" />
                                 </div>
                                 <div className="divide-y divide-neutral-50 dark:divide-neutral-800">
-                                    {report.by_branch.map((branch, idx) => (
+                                    {report?.by_branch?.map((branch, idx) => (
                                         <div key={idx} className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors">
                                             <div>
                                                 <p className="text-xs font-black tracking-tight">{branch.branch}</p>
@@ -179,7 +183,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                     <Target className="w-4 h-4 text-neutral-300" />
                                 </div>
                                 <div className="p-6 space-y-4">
-                                    {report.by_payment_mode.map((mode, idx) => (
+                                    {report?.by_payment_mode?.map((mode, idx) => (
                                         <div key={idx} className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-1.5 h-1.5 rounded-full ${mode.mode === 'CASH' ? 'bg-error' : 'bg-primary'}`} />
@@ -205,7 +209,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                 Audit Sentinel
                             </h4>
                             <div className="space-y-4 relative z-10">
-                                {report.audit_flags.map((flag, idx) => (
+                                {report?.audit_flags?.map((flag, idx) => (
                                     <div key={idx} className="flex items-start gap-2 text-xs font-bold leading-relaxed border-l-2 border-white/30 pl-3">
                                         {flag}
                                     </div>
@@ -219,7 +223,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                 <h4 className="text-[10px] font-black uppercase tracking-widest">Agent Recommendation</h4>
                             </div>
                             <div className="space-y-4">
-                                {report.recommendations.map((rec, idx) => (
+                                {report?.recommendations?.map((rec, idx) => (
                                     <div key={idx} className="flex items-start gap-3 group">
                                         <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
                                             <CheckCircle2 className="w-3 h-3 group-hover:text-white transition-colors" />

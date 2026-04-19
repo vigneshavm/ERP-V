@@ -37,10 +37,10 @@ const CashBankPosition: React.FC = () => {
     if (loading && !position) {
         return (
             <Layout>
-                <div className="flex justify-center items-center py-20">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Synchronizing Treasury Nodes...</p>
+                <div className="flex justify-center items-center py-40">
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Treasury Nodes...</p>
                     </div>
                 </div>
             </Layout>
@@ -50,172 +50,194 @@ const CashBankPosition: React.FC = () => {
     const QuickAction: React.FC<{ title: string; icon: React.ElementType; onClick: () => void; color: string }> = ({ title, icon: Icon, onClick, color }) => (
         <button
             onClick={onClick}
-            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-indigo-500 group transition-all"
+            className="flex items-center justify-between p-6 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
         >
-            <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${color}`}>
-                    <Icon className="w-5 h-5 shadow-sm" />
+            <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
+                    <Icon className="w-6 h-6" />
                 </div>
-                <span className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-tight group-hover:text-indigo-500">{title}</span>
+                <span className="text-xs font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:translate-x-2 transition-all" />
         </button>
     );
 
     return (
         <Layout>
-            <PageHeader
-                title="Treasury Command Center"
-                description="Real-time surveillance of global liquidity and capital allocation"
-                breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Liquidity Center' }]}
-                actions={
-                    <button
-                        onClick={fetchPosition}
-                        className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-                    >
-                        <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-                    </button>
-                }
-            />
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Treasury Command"
+                    description="Real-time surveillance of global liquidity and capital allocation nodes."
+                    breadcrumbs={[
+                        { label: 'Home', link: '/dashboard' },
+                        { label: 'Treasury', link: '/cashbank/position' },
+                        { label: 'Liquidity Center' }
+                    ]}
+                    actions={
+                        <button
+                            onClick={fetchPosition}
+                            className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Sync Nodes
+                        </button>
+                    }
+                />
 
-            <div className="grid grid-cols-12 gap-6">
-                {/* Liquidity Pulse Banners */}
-                <div className="col-span-12 lg:col-span-8">
-                    <CashBankHero
-                        title="Net Liquidity Position"
-                        value={`₹${(position?.totalLiquidity || 0).toLocaleString('en-IN')}`}
-                        icon={TrendingUp}
-                        subtitle="Consolidated real-time market capital"
-                        stats={
-                            <>
-                                <div className="px-4 py-2 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                <div className="grid grid-cols-12 gap-8">
+                    {/* Liquidity Pulse Banners */}
+                    <div className="col-span-12 lg:col-span-8 space-y-8">
+                        <CashBankHero
+                            title="Net Aggregate Liquidity"
+                            value={`₹${(position?.totalLiquidity || 0).toLocaleString('en-IN')}`}
+                            icon={TrendingUp}
+                            subtitle="Consolidated real-time market capital across all institutional nodes."
+                            stats={
+                                <div className="px-5 py-2.5 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
                                     <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                                     Operational Threshold: Healthy
                                 </div>
-                            </>
-                        }
-                    />
+                            }
+                        />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100 dark:shadow-none space-y-8 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-125 transition-transform">
-                                <Wallet className="w-40 h-40" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="bg-gradient-to-br from-primary to-indigo-700 p-10 rounded-[3rem] text-white shadow-2xl shadow-primary/20 space-y-10 relative overflow-hidden group border border-white/10">
+                                <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-1000">
+                                    <Wallet className="w-56 h-56" />
+                                </div>
+                                <div className="relative z-10">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Physical Vault Node</p>
+                                    <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.cashInHand || 0).toLocaleString('en-IN')}</h2>
+                                    <p className="text-xs font-bold text-white/80 mt-4 flex items-center gap-2 italic">
+                                        <ArrowDownLeft className="w-4 h-4 text-emerald-400" /> Immediate physical liquidity
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => navigate('/cashbank/cash-in-hand')} 
+                                    className="relative z-10 bg-white/10 hover:bg-white/20 px-8 py-3.5 rounded-2xl backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 active:scale-95"
+                                >
+                                    Enter Vault Terminal
+                                </button>
+                            </div>
+
+                            <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3rem] text-white shadow-2xl space-y-10 relative overflow-hidden group border border-neutral-800">
+                                <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000">
+                                    <PiggyBank className="w-56 h-56" />
+                                </div>
+                                <div className="relative z-10">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500">Digital Treasury Node</p>
+                                    <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.totalBankBalance || 0).toLocaleString('en-IN')}</h2>
+                                    <p className="text-xs font-bold text-neutral-400 mt-4 flex items-center gap-2 italic">
+                                        <ArrowUpRight className="w-4 h-4 text-primary" /> Mapping {position?.breakdown.bank.accounts} active accounts
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => navigate('/cashbank/bank-accounts')} 
+                                    className="relative z-10 bg-white/5 hover:bg-white/10 px-8 py-3.5 rounded-2xl backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-95"
+                                >
+                                    Monitor Account Nodes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Aggregate Exposure Sidebar */}
+                    <div className="col-span-12 lg:col-span-4 space-y-8">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3rem] shadow-sm relative overflow-hidden group">
+                            <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                <PieChart className="w-48 h-48" />
                             </div>
                             <div className="relative z-10">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Physical Vault Node</p>
-                                <h2 className="text-4xl font-black mt-2">₹{(position?.cashInHand || 0).toLocaleString('en-IN')}</h2>
-                                <p className="text-xs font-bold opacity-80 mt-1 flex items-center gap-1.5"><ArrowDownLeft className="w-3 h-3 text-emerald-400" /> Cash-in-hand liquidity</p>
-                            </div>
-                            <button onClick={() => navigate('/cashbank/cash-in-hand')} className="bg-white/10 hover:bg-white/20 px-6 py-2.5 rounded-xl backdrop-blur-md text-[10px] font-black uppercase tracking-widest transition-all">Enter Vault</button>
-                        </div>
-
-                        <div className="bg-gradient-to-br from-slate-800 to-slate-950 p-8 rounded-[2.5rem] text-white shadow-xl space-y-8 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-125 transition-transform">
-                                <PiggyBank className="w-40 h-40" />
-                            </div>
-                            <div className="relative z-10">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Digital Treasury Node</p>
-                                <h2 className="text-4xl font-black mt-2">₹{(position?.totalBankBalance || 0).toLocaleString('en-IN')}</h2>
-                                <p className="text-xs font-bold opacity-80 mt-1 flex items-center gap-1.5"><ArrowUpRight className="w-3 h-3 text-blue-400" /> Across {position?.breakdown.bank.accounts} active units</p>
-                            </div>
-                            <button onClick={() => navigate('/cashbank/bank-accounts')} className="bg-white/10 hover:bg-white/20 px-6 py-2.5 rounded-xl backdrop-blur-md text-[10px] font-black uppercase tracking-widest transition-all">Monitor Banks</button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Aggregate Exposure Sidebar */}
-                <div className="col-span-12 lg:col-span-4 space-y-6">
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                            <PieChart className="w-32 h-32" />
-                        </div>
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600">
-                                    <PieChart className="w-5 h-5" />
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                                        <PieChart className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Capital Allocation</h3>
                                 </div>
-                                <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">Allocation Map</h3>
-                            </div>
 
-                            <div className="space-y-6">
-                                <div className="space-y-4">
-                                    <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span>Capital Allocation</span>
-                                        <span>100% Volume</span>
-                                    </div>
-                                    <div className="flex h-3 w-full rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                                        <div className="bg-indigo-500 shadow-lg shadow-indigo-200/50" style={{ width: `${position?.breakdown.cash.percentage}%` }}></div>
-                                        <div className="bg-slate-800 dark:bg-slate-700" style={{ width: `${position?.breakdown.bank.percentage}%` }}></div>
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                                            <span className="text-[10px] font-bold text-slate-500 uppercase">{position?.breakdown.cash.percentage || 0}% Cash</span>
+                                <div className="space-y-8">
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">
+                                            <span>Allocation Metric</span>
+                                            <span>100% Total Volume</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-slate-800 dark:bg-slate-400"></div>
-                                            <span className="text-[10px] font-bold text-slate-500 uppercase">{position?.breakdown.bank.percentage || 0}% Bank</span>
+                                        <div className="flex h-4 w-full rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700">
+                                            <div className="bg-primary shadow-lg shadow-primary/40 transition-all duration-1000" style={{ width: `${position?.breakdown.cash.percentage}%` }}></div>
+                                            <div className="bg-neutral-800 dark:bg-neutral-400 transition-all duration-1000" style={{ width: `${position?.breakdown.bank.percentage}%` }}></div>
+                                        </div>
+                                        <div className="flex gap-6">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-3 h-3 rounded-full bg-primary" />
+                                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{position?.breakdown.cash.percentage || 0}% Vault</span>
+                                            </div>
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-3 h-3 rounded-full bg-neutral-800 dark:bg-neutral-400" />
+                                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{position?.breakdown.bank.percentage || 0}% Bank</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Clearing House Hotkeys */}
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm space-y-6">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">
-                                <ArrowRightLeft className="w-5 h-5" />
+                        {/* Internal Clearing Execution */}
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3rem] shadow-sm space-y-8">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 shadow-sm">
+                                    <ArrowRightLeft className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
                             </div>
-                            <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">Internal Clearing</h3>
+                            <div className="grid grid-cols-1 gap-4">
+                                <QuickAction
+                                    title="Withdrawal Execution"
+                                    icon={ArrowDownLeft}
+                                    color="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20"
+                                    onClick={() => navigate('/cashbank/transfers', { state: { toAccount: 'cash' } })}
+                                />
+                                <QuickAction
+                                    title="Deposit Execution"
+                                    icon={ArrowUpRight}
+                                    color="bg-primary/10 text-primary dark:bg-primary/20"
+                                    onClick={() => navigate('/cashbank/transfers', { state: { fromAccount: 'cash' } })}
+                                />
+                                <QuickAction
+                                    title="Registry Control"
+                                    icon={ShieldCheck}
+                                    color="bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20"
+                                    onClick={() => navigate('/cashbank/bank-accounts')}
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 gap-3">
-                            <QuickAction
-                                title="Withdrawal Execution"
-                                icon={ArrowDownLeft}
-                                color="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20"
-                                onClick={() => navigate('/cashbank/transfers', { state: { toAccount: 'cash' } })}
-                            />
-                            <QuickAction
-                                title="Deposit Execution"
-                                icon={ArrowUpRight}
-                                color="bg-blue-50 text-blue-600 dark:bg-blue-900/20"
-                                onClick={() => navigate('/cashbank/transfers', { state: { fromAccount: 'cash' } })}
-                            />
-                            <QuickAction
-                                title="Unit Management"
-                                icon={ShieldCheck}
-                                color="bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20"
-                                onClick={() => navigate('/cashbank/bank-accounts')}
-                            />
-                        </div>
-                    </div>
 
-                    {/* Fiscal Advisory */}
-                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-800/30 p-8 rounded-[2.5rem] space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600">
-                                <Zap className="w-5 h-5" />
+                        {/* Fiscal Advisory Stream */}
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] space-y-6">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-2xl text-amber-500 shadow-sm border border-amber-100 dark:border-amber-900/20">
+                                    <Zap className="w-6 h-6" />
+                                </div>
+                                <h4 className="text-sm font-black text-amber-900 dark:text-amber-300 uppercase tracking-[0.2em] leading-none">Fiscal Advisory</h4>
                             </div>
-                            <h4 className="text-sm font-black text-amber-900 dark:text-amber-300 uppercase tracking-widest leading-none">Fiscal Advisory</h4>
-                        </div>
-                        <div className="space-y-3">
-                            {(position?.breakdown.cash.percentage || 0) > 30 && (
-                                <p className="text-[11px] text-amber-800 dark:text-amber-400 font-medium leading-relaxed italic">High vault exposure detected. Consider re-routing capital to digital units for standard risk mitigation.</p>
-                            )}
-                            {(position?.breakdown.bank.percentage || 0) > 95 && (
-                                <p className="text-[11px] text-amber-800 dark:text-amber-400 font-medium leading-relaxed italic">Minimum liquidity reached in physical nodes. Maintain operational reserve for immediate market clearance.</p>
-                            )}
-                            <p className="text-[11px] text-amber-800 dark:text-amber-400 font-medium leading-relaxed italic">Current asset distribution matches optimized ERP liquidity patterns for the region.</p>
+                            <div className="space-y-4">
+                                {(position?.breakdown.cash.percentage || 0) > 30 && (
+                                    <p className="text-[11px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-amber-500/30 pl-4">
+                                        High vault exposure detected. Consider re-routing capital to digital units for institutional risk mitigation.
+                                    </p>
+                                )}
+                                {(position?.breakdown.bank.percentage || 0) > 95 && (
+                                    <p className="text-[11px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-amber-500/30 pl-4">
+                                        Minimum liquidity reached in physical nodes. Maintain operational reserve for immediate market clearance.
+                                    </p>
+                                )}
+                                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-emerald-500/30 pl-4">
+                                    Asset distribution aligns with optimized ERP liquidity patterns for the current fiscal cycle.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="pb-20"></div>
         </Layout>
     );
 };
 
 export default CashBankPosition;
-

@@ -240,7 +240,7 @@ const InventoryManager: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-main pb-16">
+            <div className="space-y-6 pt-8 text-main pb-16">
                 <PageHeader
                     title="Inventory Core Manager"
                     description={`Central stock authority and metadata control for ${tenant_id}`}

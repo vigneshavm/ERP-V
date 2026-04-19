@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/redux/store";
 import { addTransaction, addCheque, updateChequeStatus } from "@/redux/slices/financeSlice";
 import Layout from "@/components/shared/Layout";
+import PageHeader from "@/components/shared/Layout/PageHeader";
 import {
     TrendingUp,
     TrendingDown,
@@ -129,31 +130,28 @@ const FinanceOverviewPage: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
-
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h2 className="text-3xl font-black flex items-center gap-2 tracking-tight uppercase">
-                            <Layers className="w-8 h-8 text-primary" />
-                            Financial Intelligence Hub
-                        </h2>
-                        <p className="text-sm text-neutral-500 mt-1 font-medium flex items-center gap-2">
-                            Real-time capital flow analysis for <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-md font-bold italic">{currentSector}</span>
-                        </p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                            <Download className="w-4 h-4" /> Export Ledger
-                        </button>
-                        <button
-                            onClick={() => activeTab === 'CHEQUES' ? setShowChequeModal(true) : setShowExpenseModal(true)}
-                            className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
-                        >
-                            <Plus className="w-4 h-4" /> Log {activeTab === 'CHEQUES' ? 'Cheque' : 'Transaction'}
-                        </button>
-                    </div>
-                </div>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Financial Intelligence Hub"
+                    description={`Real-time capital flow analysis for ${currentSector}`}
+                    breadcrumbs={[
+                        { label: 'Home', link: '/dashboard' },
+                        { label: 'Finance' }
+                    ]}
+                    actions={
+                        <div className="flex gap-3">
+                            <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                                <Download className="w-4 h-4" /> Export Ledger
+                            </button>
+                            <button
+                                onClick={() => activeTab === 'CHEQUES' ? setShowChequeModal(true) : setShowExpenseModal(true)}
+                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
+                            >
+                                <Plus className="w-4 h-4" /> Log {activeTab === 'CHEQUES' ? 'Cheque' : 'Transaction'}
+                            </button>
+                        </div>
+                    }
+                />
 
                 {/* KPI Pulse Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

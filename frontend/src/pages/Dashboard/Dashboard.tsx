@@ -251,7 +251,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout>
-      <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+      <div className="space-y-8 pt-8">
 
         {/* Header Section with Blueprint Atmosphere */}
         <div className="relative overflow-hidden glass-panel p-8 mb-8 group border-t-2 border-t-primary/30">

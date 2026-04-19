@@ -151,11 +151,12 @@ const Transfers: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
-                title="Internal Clearing House"
-                description="Coordinate inter-unit liquidity redistribution and capital balancing"
-                breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Clearing' }]}
-            />
+            <div className="pt-8 space-y-8 pb-20">
+                <PageHeader
+                    title="Internal Clearing House"
+                    description="Coordinate inter-unit liquidity redistribution and capital balancing"
+                    breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Clearing' }]}
+                />
 
             <div className="max-w-6xl mx-auto pb-20">
                 <form onSubmit={handleSubmit} className="space-y-12">
@@ -279,7 +280,8 @@ const Transfers: React.FC = () => {
                     </div>
                 </form>
             </div>
-        </Layout>
+        </div>
+    </Layout>
     );
 };
 

@@ -12,6 +12,13 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: '0.0.0.0',
       strictPort: false,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
     // Keep optimizeDeps to ensure dependencies used in root src are pre-bundled
     optimizeDeps: {

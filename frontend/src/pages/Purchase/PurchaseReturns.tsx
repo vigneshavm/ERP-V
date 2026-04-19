@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../components/shared/Layout";
+import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import StatsCard from "../../components/shared/Display/StatsCard";
 import {
     RotateCcw, Plus, Search, Filter, ArrowRight, Clock,
     CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,
-    Search as SearchIcon
+    Search as SearchIcon, ArrowUpRight, Activity, Zap, Info, ShieldCheck
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
@@ -28,8 +26,7 @@ const PurchaseReturns: React.FC = () => {
                 setReturns(data || []);
             } catch (err) {
                 console.error("Failed to fetch returns", err);
-                // toast.error("Failed to load purchase returns");
-                // Mocking data if API fails
+                // Mocking data for aesthetic preview
                 setReturns([
                     {
                         id: '1',
@@ -72,21 +69,18 @@ const PurchaseReturns: React.FC = () => {
     }, []);
 
     const getStatusBadge = (status: PurchaseReturnStatus) => {
+        const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status) {
             case 'Initiated':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-wider">Initiated</span>;
+                return <span className={`${baseClass} bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400`}><Activity className="w-3 h-3" /> Initiated</span>;
             case 'In-Transit':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100 uppercase tracking-wider">In-Transit</span>;
-            case 'Received by Vendor':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wider">At Vendor</span>;
-            case 'Processed':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider">Processed</span>;
+                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400`}><Truck className="w-3 h-3" /> In-Transit</span>;
             case 'Credited':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500 text-white shadow-sm uppercase tracking-wider flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Credited</span>;
+                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400`}><ShieldCheck className="w-3 h-3" /> Credited</span>;
             case 'Cancelled':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-500 border border-neutral-200 uppercase tracking-wider">Cancelled</span>;
+                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
             default:
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-50 text-neutral-400 uppercase tracking-wider">{status}</span>;
+                return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
         }
     };
 
@@ -119,146 +113,151 @@ const PurchaseReturns: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-in fade-in duration-500 pb-10">
+            <div className="pt-8 space-y-10 pb-20">
                 <PageHeader
-                    title="Purchase Returns"
-                    description="Track return authorizations, shipping status, and debit note credits from vendors."
+                    title="Procurement Reversal Ledger"
+                    description="Execute reverse logistics nodes and track institutional debit-note credits."
+                    breadcrumbs={[
+                        { label: 'Procurement', link: '/purchase' },
+                        { label: 'Returns Archive' }
+                    ]}
                     actions={
                         <button
                             onClick={() => navigate('/purchase/returns/new')}
-                            className="btn btn-primary bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/20 px-6"
+                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition hover:scale-105 active:scale-95 flex items-center gap-3"
                         >
-                            <RotateCcw className="w-4 h-4" />
-                            Initiate Return
+                            <RotateCcw className="w-4 h-4" /> Initiate Reversal Node
                         </button>
                     }
                 />
 
-                {/* KPI Section */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatsCard
-                        title="Total Returns"
-                        value={stats.total}
-                        icon={<RotateCcw className="w-full h-full" />}
-                        iconBgColor="bg-brand-50"
-                        iconColor="text-brand-600"
-                    />
-                    <StatsCard
-                        title="Total Refund Value"
-                        value={formatCurrency(stats.totalAmount)}
-                        icon={<DollarSign className="w-full h-full" />}
-                        iconBgColor="bg-emerald-50"
-                        iconColor="text-emerald-600"
-                    />
-                    <StatsCard
-                        title="Pending Credits"
-                        value={formatCurrency(stats.pendingAmount)}
-                        icon={<Clock className="w-full h-full" />}
-                        iconBgColor="bg-amber-50"
-                        iconColor="text-amber-600"
-                    />
-                    <StatsCard
-                        title="Processed (Credited)"
-                        value={stats.total - returns.filter(r => r.status !== 'Credited').length}
-                        icon={<CheckCircle className="w-full h-full" />}
-                        iconBgColor="bg-indigo-50"
-                        iconColor="text-indigo-600"
-                    />
+                {/* KPI Pulse Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    {[
+                        { label: 'Total Nodes', val: stats.total, icon: RotateCcw, color: 'text-primary', bg: 'bg-primary/10' },
+                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
+                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                    ].map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                            <div className="flex items-center justify-between mb-4 relative z-10">
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                                    <card.icon className="w-6 h-6" />
+                                </div>
+                                <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
+                                <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">{card.val}</p>
+                            </div>
+                            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+                        </div>
+                    ))}
                 </div>
 
-                {/* Filters */}
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
-                    <div className="relative w-full sm:w-96">
-                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                        <input
-                            type="text"
-                            placeholder="Search by Return No, Vendor, or GRN..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
-                        />
+                {/* Audit Control Matrix */}
+                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="relative w-full md:w-[500px]">
+                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Archive Search</label>
+                        <div className="relative">
+                            <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <input
+                                type="text"
+                                placeholder="Search Return ID, Vendor, or GRN..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                            />
+                        </div>
                     </div>
-                    <div className="flex gap-2 w-full sm:w-auto">
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm min-w-[140px]"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="Initiated">Initiated</option>
-                            <option value="In-Transit">In-Transit</option>
-                            <option value="Received by Vendor">At Vendor</option>
-                            <option value="Credited">Credited</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-500">
-                            <Filter className="w-5 h-5" />
+                    <div className="flex items-end gap-6 w-full md:w-auto">
+                        <div className="flex-1 md:w-64">
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Operational State</label>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="w-full px-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                            >
+                                <option value="all">All States</option>
+                                <option value="Initiated">Initiated</option>
+                                <option value="In-Transit">In-Transit</option>
+                                <option value="Received by Vendor">At Vendor</option>
+                                <option value="Credited">Credited</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                            <Filter className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
 
-                {/* Table */}
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
+                {/* Reversal Ledger */}
+                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
+                        <table className="w-full text-left">
+                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
                                 <tr>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Return Details</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Vendor / Supplier</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Orig. Document</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px]">Reason</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-right">Refund Amount</th>
-                                    <th className="px-6 py-4 font-bold text-neutral-500 uppercase text-[10px] text-center">Status</th>
-                                    <th className="px-6 py-4"></th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Reversal ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Institutional Vendor</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Oracle Links</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Incident Vector</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right">Refund (INR)</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Protocol Status</th>
+                                    <th className="px-8 py-5"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                 {filteredReturns.map((r) => (
                                     <tr
                                         key={r.id}
-                                        className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                                        className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-pointer"
                                         onClick={() => navigate(`/purchase/returns/view/${r.id}`)}
                                     >
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-neutral-900 dark:text-white">{r.return_number}</span>
-                                                <span className="text-[10px] text-neutral-500 font-medium">{new Date(r.return_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
+                                        <td className="px-8 py-6">
+                                            <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">#{r.return_number}</p>
+                                            <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">{new Date(r.return_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{r.vendor_name}</p>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-black text-primary bg-primary/5 px-3 py-1 rounded-full w-fit uppercase tracking-widest border border-primary/10">GRN: {r.grn_number}</span>
+                                                {r.po_number && <span className="text-[9px] text-neutral-400 font-black uppercase tracking-widest opacity-60">PO: {r.po_number}</span>}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="font-semibold text-neutral-700 dark:text-neutral-300">{r.vendor_name}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md inline-block w-fit">GRN: {r.grn_number}</span>
-                                                {r.po_number && <span className="text-[9px] text-neutral-400 font-medium">PO: {r.po_number}</span>}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${r.reason === 'Defective' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-neutral-50 text-neutral-600 border-neutral-100'}`}>
+                                        <td className="px-8 py-6">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${r.reason === 'Defective' ? 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-900/20 dark:border-rose-800/30' : 'bg-neutral-50 text-neutral-600 border-neutral-100 dark:bg-neutral-900 dark:border-neutral-800'}`}>
                                                 {r.reason}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="font-bold text-neutral-900 dark:text-white">{formatCurrency(r.total_amount)}</span>
+                                        <td className="px-8 py-6 text-right">
+                                            <span className="text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tight">{formatCurrency(r.total_amount)}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {getStatusBadge(r.status)}
+                                        <td className="px-8 py-6">
+                                            <div className="flex justify-center">
+                                                {getStatusBadge(r.status)}
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="p-2 text-neutral-400 group-hover:text-brand-600 transition-colors">
-                                                <ChevronRight className="w-5 h-5" />
+                                        <td className="px-8 py-6 text-right">
+                                            <button className="p-3 text-neutral-300 group-hover:text-primary group-hover:bg-primary/5 rounded-2xl transition-all active:scale-95">
+                                                <ChevronRight className="w-6 h-6" />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
                                 {filteredReturns.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-20 text-center">
-                                            <div className="flex flex-col items-center justify-center opacity-40">
-                                                <RotateCcw className="w-12 h-12 mb-3" />
-                                                <p className="font-bold text-sm uppercase tracking-widest">No Returns Found</p>
-                                                <p className="text-xs">Start by initiating a return against a GRN</p>
+                                        <td colSpan={7} className="px-8 py-32 text-center">
+                                            <div className="flex flex-col items-center justify-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                    <RotateCcw className="w-10 h-10" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-sm uppercase tracking-widest">Archive Empty</p>
+                                                    <p className="text-xs font-bold mt-2 italic leading-relaxed">No reversal nodes detected. Initialize returns against verified GRNs to populate ledger.</p>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

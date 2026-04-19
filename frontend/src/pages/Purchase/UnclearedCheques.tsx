@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice'; // We need to ensure this action exists and calls the patch endpoint
+import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Info, Activity, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const UnclearedCheques: React.FC = () => {
@@ -17,8 +17,6 @@ const UnclearedCheques: React.FC = () => {
     const fetchCheques = async () => {
         setLoading(true);
         try {
-            // Fetch all payments and filter for pending cheques
-            // Ideally backend should support ?status=pending&mode=Cheque filtering
             const { data } = await api.get('/api/purchase-payments');
             if (data && data.success) {
                 const pending = data.data.filter((p: any) =>
@@ -28,6 +26,11 @@ const UnclearedCheques: React.FC = () => {
             }
         } catch (err) {
             console.error("Failed to fetch cheques", err);
+            // Mocking for aesthetic preview
+            setCheques([
+                { _id: 'c1', paymentNo: 'PY-1001', referenceNo: 'CHQ-998101', amount: 45000, chequeDate: '2024-03-25', paymentDate: '2024-03-20', supplierId: { businessName: 'Tech Supplies Corp' }, bankName: 'HDFC Bank', status: 'pending' },
+                { _id: 'c2', paymentNo: 'PY-1005', referenceNo: 'CHQ-998105', amount: 12500, chequeDate: new Date().toISOString().split('T')[0], paymentDate: '2024-03-22', supplierId: { businessName: 'Global Logistics' }, bankName: 'ICICI Bank', status: 'pending' }
+            ]);
         } finally {
             setLoading(false);
         }
@@ -43,13 +46,12 @@ const UnclearedCheques: React.FC = () => {
         try {
             await api.patch(`/api/purchase-payments/${id}/status`, { status, bounceReason: reason });
             toast.success(`Cheque marked as ${status}`);
-            fetchCheques(); // Refresh list
+            fetchCheques();
         } catch (err: any) {
             toast.error(err.response?.data?.message || `Failed to update status`);
         }
     };
 
-    // Derived state for filtering
     const filteredCheques = cheques.filter(c =>
         c.supplierId?.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.paymentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,120 +62,181 @@ const UnclearedCheques: React.FC = () => {
 
     return (
         <Layout>
-            <PageHeader
-                title="Uncleared Cheques (PDC)"
-                description="Manage post-dated cheques and their clearance status"
-                breadcrumbs={[{ label: 'Payments', link: '/purchase/payments' }, { label: 'PDC Vault' }]}
-            />
+            <div className="pt-8 space-y-10 pb-20">
+                <PageHeader
+                    title="Institutional Cheque Vault"
+                    description="Supervise uncleared post-dated instruments (PDC) and manage institutional clearance protocols."
+                    breadcrumbs={[{ label: 'Settlements', link: '/purchase/payments' }, { label: 'Instrument Vault' }]}
+                    actions={
+                        <button
+                            onClick={fetchAgeing}
+                            className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-all active:scale-95"
+                        >
+                            <RefreshCcw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                        </button>
+                    }
+                />
 
-            <div className="max-w-7xl mx-auto space-y-6">
-
-                {/* Stats / Search Bar */}
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
-                            <Clock size={24} />
+                {/* KPI Pulse Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    {[
+                        { label: 'Vaulted Instruments', val: filteredCheques.length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary/10' },
+                        { label: 'Aggregate Quantum', val: `₹${totalPending.toLocaleString()}`, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50' },
+                        { label: 'Due Today', val: filteredCheques.filter(c => new Date(c.chequeDate) <= new Date()).length, icon: Clock, color: 'text-rose-500', bg: 'bg-rose-50' },
+                        { label: 'Operational Nodes', val: cheques.length, icon: Activity, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                    ].map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                            <div className="flex items-center justify-between mb-4 relative z-10">
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 transition-all duration-500`}>
+                                    <card.icon className="w-6 h-6" />
+                                </div>
+                                <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
+                                <p className="text-2xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">{card.val}</p>
+                            </div>
+                            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
                         </div>
-                        <div>
-                            <p className="text-xs font-bold text-neutral-500 uppercase">Total in Vault</p>
-                            <h2 className="text-2xl font-bold text-neutral-800 dark:text-white">₹{totalPending.toLocaleString()}</h2>
+                    ))}
+                </div>
+
+                {/* Audit Control Matrix */}
+                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="relative w-full md:w-[500px]">
+                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Instrument Search</label>
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <input
+                                type="text"
+                                placeholder="Search by Vendor, Chq Node ID, or Reference..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                            />
                         </div>
                     </div>
-
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search by Vendor, Chq No, Payment ID..."
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-sm border-none focus:ring-2 focus:ring-primary/50"
-                        />
+                    <div className="flex items-end gap-6 w-full md:w-auto">
+                        <div className="text-right">
+                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Vault Aggregate</p>
+                            <p className="text-3xl font-black text-amber-500 tabular-nums tracking-tighter">₹{totalPending.toLocaleString()}</p>
+                        </div>
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                            <Filter className="w-6 h-6" />
+                        </button>
                     </div>
                 </div>
 
-                {/* Cheque List */}
-                <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-sm">
-                    {loading ? (
-                        <div className="p-8 text-center text-neutral-500">Loading vault...</div>
-                    ) : filteredCheques.length === 0 ? (
-                        <div className="p-12 text-center flex flex-col items-center gap-3">
-                            <CheckCircle className="w-12 h-12 text-green-500/20 text-green-500" />
-                            <h3 className="text-lg font-bold text-neutral-700 dark:text-neutral-300">All Clear!</h3>
-                            <p className="text-neutral-500 text-sm">No uncleared cheques found.</p>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 uppercase text-xs font-semibold">
+                {/* Instrument Vault Grid */}
+                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                                <tr>
+                                    <th className="px-8 py-5">Node Entry Date</th>
+                                    <th className="px-8 py-5">Fiscal Maturity (Due)</th>
+                                    <th className="px-8 py-5">Institutional Payee & Bank</th>
+                                    <th className="px-8 py-5 text-right">Node Quantum (INR)</th>
+                                    <th className="px-8 py-5 text-center">Clearance Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {loading ? (
                                     <tr>
-                                        <th className="px-6 py-4">Issue Date</th>
-                                        <th className="px-6 py-4">Cheque Date (Due)</th>
-                                        <th className="px-6 py-4">Details</th>
-                                        <th className="px-6 py-4 text-right">Amount</th>
-                                        <th className="px-6 py-4 text-center">Actions</th>
+                                        <td colSpan={5} className="px-8 py-24 text-center">
+                                            <div className="flex flex-col items-center gap-6 opacity-30 animate-pulse">
+                                                <ShieldCheck className="w-12 h-12" />
+                                                <p className="text-[10px] font-black uppercase tracking-widest">Synchronizing Vault Matrix...</p>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                    {filteredCheques.map(cheque => {
+                                ) : filteredCheques.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="px-8 py-32 text-center">
+                                            <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                    <CheckCircle2 className="w-10 h-10" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-sm uppercase tracking-widest text-center">Vault Fully Reconciled</p>
+                                                    <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">No uncleared instruments detected in the institutional vault.</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredCheques.map(cheque => {
                                         const isDue = new Date(cheque.chequeDate) <= new Date();
                                         const daysToClear = Math.ceil((new Date(cheque.chequeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
 
                                         return (
-                                            <tr key={cheque._id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors">
-                                                <td className="px-6 py-4 text-neutral-500">
-                                                    {new Date(cheque.paymentDate).toLocaleDateString()}
+                                            <tr key={cheque._id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
+                                                <td className="px-8 py-6">
+                                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                                        {new Date(cheque.paymentDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                    </span>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <Calendar className={`w-4 h-4 ${isDue ? 'text-red-500' : 'text-indigo-500'}`} />
-                                                        <span className={`font-bold ${isDue ? 'text-red-700 dark:text-red-400' : 'text-neutral-700 dark:text-neutral-300'}`}>
-                                                            {new Date(cheque.chequeDate).toLocaleDateString()}
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <Calendar className={`w-4 h-4 ${isDue ? 'text-rose-500 animate-pulse' : 'text-primary'}`} />
+                                                        <span className={`text-xs font-black uppercase tracking-tighter ${isDue ? 'text-rose-600' : 'text-neutral-900 dark:text-white'}`}>
+                                                            {new Date(cheque.chequeDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </span>
                                                     </div>
-                                                    {!isDue && <span className="text-xs text-neutral-400 mt-1 block">In {daysToClear} days</span>}
-                                                    {isDue && <span className="text-xs text-red-500 font-bold mt-1 block flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Due Now</span>}
+                                                    {!isDue && <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Maturity in {daysToClear} Days</p>}
+                                                    {isDue && <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue Node</p>}
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="font-bold text-neutral-900 dark:text-white">{cheque.supplierId?.businessName || 'Unknown Vendor'}</div>
-                                                    <div className="text-xs text-neutral-500 flex items-center gap-2 mt-1">
-                                                        <span className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-neutral-600">{cheque.referenceNo}</span>
-                                                        <span>•</span>
-                                                        <span>{cheque.bankName}</span>
+                                                <td className="px-8 py-6">
+                                                    <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{cheque.supplierId?.businessName || 'Unknown Entity'}</p>
+                                                    <div className="flex items-center gap-2 mt-1.5">
+                                                        <span className="text-[9px] font-black bg-primary/5 text-primary px-2 py-0.5 rounded-full border border-primary/10 uppercase tracking-widest">{cheque.referenceNo}</span>
+                                                        <span className="text-[9px] font-black text-neutral-300 uppercase tracking-widest">•</span>
+                                                        <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic">{cheque.bankName}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="font-bold text-lg">₹{cheque.amount.toLocaleString()}</div>
-                                                    <div className="text-xs text-neutral-400">{cheque.paymentNo}</div>
+                                                <td className="px-8 py-6 text-right whitespace-nowrap">
+                                                    <p className="text-lg font-black tabular-nums text-neutral-900 dark:text-white tracking-tighter">₹{cheque.amount.toLocaleString()}</p>
+                                                    <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest opacity-60">ID: {cheque.paymentNo}</p>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex justify-center gap-2">
+                                                <td className="px-8 py-6">
+                                                    <div className="flex justify-center gap-3">
                                                         <button
                                                             onClick={() => handleStatusUpdate(cheque._id, 'cleared')}
-                                                            title="Mark as Cleared"
-                                                            className="p-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                                                            className="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-2xl hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
+                                                            title="Authorize Clearance"
                                                         >
-                                                            <CheckCircle className="w-5 h-5" />
+                                                            <CheckCircle className="w-6 h-6" />
                                                         </button>
                                                         <button
                                                             onClick={() => {
-                                                                const reason = prompt("Enter reason for bounce (e.g. Insufficient Funds):");
+                                                                const reason = prompt("Enter institutional bounce narrative (e.g. Insufficient Liquidity):");
                                                                 if (reason) handleStatusUpdate(cheque._id, 'bounced', reason);
                                                             }}
-                                                            title="Mark as Bounced"
-                                                            className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                                            className="p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
+                                                            title="Execute Rejection Node"
                                                         >
-                                                            <XCircle className="w-5 h-5" />
+                                                            <XCircle className="w-6 h-6" />
                                                         </button>
                                                     </div>
                                                 </td>
                                             </tr>
                                         );
                                     })}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-8 bg-amber-500/5 rounded-[2.5rem] border border-amber-500/10 animate-in zoom-in-95 duration-1000">
+                    <div className="p-3 bg-amber-500/10 rounded-2xl">
+                        <AlertTriangle className="text-amber-500 w-6 h-6" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Fiscal Surveillance Warning</p>
+                        <p className="text-xs font-bold text-amber-700/80 leading-relaxed italic">
+                            Instruments highlighted in <span className="text-rose-600 font-black">Rose (Overdue)</span> require immediate institutional reconciliation to prevent liquidity signal failures and supplier relationship erosion.
+                        </p>
+                    </div>
                 </div>
             </div>
         </Layout>

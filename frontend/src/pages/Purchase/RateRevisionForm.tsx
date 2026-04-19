@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { Save, Calculator, Search, AlertCircle, Info } from 'lucide-react';
+import { Save, Calculator, Search, AlertCircle, Info, ArrowLeft, Activity, Zap, ShieldCheck, Clock, ChevronDown } from 'lucide-react';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
 
@@ -32,6 +32,7 @@ const RateRevisionForm: React.FC = () => {
     const [selectedBatch, setSelectedBatch] = useState<any>(null);
     const [newRate, setNewRate] = useState<number>(0);
     const [reason, setReason] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         // Fetch Suppliers
@@ -39,18 +40,12 @@ const RateRevisionForm: React.FC = () => {
             if (res.data.success) setSuppliers(res.data.data);
         }).catch(err => console.error("Failed to fetch suppliers", err));
 
-        // Fetch Items (Optimize in production to filter or search)
+        // Fetch Items
         api.get('/inventory/items').then(res => {
-            // Assuming structure { items: [...] } or { data: [...] } depending on API. 
-            // InventoryService return format check: { items, pagination } or just array?
-            // Looking at InventoryController (not shown but inferred), likely returns { success: true, data: { items: [] } }
             if (res.data.data?.items) setItems(res.data.data.items);
             else if (Array.isArray(res.data.data)) setItems(res.data.data);
         }).catch(err => console.error("Failed to fetch items", err));
     }, []);
-
-    // Filter items based on ... actually items are global usually. 
-    // Maybe we filter items that this supplier supplies? For now, list all.
 
     useEffect(() => {
         if (itemId && batchNumber) {
@@ -65,13 +60,7 @@ const RateRevisionForm: React.FC = () => {
     }, [itemId, batchNumber, items]);
 
     const oldRate = selectedBatch?.costPrice || 0;
-    const affectedQty = selectedBatch?.quantity || 0; // Using current batch qty? 
-    // Requirement is retrospective. If we sold some, we still might pay for original. 
-    // But data shows only current batch info usually. 
-    // Let's rely on user to verify Quantity if needed, or default to current batch Qty.
-    // Ideally we should store 'receivedQty' in batch, but we only have 'quantity' (current).
-    // Let's proceed with current quantity as 'Affected Stock'. 
-
+    const affectedQty = selectedBatch?.quantity || 0;
     const diffAmount = (newRate - oldRate) * affectedQty;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -79,6 +68,7 @@ const RateRevisionForm: React.FC = () => {
         if (!supplierId || !itemId || !batchNumber || !newRate) return toast.error("Please fill all fields");
         if (newRate <= oldRate) return toast.error("New rate must be higher than old rate");
 
+        setIsSaving(true);
         try {
             await api.post('/purchases/rate-revisions', {
                 supplierId,
@@ -93,146 +83,203 @@ const RateRevisionForm: React.FC = () => {
             navigate('/purchase/rate-revisions');
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to create request");
+        } finally {
+            setIsSaving(false);
         }
     };
 
     return (
         <Layout>
-            <PageHeader
-                title="New Rate Revision"
-                description="Request a retrospective cost increase approval"
-                breadcrumbs={[{ label: 'Revisions', link: '/purchase/rate-revisions' }, { label: 'New' }]}
-            />
-
-            <div className="max-w-4xl mx-auto">
-                <form onSubmit={handleSubmit} className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm p-6 space-y-6">
-
-                    {/* Supplier & Item Selection */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Supplier</label>
-                            <select
-                                value={supplierId}
-                                onChange={e => setSupplierId(e.target.value)}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title="Initialize Revision Node"
+                    description="Configure retrospective rate adjustment protocols and analyze institutional fiscal impact."
+                    breadcrumbs={[
+                        { label: 'Procurement', link: '/purchase' },
+                        { label: 'Rate Revisions', link: '/purchase/rate-revisions' },
+                        { label: 'New Revision' }
+                    ]}
+                    actions={
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => navigate('/purchase/rate-revisions')}
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 shadow-sm transition active:scale-95"
                             >
-                                <option value="">-- Select Supplier --</option>
-                                {suppliers.map(s => (
-                                    <option key={s._id} value={s._id}>{s.businessName}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Item</label>
-                            <select
-                                value={itemId}
-                                onChange={e => {
-                                    setItemId(e.target.value);
-                                    setBatchNumber('');
-                                }}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
+                                <ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isSaving}
+                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                             >
-                                <option value="">-- Select Item --</option>
-                                {items.map(i => (
-                                    <option key={i._id} value={i._id}>{i.name}</option>
-                                ))}
-                            </select>
+                                {isSaving ? <Activity className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Initialize Protocol
+                            </button>
                         </div>
-                    </div>
+                    }
+                />
 
-                    {/* Batch Selection */}
-                    {itemId && (
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Select Batch</label>
-                            <select
-                                value={batchNumber}
-                                onChange={e => setBatchNumber(e.target.value)}
-                                className="w-full p-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg"
-                            >
-                                <option value="">-- Select Batch to Revise --</option>
-                                {items.find(i => i._id === itemId)?.batches
-                                    ?.filter((b: any) => !supplierId || b.supplierId === supplierId) // Filter by supplier
-                                    ?.map((b: any) => (
-                                        <option key={b.batchNumber} value={b.batchNumber}>
-                                            {b.batchNumber} (Current Cost: ₹{b.costPrice}, Qty: {b.quantity})
-                                        </option>
-                                    ))}
-                            </select>
-                            {/* If no batches found */}
-                            {items.find(i => i._id === itemId)?.batches?.length === 0 && (
-                                <p className="text-sm text-red-500 mt-1">No batches found for this item.</p>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Rate Input & Calc */}
-                    {selectedBatch && (
-                        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-100 dark:border-indigo-800">
-                            <h4 className="font-bold text-indigo-700 dark:text-indigo-300 mb-3 flex items-center gap-2">
-                                <Calculator size={18} /> Impact Calculator
-                            </h4>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Main Parameters */}
+                    <div className="lg:col-span-7 space-y-10">
+                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-10">
+                                <Activity className="w-5 h-5 text-primary" /> Node Specifications
+                            </h3>
+                            
+                            <div className="space-y-8">
                                 <div>
-                                    <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Old Rate</label>
-                                    <div className="text-lg font-mono font-bold text-neutral-700 dark:text-neutral-300">₹{oldRate}</div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Supplier</label>
+                                    <select
+                                        value={supplierId}
+                                        onChange={e => setSupplierId(e.target.value)}
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                    >
+                                        <option value="">Select Entity...</option>
+                                        {suppliers.map(s => (
+                                            <option key={s._id} value={s._id}>{s.businessName}</option>
+                                        ))}
+                                    </select>
                                 </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Item Oracle</label>
+                                        <select
+                                            value={itemId}
+                                            onChange={e => {
+                                                setItemId(e.target.value);
+                                                setBatchNumber('');
+                                            }}
+                                            className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                        >
+                                            <option value="">Select Item...</option>
+                                            {items.map(i => (
+                                                <option key={i._id} value={i._id}>{i.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {itemId && (
+                                        <div className="animate-in slide-in-from-right-4 duration-500">
+                                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Target Batch Node</label>
+                                            <select
+                                                value={batchNumber}
+                                                onChange={e => setBatchNumber(e.target.value)}
+                                                className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                            >
+                                                <option value="">Select Batch...</option>
+                                                {items.find(i => i._id === itemId)?.batches
+                                                    ?.filter((b: any) => !supplierId || b.supplierId === supplierId)
+                                                    ?.map((b: any) => (
+                                                        <option key={b.batchNumber} value={b.batchNumber}>
+                                                            {b.batchNumber} (Cost: ₹{b.costPrice})
+                                                        </option>
+                                                    ))}
+                                            </select>
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div>
-                                    <label className="block text-xs font-bold text-indigo-500 uppercase mb-1">New Rate</label>
-                                    <input
-                                        type="number"
-                                        value={newRate}
-                                        onChange={e => setNewRate(parseFloat(e.target.value) || 0)}
-                                        className="w-full p-2 bg-white dark:bg-neutral-800 border border-indigo-300 rounded font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Revision Justification Narrative</label>
+                                    <textarea
+                                        value={reason}
+                                        onChange={e => setReason(e.target.value)}
+                                        rows={4}
+                                        className="w-full px-8 py-6 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-[2rem] text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                        placeholder="Retrospective cost adjustment rationale..."
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Affected Qty</label>
-                                    <div className="text-lg font-mono font-bold text-neutral-700 dark:text-neutral-300 text-right">{affectedQty}</div>
-                                </div>
-                            </div>
-
-                            <div className="mt-4 pt-4 border-t border-indigo-200 dark:border-indigo-800 flex justify-between items-center">
-                                <span className="text-sm text-indigo-600">Rate Difference: <strong>₹{(newRate - oldRate).toFixed(2)}</strong></span>
-                                <div className="text-right">
-                                    <span className="block text-xs text-neutral-500">Total Liability Increase</span>
-                                    <span className="text-xl font-bold text-red-600">+₹{diffAmount > 0 ? diffAmount.toLocaleString() : 0}</span>
-                                </div>
                             </div>
                         </div>
-                    )}
-
-                    <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Reason / Notes</label>
-                        <textarea
-                            value={reason}
-                            onChange={e => setReason(e.target.value)}
-                            className="w-full p-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg h-24"
-                            placeholder="Why is the rate changing retrospectively?"
-                        />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={() => navigate('/purchase/rate-revisions')}
-                            className="px-6 py-2.5 text-neutral-600 font-bold hover:bg-neutral-100 rounded-lg"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none flex items-center gap-2"
-                        >
-                            <Save size={18} />
-                            Submit Request
-                        </button>
-                    </div>
+                    {/* Impact Workspace */}
+                    <div className="lg:col-span-5 space-y-10">
+                        {selectedBatch ? (
+                            <div className="bg-neutral-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group animate-in fade-in zoom-in-95 duration-700">
+                                <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+                                    <Calculator className="w-48 h-48" />
+                                </div>
+                                
+                                <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] relative z-10 flex items-center gap-3">
+                                    <Calculator className="w-5 h-5" /> Fiscal Impact Simulation
+                                </h3>
 
-                </form>
+                                <div className="space-y-8 relative z-10">
+                                    <div className="grid grid-cols-2 gap-8">
+                                        <div>
+                                            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-2">Original Basis</p>
+                                            <p className="text-2xl font-black tabular-nums tracking-tighter">₹{oldRate.toLocaleString()}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-2">In-Stock Quantum</p>
+                                            <p className="text-2xl font-black tabular-nums tracking-tighter text-neutral-400">{affectedQty} Units</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 block">Adjusted Rate Protocol</label>
+                                        <div className="relative group/input">
+                                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-primary/40 group-focus-within/input:text-primary transition-colors">₹</span>
+                                            <input
+                                                type="number"
+                                                value={newRate}
+                                                onChange={e => setNewRate(parseFloat(e.target.value) || 0)}
+                                                className="w-full pl-12 pr-8 py-5 bg-white/5 border border-white/10 rounded-3xl text-3xl font-black text-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all tabular-nums"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="h-px bg-white/5 w-full"></div>
+
+                                    <div className="flex justify-between items-end">
+                                        <div>
+                                            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] mb-4">Total Liability Delta</p>
+                                            <p className={`text-5xl font-black tracking-tighter tabular-nums ${diffAmount > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                                {diffAmount > 0 ? '+' : ''}₹{Math.abs(diffAmount).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        {diffAmount > 0 && (
+                                            <div className="p-4 bg-rose-500/10 rounded-2xl border border-rose-500/20 animate-pulse">
+                                                <AlertCircle className="w-6 h-6 text-rose-500" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="pt-8 border-t border-white/5 flex items-start gap-4 relative z-10 opacity-60 italic">
+                                    <Info className="w-5 h-5 text-primary flex-shrink-0" />
+                                    <p className="text-[10px] font-black leading-relaxed text-neutral-400">
+                                        Execution of this node will recalibrate <span className="text-white underline">WAC (Weighted Average Cost)</span> and initialize an institutional debit-note request.
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white dark:bg-neutral-800 p-12 rounded-[3.5rem] border border-dashed border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center text-center opacity-30 grayscale min-h-[400px]">
+                                <Calculator className="w-16 h-16 mb-6" />
+                                <p className="font-black text-xs uppercase tracking-widest">Awaiting Parameter Input</p>
+                                <p className="text-[10px] font-bold mt-2 leading-relaxed">Select institutional item and batch nodes to initialize the fiscal impact simulator.</p>
+                            </div>
+                        )}
+                        
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4 animate-in slide-in-from-right-10 duration-1000">
+                            <div className="p-3 bg-amber-500/10 rounded-2xl">
+                                <ShieldCheck className="text-amber-500 w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Authorization Protocol</p>
+                                <p className="text-[10px] font-bold text-neutral-400 leading-relaxed italic">
+                                    Retrospective adjustments require institutional sign-off before inventory basis is recalibrated.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </Layout>
+        </form>
+    </Layout>
     );
 };
 

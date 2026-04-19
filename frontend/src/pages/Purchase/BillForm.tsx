@@ -1,10 +1,11 @@
-
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban } from 'lucide-react';
+import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban, Zap, ShieldCheck, Activity, ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { PurchaseBill, PurchaseBillItem, BillStatus } from "../../types/purchase";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
+import Layout from "../../components/shared/Layout/Layout";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 import BillBasicInfo from './Components/BillBasicInfo';
 import BillItemsTable from './Components/BillItemsTable';
 import BillFinancialSummary from './Components/BillFinancialSummary';
@@ -46,10 +47,8 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
     const totals = useMemo(() => {
         const items = (bill.items || []) as PurchaseBillItem[];
         const subtotal = items.reduce((sum, item) => sum + (item.line_total || 0), 0);
-
-        // Mock tax calculation based on segments
-        const isIntraState = bill.vendor_id?.toString().endsWith('1'); // Placeholder logic
-        const taxRate = 18; // Default 18%
+        const isIntraState = bill.vendor_id?.toString().endsWith('1');
+        const taxRate = 18;
         const totalTax = (subtotal * taxRate) / 100;
 
         const tax_breakdown = isIntraState
@@ -69,19 +68,14 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         if (!file) return;
 
         addAttachment(file.name);
-
-        // Mock OCR Logic
         toast.info("Processing document with OCR...", { autoClose: 2000 });
 
         setTimeout(() => {
-            // Simulate extracting amount and perhaps bill number
             const mockBillNo = `OCR-${Math.floor(Math.random() * 9000) + 1000}`;
-
             setBill(prev => ({
                 ...prev,
                 bill_number: prev.bill_number || mockBillNo,
             }));
-
             toast.success("OCR: Extracted Bill Details");
         }, 2500);
     };
@@ -95,9 +89,9 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         try {
             await onSave({
                 ...bill,
-                amount: totals.total, // Total Payable
+                amount: totals.total,
                 subTotal: totals.subtotal,
-                total_amount: totals.total, // Keep for compatibility if needed
+                total_amount: totals.total,
                 tax_breakdown: totals.tax_breakdown
             });
             toast.success(id ? "Bill updated successfully" : "Bill created successfully");
@@ -141,156 +135,142 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            {/* Top Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/50">
-                <div className="flex items-center gap-4">
-                    <button onClick={handleBack} className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-                    </button>
-                    <div>
-                        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Record Vendor Bill</h2>
-                        <p className="text-xs text-neutral-500 font-medium tracking-tight">Purchase Bill & Three-Way Matching</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={runOCR}
-                        className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 text-primary font-bold text-xs rounded-lg hover:bg-neutral-200 transition-colors uppercase"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Processing...' : 'Auto-Extract (OCR)'}
-                    </button>
-                    {id && bill.status !== 'Paid' && (
-                        <div className="flex items-center gap-2 mr-2 pr-4 border-r border-neutral-200 dark:border-neutral-800">
+        <Layout>
+            <div className="pt-8 space-y-10 pb-32">
+                <PageHeader
+                    title={id ? "Refactor Vendor Bill" : "Fiscal Node Initialization"}
+                    description="Finalize procurement liabilities with three-way matching and OCR verification."
+                    breadcrumbs={[
+                        { label: 'Procurement', link: '/purchase' },
+                        { label: 'Bills Archive', link: '/purchase/bills' },
+                        { label: id ? 'Refactor' : 'New Bill' }
+                    ]}
+                    actions={
+                        <div className="flex items-center gap-3">
                             <button
-                                onClick={() => handleUpdateStatus('Hold')}
-                                className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-amber-200"
-                                title="Put on Hold"
+                                onClick={runOCR}
+                                disabled={isLoading}
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
                             >
-                                <Clock className="w-4 h-4" />
+                                <Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-amber-500' : 'text-primary'}`} /> {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
                             </button>
+                            
+                            {id && bill.status !== 'Paid' && (
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-neutral-400 hover:bg-neutral-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
+                                </div>
+                            )}
+
                             <button
-                                onClick={() => handleUpdateStatus('Disputed')}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200"
-                                title="Dispute Bill"
+                                onClick={handleSave}
+                                disabled={isLoading}
+                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                             >
-                                <AlertCircle className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => handleUpdateStatus('Rejected')}
-                                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors border border-neutral-200"
-                                title="Reject"
-                            >
-                                <Ban className="w-4 h-4" />
+                                <Save className="w-4 h-4" /> {id ? 'Update Node' : 'Finalize Bill'}
                             </button>
                         </div>
-                    )}
-                    <button
-                        onClick={handleSave}
-                        disabled={isLoading}
-                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-lg shadow-brand-600/20 flex items-center gap-2 transition-all disabled:opacity-50"
-                    >
-                        <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : id ? 'Update Bill' : 'Finalize Bill'}
-                    </button>
-                    <button onClick={handleBack} className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors">
-                        Cancel
-                    </button>
-                </div>
-            </div>
+                    }
+                />
 
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                <div className="max-w-6xl mx-auto space-y-8">
-                    {/* Main Bill Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="space-y-6 md:col-span-2">
-                            <BillBasicInfo
-                                bill={bill}
-                                vendors={vendors}
-                                onVendorChange={handleVendorChange}
-                                onBillChange={updateBillField}
-                            />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Main Workspace */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <BillBasicInfo
+                                    bill={bill}
+                                    vendors={vendors}
+                                    onVendorChange={handleVendorChange}
+                                    onBillChange={updateBillField}
+                                />
+                            </div>
 
-                            {/* Vendor Invoice Details */}
-                            <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                    <FileText className="w-4 h-4" /> Vendor Documents
+                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-6">
+                                    <FileSpreadsheet className="w-5 h-5 text-emerald-500" /> Vendor Documents
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-6">
                                     <div>
-                                        <label className="text-xs font-bold text-neutral-500 uppercase">Vendor Invoice No.</label>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Vendor Invoice No.</label>
                                         <input
                                             type="text"
                                             value={bill.vendorInvoiceNo || ''}
                                             onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
-                                            placeholder="e.g. INV-2024-001"
-                                            className="w-full px-4 py-2 mt-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-sm font-bold"
+                                            placeholder="INV-X"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-bold text-neutral-500 uppercase">Invoice Date</label>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Invoice Date</label>
                                         <input
                                             type="date"
                                             value={bill.bill_date || ''}
                                             onChange={(e) => updateBillField('bill_date', e.target.value)}
-                                            className="w-full px-4 py-2 mt-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-sm font-bold"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Linkage Panel */}
-                    <div className="space-y-6">
-                        <div className="bg-brand-50/30 dark:bg-brand-900/10 p-6 rounded-2xl border border-brand-100 dark:border-brand-900/30 shadow-sm space-y-6">
-                            <h3 className="text-sm font-bold text-brand-700 dark:text-brand-400 uppercase tracking-widest flex items-center gap-2">
-                                <CheckCircle className="w-4 h-4" /> Three-Way Matching
+                        {/* Matching Ledger */}
+                        <div className="bg-primary/5 dark:bg-primary/10 p-10 rounded-[3rem] border border-primary/20 shadow-sm relative overflow-hidden group">
+                            <div className="absolute -top-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+                                <ShieldCheck className="w-48 h-48" />
+                            </div>
+                            <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-3 mb-8">
+                                <ShieldCheck className="w-6 h-6" /> Three-Way Matching Protocol
                             </h3>
-                            <div>
-                                <label className="block text-xs font-bold text-brand-600/60 mb-2 uppercase">Linked Goods Receipt (GRN)</label>
-                                <select
-                                    value={bill.grn_id || ''}
-                                    onChange={(e) => handleGRNChange(e.target.value)}
-                                    disabled={!bill.vendor_id}
-                                    className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-brand-200 dark:border-brand-900/50 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50"
-                                >
-                                    <option value="">Select GRN</option>
-                                    {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
-                                </select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                                <div>
+                                    <label className="text-[10px] font-black text-primary/60 uppercase tracking-widest mb-3 block">Linked Goods Receipt (GRN)</label>
+                                    <select
+                                        value={bill.grn_id || ''}
+                                        onChange={(e) => handleGRNChange(e.target.value)}
+                                        disabled={!bill.vendor_id}
+                                        className="w-full px-6 py-3.5 bg-white dark:bg-neutral-800 border border-primary/20 rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
+                                    >
+                                        <option value="">Select Receipt Node...</option>
+                                        {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
+                                    </select>
+                                </div>
                                 {bill.po_number && (
-                                    <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-brand-500/5 rounded-lg border border-brand-500/10">
-                                        <CheckCircle className="w-3.5 h-3.5 text-brand-600" />
-                                        <span className="text-[10px] font-bold text-brand-700">Matched to {bill.po_number}</span>
+                                    <div className="flex items-center gap-3 px-6 py-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl animate-in zoom-in-95">
+                                        <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Matched to Protocol {bill.po_number}</span>
                                     </div>
                                 )}
                             </div>
-                            <div className="pt-4 border-t border-brand-100 dark:border-brand-900/20">
-                                <div className="flex items-center justify-between text-xs font-medium text-brand-700 mb-2">
-                                    <span>Matching Status</span>
-                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">Auto-Linked</span>
-                                </div>
+                        </div>
+
+                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                            <div className="p-2 pt-10">
+                                <BillItemsTable
+                                    items={bill.items || []}
+                                    onUpdateItem={updateItem}
+                                />
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Items Table */}
-                <BillItemsTable
-                    items={bill.items || []}
-                    onUpdateItem={updateItem}
-                />
+                    {/* Finance Sidebar */}
+                    <div className="lg:col-span-4 space-y-10">
+                        <BillFinancialSummary
+                            totals={totals}
+                            status={bill.status}
+                            paymentTerms={bill.payment_terms}
+                        />
 
-                {/* Bottom Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
-                    {/* Attachments & Notes */}
-                    <div className="space-y-6">
-                        <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
-                            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                                <Paperclip className="w-4 h-4" /> Documents & OCR
+                        {/* Evidence Node */}
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <Paperclip className="w-5 h-5" /> Document Evidence
                             </h3>
                             <div
-                                className="border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-8 text-center hover:border-brand-500/50 hover:bg-brand-500/5 transition-all cursor-pointer group"
+                                onClick={() => document.getElementById('bill-upload')?.click()}
+                                className="border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-[2rem] p-10 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group"
                             >
                                 <input
                                     type="file"
@@ -299,47 +279,39 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     onChange={handleFileUpload}
                                     accept=".pdf,image/*"
                                 />
-                                <div onClick={() => document.getElementById('bill-upload')?.click()}>
-                                    <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                                        <Plus className="w-6 h-6 text-neutral-400 group-hover:text-brand-500" />
-                                    </div>
-                                    <p className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Click to upload Bill PDF/Image</p>
-                                    <p className="text-xs text-neutral-500 mt-1">Supports OCR amount extraction (Experimental)</p>
+                                <div className="w-16 h-16 bg-neutral-50 dark:bg-neutral-900 rounded-3xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-neutral-100 dark:border-neutral-700">
+                                    <Plus className="w-8 h-8 text-neutral-300 group-hover:text-primary" />
                                 </div>
+                                <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest leading-relaxed">Upload Invoice Node<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-3">
                                 {attachments.map((at, i) => (
-                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-xs border border-neutral-200 dark:border-neutral-700">
-                                        <FileText className="w-3.5 h-3.5" /> {at} <X className="w-3 h-3 cursor-pointer" onClick={() => removeAttachment(i)} />
+                                    <div key={i} className="flex items-center gap-3 px-4 py-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group">
+                                        <FileText className="w-4 h-4 text-neutral-400" />
+                                        <span className="max-w-[120px] truncate">{at}</span>
+                                        <X className="w-4 h-4 cursor-pointer text-neutral-300 hover:text-rose-500" onClick={() => removeAttachment(i)} />
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
-                            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                                <FileText className="w-4 h-4" /> Bill Notes
+
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                <FileText className="w-5 h-5" /> Institutional Notes
                             </h3>
                             <textarea
                                 value={bill.notes || ''}
                                 onChange={(e) => updateBillField('notes', e.target.value)}
                                 rows={4}
-                                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                                placeholder="Any internal notes or dispute details..."
+                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-3xl text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                placeholder="Audit trail remarks..."
                             />
                         </div>
                     </div>
-
-                    {/* Totals & Tax Summary */}
-                    <BillFinancialSummary
-                        totals={totals}
-                        status={bill.status}
-                        paymentTerms={bill.payment_terms}
-                    />
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
-
 
 export default BillForm;
