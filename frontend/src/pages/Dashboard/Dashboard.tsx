@@ -455,12 +455,19 @@ const Dashboard: React.FC = () => {
                         <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-default)" opacity={0.2} />
-                    <XAxis dataKey="name" fontSize={10} stroke="var(--secondary)" axisLine={false} tickLine={false} fontWeight={900} dy={15} />
-                    <YAxis fontSize={10} stroke="var(--secondary)" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={900} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--color-border))" opacity={0.2} />
+                    <XAxis dataKey="name" fontSize={10} stroke="rgb(var(--color-text-secondary))" axisLine={false} tickLine={false} fontWeight={900} dy={15} />
+                    <YAxis fontSize={10} stroke="rgb(var(--color-text-secondary))" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={900} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: 'rgb(var(--color-card))', borderColor: 'var(--border-default)', borderRadius: '4px', border: '1px solid rgba(var(--color-primary), 0.2)', color: 'var(--text-main)', boxShadow: 'var(--glow-primary)' }}
-                      itemStyle={{ color: 'var(--primary)', fontWeight: '900' }}
+                      contentStyle={{ 
+                        backgroundColor: 'rgb(var(--color-card))', 
+                        borderColor: 'rgb(var(--color-border))', 
+                        borderRadius: '4px', 
+                        border: '1px solid rgba(var(--color-primary), 0.2)', 
+                        color: 'rgb(var(--color-text))', 
+                        boxShadow: 'var(--glow-primary)' 
+                      }}
+                      itemStyle={{ color: 'rgb(var(--color-primary))', fontWeight: '900' }}
                       formatter={(value: number) => [`₹${value.toLocaleString()}`, 'MAGNITUDE']}
                     />
                     <Area type="monotone" dataKey="revenue" stroke="var(--primary)" fill="url(#colorRevenue)" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: 'var(--primary)' }} />
@@ -489,16 +496,24 @@ const Dashboard: React.FC = () => {
             <div className="h-56 relative z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={profitabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={8}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-default)" opacity={0.2} />
-                  <XAxis dataKey="month" fontSize={10} stroke="var(--secondary)" axisLine={false} tickLine={false} fontWeight={900} />
-                  <YAxis fontSize={10} stroke="var(--secondary)" tickFormatter={val => `₹${(val / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} fontWeight={900} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--color-border))" opacity={0.2} />
+                  <XAxis dataKey="month" fontSize={10} stroke="rgb(var(--color-text-secondary))" axisLine={false} tickLine={false} fontWeight={900} />
+                  <YAxis fontSize={10} stroke="rgb(var(--color-text-secondary))" tickFormatter={val => `₹${(val / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} fontWeight={900} />
                   <Tooltip
-                    cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
-                    contentStyle={{ backgroundColor: 'rgb(var(--color-card))', borderColor: 'var(--border-default)', borderRadius: '4px', border: '1px solid rgba(var(--color-success), 0.2)', fontSize: '10px', color: 'var(--text-main)', boxShadow: 'var(--glow-success)' }}
+                    cursor={{ fill: 'rgb(var(--color-primary))', opacity: 0.1 }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgb(var(--color-card))', 
+                      borderColor: 'rgb(var(--color-border))', 
+                      borderRadius: '4px', 
+                      border: '1px solid rgba(var(--color-success), 0.2)', 
+                      fontSize: '10px', 
+                      color: 'rgb(var(--color-text))', 
+                      boxShadow: 'var(--glow-success)' 
+                    }}
                     formatter={(value: number) => [`₹${value.toLocaleString()}`, '']}
                   />
-                  <Bar dataKey="income" fill="var(--primary)" radius={[2, 2, 0, 0]} barSize={24} />
-                  <Bar dataKey="expense" fill="var(--secondary)" radius={[2, 2, 0, 0]} barSize={24} opacity={0.2} />
+                  <Bar dataKey="income" fill="rgb(var(--color-primary))" radius={[2, 2, 0, 0]} barSize={24} />
+                  <Bar dataKey="expense" fill="rgb(var(--color-text-secondary))" radius={[2, 2, 0, 0]} barSize={24} opacity={0.2} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

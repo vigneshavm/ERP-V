@@ -141,7 +141,7 @@ const SalesInvoiceForm = () => {
                     backButton={
                         <Link
                             to="/sales"
-                            className="inline-flex items-center gap-2 text-sm font-bold text-neutral-500 hover:text-primary transition-colors"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-secondary opacity-70 hover:text-primary transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4" /> Back to Sales
                         </Link>
@@ -150,8 +150,8 @@ const SalesInvoiceForm = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6 mt-6">
                     {/* Section 1: Invoice Details */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4 flex items-center gap-2">
+                    <div className="glass-panel rounded-xl border border-default/30 p-6 shadow-sm">
+                        <h3 className="text-lg font-bold text-main mb-4 flex items-center gap-2">
                             <FileText className="w-5 h-5 text-primary" /> Invoice Details
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -185,9 +185,9 @@ const SalesInvoiceForm = () => {
                     </div>
 
                     {/* Section 2: Customer Selection */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                    <div className="glass-panel rounded-xl border border-default/30 p-6 shadow-sm">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+                            <h3 className="text-lg font-bold text-main flex items-center gap-2">
                                 <User className="w-5 h-5 text-primary" /> Customer
                             </h3>
                             {!formData.customer && (
@@ -202,15 +202,15 @@ const SalesInvoiceForm = () => {
                         </div>
 
                         {formData.customer ? (
-                            <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                            <div className="flex items-center justify-between p-4 bg-surface/40 rounded-lg border border-default/30">
                                 <div>
-                                    <p className="font-bold text-neutral-900 dark:text-neutral-100">{formData.customer.name}</p>
-                                    <p className="text-sm text-neutral-500">{formData.customer.phone || formData.customer.email}</p>
+                                    <p className="font-bold text-main">{formData.customer.name}</p>
+                                    <p className="text-sm text-secondary opacity-70">{formData.customer.phone || formData.customer.email}</p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, customer: null })}
-                                    className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md text-neutral-500"
+                                    className="p-2 hover:bg-surface/60 rounded-md text-secondary opacity-70"
                                 >
                                     Change
                                 </button>
@@ -218,7 +218,7 @@ const SalesInvoiceForm = () => {
                         ) : (
                             <div
                                 onClick={() => setShowCustomerModal(true)}
-                                className="border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg p-8 flex flex-col items-center justify-center text-neutral-400 cursor-pointer hover:border-primary hover:text-primary transition-colors"
+                                className="border-2 border-dashed border-default/40 rounded-lg p-8 flex flex-col items-center justify-center text-secondary opacity-50 cursor-pointer hover:border-primary hover:text-primary transition-colors"
                             >
                                 <User className="w-8 h-8 mb-2" />
                                 <span className="font-medium">Click to select a customer</span>
@@ -227,12 +227,12 @@ const SalesInvoiceForm = () => {
                     </div>
 
                     {/* Section 3: Items */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm overflow-hidden">
-                        <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4">Items</h3>
+                    <div className="glass-panel rounded-xl border border-default/30 p-6 shadow-sm overflow-hidden">
+                        <h3 className="text-lg font-bold text-main mb-4">Items</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="border-b border-neutral-200 dark:border-neutral-700 text-xs font-semibold text-neutral-500 uppercase">
+                                    <tr className="border-b border-default/30 text-xs font-semibold text-secondary opacity-70 uppercase">
                                         <th className="px-4 py-3 min-w-[200px]">Item Name</th>
                                         <th className="px-4 py-3 w-24 text-right">Qty</th>
                                         <th className="px-4 py-3 w-32 text-right">Rate</th>
@@ -241,7 +241,7 @@ const SalesInvoiceForm = () => {
                                         <th className="px-4 py-3 w-16"></th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                                <tbody className="divide-y divide-default/30">
                                     {formData.items.map((item, index) => (
                                         <tr key={index}>
                                             <td className="px-4 py-3">
@@ -250,7 +250,7 @@ const SalesInvoiceForm = () => {
                                                     placeholder="Item name/description"
                                                     value={item.name}
                                                     onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-medium placeholder:text-neutral-400"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-medium placeholder:text-secondary opacity-50"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">
@@ -278,17 +278,17 @@ const SalesInvoiceForm = () => {
                                                     max="100"
                                                     value={item.tax}
                                                     onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
-                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm text-right text-neutral-500"
+                                                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm text-right text-secondary opacity-70"
                                                 />
                                             </td>
-                                            <td className="px-4 py-3 text-right font-medium text-neutral-900 dark:text-neutral-100">
+                                            <td className="px-4 py-3 text-right font-medium text-main">
                                                 ₹{item.amount.toFixed(2)}
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 <button
                                                     type="button"
                                                     onClick={() => removeItem(index)}
-                                                    className="text-neutral-400 hover:text-rose-500 transition-colors p-1"
+                                                    className="text-secondary opacity-50 hover:text-rose-500 transition-colors p-1"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -310,55 +310,55 @@ const SalesInvoiceForm = () => {
                     {/* Section 4: Summary & Totals */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm h-full">
-                                <h3 className="text-sm font-bold text-neutral-500 uppercase mb-4">Notes & Terms</h3>
+                            <div className="glass-panel rounded-xl border border-default/30 p-6 shadow-sm h-full">
+                                <h3 className="text-sm font-bold text-secondary opacity-70 uppercase mb-4">Notes & Terms</h3>
                                 <textarea
                                     placeholder="Add notes for the customer..."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm mb-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none h-24"
+                                    className="w-full p-3 bg-surface/40 border border-default/30 rounded-lg text-sm mb-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none h-24"
                                 />
                                 <textarea
                                     placeholder="Terms and conditions..."
                                     value={formData.termsAndConditions}
                                     onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                    className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none h-24"
+                                    className="w-full p-3 bg-surface/40 border border-default/30 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none h-24"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
-                                <h3 className="text-sm font-bold text-neutral-500 uppercase mb-4">Payment Summary</h3>
+                            <div className="glass-panel rounded-xl border border-default/30 p-6 shadow-sm">
+                                <h3 className="text-sm font-bold text-secondary opacity-70 uppercase mb-4">Payment Summary</h3>
 
                                 <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between text-neutral-600 dark:text-neutral-400">
+                                    <div className="flex justify-between text-secondary">
                                         <span>Subtotal</span>
                                         <span>₹{calculateSubtotal().toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between text-neutral-600 dark:text-neutral-400">
+                                    <div className="flex justify-between text-secondary">
                                         <span>Tax (Total)</span>
                                         <span>+ ₹{calculateTotalTax().toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-400">
+                                    <div className="flex justify-between items-center text-secondary">
                                         <span className="flex items-center gap-1"><Truck className="w-3 h-3" /> Shipping</span>
                                         <input
                                             type="number"
                                             value={formData.shippingCharges}
                                             onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-neutral-300 dark:border-neutral-700 focus:border-primary outline-none p-1"
+                                            className="w-24 text-right bg-transparent border-b border-default/40 focus:border-primary outline-none p-1"
                                         />
                                     </div>
-                                    <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-400">
+                                    <div className="flex justify-between items-center text-secondary">
                                         <span className="flex items-center gap-1"><Percent className="w-3 h-3" /> Discount</span>
                                         <input
                                             type="number"
                                             value={formData.discount}
                                             onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                            className="w-24 text-right bg-transparent border-b border-neutral-300 dark:border-neutral-700 focus:border-primary outline-none p-1 text-rose-500"
+                                            className="w-24 text-right bg-transparent border-b border-default/40 focus:border-primary outline-none p-1 text-rose-500"
                                         />
                                     </div>
-                                    <div className="border-t border-neutral-200 dark:border-neutral-700 pt-3 flex justify-between items-center font-bold text-lg text-neutral-900 dark:text-neutral-100">
+                                    <div className="border-t border-default/30 pt-3 flex justify-between items-center font-bold text-lg text-main">
                                         <span>Total Amount</span>
                                         <span>₹{calculateTotal().toFixed(2)}</span>
                                     </div>

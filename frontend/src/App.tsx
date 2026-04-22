@@ -15,6 +15,7 @@ import Register from './pages/auth/Register';
 import TenantManager from './pages/People/Tenants/TenantManager';
 import TenantSignUp from './pages/People/Tenants/TenantSignUp';
 import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
+import { ThemeToggle } from './components/core/Display/ThemeToggle';
 
 // Config
 import { ConfigProvider } from './contexts/ConfigProvider';
@@ -296,16 +297,19 @@ const App: React.FC = () => {
                 <div className="text-[10px] text-primary font-bold tracking-[0.2em] uppercase leading-none mt-0.5">Administrator Console</div>
               </div>
             </div>
-            <button
-              onClick={() => {
-                setViewMode('LANDING');
-                setIsAdminAuthenticated(false);
-              }}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-              Terminate Session
-            </button>
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <button
+                onClick={() => {
+                  setViewMode('LANDING');
+                  setIsAdminAuthenticated(false);
+                }}
+                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                Terminate Session
+              </button>
+            </div>
           </div>
         </header>
         <main className="flex-1 p-6 lg:p-10 overflow-y-auto">

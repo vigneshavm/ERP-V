@@ -83,11 +83,61 @@
 
 @layer base {
   :root {
-    /* Backgrounds - Refined & Premium Cyber-Carbon */
-    --color-bg: 5 7 10;
-    /* Deep Obsidian */
-    --color-card: 16 20 24;
-    /* Hardware Surface */
+    /* Backgrounds - Premium Light Mode */
+    --color-bg: 248 250 252;     /* slate-50 */
+    --color-card: 255 255 255;   /* white */
+    --color-input: 241 245 249;  /* slate-100 */
+    --color-sidebar: 255 255 255;
+    --color-table-row: 255 255 255;
+    --color-table-header: 241 245 249;
+
+    /* Text - High-Contrast Slate */
+    --color-text: 15 23 42;      /* slate-900 */
+    --color-text-secondary: 71 85 105; /* slate-600 */
+    --color-text-muted: 100 116 139;   /* slate-500 */
+    --color-placeholder: 148 163 184;  /* slate-400 */
+
+    /* Borders - Refined */
+    --color-border: 226 232 240; /* slate-200 */
+    --color-border-light: 241 245 249;
+
+    /* Primary Accent - Cyber Indigo */
+    --color-primary: 99 102 241;
+    --color-primary-hover: 79 70 229;
+
+    /* Secondary Accent - Emerald Precision */
+    --color-secondary: 16 185 129;
+
+    /* Semantic Colors */
+    --color-error: 244 63 94;
+    --color-success: 16 185 129;
+    --color-warning: 245 158 11;
+    --color-info: 56 189 248;
+    --color-accent: 139 92 246;
+
+    /* Glow Tokens - Subtle for Light Mode */
+    --glow-primary: 0 4px 12px rgba(var(--color-primary), 0.15);
+    --glow-success: 0 4px 12px rgba(var(--color-success), 0.15);
+    --glow-error: 0 4px 12px rgba(var(--color-error), 0.15);
+
+    /* Fonts */
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+
+    /* Base Colors for Compatibility */
+    --primary: rgb(var(--color-primary));
+    --secondary: rgb(var(--color-secondary));
+    --success: rgb(var(--color-success));
+    --danger: rgb(var(--color-error));
+    --warning: rgb(var(--color-warning));
+    --info: rgb(var(--color-info));
+    --accent: rgb(var(--color-accent));
+  }
+
+  .dark {
+    /* Backgrounds - Cyber Dark */
+    --color-bg: 5 7 10;          /* Deep Obsidian */
+    --color-card: 16 20 24;      /* Hardware Surface */
     --color-input: 9 12 16;
     --color-sidebar: 5 7 10;
     --color-table-row: 16 20 24;
@@ -99,75 +149,35 @@
     --color-text-muted: 110 118 129;
     --color-placeholder: 72 82 92;
 
-    /* Borders - Industrial Grip */
+    /* Borders - Industrial */
     --color-border: 48 54 61;
     --color-border-light: 33 38 45;
 
-    /* Primary Accent - Cyber Indigo */
-    --color-primary: 99 102 241;
-    /* indigo-500 */
-    --color-primary-hover: 79 70 229;
-    /* indigo-600 */
+    /* Primary Accent - Neon Indigo/Emerald (Emerald looks more 'cyber') */
+    --color-primary: 52 211 153; /* emerald-400 */
+    --color-primary-hover: 16 185 129;
 
-    /* Secondary Accent - Emerald Precision */
-    --color-secondary: 16 185 129;
-    /* emerald-500 */
+    /* Secondary Accent */
+    --color-secondary: 245 158 11;
 
-    /* Semantic Colors - High Tech */
-    --color-error: 244 63 94;
-    --color-success: 16 185 129;
-    --color-warning: 245 158 11;
-    --color-info: 56 189 248;
-    --color-accent: 139 92 246;
+    /* Semantic Overrides */
+    --color-error: 251 113 133;
+    --color-success: 52 211 153;
+    --color-warning: 251 191 36;
 
-    /* Glow Tokens */
+    /* Glow Tokens - Intense for Dark Mode */
     --glow-primary: 0 0 20px rgba(var(--color-primary), 0.3);
     --glow-success: 0 0 20px rgba(var(--color-success), 0.3);
     --glow-error: 0 0 20px rgba(var(--color-error), 0.3);
 
-    /* Fonts */
-    --font-display: 'Outfit', sans-serif;
-    --font-body: 'Plus Jakarta Sans', sans-serif;
-  }
-
-  .dark {
-    /* Backgrounds - Deep Space */
-    --color-bg: 10 12 16;
-    --color-card: 16 20 28;
-    --color-input: 11 15 22;
-    --color-sidebar: 10 12 16;
-    --color-table-row: 16 20 28;
-    --color-table-header: 23 29 41;
-
-    /* Text - High Contrast Crystal */
-    --color-text: 241 245 249;
-    /* slate-100 */
-    --color-text-secondary: 148 163 184;
-    /* slate-400 */
-    --color-text-muted: 71 85 105;
-    /* slate-600 */
-    --color-placeholder: 51 65 85;
-    /* slate-700 */
-
-    /* Borders - Stealth */
-    --color-border: 30 41 59;
-    /* slate-800 */
-    --color-border-light: 22 30 46;
-
-    /* Primary Accent - Neon Emerald */
-    --color-primary: 52 211 153;
-    /* emerald-400 */
-    --color-primary-hover: 16 185 129;
-    /* emerald-500 */
-
-    /* Secondary Accent - Cyber Orange */
-    --color-secondary: 245 158 11;
-    /* amber-500 */
-
-    /* Semantic Colors */
-    --color-error: 251 113 133;
-    --color-success: 52 211 153;
-    --color-warning: 251 191 36;
+    /* Base Colors for Compatibility */
+    --primary: rgb(var(--color-primary));
+    --secondary: rgb(var(--color-secondary));
+    --success: rgb(var(--color-success));
+    --danger: rgb(var(--color-error));
+    --warning: rgb(var(--color-warning));
+    --info: rgb(var(--color-info));
+    --accent: rgb(var(--color-accent));
   }
 
   * {
@@ -175,12 +185,7 @@
     font-family: var(--font-body);
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.025em;
@@ -191,19 +196,26 @@
     color: rgb(var(--color-text));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #05070a;
     background-image:
-      /* Atmosphere Auras */
-      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.06) 0%, transparent 40%),
-      /* Blueprint Grid */
-      linear-gradient(rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px);
+      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.04) 0%, transparent 40%),
+      linear-gradient(rgba(var(--color-border), 0.1) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(var(--color-border), 0.1) 1.5px, transparent 1.5px);
     background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
     background-attachment: fixed;
     position: relative;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+
+  .dark body {
+    background-image:
+      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.06) 0%, transparent 40%),
+      linear-gradient(rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px);
+  }
+
 
   /* Layered Textures: Grain & Scanlines */
   body::before {
@@ -296,25 +308,32 @@
   .glass-panel {
     background-color: rgba(var(--color-card), 0.8);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border: 1px solid rgba(var(--color-border), 0.5);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   }
 
   .dark .glass-panel {
     background-color: rgba(var(--color-card), 0.6);
     border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   }
 
   /* EXPANAGER Premium Styles */
   .expanager-glass {
-    background: rgba(23, 23, 23, 0.7);
+    background: rgba(var(--color-card), 0.7);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(var(--color-border), 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .expanager-glass {
+    background: rgba(10, 10, 10, 0.7);
+    border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 
   .expanager-card-gradient {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(135deg, rgba(var(--color-primary), 0.05) 0%, transparent 100%);
   }
 
   .expanager-glow-border {
@@ -337,7 +356,7 @@
   }
 
   .expanager-text-gradient {
-    background: linear-gradient(to right, #fff, #a3a3a3);
+    background: linear-gradient(to right, rgb(var(--color-text)), rgb(var(--color-text-secondary)));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -414,12 +433,16 @@
   .card-interactive {
     background-color: rgba(var(--color-card), 0.6);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(var(--color-border), 0.5);
     padding: 1.5rem;
     border-radius: 0.125rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+  }
+
+  .dark .card-interactive {
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .card-interactive:hover {

@@ -28,8 +28,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
     return (
         <div className={`${isDark
-            ? 'bg-neutral-950 dark:bg-[#020617] text-white border-neutral-800 shadow-2xl'
-            : 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700 shadow-sm'
+            ? 'bg-neutral-950 dark:bg-card text-white border-neutral-800 shadow-2xl'
+            : 'bg-card text-main border-default shadow-sm'
             } ${compact ? 'p-4 lg:p-5 rounded-2xl' : 'p-6 lg:p-8 rounded-[2rem]'} border relative overflow-hidden group transition-all hover:border-primary/50`}>
 
             {/* Ambient Background Glow */}
@@ -44,9 +44,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
                         <Icon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
                     </div>
                     <div>
-                        <p className={`text-[9px] font-black uppercase tracking-widest mb-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-400'
+                        <p className={`text-[9px] font-black uppercase tracking-widest mb-0.5 ${isDark ? 'text-neutral-500' : 'text-secondary opacity-60'
                             }`}>{title}</p>
-                        <h3 className={`${compact ? 'text-xl' : 'text-3xl'} font-black tracking-tighter italic ${isDark ? 'text-white' : 'text-neutral-900 dark:text-white'
+                        <h3 className={`${compact ? 'text-xl' : 'text-3xl'} font-black tracking-tighter italic ${isDark ? 'text-white' : 'text-main'
                             }`}>{value}</h3>
                     </div>
                 </div>

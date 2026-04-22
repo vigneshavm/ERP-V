@@ -99,7 +99,7 @@ const PaymentInList: React.FC = () => {
                         <div className="flex gap-3">
                             <button
                                 onClick={() => window.print()}
-                                className="btn btn-secondary bg-white"
+                                className="btn btn-secondary glass-panel"
                                 title="Print List"
                             >
                                 <Printer className="w-4 h-4" />
@@ -124,14 +124,14 @@ const PaymentInList: React.FC = () => {
                         trend="Total received"
                         trendUp={true}
                         iconBgColor="bg-emerald-100"
-                        iconColor="text-emerald-600"
+                        iconColor="text-success"
                     />
                     <StatsCard
                         title="Transactions"
                         value={metrics.count}
                         icon={<History className="w-full h-full" />}
                         iconBgColor="bg-blue-100"
-                        iconColor="text-blue-600"
+                        iconColor="text-info"
                     />
                     <StatsCard
                         title="With Credit/Excess"
@@ -144,11 +144,11 @@ const PaymentInList: React.FC = () => {
                     />
                 </div>
 
-                <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col">
+                <div className="glass-panel dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col">
                     {/* Controls */}
                     <div className="p-4 bg-neutral-50/50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 max-w-md group w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary opacity-50 group-focus-within:text-brand-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search receipt #, customer name..."
@@ -161,7 +161,7 @@ const PaymentInList: React.FC = () => {
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
-                                    className="btn btn-ghost text-neutral-500"
+                                    className="btn btn-ghost text-secondary opacity-70"
                                 >
                                     <X className="w-4 h-4 mr-2" /> Clear
                                 </button>
@@ -180,15 +180,15 @@ const PaymentInList: React.FC = () => {
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600 mb-4"></div>
-                                <p className="text-neutral-500 font-medium font-outfit">Loading payments...</p>
+                                <p className="text-secondary opacity-70 font-medium font-outfit">Loading payments...</p>
                             </div>
                         ) : filteredPayments.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center px-4 font-outfit">
-                                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+                                <div className="w-16 h-16 bg-surface/30 rounded-full flex items-center justify-center mb-4">
                                     <Search className="w-8 h-8 opacity-50" />
                                 </div>
-                                <p className="text-lg font-bold text-neutral-800 dark:text-neutral-200">No records found</p>
-                                <p className="text-sm text-neutral-500 mt-1 max-w-xs">
+                                <p className="text-lg font-bold text-main dark:text-neutral-200">No records found</p>
+                                <p className="text-sm text-secondary opacity-70 mt-1 max-w-xs">
                                     Try adjusting your search or record a new payment.
                                 </p>
                                 <button
@@ -203,18 +203,18 @@ const PaymentInList: React.FC = () => {
                                 {/* Desktop Table View */}
                                 <div className="hidden md:block">
                                     <table className="w-full text-left font-outfit">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+                                        <thead className="bg-neutral-50 dark:bg-neutral-800 border-b border-default/30">
                                             <tr>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Receipt No</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Date</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Customer</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Allocation</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider">Mode</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider text-right">Amount</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wider text-right">Actions</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Receipt No</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Date</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Customer</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Allocation</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Mode</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Amount</th>
+                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
+                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 glass-panel dark:bg-neutral-900">
                                             {filteredPayments.map((payment) => (
                                                 <tr
                                                     key={payment.id}
@@ -224,7 +224,7 @@ const PaymentInList: React.FC = () => {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-brand-600 dark:text-brand-400">
                                                         {payment.receiptNo}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 dark:text-neutral-400">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                                                         <div className="flex items-center gap-2">
                                                             <Calendar className="w-3 h-3" />
                                                             {new Date(payment.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
@@ -236,15 +236,15 @@ const PaymentInList: React.FC = () => {
                                                                 {payment.customerName.charAt(0)}
                                                             </div>
                                                             <div>
-                                                                <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100 font-outfit">{payment.customerName}</div>
-                                                                <div className="text-xs text-neutral-500">{payment.customerPhone}</div>
+                                                                <div className="text-sm font-bold text-main font-outfit">{payment.customerName}</div>
+                                                                <div className="text-xs text-secondary opacity-70">{payment.customerPhone}</div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-2">
                                                             {payment.allocatedCount && payment.allocatedCount > 0 ? (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-info/10 text-blue-700 border border-blue-100">
                                                                     {payment.allocatedCount} Inv
                                                                 </span>
                                                             ) : (
@@ -262,25 +262,25 @@ const PaymentInList: React.FC = () => {
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-wrap gap-1">
                                                             {payment.modes.map((mode, idx) => (
-                                                                <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
+                                                                <span key={idx} className="px-2 py-0.5 bg-surface/30 text-secondary border border-default/30 text-[10px] uppercase font-bold rounded">
                                                                     {mode}
                                                                 </span>
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-main">
                                                         {formatCurrency(payment.amount)}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
+                                                                className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-brand-600 transition-colors"
                                                                 title="View"
                                                             >
                                                                 <Eye className="w-4 h-4" />
                                                             </button>
                                                             <button
-                                                                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-brand-600 transition-colors"
+                                                                className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-brand-600 transition-colors"
                                                                 title="Print"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
@@ -289,7 +289,7 @@ const PaymentInList: React.FC = () => {
                                                             >
                                                                 <Printer className="w-4 h-4" />
                                                             </button>
-                                                            <button className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-neutral-900 transition-colors" title="More">
+                                                            <button className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-main transition-colors" title="More">
                                                                 <MoreHorizontal className="w-4 h-4" />
                                                             </button>
                                                         </div>
@@ -306,22 +306,22 @@ const PaymentInList: React.FC = () => {
                                         <div
                                             key={payment.id}
                                             onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                            className="p-4 active:bg-neutral-50 dark:active:bg-neutral-800 transition-colors"
+                                            className="p-4 active:bg-surface/40 transition-colors"
                                         >
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
                                                     <div className="font-bold text-brand-600 dark:text-brand-400">{payment.receiptNo}</div>
-                                                    <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{payment.customerName}</div>
+                                                    <div className="text-sm font-bold text-main">{payment.customerName}</div>
                                                 </div>
-                                                <div className="font-bold text-neutral-900 dark:text-neutral-100">{formatCurrency(payment.amount)}</div>
+                                                <div className="font-bold text-main">{formatCurrency(payment.amount)}</div>
                                             </div>
                                             <div className="flex justify-between items-center mt-3">
-                                                <div className="text-xs text-neutral-500">
+                                                <div className="text-xs text-secondary opacity-70">
                                                     {new Date(payment.date).toLocaleDateString()}
                                                 </div>
                                                 <div className="flex gap-1">
                                                     {payment.modes.map((mode, idx) => (
-                                                        <span key={idx} className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-[10px] uppercase font-bold rounded">
+                                                        <span key={idx} className="px-2 py-0.5 bg-surface/30 text-secondary border border-default/30 text-[10px] uppercase font-bold rounded">
                                                             {mode}
                                                         </span>
                                                     ))}

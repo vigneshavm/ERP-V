@@ -164,7 +164,7 @@ const DeliveryChallanDetail = () => {
                             </h3>
                             <div className="space-y-2">
                                 <div>
-                                    <span className={`px-4 py-2 inline-flex text-sm font-bold rounded-full ${challan.status === 'Converted' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' :
+                                    <span className={`px-4 py-2 inline-flex text-sm font-bold rounded-full ${challan.status === 'Converted' ? 'bg-success/10 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' :
                                         challan.status === 'Delivered' ? 'bg-primary-soft text-primary' :
                                             'bg-surface text-secondary'
                                         }`}>

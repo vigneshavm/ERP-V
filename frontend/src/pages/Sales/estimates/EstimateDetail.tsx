@@ -42,8 +42,8 @@ const EstimateDetail = () => {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-          <p className="text-slate-500 font-medium">Loading estimate...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+          <p className="text-secondary opacity-70 font-medium">Loading estimate...</p>
         </div>
       </Layout>
     );
@@ -56,24 +56,24 @@ const EstimateDetail = () => {
         <div className="mb-8 print:hidden">
           <button
             onClick={() => navigate("/sales/estimates")}
-            className="flex items-center text-slate-600 hover:text-indigo-600 mb-4 transition-colors font-medium gap-2"
+            className="flex items-center text-secondary hover:text-primary mb-4 transition-colors font-medium gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Estimates
           </button>
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                <FileText className="w-6 h-6 text-indigo-600" />
+              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
+                <FileText className="w-6 h-6 text-primary" />
                 Estimate Details
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-secondary opacity-70 mt-1">
                 View and print estimate
               </p>
             </div>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm font-medium"
             >
               <Printer className="w-4 h-4" />
               Print
@@ -82,7 +82,7 @@ const EstimateDetail = () => {
         </div>
 
         {/* Estimate Card */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
+        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
           <EstimateTemplate estimate={estimate} />
         </div>
       </div>

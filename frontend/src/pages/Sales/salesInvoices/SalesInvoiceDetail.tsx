@@ -74,8 +74,8 @@ const SalesInvoiceDetail = () => {
         return (
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                    <p className="text-slate-500 font-medium">Loading invoice...</p>
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                    <p className="text-secondary opacity-70 font-medium">Loading invoice...</p>
                 </div>
             </Layout>
         );
@@ -85,13 +85,13 @@ const SalesInvoiceDetail = () => {
         return (
             <Layout>
                 <div className="max-w-4xl mx-auto">
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+                    <div className="p-4 bg-danger/10 border border-red-200 rounded-lg flex items-center gap-3">
                         <AlertCircle className="w-5 h-5 text-red-500" />
                         <p className="text-red-700">{message}</p>
                     </div>
                     <button
                         onClick={() => navigate('/sales/invoice')}
-                        className="mt-4 text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-2"
+                        className="mt-4 text-primary hover:text-primary font-medium flex items-center gap-2"
                     >
                         <ArrowLeft className="w-4 h-4" /> Back to Sales Invoices
                     </button>
@@ -131,7 +131,7 @@ const SalesInvoiceDetail = () => {
                                     {populatedInvoice.customer?.name || 'Walk-in Customer'} • {new Date(invoice.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                 </p>
                                 {balanceDue > 0 && (
-                                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-xl text-sm font-bold">
+                                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 glass-panel/20 rounded-xl text-sm font-bold">
                                         <AlertCircle className="w-4 h-4" /> ₹{balanceDue.toFixed(2)} Balance Due
                                     </div>
                                 )}
@@ -139,14 +139,14 @@ const SalesInvoiceDetail = () => {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     onClick={handlePrint}
-                                    className="px-4 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2"
+                                    className="px-4 py-2.5 glass-panel/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:glass-panel/20 transition-all flex items-center gap-2"
                                 >
                                     <Printer className="w-4 h-4" /> Print
                                 </button>
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
-                                        className="px-4 py-2.5 bg-white text-emerald-700 rounded-xl text-sm font-bold shadow-lg hover:bg-emerald-50 transition-all flex items-center gap-2"
+                                        className="px-4 py-2.5 glass-panel text-emerald-700 rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
                                     >
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
@@ -160,33 +160,33 @@ const SalesInvoiceDetail = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Customer Card */}
                         {invoice.customer && (
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
-                                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Bill To</h2>
+                            <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                                <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                    <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Bill To</h2>
                                 </div>
                                 <div className="p-6 flex items-start gap-4">
                                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shadow-lg">
                                         {isCustomer(invoice.customer) ? (invoice.customer.name.charAt(0).toUpperCase()) : '?'}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-lg font-bold text-slate-800">
+                                        <p className="text-lg font-bold text-main">
                                             {populatedInvoice.customer?.name || 'Customer'}
                                         </p>
-                                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600">
+                                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-secondary">
                                             {populatedInvoice.customer?.phone && (
                                                 <span className="flex items-center gap-1.5">
-                                                    <Phone className="w-4 h-4 text-slate-400" /> {populatedInvoice.customer.phone}
+                                                    <Phone className="w-4 h-4 text-secondary opacity-50" /> {populatedInvoice.customer.phone}
                                                 </span>
                                             )}
                                             {populatedInvoice.customer?.email && (
                                                 <span className="flex items-center gap-1.5">
-                                                    <Mail className="w-4 h-4 text-slate-400" /> {populatedInvoice.customer.email}
+                                                    <Mail className="w-4 h-4 text-secondary opacity-50" /> {populatedInvoice.customer.email}
                                                 </span>
                                             )}
                                         </div>
                                         {populatedInvoice.customer?.address && (
-                                            <p className="mt-2 text-sm text-slate-500 flex items-start gap-1.5">
-                                                <MapPin className="w-4 h-4 text-slate-400 mt-0.5" /> {populatedInvoice.customer.address}
+                                            <p className="mt-2 text-sm text-secondary opacity-70 flex items-start gap-1.5">
+                                                <MapPin className="w-4 h-4 text-secondary opacity-50 mt-0.5" /> {populatedInvoice.customer.address}
                                             </p>
                                         )}
                                     </div>
@@ -195,17 +195,17 @@ const SalesInvoiceDetail = () => {
                         )}
 
                         {/* Invoice Items */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex justify-between items-center">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Invoice Items</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Items</h2>
                                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${statusConfig.badge}`}>
                                     {invoice.paymentStatus}
                                 </span>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
-                                    <thead className="bg-slate-50 border-b border-slate-200">
-                                        <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <thead className="bg-surface/40 border-b border-default/30">
+                                        <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
                                             <th className="px-4 py-3 text-center w-12">#</th>
                                             <th className="px-4 py-3">Item</th>
                                             <th className="px-4 py-3 text-right">Qty</th>
@@ -213,14 +213,14 @@ const SalesInvoiceDetail = () => {
                                             <th className="px-4 py-3 text-right">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100">
+                                    <tbody className="divide-y divide-default/20">
                                         {invoice.items?.map((item, index) => (
-                                            <tr key={index} className="hover:bg-slate-50/80 transition-colors">
-                                                <td className="px-4 py-3 text-center text-xs text-slate-400 font-bold">{index + 1}</td>
-                                                <td className="px-4 py-3 font-medium text-slate-800">{item.name || 'Item'}</td>
+                                            <tr key={index} className="hover:bg-surface/40/80 transition-colors">
+                                                <td className="px-4 py-3 text-center text-xs text-secondary opacity-50 font-bold">{index + 1}</td>
+                                                <td className="px-4 py-3 font-medium text-main">{item.name || 'Item'}</td>
                                                 <td className="px-4 py-3 text-right font-medium">{item.quantity}</td>
-                                                <td className="px-4 py-3 text-right text-slate-600">₹{item.price?.toFixed(2) || '0.00'}</td>
-                                                <td className="px-4 py-3 text-right font-bold text-slate-800">₹{item.total?.toFixed(2) || '0.00'}</td>
+                                                <td className="px-4 py-3 text-right text-secondary">₹{item.price?.toFixed(2) || '0.00'}</td>
+                                                <td className="px-4 py-3 text-right font-bold text-main">₹{item.total?.toFixed(2) || '0.00'}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -229,28 +229,28 @@ const SalesInvoiceDetail = () => {
                         </div>
 
                         {/* Invoice Info */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Invoice Details</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Details</h2>
                             </div>
                             <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Invoice No</p>
-                                    <p className="text-sm font-bold text-slate-800">{invoice.invoiceNo}</p>
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Invoice No</p>
+                                    <p className="text-sm font-bold text-main">{invoice.invoiceNo}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Invoice Date</p>
-                                    <p className="text-sm font-medium text-slate-800">
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Invoice Date</p>
+                                    <p className="text-sm font-medium text-main">
                                         {new Date(invoice.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Payment Method</p>
-                                    <p className="text-sm font-medium text-slate-800 capitalize">{invoice.paymentMethod || 'N/A'}</p>
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Payment Method</p>
+                                    <p className="text-sm font-medium text-main capitalize">{invoice.paymentMethod || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Time</p>
-                                    <p className="text-sm font-medium text-slate-800">
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Time</p>
+                                    <p className="text-sm font-medium text-main">
                                         {new Date(invoice.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 </div>
@@ -261,36 +261,36 @@ const SalesInvoiceDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Payment Summary */}
-                        <div className="bg-white border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
-                            <div className="bg-indigo-50/50 px-6 py-3 border-b border-indigo-100">
+                        <div className="glass-panel border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
+                            <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
                                 <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Payment Summary</h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500 font-medium">Subtotal</span>
-                                    <span className="font-bold text-slate-800">₹{invoice.subtotal?.toFixed(2) || '0.00'}</span>
+                                    <span className="text-secondary opacity-70 font-medium">Subtotal</span>
+                                    <span className="font-bold text-main">₹{invoice.subtotal?.toFixed(2) || '0.00'}</span>
                                 </div>
                                 {(invoice.tax || 0) > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Tax</span>
-                                        <span className="font-bold text-slate-800">+₹{invoice.tax?.toFixed(2) || '0.00'}</span>
+                                        <span className="text-secondary opacity-70 font-medium">Tax</span>
+                                        <span className="font-bold text-main">+₹{invoice.tax?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 )}
                                 {(invoice.discount || 0) > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Discount</span>
-                                        <span className="font-bold text-rose-600">-₹{invoice.discount?.toFixed(2) || '0.00'}</span>
+                                        <span className="text-secondary opacity-70 font-medium">Discount</span>
+                                        <span className="font-bold text-danger">-₹{invoice.discount?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 )}
                                 <div className="border-t pt-4">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-500 font-medium">Total Amount</span>
-                                        <span className="font-bold text-slate-800">₹{invoice.totalAmount?.toFixed(2) || '0.00'}</span>
+                                        <span className="text-secondary opacity-70 font-medium">Total Amount</span>
+                                        <span className="font-bold text-main">₹{invoice.totalAmount?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500 font-medium">Paid Amount</span>
-                                    <span className="font-bold text-emerald-600">₹{invoice.paidAmount?.toFixed(2) || '0.00'}</span>
+                                    <span className="text-secondary opacity-70 font-medium">Paid Amount</span>
+                                    <span className="font-bold text-success">₹{invoice.paidAmount?.toFixed(2) || '0.00'}</span>
                                 </div>
                             </div>
                             <div className={`px-6 py-5 flex justify-between items-center text-white ${balanceDue > 0 ? 'bg-red-600' : 'bg-emerald-600'
@@ -305,9 +305,9 @@ const SalesInvoiceDetail = () => {
                         </div>
 
                         {/* Quick Actions */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden print:hidden">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Actions</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:hidden">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Quick Actions</h2>
                             </div>
                             <div className="p-4 space-y-2">
                                 {invoice.paymentStatus !== 'paid' && (
@@ -320,7 +320,7 @@ const SalesInvoiceDetail = () => {
                                 )}
                                 <button
                                     onClick={handlePrint}
-                                    className="w-full py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
                                 >
                                     <Printer className="w-4 h-4" /> Print Invoice
                                 </button>
@@ -330,7 +330,7 @@ const SalesInvoiceDetail = () => {
                                         dispatch(reset());
                                         navigate('/sales/invoice');
                                     }}
-                                    className="w-full py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
                                 >
                                     <ArrowLeft className="w-4 h-4" /> Back to List
                                 </button>
@@ -340,7 +340,7 @@ const SalesInvoiceDetail = () => {
                 </div>
 
                 {/* Print Footer */}
-                <div className="hidden print:block mt-12 pt-6 border-t text-center text-slate-500 text-sm">
+                <div className="hidden print:block mt-12 pt-6 border-t text-center text-secondary opacity-70 text-sm">
                     <p>Thank you for your business!</p>
                     <p className="mt-1">This is a computer-generated invoice.</p>
                 </div>

@@ -227,11 +227,11 @@ const Estimate = () => {
           {/* Header */}
           <div className="mb-6 flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                <Calculator className="w-6 h-6 text-indigo-600" />
+              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
+                <Calculator className="w-6 h-6 text-primary" />
                 Create Estimate / Proforma
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-secondary opacity-70 mt-1">
                 Price approximation for customers
               </p>
             </div>
@@ -248,33 +248,33 @@ const Estimate = () => {
             {/* Left Side - Products */}
             <div className="lg:col-span-2 space-y-4">
               {/* Customer Selection */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+              <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
                   </h2>
                 </div>
                 <div className="p-6">
 
                   {customer ? (
-                    <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+                    <div className="p-4 bg-primary/10 border border-indigo-200 rounded-xl">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg">
                             {customer.name?.charAt(0).toUpperCase() || '?'}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-800">
+                            <div className="font-bold text-main">
                               {customer.name}
                             </div>
-                            <div className="text-sm text-slate-600 flex items-center gap-1">
+                            <div className="text-sm text-secondary flex items-center gap-1">
                               <Phone className="w-3 h-3" /> {customer.phone}
                             </div>
                           </div>
                         </div>
                         <button
                           onClick={() => setCustomer(null)}
-                          className="text-red-600 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg"
+                          className="text-danger hover:text-red-700 p-1.5 hover:bg-danger/10 rounded-lg"
                         >
                           <X className="w-5 h-5" />
                         </button>
@@ -283,18 +283,18 @@ const Estimate = () => {
                   ) : (
                     <button
                       onClick={() => setShowCustomerSelect(true)}
-                      className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
+                      className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-secondary opacity-70 hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
                     >
                       <User className="w-5 h-5" /> Walk-in Customer (Click to select)
                     </button>
                   )}
                   {/* Credit Balance Display */}
                   {customer && customer.dues < 0 && (
-                    <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
+                    <div className="mt-4 p-3 bg-success/10 border border-emerald-200 rounded-xl flex items-center justify-between">
                       <span className="text-sm font-medium text-emerald-700 flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" /> Available Credit
                       </span>
-                      <span className="text-lg font-bold text-emerald-600">
+                      <span className="text-lg font-bold text-success">
                         ₹{Math.abs(customer.dues).toFixed(2)}
                       </span>
                     </div>
@@ -302,11 +302,11 @@ const Estimate = () => {
 
                   {/* Pending Dues Display */}
                   {customer && customer?.dues > 0 && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between">
+                    <div className="mt-4 p-3 bg-danger/10 border border-red-200 rounded-xl flex items-center justify-between">
                       <span className="text-sm font-medium text-red-700 flex items-center gap-2">
                         <AlertCircle className="w-4 h-4" /> Pending Dues
                       </span>
-                      <span className="text-lg font-bold text-red-600">
+                      <span className="text-lg font-bold text-danger">
                         ₹{customer.dues.toFixed(2)}
                       </span>
                     </div>
@@ -315,9 +315,9 @@ const Estimate = () => {
               </div>
 
               {/* Product Search */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Products</h2>
+              <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Products</h2>
                 </div>
                 <div className="p-6">
                   <div className="relative mb-4">
@@ -326,9 +326,9 @@ const Estimate = () => {
                       placeholder="Search products by name or SKU..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-slate-300 bg-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all"
+                      className="w-full pl-10 pr-4 py-2 border border-default/40 glass-panel placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-all"
                     />
-                    <Search className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                    <Search className="absolute left-3 top-2.5 w-5 h-5 text-secondary opacity-50" />
                   </div>
 
                   {/* Products Grid */}
@@ -337,19 +337,19 @@ const Estimate = () => {
                       <button
                         key={item._id}
                         onClick={() => addToCart(item)}
-                        className="p-4 border-2 border-slate-200 rounded-xl text-left transition hover:border-indigo-500 hover:shadow-md bg-white"
+                        className="p-4 border-2 border-default/30 rounded-xl text-left transition hover:border-primary hover:shadow-md glass-panel"
                       >
-                        <div className="font-bold text-slate-800 mb-1 truncate text-sm">
+                        <div className="font-bold text-main mb-1 truncate text-sm">
                           {item.name}
                         </div>
-                        <div className="text-lg font-bold text-indigo-600">
+                        <div className="text-lg font-bold text-primary">
                           ₹{item.sellingPrice}
                         </div>
-                        <div className="text-xs text-slate-500 mt-1">
+                        <div className="text-xs text-secondary opacity-70 mt-1">
                           Stock: {item.stockQty} {item.unit}
                         </div>
                         {item.sku && (
-                          <div className="text-xs text-slate-400 mt-1">
+                          <div className="text-xs text-secondary opacity-50 mt-1">
                             SKU: {item.sku}
                           </div>
                         )}
@@ -362,8 +362,8 @@ const Estimate = () => {
 
             {/* Right Side - Cart & Total */}
             <div className="lg:col-span-1">
-              <div className="bg-white border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4">
-                <div className="bg-indigo-50/50 px-6 py-3 border-b border-indigo-100">
+              <div className="glass-panel border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4">
+                <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
                   <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Estimate Cart</h2>
                 </div>
                 <div className="p-6">
@@ -410,7 +410,7 @@ const Estimate = () => {
                             </button>
                             <button
                               onClick={() => removeFromCart(item.itemId)}
-                              className="ml-2 text-red-600 dark:text-red-400 hover:text-red-800"
+                              className="ml-2 text-danger dark:text-red-400 hover:text-red-800"
                             >
                               <svg
                                 className="w-5 h-5"
@@ -448,7 +448,7 @@ const Estimate = () => {
                       }
                       min={0}
                       step="0.01"
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] glass-panel dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent"
                       placeholder="0.00"
                     />
                   </div>
@@ -462,7 +462,7 @@ const Estimate = () => {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] glass-panel dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent"
                       placeholder="Additional notes..."
                     />
                   </div>
@@ -481,7 +481,7 @@ const Estimate = () => {
                       <span className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
                         Discount:
                       </span>
-                      <span className="font-medium text-red-600 dark:text-red-400">
+                      <span className="font-medium text-danger dark:text-red-400">
                         -₹{discount.toFixed(2)}
                       </span>
                     </div>
@@ -489,7 +489,7 @@ const Estimate = () => {
                       <span className="text-maindark:text-[rgb(var(--color-text))]">
                         Estimated Total:
                       </span>
-                      <span className="text-indigo-600 dark:text-[rgb(var(--color-primary))]">
+                      <span className="text-primary dark:text-[rgb(var(--color-primary))]">
                         ₹{total.toFixed(2)}
                       </span>
                     </div>
@@ -520,7 +520,7 @@ const Estimate = () => {
                     <button
                       onClick={handleSaveEstimate}
                       disabled={isLoading || cart.length === 0 || !customer}
-                      className="w-full py-3 bg-indigo-600 dark:bg-[rgb(var(--color-primary))] text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-[rgb(var(--color-primary-hover))] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-3 bg-primary dark:bg-[rgb(var(--color-primary))] text-white rounded-lg hover:bg-primary-hover dark:hover:bg-[rgb(var(--color-primary-hover))] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? "Saving..." : "Save Estimate"}
                     </button>
@@ -539,7 +539,7 @@ const Estimate = () => {
             {/* Customer Selection Modal */}
             {showCustomerSelect && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-2xl border dark:border-[rgb(var(--color-border))] max-w-2xl w-full max-h-[90vh] flex flex-col">
+                <div className="glass-panel dark:bg-[rgb(var(--color-card))] rounded-xl shadow-2xl border dark:border-[rgb(var(--color-border))] max-w-2xl w-full max-h-[90vh] flex flex-col">
                   {/* Header */}
                   <div className="flex items-center justify-between p-6 border-b border-default dark:border-[rgb(var(--color-border))]">
                     <h3 className="text-xl font-bold text-maindark:text-[rgb(var(--color-text))]">
@@ -572,7 +572,7 @@ const Estimate = () => {
                       placeholder="Search by name or phone..."
                       value={customerSearchTerm}
                       onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg mb-4 focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))]"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] glass-panel dark:bg-[rgb(var(--color-input))] text-maindark:text-[rgb(var(--color-text))] rounded-lg mb-4 focus:ring-2 focus:ring-primary dark:focus:ring-[rgb(var(--color-primary))]"
                     />
 
                     <div className="space-y-2">
@@ -580,7 +580,7 @@ const Estimate = () => {
                         <button
                           key={c._id}
                           onClick={() => selectCustomer(c)}
-                          className="w-full p-4 border border-default dark:border-[rgb(var(--color-border))] rounded-lg hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-left transition"
+                          className="w-full p-4 border border-default dark:border-[rgb(var(--color-border))] rounded-lg hover:border-primary hover:bg-primary/10 dark:hover:bg-indigo-900/20 text-left transition"
                         >
                           <div className="font-medium text-maindark:text-[rgb(var(--color-text))]">
                             {c.name}
@@ -597,7 +597,7 @@ const Estimate = () => {
             )}
           </div>
         </div>
-        <div className="hidden print:block absolute top-0 left-0 w-full bg-white z-50">
+        <div className="hidden print:block absolute top-0 left-0 w-full glass-panel z-50">
           <EstimateTemplate estimate={getPreviewData()} />
         </div>
         <style>{`

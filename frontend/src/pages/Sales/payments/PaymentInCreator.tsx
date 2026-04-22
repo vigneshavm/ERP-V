@@ -49,8 +49,8 @@ const generateDemoInvoices = (customerId: string): Invoice[] => {
 const methodConfig = {
     CASH: { label: 'Cash', icon: Banknote, color: 'text-green-600' },
     UPI: { label: 'UPI', icon: Smartphone, color: 'text-purple-600' },
-    CARD: { label: 'Card', icon: CreditCard, color: 'text-blue-600' },
-    BANK: { label: 'Bank Transfer', icon: Building2, color: 'text-indigo-600' },
+    CARD: { label: 'Card', icon: CreditCard, color: 'text-info' },
+    BANK: { label: 'Bank Transfer', icon: Building2, color: 'text-primary' },
     CHEQUE: { label: 'Cheque', icon: Receipt, color: 'text-amber-600' },
     WALLET: { label: 'Wallet', icon: Wallet, color: 'text-pink-600' },
 };
@@ -179,7 +179,7 @@ const PaymentInCreator: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-white dark:bg-neutral-900">
+        <div className="h-full flex flex-col glass-panel dark:bg-neutral-900">
             {/* Header */}
             <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
                 <div className="flex flex-wrap items-center justify-between gap-4">
@@ -194,7 +194,7 @@ const PaymentInCreator: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-neutral-400" />
+                            <Calendar className="w-4 h-4 text-secondary opacity-50" />
                             <input
                                 type="date"
                                 value={receiptDate}
@@ -202,7 +202,7 @@ const PaymentInCreator: React.FC = () => {
                                 className="input text-sm w-36"
                             />
                         </div>
-                        <div className="text-neutral-500">
+                        <div className="text-secondary opacity-70">
                             <span className="font-medium">By:</span> {user?.name || 'Admin'}
                         </div>
                     </div>
@@ -231,7 +231,7 @@ const PaymentInCreator: React.FC = () => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="font-bold text-lg">{customer.name}</p>
-                                            <p className="text-sm text-neutral-500">{customer.phone}</p>
+                                            <p className="text-sm text-secondary opacity-70">{customer.phone}</p>
                                         </div>
                                         {isCustomerLocked && (
                                             <span className="text-xs text-amber-600 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
@@ -240,8 +240,8 @@ const PaymentInCreator: React.FC = () => {
                                         )}
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                            <p className="text-xs text-red-600 dark:text-red-400 font-medium">Outstanding</p>
+                                        <div className="p-3 bg-danger/10 dark:bg-red-900/20 rounded-lg">
+                                            <p className="text-xs text-danger dark:text-red-400 font-medium">Outstanding</p>
                                             <p className="text-lg font-bold text-red-700 dark:text-red-400">
                                                 {formatCurrency(customer.outstandingBalance)}
                                             </p>
@@ -256,7 +256,7 @@ const PaymentInCreator: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary opacity-50" />
                                     <input
                                         type="text"
                                         placeholder="Search customer by name or phone..."
@@ -266,18 +266,18 @@ const PaymentInCreator: React.FC = () => {
                                         className="input pl-10"
                                     />
                                     {showCustomerDropdown && filteredCustomers.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl mt-1 max-h-48 overflow-auto z-20">
+                                        <div className="absolute top-full left-0 right-0 glass-panel border border-default/30 rounded-lg shadow-xl mt-1 max-h-48 overflow-auto z-20">
                                             {filteredCustomers.map(c => (
                                                 <button
                                                     key={c.id}
                                                     onClick={() => selectCustomer(c)}
-                                                    className="w-full text-left px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 border-b border-neutral-100 dark:border-neutral-700 last:border-0"
+                                                    className="w-full text-left px-4 py-3 hover:bg-surface/60 border-b border-neutral-100 dark:border-neutral-700 last:border-0"
                                                 >
                                                     <div className="flex justify-between">
                                                         <span className="font-medium">{c.name}</span>
                                                         <span className="text-xs text-red-500">Due: {formatCurrency(c.outstandingBalance)}</span>
                                                     </div>
-                                                    <span className="text-xs text-neutral-500">{c.phone}</span>
+                                                    <span className="text-xs text-secondary opacity-70">{c.phone}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -302,7 +302,7 @@ const PaymentInCreator: React.FC = () => {
                                     const config = methodConfig[pm.method];
                                     const Icon = config.icon;
                                     return (
-                                        <div key={pm.id} className="grid grid-cols-12 gap-2 items-center p-3 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                                        <div key={pm.id} className="grid grid-cols-12 gap-2 items-center p-3 glass-panel rounded-lg border border-default/30">
                                             <div className="col-span-3">
                                                 <select
                                                     value={pm.method}
@@ -379,31 +379,31 @@ const PaymentInCreator: React.FC = () => {
                             </div>
 
                             {!customer ? (
-                                <div className="text-center py-12 text-neutral-400">
+                                <div className="text-center py-12 text-secondary opacity-50">
                                     <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
                                     <p>Select a customer to see open invoices</p>
                                 </div>
                             ) : invoices.length === 0 ? (
-                                <div className="text-center py-12 text-neutral-400">
+                                <div className="text-center py-12 text-secondary opacity-50">
                                     <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-green-500" />
                                     <p>No outstanding invoices</p>
                                 </div>
                             ) : (
                                 <div className="space-y-2">
                                     {invoices.map(inv => (
-                                        <div key={inv.id} className="p-3 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                                        <div key={inv.id} className="p-3 glass-panel rounded-lg border border-default/30">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div>
                                                     <span className="font-medium text-brand-600">{inv.invoiceNo}</span>
-                                                    <span className="text-xs text-neutral-500 ml-2">{inv.date}</span>
+                                                    <span className="text-xs text-secondary opacity-70 ml-2">{inv.date}</span>
                                                 </div>
                                                 <span className="text-sm font-medium">{formatCurrency(inv.totalAmount)}</span>
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <div className="flex-1">
-                                                    <div className="flex justify-between text-xs text-neutral-500 mb-1">
+                                                    <div className="flex justify-between text-xs text-secondary opacity-70 mb-1">
                                                         <span>Balance Due</span>
-                                                        <span className="text-red-600 font-medium">{formatCurrency(inv.balanceDue)}</span>
+                                                        <span className="text-danger font-medium">{formatCurrency(inv.balanceDue)}</span>
                                                     </div>
                                                 </div>
                                                 <div className="w-32">
@@ -424,22 +424,22 @@ const PaymentInCreator: React.FC = () => {
 
                             {/* Summary */}
                             {customer && (
-                                <div className="mt-4 p-4 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 space-y-2">
+                                <div className="mt-4 p-4 glass-panel rounded-lg border border-default/30 space-y-2">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-neutral-500">Total Payment</span>
+                                        <span className="text-secondary opacity-70">Total Payment</span>
                                         <span className="font-medium">{formatCurrency(totalPayment)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-neutral-500">Allocated to Invoices</span>
+                                        <span className="text-secondary opacity-70">Allocated to Invoices</span>
                                         <span className="font-medium text-green-600">{formatCurrency(totalAllocated)}</span>
                                     </div>
                                     {advanceCreated > 0 && (
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-blue-600">Advance Created</span>
-                                            <span className="font-medium text-blue-600">{formatCurrency(advanceCreated)}</span>
+                                            <span className="text-info">Advance Created</span>
+                                            <span className="font-medium text-info">{formatCurrency(advanceCreated)}</span>
                                         </div>
                                     )}
-                                    <div className="border-t border-neutral-200 dark:border-neutral-700 pt-2">
+                                    <div className="border-t border-default/30 pt-2">
                                         <div className="flex justify-between font-bold">
                                             <span>Remaining</span>
                                             <span className={remainingUnallocated > 0 ? 'text-amber-600' : 'text-green-600'}>

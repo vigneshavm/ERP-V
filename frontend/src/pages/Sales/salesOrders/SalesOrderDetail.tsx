@@ -112,8 +112,8 @@ const SalesOrderDetail = () => {
         return (
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                    <p className="text-slate-500 font-medium">Loading order details...</p>
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                    <p className="text-secondary opacity-70 font-medium">Loading order details...</p>
                 </div>
             </Layout>
         );
@@ -124,8 +124,8 @@ const SalesOrderDetail = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20">
                     <AlertTriangle className="w-12 h-12 text-amber-500 mb-4" />
-                    <p className="text-slate-700 font-bold text-lg">Order not found</p>
-                    <button onClick={() => navigate('/sales/sales-order-list')} className="mt-4 text-indigo-600 font-medium hover:underline">
+                    <p className="text-main opacity-90 font-bold text-lg">Order not found</p>
+                    <button onClick={() => navigate('/sales/sales-order-list')} className="mt-4 text-primary font-medium hover:underline">
                         Back to Orders
                     </button>
                 </div>
@@ -165,7 +165,7 @@ const SalesOrderDetail = () => {
                                     {order.customer?.name} • Created {new Date(order.orderDate).toLocaleDateString()}
                                 </p>
                                 {order.isOverdue && (
-                                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-xl text-sm font-bold">
+                                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 glass-panel/20 rounded-xl text-sm font-bold">
                                         <Clock className="w-4 h-4" /> Delivery Overdue
                                     </div>
                                 )}
@@ -173,14 +173,14 @@ const SalesOrderDetail = () => {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     onClick={() => window.print()}
-                                    className="px-4 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2"
+                                    className="px-4 py-2.5 glass-panel/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:glass-panel/20 transition-all flex items-center gap-2"
                                 >
                                     <Printer className="w-4 h-4" /> Print
                                 </button>
                                 {canConvertToDC && (
                                     <button
                                         onClick={() => navigate(`/sales/delivery-challan?salesOrderId=${order._id}`)}
-                                        className="px-4 py-2.5 bg-white text-purple-700 rounded-xl text-sm font-bold shadow-lg hover:bg-purple-50 transition-all flex items-center gap-2"
+                                        className="px-4 py-2.5 glass-panel text-purple-700 rounded-xl text-sm font-bold shadow-lg hover:bg-purple-50 transition-all flex items-center gap-2"
                                     >
                                         <Truck className="w-4 h-4" /> Create Delivery Challan
                                     </button>
@@ -189,7 +189,7 @@ const SalesOrderDetail = () => {
                                     <button
                                         onClick={handleCancelOrder}
                                         disabled={actionLoading}
-                                        className="px-4 py-2.5 bg-red-500/20 border border-red-300/30 text-white rounded-xl text-sm font-bold hover:bg-red-500/30 transition-all flex items-center gap-2 disabled:opacity-50"
+                                        className="px-4 py-2.5 bg-danger/100/20 border border-red-300/30 text-white rounded-xl text-sm font-bold hover:bg-danger/100/30 transition-all flex items-center gap-2 disabled:opacity-50"
                                     >
                                         <XCircle className="w-4 h-4" /> Cancel Order
                                     </button>
@@ -200,24 +200,24 @@ const SalesOrderDetail = () => {
                 </div>
 
                 {/* Order Lifecycle Timeline */}
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Order Lifecycle</h3>
+                <div className="glass-panel border border-default/30 rounded-2xl shadow-sm p-6">
+                    <h3 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider mb-4">Order Lifecycle</h3>
                     <div className="flex items-center justify-between">
                         {getLifecycleStages().map((stage, index) => (
                             <div key={stage.name} className="flex items-center flex-1">
                                 <div className="flex flex-col items-center">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${stage.completed ? 'bg-emerald-500 text-white' :
-                                        stage.current ? 'bg-indigo-600 text-white ring-4 ring-indigo-100' :
-                                            'bg-slate-100 text-slate-400'
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${stage.completed ? 'bg-success/100 text-white' :
+                                        stage.current ? 'bg-primary text-white ring-4 ring-indigo-100' :
+                                            'bg-surface/50 text-secondary opacity-50'
                                         }`}>
                                         {stage.completed ? <CheckCircle className="w-5 h-5" /> : index + 1}
                                     </div>
-                                    <p className={`mt-2 text-xs font-bold ${stage.current ? 'text-indigo-600' : 'text-slate-500'}`}>
+                                    <p className={`mt-2 text-xs font-bold ${stage.current ? 'text-primary' : 'text-secondary opacity-70'}`}>
                                         {stage.name}
                                     </p>
                                 </div>
                                 {index < 3 && (
-                                    <div className={`flex-1 h-1 mx-2 rounded-full ${stage.completed ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+                                    <div className={`flex-1 h-1 mx-2 rounded-full ${stage.completed ? 'bg-success/100' : 'bg-surface/60'}`} />
                                 )}
                             </div>
                         ))}
@@ -227,52 +227,52 @@ const SalesOrderDetail = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-6">
                         {/* Order Info */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Order Information</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Order Information</h2>
                             </div>
                             <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Order Number</p>
-                                    <p className="text-sm font-bold text-slate-800">{order.orderNumber}</p>
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Order Number</p>
+                                    <p className="text-sm font-bold text-main">{order.orderNumber}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Order Date</p>
-                                    <p className="text-sm font-medium text-slate-800">{new Date(order.orderDate).toLocaleDateString()}</p>
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Order Date</p>
+                                    <p className="text-sm font-medium text-main">{new Date(order.orderDate).toLocaleDateString()}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Expected Delivery</p>
-                                    <p className="text-sm font-medium text-slate-800">
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Expected Delivery</p>
+                                    <p className="text-sm font-medium text-main">
                                         {new Date(order.expectedDeliveryDate).toLocaleDateString()}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Created By</p>
-                                    <p className="text-sm font-medium text-slate-800">{order.createdBy?.name || 'N/A'}</p>
+                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Created By</p>
+                                    <p className="text-sm font-medium text-main">{order.createdBy?.name || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Customer Info */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Customer Details</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Customer Details</h2>
                             </div>
                             <div className="p-6 flex items-start gap-4">
                                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shadow-lg">
                                     {order.customer?.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-lg font-bold text-slate-800">{order.customer?.name}</p>
-                                    <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-600">
+                                    <p className="text-lg font-bold text-main">{order.customer?.name}</p>
+                                    <div className="flex flex-wrap gap-4 mt-2 text-sm text-secondary">
                                         {order.customer?.phone && (
                                             <span className="flex items-center gap-1.5">
-                                                <Phone className="w-4 h-4 text-slate-400" /> {order.customer.phone}
+                                                <Phone className="w-4 h-4 text-secondary opacity-50" /> {order.customer.phone}
                                             </span>
                                         )}
                                         {order.customer?.email && (
                                             <span className="flex items-center gap-1.5">
-                                                <Mail className="w-4 h-4 text-slate-400" /> {order.customer.email}
+                                                <Mail className="w-4 h-4 text-secondary opacity-50" /> {order.customer.email}
                                             </span>
                                         )}
                                     </div>
@@ -281,14 +281,14 @@ const SalesOrderDetail = () => {
                         </div>
 
                         {/* Items Table */}
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Order Items</h2>
+                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Order Items</h2>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
-                                    <thead className="bg-slate-50 border-b border-slate-200">
-                                        <tr className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <thead className="bg-surface/40 border-b border-default/30">
+                                        <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
                                             <th className="px-4 py-3 text-center w-12">#</th>
                                             <th className="px-4 py-3">Product</th>
                                             <th className="px-4 py-3 text-right">Qty</th>
@@ -298,32 +298,32 @@ const SalesOrderDetail = () => {
                                             <th className="px-4 py-3 text-right">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100">
+                                    <tbody className="divide-y divide-default/20">
                                         {order.items.map((item: SalesOrderItem, index: number) => {
                                             const deliveryProgress = item.quantity > 0 ? ((item.deliveredQty || 0) / item.quantity) * 100 : 0;
                                             return (
-                                                <tr key={index} className="hover:bg-slate-50/80 transition-colors">
-                                                    <td className="px-4 py-3 text-center text-xs text-slate-400 font-bold">{index + 1}</td>
+                                                <tr key={index} className="hover:bg-surface/40/80 transition-colors">
+                                                    <td className="px-4 py-3 text-center text-xs text-secondary opacity-50 font-bold">{index + 1}</td>
                                                     <td className="px-4 py-3">
-                                                        <p className="font-semibold text-slate-800">{item.item?.name || item.name}</p>
+                                                        <p className="font-semibold text-main">{item.item?.name || item.name}</p>
                                                     </td>
                                                     <td className="px-4 py-3 text-right font-medium">{item.quantity}</td>
                                                     <td className="px-4 py-3 text-right font-medium">₹{item.rate}</td>
-                                                    <td className="px-4 py-3 text-right text-slate-600">{item.tax}%</td>
+                                                    <td className="px-4 py-3 text-right text-secondary">{item.tax}%</td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-col items-center gap-1">
-                                                            <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div className="w-24 h-2 bg-surface/50 rounded-full overflow-hidden">
                                                                 <div
-                                                                    className="h-full bg-emerald-500 rounded-full transition-all"
+                                                                    className="h-full bg-success/100 rounded-full transition-all"
                                                                     style={{ width: `${deliveryProgress}%` }}
                                                                 />
                                                             </div>
-                                                            <span className="text-[10px] font-bold text-slate-500">
+                                                            <span className="text-[10px] font-bold text-secondary opacity-70">
                                                                 {item.deliveredQty || 0}/{item.quantity} delivered
                                                             </span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right font-bold text-slate-800">₹{item.total?.toFixed(2) || '0.00'}</td>
+                                                    <td className="px-4 py-3 text-right font-bold text-main">₹{item.total?.toFixed(2) || '0.00'}</td>
                                                 </tr>
                                             );
                                         })}
@@ -334,12 +334,12 @@ const SalesOrderDetail = () => {
 
                         {/* Notes */}
                         {order.notes && (
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Notes</h2>
+                            <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                                <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                    <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Notes</h2>
                                 </div>
                                 <div className="p-6">
-                                    <p className="text-sm text-slate-600">{order.notes}</p>
+                                    <p className="text-sm text-secondary">{order.notes}</p>
                                 </div>
                             </div>
                         )}
@@ -348,22 +348,22 @@ const SalesOrderDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Order Summary */}
-                        <div className="bg-white border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4">
-                            <div className="bg-indigo-50/50 px-6 py-3 border-b border-indigo-100">
+                        <div className="glass-panel border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4">
+                            <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
                                 <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Order Summary</h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500 font-medium">Subtotal</span>
-                                    <span className="font-bold text-slate-800">₹{order.subtotal?.toFixed(2) || '0.00'}</span>
+                                    <span className="text-secondary opacity-70 font-medium">Subtotal</span>
+                                    <span className="font-bold text-main">₹{order.subtotal?.toFixed(2) || '0.00'}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500 font-medium">Tax</span>
-                                    <span className="font-bold text-slate-800">₹{order.taxTotal?.toFixed(2) || '0.00'}</span>
+                                    <span className="text-secondary opacity-70 font-medium">Tax</span>
+                                    <span className="font-bold text-main">₹{order.taxTotal?.toFixed(2) || '0.00'}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500 font-medium">Discount</span>
-                                    <span className="font-bold text-rose-600">-₹{order.discountTotal?.toFixed(2) || '0.00'}</span>
+                                    <span className="text-secondary opacity-70 font-medium">Discount</span>
+                                    <span className="font-bold text-danger">-₹{order.discountTotal?.toFixed(2) || '0.00'}</span>
                                 </div>
                             </div>
                             <div className="bg-slate-800 px-6 py-5 flex justify-between items-center text-white">
@@ -374,14 +374,14 @@ const SalesOrderDetail = () => {
 
                         {/* Conversion History */}
                         {((order.deliveryChallans && order.deliveryChallans.length > 0) || (order.invoices && order.invoices.length > 0)) && (
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                                <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
-                                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Linked Documents</h2>
+                            <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+                                <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                                    <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Linked Documents</h2>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     {order.deliveryChallans && order.deliveryChallans.length > 0 && (
                                         <div>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Delivery Challans</p>
+                                            <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-2">Delivery Challans</p>
                                             <div className="space-y-2">
                                                 {order.deliveryChallans.map((dc: any, index: number) => (
                                                     <div key={index} className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
@@ -394,11 +394,11 @@ const SalesOrderDetail = () => {
                                     )}
                                     {order.invoices && order.invoices.length > 0 && (
                                         <div>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Invoices</p>
+                                            <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-2">Invoices</p>
                                             <div className="space-y-2">
                                                 {order.invoices.map((inv: any, index: number) => (
-                                                    <div key={index} className="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg">
-                                                        <FileText className="w-4 h-4 text-emerald-600" />
+                                                    <div key={index} className="flex items-center gap-2 p-2 bg-success/10 rounded-lg">
+                                                        <FileText className="w-4 h-4 text-success" />
                                                         <span className="text-sm font-medium text-emerald-800">{inv.invoiceNo || `Invoice #${index + 1}`}</span>
                                                     </div>
                                                 ))}

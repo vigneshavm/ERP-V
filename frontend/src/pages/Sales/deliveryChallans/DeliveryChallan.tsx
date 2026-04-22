@@ -289,7 +289,7 @@ const DeliveryChallan = () => {
                                             </div>
                                             <button
                                                 onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
-                                                className="text-rose-600 hover:text-rose-700 text-xs font-bold border border-rose-200 bg-card px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-all btn-interactive"
+                                                className="text-danger hover:text-rose-700 text-xs font-bold border border-rose-200 bg-card px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-all btn-interactive"
                                             >
                                                 Change
                                             </button>
@@ -364,7 +364,7 @@ const DeliveryChallan = () => {
                                                         {item.sku && <p className="text-[10px] text-muted font-bold mt-0.5 tracking-tight">SKU: {item.sku}</p>}
                                                     </td>
                                                     <td className="px-4 py-3 border-r border-default text-right">
-                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.availableStock > 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20' : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20'
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.availableStock > 0 ? 'bg-success/10 text-emerald-700 dark:bg-emerald-900/20' : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20'
                                                             }`}>
                                                             {item.availableStock} in stock
                                                         </span>
@@ -376,7 +376,7 @@ const DeliveryChallan = () => {
                                                             max={item.availableStock}
                                                             value={item.deliveredQty}
                                                             onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
-                                                            className={`w-full text-right px-3 py-1.5 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all ${!item.deliveredQty || item.deliveredQty <= 0 ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-default bg-input'}`}
+                                                            className={`w-full text-right px-3 py-1.5 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all ${!item.deliveredQty || item.deliveredQty <= 0 ? 'border-rose-300 bg-danger/10' : 'border-default bg-input'}`}
                                                         />
                                                     </td>
                                                     <td className="px-4 py-3 text-xs text-secondary font-bold border-r border-default">
@@ -394,7 +394,7 @@ const DeliveryChallan = () => {
                                                     <td className="px-4 py-3 text-center">
                                                         <button
                                                             onClick={() => removeItem(index)}
-                                                            className="text-muted hover:text-rose-600 transition-all p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg"
+                                                            className="text-muted hover:text-danger transition-all p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg"
                                                             title="Remove Item"
                                                         >
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
