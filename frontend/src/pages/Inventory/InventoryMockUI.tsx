@@ -26,7 +26,7 @@ const InventoryMockUI: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-emerald-500/30">
+        <div className="min-h-screen bg-app text-main font-sans selection:bg-emerald-500/30">
             {/* Background Ambient Glows */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-emerald-600/10 rounded-full blur-[120px]" />
@@ -37,10 +37,10 @@ const InventoryMockUI: React.FC = () => {
             <div className="relative z-10 flex h-screen overflow-hidden">
                 
                 {/* Minimalist Sidebar */}
-                <aside className="w-20 lg:w-64 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col items-center lg:items-start py-8">
+                <aside className="w-20 lg:w-64 border-r border-white/5 bg-input backdrop-blur-xl flex flex-col items-center lg:items-start py-8">
                     <div className="w-12 h-12 lg:w-auto lg:h-auto lg:px-6 mb-12 flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                            <Layers className="w-5 h-5 text-white" />
+                            <Layers className="w-5 h-5 text-main" />
                         </div>
                         <span className="hidden lg:block font-black text-xl tracking-tighter">BizzAI.</span>
                     </div>
@@ -51,7 +51,7 @@ const InventoryMockUI: React.FC = () => {
                             { icon: AlertTriangle, label: 'Alerts', active: false },
                             { icon: TrendingUp, label: 'Analytics', active: false },
                         ].map((item, idx) => (
-                            <button key={idx} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 rounded-xl transition-all ${item.active ? 'bg-white/10 text-emerald-400 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}>
+                            <button key={idx} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 rounded-xl transition-all ${item.active ? 'bg-white/10 text-emerald-400 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-zinc-500 hover:text-main hover:bg-white/5'}`}>
                                 <item.icon className="w-5 h-5" />
                                 <span className="hidden lg:block font-bold text-sm tracking-wide">{item.label}</span>
                             </button>
@@ -62,7 +62,7 @@ const InventoryMockUI: React.FC = () => {
                 {/* Main Content Area */}
                 <main className="flex-1 flex flex-col h-full overflow-hidden">
                     {/* Top Nav */}
-                    <header className="h-20 border-b border-white/5 bg-black/20 backdrop-blur-md flex items-center justify-between px-8">
+                    <header className="h-20 border-b border-white/5 bg-card backdrop-blur-md flex items-center justify-between px-8">
                         <div>
                             <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
                                 Inventory Matrix
@@ -113,14 +113,14 @@ const InventoryMockUI: React.FC = () => {
                     <div className="flex-1 px-8 pb-8 overflow-hidden flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-sm font-black uppercase tracking-widest text-zinc-400">Inventory Registry</h2>
-                            <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white transition-colors">
+                            <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-main transition-colors">
                                 <Filter className="w-4 h-4" />
                             </button>
                         </div>
 
                         <div className="flex-1 bg-white/[0.01] border border-white/5 rounded-[2rem] overflow-hidden flex flex-col">
                             {/* Grid Header */}
-                            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/5 bg-black/40 text-xs font-black uppercase tracking-widest text-zinc-500">
+                            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/5 bg-input text-xs font-black uppercase tracking-widest text-zinc-500">
                                 <div className="col-span-5">Asset Descriptor</div>
                                 <div className="col-span-2">Category</div>
                                 <div className="col-span-2">Status</div>
@@ -137,7 +137,7 @@ const InventoryMockUI: React.FC = () => {
                                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-sm tracking-wide text-zinc-200 group-hover:text-white transition-colors">{item.name}</h3>
+                                                <h3 className="font-bold text-sm tracking-wide text-zinc-200 group-hover:text-main transition-colors">{item.name}</h3>
                                                 <p className="text-xs font-mono text-zinc-600 mt-0.5">{item.sku}</p>
                                             </div>
                                         </div>
@@ -162,7 +162,7 @@ const InventoryMockUI: React.FC = () => {
                                         </div>
 
                                         <div className="col-span-1 flex justify-end">
-                                            <button className="p-2 text-zinc-600 hover:text-white hover:bg-white/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                            <button className="p-2 text-zinc-600 hover:text-main hover:bg-white/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
                                                 <MoreVertical className="w-4 h-4" />
                                             </button>
                                         </div>
