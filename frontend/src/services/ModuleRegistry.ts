@@ -26,6 +26,12 @@ export const Modules = {
     Sales: () => import("../pages/Sales/salesInvoices/SalesInvoice"),
     SalesMockUI: () => import("../pages/Sales/SalesMockUI"),
     Expenses: () => import("../pages/Expenses/ExpensesModule"),
+    ExpensesMockUI: () => import("../pages/Expenses/ExpensesMockUI"),
+    MarketingMockUI: () => import("../pages/Marketing/MarketingMockUI"),
+    SuppliersMockUI: () => import("../pages/People/Suppliers/SuppliersMockUI"),
+    HRMockUI: () => import("../pages/People/Employees/HRMockUI"),
+    ReportsMockUI: () => import("../pages/Reports/ReportsMockUI"),
+    CustomerEngagementMockUI: () => import("../pages/CustomerEngagement/CustomerEngagementMockUI"),
     Settings: () => import("../pages/System/Settings/Settings"),
     Storefront: () => import("../pages/Business/OnlineShop"),
     GrowDashboard: () => import("../pages/Dashboard/GrowDashboard"),
@@ -58,13 +64,13 @@ export const Modules = {
     TenantManagement: () => import("../pages/People/Tenants/TenantManager"),
     GSTReconciliation: () => import("../pages/Finance/GST/GSTReconciliation"),
     ReprintQueue: () => import("../pages/Inventory/ReprintQueue"),
-    // Tenant Growth Settings (Consolidated)
+    // Tenant Growth Settings — alias of SuperAdminGrowthConsole (same file)
     TenantGrowthSettings: () => import("../pages/System/Architecture/SuperAdminGrowthConsole"),
     TenantArchitect: () => import("../pages/System/Architecture/TenantArchitect"),
     AuditLogs: () => import("../pages/System/Audit/AuditLogViewer"),
 
     // Sales Features
-    SalesInvoiceRegister: () => import("../pages/Sales/salesInvoices/SalesInvoice"),
+    SalesInvoiceRegister: () => import("../pages/Sales/salesInvoices/SalesInvoice"), // alias of Sales
     EstimateCreator: () => import("../pages/Sales/estimates/Estimate"),
     SalesOrderCreator: () => import("../pages/Sales/salesOrders/SalesOrder"),
     DeliveryChallanCreator: () => import("../pages/Sales/deliveryChallans/DeliveryChallan"),
@@ -72,15 +78,15 @@ export const Modules = {
     PaymentInCreator: () => import("../pages/Sales/payments/PaymentIn"),
     PaymentInList: () => import("../pages/Sales/payments/PaymentInList"),
     ReturnedItemsManager: () => import("../pages/Sales/returns/ReturnedItems"),
-    CustomerCredits: () => import("../pages/Sales/payments/PaymentIn"), // Map to PaymentIn for now if missing
-    OutstandingDues: () => import("../pages/Sales/payments/PaymentInList"),
+    CustomerCredits: () => import("../pages/Sales/payments/PaymentIn"), // temporary alias → PaymentIn until CustomerCredits page is built
+    OutstandingDues: () => import("../pages/Sales/payments/PaymentInList"), // temporary alias → PaymentInList until OutstandingDues page is built
     SalesModulePlaceholder: () => import("@/components/sales/SalesModulePlaceholder"),
     SalesInvoiceForm: () => import("../pages/Sales/salesInvoices/SalesInvoiceForm"),
     SalesInvoiceDetail: () => import("../pages/Sales/salesInvoices/SalesInvoiceDetail"), // Added New Form
 
     // Purchase Features
     PurchaseOrdersModule: () => import("../pages/Purchase/PurchaseOrdersModule"),
-    PurchaseRegister: () => import("../pages/Purchase/PurchaseRegister"),
+    PurchaseRegister: () => import("../pages/Purchase/PurchaseRegister"), // alias of Purchase (core key)
     GoodsReceived: () => import("../pages/Purchase/GoodsReceived"),
     GRNForm: () => import("../pages/Purchase/GRNForm"),
     DebitNotes: () => import("../pages/Purchase/DebitNotes"),
@@ -117,7 +123,7 @@ export const Modules = {
     // Supplier Features
     SupplierLedger: () => import("../pages/People/Suppliers/SupplierLedger"),
     SupplierStatements: () => import("../pages/People/Suppliers/SupplierStatements"),
-    SupplierGroups: () => import("../pages/People/Customers/CustomerGroups"), // Actually Customers? Let's check config.
+    SupplierGroups: () => import("../pages/People/Customers/CustomerGroups"), // TODO: no dedicated SupplierGroups page yet — falls back to CustomerGroups
     SupplierAgeing: () => import("../pages/Purchase/SupplierAgeing"),
     EditSupplier: () => import("../pages/People/Suppliers/EditSupplier"),
 
@@ -177,6 +183,16 @@ export const Modules = {
     PayslipView: () => import("../pages/People/Payroll/PayslipView"),
 };
 
+/**
+ * Shared lazy instances for aliased modules.
+ * Ensures the same React.lazy component is reused across all keys
+ * that point to the same underlying file — prevents unnecessary
+ * unmount/remount when navigating between aliased routes.
+ */
+const _lazySales = lazy(Modules.Sales);
+const _lazyPurchase = lazy(Modules.Purchase);
+const _lazySuperAdmin = lazy(Modules.SuperAdminGrowthConsole);
+
 export const LazyModules = {
     Dashboard: lazy(Modules.Dashboard),
     DashboardMockUI: lazy(Modules.DashboardMockUI),
@@ -188,13 +204,19 @@ export const LazyModules = {
     POS: lazy(Modules.POS),
     POSMockUI: lazy(Modules.POSMockUI),
     Reports: lazy(Modules.Reports),
-    Purchase: lazy(Modules.Purchase),
+    Purchase: _lazyPurchase,
     PurchaseMockUI: lazy(Modules.PurchaseMockUI),
     PurchaseEntry: lazy(Modules.PurchaseEntry),
     VendorManager: lazy(Modules.VendorManager),
-    Sales: lazy(Modules.Sales),
+    Sales: _lazySales,
     SalesMockUI: lazy(Modules.SalesMockUI),
     Expenses: lazy(Modules.Expenses),
+    ExpensesMockUI: lazy(Modules.ExpensesMockUI),
+    MarketingMockUI: lazy(Modules.MarketingMockUI),
+    SuppliersMockUI: lazy(Modules.SuppliersMockUI),
+    HRMockUI: lazy(Modules.HRMockUI),
+    ReportsMockUI: lazy(Modules.ReportsMockUI),
+    CustomerEngagementMockUI: lazy(Modules.CustomerEngagementMockUI),
     Settings: lazy(Modules.Settings),
     Storefront: lazy(Modules.Storefront),
     GrowDashboard: lazy(Modules.GrowDashboard),
@@ -223,16 +245,16 @@ export const LazyModules = {
     WhatsAppEngagement: lazy(Modules.WhatsAppEngagement),
     LoyaltyEngagement: lazy(Modules.LoyaltyEngagement),
     FeedbackEngagement: lazy(Modules.FeedbackEngagement),
-    SuperAdminGrowthConsole: lazy(Modules.SuperAdminGrowthConsole),
+    SuperAdminGrowthConsole: _lazySuperAdmin,
     TenantManagement: lazy(Modules.TenantManagement),
-    TenantGrowthSettings: lazy(Modules.TenantGrowthSettings),
+    TenantGrowthSettings: _lazySuperAdmin, // shared instance — same file as SuperAdminGrowthConsole
     GSTReconciliation: lazy(Modules.GSTReconciliation),
     ReprintQueue: lazy(Modules.ReprintQueue),
     TenantArchitect: lazy(Modules.TenantArchitect),
     AuditLogs: lazy(Modules.AuditLogs),
 
     // Sales
-    SalesInvoiceRegister: lazy(Modules.SalesInvoiceRegister),
+    SalesInvoiceRegister: _lazySales, // shared instance — same file as Sales
     EstimateCreator: lazy(Modules.EstimateCreator),
     SalesOrderCreator: lazy(Modules.SalesOrderCreator),
     DeliveryChallanCreator: lazy(Modules.DeliveryChallanCreator),
@@ -248,7 +270,7 @@ export const LazyModules = {
 
     // Purchase
     PurchaseOrdersModule: lazy(Modules.PurchaseOrdersModule),
-    PurchaseRegister: lazy(Modules.PurchaseRegister),
+    PurchaseRegister: _lazyPurchase, // shared instance — same file as Purchase
     GoodsReceived: lazy(Modules.GoodsReceived),
     GRNForm: lazy(Modules.GRNForm),
     DebitNotes: lazy(Modules.DebitNotes),
@@ -360,6 +382,7 @@ export const preloadModule = (key: keyof typeof Modules) => {
  * Maps AppView IDs to Module Registry keys for preloading.
  */
 export const preloadByViewId = (viewId: string) => {
+    // Core modules
     if (viewId.startsWith('DASHBOARD')) preloadModule('Dashboard');
     else if (viewId.startsWith('INVENTORY') || viewId === 'ITEM_CATEGORIES') preloadModule('Inventory');
     else if (viewId.startsWith('POS')) preloadModule('POS');
@@ -370,6 +393,32 @@ export const preloadByViewId = (viewId: string) => {
     else if (viewId.startsWith('EXPENSE')) preloadModule('Expenses');
     else if (viewId === 'SETTINGS') preloadModule('Settings');
     else if (viewId === 'STOREFRONT') preloadModule('Storefront');
+
+    // People — Customers
+    else if (viewId.startsWith('CUSTOMER')) preloadModule('CustomerList');
+
+    // People — Suppliers
+    else if (viewId.startsWith('SUPPLIER') || viewId === 'SUPPLIER_AGEING') preloadModule('VendorManager');
+
+    // People — HR & Payroll
+    else if (viewId.startsWith('HR_') || viewId.startsWith('STAFF') || viewId.startsWith('LABOR')) preloadModule('StaffManager');
+    else if (viewId.startsWith('PAYROLL') || viewId.startsWith('SALARY') || viewId.startsWith('ATTENDANCE')) preloadModule('PayrollDashboard');
+
+    // GST & Finance sub-modules
+    else if (viewId.startsWith('GST')) preloadModule('GSTReconciliation');
+    else if (viewId.startsWith('JOURNAL')) preloadModule('JournalEntries');
+    else if (viewId.startsWith('BANK_RECONCILIATION')) preloadModule('BankReconciliationIntelligence');
+
+    // Marketing (non-GROW prefix)
+    else if (viewId.startsWith('MARKETING_EMAIL')) preloadModule('EmailMarketing');
+    else if (viewId.startsWith('MARKETING_WHATSAPP')) preloadModule('WhatsAppMarketing');
+    else if (viewId.startsWith('MARKETING_SMS')) preloadModule('SMSMarketing');
+    else if (viewId.startsWith('MARKETING_SOCIAL')) preloadModule('SocialMediaMarketing');
+    else if (viewId.startsWith('MARKETING_COUPONS')) preloadModule('MarketingCoupons');
+    else if (viewId.startsWith('MARKETING_OFFERS')) preloadModule('MarketingOffers');
+    else if (viewId.startsWith('MARKETING')) preloadModule('Marketing');
+
+    // Grow (GROW_ prefix — must come after specific GROW_ checks above)
     else if (viewId.startsWith('GROW_MARKETING_EMAIL')) preloadModule('EmailMarketing');
     else if (viewId.startsWith('GROW_ENGAGEMENT_EMAIL')) preloadModule('EmailEngagement');
     else if (viewId.startsWith('GROW_MARKETING_WHATSAPP')) preloadModule('WhatsAppMarketing');
