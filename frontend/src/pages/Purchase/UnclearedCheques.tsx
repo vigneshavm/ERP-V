@@ -5,7 +5,7 @@ import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Info, Activity, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Info, Activity, ArrowUpRight, CheckCircle2, RefreshCcw, Filter } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const UnclearedCheques: React.FC = () => {
@@ -69,7 +69,7 @@ const UnclearedCheques: React.FC = () => {
                     breadcrumbs={[{ label: 'Settlements', link: '/purchase/payments' }, { label: 'Instrument Vault' }]}
                     actions={
                         <button
-                            onClick={fetchAgeing}
+                            onClick={fetchCheques}
                             className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-all active:scale-95"
                         >
                             <RefreshCcw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
@@ -221,7 +221,8 @@ const UnclearedCheques: React.FC = () => {
                                                 </td>
                                             </tr>
                                         );
-                                    })}
+                                    })
+                                )}
                             </tbody>
                         </table>
                     </div>

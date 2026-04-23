@@ -10,15 +10,21 @@ import { lazy } from 'react';
 export const Modules = {
     // Core
     Dashboard: () => import("../pages/Dashboard/Dashboard"),
+    DashboardMockUI: () => import("../pages/Dashboard/DashboardMockUI"),
     Finance: () => import("../pages/Financial/Cashbank/FinanceOverview"),
+    FinanceMockUI: () => import("../pages/Financial/FinanceMockUI"),
     AgedStockManager: () => import("../pages/Inventory/AgedStockManager"),
     Inventory: () => import("../pages/Inventory/InventoryManager"),
+    InventoryMockUI: () => import("../pages/Inventory/InventoryMockUI"),
     POS: () => import("../pages/Pos/POSModule"),
+    POSMockUI: () => import("../pages/Pos/POSMockUI"),
     Reports: () => import("../pages/Reports/ReportsDashboard"),
     Purchase: () => import("../pages/Purchase/PurchaseRegister"),
+    PurchaseMockUI: () => import("../pages/Purchase/PurchaseMockUI"),
     PurchaseEntry: () => import("../pages/Purchase/PurchaseEntry"),
     VendorManager: () => import("../pages/People/Suppliers/Suppliers"),
     Sales: () => import("../pages/Sales/salesInvoices/SalesInvoice"),
+    SalesMockUI: () => import("../pages/Sales/SalesMockUI"),
     Expenses: () => import("../pages/Expenses/ExpensesModule"),
     Settings: () => import("../pages/System/Settings/Settings"),
     Storefront: () => import("../pages/Business/OnlineShop"),
@@ -97,6 +103,7 @@ export const Modules = {
 
     // Customer Features
     CustomerList: () => import("../pages/People/Customers/CustomerList"),
+    CustomerMockUI: () => import("../pages/People/Customers/CustomerMockUI"),
     CustomerLedger: () => import("../pages/People/Customers/CustomerLedger"),
     CustomerStatements: () => import("../pages/People/Customers/CustomerStatements"),
     CustomerGroups: () => import("../pages/People/Customers/CustomerGroups"),
@@ -172,15 +179,21 @@ export const Modules = {
 
 export const LazyModules = {
     Dashboard: lazy(Modules.Dashboard),
+    DashboardMockUI: lazy(Modules.DashboardMockUI),
+    Finance: lazy(Modules.Finance),
+    FinanceMockUI: lazy(Modules.FinanceMockUI),
     AgedStockManager: lazy(Modules.AgedStockManager),
     Inventory: lazy(Modules.Inventory),
+    InventoryMockUI: lazy(Modules.InventoryMockUI),
     POS: lazy(Modules.POS),
+    POSMockUI: lazy(Modules.POSMockUI),
     Reports: lazy(Modules.Reports),
-    Finance: lazy(Modules.Finance),
     Purchase: lazy(Modules.Purchase),
+    PurchaseMockUI: lazy(Modules.PurchaseMockUI),
     PurchaseEntry: lazy(Modules.PurchaseEntry),
     VendorManager: lazy(Modules.VendorManager),
     Sales: lazy(Modules.Sales),
+    SalesMockUI: lazy(Modules.SalesMockUI),
     Expenses: lazy(Modules.Expenses),
     Settings: lazy(Modules.Settings),
     Storefront: lazy(Modules.Storefront),
@@ -258,6 +271,7 @@ export const LazyModules = {
 
     // Customers
     CustomerList: lazy(Modules.CustomerList),
+    CustomerMockUI: lazy(Modules.CustomerMockUI),
     CustomerLedger: lazy(Modules.CustomerLedger),
     CustomerStatements: lazy(Modules.CustomerStatements),
     CustomerGroups: lazy(Modules.CustomerGroups),

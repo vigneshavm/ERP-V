@@ -186,6 +186,13 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             } />
             <Route path="/finance/gst" element={<Suspense fallback={<div>Loading GST...</div>}><LazyModules.GSTReconciliation /></Suspense>} />
             <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
+            <Route path="/inventory/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.InventoryMockUI /></Suspense>} />
+            <Route path="/customers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.CustomerMockUI /></Suspense>} />
+            <Route path="/pos/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.POSMockUI /></Suspense>} />
+            <Route path="/dashboard/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.DashboardMockUI /></Suspense>} />
+            <Route path="/sales/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SalesMockUI /></Suspense>} />
+            <Route path="/purchase/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.PurchaseMockUI /></Suspense>} />
+            <Route path="/finance/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.FinanceMockUI /></Suspense>} />
             <Route path="/settings/audit" element={<Suspense fallback={<div>Loading Audit Logs...</div>}><LazyModules.AuditLogs /></Suspense>} />
         </Routes>
     );

@@ -278,8 +278,7 @@ const RateRevisionForm: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </form>
-    </Layout>
+        </Layout>
     );
 };
 
