@@ -1,7 +1,55 @@
-import React from 'react';
-import { Receipt, Plus, Search, Filter, TrendingUp, AlertTriangle, CheckCircle2, Wallet, Coffee, Car, Wrench, MoreHorizontal, Download } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Receipt, Plus, Search, Filter, TrendingUp, AlertTriangle, CheckCircle2, Wallet, Coffee, Car, Wrench, MoreHorizontal, Download, X } from 'lucide-react';
+
+type ExpenseStatus = 'Approved' | 'Pending' | 'Rejected';
+
+interface Expense {
+    id: string;
+    desc: string;
+    cat: string;
+    date: string;
+    amount: string;
+    amountNum: number;
+    status: ExpenseStatus;
+}
+
+const MOCK_EXPENSES: Expense[] = [
+    { id: 'EXP-2026-0412', desc: 'Fleet maintenance & servicing',       cat: 'Travel & Fleet',   date: 'Oct 18, 2026', amount: '45,800',   amountNum: 45800,   status: 'Approved' },
+    { id: 'EXP-2026-0411', desc: 'Cloud infrastructure (AWS)',           cat: 'Operations',       date: 'Oct 15, 2026', amount: '1,24,000', amountNum: 124000,  status: 'Pending'  },
+    { id: 'EXP-2026-0410', desc: 'Office supplies & stationery',         cat: 'Office & Admin',   date: 'Oct 14, 2026', amount: '8,500',    amountNum: 8500,    status: 'Approved' },
+    { id: 'EXP-2026-0409', desc: 'Marketing event — client dinner',      cat: 'Miscellaneous',    date: 'Oct 12, 2026', amount: '22,400',   amountNum: 22400,   status: 'Pending'  },
+    { id: 'EXP-2026-0408', desc: 'Diesel — delivery vehicles',           cat: 'Travel & Fleet',   date: 'Oct 10, 2026', amount: '18,200',   amountNum: 18200,   status: 'Rejected' },
+    { id: 'EXP-2026-0407', desc: 'Vendor payment — packaging supplier',  cat: 'Vendor Payments',  date: 'Oct 09, 2026', amount: '62,000',   amountNum: 62000,   status: 'Approved' },
+    { id: 'EXP-2026-0406', desc: 'Staff refreshments — monthly',        cat: 'Miscellaneous',    date: 'Oct 08, 2026', amount: '4,200',    amountNum: 4200,    status: 'Approved' },
+    { id: 'EXP-2026-0405', desc: 'Internet & telecom — Oct',             cat: 'Operations',       date: 'Oct 07, 2026', amount: '9,800',    amountNum: 9800,    status: 'Pending'  },
+    { id: 'EXP-2026-0404', desc: 'Printer cartridge & paper restock',    cat: 'Office & Admin',   date: 'Oct 05, 2026', amount: '3,600',    amountNum: 3600,    status: 'Rejected' },
+    { id: 'EXP-2026-0403', desc: 'Annual software license renewal',      cat: 'Operations',       date: 'Oct 03, 2026', amount: '38,500',   amountNum: 38500,   status: 'Approved' },
+];
+
+const STATUS_COLORS: Record<ExpenseStatus, string> = {
+    Approved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    Pending:  'bg-amber-500/10  text-amber-400  border-amber-500/20',
+    Rejected: 'bg-rose-500/10   text-rose-400   border-rose-500/20',
+};
 
 const ExpensesMockUI: React.FC = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'All' | ExpenseStatus>('All');
+
+    const filtered = useMemo(() => {
+        const q = searchQuery.toLowerCase().trim();
+        return MOCK_EXPENSES.filter(exp => {
+            const matchesStatus = statusFilter === 'All' || exp.status === statusFilter;
+            const matchesSearch = !q ||
+                exp.id.toLowerCase().includes(q) ||
+                exp.desc.toLowerCase().includes(q) ||
+                exp.cat.toLowerCase().includes(q) ||
+                exp.date.toLowerCase().includes(q) ||
+                exp.status.toLowerCase().includes(q);
+            return matchesStatus && matchesSearch;
+        });
+    }, [searchQuery, statusFilter]);
+
     return (
         <div className="min-h-screen bg-app text-main font-sans selection:bg-violet-500/30 overflow-hidden flex flex-col">
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -47,48 +95,89 @@ const ExpensesMockUI: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="flex gap-6 flex-1">
-                    <div className="w-60 glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 flex flex-col gap-4">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-secondary">By Category</h3>
-                        {[
-                            { cat: 'Operations', pct: 38, icon: Wrench, color: 'bg-violet-500' },
-                            { cat: 'Travel & Fleet', pct: 22, icon: Car, color: 'bg-cyan-500' },
-                            { cat: 'Office & Admin', pct: 17, icon: Coffee, color: 'bg-amber-500' },
-                            { cat: 'Vendor Payments', pct: 13, icon: Receipt, color: 'bg-rose-500' },
-                            { cat: 'Miscellaneous', pct: 10, icon: Wallet, color: 'bg-slate-500' },
-                        ].map((c, i) => (
-                            <div key={i}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <div className="flex items-center gap-2">
-                                        <c.icon className="w-3.5 h-3.5 text-muted" />
-                                        <span className="text-xs font-bold text-main">{c.cat}</span>
+                <div className="flex flex-col gap-4 flex-1">
+                    {/* By Category — horizontal strip */}
+                    <div className="glass-panel backdrop-blur-xl border border-default rounded-2xl p-5">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-secondary mb-4">By Category</h3>
+                        <div className="grid grid-cols-5 gap-4">
+                            {[
+                                { cat: 'Operations',      pct: 38, icon: Wrench,  color: 'bg-violet-500', text: 'text-violet-400' },
+                                { cat: 'Travel & Fleet',  pct: 22, icon: Car,     color: 'bg-cyan-500',   text: 'text-cyan-400'   },
+                                { cat: 'Office & Admin',  pct: 17, icon: Coffee,  color: 'bg-amber-500',  text: 'text-amber-400'  },
+                                { cat: 'Vendor Payments', pct: 13, icon: Receipt, color: 'bg-rose-500',   text: 'text-rose-400'   },
+                                { cat: 'Miscellaneous',   pct: 10, icon: Wallet,  color: 'bg-slate-500',  text: 'text-slate-400'  },
+                            ].map((c, i) => (
+                                <div key={i} className="flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                            <c.icon className={`w-3.5 h-3.5 ${c.text}`} />
+                                            <span className="text-xs font-bold text-main truncate">{c.cat}</span>
+                                        </div>
+                                        <span className={`text-xs font-black ${c.text}`}>{c.pct}%</span>
                                     </div>
-                                    <span className="text-xs font-black text-muted">{c.pct}%</span>
+                                    <div className="h-1.5 bg-card rounded-full overflow-hidden">
+                                        <div className={`h-full ${c.color} rounded-full transition-all`} style={{ width: `${c.pct}%` }} />
+                                    </div>
                                 </div>
-                                <div className="h-1.5 bg-card rounded-full overflow-hidden">
-                                    <div className={`h-full ${c.color} rounded-full`} style={{ width: `${c.pct}%` }} />
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
+                    {/* Full-width table */}
                     <div className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl flex flex-col overflow-hidden">
-                        <div className="p-5 border-b border-default flex justify-between items-center bg-card">
-                            <div className="flex gap-4">
-                                <div className="relative">
+                        {/* Toolbar */}
+                        <div className="p-5 border-b border-default flex justify-between items-center bg-card gap-4">
+                            <div className="flex gap-3 items-center flex-1">
+                                {/* Search */}
+                                <div className="relative flex-1 max-w-sm">
                                     <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-secondary" />
-                                    <input type="text" placeholder="Search expense, vendor..." className="w-72 bg-input border border-default rounded-xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-violet-500 transition-colors text-main placeholder:text-slate-600" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search expense, category, vendor..."
+                                        value={searchQuery}
+                                        onChange={e => setSearchQuery(e.target.value)}
+                                        className="w-full bg-input border border-default rounded-xl py-2.5 pl-11 pr-9 text-sm focus:outline-none focus:border-violet-500 transition-colors text-main placeholder:text-slate-500"
+                                    />
+                                    {searchQuery && (
+                                        <button
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-main transition-colors"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
                                 </div>
-                                <button className="h-10 px-4 bg-card hover:bg-card border border-default rounded-xl text-xs font-bold text-main flex items-center gap-2">
+                                <button className="h-10 px-4 bg-card hover:bg-card/80 border border-default rounded-xl text-xs font-bold text-main flex items-center gap-2 transition-all">
                                     <Filter className="w-4 h-4" /> Filter
                                 </button>
+                                {/* Record count badge */}
+                                <span className="text-[10px] font-black text-secondary">
+                                    {filtered.length} of {MOCK_EXPENSES.length} records
+                                </span>
                             </div>
-                            <div className="flex gap-2">
-                                {['All', 'Pending', 'Approved', 'Rejected'].map((tab, idx) => (
-                                    <button key={tab} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${idx === 0 ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'text-secondary hover:text-main'}`}>{tab}</button>
+
+                            {/* Status filter tabs */}
+                            <div className="flex gap-1.5">
+                                {(['All', 'Pending', 'Approved', 'Rejected'] as const).map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setStatusFilter(tab)}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                                            statusFilter === tab
+                                                ? tab === 'Pending'  ? 'bg-amber-500/20  text-amber-400  border border-amber-500/30'
+                                                : tab === 'Approved' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                                : tab === 'Rejected' ? 'bg-rose-500/20    text-rose-400   border border-rose-500/30'
+                                                : 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
+                                                : 'text-secondary hover:text-main border border-transparent hover:border-default'
+                                        }`}
+                                    >
+                                        {tab}
+                                    </button>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Table */}
                         <div className="flex-1 overflow-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-app sticky top-0 z-20 backdrop-blur-md">
@@ -99,23 +188,49 @@ const ExpensesMockUI: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-default">
-                                    {[
-                                        { id: 'EXP-2026-0412', desc: 'Fleet maintenance & servicing', cat: 'Travel & Fleet', date: 'Oct 18, 2026', amount: '45,800', status: 'Approved', color: 'emerald' },
-                                        { id: 'EXP-2026-0411', desc: 'Cloud infrastructure (AWS)', cat: 'Operations', date: 'Oct 15, 2026', amount: '1,24,000', status: 'Pending', color: 'amber' },
-                                        { id: 'EXP-2026-0410', desc: 'Office supplies & stationery', cat: 'Office & Admin', date: 'Oct 14, 2026', amount: '8,500', status: 'Approved', color: 'emerald' },
-                                        { id: 'EXP-2026-0409', desc: 'Marketing event — client dinner', cat: 'Miscellaneous', date: 'Oct 12, 2026', amount: '22,400', status: 'Pending', color: 'amber' },
-                                        { id: 'EXP-2026-0408', desc: 'Diesel — delivery vehicles', cat: 'Travel & Fleet', date: 'Oct 10, 2026', amount: '18,200', status: 'Rejected', color: 'rose' },
-                                    ].map((exp, idx) => (
-                                        <tr key={idx} className="hover:bg-card/30 transition-colors group">
+                                    {filtered.length > 0 ? filtered.map((exp) => (
+                                        <tr key={exp.id} className="hover:bg-card/30 transition-colors group">
                                             <td className="px-8 py-5"><span className="font-mono text-sm font-bold text-violet-400 group-hover:underline cursor-pointer">{exp.id}</span></td>
                                             <td className="px-8 py-5"><div className="text-sm font-bold text-main">{exp.desc}</div></td>
                                             <td className="px-8 py-5"><span className="px-2.5 py-1 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest text-muted">{exp.cat}</span></td>
                                             <td className="px-8 py-5"><div className="text-sm font-bold text-main">{exp.date}</div></td>
                                             <td className="px-8 py-5 text-right"><span className="font-mono text-base font-black tracking-tighter text-main">₹{exp.amount}</span></td>
-                                            <td className="px-8 py-5"><div className="flex justify-center"><span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-${exp.color}-500/10 text-${exp.color}-400 border-${exp.color}-500/20`}>{exp.status}</span></div></td>
-                                            <td className="px-8 py-5"><div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity"><button className="p-2 text-muted hover:text-violet-400 bg-card hover:bg-card rounded-lg transition-colors"><MoreHorizontal className="w-4 h-4" /></button></div></td>
+                                            <td className="px-8 py-5">
+                                                <div className="flex justify-center">
+                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${STATUS_COLORS[exp.status]}`}>
+                                                        {exp.status}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button className="p-2 text-muted hover:text-violet-400 bg-card hover:bg-card rounded-lg transition-colors">
+                                                        <MoreHorizontal className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    ))}
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={7} className="px-8 py-16 text-center">
+                                                <div className="flex flex-col items-center gap-3">
+                                                    <Search className="w-8 h-8 text-secondary opacity-40" />
+                                                    <p className="text-sm font-bold text-secondary">No expenses match your search</p>
+                                                    <p className="text-xs text-muted">
+                                                        {searchQuery && <span>"{searchQuery}"</span>}
+                                                        {searchQuery && statusFilter !== 'All' && <span> · </span>}
+                                                        {statusFilter !== 'All' && <span>Status: {statusFilter}</span>}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => { setSearchQuery(''); setStatusFilter('All'); }}
+                                                        className="mt-1 text-xs text-violet-400 hover:text-violet-300 font-bold underline underline-offset-2"
+                                                    >
+                                                        Clear filters
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

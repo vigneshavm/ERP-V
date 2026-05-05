@@ -22,8 +22,18 @@ const PurchaseReturns: React.FC = () => {
         const fetchReturns = async () => {
             setIsLoading(true);
             try {
-                const { data } = await api.get('/api/purchase-returns');
-                setReturns(data || []);
+                const response = await api.get('/api/purchase-returns');
+                const raw = response.data;
+                const list = Array.isArray(raw)
+                    ? raw
+                    : Array.isArray(raw?.data)
+                    ? raw.data
+                    : Array.isArray(raw?.returns)
+                    ? raw.returns
+                    : Array.isArray(raw?.results)
+                    ? raw.results
+                    : [];
+                setReturns(list);
             } catch (err) {
                 console.error("Failed to fetch returns", err);
                 // Mocking data for aesthetic preview
@@ -96,9 +106,9 @@ const PurchaseReturns: React.FC = () => {
     }, [returns, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {
-        const totalAmount = returns.reduce((sum, r) => sum + r.total_amount, 0);
-        const pendingAmount = returns.filter(r => r.status !== 'Credited').reduce((sum, r) => sum + r.total_amount, 0);
-        const creditedAmount = returns.filter(r => r.status === 'Credited').reduce((sum, r) => sum + r.total_amount, 0);
+        const totalAmount = returns.reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
+        const pendingAmount = returns.filter(r => r.status !== 'Credited').reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
+        const creditedAmount = returns.filter(r => r.status === 'Credited').reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
 
         return {
             total: returns.length,
@@ -208,11 +218,13 @@ const PurchaseReturns: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {filteredReturns.map((r) => (
+                                {filteredReturns.map((r, index) => {
+                                    const returnId = r.id || (r as any)._id || `return-${index}`;
+                                    return (
                                     <tr
-                                        key={r.id}
+                                        key={returnId}
                                         className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-pointer"
-                                        onClick={() => navigate(`/purchase/returns/view/${r.id}`)}
+                                        onClick={() => navigate(`/purchase/returns/view/${r.id || (r as any)._id}`)}
                                     >
                                         <td className="px-8 py-6">
                                             <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">#{r.return_number}</p>
@@ -233,7 +245,7 @@ const PurchaseReturns: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <span className="text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tight">{formatCurrency(r.total_amount)}</span>
+                                            <span className="text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tight">{formatCurrency(Number(r.total_amount) || Number((r as any).totalAmount) || 0)}</span>
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex justify-center">
@@ -246,7 +258,8 @@ const PurchaseReturns: React.FC = () => {
                                             </button>
                                         </td>
                                     </tr>
-                                ))}
+                                    );
+                                })}
                                 {filteredReturns.length === 0 && (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">

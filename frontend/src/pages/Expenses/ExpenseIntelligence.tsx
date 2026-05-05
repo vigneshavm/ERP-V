@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import {
@@ -60,10 +60,12 @@ interface ExpenseTransaction {
     date: string;
     amount: number;
     category_id: string;
+    description: string;
     payment_mode: 'CASH' | 'BANK' | 'PETTY';
     submitted_by: string;
     approved_by?: string;
     receipt_attached: boolean;
+    status: 'Pending' | 'Approved' | 'Rejected';
 }
 
 interface BranchFinancials {
@@ -97,6 +99,7 @@ const ExpenseIntelligence: React.FC = () => {
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'All' | 'Pending' | 'Approved' | 'Rejected'>('All');
     const [viewMode, setViewMode] = useState<'OVERVIEW' | 'BRANCHES' | 'AUDIT'>('OVERVIEW');
 
     // --- Enterprise Mock Data ---
@@ -116,12 +119,16 @@ const ExpenseIntelligence: React.FC = () => {
     ], []);
 
     const transactions: ExpenseTransaction[] = useMemo(() => [
-        { id: 'TX001', branch_id: 'B001', date: '2026-01-11', amount: 4500, category_id: 'CAT001', payment_mode: 'CASH', submitted_by: 'Madhan', receipt_attached: false },
-        { id: 'TX002', branch_id: 'B001', date: '2026-01-11', amount: 4200, category_id: 'CAT001', payment_mode: 'CASH', submitted_by: 'Madhan', receipt_attached: false },
-        { id: 'TX003', branch_id: 'B002', date: '2026-01-10', amount: 15000, category_id: 'CAT002', payment_mode: 'BANK', submitted_by: 'Manikandan', approved_by: 'Admin', receipt_attached: true },
-        { id: 'TX004', branch_id: 'B001', date: '2026-01-09', amount: 800, category_id: 'CAT003', payment_mode: 'PETTY', submitted_by: 'Kishore', receipt_attached: true },
-        { id: 'TX005', branch_id: 'B003', date: '2026-01-08', amount: 48000, category_id: 'CAT005', payment_mode: 'BANK', submitted_by: 'Sarah', approved_by: 'Admin', receipt_attached: true },
-        // ... more transactions would be here
+        { id: 'EXP-001', branch_id: 'B001', date: '2026-04-26', amount: 4500,  category_id: 'CAT001', description: 'Blue Dart courier — batch shipment', payment_mode: 'CASH',  submitted_by: 'Madhan',      receipt_attached: false, status: 'Pending'  },
+        { id: 'EXP-002', branch_id: 'B001', date: '2026-04-26', amount: 4200,  category_id: 'CAT001', description: 'DTDC delivery charges — Apr W4',    payment_mode: 'CASH',  submitted_by: 'Madhan',      receipt_attached: false, status: 'Rejected' },
+        { id: 'EXP-003', branch_id: 'B002', date: '2026-04-25', amount: 15000, category_id: 'CAT002', description: 'Staff travel — client site visit',    payment_mode: 'BANK',  submitted_by: 'Manikandan', approved_by: 'Admin', receipt_attached: true,  status: 'Approved' },
+        { id: 'EXP-004', branch_id: 'B001', date: '2026-04-24', amount: 800,   category_id: 'CAT003', description: 'Team lunch — Chennai OMR',            payment_mode: 'PETTY', submitted_by: 'Kishore',     receipt_attached: true,  status: 'Approved' },
+        { id: 'EXP-005', branch_id: 'B003', date: '2026-04-23', amount: 48000, category_id: 'CAT005', description: 'Packaging materials — festival stock', payment_mode: 'BANK',  submitted_by: 'Sarah',      approved_by: 'Admin', receipt_attached: true,  status: 'Approved' },
+        { id: 'EXP-006', branch_id: 'B002', date: '2026-04-22', amount: 12000, category_id: 'CAT002', description: 'Outstation travel — Coimbatore',      payment_mode: 'BANK',  submitted_by: 'Ravi',        receipt_attached: false, status: 'Pending'  },
+        { id: 'EXP-007', branch_id: 'B003', date: '2026-04-21', amount: 35000, category_id: 'CAT004', description: 'Electricity bill — HSR branch Apr',   payment_mode: 'BANK',  submitted_by: 'Sarah',      approved_by: 'Admin', receipt_attached: true,  status: 'Approved' },
+        { id: 'EXP-008', branch_id: 'B001', date: '2026-04-20', amount: 5500,  category_id: 'CAT001', description: 'FedEx courier — priority docs',       payment_mode: 'CASH',  submitted_by: 'Kishore',     receipt_attached: false, status: 'Rejected' },
+        { id: 'EXP-009', branch_id: 'B002', date: '2026-04-19', amount: 9800,  category_id: 'CAT003', description: 'Staff welfare — birthday celebration', payment_mode: 'PETTY', submitted_by: 'Manikandan',  receipt_attached: true,  status: 'Pending'  },
+        { id: 'EXP-010', branch_id: 'B003', date: '2026-04-18', amount: 22000, category_id: 'CAT005', description: 'Carton boxes — restock order',         payment_mode: 'BANK',  submitted_by: 'Ravi',       approved_by: 'Admin', receipt_attached: true,  status: 'Approved' },
     ], []);
 
     // --- Intelligence Engine ---
@@ -195,9 +202,29 @@ const ExpenseIntelligence: React.FC = () => {
         return { spent, budget, leaks };
     }, [analysis]);
 
-    const filteredAnalysis = analysis.filter(a =>
-        a.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredAnalysis = useMemo(() =>
+        analysis.filter(a => a.category.toLowerCase().includes(searchTerm.toLowerCase())),
+        [analysis, searchTerm]
     );
+
+    const categoryName = useCallback(
+        (id: string) => categories.find(c => c.id === id)?.name ?? id,
+        [categories]
+    );
+
+    const filteredTransactions = useMemo(() => {
+        const q = searchTerm.toLowerCase();
+        return transactions.filter(t => {
+            const matchesStatus = statusFilter === 'All' || t.status === statusFilter;
+            const matchesSearch = !q ||
+                t.id.toLowerCase().includes(q) ||
+                t.description.toLowerCase().includes(q) ||
+                categoryName(t.category_id).toLowerCase().includes(q) ||
+                t.submitted_by.toLowerCase().includes(q) ||
+                t.payment_mode.toLowerCase().includes(q);
+            return matchesStatus && matchesSearch;
+        });
+    }, [transactions, statusFilter, searchTerm, categoryName]);
 
     return (
         <Layout>
@@ -305,17 +332,110 @@ const ExpenseIntelligence: React.FC = () => {
 
                         {viewMode === 'OVERVIEW' && (
                             <>
-                                <div className="relative mb-6">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search Categories or Actions..."
-                                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                                {/* Search + Status filter bar */}
+                                <div className="flex gap-3 mb-4 items-center">
+                                    <div className="relative flex-1">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search by ID, description, category, submitter..."
+                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex gap-1.5">
+                                        {(['All', 'Pending', 'Approved', 'Rejected'] as const).map(tab => (
+                                            <button
+                                                key={tab}
+                                                onClick={() => setStatusFilter(tab)}
+                                                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all ${
+                                                    statusFilter === tab
+                                                        ? tab === 'Pending'  ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+                                                        : tab === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                                                        : tab === 'Rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
+                                                        : 'bg-primary text-white'
+                                                        : 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                                }`}
+                                            >
+                                                {tab}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
 
+                                {/* Transactions Table */}
+                                <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm mb-6">
+                                    <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Recent Transactions</p>
+                                        <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">{filteredTransactions.length} records</span>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800">
+                                                <tr>
+                                                    {['Expense ID', 'Description', 'Category', 'Date', 'Mode', 'Submitted By', 'Amount', 'Status'].map(h => (
+                                                        <th key={h} className={`px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400 ${
+                                                            h === 'Amount' ? 'text-right' : h === 'Status' ? 'text-center' : ''
+                                                        }`}>{h}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                                {filteredTransactions.length > 0 ? filteredTransactions.map((tx, idx) => (
+                                                    <tr key={tx.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors group">
+                                                        <td className="px-5 py-4">
+                                                            <span className="font-mono text-xs font-bold text-primary group-hover:underline cursor-pointer">{tx.id}</span>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 max-w-[200px] truncate">{tx.description}</p>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-[10px] font-black uppercase tracking-wider text-neutral-500">{categoryName(tx.category_id)}</span>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">{tx.date}</span>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                                                                tx.payment_mode === 'CASH'  ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' :
+                                                                tx.payment_mode === 'BANK'  ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400' :
+                                                                'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400'
+                                                            }`}>{tx.payment_mode}</span>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-6 h-6 rounded-full bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-[10px] font-black">{tx.submitted_by[0]}</div>
+                                                                <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">{tx.submitted_by}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-5 py-4 text-right">
+                                                            <span className="font-mono text-sm font-black text-neutral-900 dark:text-neutral-100">₹{tx.amount.toLocaleString()}</span>
+                                                        </td>
+                                                        <td className="px-5 py-4">
+                                                            <div className="flex justify-center">
+                                                                <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${
+                                                                    tx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' :
+                                                                    tx.status === 'Pending'  ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20' :
+                                                                    'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20'
+                                                                }`}>{tx.status}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )) : (
+                                                    <tr>
+                                                        <td colSpan={8} className="px-5 py-12 text-center text-neutral-400 text-sm italic">
+                                                            No transactions match "{searchTerm || statusFilter}"
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {/* Category Analysis Cards */}
+                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3">Category Spend Analysis</p>
                                 {filteredAnalysis.map((item, idx) => (
                                     <div key={idx} className={`bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] p-6 shadow-sm group hover:border-primary/40 transition-all ${item.status === 'OVER_BUDGET' ? 'border-l-4 border-l-error' :
                                         item.status === 'NEAR_LIMIT' ? 'border-l-4 border-l-amber-500' : ''

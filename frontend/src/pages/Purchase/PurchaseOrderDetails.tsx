@@ -264,7 +264,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                             </td>
                                             <td className="px-8 py-6 text-center">
                                                 <div className="flex flex-col items-center gap-1.5">
-                                                    <span className="text-[10px] font-black text-neutral-900 dark:text-white tabular-nums">{item.quantity} {item.unit || 'pcs'}</span>
+                                                    <span className="text-[10px] font-black text-neutral-900 dark:text-white tabular-nums">{item.quantity} {(item as any).unit || 'pcs'}</span>
                                                     <div className="w-16 h-1 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
                                                         <div className="h-full bg-primary" style={{ width: '100%' }} />
                                                     </div>

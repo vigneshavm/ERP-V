@@ -1,112 +1,266 @@
-import React from 'react';
-import { Building2, Plus, Search, Filter, Star, AlertCircle, CheckCircle2, Clock, TrendingDown, Phone, MoreHorizontal, ArrowRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { 
+    Building2, Plus, Search, Filter, Star, AlertCircle, 
+    CheckCircle2, Clock, TrendingDown, Phone, MoreHorizontal, 
+    ArrowRight, Globe, ShieldCheck, Zap, ChevronRight
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const MOCK_SUPPLIERS = [
+    { id: 'SUP-001', name: 'Global Raw Materials Inc.', gstin: '27AABCG1234A1Z5', cat: 'Raw Materials', limit: '50,00,000', outstanding: '12,45,000', rating: 5, status: 'Active' },
+    { id: 'SUP-002', name: 'TechComponents Asia Pvt Ltd', gstin: '29AATCT5678B2Z1', cat: 'Electronics', limit: '25,00,000', outstanding: '8,20,000', rating: 4, status: 'Active' },
+    { id: 'SUP-003', name: 'Omega Industrial Supply', gstin: '06AABCO9012C3Z8', cat: 'Industrial', limit: '15,00,000', outstanding: '6,80,000', rating: 3, status: 'Overdue' },
+    { id: 'SUP-004', name: 'Starlight Medical Devices', gstin: '33AABCS3456D4Z2', cat: 'Medical', limit: '10,00,000', outstanding: '0', rating: 5, status: 'Active' },
+    { id: 'SUP-005', name: 'Apex Packaging Works', gstin: '24AABCA7890E5Z9', cat: 'Packaging', limit: '8,00,000', outstanding: '1,15,000', rating: 4, status: 'Active' },
+];
 
 const SuppliersMockUI: React.FC = () => {
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTab, setSelectedTab] = useState('All');
+    const [showFilters, setShowFilters] = useState(false);
+
+    const filteredSuppliers = useMemo(() => {
+        return MOCK_SUPPLIERS.filter(sup => {
+            const matchesSearch = 
+                sup.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                sup.gstin.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const matchesTab = 
+                selectedTab === 'All' || 
+                (selectedTab === 'Active' && sup.status === 'Active') ||
+                (selectedTab === 'Overdue' && sup.status === 'Overdue');
+            
+            return matchesSearch && matchesTab;
+        });
+    }, [searchQuery, selectedTab]);
+
     return (
-        <div className="min-h-screen bg-app text-main font-sans selection:bg-teal-500/30 overflow-hidden flex flex-col">
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[10%] left-[-5%] w-[50%] h-[50%] bg-teal-700/10 rounded-full blur-[160px]" />
-                <div className="absolute bottom-[0%] right-[10%] w-[35%] h-[40%] bg-cyan-800/10 rounded-full blur-[140px]" />
-            </div>
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8">
-                <header className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-black tracking-tight text-main flex items-center gap-3">
-                            Supplier Network
-                            <span className="px-3 py-1 bg-teal-500/10 border border-teal-500/20 text-teal-400 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                                <Building2 className="w-3 h-3" /> Vendor Registry
-                            </span>
-                        </h1>
-                        <p className="text-sm text-secondary mt-1 font-medium">Manage supplier relationships, credit terms, and payable ageing.</p>
-                    </div>
-                    <div className="flex gap-4">
-                        <button className="h-11 px-6 bg-card hover:bg-card text-main font-bold text-sm tracking-wide rounded-xl transition-all border border-default flex items-center gap-2">
-                            <TrendingDown className="w-4 h-4" /> Ageing Report
-                        </button>
-                        <button className="h-11 px-6 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-main font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(20,184,166,0.3)] flex items-center gap-2">
-                            <Plus className="w-4 h-4" /> Add Supplier
-                        </button>
-                    </div>
-                </header>
-
-                <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Total Suppliers', val: '148', sub: '12 added this month', icon: Building2, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
-                        { label: 'Outstanding Payables', val: '₹28.4L', sub: '32 bills pending', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Overdue Payables', val: '₹6.8L', sub: '9 suppliers affected', icon: AlertCircle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-                        { label: 'Settled (MTD)', val: '₹45.2L', sub: '87 transactions', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
-                            </div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+        <div className="p-6 space-y-6 h-full flex flex-col text-main animate-fade-in relative overflow-hidden">
+            {/* Advanced Filter Panel (Slide-over) */}
+            <div className={`absolute top-0 right-0 h-full w-80 bg-[#0a0a0c]/95 backdrop-blur-2xl border-l border-white/10 z-50 transform transition-transform duration-500 ease-out shadow-[-20px_0_40px_rgba(0,0,0,0.4)] flex flex-col ${showFilters ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-main/90 flex items-center gap-2">
+                        <Filter className="w-4 h-4 text-purple-400" /> Advanced Filter
+                    </h2>
+                    <button onClick={() => setShowFilters(false)} className="p-2 hover:bg-white/5 rounded-lg text-main/40 transition-colors">
+                        <ArrowRight className="w-5 h-5" />
+                    </button>
                 </div>
-
-                <div className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl flex flex-col overflow-hidden">
-                    <div className="p-5 border-b border-default flex justify-between items-center bg-card">
-                        <div className="flex gap-4">
-                            <div className="relative">
-                                <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-secondary" />
-                                <input type="text" placeholder="Search supplier, GSTIN, city..." className="w-80 bg-input border border-default rounded-xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-teal-500 transition-colors text-main placeholder:text-slate-600" />
-                            </div>
-                            <button className="h-10 px-4 bg-card hover:bg-card border border-default rounded-xl text-xs font-bold text-main flex items-center gap-2">
-                                <Filter className="w-4 h-4" /> Filter
-                            </button>
-                        </div>
-                        <div className="flex gap-2">
-                            {['All', 'Active', 'Overdue', 'Blacklisted'].map((tab, idx) => (
-                                <button key={tab} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${idx === 0 ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30' : 'text-secondary hover:text-main'}`}>{tab}</button>
+                
+                <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar text-sm">
+                    {/* Categories */}
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-main/30">Vendor Category</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['Raw Materials', 'Packaging', 'Electronics', 'Logistics', 'Services'].map(cat => (
+                                <button key={cat} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-purple-500/30 text-[11px] text-main/60 transition-all active:scale-95">
+                                    {cat}
+                                </button>
                             ))}
                         </div>
                     </div>
-                    <div className="flex-1 overflow-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-app sticky top-0 z-20 backdrop-blur-md">
-                                <tr>
-                                    {['Supplier', 'GSTIN', 'Category', 'Credit Limit', 'Outstanding', 'Rating', 'Actions'].map(h => (
-                                        <th key={h} className={`px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default ${h === 'Outstanding' || h === 'Credit Limit' ? 'text-right' : h === 'Rating' || h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-default">
-                                {[
-                                    { name: 'Global Raw Materials Inc.', gstin: '27AABCG1234A1Z5', cat: 'Raw Materials', limit: '50,00,000', outstanding: '12,45,000', rating: 5, status: 'Active' },
-                                    { name: 'TechComponents Asia Pvt Ltd', gstin: '29AATCT5678B2Z1', cat: 'Electronics', limit: '25,00,000', outstanding: '8,20,000', rating: 4, status: 'Active' },
-                                    { name: 'Omega Industrial Supply', gstin: '06AABCO9012C3Z8', cat: 'Industrial', limit: '15,00,000', outstanding: '6,80,000', rating: 3, status: 'Overdue' },
-                                    { name: 'Starlight Medical Devices', gstin: '33AABCS3456D4Z2', cat: 'Medical', limit: '10,00,000', outstanding: '0', rating: 5, status: 'Active' },
-                                    { name: 'Apex Packaging Works', gstin: '24AABCA7890E5Z9', cat: 'Packaging', limit: '8,00,000', outstanding: '1,15,000', rating: 4, status: 'Active' },
-                                ].map((sup, idx) => (
-                                    <tr key={idx} className="hover:bg-card/30 transition-colors group cursor-pointer">
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 font-black text-sm">{sup.name[0]}</div>
-                                                <div>
-                                                    <div className="text-sm font-bold text-main">{sup.name}</div>
-                                                    <div className="flex items-center gap-1 mt-0.5"><Phone className="w-3 h-3 text-slate-600" /><span className="text-[10px] text-secondary">+91 98765 43210</span></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5"><span className="font-mono text-xs text-muted">{sup.gstin}</span></td>
-                                        <td className="px-8 py-5"><span className="px-2.5 py-1 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest text-muted">{sup.cat}</span></td>
-                                        <td className="px-8 py-5 text-right"><span className="font-mono text-sm font-bold text-main">₹{sup.limit}</span></td>
-                                        <td className="px-8 py-5 text-right"><span className={`font-mono text-sm font-bold ${sup.status === 'Overdue' ? 'text-rose-400' : sup.outstanding === '0' ? 'text-emerald-400' : 'text-main'}`}>{sup.outstanding === '0' ? 'Nil' : `₹${sup.outstanding}`}</span></td>
-                                        <td className="px-8 py-5"><div className="flex justify-center gap-0.5">{Array.from({ length: 5 }).map((_, s) => <Star key={s} className={`w-3.5 h-3.5 ${s < sup.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-700'}`} />)}</div></td>
-                                        <td className="px-8 py-5"><div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-2 text-muted hover:text-teal-400 bg-card hover:bg-card rounded-lg transition-colors"><ArrowRight className="w-4 h-4" /></button>
-                                            <button className="p-2 text-muted hover:text-main bg-card hover:bg-card rounded-lg transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
-                                        </div></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+
+                    {/* Quality Rating */}
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-main/30">Quality Rating</label>
+                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                            {[1, 2, 3, 4, 5].map(star => (
+                                <button key={star} className="p-1 hover:scale-110 transition-transform">
+                                    <Star className={`w-5 h-5 ${star <= 4 ? 'text-amber-400 fill-amber-400' : 'text-white/10'}`} />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Financial Threshold */}
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-main/30">Credit Limit Range</label>
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-[10px] font-mono text-main/40">
+                                <span>₹0</span>
+                                <span>₹1,00,00,000+</span>
+                            </div>
+                            <input type="range" className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
+                        </div>
+                    </div>
+
+                    {/* Geo Location */}
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-main/30">Region / City</label>
+                        <select className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-xs text-main/60 focus:border-purple-500/50 outline-none appearance-none cursor-pointer transition-all">
+                            <option>All India</option>
+                            <option>Maharashtra</option>
+                            <option>Karnataka</option>
+                            <option>Gujarat</option>
+                        </select>
+                    </div>
+
+                    {/* Payment Terms */}
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <div className="w-5 h-5 rounded border border-white/20 group-hover:border-purple-500/50 transition-colors flex items-center justify-center">
+                                <CheckCircle2 className="w-3 h-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <span className="text-xs text-main/60">Hide Overdue Suppliers</span>
+                        </label>
                     </div>
                 </div>
-            </main>
+
+                <div className="p-6 border-t border-white/10 flex gap-3">
+                    <button className="flex-1 py-2.5 rounded-xl border border-white/10 text-xs font-bold text-main/40 hover:bg-white/5 transition-all">Reset</button>
+                    <button onClick={() => setShowFilters(false)} className="flex-1 py-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 text-xs font-bold hover:bg-purple-500/30 transition-all">Apply</button>
+                </div>
+            </div>
+
+            {/* Header */}
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
+                        Supplier Network
+                    </h1>
+                    <p className="text-sm text-main/60 mt-1 font-medium">Manage vendor relationships, credit terms, and payable ageing.</p>
+                </div>
+                <div className="flex gap-3">
+                    <button 
+                        onClick={() => navigate('/suppliers/ledger')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-sm font-bold"
+                    >
+                        <Clock className="w-4 h-4" /> Ageing Report
+                    </button>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)] transition-all text-sm font-black uppercase tracking-widest">
+                        <Plus className="w-4 h-4" /> Add Supplier
+                    </button>
+                </div>
+            </div>
+
+            {/* KPI Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {[
+                    { label: 'Total Suppliers', val: '148', sub: '12 added this month', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                    { label: 'Outstanding Payables', val: '₹28.4L', sub: '32 bills pending', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                    { label: 'Overdue Payables', val: '₹6.8L', sub: '9 suppliers affected', icon: AlertCircle, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+                    { label: 'Settled (MTD)', val: '₹45.2L', sub: '87 transactions', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+                ].map((card, i) => (
+                    <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col gap-3 group hover:bg-white/[0.04] transition-all cursor-pointer">
+                        <div className="flex justify-between items-start">
+                            <div className={`p-2.5 rounded-xl ${card.bg} ${card.color}`}>
+                                <card.icon className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold text-main/20 group-hover:text-main/40 uppercase tracking-widest">{card.sub}</span>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-main/40 uppercase tracking-widest">{card.label}</p>
+                            <p className="text-2xl font-black tracking-tight text-main">{card.val}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Filters & Data Grid */}
+            <div className="flex-1 glass-panel rounded-3xl border border-white/5 flex flex-col overflow-hidden bg-white/[0.01]">
+                <div className="p-4 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                    <div className="flex gap-4">
+                        <div className="relative">
+                            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-main/30" />
+                            <input 
+                                type="text" 
+                                placeholder="Search supplier, GSTIN, city..." 
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-80 bg-black/40 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:border-purple-500/50 outline-none transition-all text-main" 
+                            />
+                        </div>
+                        <button 
+                            onClick={() => setShowFilters(true)}
+                            className={`h-10 px-4 border rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${showFilters ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' : 'bg-white/5 hover:bg-white/10 border-white/10 text-main/60'}`}
+                        >
+                            <Filter className="w-4 h-4" /> Advanced Filter
+                        </button>
+                    </div>
+                    <div className="flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5">
+                        {['All', 'Active', 'Overdue', 'Blacklisted'].map((tab) => (
+                            <button 
+                                key={tab} 
+                                onClick={() => setSelectedTab(tab)}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedTab === tab ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-lg' : 'text-main/40 hover:text-main/60 hover:bg-white/5'}`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex-1 overflow-auto custom-scrollbar">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="bg-black/40 sticky top-0 z-20 backdrop-blur-md">
+                            <tr className="text-main/40 text-[10px] font-black uppercase tracking-widest border-b border-white/5">
+                                <th className="px-8 py-4">Supplier Entity</th>
+                                <th className="px-8 py-4 text-center">Identity</th>
+                                <th className="px-8 py-4 text-center">Category</th>
+                                <th className="px-8 py-4 text-right">Credit Limit</th>
+                                <th className="px-8 py-4 text-right">Outstanding</th>
+                                <th className="px-8 py-4 text-center">Quality Rating</th>
+                                <th className="px-8 py-4 text-center w-16"></th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {filteredSuppliers.map((sup, idx) => (
+                                <tr 
+                                    key={idx} 
+                                    onClick={() => navigate(`/suppliers/ledger?id=${sup.id}`)}
+                                    className="hover:bg-white/[0.04] transition-colors group cursor-pointer"
+                                >
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-black text-sm group-hover:bg-purple-500/20 transition-all">
+                                                {sup.name[0]}
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-bold text-main/90 group-hover:text-purple-400 transition-colors">{sup.name}</div>
+                                                <div className="flex items-center gap-1.5 mt-0.5">
+                                                    <Globe className="w-3 h-3 text-main/20" />
+                                                    <span className="text-[10px] text-main/40 font-mono">Domestic Vendor</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5 text-center">
+                                        <span className="font-mono text-[11px] text-main/30 bg-white/5 px-2 py-1 rounded border border-white/5 uppercase">{sup.gstin}</span>
+                                    </td>
+                                    <td className="px-8 py-5 text-center">
+                                        <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest text-main/50">
+                                            {sup.cat}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-5 text-right">
+                                        <span className="font-mono text-sm font-bold text-main/70">₹{sup.limit}</span>
+                                    </td>
+                                    <td className="px-8 py-5 text-right">
+                                        <span className={`font-mono text-sm font-bold ${sup.status === 'Overdue' ? 'text-pink-400' : sup.outstanding === '0' ? 'text-emerald-400' : 'text-main/90'}`}>
+                                            {sup.outstanding === '0' ? 'Nil' : `₹${sup.outstanding}`}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="flex justify-center gap-0.5">
+                                            {Array.from({ length: 5 }).map((_, s) => (
+                                                <Star key={s} className={`w-3.5 h-3.5 ${s < sup.rating ? 'text-amber-400 fill-amber-400' : 'text-white/5'}`} />
+                                            ))}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="flex justify-center">
+                                            <button className="p-2 text-main/20 hover:text-purple-400 bg-white/5 hover:bg-purple-500/10 rounded-lg transition-all border border-transparent hover:border-purple-500/20">
+                                                <ChevronRight className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };

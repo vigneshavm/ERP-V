@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "../../../redux/store";
@@ -61,6 +62,7 @@ const Settings: React.FC = () => {
 
     const { tab } = useParams<{ tab: string }>();
     const activeTab = tabs.find(t => t.id === tab) ? tab : 'general';
+    const navigate = useNavigate();
 
     const dispatch = useDispatch<AppDispatch>();
     const { tenants } = useSelector((state: RootState) => state.tenant);
@@ -255,23 +257,45 @@ const Settings: React.FC = () => {
             />
 
             <div className="flex flex-col gap-6">
-                {/* Horizontal Navigation Bar Removed */}
+                {/* Horizontal Navigation Bar */}
+                <div className="w-full bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                    <div className="flex overflow-x-auto custom-scrollbar">
+                        {tabs.map((t) => {
+                            const Icon = t.icon;
+                            const isActive = activeTab === t.id;
+                            return (
+                                <button
+                                    key={t.id}
+                                    onClick={() => navigate(`/settings/${t.id}`)}
+                                    className={`flex items-center gap-2.5 px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
+                                        isActive 
+                                        ? 'border-primary text-primary bg-primary/5' 
+                                        : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
+                                    }`}
+                                >
+                                    <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-neutral-400'}`} />
+                                    {t.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
 
                 {/* Main Content Area */}
-                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
-                    <div className="border-b border-slate-100 dark:border-slate-800 px-8 py-6 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20 backdrop-blur-sm">
+                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-neutral-900 rounded-3xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
+                    <div className="border-b border-neutral-100 dark:border-neutral-800 px-8 py-6 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50 backdrop-blur-sm">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                                 {(() => {
                                     const Icon = tabs.find(t => t.id === activeTab)?.icon || SettingsIcon;
-                                    return <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />;
+                                    return <Icon className="w-6 h-6 text-primary" />;
                                 })()}
                             </div>
                             <div>
-                                <h2 className="text-xl font-extrabold text-slate-800 dark:text-white leading-none">
+                                <h2 className="text-xl font-black text-neutral-900 dark:text-white leading-none">
                                     {tabs.find(t => t.id === activeTab)?.label} Settings
                                 </h2>
-                                <p className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">
+                                <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest">
                                     System / Configuration / {activeTab}
                                 </p>
                             </div>
@@ -279,14 +303,14 @@ const Settings: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleReset}
-                                className="px-4 py-2 text-slate-500 hover:text-red-500 dark:text-slate-400 font-bold flex items-center gap-2"
+                                className="px-4 py-2 text-neutral-500 hover:text-error dark:text-neutral-400 font-bold flex items-center gap-2 transition-colors"
                             >
                                 <RotateCcw className="w-4 h-4" /> Reset
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className={`px-6 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 ${isSaved ? 'bg-emerald-600 dark:bg-emerald-600' : ''}`}
+                                className={`px-6 py-2.5 bg-neutral-900 dark:bg-primary text-white rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 ${isSaved ? 'bg-success dark:bg-success' : 'hover:bg-neutral-800 dark:hover:bg-primary/90'}`}
                             >
                                 {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                 {isSaved ? <CheckCircle className="w-4 h-4" /> : !isSaving && <Save className="w-4 h-4" />}

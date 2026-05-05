@@ -24,8 +24,19 @@ const SupplierPayments: React.FC = () => {
         const fetchPayments = async () => {
             setIsLoading(true);
             try {
-                const { data } = await api.get('/api/purchase-payments');
-                setPayments(data || []);
+                const response = await api.get('/api/purchase-payments');
+                const raw = response.data;
+                // Normalize: handle array, { data: [] }, { payments: [] }, { results: [] }, or null
+                const list = Array.isArray(raw)
+                    ? raw
+                    : Array.isArray(raw?.data)
+                    ? raw.data
+                    : Array.isArray(raw?.payments)
+                    ? raw.payments
+                    : Array.isArray(raw?.results)
+                    ? raw.results
+                    : [];
+                setPayments(list);
             } catch (err) {
                 console.error("Failed to fetch payments", err);
                 // Mock data for UI development
@@ -120,8 +131,8 @@ const SupplierPayments: React.FC = () => {
     const filteredPayments = useMemo(() => {
         return payments.filter(p => {
             const matchesSearch =
-                p.payment_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (p.payment_number || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (p.vendor_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (p.reference_id || '').toLowerCase().includes(searchTerm.toLowerCase());
             const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
             return matchesSearch && matchesStatus;
@@ -129,8 +140,8 @@ const SupplierPayments: React.FC = () => {
     }, [payments, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {
-        const totalAmount = payments.filter(p => p.status !== 'Reversed').reduce((sum, p) => sum + p.total_amount, 0);
-        const pendingAmount = payments.filter(p => p.status === 'Pending').reduce((sum, p) => sum + p.total_amount, 0);
+        const totalAmount = payments.filter(p => p.status !== 'Reversed').reduce((sum, p) => sum + (Number(p.total_amount) || Number((p as any).totalAmount) || Number((p as any).amount) || 0), 0);
+        const pendingAmount = payments.filter(p => p.status === 'Pending').reduce((sum, p) => sum + (Number(p.total_amount) || Number((p as any).totalAmount) || Number((p as any).amount) || 0), 0);
 
         return {
             totalCount: payments.length,
@@ -237,11 +248,13 @@ const SupplierPayments: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {filteredPayments.map((p) => (
+                                {filteredPayments.map((p, index) => {
+                                    const paymentId = p.id || (p as any)._id || `payment-${index}`;
+                                    return (
                                     <tr
-                                        key={p.id}
+                                        key={paymentId}
                                         className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                                        onClick={() => navigate(`/purchase/payments/view/${p.id}`)}
+                                        onClick={() => navigate(`/purchase/payments/view/${p.id || (p as any)._id}`)}
                                     >
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
@@ -261,7 +274,7 @@ const SupplierPayments: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <span className="font-black text-neutral-900 dark:text-white">{formatCurrency(p.total_amount)}</span>
+                                            <span className="font-black text-neutral-900 dark:text-white">{formatCurrency(Number(p.total_amount) || Number((p as any).totalAmount) || Number((p as any).amount) || 0)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             {getStatusBadge(p.status)}
@@ -272,7 +285,8 @@ const SupplierPayments: React.FC = () => {
                                             </button>
                                         </td>
                                     </tr>
-                                ))}
+                                    );
+                                })}
                                 {filteredPayments.length === 0 && (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-20 text-center">

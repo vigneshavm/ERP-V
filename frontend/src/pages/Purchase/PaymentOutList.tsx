@@ -196,7 +196,7 @@ const PaymentOutList: React.FC = () => {
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex justify-center">
-                                                    {getStatusBadge(payment.status)}
+                                                    {getStatusBadge(payment.status || '')}
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">

@@ -40,19 +40,16 @@ export const LaborManager = () => {
 
   // Derive activeTab from URL
   const activeTab = useMemo(() => {
-    if (location.pathname.includes('/attendance')) return 'ATTENDANCE';
-    if (location.pathname.includes('/payments')) return 'PAYMENTS';
-    if (location.pathname.includes('/stats')) return 'STATS';
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get('tab');
+    if (tab === 'attendance') return 'ATTENDANCE';
+    if (tab === 'payments') return 'PAYMENTS';
+    if (tab === 'stats') return 'STATS';
     return 'ATTENDANCE'; // default
-  }, [location.pathname]);
+  }, [location.search]);
 
   const setActiveTab = (tab: 'ATTENDANCE' | 'PAYMENTS' | 'STATS') => {
-    const pathMap = {
-      'ATTENDANCE': '/people/employees/attendance',
-      'PAYMENTS': '/people/employees/payments',
-      'STATS': '/people/employees/stats'
-    };
-    navigate(pathMap[tab]);
+    navigate(`${location.pathname}?tab=${tab.toLowerCase()}`, { replace: true });
   };
 
   const [roles, setRoles] = useState<any[]>([]);

@@ -3,7 +3,19 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveTab } from '../redux/slices/uiSlice';
 import { RootState } from '../redux/store';
+import { MENU_ITEMS, MenuItem } from '../config/menu.config';
+import { AppView } from '../types/common';
 
+// Helper to flatten menu items to search by path
+const flattenMenu = (items: MenuItem[]): MenuItem[] => {
+    return items.reduce((acc: MenuItem[], item) => {
+        acc.push(item);
+        if (item.children) {
+            acc.push(...flattenMenu(item.children));
+        }
+        return acc;
+    }, []);
+};
 export const useTabSync = () => {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -14,12 +26,30 @@ export const useTabSync = () => {
         const searchParams = new URLSearchParams(location.search);
         const tabParam = searchParams.get('tab');
 
+        if (tabParam) {
+            // 1. Explicit ?tab parameter takes priority
+            if (activeTab !== tabParam) dispatch(setActiveTab(tabParam as AppView));
+            return;
+        }
+
+        // 2. Dynamic Path Resolution via Menu Config
+        const allItems = flattenMenu(MENU_ITEMS);
+        // We match exact paths first
+        const matchedItem = allItems.find(item => item.path && item.path === path);
+        
+        if (matchedItem) {
+            if (activeTab !== matchedItem.id) {
+                dispatch(setActiveTab(matchedItem.id));
+            }
+            return;
+        }
+
+        // 3. Fallback to dynamic URL manual overrides (for IDs like /finance/ledger/123)
         if (path === '/') {
-            if (tabParam) {
-                if (activeTab !== 'SETTINGS') dispatch(setActiveTab('SETTINGS'));
-            } else if (activeTab === 'DASHBOARD' || !activeTab) {
+            if (activeTab === 'DASHBOARD' || !activeTab) {
                 dispatch(setActiveTab('DASHBOARD'));
             }
+
         } else if (path.startsWith('/people/payroll')) {
             if (path.includes('/structure')) {
                 if (activeTab !== 'PAYROLL') dispatch(setActiveTab('PAYROLL'));

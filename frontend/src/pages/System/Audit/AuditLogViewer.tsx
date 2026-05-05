@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { Search, Filter, Download, Shield, Eye, Calendar } from 'lucide-react';
+import { Search, Filter, Download, Shield, Eye, Calendar, Clock, Database, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../../services/api';
 import { formatDateISO } from '../../../utils/helpers';
 
@@ -61,7 +61,7 @@ const AuditLogViewer = () => {
 
     return (
         <Layout>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-7xl mx-auto py-8">
                 <PageHeader
                     title="System Audit Logs"
                     description="Track user activity and system changes securely."
@@ -72,14 +72,14 @@ const AuditLogViewer = () => {
                 />
 
                 {/* Filters */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end mt-6">
-                    <div>
-                        <label className="text-xs font-medium text-gray-500 block mb-1">Entity Type</label>
+                <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-5 items-end mb-8 transition-colors">
+                    <div className="flex-1 min-w-[150px]">
+                        <label className="text-[10px] font-bold tracking-wider text-neutral-500 dark:text-neutral-400 block mb-1.5 uppercase">Entity Type</label>
                         <select
                             name="entity"
                             value={filters.entity}
                             onChange={handleFilterChange}
-                            className="p-2 border rounded-lg text-sm bg-gray-50 min-w-[150px]"
+                            className="w-full p-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                         >
                             <option value="">All Entities</option>
                             <option value="Invoice">Invoice</option>
@@ -90,191 +90,269 @@ const AuditLogViewer = () => {
                             <option value="User">User</option>
                         </select>
                     </div>
-                    <div>
-                        <label className="text-xs font-medium text-gray-500 block mb-1">Action</label>
+                    <div className="flex-1 min-w-[150px]">
+                        <label className="text-[10px] font-bold tracking-wider text-neutral-500 dark:text-neutral-400 block mb-1.5 uppercase">Action</label>
                         <input
                             type="text"
                             name="action"
                             placeholder="e.g. UPDATE"
                             value={filters.action}
                             onChange={handleFilterChange}
-                            className="p-2 border rounded-lg text-sm bg-gray-50 w-40"
+                            className="w-full p-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="text-xs font-medium text-gray-500 block mb-1">Date Range</label>
-                        <div className="flex gap-2">
-                            <input
-                                type="date"
-                                name="startDate"
-                                value={filters.startDate}
-                                onChange={handleFilterChange}
-                                className="p-2 border rounded-lg text-sm bg-gray-50"
-                            />
-                            <input
-                                type="date"
-                                name="endDate"
-                                value={filters.endDate}
-                                onChange={handleFilterChange}
-                                className="p-2 border rounded-lg text-sm bg-gray-50"
-                            />
+                        <label className="text-[10px] font-bold tracking-wider text-neutral-500 dark:text-neutral-400 block mb-1.5 uppercase">Date Range</label>
+                        <div className="flex items-center gap-2">
+                            <div className="relative">
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                <input
+                                    type="date"
+                                    name="startDate"
+                                    value={filters.startDate}
+                                    onChange={handleFilterChange}
+                                    className="pl-9 pr-3 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all [color-scheme:light] dark:[color-scheme:dark]"
+                                />
+                            </div>
+                            <span className="text-neutral-400">-</span>
+                            <div className="relative">
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                <input
+                                    type="date"
+                                    name="endDate"
+                                    value={filters.endDate}
+                                    onChange={handleFilterChange}
+                                    className="pl-9 pr-3 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all [color-scheme:light] dark:[color-scheme:dark]"
+                                />
+                            </div>
                         </div>
                     </div>
 
                     <button
                         onClick={applyFilters}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium flex items-center gap-2"
+                        className="px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 text-sm font-bold flex items-center gap-2 shadow-sm shadow-primary/20 transition-all"
                     >
                         <Filter size={16} /> Filter
                     </button>
                 </div>
 
                 {/* Log List */}
-                <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
-                                <th className="px-6 py-3 font-medium">Timestamp</th>
-                                <th className="px-6 py-3 font-medium">User</th>
-                                <th className="px-6 py-3 font-medium">Action</th>
-                                <th className="px-6 py-3 font-medium">Entity</th>
-                                <th className="px-6 py-3 font-medium">Changes</th>
-                                <th className="px-6 py-3 font-medium text-right">Details</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-50">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading logs...</td>
+                <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden transition-colors">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left whitespace-nowrap">
+                            <thead>
+                                <tr className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950/50">
+                                    <th className="px-6 py-4 font-bold">Timestamp</th>
+                                    <th className="px-6 py-4 font-bold">User</th>
+                                    <th className="px-6 py-4 font-bold">Action</th>
+                                    <th className="px-6 py-4 font-bold">Entity</th>
+                                    <th className="px-6 py-4 font-bold">Changes</th>
+                                    <th className="px-6 py-4 font-bold text-right">Details</th>
                                 </tr>
-                            ) : logs.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No audit logs found matching criteria.</td>
-                                </tr>
-                            ) : (
-                                logs.map((log: any) => (
-                                    <tr key={log._id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-3 text-sm text-gray-500 whitespace-nowrap">
-                                            {formatDateISO(new Date(log.createdAt))}
-                                            <div className="text-xs text-gray-400 mt-0.5">{new Date(log.createdAt).toLocaleTimeString()}</div>
-                                        </td>
-                                        <td className="px-6 py-3 text-sm font-medium text-gray-900">
-                                            {log.user?.name || 'Unknown'}
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium 
-                                                ${log.action.includes('DELETE') ? 'bg-red-100 text-red-800' :
-                                                    log.action.includes('UPDATE') ? 'bg-amber-100 text-amber-800' :
-                                                        'bg-blue-100 text-blue-800'}`}>
-                                                {log.action}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-3 text-sm text-gray-600">
-                                            {log.entityType} <span className="text-xs text-gray-400">#{log.entityId?.substring(0, 8)}...</span>
-                                        </td>
-                                        <td className="px-6 py-3 text-xs text-gray-500">
-                                            {/* Quick Diff Summary if needed, else plain text */}
-                                            {log.changes ? `${Object.keys(log.changes).length} fields changed` : 'See details'}
-                                        </td>
-                                        <td className="px-6 py-3 text-right">
-                                            <button
-                                                onClick={() => setSelectedLog(log)}
-                                                className="text-indigo-600 hover:bg-indigo-50 p-1 rounded transition-colors"
-                                            >
-                                                <Eye size={16} />
-                                            </button>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
+                                            <div className="flex flex-col items-center justify-center gap-3">
+                                                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                                <span className="text-sm font-medium">Loading audit logs...</span>
+                                            </div>
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                ) : logs.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-16 text-center text-neutral-500 dark:text-neutral-400">
+                                            <div className="flex flex-col items-center justify-center gap-4">
+                                                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center">
+                                                    <Shield className="w-8 h-8 text-neutral-400 dark:text-neutral-500" />
+                                                </div>
+                                                <p className="text-sm font-medium">No audit logs found matching criteria.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    logs.map((log: any) => (
+                                        <tr key={log._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-500 dark:text-neutral-400 group-hover:bg-white dark:group-hover:bg-neutral-700 transition-colors">
+                                                        <Clock className="w-4 h-4" />
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-medium text-neutral-900 dark:text-white">
+                                                            {formatDateISO(new Date(log.createdAt))}
+                                                        </div>
+                                                        <div className="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">
+                                                            {new Date(log.createdAt).toLocaleTimeString()}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">
+                                                        {log.user?.name ? log.user.name.substring(0, 2) : 'U'}
+                                                    </div>
+                                                    <span className="text-sm font-medium text-neutral-900 dark:text-white">
+                                                        {log.user?.name || 'Unknown User'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider
+                                                    ${log.action.includes('DELETE') ? 'bg-error/10 text-error border border-error/20' :
+                                                        log.action.includes('UPDATE') ? 'bg-warning/10 text-warning border border-warning/20' :
+                                                            'bg-success/10 text-success border border-success/20'}`}>
+                                                    {log.action}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Database className="w-3.5 h-3.5 text-neutral-400" />
+                                                    <span className="text-sm font-medium text-neutral-900 dark:text-white">{log.entityType}</span>
+                                                    <span className="text-xs font-mono text-neutral-400 dark:text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded">#{log.entityId?.substring(0, 8)}...</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                                {/* Quick Diff Summary if needed, else plain text */}
+                                                {log.changes ? (
+                                                    <span className="inline-flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-md">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                                        {Object.keys(log.changes).length} fields changed
+                                                    </span>
+                                                ) : 'See details'}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    onClick={() => setSelectedLog(log)}
+                                                    className="inline-flex p-2 text-neutral-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                                                    title="View Details"
+                                                >
+                                                    <Eye size={18} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
                     {/* Pagination */}
                     {pagination.pages > 1 && (
-                        <div className="flex justify-center items-center gap-2 p-4 border-t border-gray-100">
-                            <button
-                                disabled={pagination.page === 1}
-                                onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
-                                className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-                            >
-                                Prev
-                            </button>
-                            <span className="text-sm text-gray-600">Page {pagination.page} of {pagination.pages}</span>
-                            <button
-                                disabled={pagination.page === pagination.pages}
-                                onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
-                                className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-                            >
-                                Next
-                            </button>
+                        <div className="flex justify-between items-center px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
+                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                                Showing page <span className="text-neutral-900 dark:text-white font-bold">{pagination.page}</span> of <span className="text-neutral-900 dark:text-white font-bold">{pagination.pages}</span>
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    disabled={pagination.page === 1}
+                                    onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
+                                    className="p-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-600 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white dark:hover:bg-neutral-800 transition-colors"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                <button
+                                    disabled={pagination.page === pagination.pages}
+                                    onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
+                                    className="p-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-600 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white dark:hover:bg-neutral-800 transition-colors"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
 
                 {/* Detail Modal */}
                 {selectedLog && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                                    <Shield size={18} className="text-indigo-600" />
-                                    Log Details
+                    <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                        <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col border border-neutral-200 dark:border-neutral-800 animate-in zoom-in-95 duration-200">
+                            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-950/50">
+                                <h3 className="font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                        <Shield size={18} />
+                                    </div>
+                                    Audit Log Details
                                 </h3>
-                                <button onClick={() => setSelectedLog(null)} className="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                                <button onClick={() => setSelectedLog(null)} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
                             </div>
-                            <div className="p-6">
-                                <div className="grid grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">Action ID</label>
-                                        <p className="font-mono text-sm">{selectedLog._id}</p>
+                            
+                            <div className="p-6 overflow-y-auto custom-scrollbar">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/80">
+                                        <label className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1 block">Action ID</label>
+                                        <p className="font-mono text-xs text-neutral-900 dark:text-white font-medium truncate" title={selectedLog._id}>{selectedLog._id}</p>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">Integrity Hash</label>
-                                        <p className="font-mono text-xs text-green-600 break-all">{selectedLog.currentHash?.substring(0, 20)}...</p>
+                                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/80 md:col-span-2">
+                                        <label className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1 block">Integrity Hash</label>
+                                        <p className="font-mono text-xs text-success font-medium truncate" title={selectedLog.currentHash}>{selectedLog.currentHash || 'N/A'}</p>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">User</label>
-                                        <p className="font-medium">{selectedLog.user?.name} ({selectedLog.user?.email})</p>
+                                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/80">
+                                        <label className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1 block">User</label>
+                                        <p className="font-medium text-sm text-neutral-900 dark:text-white truncate" title={selectedLog.user?.email}>{selectedLog.user?.name || 'Unknown'}</p>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">Timestamp</label>
-                                        <p className="font-medium">{new Date(selectedLog.createdAt).toLocaleString()}</p>
+                                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/80">
+                                        <label className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1 block">Timestamp</label>
+                                        <p className="font-medium text-sm text-neutral-900 dark:text-white">{new Date(selectedLog.createdAt).toLocaleString()}</p>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase">IP Address</label>
-                                        <p className="font-mono text-sm">{selectedLog.ipAddress}</p>
+                                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/80">
+                                        <label className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1 block">IP Address</label>
+                                        <p className="font-mono text-sm text-neutral-900 dark:text-white">{selectedLog.ipAddress || 'Unknown'}</p>
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                    <h4 className="font-bold text-sm mb-2 text-gray-700">Snapshot Data</h4>
+                                <div className="space-y-6">
+                                    <h4 className="font-black text-sm uppercase tracking-wider text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-800 pb-2">Snapshot Data</h4>
 
                                     {selectedLog.afterSnapshot ? (
-                                        <div className="space-y-2">
-                                            <p className="text-xs font-bold text-green-600 uppercase">New/Updated State</p>
-                                            <pre className="text-xs overflow-x-auto bg-white p-2 rounded border">{JSON.stringify(selectedLog.afterSnapshot, null, 2)}</pre>
+                                        <div className="space-y-2.5">
+                                            <p className="text-[10px] font-bold text-success uppercase tracking-widest flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-success"></span>
+                                                New/Updated State
+                                            </p>
+                                            <div className="bg-neutral-950 dark:bg-[#0a0a0a] rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden relative group">
+                                                <div className="absolute top-0 left-0 w-1 h-full bg-success"></div>
+                                                <pre className="text-[11px] font-mono text-neutral-300 p-4 overflow-x-auto custom-scrollbar">
+                                                    {JSON.stringify(selectedLog.afterSnapshot, null, 2)}
+                                                </pre>
+                                            </div>
                                         </div>
                                     ) : null}
 
                                     {selectedLog.beforeSnapshot ? (
-                                        <div className="space-y-2 mt-4">
-                                            <p className="text-xs font-bold text-red-600 uppercase">Previous/Deleted State</p>
-                                            <pre className="text-xs overflow-x-auto bg-white p-2 rounded border">{JSON.stringify(selectedLog.beforeSnapshot, null, 2)}</pre>
+                                        <div className="space-y-2.5 mt-6">
+                                            <p className="text-[10px] font-bold text-error uppercase tracking-widest flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-error"></span>
+                                                Previous/Deleted State
+                                            </p>
+                                            <div className="bg-neutral-950 dark:bg-[#0a0a0a] rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden relative group">
+                                                <div className="absolute top-0 left-0 w-1 h-full bg-error"></div>
+                                                <pre className="text-[11px] font-mono text-neutral-300 p-4 overflow-x-auto custom-scrollbar">
+                                                    {JSON.stringify(selectedLog.beforeSnapshot, null, 2)}
+                                                </pre>
+                                            </div>
                                         </div>
                                     ) : null}
 
                                     {!selectedLog.beforeSnapshot && !selectedLog.afterSnapshot && (
-                                        <p className="text-sm text-gray-500 italic">No snapshot data available.</p>
+                                        <div className="bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-200 dark:border-neutral-800 rounded-xl p-8 flex flex-col items-center justify-center text-center">
+                                            <Database className="w-8 h-8 text-neutral-400 dark:text-neutral-600 mb-3" />
+                                            <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No snapshot data available for this action.</p>
+                                        </div>
                                     )}
                                 </div>
                             </div>
-                            <div className="p-4 border-t border-gray-100 flex justify-end">
+                            
+                            <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex justify-end">
                                 <button
                                     onClick={() => setSelectedLog(null)}
-                                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                                    className="px-5 py-2.5 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700 font-bold rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors shadow-sm"
                                 >
-                                    Close
+                                    Close Details
                                 </button>
                             </div>
                         </div>

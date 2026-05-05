@@ -10,7 +10,7 @@ import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 
 const SmsTrackerPage: React.FC = () => {
-    const [transactions, setTransactions] = useState([]);
+    const [transactions, setTransactions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'pending' | 'converted'>('pending');
     const [isRefreshing, setIsRefreshing] = useState(false);

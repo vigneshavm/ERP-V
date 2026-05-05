@@ -26,7 +26,49 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/sales/invoice/:id" element={
                 <Suspense fallback={<div>Loading Invoice...</div>}><LazyModules.SalesInvoiceDetail /></Suspense>
             } />
+            <Route path="/sales/invoices" element={
+                <Suspense fallback={<div>Loading Invoice Register...</div>}><LazyModules.SalesInvoiceRegister /></Suspense>
+            } />
+            <Route path="/sales/orders" element={
+                <Suspense fallback={<div>Loading Orders...</div>}><LazyModules.SalesOrderCreator /></Suspense>
+            } />
+            <Route path="/sales/orders/new" element={
+                <Suspense fallback={<div>Loading Order Form...</div>}><LazyModules.SalesOrderCreator /></Suspense>
+            } />
+            <Route path="/sales/estimates" element={
+                <Suspense fallback={<div>Loading Estimates...</div>}><LazyModules.EstimateCreator /></Suspense>
+            } />
+            <Route path="/sales/estimates/new" element={
+                <Suspense fallback={<div>Loading Estimate Form...</div>}><LazyModules.EstimateCreator /></Suspense>
+            } />
+            <Route path="/sales/challans" element={
+                <Suspense fallback={<div>Loading Challans...</div>}><LazyModules.DeliveryChallanCreator /></Suspense>
+            } />
+            <Route path="/sales/challans/new" element={
+                <Suspense fallback={<div>Loading Challan Form...</div>}><LazyModules.DeliveryChallanCreator /></Suspense>
+            } />
+            <Route path="/sales/returns" element={
+                <Suspense fallback={<div>Loading Returns...</div>}><LazyModules.ReturnedItemsManager /></Suspense>
+            } />
+            <Route path="/sales/returns/new" element={
+                <Suspense fallback={<div>Loading Return Form...</div>}><LazyModules.SalesReturn /></Suspense>
+            } />
+            <Route path="/sales/payments" element={
+                <Suspense fallback={<div>Loading Payments...</div>}><LazyModules.PaymentInList /></Suspense>
+            } />
+            <Route path="/sales/payments/new" element={
+                <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentInCreator /></Suspense>
+            } />
+            <Route path="/sales/outstanding" element={
+                <Suspense fallback={<div>Loading Outstanding Dues...</div>}><LazyModules.OutstandingDues /></Suspense>
+            } />
+            <Route path="/sales/credits" element={
+                <Suspense fallback={<div>Loading Customer Credits...</div>}><LazyModules.CustomerCredits /></Suspense>
+            } />
             {/* SUPPLIER ROUTES */}
+            <Route path="/suppliers" element={
+                <Suspense fallback={<div>Loading...</div>}><LazyModules.Suppliers /></Suspense>
+            } />
             <Route path="/suppliers/add" element={
                 <Suspense fallback={<div>Loading...</div>}><LazyModules.VendorForm /></Suspense>
             } />
@@ -157,11 +199,20 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/people/employees" element={
                 <Navigate to="/people/employees/labor" replace />
             } />
-            <Route path="/people/employees/labor" element={
+            <Route path="/people/employees/labor/add" element={
+                <Suspense fallback={<div>Loading Form...</div>}><LazyModules.LaborAdd /></Suspense>
+            } />
+            <Route path="/people/employees/labor/view/:id" element={
+                <Suspense fallback={<div>Loading Profile...</div>}><LazyModules.LaborDetail /></Suspense>
+            } />
+            <Route path="/people/employees/labor/*" element={
                 <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.LaborManager /></Suspense>
             } />
             <Route path="/people/employees/allowances" element={
                 <Suspense fallback={<div>Loading Allowances...</div>}><LazyModules.AllowanceManager /></Suspense>
+            } />
+            <Route path="/people/employees/staff" element={
+                <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.StaffManager /></Suspense>
             } />
             <Route path="/people/attendance" element={
                 <Suspense fallback={<div>Loading...</div>}><LazyModules.DailyAttendanceBoard /></Suspense>
@@ -188,12 +239,21 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
             <Route path="/inventory/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.InventoryMockUI /></Suspense>} />
             <Route path="/customers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.CustomerMockUI /></Suspense>} />
+            <Route path="/pos" element={<Suspense fallback={<div>Loading POS Terminal...</div>}><LazyModules.POSModule /></Suspense>} />
             <Route path="/pos/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.POSMockUI /></Suspense>} />
+            <Route path="/pos/orders" element={<Suspense fallback={<div>Loading POS Orders...</div>}><LazyModules.POSOrdersIntelligence /></Suspense>} />
+            <Route path="/pos/returns" element={<Suspense fallback={<div>Loading POS Returns...</div>}><LazyModules.POSReturnsIntelligence /></Suspense>} />
+            <Route path="/pos/shifts" element={<Suspense fallback={<div>Loading Shift Management...</div>}><LazyModules.ShiftManagementIntelligence /></Suspense>} />
+            <Route path="/pos/cash-drawer" element={<Suspense fallback={<div>Loading Cash Drawer...</div>}><LazyModules.CashDrawerIntelligence /></Suspense>} />
             <Route path="/dashboard/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.DashboardMockUI /></Suspense>} />
             <Route path="/sales/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SalesMockUI /></Suspense>} />
             <Route path="/purchase/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.PurchaseMockUI /></Suspense>} />
             <Route path="/finance/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.FinanceMockUI /></Suspense>} />
             <Route path="/expenses/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.ExpensesMockUI /></Suspense>} />
+            <Route path="/expenses/tracker" element={<Suspense fallback={<div>Loading Expense Intelligence...</div>}><LazyModules.ExpenseIntelligence /></Suspense>} />
+            <Route path="/expenses/categories" element={<Suspense fallback={<div>Loading Categories...</div>}><LazyModules.ExpenseCategoriesManager /></Suspense>} />
+            <Route path="/expenses/recurring" element={<Suspense fallback={<div>Loading Recurring...</div>}><LazyModules.RecurringExpensesIntelligence /></Suspense>} />
+            <Route path="/expenses/reports" element={<Suspense fallback={<div>Loading Reports...</div>}><LazyModules.ExpenseReportsIntelligence /></Suspense>} />
             <Route path="/marketing/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.MarketingMockUI /></Suspense>} />
             <Route path="/suppliers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SuppliersMockUI /></Suspense>} />
             <Route path="/hr/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.HRMockUI /></Suspense>} />
@@ -203,6 +263,17 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/grow/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.GrowMockUI /></Suspense>} />
             <Route path="/system/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SystemMockUI /></Suspense>} />
             <Route path="/settings/audit" element={<Suspense fallback={<div>Loading Audit Logs...</div>}><LazyModules.AuditLogs /></Suspense>} />
+            <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
+            <Route path="/settings/:tab" element={<Suspense fallback={<div>Loading Settings...</div>}><LazyModules.Settings /></Suspense>} />
+            {/* INVENTORY — real pages */}
+            <Route path="/inventory/products" element={<Suspense fallback={<div>Loading Products...</div>}><LazyModules.InventoryManager /></Suspense>} />
+            <Route path="/inventory/categories" element={<Suspense fallback={<div>Loading Categories...</div>}><LazyModules.CategoryManager /></Suspense>} />
+            <Route path="/inventory/aged-stock" element={<Suspense fallback={<div>Loading Aged Stock...</div>}><LazyModules.AgedStockManager /></Suspense>} />
+            <Route path="/inventory/batch-price" element={<Suspense fallback={<div>Loading Batch Price Update...</div>}><LazyModules.BatchPriceUpdate /></Suspense>} />
+            {/* EXPENSES — daily finance entry */}
+            <Route path="/expenses/daily" element={<Suspense fallback={<div>Loading Daily Finance...</div>}><LazyModules.DailyFinance /></Suspense>} />
+            {/* Fallback wildcard delegates to dynamic ModuleRenderer */}
+            <Route path="/*" element={renderContent()} />
         </Routes>
     );
 };

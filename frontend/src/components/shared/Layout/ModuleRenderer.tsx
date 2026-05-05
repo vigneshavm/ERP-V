@@ -148,9 +148,12 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'BUDGET_TRACKER': return <LazyModules.BudgetTrackerPage />;
                     case 'LOAN_ACCOUNTS': return <LazyModules.LoanAccounts />;
                     case 'FINANCIAL_GOALS': return <LazyModules.FinancialGoals />;
+                    case 'JOURNAL_ENTRIES': return <LazyModules.JournalEntries />;
+                    case 'JOURNAL_ENTRY_FORM': return <LazyModules.JournalEntryForm />;
+                    case 'ACCOUNT_LEDGER': return <LazyModules.AccountLedger />;
 
                     // POS
-                    case 'POS': return <LazyModules.POS />;
+                    case 'POS': return <LazyModules.POSModule />;
                     case 'POS_ORDERS': return <LazyModules.POSOrdersIntelligence />;
                     case 'POS_RETURNS': return <LazyModules.POSReturnsIntelligence />;
                     case 'SHIFT_MANAGEMENT': return <LazyModules.ShiftManagementIntelligence />;
@@ -185,7 +188,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'BULK_IMPORT':
                     case 'DATA_EXPORT':
                     case 'NUMBER_SERIES': return <LazyModules.Data />;
-                    case 'AUDIT_LOGS': return <LazyModules.SalesModulePlaceholder view={activeTab} />;
+                    case 'AUDIT_LOGS': return <LazyModules.AuditLogs />;
 
                     // Settings
                     case 'SETTINGS': return <LazyModules.Settings />;
