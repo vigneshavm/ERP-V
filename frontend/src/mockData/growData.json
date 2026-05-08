@@ -1,0 +1,31 @@
+{
+    "kpis": [
+        { "label": "Online Orders (MTD)", "val": "284", "sub": "+38% vs last month", "iconName": "ShoppingBag", "color": "text-lime-400", "bg": "bg-lime-500/10", "border": "border-lime-500/30" },
+        { "label": "Store Revenue", "val": "₹12.4L", "sub": "Avg ₹4,366 / order", "iconName": "TrendingUp", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "Active Campaigns", "val": "7", "sub": "3 email, 4 WhatsApp", "iconName": "Mail", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" },
+        { "label": "Google Rating", "val": "4.8 ★", "sub": "1,240 reviews", "iconName": "Star", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" }
+    ],
+    "channelHub": [
+        {
+            "title": "Online Store", "iconName": "Store", "color": "lime",
+            "stats": [{ "l": "Products Synced", "v": "840" }, { "l": "Pending Orders", "v": "12" }, { "l": "Abandoned Carts", "v": "24" }],
+            "cta": "Manage Store"
+        },
+        {
+            "title": "Marketing Hub", "iconName": "BarChart2", "color": "sky",
+            "stats": [{ "l": "Campaigns Live", "v": "7" }, { "l": "Emails Sent", "v": "12.4K" }, { "l": "Avg Open Rate", "v": "68%" }],
+            "cta": "View Campaigns"
+        },
+        {
+            "title": "Google Business", "iconName": "Globe", "color": "amber",
+            "stats": [{ "l": "Profile Views", "v": "8,240" }, { "l": "Direction Clicks", "v": "1,840" }, { "l": "New Reviews", "v": "42" }],
+            "cta": "Manage Profile"
+        }
+    ],
+    "engagementChannels": [
+        { "title": "WhatsApp Marketing", "iconName": "MessageSquare", "color": "emerald", "delivered": "8,200", "read": "7,740", "reply": "1,840" },
+        { "title": "Social Media", "iconName": "Share2", "color": "pink", "delivered": "—", "read": "Instagram · Facebook", "reply": "38 posts scheduled" },
+        { "title": "Customer Segments", "iconName": "Users", "color": "violet", "delivered": "12", "read": "3,840 customers", "reply": "6 auto-rules active" },
+        { "title": "Product Catalog", "iconName": "Package", "color": "amber", "delivered": "840", "read": "24 out of stock", "reply": "12 pending sync" }
+    ]
+}

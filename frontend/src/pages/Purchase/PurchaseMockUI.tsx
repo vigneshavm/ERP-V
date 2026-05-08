@@ -1,5 +1,6 @@
 import React from 'react';
 import { Truck, ShieldAlert, CheckCircle, Package, ArrowRight, Anchor, FileText, Search, Plus, Filter, Factory, RefreshCcw } from 'lucide-react';
+import purchaseData from '../../mockData/purchaseData.json';
 
 const PurchaseMockUI: React.FC = () => {
     return (
@@ -106,12 +107,7 @@ const PurchaseMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
-                                {[
-                                    { po: 'PO-2026-0042', supplier: 'Global Raw Materials Inc.', date: 'Oct 15, 2026', value: '45,20,000', state: 'In Transit', progress: 0, color: 'cyan' },
-                                    { po: 'PO-2026-0041', supplier: 'TechComponents Asia', date: 'Oct 12, 2026', value: '12,85,500', state: 'Partial Receipt', progress: 65, color: 'indigo' },
-                                    { po: 'PO-2026-0040', supplier: 'Omega Industrial Supply', date: 'Oct 10, 2026', value: '8,40,000', state: 'Pending QC', progress: 100, color: 'amber' },
-                                    { po: 'PO-2026-0039', supplier: 'Starlight Medical', date: 'Oct 05, 2026', value: '3,15,000', state: 'Completed', progress: 100, color: 'emerald' },
-                                ].map((row, idx) => (
+                                {purchaseData.purchaseOrders.map((row, idx) => (
                                     <tr key={idx} className="hover:bg-card/30 transition-colors group cursor-pointer">
                                         <td className="px-8 py-6">
                                             <span className="font-mono text-sm font-bold text-cyan-400 group-hover:underline">{row.po}</span>

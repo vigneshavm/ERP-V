@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Box, AlertTriangle, TrendingUp, TrendingDown, MoreVertical, Layers, Zap } from 'lucide-react';
+import inventoryData from '../../mockData/inventoryData.json';
 
 // --- Types & Mock Data ---
 interface Product {
@@ -14,13 +15,11 @@ interface Product {
     image: string;
 }
 
-const MOCK_INVENTORY: Product[] = [
-    { id: '1', name: 'Neural Link Interconnect', sku: 'NL-X1-992', category: 'Hardware', stock: 42, status: 'In Stock', price: '₹12,499', trend: 'up', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&q=80' },
-    { id: '2', name: 'Quantum Logic Board v4', sku: 'QLB-400X', category: 'Components', stock: 8, status: 'Low Stock', price: '₹45,999', trend: 'down', image: 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=100&q=80' },
-    { id: '3', name: 'Cyber-Carbon Chassis', sku: 'CC-CHAS-01', category: 'Enclosures', stock: 0, status: 'Out of Stock', price: '₹8,999', trend: 'up', image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=100&q=80' },
-    { id: '4', name: 'Optic Fiber Spool (50m)', sku: 'OFS-50M-G2', category: 'Networking', stock: 156, status: 'In Stock', price: '₹2,499', trend: 'up', image: 'https://images.unsplash.com/photo-1544717685-6447c20c0211?w=100&q=80' },
-    { id: '5', name: 'Haptic Feedback Matrix', sku: 'HFM-PRO-X', category: 'Peripherals', stock: 12, status: 'Low Stock', price: '₹18,500', trend: 'up', image: 'https://images.unsplash.com/photo-1618424181497-157f25b6ce5e?w=100&q=80' },
-];
+const IconMap: Record<string, React.ElementType> = {
+    Box, AlertTriangle, TrendingUp, Zap
+};
+
+const MOCK_INVENTORY: Product[] = inventoryData.MOCK_INVENTORY as Product[];
 
 const InventoryMockUI: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,16 +45,15 @@ const InventoryMockUI: React.FC = () => {
                     </div>
                     
                     <nav className="w-full px-4 space-y-4">
-                        {[
-                            { icon: Box, label: 'Inventory', active: true },
-                            { icon: AlertTriangle, label: 'Alerts', active: false },
-                            { icon: TrendingUp, label: 'Analytics', active: false },
-                        ].map((item, idx) => (
-                            <button key={idx} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 rounded-xl transition-all ${item.active ? 'bg-white/10 text-emerald-400 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-zinc-500 hover:text-main hover:bg-white/5'}`}>
-                                <item.icon className="w-5 h-5" />
-                                <span className="hidden lg:block font-bold text-sm tracking-wide">{item.label}</span>
-                            </button>
-                        ))}
+                        {inventoryData.sidebarNav.map((item, idx) => {
+                            const Icon = IconMap[item.iconName];
+                            return (
+                                <button key={idx} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 rounded-xl transition-all ${item.active ? 'bg-white/10 text-emerald-400 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-zinc-500 hover:text-main hover:bg-white/5'}`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                    <span className="hidden lg:block font-bold text-sm tracking-wide">{item.label}</span>
+                                </button>
+                            );
+                        })}
                     </nav>
                 </aside>
 
@@ -90,23 +88,22 @@ const InventoryMockUI: React.FC = () => {
 
                     {/* Dashboard Metrics */}
                     <div className="px-8 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            { label: 'Total Value', value: '₹14.2M', trend: '+2.4%', icon: TrendingUp, color: 'emerald' },
-                            { label: 'Critical Stock', value: '24', trend: '-5', icon: AlertTriangle, color: 'orange' },
-                            { label: 'System Active Items', value: '1,204', trend: '+12', icon: Zap, color: 'blue' },
-                        ].map((stat, idx) => (
-                            <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:bg-white/[0.04] transition-colors">
-                                <div className={`absolute top-0 right-0 w-32 h-32 bg-${stat.color}-500/10 blur-[50px] -mr-10 -mt-10 group-hover:bg-${stat.color}-500/20 transition-colors`} />
-                                <div className="flex justify-between items-start mb-4 relative z-10">
-                                    <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 text-${stat.color}-400`}>
-                                        <stat.icon className="w-5 h-5" />
+                        {inventoryData.dashboardMetrics.map((stat, idx) => {
+                            const Icon = IconMap[stat.iconName];
+                            return (
+                                <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:bg-white/[0.04] transition-colors">
+                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-${stat.color}-500/10 blur-[50px] -mr-10 -mt-10 group-hover:bg-${stat.color}-500/20 transition-colors`} />
+                                    <div className="flex justify-between items-start mb-4 relative z-10">
+                                        <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 text-${stat.color}-400`}>
+                                            {Icon && <Icon className="w-5 h-5" />}
+                                        </div>
+                                        <span className="text-xs font-bold px-2 py-1 bg-white/5 rounded-lg text-zinc-400">{stat.trend}</span>
                                     </div>
-                                    <span className="text-xs font-bold px-2 py-1 bg-white/5 rounded-lg text-zinc-400">{stat.trend}</span>
+                                    <h3 className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-1 relative z-10">{stat.label}</h3>
+                                    <p className="text-4xl font-black tracking-tighter relative z-10">{stat.value}</p>
                                 </div>
-                                <h3 className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-1 relative z-10">{stat.label}</h3>
-                                <p className="text-4xl font-black tracking-tighter relative z-10">{stat.value}</p>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Data Grid */}

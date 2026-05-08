@@ -1,5 +1,10 @@
 import React from 'react';
 import { Megaphone, Plus, Search, Filter, Mail, MessageSquare, Share2, Tag, Zap, BarChart2, Users, ArrowRight, MoreHorizontal } from 'lucide-react';
+import marketingData from '../../mockData/marketingData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Mail, MessageSquare, Share2, Tag, Megaphone
+};
 
 const MarketingMockUI: React.FC = () => {
     return (
@@ -31,21 +36,19 @@ const MarketingMockUI: React.FC = () => {
 
                 {/* Channel Cards */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Email Campaigns', val: '24', sub: '68% avg open rate', icon: Mail, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-                        { label: 'WhatsApp Blasts', val: '11', sub: '94% delivery rate', icon: MessageSquare, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'Social Scheduled', val: '38', sub: 'Next: Today 6 PM', icon: Share2, color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/30' },
-                        { label: 'Active Coupons', val: '7', sub: '₹2.4L redeemed', icon: Tag, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
+                    {marketingData.channelCards.map((card, i) => {
+                        const Icon = IconMap[card.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
                             </div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Campaigns Table */}
@@ -76,33 +79,30 @@ const MarketingMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
-                                {[
-                                    { name: 'Diwali Mega Sale 2026', channel: 'Email', audience: '12,400', sent: '12,180', rate: '71%', status: 'Live', color: 'emerald', chIcon: Mail },
-                                    { name: 'New Arrivals — Oct Drop', channel: 'WhatsApp', audience: '8,200', sent: '8,200', rate: '89%', status: 'Completed', color: 'sky', chIcon: MessageSquare },
-                                    { name: 'Loyalty Reward Reminder', channel: 'SMS', audience: '5,500', sent: '5,490', rate: '—', status: 'Completed', color: 'sky', chIcon: Megaphone },
-                                    { name: 'Instagram — Weekend Flash', channel: 'Social', audience: '—', sent: '—', rate: '—', status: 'Scheduled', color: 'amber', chIcon: Share2 },
-                                    { name: 'Re-engagement: Dormant', channel: 'Email', audience: '3,100', sent: '0', rate: '—', status: 'Draft', color: 'slate', chIcon: Mail },
-                                ].map((c, idx) => (
-                                    <tr key={idx} className="hover:bg-card/30 transition-colors group">
-                                        <td className="px-8 py-5">
-                                            <div className="text-sm font-bold text-main group-hover:text-main transition-colors">{c.name}</div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-2">
-                                                <c.chIcon className="w-4 h-4 text-muted" />
-                                                <span className="text-xs font-bold text-muted">{c.channel}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5"><div className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-secondary" /><span className="text-sm font-bold text-main">{c.audience}</span></div></td>
-                                        <td className="px-8 py-5"><span className="font-mono text-sm font-bold text-main">{c.sent}</span></td>
-                                        <td className="px-8 py-5 text-center"><span className="font-mono text-sm font-bold text-pink-400">{c.rate}</span></td>
-                                        <td className="px-8 py-5"><div className="flex justify-center"><span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-${c.color}-500/10 text-${c.color}-400 border-${c.color}-500/20`}>{c.status}</span></div></td>
-                                        <td className="px-8 py-5"><div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-2 text-muted hover:text-pink-400 bg-card hover:bg-card rounded-lg transition-colors"><ArrowRight className="w-4 h-4" /></button>
-                                            <button className="p-2 text-muted hover:text-main bg-card hover:bg-card rounded-lg transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
-                                        </div></td>
-                                    </tr>
-                                ))}
+                                {marketingData.campaigns.map((c, idx) => {
+                                    const ChIcon = IconMap[c.chIconName];
+                                    return (
+                                        <tr key={idx} className="hover:bg-card/30 transition-colors group">
+                                            <td className="px-8 py-5">
+                                                <div className="text-sm font-bold text-main group-hover:text-main transition-colors">{c.name}</div>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="flex items-center gap-2">
+                                                    {ChIcon && <ChIcon className="w-4 h-4 text-muted" />}
+                                                    <span className="text-xs font-bold text-muted">{c.channel}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-5"><div className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-secondary" /><span className="text-sm font-bold text-main">{c.audience}</span></div></td>
+                                            <td className="px-8 py-5"><span className="font-mono text-sm font-bold text-main">{c.sent}</span></td>
+                                            <td className="px-8 py-5 text-center"><span className="font-mono text-sm font-bold text-pink-400">{c.rate}</span></td>
+                                            <td className="px-8 py-5"><div className="flex justify-center"><span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-${c.color}-500/10 text-${c.color}-400 border-${c.color}-500/20`}>{c.status}</span></div></td>
+                                            <td className="px-8 py-5"><div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button className="p-2 text-muted hover:text-pink-400 bg-card hover:bg-card rounded-lg transition-colors"><ArrowRight className="w-4 h-4" /></button>
+                                                <button className="p-2 text-muted hover:text-main bg-card hover:bg-card rounded-lg transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
+                                            </div></td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

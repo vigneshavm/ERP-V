@@ -1,0 +1,16 @@
+{
+    "metrics": [
+        { "label": "Total Volume", "value": "$42,500" },
+        { "label": "Pending", "value": "12 Records" },
+        { "label": "Completed", "value": "148 Records" },
+        { "label": "Growth", "value": "+14.2%" }
+    ],
+    "records": [
+        { "id": "#REC-2024-1001", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#REC-2024-1002", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#REC-2024-1003", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#REC-2024-1004", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#REC-2024-1005", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#REC-2024-1006", "date": "Oct 24, 2024", "customer": "Global Tech Corp", "status": "Completed", "amount": "$1,250.00" }
+    ]
+}

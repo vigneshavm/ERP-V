@@ -1,0 +1,32 @@
+{
+    "kpis": [
+        { "label": "Loyalty Members", "val": "3,840", "sub": "+124 this week", "iconName": "Gift", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/30" },
+        { "label": "Avg Satisfaction", "val": "4.6 / 5", "sub": "Based on 1,200 reviews", "iconName": "Star", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
+        { "label": "Positive Feedback", "val": "89%", "sub": "342 reviews this month", "iconName": "ThumbsUp", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "Negative Feedback", "val": "11%", "sub": "42 issues raised", "iconName": "ThumbsDown", "color": "text-muted", "bg": "bg-slate-500/10", "border": "border-default" }
+    ],
+    "tools": [
+        {
+            "title": "Email Engagement", "iconName": "Mail", "color": "sky",
+            "stats": [{ "label": "Sent", "val": "12,400" }, { "label": "Opened", "val": "8,432" }, { "label": "Clicked", "val": "2,180" }],
+            "rate": "68%", "rateLabel": "Open Rate"
+        },
+        {
+            "title": "WhatsApp Engagement", "iconName": "MessageSquare", "color": "emerald",
+            "stats": [{ "label": "Delivered", "val": "8,200" }, { "label": "Read", "val": "7,740" }, { "label": "Replied", "val": "1,840" }],
+            "rate": "94%", "rateLabel": "Read Rate"
+        },
+        {
+            "title": "Loyalty Program", "iconName": "Gift", "color": "rose",
+            "stats": [{ "label": "Points Issued", "val": "4,82,000" }, { "label": "Redeemed", "val": "1,24,000" }, { "label": "Expiring Soon", "val": "28,400" }],
+            "rate": "₹1.24L", "rateLabel": "Redeemed Value"
+        }
+    ],
+    "feedback": [
+        { "customer": "Rahul Nair", "channel": "WhatsApp", "rating": 5, "feedback": "Excellent service, delivery was on time!", "date": "Oct 18, 2026", "sentiment": "Positive", "color": "emerald" },
+        { "customer": "Anita Joshi", "channel": "Email", "rating": 4, "feedback": "Good product but packaging could improve.", "date": "Oct 17, 2026", "sentiment": "Positive", "color": "emerald" },
+        { "customer": "Mohan Das", "channel": "SMS", "rating": 2, "feedback": "Delayed delivery, very disappointing.", "date": "Oct 16, 2026", "sentiment": "Negative", "color": "rose" },
+        { "customer": "Divya Menon", "channel": "WhatsApp", "rating": 5, "feedback": "Best quality I have seen. Will order again.", "date": "Oct 15, 2026", "sentiment": "Positive", "color": "emerald" },
+        { "customer": "Suresh Kumar", "channel": "Email", "rating": 3, "feedback": "Average experience. Support was slow.", "date": "Oct 14, 2026", "sentiment": "Neutral", "color": "amber" }
+    ]
+}

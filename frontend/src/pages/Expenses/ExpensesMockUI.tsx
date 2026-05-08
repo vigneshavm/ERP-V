@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Receipt, Plus, Search, Filter, TrendingUp, AlertTriangle, CheckCircle2, Wallet, Coffee, Car, Wrench, MoreHorizontal, Download, X } from 'lucide-react';
+import expensesData from '../../mockData/expensesData.json';
 
 type ExpenseStatus = 'Approved' | 'Pending' | 'Rejected';
 
@@ -13,18 +14,11 @@ interface Expense {
     status: ExpenseStatus;
 }
 
-const MOCK_EXPENSES: Expense[] = [
-    { id: 'EXP-2026-0412', desc: 'Fleet maintenance & servicing',       cat: 'Travel & Fleet',   date: 'Oct 18, 2026', amount: '45,800',   amountNum: 45800,   status: 'Approved' },
-    { id: 'EXP-2026-0411', desc: 'Cloud infrastructure (AWS)',           cat: 'Operations',       date: 'Oct 15, 2026', amount: '1,24,000', amountNum: 124000,  status: 'Pending'  },
-    { id: 'EXP-2026-0410', desc: 'Office supplies & stationery',         cat: 'Office & Admin',   date: 'Oct 14, 2026', amount: '8,500',    amountNum: 8500,    status: 'Approved' },
-    { id: 'EXP-2026-0409', desc: 'Marketing event — client dinner',      cat: 'Miscellaneous',    date: 'Oct 12, 2026', amount: '22,400',   amountNum: 22400,   status: 'Pending'  },
-    { id: 'EXP-2026-0408', desc: 'Diesel — delivery vehicles',           cat: 'Travel & Fleet',   date: 'Oct 10, 2026', amount: '18,200',   amountNum: 18200,   status: 'Rejected' },
-    { id: 'EXP-2026-0407', desc: 'Vendor payment — packaging supplier',  cat: 'Vendor Payments',  date: 'Oct 09, 2026', amount: '62,000',   amountNum: 62000,   status: 'Approved' },
-    { id: 'EXP-2026-0406', desc: 'Staff refreshments — monthly',        cat: 'Miscellaneous',    date: 'Oct 08, 2026', amount: '4,200',    amountNum: 4200,    status: 'Approved' },
-    { id: 'EXP-2026-0405', desc: 'Internet & telecom — Oct',             cat: 'Operations',       date: 'Oct 07, 2026', amount: '9,800',    amountNum: 9800,    status: 'Pending'  },
-    { id: 'EXP-2026-0404', desc: 'Printer cartridge & paper restock',    cat: 'Office & Admin',   date: 'Oct 05, 2026', amount: '3,600',    amountNum: 3600,    status: 'Rejected' },
-    { id: 'EXP-2026-0403', desc: 'Annual software license renewal',      cat: 'Operations',       date: 'Oct 03, 2026', amount: '38,500',   amountNum: 38500,   status: 'Approved' },
-];
+const IconMap: Record<string, React.ElementType> = {
+    TrendingUp, Receipt, AlertTriangle, CheckCircle2, Wrench, Car, Coffee, Wallet
+};
+
+const MOCK_EXPENSES: Expense[] = expensesData.MOCK_EXPENSES as Expense[];
 
 const STATUS_COLORS: Record<ExpenseStatus, string> = {
     Approved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -78,21 +72,19 @@ const ExpensesMockUI: React.FC = () => {
                 </header>
 
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Total This Month', val: '₹8.4L', sub: '+12% vs last month', icon: TrendingUp, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-                        { label: 'Recurring Costs', val: '₹2.1L', sub: 'Auto-debited', icon: Receipt, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
-                        { label: 'Pending Approvals', val: '17', sub: '₹3.6L awaiting', icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Settled (MTD)', val: '204', sub: '₹12.8L cleared', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
+                    {expensesData.kpis.map((card, i) => {
+                        const Icon = IconMap[card.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
                             </div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="flex flex-col gap-4 flex-1">
@@ -100,26 +92,23 @@ const ExpensesMockUI: React.FC = () => {
                     <div className="glass-panel backdrop-blur-xl border border-default rounded-2xl p-5">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-secondary mb-4">By Category</h3>
                         <div className="grid grid-cols-5 gap-4">
-                            {[
-                                { cat: 'Operations',      pct: 38, icon: Wrench,  color: 'bg-violet-500', text: 'text-violet-400' },
-                                { cat: 'Travel & Fleet',  pct: 22, icon: Car,     color: 'bg-cyan-500',   text: 'text-cyan-400'   },
-                                { cat: 'Office & Admin',  pct: 17, icon: Coffee,  color: 'bg-amber-500',  text: 'text-amber-400'  },
-                                { cat: 'Vendor Payments', pct: 13, icon: Receipt, color: 'bg-rose-500',   text: 'text-rose-400'   },
-                                { cat: 'Miscellaneous',   pct: 10, icon: Wallet,  color: 'bg-slate-500',  text: 'text-slate-400'  },
-                            ].map((c, i) => (
-                                <div key={i} className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-1.5">
-                                            <c.icon className={`w-3.5 h-3.5 ${c.text}`} />
-                                            <span className="text-xs font-bold text-main truncate">{c.cat}</span>
+                            {expensesData.categories.map((c, i) => {
+                                const Icon = IconMap[c.iconName];
+                                return (
+                                    <div key={i} className="flex flex-col gap-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-1.5">
+                                                {Icon && <Icon className={`w-3.5 h-3.5 ${c.text}`} />}
+                                                <span className="text-xs font-bold text-main truncate">{c.cat}</span>
+                                            </div>
+                                            <span className={`text-xs font-black ${c.text}`}>{c.pct}%</span>
                                         </div>
-                                        <span className={`text-xs font-black ${c.text}`}>{c.pct}%</span>
+                                        <div className="h-1.5 bg-card rounded-full overflow-hidden">
+                                            <div className={`h-full ${c.color} rounded-full transition-all`} style={{ width: `${c.pct}%` }} />
+                                        </div>
                                     </div>
-                                    <div className="h-1.5 bg-card rounded-full overflow-hidden">
-                                        <div className={`h-full ${c.color} rounded-full transition-all`} style={{ width: `${c.pct}%` }} />
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
 

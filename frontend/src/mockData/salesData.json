@@ -1,0 +1,15 @@
+{
+    "pipelineStages": [
+        { "label": "Draft Estimates", "val": "12", "amount": "₹4.2L", "iconName": "FileText", "color": "text-muted", "bg": "bg-slate-500/10", "border": "border-default" },
+        { "label": "Pending Approval", "val": "8", "amount": "₹12.5L", "iconName": "Clock", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
+        { "label": "Awaiting Payment", "val": "24", "amount": "₹45.8L", "iconName": "AlertCircle", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/30" },
+        { "label": "Settled (MTD)", "val": "142", "amount": "₹1.2Cr", "iconName": "CheckCircle2", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" }
+    ],
+    "invoices": [
+        { "id": "INV-2026-0891", "date": "Oct 14, 2026", "due": "Oct 28, 2026", "client": "Nexus Cybernetics Ltd.", "amount": "12,45,000", "status": "Unpaid", "color": "amber" },
+        { "id": "INV-2026-0890", "date": "Oct 12, 2026", "due": "Oct 26, 2026", "client": "Quantum Core Industries", "amount": "4,50,000", "status": "Paid", "color": "emerald" },
+        { "id": "INV-2026-0889", "date": "Sep 28, 2026", "due": "Oct 12, 2026", "client": "Starlight Medical", "amount": "8,90,000", "status": "Overdue", "color": "rose" },
+        { "id": "INV-2026-0888", "date": "Sep 25, 2026", "due": "Oct 09, 2026", "client": "Apex Heavy Engineering", "amount": "2,15,500", "status": "Paid", "color": "emerald" },
+        { "id": "INV-2026-0887", "date": "Sep 24, 2026", "due": "Oct 08, 2026", "client": "NeuroTech Solutions", "amount": "6,75,000", "status": "Paid", "color": "emerald" }
+    ]
+}

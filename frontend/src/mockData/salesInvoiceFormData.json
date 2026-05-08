@@ -1,0 +1,12 @@
+{
+    "lineItems": [
+        { "name": "Premium Support Plan", "qty": 1, "rate": "$500.00", "total": "$500.00" },
+        { "name": "Cloud Storage (1TB)", "qty": 3, "rate": "$50.00", "total": "$150.00" }
+    ],
+    "summary": {
+        "subtotal": "$650.00",
+        "taxLabel": "Tax (10%)",
+        "tax": "$65.00",
+        "total": "$715.00"
+    }
+}

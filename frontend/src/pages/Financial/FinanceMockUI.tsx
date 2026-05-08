@@ -6,19 +6,9 @@ import {
     FileSpreadsheet, Plus, Filter, Search, ShieldCheck, Activity,
     RefreshCw, X, ChevronDown, SlidersHorizontal
 } from 'lucide-react';
+import financeData from '../../mockData/financeData.json';
 
-const ALL_TRANSACTIONS = [
-    { date: 'Oct 15, 2026', ref: 'JRN-8891', part: 'Payment to Global Raw Materials', dr: '12,50,000', cr: '-', rec: true },
-    { date: 'Oct 14, 2026', ref: 'REC-2201', part: 'Receipt from Nexus Cybernetics', dr: '-', cr: '4,50,000', rec: false },
-    { date: 'Oct 14, 2026', ref: 'BNK-CHG', part: 'HDFC Corporate Card Fees', dr: '2,500', cr: '-', rec: true },
-    { date: 'Oct 13, 2026', ref: 'JRN-8890', part: 'Salary Disbursal (Oct)', dr: '18,40,000', cr: '-', rec: true },
-    { date: 'Oct 12, 2026', ref: 'REC-2198', part: 'Receipt from Starlight Medical', dr: '-', cr: '8,90,000', rec: true },
-    { date: 'Oct 12, 2026', ref: 'JRN-8889', part: 'Vendor Payment – Omega Industrial', dr: '1,20,000', cr: '-', rec: false },
-    { date: 'Oct 11, 2026', ref: 'BNK-CHG', part: 'SBI Settlement Charges', dr: '1,200', cr: '-', rec: true },
-    { date: 'Oct 10, 2026', ref: 'REC-2195', part: 'Receipt from Apex Corp', dr: '-', cr: '2,30,000', rec: true },
-    { date: 'Oct 09, 2026', ref: 'JRN-8885', part: 'Petty Cash Replenishment', dr: '50,000', cr: '-', rec: false },
-    { date: 'Oct 08, 2026', ref: 'REC-2190', part: 'Receipt from Vertex Solutions', dr: '-', cr: '6,75,000', rec: true },
-];
+const ALL_TRANSACTIONS = financeData.ALL_TRANSACTIONS;
 
 type FilterType = 'all' | 'debit' | 'credit';
 type FilterReconciled = 'all' | 'reconciled' | 'pending';
@@ -115,12 +105,7 @@ const FinanceMockUI: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                     {/* Bank Accounts */}
                     <div className="lg:col-span-2 grid grid-cols-2 gap-6">
-                        {[
-                            { name: 'HDFC Corporate Current', no: '**** 4482', bal: '₹42,50,000', up: true, diff: '+₹2.4L' },
-                            { name: 'SBI Settlement Node', no: '**** 9011', bal: '₹18,25,000', up: false, diff: '-₹1.1L' },
-                            { name: 'ICICI Forex Reserve', no: '**** 3329', bal: '$124,500', up: true, diff: '+$4.2k' },
-                            { name: 'Petty Cash Vault', no: 'Main Branch', bal: '₹45,200', up: true, diff: '+₹5k' },
-                        ].map((bank, idx) => (
+                        {financeData.bankAccounts.map((bank, idx) => (
                             <div key={idx} className="glass-panel backdrop-blur-md border border-default rounded-3xl p-6 group hover:border-purple-500/30 transition-all cursor-pointer relative overflow-hidden">
                                 <div className="absolute right-0 bottom-0 w-24 h-24 bg-purple-500/5 rounded-full blur-xl -mr-10 -mb-10 group-hover:scale-150 transition-transform duration-700" />
                                 <div className="flex justify-between items-start mb-6">
@@ -152,11 +137,7 @@ const FinanceMockUI: React.FC = () => {
                             <Activity className="w-4 h-4 text-amber-500" /> Instrument Vault (PDCs)
                         </h3>
                         <div className="flex-1 space-y-4 relative z-10">
-                            {[
-                                { entity: 'Nexus Cybernetics', amount: '₹4.5L', date: 'Due Tomorrow', color: 'amber' },
-                                { entity: 'Omega Industrial', amount: '₹1.2L', date: 'Overdue 2 Days', color: 'rose' },
-                                { entity: 'Starlight Medical', amount: '₹8.9L', date: 'Due in 3 Days', color: 'slate' }
-                            ].map((pdc, i) => (
+                            {financeData.pdcs.map((pdc, i) => (
                                 <div key={i} className="flex justify-between items-center p-4 bg-input border border-default rounded-2xl">
                                     <div>
                                         <p className="text-xs font-bold text-main">{pdc.entity}</p>

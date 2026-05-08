@@ -1,5 +1,10 @@
 import React from 'react';
 import { Zap, Store, BarChart2, Globe, TrendingUp, Star, ShoppingBag, Mail, MessageSquare, Share2, ArrowRight, Users, Package } from 'lucide-react';
+import growData from '../../mockData/growData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    ShoppingBag, TrendingUp, Mail, Star, Store, BarChart2, Globe, MessageSquare, Share2, Users, Package
+};
 
 const GrowMockUI: React.FC = () => {
     return (
@@ -31,84 +36,67 @@ const GrowMockUI: React.FC = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Online Orders (MTD)', val: '284', sub: '+38% vs last month', icon: ShoppingBag, color: 'text-lime-400', bg: 'bg-lime-500/10', border: 'border-lime-500/30' },
-                        { label: 'Store Revenue', val: '₹12.4L', sub: 'Avg ₹4,366 / order', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'Active Campaigns', val: '7', sub: '3 email, 4 WhatsApp', icon: Mail, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-                        { label: 'Google Rating', val: '4.8 ★', sub: '1,240 reviews', icon: Star, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}><card.icon className="w-5 h-5" /></div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                    {growData.kpis.map((card, i) => {
+                        const Icon = IconMap[card.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>{Icon && <Icon className="w-5 h-5" />}</div>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Channel Hub Grid */}
                 <div className="grid grid-cols-3 gap-6 mb-6">
-                    {[
-                        {
-                            title: 'Online Store', icon: Store, color: 'lime',
-                            stats: [{ l: 'Products Synced', v: '840' }, { l: 'Pending Orders', v: '12' }, { l: 'Abandoned Carts', v: '24' }],
-                            cta: 'Manage Store'
-                        },
-                        {
-                            title: 'Marketing Hub', icon: BarChart2, color: 'sky',
-                            stats: [{ l: 'Campaigns Live', v: '7' }, { l: 'Emails Sent', v: '12.4K' }, { l: 'Avg Open Rate', v: '68%' }],
-                            cta: 'View Campaigns'
-                        },
-                        {
-                            title: 'Google Business', icon: Globe, color: 'amber',
-                            stats: [{ l: 'Profile Views', v: '8,240' }, { l: 'Direction Clicks', v: '1,840' }, { l: 'New Reviews', v: '42' }],
-                            cta: 'Manage Profile'
-                        },
-                    ].map((ch, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 hover:bg-card/40 transition-all group cursor-pointer`}>
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2.5 rounded-xl bg-${ch.color}-500/10 text-${ch.color}-400`}><ch.icon className="w-5 h-5" /></div>
-                                    <h3 className="text-sm font-black text-main">{ch.title}</h3>
-                                </div>
-                                <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-lime-400 transition-colors" />
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 mb-5">
-                                {ch.stats.map((s, si) => (
-                                    <div key={si} className="bg-card rounded-xl p-3 text-center">
-                                        <p className="text-sm font-black text-main">{s.v}</p>
-                                        <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">{s.l}</p>
+                    {growData.channelHub.map((ch, i) => {
+                        const Icon = IconMap[ch.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 hover:bg-card/40 transition-all group cursor-pointer`}>
+                                <div className="flex items-center justify-between mb-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2.5 rounded-xl bg-${ch.color}-500/10 text-${ch.color}-400`}>{Icon && <Icon className="w-5 h-5" />}</div>
+                                        <h3 className="text-sm font-black text-main">{ch.title}</h3>
                                     </div>
-                                ))}
+                                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-lime-400 transition-colors" />
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 mb-5">
+                                    {ch.stats.map((s, si) => (
+                                        <div key={si} className="bg-card rounded-xl p-3 text-center">
+                                            <p className="text-sm font-black text-main">{s.v}</p>
+                                            <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">{s.l}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button className={`w-full py-2.5 bg-${ch.color}-500/10 hover:bg-${ch.color}-500/20 border border-${ch.color}-500/20 rounded-xl text-xs font-black uppercase tracking-widest text-${ch.color}-400 transition-all`}>{ch.cta}</button>
                             </div>
-                            <button className={`w-full py-2.5 bg-${ch.color}-500/10 hover:bg-${ch.color}-500/20 border border-${ch.color}-500/20 rounded-xl text-xs font-black uppercase tracking-widest text-${ch.color}-400 transition-all`}>{ch.cta}</button>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Engagement Channels */}
                 <div className="flex gap-6">
-                    {[
-                        { title: 'WhatsApp Marketing', icon: MessageSquare, color: 'emerald', delivered: '8,200', read: '7,740', reply: '1,840' },
-                        { title: 'Social Media', icon: Share2, color: 'pink', delivered: '—', read: 'Instagram · Facebook', reply: '38 posts scheduled' },
-                        { title: 'Customer Segments', icon: Users, color: 'violet', delivered: '12', read: '3,840 customers', reply: '6 auto-rules active' },
-                        { title: 'Product Catalog', icon: Package, color: 'amber', delivered: '840', read: '24 out of stock', reply: '12 pending sync' },
-                    ].map((ch, i) => (
-                        <div key={i} className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl p-5 hover:bg-card/40 transition-all cursor-pointer group">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className={`p-2 rounded-xl bg-${ch.color}-500/10 text-${ch.color}-400`}><ch.icon className="w-4 h-4" /></div>
-                                <h3 className="text-xs font-black text-main uppercase tracking-wide">{ch.title}</h3>
+                    {growData.engagementChannels.map((ch, i) => {
+                        const Icon = IconMap[ch.iconName];
+                        return (
+                            <div key={i} className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl p-5 hover:bg-card/40 transition-all cursor-pointer group">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className={`p-2 rounded-xl bg-${ch.color}-500/10 text-${ch.color}-400`}>{Icon && <Icon className="w-4 h-4" />}</div>
+                                    <h3 className="text-xs font-black text-main uppercase tracking-wide">{ch.title}</h3>
+                                </div>
+                                <div className="flex flex-col gap-2.5">
+                                    {[ch.delivered, ch.read, ch.reply].map((val, vi) => (
+                                        <div key={vi} className="flex items-center justify-between bg-card rounded-lg px-3 py-2">
+                                            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{['Primary', 'Secondary', 'Action'][vi]}</span>
+                                            <span className="text-xs font-bold text-main">{val}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-2.5">
-                                {[ch.delivered, ch.read, ch.reply].map((val, vi) => (
-                                    <div key={vi} className="flex items-center justify-between bg-card rounded-lg px-3 py-2">
-                                        <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{['Primary', 'Secondary', 'Action'][vi]}</span>
-                                        <span className="text-xs font-bold text-main">{val}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
         </div>

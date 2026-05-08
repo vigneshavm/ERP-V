@@ -1,0 +1,25 @@
+{
+    "ALL_TRANSACTIONS": [
+        { "date": "Oct 15, 2026", "ref": "JRN-8891", "part": "Payment to Global Raw Materials", "dr": "12,50,000", "cr": "-", "rec": true },
+        { "date": "Oct 14, 2026", "ref": "REC-2201", "part": "Receipt from Nexus Cybernetics", "dr": "-", "cr": "4,50,000", "rec": false },
+        { "date": "Oct 14, 2026", "ref": "BNK-CHG", "part": "HDFC Corporate Card Fees", "dr": "2,500", "cr": "-", "rec": true },
+        { "date": "Oct 13, 2026", "ref": "JRN-8890", "part": "Salary Disbursal (Oct)", "dr": "18,40,000", "cr": "-", "rec": true },
+        { "date": "Oct 12, 2026", "ref": "REC-2198", "part": "Receipt from Starlight Medical", "dr": "-", "cr": "8,90,000", "rec": true },
+        { "date": "Oct 12, 2026", "ref": "JRN-8889", "part": "Vendor Payment – Omega Industrial", "dr": "1,20,000", "cr": "-", "rec": false },
+        { "date": "Oct 11, 2026", "ref": "BNK-CHG", "part": "SBI Settlement Charges", "dr": "1,200", "cr": "-", "rec": true },
+        { "date": "Oct 10, 2026", "ref": "REC-2195", "part": "Receipt from Apex Corp", "dr": "-", "cr": "2,30,000", "rec": true },
+        { "date": "Oct 09, 2026", "ref": "JRN-8885", "part": "Petty Cash Replenishment", "dr": "50,000", "cr": "-", "rec": false },
+        { "date": "Oct 08, 2026", "ref": "REC-2190", "part": "Receipt from Vertex Solutions", "dr": "-", "cr": "6,75,000", "rec": true }
+    ],
+    "bankAccounts": [
+        { "name": "HDFC Corporate Current", "no": "**** 4482", "bal": "₹42,50,000", "up": true, "diff": "+₹2.4L" },
+        { "name": "SBI Settlement Node", "no": "**** 9011", "bal": "₹18,25,000", "up": false, "diff": "-₹1.1L" },
+        { "name": "ICICI Forex Reserve", "no": "**** 3329", "bal": "$124,500", "up": true, "diff": "+$4.2k" },
+        { "name": "Petty Cash Vault", "no": "Main Branch", "bal": "₹45,200", "up": true, "diff": "+₹5k" }
+    ],
+    "pdcs": [
+        { "entity": "Nexus Cybernetics", "amount": "₹4.5L", "date": "Due Tomorrow", "color": "amber" },
+        { "entity": "Omega Industrial", "amount": "₹1.2L", "date": "Overdue 2 Days", "color": "rose" },
+        { "entity": "Starlight Medical", "amount": "₹8.9L", "date": "Due in 3 Days", "color": "slate" }
+    ]
+}

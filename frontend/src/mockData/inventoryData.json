@@ -1,0 +1,19 @@
+{
+    "MOCK_INVENTORY": [
+        { "id": "1", "name": "Neural Link Interconnect", "sku": "NL-X1-992", "category": "Hardware", "stock": 42, "status": "In Stock", "price": "₹12,499", "trend": "up", "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&q=80" },
+        { "id": "2", "name": "Quantum Logic Board v4", "sku": "QLB-400X", "category": "Components", "stock": 8, "status": "Low Stock", "price": "₹45,999", "trend": "down", "image": "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=100&q=80" },
+        { "id": "3", "name": "Cyber-Carbon Chassis", "sku": "CC-CHAS-01", "category": "Enclosures", "stock": 0, "status": "Out of Stock", "price": "₹8,999", "trend": "up", "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=100&q=80" },
+        { "id": "4", "name": "Optic Fiber Spool (50m)", "sku": "OFS-50M-G2", "category": "Networking", "stock": 156, "status": "In Stock", "price": "₹2,499", "trend": "up", "image": "https://images.unsplash.com/photo-1544717685-6447c20c0211?w=100&q=80" },
+        { "id": "5", "name": "Haptic Feedback Matrix", "sku": "HFM-PRO-X", "category": "Peripherals", "stock": 12, "status": "Low Stock", "price": "₹18,500", "trend": "up", "image": "https://images.unsplash.com/photo-1618424181497-157f25b6ce5e?w=100&q=80" }
+    ],
+    "sidebarNav": [
+        { "iconName": "Box", "label": "Inventory", "active": true },
+        { "iconName": "AlertTriangle", "label": "Alerts", "active": false },
+        { "iconName": "TrendingUp", "label": "Analytics", "active": false }
+    ],
+    "dashboardMetrics": [
+        { "label": "Total Value", "value": "₹14.2M", "trend": "+2.4%", "iconName": "TrendingUp", "color": "emerald" },
+        { "label": "Critical Stock", "value": "24", "trend": "-5", "iconName": "AlertTriangle", "color": "orange" },
+        { "label": "System Active Items", "value": "1,204", "trend": "+12", "iconName": "Zap", "color": "blue" }
+    ]
+}

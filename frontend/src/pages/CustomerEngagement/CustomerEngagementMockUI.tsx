@@ -1,5 +1,10 @@
 import React from 'react';
 import { Heart, Plus, Search, Filter, MessageSquare, Mail, Gift, Star, ThumbsUp, ThumbsDown, MoreHorizontal, ArrowRight, Users } from 'lucide-react';
+import customerEngagementData from '../../mockData/customerEngagementData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Gift, Star, ThumbsUp, ThumbsDown, Mail, MessageSquare
+};
 
 const CustomerEngagementMockUI: React.FC = () => {
     return (
@@ -31,66 +36,51 @@ const CustomerEngagementMockUI: React.FC = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Loyalty Members', val: '3,840', sub: '+124 this week', icon: Gift, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-                        { label: 'Avg Satisfaction', val: '4.6 / 5', sub: 'Based on 1,200 reviews', icon: Star, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Positive Feedback', val: '89%', sub: '342 reviews this month', icon: ThumbsUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'Negative Feedback', val: '11%', sub: '42 issues raised', icon: ThumbsDown, color: 'text-muted', bg: 'bg-slate-500/10', border: 'border-default' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
+                    {customerEngagementData.kpis.map((card, i) => {
+                        const Icon = IconMap[card.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
                             </div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Engagement Tools Grid */}
                 <div className="grid grid-cols-3 gap-6 mb-6">
-                    {[
-                        {
-                            title: 'Email Engagement', icon: Mail, color: 'sky',
-                            stats: [{ label: 'Sent', val: '12,400' }, { label: 'Opened', val: '8,432' }, { label: 'Clicked', val: '2,180' }],
-                            rate: '68%', rateLabel: 'Open Rate'
-                        },
-                        {
-                            title: 'WhatsApp Engagement', icon: MessageSquare, color: 'emerald',
-                            stats: [{ label: 'Delivered', val: '8,200' }, { label: 'Read', val: '7,740' }, { label: 'Replied', val: '1,840' }],
-                            rate: '94%', rateLabel: 'Read Rate'
-                        },
-                        {
-                            title: 'Loyalty Program', icon: Gift, color: 'rose',
-                            stats: [{ label: 'Points Issued', val: '4,82,000' }, { label: 'Redeemed', val: '1,24,000' }, { label: 'Expiring Soon', val: '28,400' }],
-                            rate: '₹1.24L', rateLabel: 'Redeemed Value'
-                        },
-                    ].map((tool, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 hover:bg-card/40 transition-all group cursor-pointer`}>
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2.5 rounded-xl bg-${tool.color}-500/10 text-${tool.color}-400`}>
-                                        <tool.icon className="w-5 h-5" />
+                    {customerEngagementData.tools.map((tool, i) => {
+                        const Icon = IconMap[tool.iconName];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 hover:bg-card/40 transition-all group cursor-pointer`}>
+                                <div className="flex items-center justify-between mb-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2.5 rounded-xl bg-${tool.color}-500/10 text-${tool.color}-400`}>
+                                            {Icon && <Icon className="w-5 h-5" />}
+                                        </div>
+                                        <h3 className="text-sm font-black text-main">{tool.title}</h3>
                                     </div>
-                                    <h3 className="text-sm font-black text-main">{tool.title}</h3>
+                                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-rose-400 transition-colors" />
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-rose-400 transition-colors" />
+                                <div className="grid grid-cols-3 gap-3 mb-5">
+                                    {tool.stats.map((s, si) => (
+                                        <div key={si} className="bg-card rounded-xl p-3 text-center">
+                                            <p className="text-sm font-black text-main">{s.val}</p>
+                                            <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">{s.label}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className={`flex items-center justify-between px-4 py-3 bg-${tool.color}-500/5 border border-${tool.color}-500/20 rounded-xl`}>
+                                    <span className="text-[10px] font-black text-muted uppercase tracking-widest">{tool.rateLabel}</span>
+                                    <span className={`text-lg font-black text-${tool.color}-400`}>{tool.rate}</span>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-3 mb-5">
-                                {tool.stats.map((s, si) => (
-                                    <div key={si} className="bg-card rounded-xl p-3 text-center">
-                                        <p className="text-sm font-black text-main">{s.val}</p>
-                                        <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">{s.label}</p>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className={`flex items-center justify-between px-4 py-3 bg-${tool.color}-500/5 border border-${tool.color}-500/20 rounded-xl`}>
-                                <span className="text-[10px] font-black text-muted uppercase tracking-widest">{tool.rateLabel}</span>
-                                <span className={`text-lg font-black text-${tool.color}-400`}>{tool.rate}</span>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Feedback Table */}
@@ -119,13 +109,7 @@ const CustomerEngagementMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
-                                {[
-                                    { customer: 'Rahul Nair', channel: 'WhatsApp', rating: 5, feedback: 'Excellent service, delivery was on time!', date: 'Oct 18, 2026', sentiment: 'Positive', color: 'emerald' },
-                                    { customer: 'Anita Joshi', channel: 'Email', rating: 4, feedback: 'Good product but packaging could improve.', date: 'Oct 17, 2026', sentiment: 'Positive', color: 'emerald' },
-                                    { customer: 'Mohan Das', channel: 'SMS', rating: 2, feedback: 'Delayed delivery, very disappointing.', date: 'Oct 16, 2026', sentiment: 'Negative', color: 'rose' },
-                                    { customer: 'Divya Menon', channel: 'WhatsApp', rating: 5, feedback: 'Best quality I have seen. Will order again.', date: 'Oct 15, 2026', sentiment: 'Positive', color: 'emerald' },
-                                    { customer: 'Suresh Kumar', channel: 'Email', rating: 3, feedback: 'Average experience. Support was slow.', date: 'Oct 14, 2026', sentiment: 'Neutral', color: 'amber' },
-                                ].map((fb, idx) => (
+                                {customerEngagementData.feedback.map((fb, idx) => (
                                     <tr key={idx} className="hover:bg-card/30 transition-colors group">
                                         <td className="px-8 py-4">
                                             <div className="flex items-center gap-3">

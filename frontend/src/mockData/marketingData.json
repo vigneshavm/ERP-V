@@ -1,0 +1,15 @@
+{
+    "channelCards": [
+        { "label": "Email Campaigns", "val": "24", "sub": "68% avg open rate", "iconName": "Mail", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" },
+        { "label": "WhatsApp Blasts", "val": "11", "sub": "94% delivery rate", "iconName": "MessageSquare", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "Social Scheduled", "val": "38", "sub": "Next: Today 6 PM", "iconName": "Share2", "color": "text-pink-400", "bg": "bg-pink-500/10", "border": "border-pink-500/30" },
+        { "label": "Active Coupons", "val": "7", "sub": "₹2.4L redeemed", "iconName": "Tag", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" }
+    ],
+    "campaigns": [
+        { "name": "Diwali Mega Sale 2026", "channel": "Email", "audience": "12,400", "sent": "12,180", "rate": "71%", "status": "Live", "color": "emerald", "chIconName": "Mail" },
+        { "name": "New Arrivals — Oct Drop", "channel": "WhatsApp", "audience": "8,200", "sent": "8,200", "rate": "89%", "status": "Completed", "color": "sky", "chIconName": "MessageSquare" },
+        { "name": "Loyalty Reward Reminder", "channel": "SMS", "audience": "5,500", "sent": "5,490", "rate": "—", "status": "Completed", "color": "sky", "chIconName": "Megaphone" },
+        { "name": "Instagram — Weekend Flash", "channel": "Social", "audience": "—", "sent": "—", "rate": "—", "status": "Scheduled", "color": "amber", "chIconName": "Share2" },
+        { "name": "Re-engagement: Dormant", "channel": "Email", "audience": "3,100", "sent": "0", "rate": "—", "status": "Draft", "color": "slate", "chIconName": "Mail" }
+    ]
+}

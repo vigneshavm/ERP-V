@@ -1,5 +1,15 @@
 import React from 'react';
 import { Activity, ArrowUpRight, ArrowDownRight, Users, Box, Banknote, ShieldCheck, Zap, AlertTriangle, Briefcase, ChevronRight } from 'lucide-react';
+import dashboardData from '../../mockData/dashboardData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Banknote,
+    Briefcase,
+    Box,
+    Users,
+    ShieldCheck,
+    Zap
+};
 
 const DashboardMockUI: React.FC = () => {
     return (
@@ -30,29 +40,27 @@ const DashboardMockUI: React.FC = () => {
 
                 {/* Primary KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {[
-                        { label: 'Gross Revenue', val: '₹14.2M', trend: '+12.5%', isUp: true, icon: Banknote, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-                        { label: 'Active Orders', val: '842', trend: '+5.2%', isUp: true, icon: Briefcase, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
-                        { label: 'Inventory Cost', val: '₹4.8M', trend: '-2.1%', isUp: false, icon: Box, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-                        { label: 'Client Base', val: '4,291', trend: '+18.4%', isUp: true, icon: Users, color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/20' }
-                    ].map((kpi, i) => (
-                        <div key={i} className="glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 relative overflow-hidden group hover:border-default transition-colors">
-                            <div className={`absolute -right-6 -top-6 w-24 h-24 ${kpi.bg} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
-                            <div className="flex justify-between items-start mb-4 relative z-10">
-                                <div className={`p-3 ${kpi.bg} ${kpi.color} rounded-2xl border ${kpi.border}`}>
-                                    <kpi.icon className="w-5 h-5" />
+                    {dashboardData.kpis.map((kpi, i) => {
+                        const Icon = IconMap[kpi.iconName];
+                        return (
+                            <div key={i} className="glass-panel backdrop-blur-xl border border-default rounded-3xl p-6 relative overflow-hidden group hover:border-default transition-colors">
+                                <div className={`absolute -right-6 -top-6 w-24 h-24 ${kpi.bg} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+                                <div className="flex justify-between items-start mb-4 relative z-10">
+                                    <div className={`p-3 ${kpi.bg} ${kpi.color} rounded-2xl border ${kpi.border}`}>
+                                        {Icon && <Icon className="w-5 h-5" />}
+                                    </div>
+                                    <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full ${kpi.isUp ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}>
+                                        {kpi.isUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                                        {kpi.trend}
+                                    </div>
                                 </div>
-                                <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full ${kpi.isUp ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}>
-                                    {kpi.isUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                    {kpi.trend}
+                                <div className="relative z-10">
+                                    <p className="text-3xl font-black text-main tabular-nums tracking-tighter mb-1">{kpi.val}</p>
+                                    <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{kpi.label}</p>
                                 </div>
                             </div>
-                            <div className="relative z-10">
-                                <p className="text-3xl font-black text-main tabular-nums tracking-tighter mb-1">{kpi.val}</p>
-                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{kpi.label}</p>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -64,7 +72,7 @@ const DashboardMockUI: React.FC = () => {
                                 <p className="text-xs text-secondary mt-1">Daily fiscal performance across all operational nodes.</p>
                             </div>
                             <div className="flex gap-2">
-                                {['1W', '1M', '3M', '1Y'].map((t, i) => (
+                                {dashboardData.chartData.timeFrames.map((t, i) => (
                                     <button key={t} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${i === 1 ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'text-secondary hover:bg-card border border-transparent'}`}>
                                         {t}
                                     </button>
@@ -78,7 +86,7 @@ const DashboardMockUI: React.FC = () => {
                                     <div key={line} className="w-full h-px bg-card" />
                                 ))}
                             </div>
-                            {[40, 65, 45, 80, 55, 90, 75, 100, 60, 85, 70, 95].map((h, i) => (
+                            {dashboardData.chartData.barHeights.map((h, i) => (
                                 <div key={i} className="flex-1 group relative flex flex-col justify-end h-full">
                                     <div 
                                         className={`w-full rounded-t-lg transition-all duration-1000 ${i === 7 ? 'bg-gradient-to-t from-indigo-600 to-cyan-400 shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'bg-card group-hover:bg-indigo-500/50'}`}
@@ -99,22 +107,20 @@ const DashboardMockUI: React.FC = () => {
                             <span className="w-6 h-6 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center text-[10px] font-black">3</span>
                         </div>
                         <div className="flex-1 space-y-4">
-                            {[
-                                { title: 'Low Stock: Neural Link Gen 3', desc: 'Only 15 units remaining in Main Warehouse.', icon: Box, color: 'rose' },
-                                { title: 'Pending Approval', desc: 'Purchase Order #PO-2026-042 awaits authorization.', icon: ShieldCheck, color: 'amber' },
-                                { title: 'Unreconciled Bank Entries', desc: '5 entries found in HDFC statement sync.', icon: Banknote, color: 'indigo' },
-                                { title: 'Server Load Spike', desc: 'Database node scaling activated successfully.', icon: Zap, color: 'emerald' }
-                            ].map((alert, i) => (
-                                <div key={i} className="p-4 rounded-2xl border border-default glass-panel hover:bg-card transition-colors cursor-pointer group flex items-start gap-4">
-                                    <div className={`p-2 rounded-xl bg-${alert.color}-500/10 text-${alert.color}-400 mt-1`}>
-                                        <alert.icon className="w-4 h-4" />
+                            {dashboardData.systemAlerts.map((alert, i) => {
+                                const AlertIcon = IconMap[alert.iconName];
+                                return (
+                                    <div key={i} className="p-4 rounded-2xl border border-default glass-panel hover:bg-card transition-colors cursor-pointer group flex items-start gap-4">
+                                        <div className={`p-2 rounded-xl bg-${alert.color}-500/10 text-${alert.color}-400 mt-1`}>
+                                            {AlertIcon && <AlertIcon className="w-4 h-4" />}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-main group-hover:text-main transition-colors">{alert.title}</h4>
+                                            <p className="text-xs text-secondary mt-1 leading-relaxed">{alert.desc}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-main group-hover:text-main transition-colors">{alert.title}</h4>
-                                        <p className="text-xs text-secondary mt-1 leading-relaxed">{alert.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                         <button className="w-full mt-6 py-3 rounded-xl border border-default text-xs font-black uppercase tracking-widest text-muted hover:text-main hover:bg-card transition-all flex items-center justify-center gap-2">
                             View All Events <ChevronRight className="w-4 h-4" />

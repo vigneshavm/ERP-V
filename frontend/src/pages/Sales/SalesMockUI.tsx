@@ -1,5 +1,10 @@
 import React from 'react';
 import { FileText, Plus, Search, Filter, CheckCircle2, Clock, AlertCircle, ArrowRight, DollarSign, Download, Printer, MoreHorizontal } from 'lucide-react';
+import salesData from '../../mockData/salesData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    FileText, Clock, AlertCircle, CheckCircle2
+};
 
 const SalesMockUI: React.FC = () => {
     return (
@@ -34,25 +39,23 @@ const SalesMockUI: React.FC = () => {
 
                 {/* Pipeline Stage Cards */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Draft Estimates', val: '12', amount: '₹4.2L', icon: FileText, color: 'text-muted', bg: 'bg-slate-500/10', border: 'border-default' },
-                        { label: 'Pending Approval', val: '8', amount: '₹12.5L', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Awaiting Payment', val: '24', amount: '₹45.8L', icon: AlertCircle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-                        { label: 'Settled (MTD)', val: '142', amount: '₹1.2Cr', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' }
-                    ].map((stage, i) => (
-                        <div key={i} className={`bg-white dark:bg-neutral-900 rounded-2xl p-6 border ${stage.border} relative overflow-hidden group hover:border-primary/50 transition-all cursor-pointer shadow-sm`}>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className={`p-3 rounded-xl ${stage.bg} ${stage.color}`}>
-                                    <stage.icon className="w-5 h-5" />
+                    {salesData.pipelineStages.map((stage, i) => {
+                        const Icon = IconMap[stage.iconName];
+                        return (
+                            <div key={i} className={`bg-white dark:bg-neutral-900 rounded-2xl p-6 border ${stage.border} relative overflow-hidden group hover:border-primary/50 transition-all cursor-pointer shadow-sm`}>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={`p-3 rounded-xl ${stage.bg} ${stage.color}`}>
+                                        {Icon && <Icon className="w-5 h-5" />}
+                                    </div>
+                                    <span className="text-2xl font-black text-neutral-900 dark:text-white tabular-nums">{stage.val}</span>
                                 </div>
-                                <span className="text-2xl font-black text-neutral-900 dark:text-white tabular-nums">{stage.val}</span>
+                                <div>
+                                    <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">{stage.label}</p>
+                                    <p className={`text-xl font-black tracking-tighter mt-1 ${stage.color}`}>{stage.amount}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">{stage.label}</p>
-                                <p className={`text-xl font-black tracking-tighter mt-1 ${stage.color}`}>{stage.amount}</p>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Main Data Grid Area */}
@@ -95,13 +98,7 @@ const SalesMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                                {[
-                                    { id: 'INV-2026-0891', date: 'Oct 14, 2026', due: 'Oct 28, 2026', client: 'Nexus Cybernetics Ltd.', amount: '12,45,000', status: 'Unpaid', color: 'amber' },
-                                    { id: 'INV-2026-0890', date: 'Oct 12, 2026', due: 'Oct 26, 2026', client: 'Quantum Core Industries', amount: '4,50,000', status: 'Paid', color: 'emerald' },
-                                    { id: 'INV-2026-0889', date: 'Sep 28, 2026', due: 'Oct 12, 2026', client: 'Starlight Medical', amount: '8,90,000', status: 'Overdue', color: 'rose' },
-                                    { id: 'INV-2026-0888', date: 'Sep 25, 2026', due: 'Oct 09, 2026', client: 'Apex Heavy Engineering', amount: '2,15,500', status: 'Paid', color: 'emerald' },
-                                    { id: 'INV-2026-0887', date: 'Sep 24, 2026', due: 'Oct 08, 2026', client: 'NeuroTech Solutions', amount: '6,75,000', status: 'Paid', color: 'emerald' },
-                                ].map((inv, idx) => (
+                                {salesData.invoices.map((inv, idx) => (
                                     <tr key={idx} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group">
                                         <td className="px-8 py-5">
                                             <span className="font-mono text-sm font-bold text-primary group-hover:underline cursor-pointer">{inv.id}</span>
