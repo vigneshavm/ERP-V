@@ -1,0 +1,22 @@
+{
+    "company": {
+        "name": "SmartERPAI Inc.",
+        "address": "123 Enterprise Way, Textile District",
+        "city": "City, Country 10001"
+    },
+    "payslip": {
+        "docId": "#HR-DOC-4921",
+        "period": "Oct 2024",
+        "employee": {
+            "name": "Sarah Jenkins",
+            "id": "EMP-0042",
+            "role": "Senior Sales Executive"
+        },
+        "summary": {
+            "base": "$8,500.00",
+            "deductions": "-$1,250.00",
+            "netTotal": "$7,250.00"
+        }
+    }
+}
+

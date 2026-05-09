@@ -1,0 +1,11 @@
+{
+    "records": [
+        { "id": "EMP-001", "name": "Arjun Mehta", "dept": "Operations", "status": "Active", "amount": "85,000" },
+        { "id": "EMP-002", "name": "Priya Sharma", "dept": "Finance", "status": "Active", "amount": "72,000" },
+        { "id": "EMP-003", "name": "Rohit Verma", "dept": "Sales", "status": "Active", "amount": "48,000" },
+        { "id": "EMP-004", "name": "Sneha Iyer", "dept": "Textile", "status": "Active", "amount": "95,000" },
+        { "id": "EMP-005", "name": "Kiran Das", "dept": "Logistics", "status": "Active", "amount": "42,000" },
+        { "id": "EMP-006", "name": "Anjali Verma", "dept": "Billing", "status": "Active", "amount": "30,000" }
+    ]
+}
+

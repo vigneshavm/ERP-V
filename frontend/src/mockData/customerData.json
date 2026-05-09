@@ -1,0 +1,25 @@
+{
+    "totalContacts": "4,291",
+    "MOCK_CUSTOMERS": [
+        { "id": "1", "name": "Meera's Boutique", "handle": "@meeras_fashion", "tier": "Platinum", "spent": "₹14,52,000", "lastActive": "2h ago", "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80", "status": "Active" },
+        { "id": "2", "name": "Rajesh Kumar (Wholesale)", "handle": "@rk_textiles", "tier": "Gold", "spent": "₹11,24,500", "lastActive": "1d ago", "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80", "status": "Active" },
+        { "id": "3", "name": "Anjali Sharma", "handle": "@anjali_s", "tier": "Standard", "spent": "₹45,200", "lastActive": "3w ago", "avatar": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80", "status": "Dormant" },
+        { "id": "4", "name": "Elite Garments", "handle": "@elite_garms", "tier": "Platinum", "spent": "₹18,90,000", "lastActive": "5m ago", "avatar": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&q=80", "status": "Active" }
+    ],
+    "sidebarNav": [
+        { "iconName": "Users", "active": true },
+        { "iconName": "Activity", "active": false },
+        { "iconName": "Briefcase", "active": false }
+    ],
+    "stats": [
+        { "label": "Lifetime Value", "value": "₹14,52,000", "sub": "Top 5% of customers" },
+        { "label": "Total Orders", "value": "1,142", "sub": "Last order 2h ago" },
+        { "label": "Loyalty Points", "value": "22,450", "sub": "Redeemable value ₹2,245" }
+    ],
+    "recentTransactions": [
+        { "orderId": "TEX-9932", "date": "Oct 14, 2026", "items": 30, "amount": "₹120,000" },
+        { "orderId": "TEX-9931", "date": "Oct 13, 2026", "items": 20, "amount": "₹83,500" },
+        { "orderId": "TEX-9930", "date": "Oct 12, 2026", "items": 45, "amount": "₹115,000" }
+    ]
+}
+

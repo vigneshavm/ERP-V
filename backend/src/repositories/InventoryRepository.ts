@@ -9,8 +9,8 @@ export class InventoryRepository {
         return Item.create(itemData);
     }
 
-    async findById(id: string, tenantId: string): Promise<IItem | null> {
-        return Item.findOne({ _id: id, tenantId });
+    async findById(id: string, tenantId: string, session?: any): Promise<IItem | null> {
+        return Item.findOne({ _id: id, tenantId }).session(session || null);
     }
 
     async findByName(name: string, tenantId: string): Promise<IItem | null> {
@@ -53,11 +53,11 @@ export class InventoryRepository {
         });
     }
 
-    async update(id: string, tenantId: string, updateData: Partial<IItem>): Promise<IItem | null> {
+    async update(id: string, tenantId: string, updateData: Partial<IItem>, session?: any): Promise<IItem | null> {
         return Item.findOneAndUpdate(
             { _id: id, tenantId },
             updateData,
-            { new: true }
+            { new: true, session }
         );
     }
 

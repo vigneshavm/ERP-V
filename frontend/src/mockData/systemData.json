@@ -1,0 +1,26 @@
+{
+    "healthMetrics": [
+        { "label": "System Health", "val": "99.8%", "sub": "All services operational", "icon": "Activity", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "Last Sync", "val": "2m ago", "sub": "4 devices synced", "icon": "RefreshCw", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" },
+        { "label": "Audit Events (Today)", "val": "1,284", "sub": "3 flagged actions", "icon": "FileSearch", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
+        { "label": "Database Size", "val": "2.4 GB", "sub": "Last backup: 1h ago", "icon": "Database", "color": "text-violet-400", "bg": "bg-violet-500/10", "border": "border-violet-500/30" }
+    ],
+    "modules": [
+        { "label": "Device Sync", "icon": "RefreshCw", "status": "Active", "color": "emerald" },
+        { "label": "Cloud Backup", "icon": "HardDrive", "status": "Active", "color": "emerald" },
+        { "label": "Audit Logger", "icon": "FileSearch", "status": "Active", "color": "emerald" },
+        { "label": "Data Import/Export", "icon": "Database", "status": "Standby", "color": "amber" },
+        { "label": "Role Engine", "icon": "Shield", "status": "Active", "color": "emerald" },
+        { "label": "Architecture AI", "icon": "Cpu", "status": "Active", "color": "emerald" }
+    ],
+    "auditLogs": [
+        { "time": "Today 11:42 PM", "user": "Arjun Mehta", "action": "Invoice Deleted", "module": "Sales", "ip": "192.168.1.101", "status": "Flagged", "color": "rose" },
+        { "time": "Today 11:38 PM", "user": "System", "action": "Auto Backup", "module": "System", "ip": "Internal", "status": "Success", "color": "emerald" },
+        { "time": "Today 11:30 PM", "user": "Priya Sharma", "action": "Role Updated", "module": "Security", "ip": "192.168.1.104", "status": "Success", "color": "emerald" },
+        { "time": "Today 11:18 PM", "user": "Rohit Verma", "action": "Failed Login (×3)", "module": "Auth", "ip": "103.56.12.88", "status": "Flagged", "color": "rose" },
+        { "time": "Today 10:55 PM", "user": "System", "action": "Device Sync", "module": "Sync", "ip": "Internal", "status": "Success", "color": "emerald" },
+        { "time": "Today 10:40 PM", "user": "Admin", "action": "GST Config Changed", "module": "Settings", "ip": "192.168.1.100", "status": "Warning", "color": "amber" }
+    ],
+    "auditTabs": ["All", "Auth", "Data", "Config", "Flagged"]
+}
+

@@ -1,15 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Filter, Search, Plus, Download, ChevronRight, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import laborManagerData from '../../../mockData/laborManagerData.json';
 
-const MOCK_LABOR_DATA = [
-    { id: 'EMP-001', name: 'Aarav Patel', role: 'Sales Associate', department: 'Sales', status: 'Active', shift: 'Morning', joinDate: '2023-01-15', attendance: '98%', performance: 'Excellent', value: '45,000' },
-    { id: 'EMP-002', name: 'Priya Sharma', role: 'Store Manager', department: 'Management', status: 'Active', shift: 'General', joinDate: '2022-11-01', attendance: '100%', performance: 'Outstanding', value: '85,000' },
-    { id: 'EMP-003', name: 'Rahul Desai', role: 'Master Tailor', department: 'Tailoring', status: 'On Leave', shift: 'Morning', joinDate: '2024-03-10', attendance: '92%', performance: 'Good', value: '35,000' },
-    { id: 'EMP-004', name: 'Anjali Verma', role: 'Cashier', department: 'Billing', status: 'Active', shift: 'Evening', joinDate: '2023-06-22', attendance: '95%', performance: 'Good', value: '30,000' },
-    { id: 'EMP-005', name: 'Karan Singh', role: 'Stock Clerk', department: 'Inventory', status: 'Inactive', shift: 'Night', joinDate: '2023-09-05', attendance: '80%', performance: 'Needs Improvement', value: '25,000' },
-    { id: 'EMP-006', name: 'Meera Reddy', role: 'Senior Sales Associate', department: 'Sales', status: 'Active', shift: 'General', joinDate: '2021-05-20', attendance: '99%', performance: 'Excellent', value: '55,000' },
-];
+const MOCK_LABOR_DATA = laborManagerData.laborers;
 
 const LaborManagerMockUI: React.FC = () => {
     const navigate = useNavigate();

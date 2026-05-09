@@ -1,0 +1,13 @@
+{
+    "lineItems": [
+        { "name": "Industrial Gearbox Assembly", "qty": 2, "rate": "$2,500.00", "total": "$5,000.00" },
+        { "name": "Lubrication Kit (5L)", "qty": 4, "rate": "$45.00", "total": "$180.00" }
+    ],
+    "summary": {
+        "subtotal": "$5,180.00",
+        "taxLabel": "Loading Charges",
+        "tax": "$120.00",
+        "total": "$5,300.00"
+    }
+}
+

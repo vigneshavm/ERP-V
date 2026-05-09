@@ -30,7 +30,8 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
         const fetchVendors = async () => {
             try {
                 const { data } = await api.get('/suppliers');
-                setVendors(data || []);
+                const vendorList = Array.isArray(data) ? data : (data?.data || []);
+                setVendors(vendorList);
             } catch (err) {
                 console.error("Failed to fetch suppliers", err);
             }
@@ -87,8 +88,10 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
                     api.get(`/api/purchases?vendorId=${bill.vendor_id}`),
                     api.get(`/api/grns?vendorId=${bill.vendor_id}`)
                 ]);
-                setPos(poRes.data || []);
-                const fetchedGrns = grnRes.data || [];
+                const poList = Array.isArray(poRes.data) ? poRes.data : (poRes.data?.data || []);
+                setPos(poList);
+                
+                const fetchedGrns = Array.isArray(grnRes.data) ? grnRes.data : (grnRes.data?.data || []);
                 setGrns(fetchedGrns);
 
                 // Auto-select GRN if provided in URL and not yet set

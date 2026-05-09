@@ -1,5 +1,10 @@
 import React from 'react';
-import { BarChart2, TrendingUp, TrendingDown, Download, Filter, Search, PieChart, FileText, Package, ShoppingCart, DollarSign, ArrowRight } from 'lucide-react';
+import { BarChart2, TrendingUp, TrendingDown, Download, Filter, Search, PieChart, FileText, Package, ShoppingCart, DollarSign, ArrowRight, BarChart3 } from 'lucide-react';
+import reportsData from '../../mockData/reportsData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    TrendingUp, TrendingDown, DollarSign, Package, ShoppingCart, FileText, PieChart, BarChart2
+};
 
 const ReportsMockUI: React.FC = () => {
     return (
@@ -31,76 +36,72 @@ const ReportsMockUI: React.FC = () => {
 
                 {/* KPI Summary */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Total Revenue (MTD)', val: '₹1.84Cr', sub: '+18.2% vs last month', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'Total Purchases (MTD)', val: '₹68.4L', sub: '-4.1% vs last month', icon: TrendingDown, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-                        { label: 'Gross Profit', val: '₹1.16Cr', sub: '63% gross margin', icon: DollarSign, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-                        { label: 'Inventory Value', val: '₹2.41Cr', sub: '1,840 active SKUs', icon: Package, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`bg-white dark:bg-neutral-900 rounded-2xl p-6 border ${card.border} group hover:border-primary/50 transition-all cursor-pointer shadow-sm`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
+                    {reportsData.kpis.map((card, i) => {
+                        const Icon = IconMap[card.icon];
+                        return (
+                            <div key={i} className={`bg-white dark:bg-neutral-900 rounded-2xl p-6 border ${card.border} group hover:border-primary/50 transition-all cursor-pointer shadow-sm`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-neutral-900 dark:text-white">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
                             </div>
-                            <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-neutral-900 dark:text-white">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Report Category Grid */}
                 <div className="grid grid-cols-3 gap-6 mb-6">
-                    {[
-                        { title: 'Sales Reports', desc: 'Invoice register, daybook, payment-in, outstanding dues', icon: ShoppingCart, color: 'sky', reports: ['Sales Invoice Register', 'Payment Received', 'Outstanding Dues', 'Customer Daybook'] },
-                        { title: 'Purchase Reports', desc: 'Bills, GRN, supplier ageing, debit notes', icon: FileText, color: 'indigo', reports: ['Purchase Register', 'Supplier Ageing', 'GRN Summary', 'Debit Notes'] },
-                        { title: 'Inventory Reports', desc: 'Stock movement, low stock, batch expiry, category-wise', icon: Package, color: 'amber', reports: ['Stock Summary', 'Stock Movement', 'Low Stock Alert', 'Batch Expiry'] },
-                    ].map((sec, i) => (
-                        <div key={i} className={`bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 hover:border-primary/50 transition-all cursor-pointer group shadow-sm`}>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className={`p-3 rounded-xl bg-${sec.color}-500/10 text-${sec.color}-400`}>
-                                    <sec.icon className="w-5 h-5" />
+                    {reportsData.mainCategories.map((sec, i) => {
+                        const Icon = IconMap[sec.icon];
+                        return (
+                            <div key={i} className={`bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 hover:border-primary/50 transition-all cursor-pointer group shadow-sm`}>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`p-3 rounded-xl bg-${sec.color}-500/10 text-${sec.color}-400`}>
+                                        {Icon && <Icon className="w-5 h-5" />}
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-black text-neutral-900 dark:text-white">{sec.title}</h3>
+                                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold mt-0.5">{sec.desc}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-neutral-900 dark:text-white">{sec.title}</h3>
-                                    <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold mt-0.5">{sec.desc}</p>
+                                <div className="flex flex-col gap-2">
+                                    {sec.reports.map((r, ri) => (
+                                        <button key={ri} className="flex items-center justify-between px-3 py-2 bg-neutral-50 dark:bg-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-bold text-neutral-900 dark:text-white transition-all group/btn">
+                                            <span>{r}</span>
+                                            <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover/btn:text-primary transition-colors" />
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                {sec.reports.map((r, ri) => (
-                                    <button key={ri} className="flex items-center justify-between px-3 py-2 bg-neutral-50 dark:bg-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-bold text-neutral-900 dark:text-white transition-all group/btn">
-                                        <span>{r}</span>
-                                        <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover/btn:text-primary transition-colors" />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Finance & Other Reports */}
                 <div className="flex gap-6 flex-1">
-                    {[
-                        { title: 'Finance Reports', icon: DollarSign, color: 'emerald', reports: ['Cash & Bank Position', 'Fund Transfers', 'Bank Reconciliation', 'Journal Ledger', 'GST Summary'] },
-                        { title: 'HR & Payroll', icon: BarChart2, color: 'violet', reports: ['Payroll Summary', 'Attendance Report', 'Salary Register', 'Leave Balance'] },
-                        { title: 'GST & Tax', icon: PieChart, color: 'rose', reports: ['GSTR-1 Summary', 'GSTR-3B Preview', 'Input Tax Credit', 'E-Invoice Log'] },
-                    ].map((sec, i) => (
-                        <div key={i} className={`flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 hover:border-primary/50 transition-all shadow-sm`}>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className={`p-2.5 rounded-xl bg-${sec.color}-500/10 text-${sec.color}-400`}>
-                                    <sec.icon className="w-4 h-4" />
+                    {reportsData.secondaryCategories.map((sec, i) => {
+                        const Icon = IconMap[sec.icon];
+                        return (
+                            <div key={i} className={`flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 hover:border-primary/50 transition-all shadow-sm`}>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`p-2.5 rounded-xl bg-${sec.color}-500/10 text-${sec.color}-400`}>
+                                        {Icon && <Icon className="w-4 h-4" />}
+                                    </div>
+                                    <h3 className="text-sm font-black text-neutral-900 dark:text-white">{sec.title}</h3>
                                 </div>
-                                <h3 className="text-sm font-black text-neutral-900 dark:text-white">{sec.title}</h3>
+                                <div className="flex flex-col gap-2">
+                                    {sec.reports.map((r, ri) => (
+                                        <button key={ri} className="flex items-center justify-between px-3 py-2 bg-neutral-50 dark:bg-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-bold text-neutral-900 dark:text-white transition-all group/btn">
+                                            <span>{r}</span>
+                                            <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover/btn:text-primary transition-colors" />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                {sec.reports.map((r, ri) => (
-                                    <button key={ri} className="flex items-center justify-between px-3 py-2 bg-neutral-50 dark:bg-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-bold text-neutral-900 dark:text-white transition-all group/btn">
-                                        <span>{r}</span>
-                                        <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover/btn:text-primary transition-colors" />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
         </div>

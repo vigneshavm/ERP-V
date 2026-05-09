@@ -208,7 +208,8 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                             supplierId: purchase.vendorId.toString()
                         },
                         req.user?.tenantId || 'default',
-                        req.user
+                        req.user,
+                        session
                     );
                 }
             }

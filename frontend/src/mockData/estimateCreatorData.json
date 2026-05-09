@@ -1,0 +1,13 @@
+{
+    "lineItems": [
+        { "name": "Cloud Infrastructure Setup", "qty": 1, "rate": "$12,000.00", "total": "$12,000.00" },
+        { "name": "Security Audit Services", "qty": 1, "rate": "$3,500.00", "total": "$3,500.00" }
+    ],
+    "summary": {
+        "subtotal": "$15,500.00",
+        "taxLabel": "Discount (Enterprise)",
+        "tax": "-$1,550.00",
+        "total": "$13,950.00"
+    }
+}
+

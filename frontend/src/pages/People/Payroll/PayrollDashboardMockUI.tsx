@@ -5,6 +5,11 @@ import {
     CreditCard, Activity
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import payrollDashboardData from '../../../mockData/payrollDashboardData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    DollarSign, ShieldCheck, AlertCircle, FileCheck, Clock
+};
 
 const PayrollDashboardMockUI: React.FC = () => {
     const navigate = useNavigate();
@@ -34,25 +39,23 @@ const PayrollDashboardMockUI: React.FC = () => {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                    { title: "Monthly Payout", value: "₹42,50,000", icon: DollarSign, color: "text-emerald-400", bg: "bg-emerald-400/10", trend: "+1.2%" },
-                    { title: "Tax Liabilities", value: "₹8,12,000", icon: ShieldCheck, color: "text-blue-400", bg: "bg-blue-400/10", trend: "On Track" },
-                    { title: "Pending Approvals", value: "18", icon: AlertCircle, color: "text-amber-400", bg: "bg-amber-400/10", trend: "High Priority" },
-                    { title: "System Accuracy", value: "100%", icon: FileCheck, color: "text-purple-400", bg: "bg-purple-400/10", trend: "Verified" }
-                ].map((kpi, idx) => (
-                    <div key={idx} className="glass-panel p-5 rounded-xl border border-white/5 flex flex-col gap-3">
-                        <div className="flex justify-between items-start">
-                            <div className={`p-2.5 rounded-lg ${kpi.bg} ${kpi.color}`}>
-                                <kpi.icon className="w-5 h-5" />
+                {payrollDashboardData.metrics.map((kpi, idx) => {
+                    const Icon = IconMap[kpi.icon];
+                    return (
+                        <div key={idx} className="glass-panel p-5 rounded-xl border border-white/5 flex flex-col gap-3">
+                            <div className="flex justify-between items-start">
+                                <div className={`p-2.5 rounded-lg ${kpi.bg} ${kpi.color}`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <span className="text-[10px] font-bold text-main/30 uppercase tracking-tighter">{kpi.trend}</span>
                             </div>
-                            <span className="text-[10px] font-bold text-main/30 uppercase tracking-tighter">{kpi.trend}</span>
+                            <div>
+                                <p className="text-[10px] text-main/40 uppercase tracking-widest font-bold">{kpi.title}</p>
+                                <p className="text-xl font-bold mt-0.5 text-main">{kpi.value}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[10px] text-main/40 uppercase tracking-widest font-bold">{kpi.title}</p>
-                            <p className="text-xl font-bold mt-0.5 text-main">{kpi.value}</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Dashboard Grid */}
@@ -77,11 +80,7 @@ const PayrollDashboardMockUI: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {[
-                                        { period: 'April 2026 (Final)', amount: '₹42,50,000', date: 'Apr 30, 2026', status: 'Ready' },
-                                        { period: 'May 2026 (Mid)', amount: '₹2,10,000', date: 'May 15, 2026', status: 'Draft' },
-                                        { period: 'May 2026 (Final)', amount: '₹43,10,000', date: 'May 31, 2026', status: 'Pending' }
-                                    ].map((row, i) => (
+                                    {payrollDashboardData.upcomingRuns.map((row, i) => (
                                         <tr key={i} className="hover:bg-white/[0.02] transition-colors cursor-pointer group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
@@ -112,30 +111,27 @@ const PayrollDashboardMockUI: React.FC = () => {
                     <div>
                         <h2 className="text-sm font-bold uppercase tracking-wider text-main/60 mb-4">Operational Insights</h2>
                         <div className="space-y-4">
-                            <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 space-y-2">
-                                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-tighter">
-                                    <AlertCircle className="w-4 h-4" /> Compliance Warning
-                                </div>
-                                <p className="text-xs text-main/60 leading-relaxed">
-                                    3 employees have missing bank account details for the upcoming April 30 run.
-                                </p>
-                            </div>
-                            <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10 space-y-2">
-                                <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-tighter">
-                                    <Clock className="w-4 h-4" /> Tax Deadline
-                                    <span className="ml-auto text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">2 Days Left</span>
-                                </div>
-                                <p className="text-xs text-main/60 leading-relaxed">
-                                    Monthly TDS returns need to be filed and reconciled.
-                                </p>
-                            </div>
+                            {payrollDashboardData.insights.map((insight, i) => {
+                                const Icon = IconMap[insight.icon];
+                                return (
+                                    <div key={i} className={`p-4 rounded-xl ${insight.bg} border ${insight.border} space-y-2`}>
+                                        <div className={`flex items-center gap-2 ${insight.color} font-bold text-xs uppercase tracking-tighter`}>
+                                            {Icon && <Icon className="w-4 h-4" />} {insight.title}
+                                            {insight.deadline && <span className="ml-auto text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">{insight.deadline}</span>}
+                                        </div>
+                                        <p className="text-xs text-main/60 leading-relaxed">
+                                            {insight.desc}
+                                        </p>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
                     <div className="pt-6 border-t border-white/5">
                         <h3 className="text-[10px] font-bold text-main/30 uppercase tracking-widest mb-4">Quick Links</h3>
                         <div className="grid grid-cols-2 gap-2">
-                            {['Salary Slips', 'Tax Forms', 'Audit Logs', 'Bank Files'].map(link => (
+                            {payrollDashboardData.quickLinks.map(link => (
                                 <button key={link} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-[11px] text-main/60 text-left transition-all">
                                     {link}
                                 </button>

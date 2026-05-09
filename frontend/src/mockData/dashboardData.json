@@ -1,18 +1,19 @@
 {
   "kpis": [
-    { "label": "Gross Revenue", "val": "₹14.2M", "trend": "+12.5%", "isUp": true, "iconName": "Banknote", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/20" },
-    { "label": "Active Orders", "val": "842", "trend": "+5.2%", "isUp": true, "iconName": "Briefcase", "color": "text-indigo-400", "bg": "bg-indigo-500/10", "border": "border-indigo-500/20" },
-    { "label": "Inventory Cost", "val": "₹4.8M", "trend": "-2.1%", "isUp": false, "iconName": "Box", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/20" },
-    { "label": "Client Base", "val": "4,291", "trend": "+18.4%", "isUp": true, "iconName": "Users", "color": "text-fuchsia-400", "bg": "bg-fuchsia-500/10", "border": "border-fuchsia-500/20" }
+    { "label": "Textile Revenue", "val": "₹14.2M", "trend": "+12.5%", "isUp": true, "iconName": "Banknote", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/20" },
+    { "label": "Boutique Orders", "val": "842", "trend": "+5.2%", "isUp": true, "iconName": "Briefcase", "color": "text-indigo-400", "bg": "bg-indigo-500/10", "border": "border-indigo-500/20" },
+    { "label": "Fabric Stock Value", "val": "₹4.8M", "trend": "-2.1%", "isUp": false, "iconName": "Box", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/20" },
+    { "label": "Retail Customers", "val": "4,291", "trend": "+18.4%", "isUp": true, "iconName": "Users", "color": "text-fuchsia-400", "bg": "bg-fuchsia-500/10", "border": "border-fuchsia-500/20" }
   ],
   "chartData": {
     "timeFrames": ["1W", "1M", "3M", "1Y"],
     "barHeights": [40, 65, 45, 80, 55, 90, 75, 100, 60, 85, 70, 95]
   },
   "systemAlerts": [
-    { "title": "Low Stock: Neural Link Gen 3", "desc": "Only 15 units remaining in Main Warehouse.", "iconName": "Box", "color": "rose" },
-    { "title": "Pending Approval", "desc": "Purchase Order #PO-2026-042 awaits authorization.", "iconName": "ShieldCheck", "color": "amber" },
-    { "title": "Unreconciled Bank Entries", "desc": "5 entries found in HDFC statement sync.", "iconName": "Banknote", "color": "indigo" },
-    { "title": "Server Load Spike", "desc": "Database node scaling activated successfully.", "iconName": "Zap", "color": "emerald" }
+    { "title": "Low Stock: Pure Silk (Kanchipuram)", "desc": "Only 3 sarees remaining in showroom.", "iconName": "Box", "color": "rose" },
+    { "title": "Pending Tailoring Approval", "desc": "Order #TEX-2026-042 awaits measurements review.", "iconName": "ShieldCheck", "color": "amber" },
+    { "title": "Unreconciled Cash", "desc": "₹5,200 discrepancy in POS drawer #1.", "iconName": "Banknote", "color": "indigo" },
+    { "title": "Bulk Shipment Received", "desc": "Vardhman Cotton shipment arrived at warehouse.", "iconName": "Zap", "color": "emerald" }
   ]
 }
+

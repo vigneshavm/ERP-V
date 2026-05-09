@@ -1,25 +1,14 @@
 import React from 'react';
 import { Settings, User, Shield, Bell, Palette, Globe, CreditCard, Building2, ChevronRight, Save, ToggleLeft, ToggleRight } from 'lucide-react';
+import settingsData from '../../../mockData/settingsData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Building2, User, Shield, Bell, Palette, Globe, CreditCard
+};
 
 const SettingsMockUI: React.FC = () => {
-    const sections = [
-        { id: 'general', label: 'Business Profile', icon: Building2, color: 'text-muted', bg: 'bg-slate-500/10', border: 'border-default' },
-        { id: 'users', label: 'Users & Roles', icon: User, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-        { id: 'security', label: 'Security', icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-        { id: 'notifications', label: 'Notifications', icon: Bell, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-        { id: 'branding', label: 'Themes & Branding', icon: Palette, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
-        { id: 'finance', label: 'Financial Year & Tax', icon: CreditCard, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-        { id: 'integrations', label: 'Integrations', icon: Globe, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/30' },
-    ];
-
-    const toggles = [
-        { label: 'Enable GST Billing', sub: 'Applies GST on all invoices', on: true },
-        { label: 'Multi-Branch Mode', sub: 'Manage multiple store locations', on: false },
-        { label: 'Low Stock Alerts', sub: 'Notify when stock falls below threshold', on: true },
-        { label: 'Auto Backup (Cloud)', sub: 'Daily automated data backup', on: true },
-        { label: 'Customer Loyalty Program', sub: 'Enable loyalty points on purchases', on: false },
-        { label: 'WhatsApp Notifications', sub: 'Send transactional alerts via WhatsApp', on: true },
-    ];
+    const sections = settingsData.sections;
+    const toggles = settingsData.toggles;
 
     return (
         <div className="min-h-screen bg-app text-main font-sans selection:bg-slate-500/30 overflow-hidden flex flex-col">
@@ -37,13 +26,16 @@ const SettingsMockUI: React.FC = () => {
                         <p className="text-xs text-secondary mt-1 font-medium">Configure your ERP workspace</p>
                     </div>
                     <nav className="flex flex-col gap-1">
-                        {sections.map((s, i) => (
-                            <button key={s.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left ${i === 0 ? 'bg-card text-main border border-default' : 'text-muted hover:bg-card hover:text-main'}`}>
-                                <div className={`p-1.5 rounded-lg ${s.bg} ${s.color}`}><s.icon className="w-3.5 h-3.5" /></div>
-                                {s.label}
-                                <ChevronRight className="w-3.5 h-3.5 ml-auto text-slate-600" />
-                            </button>
-                        ))}
+                        {sections.map((s, i) => {
+                            const Icon = IconMap[s.icon];
+                            return (
+                                <button key={s.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left ${i === 0 ? 'bg-card text-main border border-default' : 'text-muted hover:bg-card hover:text-main'}`}>
+                                    <div className={`p-1.5 rounded-lg ${s.bg} ${s.color}`}>{Icon && <Icon className="w-3.5 h-3.5" />}</div>
+                                    {s.label}
+                                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-slate-600" />
+                                </button>
+                            );
+                        })}
                     </nav>
                 </aside>
 
@@ -55,14 +47,7 @@ const SettingsMockUI: React.FC = () => {
                             <Building2 className="w-4 h-4" /> Business Profile
                         </h2>
                         <div className="grid grid-cols-2 gap-5">
-                            {[
-                                { label: 'Business Name', val: 'Neural Retail Co.' },
-                                { label: 'GSTIN', val: '27AABCN1234A1Z5' },
-                                { label: 'Business Type', val: 'Retail & Distribution' },
-                                { label: 'Financial Year', val: 'April 2026 – March 2027' },
-                                { label: 'Primary Currency', val: 'INR (₹)' },
-                                { label: 'Time Zone', val: 'Asia/Kolkata (IST +5:30)' },
-                            ].map((f, i) => (
+                            {settingsData.businessProfile.map((f, i) => (
                                 <div key={i}>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-secondary block mb-1.5">{f.label}</label>
                                     <input defaultValue={f.val} className="w-full bg-input border border-default rounded-xl px-4 py-2.5 text-sm text-main font-bold focus:outline-none focus:border-slate-500 transition-colors" />

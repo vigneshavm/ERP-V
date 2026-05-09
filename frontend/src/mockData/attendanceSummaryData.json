@@ -1,0 +1,18 @@
+{
+    "summaries": [
+        { "period": "April 2026", "totalHours": "24,500", "overtime": "1,240", "accuracy": "99.8%", "status": "Processed" },
+        { "period": "March 2026", "totalHours": "23,800", "overtime": "980", "accuracy": "99.5%", "status": "Finalized" },
+        { "period": "February 2026", "totalHours": "22,100", "overtime": "1,150", "accuracy": "98.9%", "status": "Archived" }
+    ],
+    "metrics": [
+        { "title": "Monthly Hours", "value": "24,500", "icon": "Clock", "color": "text-blue-400", "trend": "+4.2%" },
+        { "title": "Overtime (Hrs)", "value": "1,240", "icon": "TrendingUp", "color": "text-amber-400", "trend": "-1.5%" },
+        { "title": "Active Personnel", "value": "142", "icon": "Users", "color": "text-purple-400", "trend": "+2" },
+        { "title": "Data Integrity", "value": "99.8%", "icon": "CheckCircle2", "color": "text-emerald-400", "trend": "Stable" }
+    ],
+    "health": [
+        { "type": "success", "title": "Data Synced", "icon": "CheckCircle2", "color": "text-emerald-500", "bg": "bg-emerald-500/5", "border": "border-emerald-500/10", "sub": "Last sync: 5 mins ago" },
+        { "type": "warning", "title": "Pending Approvals", "icon": "AlertTriangle", "color": "text-amber-400", "bg": "bg-amber-500/5", "border": "border-amber-500/10", "sub": "12 entries require review" }
+    ]
+}
+

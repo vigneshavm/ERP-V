@@ -1,0 +1,13 @@
+{
+    "lineItems": [
+        { "name": "Defective Fabrics Unit", "qty": 1, "rate": "$1,200.00", "total": "$1,200.00" },
+        { "name": "Incorrect Cable Type", "qty": 5, "rate": "$15.00", "total": "$75.00" }
+    ],
+    "summary": {
+        "subtotal": "$1,275.00",
+        "taxLabel": "Restocking Fee (5%)",
+        "tax": "-$63.75",
+        "total": "$1,211.25"
+    }
+}
+

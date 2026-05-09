@@ -24,7 +24,7 @@ const BillBasicInfo: React.FC<BillBasicInfoProps> = ({ bill, vendors, onVendorCh
                         className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
                     >
                         <option value="">Select Vendor</option>
-                        {vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
+                        {Array.isArray(vendors) && vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
                     </select>
                 </div>
                 <div>

@@ -1,0 +1,11 @@
+{
+    "employees": [
+        { "id": "EMP-001", "name": "Arjun Mehta", "dept": "Operations", "role": "Senior Manager", "mobile": "98765-43210" },
+        { "id": "EMP-002", "name": "Priya Sharma", "dept": "Finance", "role": "Account Lead", "mobile": "98765-43211" },
+        { "id": "EMP-003", "name": "Rohit Verma", "dept": "Sales", "role": "Sales Executive", "mobile": "98765-43212" },
+        { "id": "EMP-004", "name": "Sneha Iyer", "dept": "Textile", "role": "Dev Engineer", "mobile": "98765-43213" },
+        { "id": "EMP-005", "name": "Kiran Das", "dept": "Logistics", "role": "Fleet Coordinator", "mobile": "98765-43214" },
+        { "id": "EMP-006", "name": "Anjali Verma", "dept": "Billing", "role": "Cashier", "mobile": "98765-43215" }
+    ]
+}
+

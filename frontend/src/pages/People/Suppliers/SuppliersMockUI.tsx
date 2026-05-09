@@ -5,14 +5,13 @@ import {
     ArrowRight, Globe, ShieldCheck, Zap, ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import suppliersData from '../../../mockData/suppliersData.json';
 
-const MOCK_SUPPLIERS = [
-    { id: 'SUP-001', name: 'Global Raw Materials Inc.', gstin: '27AABCG1234A1Z5', cat: 'Raw Materials', limit: '50,00,000', outstanding: '12,45,000', rating: 5, status: 'Active' },
-    { id: 'SUP-002', name: 'TechComponents Asia Pvt Ltd', gstin: '29AATCT5678B2Z1', cat: 'Electronics', limit: '25,00,000', outstanding: '8,20,000', rating: 4, status: 'Active' },
-    { id: 'SUP-003', name: 'Omega Industrial Supply', gstin: '06AABCO9012C3Z8', cat: 'Industrial', limit: '15,00,000', outstanding: '6,80,000', rating: 3, status: 'Overdue' },
-    { id: 'SUP-004', name: 'Starlight Medical Devices', gstin: '33AABCS3456D4Z2', cat: 'Medical', limit: '10,00,000', outstanding: '0', rating: 5, status: 'Active' },
-    { id: 'SUP-005', name: 'Apex Packaging Works', gstin: '24AABCA7890E5Z9', cat: 'Packaging', limit: '8,00,000', outstanding: '1,15,000', rating: 4, status: 'Active' },
-];
+const IconMap: Record<string, React.ElementType> = {
+    Building2, Zap, AlertCircle, CheckCircle2
+};
+
+const MOCK_SUPPLIERS = suppliersData.MOCK_SUPPLIERS;
 
 const SuppliersMockUI: React.FC = () => {
     const navigate = useNavigate();
@@ -53,7 +52,7 @@ const SuppliersMockUI: React.FC = () => {
                     <div className="space-y-4">
                         <label className="text-[10px] font-black uppercase tracking-widest text-main/30">Vendor Category</label>
                         <div className="flex flex-wrap gap-2">
-                            {['Raw Materials', 'Packaging', 'Electronics', 'Logistics', 'Services'].map(cat => (
+                            {suppliersData.filterCategories.map(cat => (
                                 <button key={cat} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-purple-500/30 text-[11px] text-main/60 transition-all active:scale-95">
                                     {cat}
                                 </button>
@@ -136,25 +135,23 @@ const SuppliersMockUI: React.FC = () => {
 
             {/* KPI Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {[
-                    { label: 'Total Suppliers', val: '148', sub: '12 added this month', icon: Building2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                    { label: 'Outstanding Payables', val: '₹28.4L', sub: '32 bills pending', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                    { label: 'Overdue Payables', val: '₹6.8L', sub: '9 suppliers affected', icon: AlertCircle, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-                    { label: 'Settled (MTD)', val: '₹45.2L', sub: '87 transactions', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                ].map((card, i) => (
-                    <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col gap-3 group hover:bg-white/[0.04] transition-all cursor-pointer">
-                        <div className="flex justify-between items-start">
-                            <div className={`p-2.5 rounded-xl ${card.bg} ${card.color}`}>
-                                <card.icon className="w-5 h-5" />
+                {suppliersData.kpis.map((card, i) => {
+                    const Icon = IconMap[card.iconName];
+                    return (
+                        <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col gap-3 group hover:bg-white/[0.04] transition-all cursor-pointer">
+                            <div className="flex justify-between items-start">
+                                <div className={`p-2.5 rounded-xl ${card.bg} ${card.color}`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <span className="text-[10px] font-bold text-main/20 group-hover:text-main/40 uppercase tracking-widest">{card.sub}</span>
                             </div>
-                            <span className="text-[10px] font-bold text-main/20 group-hover:text-main/40 uppercase tracking-widest">{card.sub}</span>
+                            <div>
+                                <p className="text-[10px] font-black text-main/40 uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tight text-main">{card.val}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[10px] font-black text-main/40 uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tight text-main">{card.val}</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Filters & Data Grid */}

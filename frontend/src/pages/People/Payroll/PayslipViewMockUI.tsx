@@ -1,5 +1,6 @@
 import React from 'react';
 import { Download, Printer, Share2, FileText, ArrowLeft } from 'lucide-react';
+import payslipViewData from '../../../mockData/payslipViewData.json';
 
 const PayslipViewMockUI: React.FC = () => {
     return (
@@ -34,14 +35,14 @@ const PayslipViewMockUI: React.FC = () => {
             <div className="glass-panel p-12 rounded-xl border border-white/5 bg-white/[0.02] min-h-[600px] flex flex-col shadow-2xl">
                 <div className="flex justify-between items-start border-b border-white/10 pb-8 mb-8">
                     <div>
-                        <h2 className="text-3xl font-bold text-main">SmartERPAI Inc.</h2>
-                        <p className="text-main/60 mt-2">123 Enterprise Way, Tech District</p>
-                        <p className="text-main/60">City, Country 10001</p>
+                        <h2 className="text-3xl font-bold text-main">{payslipViewData.company.name}</h2>
+                        <p className="text-main/60 mt-2">{payslipViewData.company.address}</p>
+                        <p className="text-main/60">{payslipViewData.company.city}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-xl font-bold text-purple-400 uppercase tracking-widest mb-2">Employee Payslip</h2>
-                        <p className="text-main/80 font-medium">Doc ID: #HR-DOC-4921</p>
-                        <p className="text-main/60">Period: Oct 2024</p>
+                        <p className="text-main/80 font-medium">Doc ID: {payslipViewData.payslip.docId}</p>
+                        <p className="text-main/60">Period: {payslipViewData.payslip.period}</p>
                     </div>
                 </div>
                 
@@ -50,9 +51,9 @@ const PayslipViewMockUI: React.FC = () => {
                         <div className="space-y-2">
                             <h3 className="text-main/50 text-xs uppercase tracking-wider font-semibold">Employee Details</h3>
                             <div className="bg-black/20 p-4 rounded-lg border border-white/5 space-y-2 text-sm">
-                                <div className="flex justify-between"><span className="text-main/60">Name:</span> <span className="font-medium">Sarah Jenkins</span></div>
-                                <div className="flex justify-between"><span className="text-main/60">ID:</span> <span className="font-medium">EMP-0042</span></div>
-                                <div className="flex justify-between"><span className="text-main/60">Role:</span> <span className="font-medium">Senior Developer</span></div>
+                                <div className="flex justify-between"><span className="text-main/60">Name:</span> <span className="font-medium">{payslipViewData.payslip.employee.name}</span></div>
+                                <div className="flex justify-between"><span className="text-main/60">ID:</span> <span className="font-medium">{payslipViewData.payslip.employee.id}</span></div>
+                                <div className="flex justify-between"><span className="text-main/60">Role:</span> <span className="font-medium">{payslipViewData.payslip.employee.role}</span></div>
                             </div>
                         </div>
                     </div>
@@ -60,9 +61,9 @@ const PayslipViewMockUI: React.FC = () => {
                         <div className="space-y-2">
                             <h3 className="text-main/50 text-xs uppercase tracking-wider font-semibold">Summary</h3>
                             <div className="bg-black/20 p-4 rounded-lg border border-white/5 space-y-2 text-sm">
-                                <div className="flex justify-between"><span className="text-main/60">Base:</span> <span className="font-medium">$8,500.00</span></div>
-                                <div className="flex justify-between"><span className="text-main/60">Deductions:</span> <span className="font-medium text-red-400">-$1,250.00</span></div>
-                                <div className="flex justify-between pt-2 border-t border-white/10 text-base"><span className="text-main/80 font-bold">Net Total:</span> <span className="font-bold text-emerald-400">$7,250.00</span></div>
+                                <div className="flex justify-between"><span className="text-main/60">Base:</span> <span className="font-medium">{payslipViewData.payslip.summary.base}</span></div>
+                                <div className="flex justify-between"><span className="text-main/60">Deductions:</span> <span className="font-medium text-red-400">{payslipViewData.payslip.summary.deductions}</span></div>
+                                <div className="flex justify-between pt-2 border-t border-white/10 text-base"><span className="text-main/80 font-bold">Net Total:</span> <span className="font-bold text-emerald-400">{payslipViewData.payslip.summary.netTotal}</span></div>
                             </div>
                         </div>
                     </div>

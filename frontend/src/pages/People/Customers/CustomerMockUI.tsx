@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Users, UserPlus, Phone, Mail, MapPin, Briefcase, Activity, ChevronRight, Zap } from 'lucide-react';
+import customerData from '../../../mockData/customerData.json';
 
 interface Customer {
     id: string;
@@ -12,12 +13,11 @@ interface Customer {
     status: 'Active' | 'Dormant';
 }
 
-const MOCK_CUSTOMERS: Customer[] = [
-    { id: '1', name: 'Elena Vance', handle: '@evance_cyber', tier: 'Platinum', spent: '₹4,52,000', lastActive: '2h ago', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80', status: 'Active' },
-    { id: '2', name: 'Marcus Sterling', handle: '@sterling_m', tier: 'Gold', spent: '₹1,24,500', lastActive: '1d ago', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80', status: 'Active' },
-    { id: '3', name: 'Sarah Chen', handle: '@schen_tech', tier: 'Standard', spent: '₹45,200', lastActive: '3w ago', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80', status: 'Dormant' },
-    { id: '4', name: 'David Omari', handle: '@domari_99', tier: 'Platinum', spent: '₹8,90,000', lastActive: '5m ago', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&q=80', status: 'Active' },
-];
+const IconMap: Record<string, React.ElementType> = {
+    Users, Activity, Briefcase
+};
+
+const MOCK_CUSTOMERS: Customer[] = customerData.MOCK_CUSTOMERS as Customer[];
 
 const CustomerMockUI: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -37,11 +37,14 @@ const CustomerMockUI: React.FC = () => {
                         <Users className="w-6 h-6 text-main" />
                     </div>
                     <nav className="flex flex-col gap-6">
-                        {[Users, Activity, Briefcase].map((Icon, idx) => (
-                            <button key={idx} className={`p-3 rounded-xl transition-all ${idx === 0 ? 'bg-indigo-500/20 text-indigo-400 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]' : 'text-secondary hover:text-main hover:bg-card'}`}>
-                                <Icon className="w-6 h-6" />
-                            </button>
-                        ))}
+                        {customerData.sidebarNav.map((item, idx) => {
+                            const Icon = IconMap[item.iconName];
+                            return (
+                                <button key={idx} className={`p-3 rounded-xl transition-all ${item.active ? 'bg-indigo-500/20 text-indigo-400 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]' : 'text-secondary hover:text-main hover:bg-card'}`}>
+                                    {Icon && <Icon className="w-6 h-6" />}
+                                </button>
+                            );
+                        })}
                     </nav>
                 </aside>
 
@@ -74,7 +77,7 @@ const CustomerMockUI: React.FC = () => {
                         {/* List Section */}
                         <div className="w-1/3 border-r border-default flex flex-col bg-slate-900/10">
                             <div className="p-6 border-b border-default flex justify-between items-center">
-                                <h2 className="text-xs font-black uppercase tracking-widest text-muted">Total Contacts (4,291)</h2>
+                                <h2 className="text-xs font-black uppercase tracking-widest text-muted">Total Contacts ({customerData.totalContacts})</h2>
                                 <button className="text-muted hover:text-main transition-colors">
                                     <Filter className="w-4 h-4" />
                                 </button>
@@ -128,11 +131,7 @@ const CustomerMockUI: React.FC = () => {
 
                             {/* Stats Grid */}
                             <div className="grid grid-cols-3 gap-6 mb-12 relative z-10">
-                                {[
-                                    { label: 'Lifetime Value', value: MOCK_CUSTOMERS[0].spent, sub: 'Top 5% of customers' },
-                                    { label: 'Total Orders', value: '142', sub: 'Last order 2h ago' },
-                                    { label: 'Loyalty Points', value: '12,450', sub: 'Redeemable value ₹1,245' }
-                                ].map((stat, i) => (
+                                {customerData.stats.map((stat, i) => (
                                     <div key={i} className="glass-panel border border-default rounded-2xl p-6 backdrop-blur-sm hover:bg-card/40 transition-colors">
                                         <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-2">{stat.label}</p>
                                         <p className="text-3xl font-black text-main mb-1">{stat.value}</p>
@@ -145,19 +144,19 @@ const CustomerMockUI: React.FC = () => {
                             <div className="relative z-10">
                                 <h3 className="text-sm font-black uppercase tracking-widest text-muted mb-6">Recent Transactions</h3>
                                 <div className="glass-panel border border-default rounded-2xl overflow-hidden backdrop-blur-sm">
-                                    {[1, 2, 3].map((_, i) => (
+                                    {customerData.recentTransactions.map((tx, i) => (
                                         <div key={i} className="flex items-center justify-between p-5 border-b border-default last:border-0 hover:bg-card/40 transition-colors cursor-pointer group">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
                                                     <Briefcase className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-main">Order #ORD-{9932 - i}</p>
-                                                    <p className="text-xs text-secondary mt-0.5">Oct {14 - i}, 2026 • 3 items</p>
+                                                    <p className="text-sm font-bold text-main">Order #{tx.orderId}</p>
+                                                    <p className="text-xs text-secondary mt-0.5">{tx.date} • {tx.items} items</p>
                                                 </div>
                                             </div>
                                             <div className="text-right flex items-center gap-4">
-                                                <span className="text-sm font-mono font-bold text-main">₹{12000 + i * 1500}</span>
+                                                <span className="text-sm font-mono font-bold text-main">{tx.amount}</span>
                                                 <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
                                             </div>
                                         </div>

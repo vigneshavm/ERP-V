@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Save, X, User, Briefcase, DollarSign, Calendar, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import laborAddData from '../../../mockData/laborAddData.json';
 
 const LaborAddMockUI: React.FC = () => {
     const navigate = useNavigate();
@@ -95,10 +96,9 @@ const LaborAddMockUI: React.FC = () => {
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Department</label>
                                     <select className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all appearance-none cursor-pointer">
-                                        <option className="bg-[#0a0a0a]">Engineering</option>
-                                        <option className="bg-[#0a0a0a]">Marketing</option>
-                                        <option className="bg-[#0a0a0a]">Sales</option>
-                                        <option className="bg-[#0a0a0a]">Operations</option>
+                                        {laborAddData.departments.map(dept => (
+                                            <option key={dept} className="bg-[#0a0a0a]">{dept}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="space-y-2">
@@ -167,12 +167,7 @@ const LaborAddMockUI: React.FC = () => {
 
                         <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-4">
                             <div className="text-xs font-bold text-main/40 uppercase tracking-wider">Onboarding Checklist</div>
-                            {[
-                                'Identity Verification',
-                                'Tax Documents Signed',
-                                'Equipment Provisioned',
-                                'System Access Granted'
-                            ].map((item, i) => (
+                            {laborAddData.checklist.map((item, i) => (
                                 <div key={i} className="flex items-center gap-3">
                                     <div className="w-5 h-5 rounded border border-white/10 bg-black/20 flex items-center justify-center cursor-pointer hover:border-purple-500/50 transition-all">
                                         {i === 0 && <div className="w-2.5 h-2.5 bg-purple-500 rounded-sm shadow-[0_0_8px_rgba(168,85,247,0.5)]" />}

@@ -108,6 +108,7 @@ export const MENU_ITEMS: MenuItem[] = [
         path: '/purchase',
         children: [
             { id: 'PURCHASE_REGISTER', label: 'Register', icon: FileText, module: 'PURCHASE', path: '/purchase/register' },
+            { id: 'PURCHASE_REGISTER_MOCK', label: 'Register (Mock)', icon: FileText, module: 'PURCHASE', path: '/purchase/register/mock' },
             { id: 'VENDORS', label: 'Vendors', icon: Users, module: 'PURCHASE', path: '/suppliers' },
             { id: 'PURCHASE_ENTRY', label: 'New Entry', icon: Plus, module: 'PURCHASE', path: '/purchase/new' },
             { id: 'PURCHASE_ORDER', label: 'Orders', icon: ClipboardList, module: 'PURCHASE', path: '/purchase/orders' },

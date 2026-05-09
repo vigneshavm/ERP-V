@@ -1,0 +1,13 @@
+{
+    "lineItems": [
+        { "name": "Standard Subscription", "qty": 1, "rate": "$299.00", "total": "$299.00" },
+        { "name": "Setup Fee", "qty": 1, "rate": "$150.00", "total": "$150.00" }
+    ],
+    "summary": {
+        "subtotal": "$449.00",
+        "taxLabel": "Tax (18%)",
+        "tax": "$80.82",
+        "total": "$529.82"
+    }
+}
+

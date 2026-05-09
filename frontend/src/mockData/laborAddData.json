@@ -1,0 +1,10 @@
+{
+    "checklist": [
+        "Identity Verification",
+        "Tax Documents Signed",
+        "Equipment Provisioned",
+        "System Access Granted"
+    ],
+    "departments": ["Sales", "Marketing", "Sales", "Operations"]
+}
+

@@ -1,15 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Filter, Search, Plus, Download, ChevronRight, Users, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import allowanceManagerData from '../../../mockData/allowanceManagerData.json';
 
-const MOCK_ALLOWANCES = [
-    { id: 'EMP-001', name: 'John Doe', type: 'Housing', dept: 'Engineering', status: 'Approved', amount: '15,000.00' },
-    { id: 'EMP-002', name: 'Jane Smith', type: 'Transport', dept: 'Marketing', status: 'Approved', amount: '8,500.00' },
-    { id: 'EMP-003', name: 'Robert Johnson', type: 'Medical', dept: 'Engineering', status: 'Pending', amount: '12,000.00' },
-    { id: 'EMP-004', name: 'Michael Brown', type: 'Bonus', dept: 'Sales', status: 'Approved', amount: '25,000.00' },
-    { id: 'EMP-005', name: 'Emily Davis', type: 'Housing', dept: 'Operations', status: 'Approved', amount: '15,000.00' },
-    { id: 'EMP-006', name: 'William Wilson', type: 'Internet', dept: 'Engineering', status: 'Rejected', amount: '2,000.00' },
-];
+const MOCK_ALLOWANCES = allowanceManagerData.allowances;
 
 const AllowanceManagerMockUI: React.FC = () => {
     const navigate = useNavigate();

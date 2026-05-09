@@ -1,0 +1,17 @@
+{
+    "metrics": [
+        { "label": "Total Credits", "value": "$12,450" },
+        { "label": "Pending", "value": "5 Records" },
+        { "label": "Utilized", "value": "128 Records" },
+        { "label": "Growth", "value": "+8.2%" }
+    ],
+    "records": [
+        { "id": "#CRD-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$500.00" },
+        { "id": "#CRD-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#CRD-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$750.00" },
+        { "id": "#CRD-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$2,000.00" },
+        { "id": "#CRD-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$350.00" },
+        { "id": "#CRD-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$1,100.00" }
+    ]
+}
+

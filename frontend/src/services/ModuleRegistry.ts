@@ -175,6 +175,7 @@ export const Modules = {
     DailyFinance: () => import("../pages/Expenses/DailyFinance"),
     POSModule: () => import("../pages/Pos/POSModule"),
     Suppliers: () => import("../pages/People/Suppliers/Suppliers"),
+    PurchaseRegisterMockUI: () => import("../pages/Purchase/PurchaseRegisterMockUI"),
 };
 
 /**
@@ -320,6 +321,7 @@ const _lazyAddSupplier = lazy(Modules.VendorForm);
 const _lazySupplierDetail = lazy(Modules.VendorDetails);
 const _lazyPOSModule = lazy(Modules.POSModule);
 const _lazySuppliers = lazy(Modules.Suppliers);
+const _lazyPurchaseRegisterMockUI = lazy(Modules.PurchaseRegisterMockUI);
 
 export const LazyModules = {
     Dashboard: _lazyDashboardMockUI,
@@ -488,6 +490,7 @@ export const LazyModules = {
     DailyFinance: _lazyDailyFinance,
     POSModule: _lazyPOSModule,
     Suppliers: _lazySuppliers,
+    PurchaseRegisterMockUI: _lazyPurchaseRegisterMockUI,
 };
 
 

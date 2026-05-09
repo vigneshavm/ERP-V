@@ -1,0 +1,28 @@
+{
+    "sections": [
+        { "id": "general", "label": "Business Profile", "icon": "Building2", "color": "text-muted", "bg": "bg-slate-500/10", "border": "border-default" },
+        { "id": "users", "label": "Users & Roles", "icon": "User", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" },
+        { "id": "security", "label": "Security", "icon": "Shield", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "id": "notifications", "label": "Notifications", "icon": "Bell", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
+        { "id": "branding", "label": "Themes & Branding", "icon": "Palette", "color": "text-violet-400", "bg": "bg-violet-500/10", "border": "border-violet-500/30" },
+        { "id": "finance", "label": "Financial Year & Tax", "icon": "CreditCard", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/30" },
+        { "id": "integrations", "label": "Integrations", "icon": "Globe", "color": "text-cyan-400", "bg": "bg-cyan-500/10", "border": "border-cyan-500/30" }
+    ],
+    "toggles": [
+        { "label": "Enable GST Billing", "sub": "Applies GST on all invoices", "on": true },
+        { "label": "Multi-Branch Mode", "sub": "Manage multiple store locations", "on": false },
+        { "label": "Low Stock Alerts", "sub": "Notify when stock falls below threshold", "on": true },
+        { "label": "Auto Backup (Cloud)", "sub": "Daily automated data backup", "on": true },
+        { "label": "Customer Loyalty Program", "sub": "Enable loyalty points on purchases", "on": false },
+        { "label": "WhatsApp Notifications", "sub": "Send transactional alerts via WhatsApp", "on": true }
+    ],
+    "businessProfile": [
+        { "label": "Business Name", "val": "Neural Retail Co." },
+        { "label": "GSTIN", "val": "27AABCN1234A1Z5" },
+        { "label": "Business Type", "val": "Retail & Distribution" },
+        { "label": "Financial Year", "val": "April 2026 – March 2027" },
+        { "label": "Primary Currency", "val": "INR (₹)" },
+        { "label": "Time Zone", "val": "Asia/Kolkata (IST +5:30)" }
+    ]
+}
+

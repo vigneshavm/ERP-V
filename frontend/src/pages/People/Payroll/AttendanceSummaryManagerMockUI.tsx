@@ -4,12 +4,13 @@ import {
     FileText, CheckCircle2, AlertTriangle, ArrowUpRight,
     BarChart3
 } from 'lucide-react';
+import attendanceSummaryData from '../../../mockData/attendanceSummaryData.json';
 
-const MOCK_SUMMARIES = [
-    { period: 'April 2026', totalHours: '24,500', overtime: '1,240', accuracy: '99.8%', status: 'Processed' },
-    { period: 'March 2026', totalHours: '23,800', overtime: '980', accuracy: '99.5%', status: 'Finalized' },
-    { period: 'February 2026', totalHours: '22,100', overtime: '1,150', accuracy: '98.9%', status: 'Archived' },
-];
+const IconMap: Record<string, React.ElementType> = {
+    Clock, TrendingUp, Users, CheckCircle2, AlertTriangle
+};
+
+const MOCK_SUMMARIES = attendanceSummaryData.summaries;
 
 const AttendanceSummaryManagerMockUI: React.FC = () => {
     const [selectedPeriod, setSelectedPeriod] = useState('April 2026');
@@ -59,27 +60,25 @@ const AttendanceSummaryManagerMockUI: React.FC = () => {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                    { title: "Monthly Hours", value: "24,500", icon: Clock, color: "text-blue-400", trend: "+4.2%" },
-                    { title: "Overtime (Hrs)", value: "1,240", icon: TrendingUp, color: "text-amber-400", trend: "-1.5%" },
-                    { title: "Active Personnel", value: "142", icon: Users, color: "text-purple-400", trend: "+2" },
-                    { title: "Data Integrity", value: "99.8%", icon: CheckCircle2, color: "text-emerald-400", trend: "Stable" }
-                ].map((kpi, idx) => (
-                    <div key={idx} className="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                            <div className={`p-2 rounded-lg bg-white/5 ${kpi.color}`}>
-                                <kpi.icon className="w-5 h-5" />
+                {attendanceSummaryData.metrics.map((kpi, idx) => {
+                    const Icon = IconMap[kpi.icon];
+                    return (
+                        <div key={idx} className="glass-panel p-5 rounded-xl border border-white/5 flex flex-col justify-between">
+                            <div className="flex justify-between items-start">
+                                <div className={`p-2 rounded-lg bg-white/5 ${kpi.color}`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${kpi.trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                                    {kpi.trend}
+                                </span>
                             </div>
-                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${kpi.trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                                {kpi.trend}
-                            </span>
+                            <div className="mt-4">
+                                <p className="text-[10px] text-main/30 uppercase tracking-widest font-bold">{kpi.title}</p>
+                                <p className="text-2xl font-bold mt-0.5 text-main">{kpi.value}</p>
+                            </div>
                         </div>
-                        <div className="mt-4">
-                            <p className="text-[10px] text-main/30 uppercase tracking-widest font-bold">{kpi.title}</p>
-                            <p className="text-2xl font-bold mt-0.5 text-main">{kpi.value}</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Summary Grid */}
@@ -127,20 +126,18 @@ const AttendanceSummaryManagerMockUI: React.FC = () => {
                     <div>
                         <h2 className="text-sm font-bold uppercase tracking-wider text-main/60 mb-4">Payroll Health</h2>
                         <div className="space-y-4">
-                            <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center gap-4">
-                                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
-                                <div>
-                                    <p className="text-sm font-bold text-main/90">Data Synced</p>
-                                    <p className="text-xs text-main/40">Last sync: 5 mins ago</p>
-                                </div>
-                            </div>
-                            <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-center gap-4">
-                                <AlertTriangle className="w-8 h-8 text-amber-400" />
-                                <div>
-                                    <p className="text-sm font-bold text-main/90">Pending Approvals</p>
-                                    <p className="text-xs text-main/40">12 entries require review</p>
-                                </div>
-                            </div>
+                            {attendanceSummaryData.health.map((item, i) => {
+                                const Icon = IconMap[item.icon];
+                                return (
+                                    <div key={i} className={`p-4 rounded-xl ${item.bg} border ${item.border} flex items-center gap-4`}>
+                                        {Icon && <Icon className={`w-8 h-8 ${item.color}`} />}
+                                        <div>
+                                            <p className="text-sm font-bold text-main/90">{item.title}</p>
+                                            <p className="text-xs text-main/40">{item.sub}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 

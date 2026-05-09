@@ -1,5 +1,6 @@
 import React from 'react';
 import { Save, X, Plus, FileText, ArrowLeft } from 'lucide-react';
+import estimateCreatorData from '../../../mockData/estimateCreatorData.json';
 
 const EstimateCreatorMockUI: React.FC = () => {
     return (
@@ -64,18 +65,14 @@ const EstimateCreatorMockUI: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                        <td className="p-3 text-blue-400 font-medium">Premium Support Plan</td>
-                                        <td className="p-3 text-right">1</td>
-                                        <td className="p-3 text-right">$500.00</td>
-                                        <td className="p-3 text-right font-medium">$500.00</td>
-                                    </tr>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                        <td className="p-3 text-blue-400 font-medium">Cloud Storage (1TB)</td>
-                                        <td className="p-3 text-right">3</td>
-                                        <td className="p-3 text-right">$50.00</td>
-                                        <td className="p-3 text-right font-medium">$150.00</td>
-                                    </tr>
+                                    {estimateCreatorData.lineItems.map((item, idx) => (
+                                        <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                            <td className="p-3 text-blue-400 font-medium">{item.name}</td>
+                                            <td className="p-3 text-right">{item.qty}</td>
+                                            <td className="p-3 text-right">{item.rate}</td>
+                                            <td className="p-3 text-right font-medium">{item.total}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -89,15 +86,15 @@ const EstimateCreatorMockUI: React.FC = () => {
                         <div className="space-y-3 text-sm">
                             <div className="flex justify-between text-main/70">
                                 <span>Subtotal</span>
-                                <span>$650.00</span>
+                                <span>{estimateCreatorData.summary.subtotal}</span>
                             </div>
                             <div className="flex justify-between text-main/70">
-                                <span>Tax (10%)</span>
-                                <span>$65.00</span>
+                                <span>{estimateCreatorData.summary.taxLabel}</span>
+                                <span>{estimateCreatorData.summary.tax}</span>
                             </div>
                             <div className="pt-3 border-t border-white/10 flex justify-between font-bold text-lg mt-4">
                                 <span>Total</span>
-                                <span className="text-emerald-400">$715.00</span>
+                                <span className="text-emerald-400">{estimateCreatorData.summary.total}</span>
                             </div>
                         </div>
                     </div>

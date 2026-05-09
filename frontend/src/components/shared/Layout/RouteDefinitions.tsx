@@ -108,8 +108,23 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/purchase/orders/:id" element={
                 <Suspense fallback={<div>Loading Order Details...</div>}><LazyModules.PurchaseOrdersModule /></Suspense>
             } />
+            <Route path="/purchase/register" element={
+                <Suspense fallback={<div>Loading Register...</div>}><LazyModules.PurchaseRegister /></Suspense>
+            } />
+            <Route path="/purchase/register/mock" element={
+                <Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.PurchaseRegisterMockUI /></Suspense>
+            } />
+            <Route path="/purchase/new" element={
+                <Suspense fallback={<div>Loading Purchase Entry...</div>}><LazyModules.PurchaseEntry /></Suspense>
+            } />
+            <Route path="/purchase/bills" element={
+                <Suspense fallback={<div>Loading Bills...</div>}><LazyModules.Bills /></Suspense>
+            } />
             <Route path="/purchase/bills/new" element={
                 <Suspense fallback={<div>Loading Bill Form...</div>}><LazyModules.BillForm /></Suspense>
+            } />
+            <Route path="/purchase/bills/create" element={
+                <Navigate to="/purchase/bills/new" replace />
             } />
             <Route path="/purchase/bills/new/:grnId" element={
                 <Suspense fallback={<div>Loading Bill Form...</div>}><LazyModules.BillForm /></Suspense>

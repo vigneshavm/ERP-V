@@ -5,14 +5,14 @@ import {
     Building2, MoreHorizontal, Download, ChevronRight
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import supplierLedgerData from '../../../mockData/supplierLedgerData.json';
 
-const MOCK_TRANSACTIONS = [
-    { date: '2026-04-20', type: 'Purchase Bill', ref: 'BILL-4452', desc: 'Raw Materials Batch #401', debit: 45000, credit: 0, balance: 1245000 },
-    { date: '2026-04-18', type: 'Payment Out', ref: 'PAY-8821', desc: 'Electronic Clearing Service', debit: 0, credit: 50000, balance: 1200000 },
-    { date: '2026-04-15', type: 'Purchase Bill', ref: 'BILL-4420', desc: 'Inventory Restock', debit: 82000, credit: 0, balance: 1250000 },
-    { date: '2026-04-10', type: 'Debit Note', ref: 'RET-102', desc: 'Damaged Goods Return', debit: 0, credit: 15000, balance: 1168000 },
-    { date: '2026-04-05', type: 'Payment Out', ref: 'PAY-8805', desc: 'Advance Payment', debit: 0, credit: 100000, balance: 1183000 },
-];
+const IconMap: Record<string, React.ElementType> = {
+    Book, ArrowUpRight, ArrowDownLeft
+};
+
+const MOCK_TRANSACTIONS = supplierLedgerData.MOCK_TRANSACTIONS;
+const PERIOD_RANGE = supplierLedgerData.periodRange;
 
 const SupplierLedgerMockUI: React.FC = () => {
     const navigate = useNavigate();
@@ -49,24 +49,23 @@ const SupplierLedgerMockUI: React.FC = () => {
 
             {/* Summary Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                    { label: 'Opening Balance', val: '₹11,83,000', sub: 'As of Apr 01, 2026', icon: Book, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                    { label: 'Total Purchases', val: '₹1,27,000', sub: '2 Bills this month', icon: ArrowUpRight, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-                    { label: 'Total Payments', val: '₹65,000', sub: '1 Payment settled', icon: ArrowDownLeft, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                ].map((card, i) => (
-                    <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col gap-3 group hover:bg-white/[0.04] transition-all cursor-pointer">
-                        <div className="flex justify-between items-start">
-                            <div className={`p-2.5 rounded-xl ${card.bg} ${card.color}`}>
-                                <card.icon className="w-5 h-5" />
+                {supplierLedgerData.summary.map((card, i) => {
+                    const Icon = IconMap[card.iconName];
+                    return (
+                        <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col gap-3 group hover:bg-white/[0.04] transition-all cursor-pointer">
+                            <div className="flex justify-between items-start">
+                                <div className={`p-2.5 rounded-xl ${card.bg} ${card.color}`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <span className="text-[10px] font-bold text-main/20 group-hover:text-main/40 uppercase tracking-widest">{card.sub}</span>
                             </div>
-                            <span className="text-[10px] font-bold text-main/20 group-hover:text-main/40 uppercase tracking-widest">{card.sub}</span>
+                            <div>
+                                <p className="text-[10px] font-black text-main/40 uppercase tracking-widest">{card.label}</p>
+                                <p className="text-xl font-black tracking-tight text-main">{card.val}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[10px] font-black text-main/40 uppercase tracking-widest">{card.label}</p>
-                            <p className="text-xl font-black tracking-tight text-main">{card.val}</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Ledger Table */}
@@ -78,7 +77,7 @@ const SupplierLedgerMockUI: React.FC = () => {
                             <input 
                                 type="text" 
                                 readOnly
-                                value="Apr 01, 2026 - Apr 30, 2026"
+                                value={PERIOD_RANGE}
                                 className="w-64 bg-black/40 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-xs font-bold transition-all text-main cursor-default" 
                             />
                         </div>
@@ -88,7 +87,7 @@ const SupplierLedgerMockUI: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-main/40">Closing Balance:</span>
-                        <span className="px-3 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 rounded-lg text-sm font-black tracking-tight">₹12,45,000 Dr</span>
+                        <span className="px-3 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 rounded-lg text-sm font-black tracking-tight">{supplierLedgerData.closingBalance}</span>
                     </div>
                 </div>
 

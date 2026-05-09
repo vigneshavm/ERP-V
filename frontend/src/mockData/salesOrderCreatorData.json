@@ -1,0 +1,13 @@
+{
+    "lineItems": [
+        { "name": "Bulk Office Furniture Set", "qty": 1, "rate": "$4,500.00", "total": "$4,500.00" },
+        { "name": "Ergonomic Chairs", "qty": 10, "rate": "$250.00", "total": "$2,500.00" }
+    ],
+    "summary": {
+        "subtotal": "$7,000.00",
+        "taxLabel": "Shipping & Handling",
+        "tax": "$250.00",
+        "total": "$7,250.00"
+    }
+}
+

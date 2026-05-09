@@ -1,8 +1,9 @@
 {
     "purchaseOrders": [
         { "po": "PO-2026-0042", "supplier": "Global Raw Materials Inc.", "date": "Oct 15, 2026", "value": "45,20,000", "state": "In Transit", "progress": 0, "color": "cyan" },
-        { "po": "PO-2026-0041", "supplier": "TechComponents Asia", "date": "Oct 12, 2026", "value": "12,85,500", "state": "Partial Receipt", "progress": 65, "color": "indigo" },
+        { "po": "PO-2026-0041", "supplier": "TextileGarments Asia", "date": "Oct 12, 2026", "value": "12,85,500", "state": "Partial Receipt", "progress": 65, "color": "indigo" },
         { "po": "PO-2026-0040", "supplier": "Omega Industrial Supply", "date": "Oct 10, 2026", "value": "8,40,000", "state": "Pending QC", "progress": 100, "color": "amber" },
-        { "po": "PO-2026-0039", "supplier": "Starlight Medical", "date": "Oct 05, 2026", "value": "3,15,000", "state": "Completed", "progress": 100, "color": "emerald" }
+        { "po": "PO-2026-0039", "supplier": "Starlight Ethnic", "date": "Oct 05, 2026", "value": "3,15,000", "state": "Completed", "progress": 100, "color": "emerald" }
     ]
 }
+

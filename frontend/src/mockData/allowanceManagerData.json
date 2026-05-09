@@ -1,0 +1,10 @@
+{
+    "allowances": [
+        { "id": "EMP-001", "name": "Arjun Mehta", "type": "Housing", "dept": "Sales", "status": "Approved", "amount": "8,000.00" },
+        { "id": "EMP-002", "name": "Priya Sharma", "type": "Transport", "dept": "Showroom", "status": "Approved", "amount": "3,500.00" },
+        { "id": "EMP-003", "name": "Rohit Verma", "type": "Uniform", "dept": "Tailoring", "status": "Pending", "amount": "2,000.00" },
+        { "id": "EMP-004", "name": "Sneha Iyer", "type": "Festival Bonus", "dept": "Billing", "status": "Approved", "amount": "15,000.00" },
+        { "id": "EMP-005", "name": "Kiran Das", "type": "Overtime", "dept": "Logistics", "status": "Approved", "amount": "5,000.00" }
+    ]
+}
+

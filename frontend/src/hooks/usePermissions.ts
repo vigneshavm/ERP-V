@@ -68,11 +68,26 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'PURCHASE_REGISTER': 'PURCHASE',
     'PURCHASE_ENTRY': 'PURCHASE',
     'PURCHASE_ORDER': 'PURCHASE',
+    'PURCHASE_ORDER_LIST': 'PURCHASE',
+    'PURCHASE_ORDER_FORM': 'PURCHASE',
+    'PURCHASE_ORDER_DETAILS': 'PURCHASE',
     'GOODS_RECEIVED': 'PURCHASE',
+    'GRN_FORM': 'PURCHASE',
+    'PURCHASE_BILLS': 'PURCHASE',
+    'BILL_FORM': 'PURCHASE',
+    'PURCHASE_PAYMENT_OUT': 'PURCHASE',
+    'PURCHASE_HISTORY': 'PURCHASE',
+    'PURCHASE_RETURN': 'PURCHASE',
+    'PURCHASE_RETURNS': 'PURCHASE',
+    'PURCHASE_RETURN_FORM': 'PURCHASE',
+    'PURCHASE_UPLOAD': 'PURCHASE',
     'DEBIT_NOTES': 'PURCHASE',
     'SUPPLIER_PAYMENTS': 'PURCHASE',
     'OUTSTANDING_PAYABLES': 'PURCHASE',
     'VENDOR_INFLOW_OUTFLOW': 'PURCHASE',
+    'SUPPLIER_AGEING': 'PURCHASE',
+    'RATE_REVISIONS': 'PURCHASE',
+    'CHEQUES_VAULT': 'PURCHASE',
 
     // FINANCE
     'FINANCE': 'FINANCE',
@@ -215,12 +230,10 @@ export const usePermissions = () => {
         // API returns 'role', but types might expect 'systemRole'. Fallback to 'role'.
         let roleCodeRaw = (user.systemRole || user.role || 'staff').toLowerCase();
 
-        console.log('UsePermissions Debug:', {
-            view,
-            userRole: user.role,
-            roleCodeRaw,
-            hasPermission: rolePermissions[roleCodeRaw as DbRoleCode]?.includes(view)
-        });
+        // Handle Co-Owner hyphen mismatch
+        if (roleCodeRaw === 'coowner') {
+            roleCodeRaw = 'co-owner';
+        }
 
         // Manual Override for specific user request
         if (user.email === 'avmvignesh0207@gmail.com') {
@@ -229,6 +242,13 @@ export const usePermissions = () => {
 
         const effectiveRoleCode = roleCodeRaw as DbRoleCode;
         const allowedViews = rolePermissions[effectiveRoleCode] || [];
+
+        // Debug log for production-grade troubleshooting
+        console.log('Permission Resolver:', {
+            target: view,
+            activeRole: effectiveRoleCode,
+            isGranted: allowedViews.includes(view)
+        });
 
         if (!allowedViews.includes(view)) return false;
 

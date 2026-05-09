@@ -1,0 +1,17 @@
+{
+    "periodRange": "Apr 01, 2026 - Apr 30, 2026",
+    "MOCK_TRANSACTIONS": [
+        { "date": "2026-04-20", "type": "Purchase Bill", "ref": "BILL-4452", "desc": "Raw Materials Batch #401", "debit": 45000, "credit": 0, "balance": 1245000 },
+        { "date": "2026-04-18", "type": "Payment Out", "ref": "PAY-8821", "desc": "Electronic Clearing Service", "debit": 0, "credit": 50000, "balance": 1200000 },
+        { "date": "2026-04-15", "type": "Purchase Bill", "ref": "BILL-4420", "desc": "Inventory Restock", "debit": 82000, "credit": 0, "balance": 1250000 },
+        { "date": "2026-04-10", "type": "Debit Note", "ref": "RET-102", "desc": "Damaged Goods Return", "debit": 0, "credit": 15000, "balance": 1168000 },
+        { "date": "2026-04-05", "type": "Payment Out", "ref": "PAY-8805", "desc": "Advance Payment", "debit": 0, "credit": 100000, "balance": 1183000 }
+    ],
+    "summary": [
+        { "label": "Opening Balance", "val": "₹11,83,000", "sub": "As of Apr 01, 2026", "iconName": "Book", "color": "text-blue-400", "bg": "bg-blue-500/10" },
+        { "label": "Total Purchases", "val": "₹1,27,000", "sub": "2 Bills this month", "iconName": "ArrowUpRight", "color": "text-pink-400", "bg": "bg-pink-500/10" },
+        { "label": "Total Payments", "val": "₹65,000", "sub": "1 Payment settled", "iconName": "ArrowDownLeft", "color": "text-emerald-400", "bg": "bg-emerald-500/10" }
+    ],
+    "closingBalance": "₹12,45,000 Dr"
+}
+

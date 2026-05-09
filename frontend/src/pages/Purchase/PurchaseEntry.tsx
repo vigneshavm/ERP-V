@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Save, Printer, FileText, Search, Plus, Trash2,
     Calendar, User, Truck, CreditCard, Loader2, ShoppingBag,
-    Paperclip, FileCheck, ClipboardList, Info
+    Paperclip, FileCheck, ClipboardList, Info, Upload, FileUp, X, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { RootState } from "../../redux/store";
 import { getAllSuppliers } from "../../redux/slices/supplierSlice";
+import { getAllItems } from "../../redux/slices/inventorySlice";
 import { useNavigate } from 'react-router-dom';
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import api from "../../services/api";
@@ -16,6 +17,7 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import inventoryData from '../../mockData/inventoryData.json';
 
 interface Supplier {
     _id: string;
@@ -74,6 +76,7 @@ interface PurchaseItem {
 
 const PurchaseEntry: React.FC = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch<any>();
     const { user } = useSelector((state: RootState) => state.auth);
     const tenantId = user?.tenantId;
     const branchId = user?.branchId; // Default to user branch
@@ -90,6 +93,8 @@ const PurchaseEntry: React.FC = () => {
     // Items Hook
     const { items, setItems, removeItem, totals } = usePurchaseItems([]);
     const [activeSearchRow, setActiveSearchRow] = useState<number | null>(null);
+    const [dropdownHighlightIndex, setDropdownHighlightIndex] = useState<number>(-1);
+    const [searchCategoryFilter, setSearchCategoryFilter] = useState<string | null>(null);
     const { items: products } = useSelector((state: RootState) => state.inventory);
 
     const [shippingAmount, setShippingAmount] = useState(0);
@@ -106,6 +111,14 @@ const PurchaseEntry: React.FC = () => {
 
     const [showDesignSetModal, setShowDesignSetModal] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
+
+    // PDF Import State
+    const [showPdfPanel, setShowPdfPanel] = useState(false);
+    const [isPdfParsing, setIsPdfParsing] = useState(false);
+    const [pdfFileName, setPdfFileName] = useState('');
+    const [pdfExtractedText, setPdfExtractedText] = useState('');
+    const [pdfParseResult, setPdfParseResult] = useState<{ items: any[], raw: string } | null>(null);
+    const pdfInputRef = useRef<HTMLInputElement>(null);
 
     // Design Set Temp State
     const [designSet, setDesignSet] = useState({
@@ -136,14 +149,37 @@ const PurchaseEntry: React.FC = () => {
         };
         fetchProfile();
 
+        // Fetch products if empty
+        if (products.length === 0) {
+            dispatch(getAllItems() as any);
+        }
+
+        // Close dropdown on click outside
+        const handleClickOutside = () => {
+            setActiveSearchRow(null);
+            setSearchCategoryFilter(null);
+        };
+        window.addEventListener('mousedown', handleClickOutside);
+        return () => window.removeEventListener('mousedown', handleClickOutside);
+    }, [dispatch, products.length]);
+
+    useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const { data } = await api.get('/api/inventory/categories');
                 // The API returns { success: true, data: [...] }
                 const list = data.data || data;
-                setCategories(Array.isArray(list) ? list : []);
+                let parsedList = Array.isArray(list) ? list : [];
+                
+                // Fallback to mock data if API returns empty
+                if (parsedList.length === 0) {
+                    parsedList = inventoryData.MOCK_CATEGORIES;
+                }
+                
+                setCategories(parsedList);
             } catch (err) {
                 console.error("Failed to fetch categories", err);
+                setCategories(inventoryData.MOCK_CATEGORIES as Category[]);
             }
         };
         fetchCategories();
@@ -158,7 +194,6 @@ const PurchaseEntry: React.FC = () => {
 
     // Fetch Suppliers
     // Fetch Suppliers via Redux to ensure consistency
-    const dispatch = useDispatch<any>();
     const { suppliers: reduxSuppliers } = useSelector((state: RootState) => state.suppliers);
 
     useEffect(() => {
@@ -192,6 +227,208 @@ const PurchaseEntry: React.FC = () => {
             margin: 0,
             sellingPrice: 0
         }]);
+    };
+
+    // Load pdfjs UMD via <script> tag — sets window.pdfjsLib global (correct for UMD bundles)
+    const loadPdfJs = (): Promise<any> => {
+        return new Promise((resolve, reject) => {
+            const PDFJS_VERSION = '3.11.174';
+            const src = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.min.js`;
+
+            // Already loaded — reuse global
+            if ((window as any).pdfjsLib) {
+                resolve((window as any).pdfjsLib);
+                return;
+            }
+
+            // Already injected but not yet loaded
+            const existing = document.querySelector(`script[src="${src}"]`);
+            if (existing) {
+                existing.addEventListener('load', () => resolve((window as any).pdfjsLib));
+                existing.addEventListener('error', reject);
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => resolve((window as any).pdfjsLib);
+            script.onerror = () => reject(new Error('Failed to load pdfjs-dist from CDN'));
+            document.head.appendChild(script);
+        });
+    };
+
+    // PDF Upload & Parse Logic
+    const parsePdfItems = async (file: File) => {
+        setIsPdfParsing(true);
+        setPdfFileName(file.name);
+        setPdfParseResult(null);
+        try {
+            const PDFJS_VERSION = '3.11.174';
+            const pdfjs = await loadPdfJs();
+            pdfjs.GlobalWorkerOptions.workerSrc =
+                `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
+            console.log('[PDF] pdfjs loaded, version:', pdfjs.version);
+
+            const arrayBuffer = await file.arrayBuffer();
+            console.log('[PDF] ArrayBuffer size:', arrayBuffer.byteLength);
+            const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+            console.log('[PDF] Loaded. Pages:', pdf.numPages);
+
+            let fullText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+
+                // Group text fragments by Y-position into line buckets.
+                // PDF Y-coordinates increase bottom→top, so we sort Y descending
+                // to read top→bottom. Items in same bucket are sorted left→right by X.
+                const lineMap = new Map<number, Array<{ x: number; str: string }>>();
+
+                for (const item of content.items as any[]) {
+                    const str = ((item as any).str ?? '').trim();
+                    if (!str) continue;
+                    const transform = (item as any).transform;
+                    const rawY = transform ? transform[5] : 0;
+                    const x    = transform ? transform[4] : 0;
+                    // Bucket Y into 3pt slots to merge items on the same visual line
+                    const bucketY = Math.round(rawY / 3) * 3;
+
+                    if (!lineMap.has(bucketY)) lineMap.set(bucketY, []);
+                    lineMap.get(bucketY)!.push({ x, str });
+                }
+
+                // Sort buckets top→bottom (higher Y = higher on page → descending)
+                const sortedYs = Array.from(lineMap.keys()).sort((a, b) => b - a);
+                const pageLines: string[] = [];
+
+                for (const y of sortedYs) {
+                    const frags = lineMap.get(y)!.sort((a, b) => a.x - b.x);
+                    const line  = frags.map(f => f.str).join(' ').trim();
+                    if (line) pageLines.push(line);
+                }
+
+                fullText += pageLines.join('\n') + '\n';
+                if (i === 1) console.log('[PDF] Page 1 lines (first 20):', pageLines.slice(0, 20));
+            }
+
+            console.log('[PDF] Extracted text length:', fullText.length);
+            console.log('[PDF] First 500 chars:', fullText.substring(0, 500));
+
+            setPdfExtractedText(fullText);
+
+
+            // ─── Token-based item parser ───
+            // Handles any column order (Indian GST invoices vary widely in layout).
+            // For each line: extract all numbers → clean text name → infer qty+rate.
+
+            const SKIP_LINE = /^(total|sub.?total|grand|tax|gst|igst|cgst|sgst|cess|discount|freight|shipping|invoice|date|gstin|hsn|sac|description|amount|rate|qty|quantity|buyer|seller|address|state|code|email|ph |phone|bill to|ship|balance|advance|due|terms|bank|account|ifsc|eway|way.bill|s\.?\s*no|sl\.?\s*no|sr\.?\s*no|particular|goods|narration|we |thank|cheque|upi|neft|rtgs|pan|cin|subject|authoris|signator|original|duplicate|certified|rupees|rs\.)/i;
+
+            const lines = fullText.split(/[\n\r]+/).filter(l => l.trim().length > 3);
+            const parsedItems: any[] = [];
+
+            for (const line of lines) {
+                const clean = line.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+                if (!clean) continue;
+
+                // Extract all numeric values (support Indian comma format: 10,032.00)
+                const numTokens = clean.match(/\d+(?:,\d{2,3})*(?:\.\d+)?/g) || [];
+                const nums = numTokens.map(n => parseFloat(n.replace(/,/g, '')));
+                if (nums.length === 0) continue;
+
+                // Build clean item name: remove numbers, units, ₹ signs
+                const nameRaw = clean
+                    .replace(/\d+(?:,\d{2,3})*(?:\.\d+)?/g, '')
+                    .replace(/\b(nos?|pcs?|kgs?|gms?|mtrs?|mts?|units?|box|bxs?|ltrs?|sets?|pair|pkt|packets?)\b/gi, '')
+                    .replace(/[₹$%@#^&*()_+=\[\]{};':"\\|<>/?]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                if (nameRaw.length < 3) continue;
+                if (SKIP_LINE.test(nameRaw)) continue;
+                // Skip lines that are mostly numbers (< 4 alpha chars)
+                if ((nameRaw.match(/[a-zA-Z]/g) || []).length < 4) continue;
+
+                // ─── Infer qty and rate ───
+                let qty = 1;
+                let rate = 0;
+
+                if (nums.length === 1) {
+                    rate = nums[0];
+                } else {
+                    // Smallest integer ≤ 1000 is the best qty candidate
+                    const intCandidates = nums.filter(n => Number.isInteger(n) && n >= 1 && n <= 1000);
+                    const qtyGuess = intCandidates.length > 0 ? Math.min(...intCandidates) : null;
+
+                    if (qtyGuess) {
+                        qty = qtyGuess;
+                        // Find rate: n where n*qty ≈ another number (the total), 2% tolerance
+                        const others = nums.filter(n => n !== qty);
+                        let found = false;
+                        for (const n of others) {
+                            const expectedTotal = n * qty;
+                            if (others.some(t => t !== n && Math.abs(t - expectedTotal) / (t || 1) < 0.02)) {
+                                rate = n;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            // No qty×rate=total match → use second-smallest as rate
+                            const sorted = [...others].sort((a, b) => a - b);
+                            rate = sorted[0] ?? nums[0];
+                        }
+                    } else {
+                        // No integer ≤ 1000 → qty=1, rate = second-largest (largest is total)
+                        const sorted = [...nums].sort((a, b) => b - a);
+                        rate = sorted.length > 1 ? sorted[1] : sorted[0];
+                    }
+                }
+
+                if (rate <= 0) continue;
+
+                parsedItems.push({
+                    id: Math.random().toString(36).substr(2, 9),
+                    product_id: '',
+                    product_name: nameRaw,
+                    sku: '',
+                    quantity: qty,
+                    rate: Math.round(rate * 100) / 100,
+                    tax_percent: 0,
+                    discount_amount: 0,
+                    line_total: Math.round(qty * rate * 100) / 100,
+                    margin: 0,
+                    sellingPrice: 0
+                });
+            }
+
+
+            console.log('[PDF] Full extracted text length:', fullText.length);
+            setPdfParseResult({ items: parsedItems, raw: fullText });
+            toast.success(`PDF parsed: found ${parsedItems.length} potential items`);
+        } catch (err: any) {
+            console.error('[PDF] Parse error:', err?.message || err, err);
+            if (err?.message?.includes('worker')) {
+                toast.error('PDF worker failed to load. Check your network connection.');
+            } else if (err?.message?.includes('Invalid PDF')) {
+                toast.error('Invalid or corrupted PDF file.');
+            } else {
+                toast.error('Could not parse PDF. Try a text-based (digital) PDF, not a scanned image.');
+            }
+        } finally {
+            setIsPdfParsing(false);
+        }
+    };
+
+    const applyPdfItems = () => {
+        if (!pdfParseResult || pdfParseResult.items.length === 0) return;
+        setItems(prev => {
+            const existingWithData = prev.filter(i => i.product_name);
+            return [...existingWithData, ...pdfParseResult.items];
+        });
+        setPdfParseResult(null);
+        setPdfFileName('');
+        setShowPdfPanel(false);
+        toast.success('Items imported from PDF!');
     };
 
     // Expand Design Set
@@ -289,53 +526,67 @@ const PurchaseEntry: React.FC = () => {
         }
     }, []);
 
-    const handleProductSelect = (index: number, product: Product) => {
-        const newItems = [...items];
-        const item = newItems[index];
+    const handleCategorySelect = (index: number, cat: Category) => {
+        setItems((prevItems: PurchaseItem[]) => {
+            const newItems = [...prevItems];
+            const item = { ...newItems[index] };
 
-        item.productId = product.id;
-        item.productName = product.name;
-        item.sku = product.sku;
-        item.unitId = product.unit || 'Piece';
-        item.rate = product.cost || 0;
-        item.taxPercent = product.gstPercentage || 0;
-
-        const basic = item.quantity * item.rate;
-        item.taxAmount = (basic * item.taxPercent) / 100;
-        item.amount = basic + item.taxAmount;
-
-        newItems[index] = item;
-        setItems(newItems);
+            // We are adding a new product, so no product_id
+            item.product_id = '';
+            item.productId = '';
+            item.category_name = cat.name;
+            item.category_code = cat.shortCode || '';
+            
+            // Auto-fill product name if left blank
+            if (!item.product_name || item.product_name.trim() === '') {
+                item.product_name = cat.name;
+                item.productName = cat.name;
+            }
+            
+            newItems[index] = item;
+            return newItems;
+        });
         setActiveSearchRow(null);
     };
 
     // Handle Item Change
     const updateItem = (index: number, field: keyof PurchaseItem, value: PurchaseItem[keyof PurchaseItem]) => {
-        const newItems = [...items];
-        const item = { ...newItems[index], [field]: value };
+        setItems((prevItems: PurchaseItem[]) => {
+            const newItems = [...prevItems];
+            const item = { ...newItems[index], [field]: value };
 
-        if (field === 'productName' && item.productId) {
-            item.productId = '';
-        }
+            // Keep legacy camelCase and snake_case fields in sync
+            if (field === 'productName' || field === 'product_name') {
+                item.productName = value as string;
+                item.product_name = value as string;
+                if (item.productId || item.product_id) {
+                    item.productId = '';
+                    item.product_id = '';
+                }
+            }
+            
+            if (field === 'taxPercent' || field === 'tax_percent') {
+                item.taxPercent = value as number;
+                item.tax_percent = value as number;
+            }
 
-        // Recalculate
-        if (field === 'quantity' || field === 'rate' || field === 'taxPercent') {
-            const basic = item.quantity * item.rate;
-            item.taxAmount = (basic * item.taxPercent) / 100;
-            item.amount = basic + item.taxAmount;
-        }
+            // Recalculate
+            if (field === 'quantity' || field === 'rate' || field === 'taxPercent' || field === 'tax_percent') {
+                const basic = item.quantity * item.rate;
+                item.taxAmount = (basic * (item.taxPercent || 0)) / 100;
+                item.amount = basic + (item.taxAmount || 0);
+                item.line_total = item.amount;
+            }
 
-        newItems[index] = item;
-        setItems(newItems);
+            newItems[index] = item;
+            return newItems;
+        });
     };
 
-    const getFilteredProducts = (query: string) => {
-        if (!query || query.length < 2) return [];
-        const lower = query.toLowerCase();
-        return (products as Product[]).filter(p =>
-            p.name.toLowerCase().includes(lower) ||
-            (p.sku && p.sku.toLowerCase().includes(lower))
-        ).slice(0, 50);
+    const getFilteredCategories = (query: string) => {
+        const lower = (query || '').toLowerCase().trim();
+        if (!lower) return categories;
+        return categories.filter(c => c.name.toLowerCase().includes(lower));
     };
 
     const generatePDF = (orderData: any) => {
@@ -410,12 +661,26 @@ const PurchaseEntry: React.FC = () => {
     };
 
     const handleSave = async (status: 'DRAFT' | 'COMPLETED', overrideOptions: any = {}) => {
-        if (!supplierId) return alert('Please select a supplier');
-        const hasItems = items.filter((i: any) => i.product_id || i.product_name).length > 0;
+        console.log("=== VALIDATION CHECK ===");
+        console.log("Supplier ID:", supplierId);
+        console.log("Items Array:", items);
+        
+        if (!supplierId) return toast.error('Please select a supplier from the list first.');
+        
+        // Strengthened check to ensure we catch both naming conventions and avoid whitespace bypass
+        const validItems = items.filter((i: any) => 
+            (i.product_id && i.product_id.trim() !== '') || 
+            (i.product_name && i.product_name.trim() !== '') || 
+            (i.productName && i.productName.trim() !== '')
+        );
+        
+        console.log("Valid Items Count:", validItems.length);
+        const hasItems = validItems.length > 0;
         const hasManualTotal = manualTotalAmount !== '' && Number(manualTotalAmount) > 0;
 
         if (!hasItems && !hasManualTotal) {
-            return alert('Please add at least one item or enter a total purchase amount.');
+            console.warn("Validation failed: No valid items and no manual total.");
+            return toast.error('Please add at least one item with a valid Product Name, or enter a manual total purchase amount.');
         }
 
         setIsProcessing(true);
@@ -457,6 +722,8 @@ const PurchaseEntry: React.FC = () => {
                 attachments: attachments.map(a => a.name),
                 ...overrideOptions
             };
+
+            console.log("=== PURCHASE API PAYLOAD ===", JSON.stringify(payload, null, 2));
 
             const { data } = await api.post('/api/purchases', payload);
 
@@ -553,7 +820,7 @@ const PurchaseEntry: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10" onClick={() => setActiveSearchRow(null)}>
+            <div className="space-y-6 animate-fade-in pb-10" onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); handleSave('COMPLETED'); } }}>
 
 
 
@@ -963,7 +1230,27 @@ const PurchaseEntry: React.FC = () => {
                 {/* Items Table */}
                 <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                     <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-800/50">
-                        <h3 className="font-bold text-neutral-700 dark:text-neutral-300">Items List</h3>
+                        <div className="flex items-center gap-3">
+                            <h3 className="font-bold text-neutral-700 dark:text-neutral-300">Items List</h3>
+                            <div className="flex bg-neutral-100 dark:bg-neutral-900 p-0.5 rounded-lg">
+                                <button
+                                    onClick={() => setShowPdfPanel(false)}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                                        !showPdfPanel ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-400 hover:text-neutral-600'
+                                    }`}
+                                >
+                                    Manual Entry
+                                </button>
+                                <button
+                                    onClick={() => setShowPdfPanel(true)}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-all flex items-center gap-1 ${
+                                        showPdfPanel ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-400 hover:text-neutral-600'
+                                    }`}
+                                >
+                                    <FileUp className="w-3 h-3" /> PDF Import
+                                </button>
+                            </div>
+                        </div>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowDesignSetModal(true)}
@@ -979,6 +1266,79 @@ const PurchaseEntry: React.FC = () => {
                             </button>
                         </div>
                     </div>
+
+                    {/* PDF Import Panel */}
+                    {showPdfPanel && (
+                        <div className="border-b border-neutral-100 dark:border-neutral-700 p-6 bg-gradient-to-br from-indigo-50/50 to-violet-50/50 dark:from-indigo-950/20 dark:to-violet-950/20 animate-in slide-in-from-top-2 duration-300">
+                            <div className="flex items-start gap-6">
+                                {/* Drop Zone */}
+                                <label
+                                    className="flex-shrink-0 w-56 h-36 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-indigo-300 dark:border-indigo-700 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all group"
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        const file = e.dataTransfer.files[0];
+                                        if (file && file.type === 'application/pdf') parsePdfItems(file);
+                                        else toast.error('Please drop a PDF file');
+                                    }}
+                                >
+                                    <input
+                                        ref={pdfInputRef}
+                                        type="file"
+                                        accept=".pdf"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) parsePdfItems(file);
+                                        }}
+                                    />
+                                    {isPdfParsing ? (
+                                        <><Loader2 className="w-8 h-8 text-indigo-500 animate-spin" /><span className="text-xs font-bold text-indigo-500">Parsing PDF...</span></>
+                                    ) : pdfFileName ? (
+                                        <><CheckCircle2 className="w-8 h-8 text-emerald-500" /><span className="text-xs font-bold text-emerald-600 text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
+                                    ) : (
+                                        <><Upload className="w-8 h-8 text-indigo-400 group-hover:text-indigo-600 transition-colors" /><span className="text-xs font-bold text-indigo-400 group-hover:text-indigo-600">Drop PDF here</span><span className="text-[10px] text-neutral-400">or click to browse</span></>
+                                    )}
+                                </label>
+
+                                {/* Parse Results */}
+                                <div className="flex-1">
+                                    {!pdfParseResult && !isPdfParsing && (
+                                        <div className="h-36 flex flex-col justify-center">
+                                            <h4 className="font-bold text-neutral-700 dark:text-neutral-300 text-sm mb-1 flex items-center gap-2"><FileUp className="w-4 h-4 text-indigo-500" /> PDF Items Import</h4>
+                                            <p className="text-xs text-neutral-500 leading-relaxed">Upload a supplier <strong>invoice or packing list</strong> PDF. The system will automatically extract item names, quantities, and rates into the items table.</p>
+                                            <p className="text-[10px] text-neutral-400 mt-2 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Works best with text-based PDFs. Scanned images are not supported.</p>
+                                        </div>
+                                    )}
+                                    {pdfParseResult && (
+                                        <div className="h-36 flex flex-col">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
+                                                    Found <span className="text-indigo-600">{pdfParseResult.items.length}</span> items in PDF
+                                                </span>
+                                                <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-neutral-400 hover:text-red-500 flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
+                                            </div>
+                                            <div className="flex-1 overflow-y-auto space-y-1 pr-1">
+                                                {pdfParseResult.items.map((item, i) => (
+                                                    <div key={i} className="flex items-center gap-3 bg-white dark:bg-neutral-800 rounded-lg px-3 py-1.5 border border-neutral-100 dark:border-neutral-700 text-xs">
+                                                        <span className="flex-1 font-medium text-neutral-700 dark:text-neutral-300 truncate">{item.product_name}</span>
+                                                        <span className="text-neutral-400">Qty: <strong>{item.quantity}</strong></span>
+                                                        <span className="text-neutral-400">₹<strong>{item.rate}</strong></span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button
+                                                onClick={applyPdfItems}
+                                                className="mt-3 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                                            >
+                                                <CheckCircle2 className="w-4 h-4" /> Import {pdfParseResult.items.length} Items into Table
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div className="overflow-x-auto min-h-[300px]">
                         <table className="w-full text-left text-sm">
                             <thead>
@@ -995,49 +1355,86 @@ const PurchaseEntry: React.FC = () => {
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
                                 {items.map((item, idx) => (
-                                    <tr key={item.id || idx} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
+                                    <tr key={item.id || idx} className={`group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors ${activeSearchRow === idx ? 'relative z-50' : ''}`}>
                                         <td className="px-6 py-4 text-neutral-400 font-medium">{idx + 1}</td>
-                                        <td className="px-6 py-4 relative">
+                                        <td className={`px-6 py-4 relative ${activeSearchRow === idx ? 'z-50' : ''}`}>
                                             <input
                                                 type="text"
                                                 placeholder="Search item..."
                                                 value={item.product_name}
-                                                onFocus={() => setActiveSearchRow(idx)}
+                                                onFocus={() => { setActiveSearchRow(idx); setDropdownHighlightIndex(-1); }}
                                                 onChange={e => {
                                                     updateItem(idx, 'product_name', e.target.value);
                                                     setActiveSearchRow(idx);
+                                                    setDropdownHighlightIndex(-1);
+                                                }}
+                                                onKeyDown={e => {
+                                                    if (activeSearchRow === idx && categories.length > 0) {
+                                                        if (e.key === 'ArrowDown') {
+                                                            e.preventDefault();
+                                                            setDropdownHighlightIndex(prev => Math.min(prev + 1, categories.length - 1));
+                                                        } else if (e.key === 'ArrowUp') {
+                                                            e.preventDefault();
+                                                            setDropdownHighlightIndex(prev => Math.max(prev - 1, 0));
+                                                        } else if (e.key === 'Enter' && dropdownHighlightIndex >= 0) {
+                                                            e.preventDefault();
+                                                            handleCategorySelect(idx, categories[dropdownHighlightIndex]);
+                                                        }
+                                                    }
                                                 }}
                                                 className="w-full bg-transparent border-none outline-none font-medium placeholder:text-neutral-300 focus:placeholder:text-neutral-400 text-neutral-900 dark:text-neutral-100"
                                             />
                                             <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
-                                                {item.sku && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded">SKU: {item.sku}</span>}
-                                                {item.color && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded">{item.color}</span>}
-                                                {item.size && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded">{item.size}</span>}
+                                                {item.category_name && (
+                                                    <span className="bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 px-1.5 py-0.5 rounded border border-violet-200 dark:border-violet-800">
+                                                        {item.category_name}
+                                                    </span>
+                                                )}
+                                                {item.sku && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">SKU: {item.sku}</span>}
+                                                {item.color && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{item.color}</span>}
+                                                {item.size && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{item.size}</span>}
                                             </div>
 
-                                            {/* Product Search Dropdown */}
-                                            {activeSearchRow === idx && item.product_name && !item.product_id && (
-                                                <div className="absolute top-12 left-6 right-0 bg-white dark:bg-neutral-800 rounded-xl shadow-2xl border border-neutral-100 dark:border-neutral-700 z-50 max-h-52 overflow-auto w-[400px]">
-                                                    {getFilteredProducts(item.product_name).length > 0 ? (
-                                                        getFilteredProducts(item.product_name).map(p => (
-                                                            <div
-                                                                key={p.id}
-                                                                className="px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 cursor-pointer border-b border-neutral-50 dark:border-neutral-800 last:border-0"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleProductSelect(idx, p);
-                                                                }}
-                                                            >
-                                                                <div className="font-semibold text-neutral-900 dark:text-white">{p.name}</div>
-                                                                <div className="flex justify-between text-xs text-neutral-500 mt-1">
-                                                                    <span>SKU: {p.sku}</span>
-                                                                    <span className={p.stockQty < 10 ? 'text-amber-500' : 'text-green-500'}>Stock: {p.stockQty}</span>
+                                            {/* ─── Category Selection Dropdown for New Products ─── */}
+                                            {activeSearchRow === idx && (
+                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[300px] overflow-hidden"
+                                                    onMouseDown={e => {
+                                                        e.preventDefault(); // prevent input blur
+                                                        e.stopPropagation(); // prevent window click-outside from firing
+                                                    }}
+                                                >
+                                                    {/* Search hint */}
+                                                    <div className="px-4 pt-3 pb-2 border-b border-neutral-100 dark:border-neutral-800 flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Search className="w-3.5 h-3.5 text-neutral-400" />
+                                                            <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+                                                                Select Category for New Product
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Category list */}
+                                                    <div className="max-h-56 overflow-y-auto p-2">
+                                                        {categories.length > 0 ? (
+                                                            categories.map((cat, catIdx) => (
+                                                                <div
+                                                                    key={cat.id}
+                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === catIdx ? 'bg-violet-100 dark:bg-violet-900/40' : 'hover:bg-violet-50 dark:hover:bg-violet-900/20'}`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleCategorySelect(idx, cat);
+                                                                    }}
+                                                                >
+                                                                    <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-violet-700 dark:group-hover:text-violet-400">{cat.name}</div>
+                                                                    {cat.shortCode && <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-md">{cat.shortCode}</div>}
                                                                 </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="px-4 py-3 text-center">
+                                                                <p className="text-xs text-neutral-400">No category matched</p>
                                                             </div>
-                                                        ))
-                                                    ) : (
-                                                        <div className="p-4 text-center text-xs text-neutral-400">No match found</div>
-                                                    )}
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </td>
@@ -1045,6 +1442,7 @@ const PurchaseEntry: React.FC = () => {
                                             <input
                                                 type="number"
                                                 value={item.quantity}
+                                                onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)}
                                                 className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-neutral-700 dark:text-neutral-300"
                                             />
@@ -1053,6 +1451,7 @@ const PurchaseEntry: React.FC = () => {
                                             <input
                                                 type="number"
                                                 value={item.rate}
+                                                onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
                                                 className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-neutral-700 dark:text-neutral-300"
                                             />
@@ -1061,6 +1460,7 @@ const PurchaseEntry: React.FC = () => {
                                             <input
                                                 type="number"
                                                 value={item.tax_percent}
+                                                onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'tax_percent', parseFloat(e.target.value) || 0)}
                                                 className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-neutral-500"
                                             />
@@ -1072,6 +1472,7 @@ const PurchaseEntry: React.FC = () => {
                                                     <input
                                                         type="number"
                                                         value={item.margin || 0}
+                                                        onFocus={e => e.target.select()}
                                                         onChange={e => {
                                                             const margin = parseFloat(e.target.value) || 0;
                                                             const sellingPrice = item.rate * (1 + margin / 100);
@@ -1087,6 +1488,19 @@ const PurchaseEntry: React.FC = () => {
                                                     <input
                                                         type="number"
                                                         value={item.sellingPrice || 0}
+                                                        onFocus={e => e.target.select()}
+                                                        onKeyDown={e => {
+                                                            if (e.key === 'Tab' && !e.shiftKey && idx === items.length - 1) {
+                                                                e.preventDefault();
+                                                                addEmptyRow();
+                                                                setTimeout(() => {
+                                                                    const inputs = document.querySelectorAll('input[placeholder="Search item..."]');
+                                                                    if (inputs && inputs.length > 0) {
+                                                                        (inputs[inputs.length - 1] as HTMLElement).focus();
+                                                                    }
+                                                                }, 50);
+                                                            }
+                                                        }}
                                                         onChange={e => {
                                                             const sellingPrice = parseFloat(e.target.value) || 0;
                                                             const margin = item.rate > 0 ? ((sellingPrice / item.rate) - 1) * 100 : 0;

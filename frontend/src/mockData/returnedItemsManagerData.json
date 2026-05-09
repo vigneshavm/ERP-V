@@ -1,0 +1,17 @@
+{
+    "metrics": [
+        { "label": "Return Volume", "value": "$12,400" },
+        { "label": "Processing", "value": "8 Records" },
+        { "label": "Refunded", "value": "112 Records" },
+        { "label": "Return Rate", "value": "2.4%" }
+    ],
+    "records": [
+        { "id": "#RET-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#RET-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$450.00" },
+        { "id": "#RET-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$2,100.00" },
+        { "id": "#RET-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$800.00" },
+        { "id": "#RET-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$150.00" },
+        { "id": "#RET-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$5,000.00" }
+    ]
+}
+

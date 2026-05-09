@@ -1,5 +1,10 @@
 import React from 'react';
 import { Cpu, Database, RefreshCw, Shield, FileSearch, HardDrive, Activity, AlertTriangle, CheckCircle2, Clock, ArrowRight, MoreHorizontal, Download } from 'lucide-react';
+import systemData from '../../mockData/systemData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Activity, RefreshCw, FileSearch, Database, HardDrive, Shield, Cpu
+};
 
 const SystemMockUI: React.FC = () => {
     return (
@@ -31,19 +36,19 @@ const SystemMockUI: React.FC = () => {
 
                 {/* System Health Cards */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'System Health', val: '99.8%', sub: 'All services operational', icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'Last Sync', val: '2m ago', sub: '4 devices synced', icon: RefreshCw, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-                        { label: 'Audit Events (Today)', val: '1,284', sub: '3 flagged actions', icon: FileSearch, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Database Size', val: '2.4 GB', sub: 'Last backup: 1h ago', icon: Database, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
-                    ].map((card, i) => (
-                        <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
-                            <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}><card.icon className="w-5 h-5" /></div>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
-                            <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
-                            <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
-                        </div>
-                    ))}
+                    {systemData.healthMetrics.map((card, i) => {
+                        const Icon = IconMap[card.icon];
+                        return (
+                            <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
+                                <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                </div>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
+                                <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
+                                <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <div className="flex gap-6 flex-1">
@@ -51,22 +56,18 @@ const SystemMockUI: React.FC = () => {
                     <div className="w-72 flex flex-col gap-4">
                         <div className="glass-panel backdrop-blur-xl border border-default rounded-3xl p-5">
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-secondary mb-4">System Modules</h3>
-                            {[
-                                { label: 'Device Sync', icon: RefreshCw, status: 'Active', color: 'emerald' },
-                                { label: 'Cloud Backup', icon: HardDrive, status: 'Active', color: 'emerald' },
-                                { label: 'Audit Logger', icon: FileSearch, status: 'Active', color: 'emerald' },
-                                { label: 'Data Import/Export', icon: Database, status: 'Standby', color: 'amber' },
-                                { label: 'Role Engine', icon: Shield, status: 'Active', color: 'emerald' },
-                                { label: 'Architecture AI', icon: Cpu, status: 'Active', color: 'emerald' },
-                            ].map((mod, i) => (
-                                <div key={i} className="flex items-center justify-between py-3 border-b border-default last:border-0 group cursor-pointer">
-                                    <div className="flex items-center gap-2.5">
-                                        <mod.icon className="w-4 h-4 text-secondary group-hover:text-main transition-colors" />
-                                        <span className="text-sm font-bold text-main">{mod.label}</span>
+                            {systemData.modules.map((mod, i) => {
+                                const Icon = IconMap[mod.icon];
+                                return (
+                                    <div key={i} className="flex items-center justify-between py-3 border-b border-default last:border-0 group cursor-pointer">
+                                        <div className="flex items-center gap-2.5">
+                                            {Icon && <Icon className="w-4 h-4 text-secondary group-hover:text-main transition-colors" />}
+                                            <span className="text-sm font-bold text-main">{mod.label}</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-${mod.color}-500/10 text-${mod.color}-400 border border-${mod.color}-500/20`}>{mod.status}</span>
                                     </div>
-                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-${mod.color}-500/10 text-${mod.color}-400 border border-${mod.color}-500/20`}>{mod.status}</span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -77,7 +78,7 @@ const SystemMockUI: React.FC = () => {
                                 <FileSearch className="w-4 h-4" /> Recent Audit Events
                             </h3>
                             <div className="flex gap-2">
-                                {['All', 'Auth', 'Data', 'Config', 'Flagged'].map((tab, idx) => (
+                                {systemData.auditTabs.map((tab, idx) => (
                                     <button key={tab} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${idx === 0 ? 'bg-card text-main border border-default' : 'text-secondary hover:text-main'}`}>{tab}</button>
                                 ))}
                             </div>
@@ -92,14 +93,7 @@ const SystemMockUI: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-default">
-                                    {[
-                                        { time: 'Today 11:42 PM', user: 'Arjun Mehta', action: 'Invoice Deleted', module: 'Sales', ip: '192.168.1.101', status: 'Flagged', color: 'rose' },
-                                        { time: 'Today 11:38 PM', user: 'System', action: 'Auto Backup', module: 'System', ip: 'Internal', status: 'Success', color: 'emerald' },
-                                        { time: 'Today 11:30 PM', user: 'Priya Sharma', action: 'Role Updated', module: 'Security', ip: '192.168.1.104', status: 'Success', color: 'emerald' },
-                                        { time: 'Today 11:18 PM', user: 'Rohit Verma', action: 'Failed Login (×3)', module: 'Auth', ip: '103.56.12.88', status: 'Flagged', color: 'rose' },
-                                        { time: 'Today 10:55 PM', user: 'System', action: 'Device Sync', module: 'Sync', ip: 'Internal', status: 'Success', color: 'emerald' },
-                                        { time: 'Today 10:40 PM', user: 'Admin', action: 'GST Config Changed', module: 'Settings', ip: '192.168.1.100', status: 'Warning', color: 'amber' },
-                                    ].map((ev, idx) => (
+                                    {systemData.auditLogs.map((ev, idx) => (
                                         <tr key={idx} className="hover:bg-card/30 transition-colors group">
                                             <td className="px-6 py-4"><span className="text-xs font-mono text-muted">{ev.time}</span></td>
                                             <td className="px-6 py-4"><span className="text-sm font-bold text-main">{ev.user}</span></td>

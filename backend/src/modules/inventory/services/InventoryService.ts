@@ -370,9 +370,10 @@ export class InventoryService {
         rate: number,
         batchInfo: { batchNumber?: string, expiryDate?: Date, supplierId?: string },
         tenantId: string,
-        user: any
+        user: any,
+        session?: any
     ): Promise<void> {
-        const item = await this.inventoryRepository.findById(itemId, tenantId);
+        const item = await this.inventoryRepository.findById(itemId, tenantId, session);
         if (!item) throw new AppError("Item not found", 404);
 
         // 1. WAC Calculation
@@ -403,10 +404,10 @@ export class InventoryService {
             };
         }
 
-        await Item.findByIdAndUpdate(itemId, updates);
+        await Item.findByIdAndUpdate(itemId, updates).session(session || null);
 
         // 4. Log
-        await StockLog.create({
+        await StockLog.create([{
             itemId: item._id,
             tenantId,
             type: 'PURCHASE',
@@ -414,7 +415,7 @@ export class InventoryService {
             finalQty: newTotalQty,
             reason: `Purchase Recv: ${batchInfo.batchNumber || 'N/A'}`,
             performedBy: user._id
-        });
+        }], { session });
     }
 
     async reduceStock(

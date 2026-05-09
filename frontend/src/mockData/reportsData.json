@@ -1,0 +1,19 @@
+{
+    "kpis": [
+        { "label": "Total Revenue (MTD)", "val": "₹1.84Cr", "sub": "+18.2% vs last month", "icon": "TrendingUp", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "Total Purchases (MTD)", "val": "₹68.4L", "sub": "-4.1% vs last month", "icon": "TrendingDown", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/30" },
+        { "label": "Gross Profit", "val": "₹1.16Cr", "sub": "63% gross margin", "icon": "DollarSign", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" },
+        { "label": "Inventory Value", "val": "₹2.41Cr", "sub": "1,840 active SKUs", "icon": "Package", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" }
+    ],
+    "mainCategories": [
+        { "title": "Sales Reports", "desc": "Invoice register, daybook, payment-in, outstanding dues", "icon": "ShoppingCart", "color": "sky", "reports": ["Sales Invoice Register", "Payment Received", "Outstanding Dues", "Customer Daybook"] },
+        { "title": "Purchase Reports", "desc": "Bills, GRN, supplier ageing, debit notes", "icon": "FileText", "color": "indigo", "reports": ["Purchase Register", "Supplier Ageing", "GRN Summary", "Debit Notes"] },
+        { "title": "Inventory Reports", "desc": "Stock movement, low stock, batch expiry, category-wise", "icon": "Package", "color": "amber", "reports": ["Stock Summary", "Stock Movement", "Low Stock Alert", "Batch Expiry"] }
+    ],
+    "secondaryCategories": [
+        { "title": "Finance Reports", "icon": "DollarSign", "color": "emerald", "reports": ["Cash & Bank Position", "Fund Transfers", "Bank Reconciliation", "Journal Ledger", "GST Summary"] },
+        { "title": "HR & Payroll", "icon": "BarChart2", "color": "violet", "reports": ["Payroll Summary", "Attendance Report", "Salary Register", "Leave Balance"] },
+        { "title": "GST & Tax", "icon": "PieChart", "color": "rose", "reports": ["GSTR-1 Summary", "GSTR-3B Preview", "Input Tax Credit", "E-Invoice Log"] }
+    ]
+}
+

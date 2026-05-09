@@ -1,0 +1,12 @@
+{
+    "products": [
+        { "id": "1", "name": "Cotton Kurta (Men)", "price": 1499, "category": "Readymade", "stock": 42, "image": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200&q=80" },
+        { "id": "2", "name": "Pure Silk Saree", "price": 12999, "category": "Ethnic Wear", "stock": 8, "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&q=80" },
+        { "id": "3", "name": "Denim Jeans (Slim Fit)", "price": 2499, "category": "Readymade", "stock": 50, "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=200&q=80" },
+        { "id": "4", "name": "Linen Fabric (Per Meter)", "price": 550, "category": "Fabrics", "stock": 156, "image": "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&q=80" },
+        { "id": "5", "name": "Designer Salwar Suit", "price": 4500, "category": "Ethnic Wear", "stock": 12, "image": "https://images.unsplash.com/photo-1618424181497-157f25b6ce5e?w=200&q=80" },
+        { "id": "6", "name": "Handmade Woolen Shawl", "price": 3500, "category": "Accessories", "stock": 30, "image": "https://images.unsplash.com/photo-1563208293-1627c293779e?w=200&q=80" }
+    ],
+    "categories": ["All Items", "Fabrics", "Ethnic Wear", "Readymade", "Accessories"]
+}
+

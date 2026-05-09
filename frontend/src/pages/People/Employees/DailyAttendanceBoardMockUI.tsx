@@ -3,25 +3,13 @@ import {
     Users, Clock, Calendar, Search, Filter, 
     CheckCircle2, AlertCircle, UserMinus, ChevronLeft, ChevronRight, Save, XCircle, Loader2
 } from 'lucide-react';
+import attendanceBoardData from '../../../mockData/attendanceBoardData.json';
+
+const MOCK_EMPLOYEES = attendanceBoardData.employees;
+
+
 
 type AttendanceStatus = 'PRESENT' | 'HALF' | 'ABSENT' | 'LATE' | 'ON_LEAVE';
-
-interface MockEmployee {
-    id: string;
-    name: string;
-    dept: string;
-    role: string;
-    mobile: string;
-}
-
-const MOCK_EMPLOYEES: MockEmployee[] = [
-    { id: 'EMP-001', name: 'Aarav Patel', dept: 'Sales', role: 'Sales Associate', mobile: '98765-43210' },
-    { id: 'EMP-002', name: 'Priya Sharma', dept: 'Management', role: 'Store Manager', mobile: '98765-43211' },
-    { id: 'EMP-003', name: 'Rahul Desai', dept: 'Tailoring', role: 'Master Tailor', mobile: '98765-43212' },
-    { id: 'EMP-004', name: 'Anjali Verma', dept: 'Billing', role: 'Cashier', mobile: '98765-43213' },
-    { id: 'EMP-005', name: 'Karan Singh', dept: 'Inventory', role: 'Stock Clerk', mobile: '98765-43214' },
-    { id: 'EMP-006', name: 'Meera Reddy', dept: 'Sales', role: 'Senior Sales Associate', mobile: '98765-43215' },
-];
 
 const DailyAttendanceBoardMockUI: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');

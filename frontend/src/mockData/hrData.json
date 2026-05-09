@@ -1,0 +1,17 @@
+{
+    "metrics": [
+        { "label": "Total Staff", "val": "84", "sub": "3 joined this month", "icon": "Users", "color": "text-indigo-400", "bg": "bg-indigo-500/10", "border": "border-indigo-500/30" },
+        { "label": "On Floor Today", "val": "76", "sub": "90.5% attendance", "icon": "UserCheck", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" },
+        { "label": "On Leave", "val": "8", "sub": "2 Ethnic, 6 casual", "icon": "Clock", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
+        { "label": "Monthly Payroll", "val": "₹12.4L", "sub": "Next run: Nov 1", "icon": "DollarSign", "color": "text-sky-400", "bg": "bg-sky-500/10", "border": "border-sky-500/30" }
+    ],
+    "employees": [
+        { "id": "EMP-001", "name": "Arjun Mehta", "dept": "Management", "role": "Showroom Manager", "joined": "Mar 2021", "salary": "45,000", "attend": "97%", "status": "Present", "color": "emerald" },
+        { "id": "EMP-002", "name": "Priya Sharma", "dept": "Sales", "role": "Saree Specialist", "joined": "Jul 2022", "salary": "32,000", "attend": "94%", "status": "Present", "color": "emerald" },
+        { "id": "EMP-003", "name": "Rohit Verma", "dept": "Tailoring", "role": "Master Tailor", "joined": "Jan 2023", "salary": "38,000", "attend": "88%", "status": "On Leave", "color": "amber" },
+        { "id": "EMP-004", "name": "Sneha Iyer", "dept": "Billing", "role": "Senior Cashier", "joined": "Oct 2023", "salary": "28,000", "attend": "99%", "status": "Present", "color": "emerald" },
+        { "id": "EMP-005", "name": "Kiran Das", "dept": "Logistics", "role": "Inventory In-charge", "joined": "Jun 2020", "salary": "25,000", "attend": "91%", "status": "Present", "color": "emerald" },
+        { "id": "EMP-006", "name": "Anjali Verma", "dept": "Sales", "role": "Floor Assistant", "joined": "Jun 2023", "salary": "20,000", "attend": "95%", "status": "Present", "color": "emerald" }
+    ]
+}
+

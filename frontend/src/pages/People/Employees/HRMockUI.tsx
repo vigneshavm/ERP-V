@@ -1,5 +1,13 @@
 import React from 'react';
 import { Users, Plus, Search, Filter, UserCheck, UserX, Clock, DollarSign, Briefcase, Calendar, MoreHorizontal, ArrowRight, Shield } from 'lucide-react';
+import hrData from '../../../mockData/hrData.json';
+
+const IconMap: Record<string, React.ElementType> = {
+    Users,
+    UserCheck,
+    Clock,
+    DollarSign
+};
 
 const HRMockUI: React.FC = () => {
     return (
@@ -29,23 +37,21 @@ const HRMockUI: React.FC = () => {
                     </div>
                 </header>
 
-                <div className="grid grid-cols-4 gap-6 mb-8">
-                    {[
-                        { label: 'Total Headcount', val: '84', sub: '3 joined this month', icon: Users, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
-                        { label: 'Present Today', val: '76', sub: '90.5% attendance', icon: UserCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-                        { label: 'On Leave', val: '8', sub: '2 medical, 6 casual', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-                        { label: 'Monthly Payroll', val: '₹18.4L', sub: 'Next run: Nov 1', icon: DollarSign, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/30' },
-                    ].map((card, i) => (
+            <div className="grid grid-cols-4 gap-6 mb-8">
+                {hrData.metrics.map((card, i) => {
+                    const Icon = IconMap[card.icon];
+                    return (
                         <div key={i} className={`glass-panel backdrop-blur-md rounded-2xl p-6 border ${card.border} group hover:bg-card/80 transition-all cursor-pointer`}>
                             <div className={`p-3 rounded-xl ${card.bg} ${card.color} w-fit mb-4`}>
-                                <card.icon className="w-5 h-5" />
+                                {Icon && <Icon className="w-5 h-5" />}
                             </div>
                             <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{card.label}</p>
                             <p className="text-2xl font-black tracking-tighter mt-1 text-main">{card.val}</p>
                             <p className={`text-[10px] mt-1 font-bold ${card.color}`}>{card.sub}</p>
                         </div>
-                    ))}
-                </div>
+                    );
+                })}
+            </div>
 
                 <div className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl flex flex-col overflow-hidden">
                     <div className="p-5 border-b border-default flex justify-between items-center bg-card">
@@ -74,13 +80,7 @@ const HRMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default">
-                                {[
-                                    { name: 'Arjun Mehta', dept: 'Operations', role: 'Senior Manager', joined: 'Mar 2021', salary: '85,000', attend: '97%', status: 'Present', color: 'emerald' },
-                                    { name: 'Priya Sharma', dept: 'Finance', role: 'Account Lead', joined: 'Jul 2022', salary: '72,000', attend: '94%', status: 'Present', color: 'emerald' },
-                                    { name: 'Rohit Verma', dept: 'Sales', role: 'Sales Executive', joined: 'Jan 2023', salary: '48,000', attend: '88%', status: 'On Leave', color: 'amber' },
-                                    { name: 'Sneha Iyer', dept: 'Tech', role: 'Dev Engineer', joined: 'Oct 2023', salary: '95,000', attend: '99%', status: 'Present', color: 'emerald' },
-                                    { name: 'Kiran Das', dept: 'Logistics', role: 'Fleet Coordinator', joined: 'Jun 2020', salary: '42,000', attend: '91%', status: 'Present', color: 'emerald' },
-                                ].map((emp, idx) => (
+                                {hrData.employees.map((emp, idx) => (
                                     <tr key={idx} className="hover:bg-card/30 transition-colors group cursor-pointer">
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-3">

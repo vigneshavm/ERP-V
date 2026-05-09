@@ -1,5 +1,6 @@
 import React from 'react';
 import { Filter, Search, Plus, Download, ChevronRight, Users } from 'lucide-react';
+import payrollRunsData from '../../../mockData/payrollRunsData.json';
 
 const PayrollRunsMockUI: React.FC = () => {
     return (
@@ -52,24 +53,24 @@ const PayrollRunsMockUI: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 bg-white/[0.01]">
-                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                            {payrollRunsData.runs.map((rec, i) => (
                                 <tr key={i} className="hover:bg-white/[0.04] transition-colors cursor-pointer group">
-                                    <td className="p-4 font-medium text-purple-400 group-hover:text-purple-300">EMP-00${i}</td>
+                                    <td className="p-4 font-medium text-purple-400 group-hover:text-purple-300">{rec.id}</td>
                                     <td className="p-4 text-main/90 font-medium">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
                                                 <Users className="w-4 h-4" />
                                             </div>
-                                            Employee ${i}
+                                            {rec.name}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-main/80">Engineering</td>
+                                    <td className="p-4 text-main/80">{rec.dept}</td>
                                     <td className="p-4">
                                         <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium tracking-wide">
-                                            Active
+                                            {rec.status}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right font-medium text-main/90">$${i},000.00</td>
+                                    <td className="p-4 text-right font-medium text-main/90">₹{rec.amount}</td>
                                     <td className="p-4 text-center">
                                         <ChevronRight className="w-4 h-4 text-main/30 group-hover:text-main/70 transition-colors inline-block" />
                                     </td>

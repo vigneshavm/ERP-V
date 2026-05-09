@@ -1,0 +1,17 @@
+{
+    "MOCK_SUPPLIERS": [
+        { "id": "SUP-001", "name": "Vardhman Textile Mills", "gstin": "27AABCG1234A1Z5", "cat": "Cotton Fabrics", "limit": "50,00,000", "outstanding": "12,45,000", "rating": 5, "status": "Active" },
+        { "id": "SUP-002", "name": "Kanchipuram Silk weavers Co.", "gstin": "29AATCT5678B2Z1", "cat": "Silk/Ethnic", "limit": "25,00,000", "outstanding": "8,20,000", "rating": 5, "status": "Active" },
+        { "id": "SUP-003", "name": "Arvind Denim Ltd.", "gstin": "06AABCO9012C3Z8", "cat": "Denim", "limit": "35,00,000", "outstanding": "16,80,000", "rating": 4, "status": "Overdue" },
+        { "id": "SUP-004", "name": "Surat Saree Wholesalers", "gstin": "33AABCS3456D4Z2", "cat": "Readymade", "limit": "10,00,000", "outstanding": "0", "rating": 5, "status": "Active" },
+        { "id": "SUP-005", "name": "Reliable Packaging & Yarn", "gstin": "24AABCA7890E5Z9", "cat": "Accessories", "limit": "8,00,000", "outstanding": "1,15,000", "rating": 4, "status": "Active" }
+    ],
+    "filterCategories": ["Cotton Fabrics", "Silk/Ethnic", "Denim", "Readymade", "Accessories"],
+    "kpis": [
+        { "label": "Textile Suppliers", "val": "148", "sub": "12 added this month", "iconName": "Building2", "color": "text-purple-400", "bg": "bg-purple-500/10" },
+        { "label": "Outstanding Payables", "val": "₹28.4L", "sub": "32 bills pending", "iconName": "Zap", "color": "text-blue-400", "bg": "bg-blue-500/10" },
+        { "label": "Overdue Payables", "val": "₹16.8L", "sub": "9 suppliers affected", "iconName": "AlertCircle", "color": "text-pink-400", "bg": "bg-pink-500/10" },
+        { "label": "Settled (MTD)", "val": "₹45.2L", "sub": "87 transactions", "iconName": "CheckCircle2", "color": "text-emerald-400", "bg": "bg-emerald-500/10" }
+    ]
+}
+

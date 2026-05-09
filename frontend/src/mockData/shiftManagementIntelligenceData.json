@@ -1,0 +1,14 @@
+{
+    "metrics": [
+        { "title": "Active Terminals", "value": "8/10", "icon": "Activity", "color": "text-emerald-400", "bg": "bg-emerald-400/10" },
+        { "title": "Avg Shift Time", "value": "8h 12m", "icon": "Clock", "color": "text-teal-400", "bg": "bg-teal-400/10" },
+        { "title": "Drawer Discrepancy", "value": "$0.00", "icon": "ShieldCheck", "color": "text-blue-400", "bg": "bg-blue-400/10" },
+        { "title": "Cash Expected", "value": "$4,250", "icon": "DollarSign", "color": "text-cyan-400", "bg": "bg-cyan-400/10" }
+    ],
+    "shifts": [
+        { "terminal": "Terminal 01", "cashier": "Jane Doe", "status": "Online", "time": "Started 4h ago" },
+        { "terminal": "Terminal 02", "cashier": "Jane Doe", "status": "Online", "time": "Started 4h ago" },
+        { "terminal": "Terminal 03", "cashier": "Jane Doe", "status": "Online", "time": "Started 4h ago" }
+    ]
+}
+

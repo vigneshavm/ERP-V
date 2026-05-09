@@ -1,5 +1,6 @@
 import React from 'react';
 import { Filter, Search, Plus, Download, ChevronRight, BarChart2 } from 'lucide-react';
+import outstandingDuesData from '../../../mockData/outstandingDuesData.json';
 
 const OutstandingDuesMockUI: React.FC = () => {
     return (
@@ -24,12 +25,7 @@ const OutstandingDuesMockUI: React.FC = () => {
 
             {/* Micro-Metrics */}
             <div className="grid grid-cols-4 gap-4">
-                {[
-                    { label: "Total Volume", value: "$42,500" },
-                    { label: "Pending", value: "12 Records" },
-                    { label: "Completed", value: "148 Records" },
-                    { label: "Growth", value: "+14.2%" }
-                ].map((stat, i) => (
+                {outstandingDuesData.metrics.map((stat, i) => (
                     <div key={i} className="glass-panel p-4 rounded-xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent">
                         <p className="text-xs text-main/50 uppercase tracking-wider font-medium">{stat.label}</p>
                         <p className="text-2xl font-semibold mt-1">{stat.value}</p>
@@ -70,17 +66,17 @@ const OutstandingDuesMockUI: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 bg-white/[0.01]">
-                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                            {outstandingDuesData.records.map((rec, i) => (
                                 <tr key={i} className="hover:bg-white/[0.04] transition-colors cursor-pointer group">
-                                    <td className="p-4 font-medium text-blue-400 group-hover:text-blue-300">#REC-2024-{1000 + i}</td>
-                                    <td className="p-4 text-main/80">Oct 24, 2024</td>
-                                    <td className="p-4 text-main/90 font-medium">Global Tech Corp</td>
+                                    <td className="p-4 font-medium text-blue-400 group-hover:text-blue-300">{rec.id}</td>
+                                    <td className="p-4 text-main/80">{rec.date}</td>
+                                    <td className="p-4 text-main/90 font-medium">{rec.customer}</td>
                                     <td className="p-4">
                                         <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium tracking-wide">
-                                            Completed
+                                            {rec.status}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right font-medium text-main/90">$1,250.00</td>
+                                    <td className="p-4 text-right font-medium text-main/90">{rec.amount}</td>
                                     <td className="p-4 text-center">
                                         <ChevronRight className="w-4 h-4 text-main/30 group-hover:text-main/70 transition-colors inline-block" />
                                     </td>

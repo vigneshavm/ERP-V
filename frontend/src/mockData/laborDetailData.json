@@ -1,0 +1,36 @@
+{
+    "profile": {
+        "name": "Arjun Mehta",
+        "role": "Senior Manager",
+        "email": "arjun.m@neuralretail.local",
+        "phone": "+91 98765 43210",
+        "location": "Mumbai, India"
+    },
+    "performance": {
+        "attendance": "97%",
+        "efficiency": "98%"
+    },
+    "kpis": [
+        { "label": "Annual Salary", "val": "₹10,20,000", "color": "text-purple-400" },
+        { "label": "Time at Company", "val": "3.2 Years", "color": "text-blue-400" },
+        { "label": "Direct Reports", "val": "18 People", "color": "text-pink-400" }
+    ],
+    "activity": [
+        { "action": "Approved Monthly Operations Budget", "time": "2 hours ago" },
+        { "action": "Performance Review: Logistics Team", "time": "1 day ago" },
+        { "action": "Shift Strategy Planning Meeting", "time": "2 days ago" }
+    ],
+    "skills": ["Operations Management", "Strategic Planning", "Budgeting", "Team Leadership", "Risk Assessment", "Conflict Resolution"],
+    "feedback": "Outstanding leadership in streamlining the operations module. Effectively managed the transition to the new inventory tracking system with zero downtime.",
+    "attendanceLog": [
+        { "date": "2026-04-25", "status": "PRESENT", "in": "09:00 AM", "out": "06:00 PM", "ot": "0" },
+        { "date": "2026-04-24", "status": "PRESENT", "in": "08:45 AM", "out": "06:30 PM", "ot": "0.5" },
+        { "date": "2026-04-23", "status": "HALF", "in": "09:10 AM", "out": "01:00 PM", "ot": "0" },
+        { "date": "2026-04-22", "status": "ABSENT", "in": "--", "out": "--", "ot": "0" },
+        { "date": "2026-04-21", "status": "PRESENT", "in": "09:00 AM", "out": "07:00 PM", "ot": "1.0" },
+        { "date": "2026-04-20", "status": "PRESENT", "in": "08:55 AM", "out": "06:00 PM", "ot": "0" },
+        { "date": "2026-04-19", "status": "PRESENT", "in": "09:05 AM", "out": "06:10 PM", "ot": "0" },
+        { "date": "2026-04-18", "status": "ON_LEAVE", "in": "--", "out": "--", "ot": "0" }
+    ]
+}
+

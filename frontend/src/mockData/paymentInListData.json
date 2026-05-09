@@ -1,0 +1,17 @@
+{
+    "metrics": [
+        { "label": "Monthly Inflow", "value": "$125,500" },
+        { "label": "Pending Clearance", "value": "24 Records" },
+        { "label": "Cleared", "value": "212 Records" },
+        { "label": "YOY Growth", "value": "+18.5%" }
+    ],
+    "records": [
+        { "id": "#PAY-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$1,250.00" },
+        { "id": "#PAY-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$4,500.00" },
+        { "id": "#PAY-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$2,500.00" },
+        { "id": "#PAY-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$18,400.00" },
+        { "id": "#PAY-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$1,200.00" },
+        { "id": "#PAY-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$5,000.00" }
+    ]
+}
+

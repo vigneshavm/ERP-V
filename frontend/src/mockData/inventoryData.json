@@ -1,19 +1,34 @@
 {
     "MOCK_INVENTORY": [
-        { "id": "1", "name": "Neural Link Interconnect", "sku": "NL-X1-992", "category": "Hardware", "stock": 42, "status": "In Stock", "price": "₹12,499", "trend": "up", "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&q=80" },
-        { "id": "2", "name": "Quantum Logic Board v4", "sku": "QLB-400X", "category": "Components", "stock": 8, "status": "Low Stock", "price": "₹45,999", "trend": "down", "image": "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=100&q=80" },
-        { "id": "3", "name": "Cyber-Carbon Chassis", "sku": "CC-CHAS-01", "category": "Enclosures", "stock": 0, "status": "Out of Stock", "price": "₹8,999", "trend": "up", "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=100&q=80" },
-        { "id": "4", "name": "Optic Fiber Spool (50m)", "sku": "OFS-50M-G2", "category": "Networking", "stock": 156, "status": "In Stock", "price": "₹2,499", "trend": "up", "image": "https://images.unsplash.com/photo-1544717685-6447c20c0211?w=100&q=80" },
-        { "id": "5", "name": "Haptic Feedback Matrix", "sku": "HFM-PRO-X", "category": "Peripherals", "stock": 12, "status": "Low Stock", "price": "₹18,500", "trend": "up", "image": "https://images.unsplash.com/photo-1618424181497-157f25b6ce5e?w=100&q=80" }
+        { "id": "1", "name": "Premium Cotton Fabric (Metres)", "sku": "TEX-COT-001", "category": "Fabrics", "stock": 420, "status": "In Stock", "price": "₹450", "trend": "up" },
+        { "id": "2", "name": "Pure Silk Kanchipuram Saree", "sku": "TEX-SLK-882", "category": "Sarees", "stock": 8, "status": "Low Stock", "price": "₹12,999", "trend": "down" },
+        { "id": "3", "name": "Denim Roll - Dark Indigo (100m)", "sku": "TEX-DNM-01", "category": "Fabrics", "stock": 0, "status": "Out of Stock", "price": "₹28,999", "trend": "up" },
+        { "id": "4", "name": "Linen Men's Formal Shirt", "sku": "TEX-SHR-042", "category": "Shirts", "stock": 156, "status": "In Stock", "price": "₹2,499", "trend": "up" },
+        { "id": "5", "name": "Slim Fit Chino Pants", "sku": "TEX-PNT-019", "category": "Pants", "stock": 85, "status": "In Stock", "price": "₹1,899", "trend": "up" },
+        { "id": "6", "name": "Poonam Saree - Rose Silk", "sku": "TEX-SAR-091", "category": "Sarees", "stock": 24, "status": "In Stock", "price": "₹899", "trend": "up" },
+        { "id": "7", "name": "Men's Casual Cotton Trousers", "sku": "TEX-TRS-003", "category": "Pants", "stock": 62, "status": "In Stock", "price": "₹1,299", "trend": "down" },
+        { "id": "8", "name": "Georgette Floral Saree", "sku": "TEX-SAR-104", "category": "Sarees", "stock": 15, "status": "Low Stock", "price": "₹1,450", "trend": "up" },
+        { "id": "9", "name": "Checked Flannel Shirt", "sku": "TEX-SHR-088", "category": "Shirts", "stock": 40, "status": "In Stock", "price": "₹1,199", "trend": "up" },
+        { "id": "10", "name": "Polyester Thread Spool (Box of 12)", "sku": "TEX-ACC-005", "category": "Accessories", "stock": 12, "status": "Low Stock", "price": "₹1,500", "trend": "up" }
+    ],
+    "MOCK_CATEGORIES": [
+        { "id": "cat-1", "name": "Sarees", "shortCode": "SAR" },
+        { "id": "cat-2", "name": "Shirts", "shortCode": "SHR" },
+        { "id": "cat-3", "name": "Pants", "shortCode": "PNT" },
+        { "id": "cat-4", "name": "Fabrics", "shortCode": "FAB" },
+        { "id": "cat-5", "name": "Ethnic Wear", "shortCode": "ETH" },
+        { "id": "cat-6", "name": "Readymade", "shortCode": "RDY" },
+        { "id": "cat-7", "name": "Accessories", "shortCode": "ACC" }
     ],
     "sidebarNav": [
-        { "iconName": "Box", "label": "Inventory", "active": true },
-        { "iconName": "AlertTriangle", "label": "Alerts", "active": false },
-        { "iconName": "TrendingUp", "label": "Analytics", "active": false }
+        { "iconName": "Box", "label": "Textile Inventory", "active": true },
+        { "iconName": "AlertTriangle", "label": "Stock Alerts", "active": false },
+        { "iconName": "TrendingUp", "label": "Sales Analytics", "active": false }
     ],
     "dashboardMetrics": [
-        { "label": "Total Value", "value": "₹14.2M", "trend": "+2.4%", "iconName": "TrendingUp", "color": "emerald" },
-        { "label": "Critical Stock", "value": "24", "trend": "-5", "iconName": "AlertTriangle", "color": "orange" },
-        { "label": "System Active Items", "value": "1,204", "trend": "+12", "iconName": "Zap", "color": "blue" }
+        { "label": "Stock Value", "value": "₹14.2M", "trend": "+2.4%", "iconName": "TrendingUp", "color": "emerald" },
+        { "label": "Reorder Items", "value": "24", "trend": "-5", "iconName": "AlertTriangle", "color": "orange" },
+        { "label": "Fast Moving SKUs", "value": "1,204", "trend": "+12", "iconName": "Zap", "color": "blue" }
     ]
 }
+

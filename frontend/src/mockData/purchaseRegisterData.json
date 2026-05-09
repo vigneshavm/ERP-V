@@ -1,0 +1,16 @@
+{
+    "metrics": [
+        { "label": "Total Procurement (MTD)", "value": "₹82.45 L" },
+        { "label": "Pending Deliveries", "value": "12" },
+        { "label": "Quality Hold", "value": "4" },
+        { "label": "Open Liabilities", "value": "₹15.20 L" }
+    ],
+    "records": [
+        { "id": "PR-2026-001", "date": "15 Oct 2026", "supplier": "Global Raw Materials Inc.", "status": "In Transit", "amount": "₹45,20,000", "color": "blue" },
+        { "id": "PR-2026-002", "date": "12 Oct 2026", "supplier": "TextileGarments Asia", "status": "Partial Receipt", "amount": "₹12,85,500", "color": "indigo" },
+        { "id": "PR-2026-003", "date": "10 Oct 2026", "supplier": "Omega Industrial Supply", "status": "Pending QC", "amount": "₹8,40,000", "color": "amber" },
+        { "id": "PR-2026-004", "date": "08 Oct 2026", "supplier": "Apex Chemicals", "status": "Completed", "amount": "₹2,15,000", "color": "emerald" },
+        { "id": "PR-2026-005", "date": "05 Oct 2026", "supplier": "Starlight Ethnic", "status": "Completed", "amount": "₹3,15,000", "color": "emerald" },
+        { "id": "PR-2026-006", "date": "01 Oct 2026", "supplier": "Vertex Solutions", "status": "Cancelled", "amount": "₹1,50,000", "color": "rose" }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "metrics": [
+        { "label": "Total Dues", "value": "$84,200" },
+        { "label": "Overdue", "value": "18 Records" },
+        { "label": "Active", "value": "42 Records" },
+        { "label": "Collection Rate", "value": "92%" }
+    ],
+    "records": [
+        { "id": "#DUE-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$12,450.00" },
+        { "id": "#DUE-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$8,200.00" },
+        { "id": "#DUE-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$6,800.00" },
+        { "id": "#DUE-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$15,000.00" },
+        { "id": "#DUE-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$3,150.00" },
+        { "id": "#DUE-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$6,750.00" }
+    ]
+}
+

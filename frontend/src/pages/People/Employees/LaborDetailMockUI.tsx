@@ -5,6 +5,7 @@ import {
     Clock, ShieldCheck, Download, MoreVertical
 } from 'lucide-react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import laborDetailData from '../../../mockData/laborDetailData.json';
 
 const LaborDetailMockUI: React.FC = () => {
     const navigate = useNavigate();
@@ -17,13 +18,7 @@ const LaborDetailMockUI: React.FC = () => {
     const [activeTab, setActiveTab] = useState(initialTab);
 
     const [isEditing, setIsEditing] = useState(false);
-    const [profileData, setProfileData] = useState({
-        name: `Aarav Patel`,
-        role: 'Senior Sales Associate',
-        email: 'aarav.p@textileshop.local',
-        phone: '+91 98765 43210',
-        location: 'Mumbai, India'
-    });
+    const [profileData, setProfileData] = useState(laborDetailData.profile);
 
     return (
         <div className="p-6 space-y-6 h-full flex flex-col text-main animate-fade-in">
@@ -165,19 +160,19 @@ const LaborDetailMockUI: React.FC = () => {
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs">
                                         <span className="text-main/60">Attendance Rate</span>
-                                        <span className="text-emerald-400 font-bold">98.5%</span>
+                                        <span className="text-emerald-400 font-bold">{laborDetailData.performance.attendance}</span>
                                     </div>
                                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div className="h-full bg-emerald-500 w-[98.5%] shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                        <div className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" style={{ width: laborDetailData.performance.attendance }} />
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-xs">
                                         <span className="text-main/60">Task Efficiency</span>
-                                        <span className="text-purple-400 font-bold">92%</span>
+                                        <span className="text-purple-400 font-bold">{laborDetailData.performance.efficiency}</span>
                                     </div>
                                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div className="h-full bg-purple-500 w-[92%] shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+                                        <div className="h-full bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.5)]" style={{ width: laborDetailData.performance.efficiency }} />
                                     </div>
                                 </div>
                             </div>
@@ -188,14 +183,10 @@ const LaborDetailMockUI: React.FC = () => {
                     <div className="lg:col-span-3 space-y-6">
                         {/* KPI Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {[
-                                { label: 'Annual Salary', val: '$120,000', icon: DollarSign, color: 'text-purple-400' },
-                                { label: 'Time at Company', val: '2.4 Years', icon: Clock, color: 'text-blue-400' },
-                                { label: 'Direct Reports', val: '12 People', icon: Briefcase, color: 'text-pink-400' },
-                            ].map((kpi, i) => (
+                            {laborDetailData.kpis.map((kpi, i) => (
                                 <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5 flex items-center gap-4">
                                     <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center ${kpi.color}`}>
-                                        <kpi.icon className="w-6 h-6" />
+                                        <DollarSign className="w-6 h-6" />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-bold text-main/30 uppercase tracking-wider">{kpi.label}</p>
@@ -247,11 +238,7 @@ const LaborDetailMockUI: React.FC = () => {
                                                 <Activity className="w-3.5 h-3.5 text-blue-500" /> Recent Activity
                                             </div>
                                             <div className="space-y-4">
-                                                {[
-                                                    { action: 'Processed Invoice #INV-8821', time: '2 hours ago' },
-                                                    { action: 'Restocked Summer Silk Collection', time: '1 day ago' },
-                                                    { action: 'Attendance Check-in', time: '2 days ago' }
-                                                ].map((log, i) => (
+                                                {laborDetailData.activity.map((log, i) => (
                                                     <div key={i} className="flex items-start gap-3">
                                                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shadow-[0_0_5px_rgba(59,130,246,0.5)]" />
                                                         <div>
@@ -270,7 +257,7 @@ const LaborDetailMockUI: React.FC = () => {
                                                 <PieChart className="w-3.5 h-3.5 text-pink-500" /> Skills & Expertise
                                             </div>
                                             <div className="flex flex-wrap gap-2">
-                                                {['Customer Service', 'Fabric Knowledge', 'POS Operations', 'Inventory Management', 'Visual Merchandising', 'Bilingual'].map((skill, i) => (
+                                                {laborDetailData.skills.map((skill, i) => (
                                                     <span key={i} className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs text-main/70 hover:border-purple-500/30 hover:text-purple-400 transition-all cursor-default">
                                                         {skill}
                                                     </span>
@@ -288,7 +275,7 @@ const LaborDetailMockUI: React.FC = () => {
                                                 </div>
                                             </div>
                                             <p className="text-sm text-main/70 leading-relaxed italic">
-                                                "Excellent customer handling during the festive rush. Demonstrates strong knowledge of silk and cotton blends, and effectively manages inventory levels."
+                                                "{laborDetailData.feedback}"
                                             </p>
                                         </div>
                                     </div>
@@ -310,16 +297,7 @@ const LaborDetailMockUI: React.FC = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/5 bg-white/[0.01]">
-                                                {[
-                                                    { date: '2026-04-25', status: 'PRESENT', in: '09:00 AM', out: '06:00 PM', ot: '0' },
-                                                    { date: '2026-04-24', status: 'PRESENT', in: '08:45 AM', out: '06:30 PM', ot: '0.5' },
-                                                    { date: '2026-04-23', status: 'HALF', in: '09:10 AM', out: '01:00 PM', ot: '0' },
-                                                    { date: '2026-04-22', status: 'ABSENT', in: '--', out: '--', ot: '0' },
-                                                    { date: '2026-04-21', status: 'PRESENT', in: '09:00 AM', out: '07:00 PM', ot: '1.0' },
-                                                    { date: '2026-04-20', status: 'PRESENT', in: '08:55 AM', out: '06:00 PM', ot: '0' },
-                                                    { date: '2026-04-19', status: 'PRESENT', in: '09:05 AM', out: '06:10 PM', ot: '0' },
-                                                    { date: '2026-04-18', status: 'ON_LEAVE', in: '--', out: '--', ot: '0' }
-                                                ].map((log, i) => (
+                                                {laborDetailData.attendanceLog.map((log, i) => (
                                                     <tr key={i} className="hover:bg-white/[0.04] transition-colors">
                                                         <td className="p-4 font-mono text-main/80">{log.date}</td>
                                                         <td className="p-4">
