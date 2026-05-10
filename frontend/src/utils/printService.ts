@@ -98,21 +98,28 @@ const generateReceiptHTML = (sale: Sale, tenant: Tenant, branch: Branch): string
             <table style="width: 100%; font-size: 12px; margin-top: 5px; border-collapse: collapse;">
                 <thead>
                     <tr style="border-bottom: 1px dashed #000;">
-                        <th style="text-align: left; padding: 2px 0;">GST%</th>
+                        <th style="text-align: left;  padding: 2px 0;">GST%</th>
                         <th style="text-align: right; padding: 2px 0;">Taxable</th>
-                        <th style="text-align: right; padding: 2px 0;">GST</th>
                         <th style="text-align: right; padding: 2px 0;">CGST</th>
                         <th style="text-align: right; padding: 2px 0;">SGST</th>
+                        <th style="text-align: right; padding: 2px 0;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="text-align: left; padding: 2px 0; font-weight: bold;">${tax_details.gst_percentage}%</td>
-                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.taxable_value.toFixed(2)}</td>
-                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(tax_details.cgst_amount + tax_details.sgst_amount).toFixed(2)}</td>
-                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.cgst_amount.toFixed(2)}</td>
-                        <td style="text-align: right; padding: 2px 0; font-weight: bold;">${tax_details.sgst_amount.toFixed(2)}</td>
-                    </tr>
+                    ${(() => {
+                        const slabs: any[] = tax_details.gst_slabs && tax_details.gst_slabs.length > 0
+                            ? tax_details.gst_slabs
+                            : [{ rate: tax_details.gst_percentage, taxableValue: tax_details.taxable_value, cgst: tax_details.cgst_amount, sgst: tax_details.sgst_amount }];
+                        return slabs.map((s: any) => `
+                            <tr>
+                                <td style="text-align: left;  padding: 2px 0; font-weight: bold;">${s.rate}%</td>
+                                <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(s.taxableValue ?? s.taxable_value ?? 0).toFixed(2)}</td>
+                                <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(s.cgst ?? s.cgst_amount ?? 0).toFixed(2)}</td>
+                                <td style="text-align: right; padding: 2px 0; font-weight: bold;">${(s.sgst ?? s.sgst_amount ?? 0).toFixed(2)}</td>
+                                <td style="text-align: right; padding: 2px 0; font-weight: bold;">${((s.cgst ?? s.cgst_amount ?? 0) + (s.sgst ?? s.sgst_amount ?? 0)).toFixed(2)}</td>
+                            </tr>
+                        `).join('');
+                    })()}
                 </tbody>
             </table>
 

@@ -1,10 +1,37 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState, useMemo } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
 import { getDeliveryChallanById, convertToInvoice, reset } from "../../../redux/slices/deliveryChallanSlice";
-import { ArrowLeft, Printer, Truck, ArrowRightCircle, Phone, Mail } from 'lucide-react';
+import { 
+    ArrowLeft, 
+    Printer, 
+    Truck, 
+    ArrowRightCircle, 
+    Phone, 
+    Mail,
+    FileText,
+    CheckCircle2,
+    XCircle,
+    Clock,
+    Download,
+    Share2,
+    RefreshCw,
+    Calendar,
+    Briefcase,
+    Zap,
+    User,
+    Layers,
+    ChevronRight,
+    MapPin,
+    Navigation,
+    Anchor,
+    Plane,
+    Activity,
+    Info,
+    ShieldCheck,
+    Receipt
+} from 'lucide-react';
 import { RootState } from "../../../redux/store";
 
 const DeliveryChallanDetail = () => {
@@ -39,7 +66,7 @@ const DeliveryChallanDetail = () => {
         setConvertConfirm(false);
 
         if (result.type.includes('fulfilled')) {
-            toast.success('Converted to Invoice successfully!');
+            toast.success('Protocol transitioned to Fiscal Invoice');
             const payload = result.payload as any;
             if (payload?.invoice?._id) {
                 navigate(`/sales/invoice/${payload.invoice._id}`);
@@ -47,260 +74,326 @@ const DeliveryChallanDetail = () => {
         }
     };
 
+    const lifecycleStages = useMemo(() => {
+        const stages = ['Draft', 'Delivered', 'Converted'];
+        const currentStatus = challan?.status || 'Draft';
+        const currentIndex = stages.indexOf(currentStatus);
+
+        return stages.map((stage, index) => ({
+            name: stage === 'Converted' ? 'Invoiced' : stage,
+            completed: index < currentIndex || (index === currentIndex && currentStatus === 'Converted'),
+            current: index === currentIndex && currentStatus !== 'Converted',
+            upcoming: index > currentIndex
+        }));
+    }, [challan]);
+
     if (isLoading || !challan) {
         return (
-            <Layout>
-                <div className="flex flex-col items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                    <p className="text-secondary font-medium">Loading challan...</p>
-                </div>
-            </Layout>
+            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4">
+                <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+                <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] animate-pulse">Syncing Dispatch Node...</p>
+            </div>
         );
     }
 
     const totalQuantity = (challan?.items || []).reduce((sum: number, item: any) => sum + (item.deliveredQty || 0), 0);
 
     return (
-        <Layout>
-            <div className="max-w-5xl mx-auto animate-fade-in pb-10">
-                {/* Header - Hidden on print */}
-                <div className="mb-8 print:hidden">
-                    <button
-                        onClick={() => navigate('/sales/delivery-challan-list')}
-                        className="flex items-center text-secondary hover:text-primary mb-4 transition-colors font-medium gap-2"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Challan List
-                    </button>
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
-                                <Truck className="w-6 h-6 text-primary" />
-                                Delivery Challan
+        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative pb-20">
+            {/* Ambient Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+            </div>
+
+            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
+                {/* Modern Header - Hidden on print */}
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 print:hidden">
+                    <div className="flex items-center gap-6">
+                        <button 
+                            onClick={() => navigate('/sales/challans')}
+                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:scale-110 transition-transform text-neutral-500 hover:text-amber-500 shadow-sm"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <div className="relative">
+                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+                            <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                                {challan.challanNumber}
+                                <span className={`px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-xs font-bold uppercase tracking-widest`}>
+                                    {challan.status === 'Converted' ? 'Fiscal Finalized' : 'Dispatch Protocol'}
+                                </span>
                             </h1>
-                            <p className="text-sm text-secondary mt-1">View and print delivery challan</p>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {new Date(challan.challanDate).toLocaleDateString()}</p>
+                            </div>
                         </div>
-                        <div className="flex gap-2">
-                            {challan.status !== 'Converted' && (
-                                <button
-                                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm font-medium"
-                                    onClick={() => setConvertConfirm(true)}
-                                >
-                                    <ArrowRightCircle className="w-4 h-4" />
-                                    Convert to Invoice
-                                </button>
-                            )}
-                            <button
-                                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm font-medium"
-                                onClick={handlePrint}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={handlePrint}
+                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:text-amber-500 transition-colors shadow-sm group"
+                        >
+                            <Printer className="w-4 h-4" />
+                        </button>
+                        {challan.status !== 'Converted' && (
+                            <button 
+                                onClick={() => setConvertConfirm(true)}
+                                className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
                             >
-                                <Printer className="w-4 h-4" />
-                                Print
+                                <Receipt className="w-4 h-4 inline-block mr-2" /> Transition to Invoice
                             </button>
-                        </div>
+                        )}
+                        <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
+                            <Download className="w-4 h-4" /> Export Manifest
+                        </button>
                     </div>
-                </div>
+                </header>
 
-                {/* Challan Container */}
-                <div className="bg-card border border-default rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
-                    {/* Header Section */}
-                    <div className="px-8 py-6 border-b-2 border-default print:border-gray-300">
-                        <div className="flex justify-between items-start gap-4">
-                            <div className="flex-1">
-                                <h2 className="text-3xl font-bold text-primary mb-1 tracking-tight">DELIVERY CHALLAN</h2>
-                                <div className="text-base font-mono font-bold text-main">
-                                    Challan #: {challan.challanNumber}
-                                </div>
-                            </div>
-                            <div className="text-right flex-shrink-0">
-                                <div className="text-xs font-bold text-secondary uppercase mb-1 tracking-wider">Challan Date</div>
-                                <div className="font-bold text-base text-main">
-                                    {new Date(challan.challanDate).toLocaleDateString('en-IN', {
-                                        day: '2-digit',
-                                        month: 'short',
-                                        year: 'numeric',
-                                    })}
-                                </div>
-                                {challan.deliveryDate && (
-                                    <>
-                                        <div className="text-xs font-bold text-secondary uppercase mb-1 mt-2 tracking-wider">Delivery Date</div>
-                                        <div className="font-bold text-base text-main">
-                                            {new Date(challan.deliveryDate).toLocaleDateString('en-IN', {
-                                                day: '2-digit',
-                                                month: 'short',
-                                                year: 'numeric',
-                                            })}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Customer and Status Section */}
-                    <div className="grid grid-cols-2 gap-6 px-8 py-6">
-                        <div>
-                            <h3 className="text-xs font-bold text-secondary uppercase mb-3 pb-2 border-b border-default tracking-wider">
-                                Delivered To
-                            </h3>
-                            <div className="space-y-2">
-                                <div className="font-bold text-lg text-main">{challan.customer.name}</div>
-                                <div className="text-sm text-secondary flex items-center gap-2">
-                                    <Phone className="w-4 h-4 text-muted" />
-                                    {challan.customer.phone}
-                                </div>
-                                {challan.customer.email && (
-                                    <div className="text-sm text-secondary flex items-center gap-2">
-                                        <Mail className="w-4 h-4 text-muted" />
-                                        {challan.customer.email}
+                {/* Progress Timeline - Hidden on print */}
+                <div className="bg-white dark:bg-neutral-900 rounded-[40px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm print:hidden">
+                    <div className="flex items-center justify-between gap-4 max-w-2xl mx-auto">
+                        {lifecycleStages.map((stage, index) => (
+                            <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">
+                                <div className="flex flex-col items-center gap-2 relative">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${stage.completed ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
+                                        {stage.completed ? <CheckCircle2 className="w-6 h-6" /> : <span className="font-black">{index + 1}</span>}
                                     </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="text-right">
-                            <h3 className="text-xs font-bold text-secondary uppercase mb-3 pb-2 border-b border-default tracking-wider">
-                                Status
-                            </h3>
-                            <div className="space-y-2">
-                                <div>
-                                    <span className={`px-4 py-2 inline-flex text-sm font-bold rounded-full ${challan.status === 'Converted' ? 'bg-success/10 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' :
-                                        challan.status === 'Delivered' ? 'bg-primary-soft text-primary' :
-                                            'bg-surface text-secondary'
-                                        }`}>
-                                        {challan.status}
+                                    <span className={`text-[9px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${stage.current ? 'text-amber-500' : 'text-neutral-400'}`}>
+                                        {stage.name}
                                     </span>
                                 </div>
-                                {challan.convertedToInvoice && (
-                                    <div className="text-sm text-secondary mt-2">
-                                        Converted to Invoice: {challan.convertedToInvoice.invoiceNo}
-                                    </div>
+                                {index < 2 && (
+                                    <div className={`h-1 flex-1 rounded-full ${stage.completed ? 'bg-emerald-500' : 'bg-neutral-100 dark:bg-neutral-800'}`} />
                                 )}
                             </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Print Layout Header (Visible only on print) */}
+                <div className="hidden print:block border-b-4 border-neutral-900 pb-8 mb-8">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h2 className="text-4xl font-black tracking-tighter uppercase">Delivery Challan</h2>
+                            <p className="text-lg font-bold text-neutral-500 mt-1">Registry: {challan.challanNumber}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs font-black uppercase tracking-widest text-neutral-400">Date of Dispatch</p>
+                            <p className="text-xl font-black">{new Date(challan.challanDate).toLocaleDateString()}</p>
                         </div>
                     </div>
+                </div>
 
-                    {/* Items Table */}
-                    <div className="px-8 py-6 border-t border-default">
-                        <h3 className="text-xs font-bold text-secondary uppercase mb-4">Items Delivered</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b-2 border-default">
-                                        <th className="text-left py-2 px-2 font-bold text-main">#</th>
-                                        <th className="text-left py-2 px-2 font-bold text-main">Item Name</th>
-                                        <th className="text-center py-2 px-2 font-bold text-main">Quantity</th>
-                                        <th className="text-center py-2 px-2 font-bold text-main">Unit</th>
-                                        <th className="text-left py-2 px-2 font-bold text-main">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {(challan?.items || []).map((item: any, index: number) => (
-                                        <tr key={index} className="border-b border-default">
-                                            <td className="py-2 px-2 text-main">{index + 1}</td>
-                                            <td className="py-2 px-2 text-main font-medium">
-                                                {item.item?.name || 'N/A'}
-                                                {item.item?.sku && <div className="text-xs text-secondary">{item.item.sku}</div>}
-                                            </td>
-                                            <td className="py-2 px-2 text-center text-main font-semibold">{item.deliveredQty}</td>
-                                            <td className="py-2 px-2 text-center text-main">{item.unit}</td>
-                                            <td className="py-2 px-2 text-main">{item.description || '-'}</td>
-                                        </tr>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    {/* Main Content Area */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Information Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Entity Mapping */}
+                            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
+                                <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
+                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                                        <User className="w-4 h-4 text-amber-500" /> Consignee Entity
+                                    </h3>
+                                </div>
+                                <div className="p-8 flex items-center gap-6">
+                                    <div className="w-16 h-16 rounded-3xl bg-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
+                                        {challan.customer?.name?.charAt(0).toUpperCase() || '?'}
+                                    </div>
+                                    <div>
+                                        <p className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tight">{challan.customer?.name}</p>
+                                        <div className="space-y-1 mt-2">
+                                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2"><Phone className="w-3 h-3" /> {challan.customer?.phone}</p>
+                                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2"><Mail className="w-3 h-3" /> {challan.customer?.email || 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Logistics Params */}
+                            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
+                                <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
+                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                                        <Truck className="w-4 h-4 text-amber-500" /> Logistics Matrix
+                                    </h3>
+                                </div>
+                                <div className="p-8 grid grid-cols-2 gap-6">
+                                    {[
+                                        { label: 'Transport Mode', value: challan.transportMode || 'ROAD', icon: Navigation },
+                                        { label: 'Vehicle Node', value: challan.vehicleNo || 'LOCAL', icon: Truck },
+                                        { label: 'Carrier/Driver', value: challan.driverName || 'INTERNAL', icon: User },
+                                        { label: 'Expected Node', value: challan.deliveryDate ? new Date(challan.deliveryDate).toLocaleDateString() : 'N/A', icon: Clock },
+                                    ].map((item, i) => (
+                                        <div key={i} className="space-y-1">
+                                            <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">{item.label}</p>
+                                            <p className="text-xs font-black uppercase tracking-tight text-neutral-900 dark:text-white">{item.value}</p>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {/* Transport Details */}
-                    {(challan.vehicleNo || challan.driverName || challan.transportMode) && (
-                        <div className="px-8 py-6 border-t border-default">
-                            <h3 className="text-xs font-bold text-secondary uppercase mb-4">Transport Details</h3>
-                            <div className="grid grid-cols-3 gap-4 text-sm">
-                                {challan.transportMode && (
-                                    <div>
-                                        <div className="text-secondary mb-1">Transport Mode</div>
-                                        <div className="font-medium text-main capitalize">{challan.transportMode}</div>
-                                    </div>
-                                )}
-                                {challan.vehicleNo && (
-                                    <div>
-                                        <div className="text-secondary mb-1">Vehicle Number</div>
-                                        <div className="font-medium text-main">{challan.vehicleNo}</div>
-                                    </div>
-                                )}
-                                {challan.driverName && (
-                                    <div>
-                                        <div className="text-secondary mb-1">Driver Name</div>
-                                        <div className="font-medium text-main">{challan.driverName}</div>
-                                    </div>
-                                )}
+                                </div>
                             </div>
                         </div>
-                    )}
 
-                    {/* Summary */}
-                    <div className="px-8 py-6 border-t border-default bg-surface">
-                        <div className="flex justify-center">
-                            <div className="w-full md:w-96">
-                                <div className="space-y-4 bg-card p-6 rounded-lg shadow-sm border border-default">
-                                    <div className="flex justify-between py-2 text-base">
-                                        <span className="text-main">Total Items:</span>
-                                        <span className="font-bold text-main">{(challan?.items || []).length}</span>
+                        {/* Manifest Table */}
+                        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
+                            <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex items-center justify-between">
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Dispatch Manifest</h3>
+                                <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-lg text-[9px] font-black uppercase tracking-widest">{challan.items.length} Nodes</span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-neutral-50/50 dark:bg-neutral-950/50">
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Product Specification</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 text-center">Quantity</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Unit</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Directives</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                        {challan.items.map((item: any, index: number) => (
+                                            <tr key={index} className="group hover:bg-amber-500/[0.01] transition-colors">
+                                                <td className="px-8 py-6 text-center text-[10px] font-black text-neutral-400">{(index + 1).toString().padStart(2, '0')}</td>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight">{item.item?.name || 'Unknown Item'}</span>
+                                                        <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">SKU: {item.item?.sku || 'N/A'}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6 text-center">
+                                                    <span className="text-sm font-mono font-black text-neutral-900 dark:text-white">{item.deliveredQty}</span>
+                                                </td>
+                                                <td className="px-8 py-6 text-center">
+                                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{item.unit || 'PCS'}</span>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-tight italic">{item.description || '-'}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Directives */}
+                        {challan.notes && (
+                            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[32px] p-8 shadow-sm">
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+                                    <Info className="w-4 h-4 text-amber-500" /> Operational Directives
+                                </h3>
+                                <p className="text-sm font-bold text-neutral-600 dark:text-neutral-400 leading-relaxed bg-neutral-50/50 dark:bg-neutral-950/50 p-6 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-inner">
+                                    {challan.notes}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sidebar: Financials & History */}
+                    <div className="space-y-8 sticky top-8 print:hidden">
+                        {/* Fulfillment Summary */}
+                        <div className="bg-neutral-900 dark:bg-white rounded-[40px] p-8 text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-[100px]" />
+                            <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Summary</h3>
+                            <div className="space-y-4 relative z-10">
+                                {[
+                                    { label: 'Manifest Nodes', value: challan.items.length, color: 'text-white dark:text-neutral-900' },
+                                    { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-amber-400 dark:text-amber-600' },
+                                ].map((item, i) => (
+                                    <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
+                                        <span>{item.label}</span>
+                                        <span className={`font-mono ${item.color}`}>{item.value}</span>
                                     </div>
-                                    <div className="flex justify-between py-2 text-base border-t border-default">
-                                        <span className="text-main">Total Quantity:</span>
-                                        <span className="font-bold text-main">{totalQuantity}</span>
+                                ))}
+                                <div className="pt-6 border-t border-white/10 dark:border-neutral-200 mt-2">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">Gross Dispatch Quantity</p>
+                                    <div className="text-4xl font-display font-black tracking-tighter flex items-center gap-2">
+                                        <Layers className="w-8 h-8 text-amber-500" />
+                                        {totalQuantity}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Notes */}
-                    {challan.notes && (
-                        <div className="px-8 py-6 border-t border-default">
-                            <h3 className="text-xs font-bold text-secondary uppercase mb-3 pb-2 border-b border-default">
-                                Notes
-                            </h3>
-                            <p className="text-sm text-secondary leading-relaxed">{challan.notes}</p>
-                        </div>
-                    )}
-
-                    {/* Footer */}
-                    <div className="px-8 py-6 border-t border-default text-center">
-                        <p className="text-sm text-main font-medium">Thank you for your business!</p>
-                        <p className="text-xs text-secondary mt-2">This is a computer-generated delivery challan.</p>
-                        {challan.createdAt && (
-                            <p className="text-xs text-secondary mt-2">
-                                Created on {new Date(challan.createdAt).toLocaleString('en-IN')}
-                            </p>
+                        {/* Linked Fiscal Node */}
+                        {challan.convertedToInvoice && (
+                            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
+                                <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
+                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Fiscal Link</h3>
+                                </div>
+                                <div className="p-8">
+                                    <div 
+                                        onClick={() => navigate(`/sales/invoice/${challan.convertedToInvoice._id}`)}
+                                        className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800 group cursor-pointer hover:border-emerald-500/30 transition-all"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Receipt className="w-4 h-4 text-emerald-500" />
+                                            <span className="text-xs font-black uppercase tracking-tight group-hover:text-emerald-500">{challan.convertedToInvoice.invoiceNo}</span>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-neutral-300 group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </div>
+                            </div>
                         )}
+
+                        {/* Audit Log (Simulated) */}
+                        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
+                            <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Registry Audit</h3>
+                            </div>
+                            <div className="p-8 space-y-6">
+                                <div className="flex gap-4">
+                                    <div className="w-1 bg-emerald-500 rounded-full" />
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-white">Protocol Created</p>
+                                        <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">{new Date(challan.createdAt).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                {challan.status === 'Converted' && (
+                                    <div className="flex gap-4">
+                                        <div className="w-1 bg-amber-500 rounded-full" />
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-white">Fiscal Transition</p>
+                                            <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">Status: FINALIZED</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
             {/* Convert Confirmation Modal */}
             {convertConfirm && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-card rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-default">
-                        <h3 className="text-lg font-bold text-main mb-4">Convert to Invoice</h3>
-                        <p className="text-secondary mb-6">
-                            Are you sure you want to convert this challan to an invoice? This action cannot be undone.
-                        </p>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setConvertConfirm(false)}
-                                className="flex-1 px-4 py-2 border border-default rounded-lg hover:bg-surface font-medium text-main"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConvert}
-                                className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium"
-                            >
-                                Convert
-                            </button>
+                <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xl flex items-center justify-center z-[100] p-4 animate-in fade-in zoom-in duration-300">
+                    <div className="bg-white dark:bg-neutral-900 rounded-[40px] p-10 max-w-md w-full shadow-2xl border border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px]" />
+                        <div className="relative z-10 text-center">
+                            <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                <Receipt className="w-10 h-10" />
+                            </div>
+                            <h3 className="text-2xl font-display font-black text-neutral-900 dark:text-white uppercase tracking-tight mb-2">Transition Protocol?</h3>
+                            <p className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-8 leading-relaxed">
+                                Transition this dispatch protocol to a Fiscal Invoice? This will lock the logistical matrix and initiate billing.
+                            </p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <button 
+                                    onClick={() => setConvertConfirm(false)}
+                                    className="px-6 py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    onClick={handleConvert}
+                                    className="px-6 py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
+                                >
+                                    Transition
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -309,28 +402,19 @@ const DeliveryChallanDetail = () => {
             {/* Print Styles */}
             <style>{`
                 @media print {
-                    * {
-                        -webkit-print-color-adjust: exact !important;
-                        color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                    }
-                    
-                    body {
-                        background: white !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                    }
-                    
-                    nav, aside, .print\\:hidden, button:not(.print\\:block) {
-                        display: none !important;
-                    }
-                    
-                    .max-w-5xl {
-                        max-width: 100% !important;
-                    }
+                    @page { margin: 20mm; }
+                    body { background: white !important; color: black !important; }
+                    .print\\:hidden { display: none !important; }
+                    main { padding: 0 !important; max-width: 100% !important; }
+                    .lg\\:grid-cols-3 { grid-template-columns: 1fr !important; }
+                    .lg\\:col-span-2 { grid-column: span 3 / span 3 !important; }
+                    .bg-white, .dark\\:bg-neutral-900, .bg-neutral-50, .dark\\:bg-neutral-950 { background: transparent !important; }
+                    .border, .border-b, .border-t { border-color: #e5e7eb !important; }
+                    .text-neutral-400, .text-neutral-500 { color: #6b7280 !important; }
+                    .shadow-sm, .shadow-2xl, .shadow-lg { shadow: none !important; box-shadow: none !important; }
                 }
             `}</style>
-        </Layout>
+        </div>
     );
 };
 

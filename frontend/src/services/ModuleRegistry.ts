@@ -8,7 +8,7 @@ import { lazy } from 'react';
  */
 
 export const Modules = {
-    Dashboard: () => import("../pages/Dashboard/DashboardMockUI"),
+    Dashboard: () => import("../pages/Dashboard/Dashboard"),
     DashboardMockUI: () => import("../pages/Dashboard/DashboardMockUI"),
     Finance: () => import("../pages/Financial/FinanceMockUI"),
     FinanceMockUI: () => import("../pages/Financial/FinanceMockUI"),
@@ -72,8 +72,13 @@ export const Modules = {
     AuditLogs: () => import("../pages/System/Audit/AuditLogViewer"),
     SalesInvoiceRegister: () => import("../pages/Sales/salesInvoices/SalesInvoice"),
     EstimateCreator: () => import("../pages/Sales/estimates/Estimate"),
+    EstimateRegister: () => import("../pages/Sales/estimates/EstimateList"),
     SalesOrderCreator: () => import("../pages/Sales/salesOrders/SalesOrder"),
+    SalesOrderRegister: () => import("../pages/Sales/salesOrders/SalesOrderList"),
+    SalesOrderDetail: () => import("../pages/Sales/salesOrders/SalesOrderDetail"),
     DeliveryChallanCreator: () => import("../pages/Sales/deliveryChallans/DeliveryChallan"),
+    DeliveryChallanRegister: () => import("../pages/Sales/deliveryChallans/DeliveryChallanList"),
+    DeliveryChallanDetail: () => import("../pages/Sales/deliveryChallans/DeliveryChallanDetail"),
     SalesReturn: () => import("../pages/Sales/returns/Return"),
     PaymentInCreator: () => import("../pages/Sales/payments/PaymentInCreator"),
     PaymentInList: () => import("../pages/Sales/payments/PaymentInList"),
@@ -176,6 +181,7 @@ export const Modules = {
     POSModule: () => import("../pages/Pos/POSModule"),
     Suppliers: () => import("../pages/People/Suppliers/Suppliers"),
     PurchaseRegisterMockUI: () => import("../pages/Purchase/PurchaseRegisterMockUI"),
+    PurchaseExpress: () => import("../pages/Purchase/PurchaseExpress"),
 };
 
 /**
@@ -184,6 +190,7 @@ export const Modules = {
  * that point to the same underlying file — prevents unnecessary
  * unmount/remount when navigating between aliased routes.
  */
+const _lazyDashboard = lazy(Modules.Dashboard);
 const _lazyDashboardMockUI = lazy(Modules.DashboardMockUI);
 const _lazyFinanceMockUI = lazy(Modules.FinanceMockUI);
 const _lazyInventoryMockUI = lazy(Modules.InventoryMockUI);
@@ -206,8 +213,13 @@ const _lazyDeviceIntelligence = lazy(Modules.DeviceIntelligence);
 const _lazyLogin = lazy(Modules.Login);
 const _lazySalesInvoiceRegister = lazy(Modules.SalesInvoiceRegister);
 const _lazyEstimateCreator = lazy(Modules.EstimateCreator);
+const _lazyEstimateRegister = lazy(Modules.EstimateRegister);
 const _lazySalesOrderCreator = lazy(Modules.SalesOrderCreator);
+const _lazySalesOrderRegister = lazy(Modules.SalesOrderRegister);
+const _lazySalesOrderDetail = lazy(Modules.SalesOrderDetail);
 const _lazyDeliveryChallanCreator = lazy(Modules.DeliveryChallanCreator);
+const _lazyDeliveryChallanRegister = lazy(Modules.DeliveryChallanRegister);
+const _lazyDeliveryChallanDetail = lazy(Modules.DeliveryChallanDetail);
 const _lazySalesReturn = lazy(Modules.SalesReturn);
 const _lazyPaymentInCreator = lazy(Modules.PaymentInCreator);
 const _lazyPaymentInList = lazy(Modules.PaymentInList);
@@ -322,9 +334,10 @@ const _lazySupplierDetail = lazy(Modules.VendorDetails);
 const _lazyPOSModule = lazy(Modules.POSModule);
 const _lazySuppliers = lazy(Modules.Suppliers);
 const _lazyPurchaseRegisterMockUI = lazy(Modules.PurchaseRegisterMockUI);
+const _lazyPurchaseExpress = lazy(Modules.PurchaseExpress);
 
 export const LazyModules = {
-    Dashboard: _lazyDashboardMockUI,
+    Dashboard: _lazyDashboard,
     DashboardMockUI: _lazyDashboardMockUI,
     Finance: _lazyFinanceMockUI,
     FinanceMockUI: _lazyFinanceMockUI,
@@ -388,8 +401,13 @@ export const LazyModules = {
     AuditLogs: _lazyAuditLogs,
     SalesInvoiceRegister: _lazySalesInvoiceRegister,
     EstimateCreator: _lazyEstimateCreator,
+    EstimateRegister: _lazyEstimateRegister,
     SalesOrderCreator: _lazySalesOrderCreator,
+    SalesOrderRegister: _lazySalesOrderRegister,
+    SalesOrderDetail: _lazySalesOrderDetail,
     DeliveryChallanCreator: _lazyDeliveryChallanCreator,
+    DeliveryChallanRegister: _lazyDeliveryChallanRegister,
+    DeliveryChallanDetail: _lazyDeliveryChallanDetail,
     SalesReturn: _lazySalesReturn,
     PaymentInCreator: _lazyPaymentInCreator,
     PaymentInList: _lazyPaymentInList,
@@ -491,6 +509,7 @@ export const LazyModules = {
     POSModule: _lazyPOSModule,
     Suppliers: _lazySuppliers,
     PurchaseRegisterMockUI: _lazyPurchaseRegisterMockUI,
+    PurchaseExpress: _lazyPurchaseExpress,
 };
 
 

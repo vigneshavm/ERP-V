@@ -1,17 +1,16 @@
 {
     "metrics": [
-        { "label": "Total Dues", "value": "$84,200" },
-        { "label": "Overdue", "value": "18 Records" },
-        { "label": "Active", "value": "42 Records" },
-        { "label": "Collection Rate", "value": "92%" }
+        { "label": "Total Dues", "value": "₹8,42,000", "trend": "+12%", "status": "warning" },
+        { "label": "Overdue", "value": "18 Records", "trend": "+2", "status": "error" },
+        { "label": "Active", "value": "42 Records", "trend": "-5", "status": "success" },
+        { "label": "Collection Rate", "value": "92%", "trend": "+1.5%", "status": "success" }
     ],
     "records": [
-        { "id": "#DUE-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$12,450.00" },
-        { "id": "#DUE-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$8,200.00" },
-        { "id": "#DUE-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$6,800.00" },
-        { "id": "#DUE-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$15,000.00" },
-        { "id": "#DUE-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$3,150.00" },
-        { "id": "#DUE-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$6,750.00" }
+        { "id": "#DUE-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Pending", "amount": "₹1,12,450.00", "overdueDays": 45, "risk": "High", "lastContact": "2 days ago" },
+        { "id": "#DUE-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Partial", "amount": "₹82,200.00", "overdueDays": 12, "risk": "Low", "lastContact": "Today" },
+        { "id": "#DUE-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Pending", "amount": "₹68,800.00", "overdueDays": 32, "risk": "Medium", "lastContact": "5 days ago" },
+        { "id": "#DUE-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Overdue", "amount": "₹1,50,000.00", "overdueDays": 92, "risk": "Critical", "lastContact": "1 week ago" },
+        { "id": "#DUE-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Pending", "amount": "₹31,150.00", "overdueDays": 5, "risk": "Low", "lastContact": "Yesterday" },
+        { "id": "#DUE-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Pending", "amount": "₹67,750.00", "overdueDays": 22, "risk": "Medium", "lastContact": "3 days ago" }
     ]
 }
-

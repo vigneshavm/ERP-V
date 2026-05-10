@@ -1,8 +1,35 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
+import {
+    ShoppingCart,
+    Package,
+    Plus,
+    Search,
+    Eye,
+    Trash2,
+    Calculator,
+    CheckCircle2,
+    Clock,
+    XCircle,
+    ArrowLeft,
+    TrendingUp,
+    FileCheck,
+    AlertTriangle,
+    Download,
+    Filter,
+    ChevronRight,
+    Calendar,
+    Briefcase,
+    Zap,
+    RefreshCw,
+    User,
+    Truck,
+    IndianRupee,
+    Layers,
+    ShieldCheck
+} from 'lucide-react';
 import { SalesOrder } from '../../../types/sales';
 
 const SalesOrderList = () => {
@@ -17,12 +44,13 @@ const SalesOrderList = () => {
 
     const isOverdue = (order: SalesOrder) => {
         if (!order.expectedDeliveryDate) return false;
-        return new Date(order.expectedDeliveryDate) < new Date() && order.status !== 'Delivered' && order.status !== 'Invoiced' && order.status !== 'Cancelled';
+        return new Date(order.expectedDeliveryDate) < new Date() && 
+               !['Delivered', 'Invoiced', 'Cancelled'].includes(order.status);
     };
 
     useEffect(() => {
         fetchOrders();
-    }, [filters]);
+    }, [filters.status, filters.overdue]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -38,344 +66,294 @@ const SalesOrderList = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            let fetchedOrders = response.data;
-
-            // Apply search filter on frontend
-            if (filters.search) {
-                const searchLower = filters.search.toLowerCase();
-                fetchedOrders = fetchedOrders.filter((order: SalesOrder) =>
-                    order.orderNumber.toLowerCase().includes(searchLower) ||
-                    order.customer?.name.toLowerCase().includes(searchLower)
-                );
-            }
-
-            setOrders(fetchedOrders);
+            setOrders(response.data);
         } catch (error: any) {
-            console.error('Error fetching orders:', error);
-            toast.error('Failed to fetch sales orders');
+            toast.error('Failed to sync order matrix');
         } finally {
             setLoading(false);
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const filteredOrders = useMemo(() => {
+        if (!filters.search) return orders;
+        const searchLower = filters.search.toLowerCase();
+        return orders.filter((order) =>
+            order.orderNumber.toLowerCase().includes(searchLower) ||
+            order.customer?.name.toLowerCase().includes(searchLower)
+        );
+    }, [orders, filters.search]);
+
+    const getStatusConfig = (status: string) => {
         switch (status) {
             case 'Delivered':
             case 'Invoiced':
-                return 'bg-success/10 text-success border border-success/30';
+                return { color: 'text-emerald-500', bg: 'bg-emerald-500/10', icon: CheckCircle2 };
             case 'Confirmed':
-                return 'bg-info/10 text-info border border-info/30';
+                return { color: 'text-amber-500', bg: 'bg-amber-500/10', icon: Zap };
             case 'Partially Delivered':
             case 'Partially Invoiced':
-                return 'bg-warning/10 text-warning border border-warning/30';
+                return { color: 'text-blue-500', bg: 'bg-blue-500/10', icon: Clock };
             case 'Cancelled':
-                return 'bg-danger/10 text-danger border border-danger/30';
-            default: // Draft
-                return 'bg-surface/50 text-main border border-default/30';
+                return { color: 'text-rose-500', bg: 'bg-rose-500/10', icon: XCircle };
+            default:
+                return { color: 'text-neutral-500', bg: 'bg-neutral-500/10', icon: FileCheck };
         }
     };
 
-    // Calculate Dashboard Metrics
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-    const confirmedOrders = orders.filter((o) => ['Confirmed', 'Partially Delivered', 'Delivered'].includes(o.status)).length;
-    const overdueOrders = orders.filter((o) => isOverdue(o)).length;
+    const metrics = useMemo(() => {
+        const total = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+        const overdueCount = orders.filter(isOverdue).length;
+        const pendingCount = orders.filter(o => !['Delivered', 'Invoiced', 'Cancelled'].includes(o.status)).length;
+        return { total, overdueCount, pendingCount, count: orders.length };
+    }, [orders]);
 
     return (
-        <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-main tracking-tight">Sales Orders</h1>
-                        <p className="text-sm text-secondary opacity-70 mt-1">Manage, track, and fulfill customer orders</p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => window.print()}
-                            className="p-2 glass-panel border border-default/40 rounded-lg text-secondary hover:bg-surface/40 shadow-sm transition-all"
-                            title="Print List"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => navigate('/sales/sales-order')}
-                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover shadow-sm transition-all font-medium"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>Create Order</span>
-                        </button>
-                    </div>
-                </div>
+        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
+            {/* Ambient Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+            </div>
 
-                {/* Dashboard / Metrics Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="glass-panel p-5 rounded-xl shadow-sm border border-default/20 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider">Total Revenue</p>
-                                <h3 className="text-2xl font-bold text-main mt-1">₹{totalRevenue.toLocaleString()}</h3>
-                            </div>
-                            <div className="p-2 bg-success/10 rounded-lg text-success">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 flex items-center text-xs text-success font-medium">
-                            <span className="flex items-center">
-                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                                +12% from last month
+            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
+                {/* Modern Header */}
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="relative">
+                        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            Order <span className="text-amber-500">Logistics</span>
+                            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-xs font-bold uppercase tracking-widest">
+                                Protocol Matrix
                             </span>
+                        </h1>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400">Ledger Pipeline Active // Operational Status: Nominal</p>
                         </div>
                     </div>
+                    
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        <button className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:scale-110 transition-transform shadow-sm group">
+                            <RefreshCw className="w-4 h-4 text-neutral-500 group-hover:text-amber-500" onClick={fetchOrders} />
+                        </button>
+                        <Link to="/sales/orders/new" className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
+                            <Plus className="w-4 h-4" /> Initialize Order Protocol
+                        </Link>
+                    </div>
+                </header>
 
-                    <div className="glass-panel p-5 rounded-xl shadow-sm border border-default/20 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider">Total Orders</p>
-                                <h3 className="text-2xl font-bold text-main mt-1">{totalOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 h-1 w-full bg-surface/50 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary rounded-full" style={{ width: '70%' }}></div>
-                        </div>
-                    </div>
-
-                    <div className="glass-panel p-5 rounded-xl shadow-sm border border-default/20 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider">Confirmed</p>
-                                <h3 className="text-2xl font-bold text-main mt-1">{confirmedOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-info/10 rounded-lg text-info">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                {/* Industrial KPI Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                        { label: 'Cumulative Volume', value: `₹${metrics.total.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500', trend: '+12.4%', detail: 'Gross Logistical Value' },
+                        { label: 'Active Pipeline', value: metrics.pendingCount, icon: Clock, color: 'text-blue-500', trend: 'Live', detail: 'Fulfillment Pending' },
+                        { label: 'Protocol Nodes', value: metrics.count, icon: Briefcase, color: 'text-neutral-500', trend: 'Verified', detail: 'Total Documented Orders' },
+                        { label: 'Critical Overdue', value: metrics.overdueCount, icon: AlertTriangle, color: metrics.overdueCount > 0 ? 'text-rose-500' : 'text-emerald-500', trend: 'Priority', detail: 'SLA Breach Risk' },
+                    ].map((stat, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm group hover:border-amber-500/30 transition-all relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-neutral-500/5 to-transparent rounded-bl-[100px]"></div>
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className={`p-3 rounded-2xl ${stat.color.replace('text', 'bg')}/10 ${stat.color}`}>
+                                        <stat.icon className="w-6 h-6" />
+                                    </div>
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${stat.trend.includes('+') ? 'text-emerald-500' : 'text-neutral-400'}`}>
+                                        {stat.trend}
+                                    </span>
+                                </div>
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">{stat.label}</h3>
+                                <div className="text-3xl font-display font-black text-neutral-900 dark:text-white tracking-tighter mt-auto">
+                                    {stat.value}
+                                </div>
+                                <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest mt-2">{stat.detail}</p>
                             </div>
                         </div>
-                        <div className="mt-4 text-xs text-secondary opacity-70">
-                            <strong>{((confirmedOrders / (totalOrders || 1)) * 100).toFixed(0)}%</strong> conversion rate
-                        </div>
-                    </div>
-
-                    <div className="glass-panel p-5 rounded-xl shadow-sm border border-default/20 flex flex-col justify-between hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider">Attention Needed</p>
-                                <h3 className="text-2xl font-bold text-main mt-1">{overdueOrders}</h3>
-                            </div>
-                            <div className="p-2 bg-rose-50 rounded-lg text-danger">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-4 text-xs text-danger font-medium">
-                            {overdueOrders > 0 ? "Requires immediate action" : "All clear"}
-                        </div>
-                    </div>
+                    ))}
                 </div>
 
-                {/* Main Content Island */}
-                <div className="glass-panel rounded-xl shadow-sm border border-default/30 overflow-hidden flex flex-col">
-                    {/* Advanced Filter Bar */}
-                    <div className="p-5 border-b border-default/20 bg-surface/30">
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                            {/* Search */}
-                            <div className="relative w-full md:max-w-md group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-secondary opacity-50 group-focus-within:text-primary hover:text-primary-hover transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search order #, customer name..."
-                                    value={filters.search}
-                                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                    className="block w-full pl-10 pr-3 py-2 border border-default/40 rounded-lg leading-5 glass-panel placeholder-slate-400 focus:outline-none focus:placeholder-slate-300 focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-all shadow-sm"
-                                />
-                            </div>
+                {/* Institutional Data Matrix */}
+                <div className="bg-white dark:bg-neutral-900 rounded-[40px] border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden flex flex-col">
+                    {/* Matrix Control Bar */}
+                    <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-6 items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50">
+                        <div className="relative w-full md:max-w-md group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 group-focus-within:scale-110 transition-transform" />
+                            <input
+                                type="text"
+                                placeholder="Scan Matrix (Order #, Entity...)"
+                                value={filters.search}
+                                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                                className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-4 pl-12 pr-6 text-xs font-bold focus:border-amber-500/50 outline-none transition-all dark:text-white shadow-inner"
+                            />
+                        </div>
 
-                            {/* Filters & Actions */}
-                            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <div className="flex items-center gap-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-1.5 rounded-2xl">
+                                <button 
+                                    onClick={() => setFilters({ ...filters, overdue: !filters.overdue })}
+                                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${filters.overdue ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-neutral-400 hover:text-neutral-900 dark:hover:text-white'}`}
+                                >
+                                    SLA Breach
+                                </button>
                                 <select
                                     value={filters.status}
                                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                                    className="block w-full md:w-40 py-2 px-3 border border-default/40 glass-panel rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm text-main opacity-90 font-medium"
+                                    className="bg-transparent text-[10px] font-black uppercase tracking-widest px-4 py-2 outline-none text-neutral-500 dark:text-neutral-400 cursor-pointer"
                                 >
-                                    <option value="">All Statuses</option>
-                                    <option value="Draft">Draft</option>
+                                    <option value="">All Status Protocols</option>
                                     <option value="Confirmed">Confirmed</option>
-                                    <option value="Delivered">Delivered</option>
                                     <option value="Invoiced">Invoiced</option>
+                                    <option value="Delivered">Delivered</option>
                                     <option value="Cancelled">Cancelled</option>
                                 </select>
-
-                                <label className="flex items-center gap-2 cursor-pointer glass-panel px-3 py-2 border border-default/40 rounded-lg shadow-sm hover:bg-surface/40 transition-colors select-none">
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.overdue}
-                                        onChange={(e) => setFilters({ ...filters, overdue: e.target.checked })}
-                                        className="w-4 h-4 text-primary rounded border-default/40 focus:ring-primary"
-                                    />
-                                    <span className="text-sm font-medium text-main opacity-90">Overdue</span>
-                                </label>
-
-                                {(filters.status || filters.search || filters.overdue) && (
-                                    <button
-                                        onClick={() => setFilters({ status: '', search: '', overdue: false })}
-                                        className="text-sm text-secondary opacity-70 hover:text-primary font-medium px-2 transition-colors"
-                                    >
-                                        Clear
-                                    </button>
-                                )}
                             </div>
+                            <button className="p-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:text-amber-500 transition-colors">
+                                <Download className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
 
-                    {/* Data Display */}
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                            <p className="text-secondary opacity-70 font-medium">Loading sales orders...</p>
-                        </div>
-                    ) : orders.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-                            <div className="bg-surface/50 p-4 rounded-full mb-4">
-                                <svg className="w-8 h-8 text-secondary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                            </div>
-                            <h3 className="text-lg font-bold text-main">No orders found</h3>
-                            <p className="text-secondary opacity-70 mt-1 max-w-sm">
-                                Try adjusting your filters or create a new sales order to get started.
-                            </p>
-                            <button
-                                onClick={() => navigate('/sales/sales-order')}
-                                className="mt-6 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover font-medium shadow-sm"
-                            >
-                                Create First Order
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Desktop Table View */}
-                            <div className="hidden md:block overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className="bg-surface/40 border-b border-default/30">
-                                        <tr>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Order</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Customer</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Date</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Amount</th>
-                                            <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-default/20 glass-panel">
-                                        {orders.map((order: SalesOrder) => (
-                                            <tr
-                                                key={order._id}
-                                                onClick={() => navigate(`/sales/sales-order/${order._id}`)}
-                                                className="hover:bg-surface/40 transition-colors cursor-pointer group"
-                                            >
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="font-bold text-main">{order.orderNumber}</div>
-                                                    {isOverdue(order) && (
-                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger mt-1">
-                                                            OVERDUE
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="font-medium text-main">{order.customer?.name || 'Unknown'}</div>
-                                                    <div className="text-xs text-secondary opacity-70">{order.customer?.phone || '-'}</div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
-                                                    {new Date(order.orderDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                                        {order.status}
+                    {/* Data Matrix */}
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-neutral-50 dark:bg-neutral-950/50">
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Order Node</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Customer Entity</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Operational Log</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Status Protocol</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 text-right">Net Valuation</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-8 py-20 text-center">
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+                                                <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] animate-pulse">Syncing Order Matrix...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : filteredOrders.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-8 py-20 text-center">
+                                            <div className="flex flex-col items-center gap-4 text-neutral-300 dark:text-neutral-700">
+                                                <Package className="w-16 h-16 opacity-20" />
+                                                <p className="text-xs font-black uppercase tracking-widest">Protocol Matrix Empty</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredOrders.map((order) => (
+                                        <tr 
+                                            key={order._id} 
+                                            className="group hover:bg-amber-500/[0.02] transition-colors cursor-pointer"
+                                            onClick={() => navigate(`/sales/sales-order/${order._id}`)}
+                                        >
+                                            <td className="px-8 py-6">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight group-hover:text-amber-500 transition-colors">{order.orderNumber}</span>
+                                                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">ID: {order._id?.slice(-8).toUpperCase()}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-500 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                                                        <User className="w-5 h-5" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight">{order.customer?.name}</span>
+                                                        <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">{order.customer?.phone}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
+                                                        <Calendar className="w-3 h-3 text-amber-500" /> {new Date(order.orderDate).toLocaleDateString()}
                                                     </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                    <div className="font-bold text-main">₹{order.totalAmount.toLocaleString()}</div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigate(`/sales/sales-order/${order._id}`);
-                                                        }}
-                                                        className="text-primary hover:text-primary p-2 rounded-full hover:bg-primary/10 transition-colors opacity-0 group-hover:opacity-100"
+                                                    <span className={`text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-2 ${isOverdue(order) ? 'text-rose-500' : 'text-neutral-400'}`}>
+                                                        <Truck className="w-3 h-3" /> SLA: {new Date(order.expectedDeliveryDate).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                {(() => {
+                                                    const config = getStatusConfig(order.status);
+                                                    const Icon = config.icon;
+                                                    return (
+                                                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${config.bg} ${config.color} border border-${config.color.split('-')[1]}-500/20 shadow-sm`}>
+                                                            <Icon className="w-3.5 h-3.5" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">{order.status}</span>
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-sm font-mono font-black text-neutral-900 dark:text-white tracking-tighter flex items-center gap-1">
+                                                        <IndianRupee className="w-3 h-3 text-amber-500" /> {order.totalAmount?.toLocaleString()}
+                                                    </span>
+                                                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">Matrix Yield</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                    <button 
+                                                        className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                                                        title="Matrix View"
                                                     >
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
+                                                        <Eye className="w-4 h-4" />
                                                     </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                    <button 
+                                                        className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                                        title="Purge Object"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
-                            {/* Mobile Card Stack View */}
-                            <div className="md:hidden divide-y divide-default/20">
-                                {orders.map((order: SalesOrder) => (
-                                    <div
-                                        key={order._id}
-                                        onClick={() => navigate(`/sales/sales-order/${order._id}`)}
-                                        className="p-4 active:bg-surface/40 transition-colors"
-                                    >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div>
-                                                <div className="font-bold text-main">{order.orderNumber}</div>
-                                                <div className="text-sm text-secondary">{order.customer?.name}</div>
-                                            </div>
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                                {order.status}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between items-center mt-3">
-                                            <div className="text-xs text-secondary opacity-70">
-                                                {new Date(order.orderDate).toLocaleDateString()}
-                                            </div>
-                                            <div className="font-bold text-main">₹{order.totalAmount.toLocaleString()}</div>
-                                        </div>
-                                        <div className="mt-3">
-                                            <button className="w-full py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors">
-                                                View Details
-                                            </button>
-                                        </div>
-                                        {isOverdue(order) && (
-                                            <div className="mt-2 text-xs font-bold text-danger flex items-center">
-                                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                Overdue Delivery
-                                            </div>
-                                        )}
+                    {/* Matrix Status Bar */}
+                    <div className="p-8 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="flex items-center gap-6">
+                            <div className="flex -space-x-3">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-neutral-900 bg-neutral-200 dark:bg-neutral-800 overflow-hidden shadow-xl shadow-black/5 flex items-center justify-center">
+                                        <User className="w-5 h-5 text-neutral-400" />
                                     </div>
                                 ))}
                             </div>
-                        </>
-                    )}
+                            <div className="flex flex-col">
+                                <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-widest">Active Dispatch Nodes</span>
+                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Version 4.0 // Stable Matrix</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex flex-col items-end">
+                                <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.2em]">Operational Pulse</span>
+                                <div className="w-48 h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full mt-2 overflow-hidden shadow-inner">
+                                    <div className="w-[85%] h-full bg-emerald-500 rounded-full animate-pulse" />
+                                </div>
+                            </div>
+                            <button className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:scale-110 transition-transform shadow-lg shadow-black/5">
+                                <ShieldCheck className="w-4 h-4 text-amber-500" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </Layout>
+            </main>
+        </div>
     );
 };
 
 export default SalesOrderList;
+
 

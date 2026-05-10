@@ -7,6 +7,9 @@ const invoiceItemSchema = new Schema({
         ref: "Item",
         required: true,
     },
+    name: { type: String },        // Denormalized for fast reads/receipts
+    hsnCode: { type: String },     // HSN/SAC code at time of sale
+    gstRate: { type: Number, default: 0 },  // GST % at time of sale
     quantity: {
         type: Number,
         required: true,
@@ -15,6 +18,10 @@ const invoiceItemSchema = new Schema({
         type: Number,
         required: true,
     },
+    taxableAmount: { type: Number, default: 0 }, // price*qty before tax
+    cgst: { type: Number, default: 0 },
+    sgst: { type: Number, default: 0 },
+    igst: { type: Number, default: 0 },
     tax: {
         type: Number,
         default: 0,
@@ -123,6 +130,11 @@ const invoiceSchema = new Schema<IInvoice>(
             required: true,
             index: true
         },
+        storeId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Store",
+            index: true
+        },
         isDeleted: {
             type: Boolean,
             default: false,
@@ -133,6 +145,22 @@ const invoiceSchema = new Schema<IInvoice>(
         deletedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+        },
+        // GST Compliance
+        taxMode: {
+            type: String,
+            enum: ['INCLUSIVE', 'EXCLUSIVE'],
+            default: 'INCLUSIVE'
+        },
+        isInterState: {
+            type: Boolean,
+            default: false   // false = CGST+SGST, true = IGST
+        },
+        taxBreakdown: {
+            cgst:  { type: Number, default: 0 },
+            sgst:  { type: Number, default: 0 },
+            igst:  { type: Number, default: 0 },
+            total: { type: Number, default: 0 }
         },
     },
     { timestamps: true }

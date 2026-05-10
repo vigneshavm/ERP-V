@@ -16,6 +16,21 @@ const itemSchema = new Schema<IItem>(
         sku: {
             type: String,
         },
+        barcode: {
+            type: String,
+            trim: true,
+            index: true
+        },
+        hsnCode: {
+            type: String,
+            trim: true,
+            index: true  // For GSTR-1 aggregation queries
+        },
+        gstRate: {
+            type: Number,
+            enum: [0, 5, 12, 18, 28],
+            default: 0
+        },
         category: {
             type: String,
         },
@@ -91,6 +106,11 @@ const itemSchema = new Schema<IItem>(
             costPrice: Number, // Cost for this specific batch
             supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier' },
             receivedDate: { type: Date, default: Date.now }
+        }],
+        storeLevels: [{
+            storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
+            qty: { type: Number, default: 0 },
+            reservedQty: { type: Number, default: 0 }
         }]
     },
     { timestamps: true }

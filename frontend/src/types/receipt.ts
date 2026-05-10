@@ -33,6 +33,13 @@ export interface ReceiptTaxDetails {
     taxable_value: number;
     cgst_amount: number;
     sgst_amount: number;
+    // Extended: one entry per GST rate slab (multi-rate receipts)
+    gst_slabs?: {
+        rate: number;
+        taxableValue: number;
+        cgst: number;
+        sgst: number;
+    }[];
 }
 
 export interface ReceiptFooter {

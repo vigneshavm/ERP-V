@@ -160,27 +160,67 @@ export class SalesService {
         };
     }
     async createInvoice(invoiceData: any, userId: string, tenantId: string): Promise<IInvoice> {
-        // Basic validation
         if (!invoiceData.items || invoiceData.items.length === 0) {
             throw new AppError("Invoice must have at least one item", 400);
         }
 
-        const invoice = await this.invoiceRepository.create({
-            ...invoiceData,
-            createdBy: userId,
-            tenantId: tenantId,
-            paymentStatus: invoiceData.status || 'unpaid',
-            paymentMethod: invoiceData.paymentMethod || 'due',
-            hasReturns: false,
-            returnedAmount: 0,
-            paidAmount: 0
+        const isInterState: boolean = invoiceData.isInterState ?? false;
+        const isInclusive: boolean  = (invoiceData.taxMode ?? 'INCLUSIVE') === 'INCLUSIVE';
+
+        let totalCGST = 0, totalSGST = 0, totalIGST = 0;
+
+        // Decompose GST per line item
+        const enrichedItems = invoiceData.items.map((item: any) => {
+            const gstRate    = item.gstRate   ?? 0;
+            const lineValue  = item.total     ?? (item.price * item.quantity);
+
+            let taxableAmount = lineValue;
+            if (isInclusive && gstRate > 0) {
+                taxableAmount = lineValue / (1 + gstRate / 100);
+            }
+            const taxAmount = lineValue - taxableAmount;
+
+            let cgst = 0, sgst = 0, igst = 0;
+            if (isInterState) {
+                igst = taxAmount;
+            } else {
+                cgst = taxAmount / 2;
+                sgst = taxAmount / 2;
+            }
+
+            totalCGST += cgst;
+            totalSGST += sgst;
+            totalIGST += igst;
+
+            return {
+                ...item,
+                taxableAmount: +taxableAmount.toFixed(2),
+                cgst:          +cgst.toFixed(2),
+                sgst:          +sgst.toFixed(2),
+                igst:          +igst.toFixed(2),
+                tax:           +(cgst + sgst + igst).toFixed(2),
+            };
         });
 
-        // Update customer dues if applicable (optional, depending on flow)
-        if (invoice.customer && invoice.paymentStatus === 'unpaid') {
-            // Logic to update customer dues could go here or be handled by a separate event/method
-            // For now, we'll keep it simple as per other methods
-        }
+        const invoice = await this.invoiceRepository.create({
+            ...invoiceData,
+            items:          enrichedItems,
+            createdBy:      userId,
+            tenantId:       tenantId,
+            isInterState,
+            taxMode:        invoiceData.taxMode ?? 'INCLUSIVE',
+            taxBreakdown: {
+                cgst:  +totalCGST.toFixed(2),
+                sgst:  +totalSGST.toFixed(2),
+                igst:  +totalIGST.toFixed(2),
+                total: +(totalCGST + totalSGST + totalIGST).toFixed(2),
+            },
+            paymentStatus:  invoiceData.status || 'unpaid',
+            paymentMethod:  invoiceData.paymentMethod || 'due',
+            hasReturns:     false,
+            returnedAmount: 0,
+            paidAmount:     0,
+        });
 
         return invoice;
     }

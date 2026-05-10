@@ -111,6 +111,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'PURCHASE_REGISTER_MOCK', label: 'Register (Mock)', icon: FileText, module: 'PURCHASE', path: '/purchase/register/mock' },
             { id: 'VENDORS', label: 'Vendors', icon: Users, module: 'PURCHASE', path: '/suppliers' },
             { id: 'PURCHASE_ENTRY', label: 'New Entry', icon: Plus, module: 'PURCHASE', path: '/purchase/new' },
+            { id: 'PURCHASE_EXPRESS', label: 'Express Purchase (Small Biz)', icon: Zap, module: 'PURCHASE', path: '/purchase/express' },
             { id: 'PURCHASE_ORDER', label: 'Orders', icon: ClipboardList, module: 'PURCHASE', path: '/purchase/orders' },
             { id: 'PURCHASE_ORDER_LIST', label: 'Order List', icon: List, module: 'PURCHASE', path: '/purchase/orders/list' },
             { id: 'PURCHASE_ORDER_FORM', label: 'New Order', icon: Plus, module: 'PURCHASE', path: '/purchase/orders/new' },

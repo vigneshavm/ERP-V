@@ -34,4 +34,9 @@ router.use('/journal', journalEntryRoutes);
 import clearingParameterRoutes from './clearingParameterRoutes.js';
 router.use('/clearing', clearingParameterRoutes);
 
+// GST Routes (GSTR-1 sales export)
+import { getGSTR1Report, exportGSTR1 } from '../controllers/GSTR1Controller.js';
+router.get('/gst/gstr1',        protect, getGSTR1Report);
+router.get('/gst/gstr1/export', protect, exportGSTR1);
+
 export default router;

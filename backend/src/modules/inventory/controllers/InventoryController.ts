@@ -47,10 +47,31 @@ export class InventoryController {
         }
     };
 
+    public getItemByBarcode = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const item = await this.inventoryService.getItemByBarcode(authReq.params.barcode, authReq.tenantId as string);
+            res.status(200).json(item);
+        } catch (err: any) {
+            error(`Get Item by Barcode Error: ${err.message}`);
+            res.status(err.statusCode || 500).json({ message: err.message });
+        }
+    };
+
     public updateItem = async (req: Request, res: Response): Promise<void> => {
         const authReq = req as any;
         try {
+            // Fetch current state for audit
+            const originalItem = await Item.findOne({ _id: authReq.params.id, tenantId: authReq.tenantId });
+            if (originalItem) {
+                authReq.originalEntity = originalItem.toObject();
+            }
+
             const result = await this.inventoryService.updateItem(authReq.params.id, authReq.tenantId as string, authReq.body, authReq.user);
+            
+            // Attach result for audit
+            authReq.updatedEntity = result;
+
             res.status(200).json(result);
         } catch (err: any) {
             error(`Update Item Error: ${err.message}`);
@@ -61,6 +82,12 @@ export class InventoryController {
     public deleteItem = async (req: Request, res: Response): Promise<void> => {
         const authReq = req as any;
         try {
+            // Fetch current state for audit
+            const originalItem = await Item.findOne({ _id: authReq.params.id, tenantId: authReq.tenantId });
+            if (originalItem) {
+                authReq.deletedEntity = originalItem.toObject();
+            }
+
             await this.inventoryService.deleteItem(authReq.params.id, authReq.tenantId as string, authReq.user?.name as string);
             res.status(200).json({ message: 'Item deleted' });
         } catch (err: any) {

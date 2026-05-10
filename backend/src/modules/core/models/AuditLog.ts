@@ -14,6 +14,7 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 import crypto from "crypto";
 
 export interface IAuditLog extends Document {
+    tenantId: string;
     userId: mongoose.Types.ObjectId;
     action: string;
     entityType: "Invoice" | "Customer" | "Item" | "Return" | "SalesOrder" | "Payment" | "User";
@@ -37,6 +38,11 @@ interface IAuditLogModel extends Model<IAuditLog> {
 
 const auditLogSchema = new Schema<IAuditLog>(
     {
+        tenantId: {
+            type: String,
+            required: true,
+            index: true,
+        },
         userId: {
             type: Schema.Types.ObjectId,
             ref: "User",
@@ -157,6 +163,7 @@ auditLogSchema.pre('save', async function (next) {
         // Calculate current hash
         const dataToHash = JSON.stringify({
             userId: this.userId,
+            tenantId: this.tenantId,
             action: this.action,
             entityType: this.entityType,
             entityId: this.entityId,

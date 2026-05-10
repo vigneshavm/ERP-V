@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
 import { setActiveTab } from "../../redux/slices/uiSlice";
@@ -61,6 +61,8 @@ const Dashboard: React.FC = () => {
   const { dashboardStats, stockReport, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
   const { expenses } = useSelector((state: RootState) => state.expense);
   const { suppliers, isLoading: supplierLoading } = useSelector((state: RootState) => state.suppliers);
+
+  const [activeDashboardTab, setActiveDashboardTab] = useState<'OVERVIEW' | 'ALERTS'>('OVERVIEW');
 
   // Contextual Header Data
   const branchName = useMemo(() => getBranchName(currentBranchId), [getBranchName, currentBranchId]);
@@ -267,14 +269,14 @@ const Dashboard: React.FC = () => {
                 <Target className="w-8 h-8 text-primary" />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-5xl font-display font-black text-main tracking-tighter uppercase mb-1 drop-shadow-sm">Mission Control</h1>
+                <h1 className="text-5xl font-display font-black text-main tracking-tighter uppercase mb-1 drop-shadow-sm">Shop Owner Dashboard</h1>
                 <div className="flex items-center gap-3">
                   <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase rounded-sm border border-primary/30 tracking-[0.2em]">
                     {sectorName}
                   </span>
                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                   <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-70">
-                    {branchName} Node
+                    {branchName} Shop
                   </span>
                 </div>
               </div>
@@ -282,18 +284,53 @@ const Dashboard: React.FC = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end mr-4">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-widest opacity-50 mb-1">System Frequency</span>
-                <span className="text-xl font-display font-black text-main tracking-tighter">2.4 GHz <span className="text-primary text-xs ml-1">STABLE</span></span>
+                <span className="text-[10px] font-black text-secondary uppercase tracking-widest opacity-50 mb-1">Store / Branch</span>
+                <select 
+                  className="bg-surface border border-default rounded px-2 py-1 text-xs text-main"
+                  value={currentBranchId || ''}
+                  onChange={(e) => console.log('Dispatch branch change', e.target.value)}
+                >
+                  <option value="">All Stores (Consolidated)</option>
+                  {branches.map((b: any) => (
+                    <option key={b.id || b._id} value={b.id || b._id}>{b.name}</option>
+                  ))}
+                </select>
               </div>
               <div className="w-px h-12 bg-default opacity-20" />
             </div>
           </div>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-4 border-b border-default pb-4 mb-8">
+          {[
+            { id: 'OVERVIEW', label: 'Overview', icon: Target },
+            { id: 'ALERTS', label: 'Business Alerts', icon: AlertTriangle }
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeDashboardTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveDashboardTab(tab.id as any)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-sm transition-all border ${
+                  isActive 
+                    ? 'bg-primary/20 border-primary/50 text-primary glow-primary' 
+                    : 'bg-surface/50 border-default/30 text-secondary hover:border-primary/30 hover:text-main'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-widest">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {activeDashboardTab === 'OVERVIEW' && <>
         {/* Business Overview Section */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-60">Operational Overview</h2>
+            <h2 className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-60">Business Overview</h2>
             <div className="flex items-center gap-3 glass-panel px-4 py-2 hover:border-primary/40 transition-all">
               <span className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Sync: {lastUpdate}</span>
               <div className="w-px h-3 bg-default opacity-50" />
@@ -314,7 +351,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center text-primary border border-primary/30 group-hover:glow-primary transition-all">
                     <TrendingUp className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue Matrix</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Today's Collections (Sales)</span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-primary opacity-50">₹</span>
@@ -338,7 +375,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-sm bg-success/20 flex items-center justify-center text-success border border-success/30 group-hover:glow-success transition-all">
                     <ArrowDownLeft className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Flux Inbound</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Customer Udhaar (To Receive)</span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-success opacity-50">₹</span>
@@ -362,7 +399,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-sm bg-danger/20 flex items-center justify-center text-danger border border-danger/30 group-hover:glow-error transition-all">
                     <ArrowUpRight className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Flux Outbound</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Supplier Udhaar (To Pay)</span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-danger opacity-50">₹</span>
@@ -386,7 +423,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-sm bg-info/20 flex items-center justify-center text-info border border-info/30 group-hover:glow-primary transition-all">
                     <Package className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Asset Matrix</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Inventory Value (Stock)</span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-info opacity-50">₹</span>
@@ -410,7 +447,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-sm bg-warning/20 flex items-center justify-center text-warning border border-warning/30 group-hover:glow-primary transition-all">
                     <Landmark className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Liquidity Pulse</span>
+                  <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Liquid Cash (Hand & Bank)</span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-warning opacity-50">₹</span>
@@ -438,9 +475,9 @@ const Dashboard: React.FC = () => {
                 <div>
                   <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
                     <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
-                    Sales Flux
+                    Sales Performance
                   </h3>
-                  <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Operational Revenue Matrix / 7D</p>
+                  <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Last 7 Days Sales Trend</p>
                 </div>
                 <div className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-sm text-[10px] font-black text-primary uppercase tracking-widest">
                   Live Feed
@@ -488,9 +525,9 @@ const Dashboard: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
                   <div className="w-2 h-8 bg-success rounded-full shadow-[0_0_15px_rgba(var(--color-success),0.5)]" />
-                  Net Yield
+                  Monthly Business Health (P&L)
                 </h3>
-                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">6-Month Profitability Hub</p>
+                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">6-Month Growth Analysis</p>
               </div>
             </div>
             <div className="h-56 relative z-10">
@@ -526,9 +563,9 @@ const Dashboard: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
                   <div className="w-2 h-8 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-error),0.5)]" />
-                  Leakage Map
+                  Expense Breakdown
                 </h3>
-                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Expenditure Logic / Current Cycle</p>
+                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Where Your Money is Going</p>
               </div>
             </div>
             <div className="h-56 relative z-10 flex items-center">
@@ -569,61 +606,14 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+        </>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Flux Log - Latest Transactions */}
-        <div className="lg:col-span-2 card-interactive p-8 group min-h-[600px] flex flex-col bg-card/60 backdrop-blur-2xl overflow-hidden">
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-[120px] -mr-48 -mb-48 animate-aura" style={{ animationDelay: '6s' }} />
-          <div className="flex items-center justify-between mb-10 pb-4 border-b border-default relative z-10">
-            <div>
-              <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4">
-                <div className="w-2 h-8 bg-accent rounded-full shadow-[0_0_15px_rgba(var(--color-accent),0.5)]" />
-                Flux Log
-              </h3>
-              <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Real-Time Transaction Stream</p>
-            </div>
-            <button className="px-5 py-2 bg-accent/10 border border-accent/20 text-[10px] font-black text-accent uppercase tracking-widest hover:bg-accent hover:text-white transition-all rounded-sm">
-              Full Registry
-            </button>
-          </div>
 
-          <div className="space-y-4 flex-1">
-            {transactions && transactions.length > 0 ? (
-              transactions.slice(0, 7).map((tx, idx) => (
-                <div key={idx} className="flex items-center justify-between p-5 bg-surface/30 border border-default/50 rounded-sm hover:border-accent/40 hover:bg-surface/50 transition-all group/item hover:translate-x-1 duration-300">
-                  <div className="flex items-center gap-5">
-                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center border ${tx.type === 'INCOME' ? 'bg-success/10 border-success/30 text-success' : 'bg-danger/10 border-danger/30 text-danger'}`}>
-                      {tx.type === 'INCOME' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-main uppercase tracking-tight">{tx.description || 'System Protocol'}</p>
-                      <p className="text-[10px] text-secondary font-bold uppercase opacity-50 flex items-center gap-2">
-                        <span className={`w-1.5 h-1.5 rounded-full ${tx.type === 'INCOME' ? 'bg-success' : 'bg-danger'}`} />
-                        {tx.category || 'General'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-lg font-black tracking-tighter ${tx.type === 'INCOME' ? 'text-success' : 'text-danger'}`}>
-                      {tx.type === 'INCOME' ? '+' : '-'}₹{tx.amount.toLocaleString()}
-                    </p>
-                    <p className="text-[10px] text-secondary font-black opacity-40 uppercase tracking-widest">{new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center py-20 opacity-20 grayscale">
-                <div className="w-32 h-32 mb-8 rounded-full border-4 border-dashed border-secondary animate-spin duration-[30s]" />
-                <p className="text-xs font-black uppercase tracking-[0.4em]">No Active Flux Detected</p>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Neural Hub - Intelligence Widgets */}
-        <div className="space-y-8">
-          <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.5em] opacity-50 pl-2 mb-4">Neural Priority Hub</h3>
+        {activeDashboardTab === 'ALERTS' &&
+        <div className="space-y-6">
+          <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.5em] opacity-50 pl-2 mb-4 border-b border-default pb-4">Important Business Alerts</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           {/* Cost Intelligence Widget */}
           <div className="card-interactive p-8 grad-error border-l-4 border-l-danger group relative overflow-hidden bg-card/60 backdrop-blur-2xl">
@@ -634,13 +624,13 @@ const Dashboard: React.FC = () => {
                   <ShieldAlert className="w-7 h-7 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-main uppercase tracking-tight">CapEx Anomaly</h4>
-                  <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Logic Engine: Risk detected</p>
+                  <h4 className="text-sm font-black text-main uppercase tracking-tight">High Expense Alert</h4>
+                  <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">System has detected a risk</p>
                 </div>
               </div>
             </div>
             <p className="text-[11px] text-secondary leading-relaxed mb-6 font-bold opacity-80 relative z-10">
-              Logistics expenditure has deviated by <span className="text-danger font-black">+18%</span> from the standard baseline in Coimbatore node.
+              Logistics expenditure has deviated by <span className="text-danger font-black">+18%</span> from the standard baseline in your shop.
             </p>
             <div className="flex items-end justify-between mb-6 relative z-10">
               <div className="px-3 py-1 bg-danger/20 border border-danger/30 rounded-sm text-[9px] font-black text-danger uppercase tracking-widest">
@@ -661,8 +651,8 @@ const Dashboard: React.FC = () => {
                 <Package className="w-7 h-7" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-main uppercase tracking-tight">Depletion Logic</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Auto-Calibration Active</p>
+                <h4 className="text-sm font-black text-main uppercase tracking-tight">Low Stock Warning</h4>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Predicting items about to run out</p>
               </div>
             </div>
             <div className="space-y-4">
@@ -674,7 +664,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className={`text-[11px] font-black uppercase tracking-widest ${item.urgency === 'Critical' ? 'text-danger animate-pulse' : 'text-primary'}`}>
-                      {item.daysLeft} CYCLES
+                      {item.daysLeft} DAYS LEFT
                     </p>
                   </div>
                 </div>
@@ -690,8 +680,8 @@ const Dashboard: React.FC = () => {
                 <User className="w-7 h-7" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-main uppercase tracking-tight">Trust Profile</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Counterparty Calibration</p>
+                <h4 className="text-sm font-black text-main uppercase tracking-tight">Customer Credit Risk</h4>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Tracking risky udhaar customers</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -709,6 +699,8 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
+        </div>
+        }
       </div>
     </Layout>
   );

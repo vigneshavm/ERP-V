@@ -1,15 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Layout from "../../../components/shared/Layout/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import FormInput from "../../../components/core/Form/Input";
+import {
+    Truck,
+    Plus,
+    Trash2,
+    Save,
+    ArrowLeft,
+    Clock,
+    ShieldCheck,
+    Zap,
+    Info,
+    Layers,
+    Globe,
+    RefreshCw,
+    ShoppingBag,
+    Tag,
+    IndianRupee,
+    Minus,
+    Search,
+    Calendar,
+    Briefcase,
+    CheckCircle2,
+    Package,
+    User,
+    ChevronRight,
+    MapPin,
+    Navigation,
+    Anchor,
+    Plane,
+    Activity
+} from 'lucide-react';
 import CustomerSelectionModal from "../../../components/shared/Modals/CustomerSelectionModal";
 import ItemSelectionModal from "../../../components/shared/Modals/ItemSelectionModal";
 import SalesOrderSelectionModal from "../../../components/shared/Modals/SalesOrderSelectionModal";
 import { createDeliveryChallan, reset } from "../../../redux/slices/deliveryChallanSlice";
-
 import { RootState } from '../../../redux/store';
 
 interface ChallanItem {
@@ -65,38 +91,19 @@ const DeliveryChallan = () => {
         }
 
         if (isSuccess && challan) {
-            toast.success('Delivery Challan created successfully!');
-
-            // Reset Redux state BEFORE navigation
+            toast.success('Dispatch Protocol Finalized');
             dispatch(reset());
-
-            // Reset form state
-            setFormData({
-                challanNo: 'DC-' + Date.now(),
-                challanDate: new Date().toISOString().split('T')[0],
-                deliveryDate: '',
-                customer: null,
-                salesOrder: null,
-                items: [],
-                vehicleNo: '',
-                driverName: '',
-                transportMode: 'road',
-                notes: ''
-            });
-
-            // Navigate to detail page
             navigate(`/sales/delivery-challan/${challan._id}`);
         }
     }, [isError, isSuccess, message, challan, navigate, dispatch]);
 
     const handleSalesOrderSelect = (order: any) => {
-        // Auto-populate customer and items from sales order
         const orderItems = order.items.map((item: any) => ({
             item: item.item._id || item.item,
-            name: item.item.name || 'Unknown',
+            name: item.item.name || 'Unknown Node',
             sku: item.item.sku || '',
             quantity: item.quantity,
-            deliveredQty: item.quantity - (item.deliveredQty || 0), // Remaining quantity
+            deliveredQty: item.quantity - (item.deliveredQty || 0),
             unit: item.item.unit || 'pcs',
             description: '',
             availableStock: item.item.stock || 0,
@@ -111,7 +118,7 @@ const DeliveryChallan = () => {
             deliveryDate: order.expectedDeliveryDate ? new Date(order.expectedDeliveryDate).toISOString().split('T')[0] : ''
         });
 
-        toast.success(`Loaded ${orderItems.length} items from Sales Order ${order.orderNumber}`);
+        toast.success(`Matrix Loaded from Sales Order ${order.orderNumber}`);
     };
 
     const handleItemSelect = (item: any) => {
@@ -119,29 +126,29 @@ const DeliveryChallan = () => {
             item: item._id,
             name: item.name,
             sku: item.sku,
-            quantity: item.quantity,
-            deliveredQty: item.quantity,
+            quantity: item.quantity || 1,
+            deliveredQty: item.quantity || 1,
             unit: item.unit || 'pcs',
             description: '',
             availableStock: item.stockQty - (item.reservedStock || 0),
-            sellingPrice: item.sellingPrice
+            sellingPrice: item.sellingPrice || 0
         };
 
         setFormData({
             ...formData,
             items: [...formData.items, newItem]
         });
+        toast.success(`Added ${item.name} to dispatch manifest`);
     };
 
-    const updateItem = (index: number, field: string, value: any) => {
+    const updateItem = (index: number, field: keyof ChallanItem, value: any) => {
         const newItems = [...formData.items];
         (newItems[index] as any)[field] = value;
 
-        // Validate deliveredQty doesn't exceed available stock
         if (field === 'deliveredQty') {
             const maxQty = newItems[index].availableStock;
             if (value > maxQty) {
-                toast.warning(`Cannot deliver more than available stock (${maxQty})`);
+                toast.warning(`SLA Alert: Delivery exceeds available stock (${maxQty})`);
                 (newItems[index] as any)[field] = maxQty;
             }
         }
@@ -150,30 +157,29 @@ const DeliveryChallan = () => {
     };
 
     const removeItem = (index: number) => {
+        const item = formData.items[index];
         const newItems = formData.items.filter((_, i) => i !== index);
         setFormData({ ...formData, items: newItems });
+        toast.warn(`Removed ${item.name} from dispatch manifest`);
     };
 
     const handleSave = () => {
-        // Validation
         if (!formData.customer) {
-            toast.error('Please select a customer');
+            toast.error('Entity mapping required');
             return;
         }
 
         if (formData.items.length === 0) {
-            toast.error('Please add at least one item');
+            toast.error('Dispatch manifest cannot be empty');
             return;
         }
 
-        // Check all items have deliveredQty > 0
         const invalidItems = formData.items.filter(item => !item.deliveredQty || item.deliveredQty <= 0);
         if (invalidItems.length > 0) {
-            toast.error('All items must have a delivered quantity greater than 0');
+            toast.error('All dispatch nodes must have positive quantity');
             return;
         }
 
-        // Prepare data for API
         const challanData = {
             customerId: formData.customer._id,
             challanDate: formData.challanDate,
@@ -195,312 +201,359 @@ const DeliveryChallan = () => {
         dispatch(createDeliveryChallan(challanData) as any);
     };
 
-    const totalItems = formData.items.length;
-    const totalQuantity = formData.items.reduce((sum: number, item: any) => sum + (item.deliveredQty || 0), 0);
+    const metrics = useMemo(() => {
+        const totalItems = formData.items.length;
+        const totalQty = formData.items.reduce((sum, item) => sum + (item.deliveredQty || 0), 0);
+        return { totalItems, totalQty };
+    }, [formData.items]);
 
     return (
-        <Layout>
-            <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] bg-app">
-                {/* ERP Header Action Bar */}
-                <div className="bg-card border-b border-default px-6 py-3 flex items-center justify-between shadow-sm shrink-0">
+        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-hidden flex flex-col transition-colors animate-fade-in relative">
+            {/* Ambient Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+            </div>
+
+            {/* Top Command Bar */}
+            <header className="relative z-20 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 px-8 py-4 flex items-center justify-between shadow-sm transition-all">
+                <div className="flex items-center gap-6">
+                    <button 
+                        onClick={() => navigate('/sales/challans')}
+                        className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-2xl hover:scale-110 transition-transform text-neutral-500 hover:text-amber-500"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
                     <div>
-                        <h1 className="text-xl font-bold text-main">Delivery Challan</h1>
-                        <p className="text-xs text-secondary">Create and manage delivery documents</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => navigate('/sales/delivery-challan-list')}
-                            className="px-4 py-1.5 text-sm font-bold text-secondary bg-card border border-default rounded-lg hover:bg-surface transition-all btn-interactive"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={isLoading}
-                            className="px-6 py-1.5 text-sm font-bold text-white bg-primary border border-transparent rounded-lg shadow-lg shadow-primary/25 hover:bg-primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 transition-all btn-interactive"
-                        >
-                            {isLoading && (
-                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            )}
-                            {isLoading ? 'Saving...' : 'Save Challan'}
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white">
+                                Dispatch <span className="text-amber-500">Protocol</span>
+                            </h1>
+                            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                                Logistics v4.0
+                            </span>
+                        </div>
+                        <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5 flex items-center gap-2">
+                            <Globe className="w-3 h-3" /> Global Fulfillment Node // Operational Mode: Dispatch
+                        </p>
                     </div>
                 </div>
 
-                {/* Main Content Scrollable Area */}
-                <div className="flex-1 overflow-auto p-6">
-                    <div className="max-w-7xl mx-auto space-y-6">
-                        {/* Top Section: Basic Info & Customer - ERP Grid Style */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden">
-                            <div className="bg-surface px-4 py-2 border-b border-default flex justify-between items-center">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Document Details</h2>
-                                <div className="text-xs text-secondary font-medium">
-                                    {formData.salesOrder && <span className="bg-primary-soft text-primary px-2 py-0.5 rounded border border-primary/20">Linked to SO</span>}
-                                </div>
-                            </div>
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-                                {/* Column 1: Challan Info */}
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Challan No.</label>
-                                        <input
-                                            type="text"
-                                            value={formData.challanNo}
-                                            disabled
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-bold text-main focus:outline-none opacity-80"
-                                        />
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => navigate('/sales/challans')}
+                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all shadow-sm"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={handleSave}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                    >
+                        {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                        Finalize Protocol
+                    </button>
+                </div>
+            </header>
+
+            <main className="relative z-10 flex-1 flex overflow-hidden">
+                {/* Left Panel: Items Matrix */}
+                <section className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                    <div className="max-w-[1000px] mx-auto space-y-8 pb-20">
+                        {/* Summary Dashboard */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { label: 'Dispatch Nodes', value: `${metrics.totalItems} Units`, icon: Layers, color: 'text-amber-500' },
+                                { label: 'Gross Quantity', value: metrics.totalQty, icon: Activity, color: 'text-blue-500' },
+                                { label: 'Risk Protocol', value: 'Nominal', icon: ShieldCheck, color: 'text-emerald-500' }
+                            ].map((stat, i) => (
+                                <div key={i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                                    <div className={`p-3 rounded-2xl ${stat.color.replace('text', 'bg')}/10 ${stat.color}`}>
+                                        <stat.icon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Challan Date <span className="text-rose-500">*</span></label>
-                                        <input
-                                            value={formData.challanDate}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, challanDate: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        />
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{stat.label}</p>
+                                        <p className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tight">{stat.value}</p>
                                     </div>
                                 </div>
-
-                                {/* Column 2: Logistics Date */}
-                                <div>
-                                    <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Delivery Expected</label>
-                                    <input
-                                        type="date"
-                                        value={formData.deliveryDate}
-                                        onChange={(e) => setFormData({ ...formData, deliveryDate: e.target.value })}
-                                        className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    />
-                                </div>
-
-                                {/* Column 3 & 4: Customer Panel */}
-                                <div className="md:col-span-2 border border-default rounded-xl bg-surface/30 p-4 relative group transition-all hover:bg-surface/50">
-                                    <label className="block text-xs font-bold text-primary mb-3 uppercase tracking-wider">Customer</label>
-                                    {formData.customer ? (
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="font-bold text-main text-base">{formData.customer.name}</p>
-                                                <p className="text-xs text-secondary mt-1 font-medium">{formData.customer.address?.line1}, {formData.customer.address?.city}</p>
-                                                <div className="flex gap-3 mt-3 text-xs text-secondary font-medium">
-                                                    <span>Ph: {formData.customer.phone}</span>
-                                                    {formData.customer.email && <span>• {formData.customer.email}</span>}
-                                                </div>
-                                            </div>
-                                            <button
-                                                onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
-                                                className="text-danger hover:text-rose-700 text-xs font-bold border border-rose-200 bg-card px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-all btn-interactive"
-                                            >
-                                                Change
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="h-full flex flex-col items-center justify-center gap-3 py-2">
-                                            <p className="text-sm text-secondary font-medium">No customer selected</p>
-                                            <div className="flex gap-3">
-                                                <button
-                                                    onClick={() => setShowCustomerModal(true)}
-                                                    className="px-4 py-2 bg-card border border-primary text-primary text-xs font-bold rounded-lg hover:bg-primary-soft shadow-sm transition-all btn-interactive"
-                                                >
-                                                    Find Customer
-                                                </button>
-                                                <span className="text-muted text-xs flex items-center font-bold">OR</span>
-                                                <button
-                                                    onClick={() => setShowSalesOrderModal(true)}
-                                                    className="px-4 py-2 bg-primary border border-transparent text-white text-xs font-bold rounded-lg hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all btn-interactive"
-                                                >
-                                                    Select from Sales Order
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            ))}
                         </div>
 
-                        {/* Items Section - Dense Table */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[300px]">
-                            <div className="px-4 py-2 border-b border-default bg-surface flex justify-between items-center">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Items & Quantities</h2>
-                                <button
-                                    onClick={() => setShowItemModal(true)}
-                                    className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all btn-interactive"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    Add Item
-                                </button>
+                        {/* Items Data Matrix */}
+                        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] shadow-sm overflow-hidden flex flex-col transition-all">
+                            <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50">
+                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Dispatch Manifest</h3>
+                                <div className="flex items-center gap-3">
+                                    {formData.salesOrder && (
+                                        <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
+                                            <Briefcase className="w-3 h-3" /> Linked to SO
+                                        </span>
+                                    )}
+                                    <button 
+                                        onClick={() => setShowItemModal(true)}
+                                        className="p-3 bg-amber-500 text-white rounded-2xl hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
+                                    >
+                                        <Plus className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="flex-1 overflow-x-auto">
+                            <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-surface border-b border-default">
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-12 text-center tracking-wider">#</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default tracking-wider">Item Details</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-24 text-right tracking-wider">Stock</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-32 text-right tracking-wider">Delivery Qty</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default w-20 tracking-wider">Unit</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase border-r border-default tracking-wider">Description</th>
-                                            <th className="px-4 py-3 text-xs font-bold text-secondary uppercase w-16 text-center tracking-wider">Action</th>
+                                        <tr className="bg-neutral-50 dark:bg-neutral-950/50">
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Product Specification</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 w-32 text-right">Available</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 w-40 text-right">Dispatch Qty</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 w-24 text-center">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-default">
+                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {formData.items.length === 0 ? (
                                             <tr>
-                                                <td colSpan={7} className="px-4 py-16 text-center text-muted font-medium italic">
-                                                    Start adding items to create the challan
+                                                <td colSpan={5} className="px-8 py-20 text-center">
+                                                    <div className="flex flex-col items-center gap-4 opacity-20 grayscale">
+                                                        <Truck className="w-16 h-16 text-amber-500" />
+                                                        <p className="text-xs font-black uppercase tracking-widest text-neutral-400">Manifest Empty // Sync Entity or Items</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ) : (
                                             formData.items.map((item, index) => (
-                                                <tr key={index} className="hover:bg-surface transition-colors group">
-                                                    <td className="px-4 py-3 text-xs text-secondary font-bold text-center border-r border-default bg-surface/30">
+                                                <tr key={index} className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                                                    <td className="px-8 py-6 text-center text-[10px] font-black text-neutral-400">
                                                         {index + 1}
                                                     </td>
-                                                    <td className="px-4 py-3 border-r border-default font-medium">
-                                                        <p className="text-sm font-bold text-main">{item.name}</p>
-                                                        {item.sku && <p className="text-[10px] text-muted font-bold mt-0.5 tracking-tight">SKU: {item.sku}</p>}
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight">{item.name}</span>
+                                                            <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1 flex items-center gap-1">
+                                                                SKU: {item.sku || 'N/A'} // UNIT: {item.unit}
+                                                            </span>
+                                                        </div>
                                                     </td>
-                                                    <td className="px-4 py-3 border-r border-default text-right">
-                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.availableStock > 0 ? 'bg-success/10 text-emerald-700 dark:bg-emerald-900/20' : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20'
-                                                            }`}>
-                                                            {item.availableStock} in stock
+                                                    <td className="px-8 py-6 text-right">
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${item.availableStock > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                            {item.availableStock} Units
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 text-right border-r border-default p-2">
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            max={item.availableStock}
-                                                            value={item.deliveredQty}
-                                                            onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
-                                                            className={`w-full text-right px-3 py-1.5 text-sm font-bold border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all ${!item.deliveredQty || item.deliveredQty <= 0 ? 'border-rose-300 bg-danger/10' : 'border-default bg-input'}`}
-                                                        />
+                                                    <td className="px-8 py-6 text-right">
+                                                        <div className="inline-flex items-center bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden p-1 shadow-inner">
+                                                            <button 
+                                                                onClick={() => updateItem(index, 'deliveredQty', Math.max(1, item.deliveredQty - 1))}
+                                                                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg text-neutral-400 transition-colors"
+                                                            >
+                                                                <Minus className="w-3 h-3" />
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                value={item.deliveredQty}
+                                                                onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
+                                                                className="w-16 text-center bg-transparent text-xs font-black outline-none dark:text-white"
+                                                            />
+                                                            <button 
+                                                                onClick={() => updateItem(index, 'deliveredQty', item.deliveredQty + 1)}
+                                                                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg text-neutral-400 transition-colors"
+                                                            >
+                                                                <Plus className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-xs text-secondary font-bold border-r border-default">
-                                                        {item.unit}
-                                                    </td>
-                                                    <td className="px-4 p-2 border-r border-default">
-                                                        <input
-                                                            type="text"
-                                                            value={item.description}
-                                                            onChange={(e) => updateItem(index, 'description', e.target.value)}
-                                                            placeholder="Add remarks..."
-                                                            className="w-full px-3 py-1.5 text-xs font-medium border border-transparent hover:border-default focus:border-primary rounded-lg focus:outline-none transition-all bg-transparent focus:bg-input text-main"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-3 text-center">
-                                                        <button
+                                                    <td className="px-8 py-6 text-center">
+                                                        <button 
                                                             onClick={() => removeItem(index)}
-                                                            className="text-muted hover:text-danger transition-all p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg"
-                                                            title="Remove Item"
+                                                            className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                                                         >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
+                                                            <Trash2 className="w-4 h-4" />
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))
                                         )}
                                     </tbody>
-                                    {formData.items.length > 0 && (
-                                        <tfoot className="bg-surface border-t border-default">
-                                            <tr>
-                                                <td colSpan={3} className="px-4 py-3 text-xs font-bold text-right text-secondary uppercase border-r border-default tracking-wider">Totals:</td>
-                                                <td className="px-4 py-3 text-sm text-right text-primary font-bold border-r border-default">{totalQuantity}</td>
-                                                <td className="px-4 py-3 text-xs font-bold text-secondary border-r border-default" colSpan={3}>
-                                                    {totalItems} Item(s)
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    )}
                                 </table>
                             </div>
                         </div>
 
-                        {/* Bottom Section: Transport & Logistics */}
-                        <div className="bg-card border border-default rounded-xl shadow-sm overflow-hidden">
-                            <div className="bg-surface px-4 py-2 border-b border-default">
-                                <h2 className="text-sm font-bold text-main uppercase tracking-wide">Transport & Notes</h2>
-                            </div>
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="col-span-1">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Transport Mode</label>
-                                        <select
-                                            value={formData.transportMode}
-                                            onChange={(e) => setFormData({ ...formData, transportMode: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        {/* Logistics Directives */}
+                        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[32px] p-8 shadow-sm">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                <Info className="w-4 h-4 text-amber-500" /> Operational Directives
+                            </h3>
+                            <textarea 
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white placeholder:text-neutral-500 min-h-[120px] shadow-inner"
+                                placeholder="Enter specific logistical protocols, handling terms, or delivery notes..."
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Right Panel: Logistics parameters */}
+                <aside className="w-[400px] bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xl border-l border-neutral-200 dark:border-neutral-800 p-8 flex flex-col gap-8 overflow-y-auto custom-scrollbar relative z-20 shadow-2xl">
+                    <div className="space-y-8">
+                        {/* Customer Entity Mapping */}
+                        <div>
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4">Entity Mapping</h3>
+                            {formData.customer ? (
+                                <div className="bg-white dark:bg-neutral-900 border-2 border-amber-500/20 rounded-3xl p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group transition-all hover:scale-[1.02]">
+                                    <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-[40px]" />
+                                    <div className="flex items-start gap-4 mb-4 relative z-10">
+                                        <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                                            <User className="w-6 h-6" />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight truncate">{formData.customer.name}</p>
+                                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mt-0.5 truncate">{formData.customer.address?.line1}, {formData.customer.address?.city}</p>
+                                        </div>
+                                        <button 
+                                            onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
+                                            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl text-neutral-400 hover:text-rose-500 transition-colors"
                                         >
-                                            <option value="road">Road</option>
-                                            <option value="rail">Rail</option>
-                                            <option value="air">Air</option>
-                                            <option value="ship">Ship</option>
-                                            <option value="courier">Courier</option>
-                                        </select>
+                                            <RefreshCw className="w-4 h-4" />
+                                        </button>
                                     </div>
-                                    <div className="col-span-1">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Vehicle No.</label>
+                                    <div className="space-y-2 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
+                                            <MapPin className="w-3 h-3 text-amber-500" /> SLA: Local Node Dispatch
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
+                                            <Tag className="w-3 h-3 text-amber-500" /> Ph: {formData.customer.phone}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <button 
+                                        onClick={() => setShowCustomerModal(true)}
+                                        className="w-full bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-3xl p-6 flex flex-col items-center gap-3 hover:border-amber-500/50 transition-all group shadow-sm"
+                                    >
+                                        <Search className="w-6 h-6 text-neutral-300 group-hover:text-amber-500 transition-colors" />
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] group-hover:text-amber-500 transition-colors">Map Customer Entity</p>
+                                    </button>
+                                    <div className="flex items-center gap-2 px-4 py-2 opacity-30">
+                                        <div className="h-px flex-1 bg-neutral-300 dark:bg-neutral-700" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest">OR</span>
+                                        <div className="h-px flex-1 bg-neutral-300 dark:bg-neutral-700" />
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowSalesOrderModal(true)}
+                                        className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-3xl p-6 flex flex-col items-center gap-3 hover:bg-amber-500/20 transition-all group shadow-sm"
+                                    >
+                                        <Briefcase className="w-6 h-6" />
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">Select from Sales Order</p>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Transport Parameters */}
+                        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[32px] p-6 space-y-6 shadow-sm">
+                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4">Logistics Matrix</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Transport Vector</label>
+                                    <div className="grid grid-cols-5 gap-2">
+                                        {[
+                                            { id: 'road', icon: Truck },
+                                            { id: 'rail', icon: Navigation },
+                                            { id: 'air', icon: Plane },
+                                            { id: 'ship', icon: Anchor },
+                                            { id: 'courier', icon: Globe }
+                                        ].map(mode => (
+                                            <button
+                                                key={mode.id}
+                                                onClick={() => setFormData({ ...formData, transportMode: mode.id })}
+                                                className={`p-3 rounded-xl border transition-all flex items-center justify-center ${formData.transportMode === mode.id ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400 hover:border-amber-500/30'}`}
+                                                title={mode.id.toUpperCase()}
+                                            >
+                                                <mode.icon className="w-4 h-4" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Vehicle Node ID</label>
+                                    <div className="relative">
+                                        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
                                         <input
                                             type="text"
                                             value={formData.vehicleNo}
                                             onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
                                             placeholder="MH-01-AB-1234"
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        />
-                                    </div>
-                                    <div className="col-span-2">
-                                        <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Driver Name / Carrier</label>
-                                        <input
-                                            type="text"
-                                            value={formData.driverName}
-                                            onChange={(e) => setFormData({ ...formData, driverName: e.target.value })}
-                                            className="w-full px-3 py-1.5 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
-                                <div className="col-span-1">
-                                    <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Additional Notes</label>
-                                    <textarea
-                                        value={formData.notes}
-                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        rows={4}
-                                        className="w-full px-3 py-2 bg-input border border-default rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-                                        placeholder="Enter any special instructions or remarks..."
-                                    />
+                                <div>
+                                    <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Dispatch Date</label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
+                                        <input
+                                            type="date"
+                                            value={formData.challanDate}
+                                            onChange={(e) => setFormData({ ...formData, challanDate: e.target.value })}
+                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Dispatch Valuation */}
+                        <div className="bg-neutral-900 dark:bg-white rounded-[40px] p-8 text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden mt-auto">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-[100px]" />
+                            <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Valuation</h3>
+                            <div className="space-y-6 relative z-10">
+                                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
+                                    <span>Matrix Nodes</span>
+                                    <span className="font-mono">{metrics.totalItems} Units</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
+                                    <span>Logistics Protocol</span>
+                                    <span className="font-mono text-emerald-400 dark:text-emerald-600">{formData.transportMode.toUpperCase()}</span>
+                                </div>
+                                <div className="pt-6 border-t border-white/10 dark:border-neutral-200">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Total Fulfillment Qty</span>
+                                        <div className="text-4xl font-display font-black tracking-tighter flex items-center gap-3">
+                                            <Activity className="w-8 h-8 text-amber-500" />
+                                            {metrics.totalQty.toLocaleString()}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </aside>
+            </main>
 
-                <CustomerSelectionModal
-                    isOpen={showCustomerModal}
-                    onClose={() => setShowCustomerModal(false)}
-                    onSelect={(customer: any) => {
-                        setFormData({ ...formData, customer });
-                        setShowCustomerModal(false);
-                    }}
-                />
+            <CustomerSelectionModal
+                isOpen={showCustomerModal}
+                onClose={() => setShowCustomerModal(false)}
+                onSelect={(customer: any) => {
+                    setFormData({ ...formData, customer });
+                    setShowCustomerModal(false);
+                    toast.success(`Entity ${customer.name} mapped to dispatch protocol`);
+                }}
+            />
 
-                <ItemSelectionModal
-                    isOpen={showItemModal}
-                    onClose={() => setShowItemModal(false)}
-                    onSelect={handleItemSelect}
-                />
+            <ItemSelectionModal
+                isOpen={showItemModal}
+                onClose={() => setShowItemModal(false)}
+                onSelect={handleItemSelect}
+            />
 
-                <SalesOrderSelectionModal
-                    isOpen={showSalesOrderModal}
-                    onClose={() => setShowSalesOrderModal(false)}
-                    onSelect={handleSalesOrderSelect}
-                />
-            </div>
-        </Layout>
+            <SalesOrderSelectionModal
+                isOpen={showSalesOrderModal}
+                onClose={() => setShowSalesOrderModal(false)}
+                onSelect={handleSalesOrderSelect}
+            />
+        </div>
     );
 };
 
 export default DeliveryChallan;
-

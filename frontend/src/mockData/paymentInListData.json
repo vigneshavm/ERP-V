@@ -1,17 +1,16 @@
 {
     "metrics": [
-        { "label": "Monthly Inflow", "value": "$125,500" },
-        { "label": "Pending Clearance", "value": "24 Records" },
-        { "label": "Cleared", "value": "212 Records" },
-        { "label": "YOY Growth", "value": "+18.5%" }
+        { "label": "Total Collections (MTD)", "value": "₹12,45,200", "trend": "+18.4%", "status": "success" },
+        { "label": "Pending Verification", "value": "₹42,800", "trend": "-2", "status": "warning" },
+        { "label": "Settlement Ratio", "value": "98.2%", "trend": "+0.5%", "status": "success" },
+        { "label": "Active Channels", "value": "5 Modes", "trend": "Stable", "status": "info" }
     ],
     "records": [
-        { "id": "#PAY-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$1,250.00" },
-        { "id": "#PAY-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$4,500.00" },
-        { "id": "#PAY-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$2,500.00" },
-        { "id": "#PAY-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$18,400.00" },
-        { "id": "#PAY-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$1,200.00" },
-        { "id": "#PAY-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$5,000.00" }
+        { "id": "#RCP-2024-5501", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Verified", "amount": "₹1,45,000.00", "mode": "Bank Transfer", "reference": "UTR-99283" },
+        { "id": "#RCP-2024-5502", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Pending", "amount": "₹22,200.00", "mode": "UPI / G-Pay", "reference": "TXN-88210" },
+        { "id": "#RCP-2024-5503", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Verified", "amount": "₹88,800.00", "mode": "Cash", "reference": "RCP-991" },
+        { "id": "#RCP-2024-5504", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Verified", "amount": "₹15,000.00", "mode": "Cheque", "reference": "CHQ-00122" },
+        { "id": "#RCP-2024-5505", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Failed", "amount": "₹3,150.00", "mode": "Card", "reference": "AUTH-ERR" },
+        { "id": "#RCP-2024-5506", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Verified", "amount": "₹17,750.00", "mode": "Bank Transfer", "reference": "UTR-99102" }
     ]
 }
-

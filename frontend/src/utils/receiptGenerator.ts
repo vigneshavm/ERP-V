@@ -57,83 +57,45 @@ export const generateReceiptJSON = (
     // 4. Totals
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
     const finalTotal = sale.total;
-    // Net total in the example is same as Final Total, implying Inclusive Tax or just subtotal.
-    // Usually Net Total = Subtotal before tax? Or Total after tax?
-    // In the prompt: Net Total: 450, Final Total: 450. Tax details show breakdown OF that 450.
-    // So Net Total here likely means the Payable Amount.
     const netTotal = finalTotal;
 
-    // 5. Tax Details (Reverse Calculation for Inclusive Tax or Forward for Exclusive)
-    // The prompt shows: Total 450. Taxable: 428.57. CGST: 10.72. SGST: 10.72.
-    // 428.57 + 10.72 + 10.72 = 450.01 (approx 450).
-    // This implies 5% GST included. (428.57 * 0.05 = 21.428 -> 10.714 each).
-    // Formula: Taxable = Total / (1 + TaxRate)
+    // 5. Dynamic GST Breakdown — group items by GST rate slab
+    // Each cart item may carry gstRate + gstPercentage for backward compat
+    interface GSTSlab { rate: number; taxableValue: number; cgst: number; sgst: number; }
+    const slabMap = new Map<number, GSTSlab>();
 
-    // We need to determine the tax rate. Ideally from items or sale meta.
-    // For this specific 'Textiles' prompt, it's 5%.
-    // We will scan items to find the dominant tax rate or average.
-    // For now, we'll implement logic to detect 5% if textile, or use product gstPercentage.
+    for (const cartItem of sale.items) {
+        const gstRate = (cartItem as any).gstRate ?? (cartItem as any).gstPercentage ?? 5;
+        const lineTotal = (cartItem.price ?? 0) * (cartItem.qty ?? 1);
 
-    // Calculate total tax from items
-    let totalTaxableValue = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
+        let taxableValue: number;
+        if (sale.taxMode === 'EXCLUSIVE') {
+            taxableValue = lineTotal;
+        } else {
+            // Inclusive — reverse calculate
+            taxableValue = lineTotal / (1 + gstRate / 100);
+        }
 
-    // Detect global tax rate or sum up per item?
-    // The prompt asks for a summary tax block.
-    // Let's assume a uniform tax rate for simplicity or weighted average if we want to be fancy.
-    // But the prompt example has a single "GST %: 5" line.
-    const gstPercentage = 5; // Defaulting to 5% as per prompt, but should be dynamic.
+        const taxAmount = lineTotal - taxableValue;
+        const cgst = taxAmount / 2;
+        const sgst = taxAmount / 2;
 
-    if (sale.taxMode === 'EXCLUSIVE') {
-        // Sales total includes tax? Or is it added on top?
-        // Usually Sale.total is the final amount the customer pays.
-        // If Exclusive, Price * Qty = Taxable. Tax is added.
-        // If Inclusive, Price * Qty = Total. Tax is extracted.
-
-        // Let's assume Inclusive for retail textile usually.
-        totalTaxableValue = finalTotal / (1 + (gstPercentage / 100));
-    } else {
-        // Default to Inclusive calculation logic to match the example "450 -> 428.57"
-        totalTaxableValue = finalTotal / (1 + (gstPercentage / 100));
+        const existing = slabMap.get(gstRate) ?? { rate: gstRate, taxableValue: 0, cgst: 0, sgst: 0 };
+        existing.taxableValue += taxableValue;
+        existing.cgst         += cgst;
+        existing.sgst         += sgst;
+        slabMap.set(gstRate, existing);
     }
 
-    totalCGST = (totalTaxableValue * (gstPercentage / 2)) / 100;
-    totalSGST = (totalTaxableValue * (gstPercentage / 2)) / 100;
+    const gstSlabs: GSTSlab[] = Array.from(slabMap.values()).map(s => ({
+        rate:         s.rate,
+        taxableValue: +s.taxableValue.toFixed(2),
+        cgst:         +s.cgst.toFixed(2),
+        sgst:         +s.sgst.toFixed(2),
+    }));
 
-    const taxableValueFixed = Number(totalTaxableValue.toFixed(2));
-
-    // Calculate total tax amount to ensure (Taxable + Tax = Total)
-    const totalTaxAmount = finalTotal - taxableValueFixed;
-
-    // Split tax into CGST and SGST
-    // (totalTaxAmount / 2) might have more decimals, round it to 2.
-    // However, we need to ensure CGST + SGST = TotalTaxAmount exactly if possible.
-    // usually strictly equal split.
-    const cgstFixed = Number((totalTaxAmount / 2).toFixed(2));
-    const sgstFixed = Number((totalTaxAmount / 2).toFixed(2));
-
-    // If there's a 0.01 diff due to split rounding?
-    // 10.715 -> 10.72. 10.72 + 10.72 = 21.44 vs 21.43?
-    // Let's check the example: 10.72 + 10.72 = 21.44.
-    // 428.57 + 21.44 = 450.01.
-    // The example receipt math: 428.57 + 10.72 + 10.72 = 450.01.
-    // So the example receipt ITSELF has a 0.01 rounding error vs the Total 450.00!
-    // But physically it likely prints 450.00.
-    // My goal is to mimic the receipt. 10.72 is preferred over 10.71 if it matches the example.
-
-    // If I use the previous logic: 10.71 + 10.71 = 21.42.
-    // 428.57 + 21.42 = 449.99.
-
-    // Standard approach: 
-    // Taxable: 428.57
-    // Tax: 21.43 (derived) -> /2 = 10.715 -> 10.72.
-    // Sum: 428.57 + 10.72 + 10.72 = 450.01.
-
-    // I will stick to the "Calculate Total Tax, then split" approach as it usually yields the most "expected" values for the components, even if the sum is off by 0.01.
-    // Or I can force the components to sum to the total tax?
-    // For this task, mimicking the output "10.72" is the key success criteria.
-
+    // Keep a single-slab summary for backward compat (dominant slab or first)
+    const primarySlab = gstSlabs[0] ?? { rate: 0, taxableValue: finalTotal, cgst: 0, sgst: 0 };
 
     // 6. Footer
     const footerMessage1 = options?.footerMessage1 || "மஞ்சள் வைத்த துணிகள் மற்றும் தள்ளுபடி விலையில் விற்ற துணிகளை மாற்ற இயலாது.";
@@ -142,7 +104,7 @@ export const generateReceiptJSON = (
     return {
         receipt_data: {
             header: {
-                store_name: tenant.name || branch.name, // Tenant Name usually the Store Brand
+                store_name: tenant.name || branch.name,
                 store_address: storeAddress,
                 store_phone: storePhone,
                 gstin: gstin,
@@ -153,7 +115,7 @@ export const generateReceiptJSON = (
                 date: dateStr,
                 time: timeStr,
                 bill_no: billNo,
-                customer_name: sale.customerName || 'KATE' // Default from prompt if missing? Or just empty.
+                customer_name: sale.customerName || 'KATE'
             },
             items: items,
             totals: {
@@ -162,10 +124,12 @@ export const generateReceiptJSON = (
                 total_quantity: totalQuantity
             },
             tax_details: {
-                gst_percentage: gstPercentage,
-                taxable_value: taxableValueFixed,
-                cgst_amount: cgstFixed,
-                sgst_amount: sgstFixed
+                gst_percentage: primarySlab.rate,
+                taxable_value:  primarySlab.taxableValue,
+                cgst_amount:    primarySlab.cgst,
+                sgst_amount:    primarySlab.sgst,
+                // Extended: all slabs for multi-rate receipts
+                gst_slabs:      gstSlabs,
             },
             footer: {
                 message_1: footerMessage1,

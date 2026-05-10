@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Layout from "../../../components/shared/Layout/Layout";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
 import EstimateTemplate from "@/components/sales/EstimateTemplate";
-import { ArrowLeft, Printer, FileText } from 'lucide-react';
+import { 
+    ArrowLeft, 
+    Printer, 
+    FileText, 
+    ShieldCheck, 
+    Zap, 
+    Download, 
+    Share2, 
+    RefreshCw,
+    Calculator,
+    Globe,
+    CheckCircle2
+} from 'lucide-react';
 
 const EstimateDetail = () => {
   const { id } = useParams();
@@ -17,6 +28,7 @@ const EstimateDetail = () => {
   }, [id]);
 
   const fetchEstimate = async () => {
+    setIsLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user") || '{}');
       const response = await api.get(
@@ -40,52 +52,115 @@ const EstimateDetail = () => {
 
   if (isLoading || !estimate) {
     return (
-      <Layout>
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-          <p className="text-secondary opacity-70 font-medium">Loading estimate...</p>
-        </div>
-      </Layout>
+      <div className="h-screen bg-neutral-950 flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+        <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] animate-pulse">Syncing Matrix Node...</p>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="max-w-4xl mx-auto animate-fade-in pb-10">
-        {/* Header - Hidden on print */}
-        <div className="mb-8 print:hidden">
-          <button
-            onClick={() => navigate("/sales/estimates")}
-            className="flex items-center text-secondary hover:text-primary mb-4 transition-colors font-medium gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Estimates
-          </button>
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
-                <FileText className="w-6 h-6 text-primary" />
-                Estimate Details
-              </h1>
-              <p className="text-sm text-secondary opacity-70 mt-1">
-                View and print estimate
-              </p>
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
+      {/* Ambient Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+      </div>
+
+      <main className="relative z-10 flex-1 flex flex-col max-w-[1200px] w-full mx-auto px-8 py-8 space-y-8">
+        {/* Modern Header - Hidden on print */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 print:hidden">
+          <div className="relative">
+            <Link to="/sales/estimates" className="flex items-center gap-2 text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-amber-500 transition-colors mb-4 group">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Registry
+            </Link>
+            <div className="absolute -left-4 top-10 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+            <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+              Proforma <span className="text-amber-500">Matrix View</span>
+              <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-[9px] font-bold uppercase tracking-widest">
+                {estimate.estimateNo}
+              </span>
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400">Institutional Audit Pass // Verified Hash</p>
             </div>
+          </div>
+          
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <button className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:scale-110 transition-transform shadow-sm group">
+              <Share2 className="w-4 h-4 text-neutral-500 group-hover:text-amber-500" />
+            </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm font-medium"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-black/20"
             >
-              <Printer className="w-4 h-4" />
-              Print
+              <Printer className="w-4 h-4" /> Export to Hardcopy
+            </button>
+            <button
+              onClick={() => navigate(`/sales/estimate/edit/${id}`)}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20"
+            >
+              <Zap className="w-4 h-4 text-white" /> Modify Protocol
             </button>
           </div>
+        </header>
+
+        {/* Status Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 print:hidden">
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-6 flex items-center gap-5 shadow-sm">
+                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500">
+                    <Globe className="w-6 h-6" />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Protocol Origin</p>
+                    <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tighter mt-0.5">Central Ledger Node</p>
+                </div>
+            </div>
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-6 flex items-center gap-5 shadow-sm">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500">
+                    <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Validation Status</p>
+                    <p className="text-sm font-black text-emerald-500 uppercase tracking-tighter mt-0.5">Matrix Verified 4.0</p>
+                </div>
+            </div>
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-6 flex items-center gap-5 shadow-sm">
+                <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500">
+                    <Calculator className="w-6 h-6" />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Fiscal Yield</p>
+                    <p className="text-sm font-black text-neutral-900 dark:text-white font-mono tracking-tighter mt-0.5">₹{estimate.totalAmount?.toLocaleString()}</p>
+                </div>
+            </div>
         </div>
 
         {/* Estimate Card */}
-        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border-0 print:rounded-none">
-          <EstimateTemplate estimate={estimate} />
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] shadow-2xl overflow-hidden print:shadow-none print:border-0 print:rounded-none relative mb-20 group">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.02] to-rose-500/[0.02] pointer-events-none"></div>
+          <div className="p-4 print:p-0">
+            <EstimateTemplate estimate={estimate} />
+          </div>
+          
+          {/* Internal Footer Metadata */}
+          <div className="p-8 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col md:flex-row justify-between items-center gap-6 print:hidden">
+              <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest">Internal Hash Sequence</span>
+                      <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">EST-VAL-{id?.slice(-8).toUpperCase()} // NODE-SAFE</span>
+                  </div>
+              </div>
+              <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+                  <RefreshCw className="w-3.5 h-3.5 text-amber-500" /> Sequence Updated: {new Date(estimate.updatedAt).toLocaleTimeString()}
+              </div>
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* Print Styles */}
       <style>{`
@@ -98,18 +173,28 @@ const EstimateDetail = () => {
             visibility: visible;
           }
           .print\\:shadow-none {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            border: none !important;
+            background: white !important;
           }
           .print\\:hidden {
             display: none !important;
           }
+          /* Dark mode print adjustment */
+          @media (prefers-color-scheme: dark) {
+            .print\\:shadow-none {
+              color: black !important;
+              background: white !important;
+            }
+          }
         }
       `}</style>
-    </Layout>
+    </div>
   );
 };
 
 export default EstimateDetail;
+

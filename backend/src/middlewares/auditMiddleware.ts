@@ -15,8 +15,10 @@ export const logAudit = async ({
     ipAddress,
     userAgent = null,
     metadata = {},
+    tenantId,
 }: {
     userId: string;
+    tenantId: string;
     action: string;
     entityType: string;
     entityId: string;
@@ -29,6 +31,7 @@ export const logAudit = async ({
     try {
         await AuditLog.create({
             userId,
+            tenantId,
             action,
             entityType,
             entityId,
@@ -59,6 +62,7 @@ export const auditDelete = (entityType: string, action: string) => {
                 // Log audit in background (don't await)
                 logAudit({
                     userId: (req as any).user._id,
+                    tenantId: (req as any).user.tenantId,
                     action,
                     entityType,
                     entityId: String(req.params.id),
@@ -88,6 +92,7 @@ export const auditUpdate = (entityType: string, action: string) => {
             if (res.statusCode >= 200 && res.statusCode < 300) {
                 logAudit({
                     userId: (req as any).user._id,
+                    tenantId: (req as any).user.tenantId,
                     action,
                     entityType,
                     entityId: String(req.params.id),

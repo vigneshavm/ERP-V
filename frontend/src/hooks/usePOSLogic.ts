@@ -38,6 +38,8 @@ import { usePOSTotals } from './usePOSTotals';
 import { usePOSCheckout } from './usePOSCheckout';
 import { usePOSCart } from './pos/usePOSCart';
 import { usePOSSession } from './pos/usePOSSession';
+import { useBarcodeScanner } from './useBarcodeScanner';
+import api from '../services/api';
 
 export const usePOSLogic = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -201,6 +203,44 @@ export const usePOSLogic = () => {
         });
         return () => channel.close();
     }, [cart, cartTotal, activeCustomer]);
+
+    // --- Barcode Scanner Logic ---
+    const handleBarcodeScan = useCallback(async (barcode: string) => {
+        try {
+            // First try to find it locally in already loaded products
+            const localProduct = products.find(p => p.barcode === barcode);
+            
+            if (localProduct) {
+                addItem({
+                    ...localProduct,
+                    id: localProduct.id || localProduct._id || '',
+                    qty: 1,
+                    price: localProduct.sellingPrice,
+                    taxMode: localProduct.taxMode || defaultTaxMode
+                }, isReturnMode);
+                return;
+            }
+            
+            // If not found locally, query the backend
+            const res = await api.get(`/inventory/barcode/${barcode}`);
+            if (res.data) {
+                const item = res.data;
+                addItem({
+                    ...item,
+                    id: item._id || item.id,
+                    qty: 1,
+                    price: item.sellingPrice,
+                    taxMode: item.taxMode || defaultTaxMode
+                }, isReturnMode);
+            }
+        } catch (err) {
+            console.warn('Barcode not found:', barcode);
+            // Optional: Play an error beep or show toast
+            alert(`Product with barcode ${barcode} not found!`);
+        }
+    }, [products, addItem, isReturnMode, defaultTaxMode]);
+
+    useBarcodeScanner({ onScan: handleBarcodeScan });
 
     // --- Global Shortcuts (via Hook) ---
     const shortcutHandlers = useMemo(() => ({

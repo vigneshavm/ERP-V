@@ -1,19 +1,43 @@
 {
   "kpis": [
-    { "label": "Textile Revenue", "val": "₹14.2M", "trend": "+12.5%", "isUp": true, "iconName": "Banknote", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/20" },
-    { "label": "Boutique Orders", "val": "842", "trend": "+5.2%", "isUp": true, "iconName": "Briefcase", "color": "text-indigo-400", "bg": "bg-indigo-500/10", "border": "border-indigo-500/20" },
-    { "label": "Fabric Stock Value", "val": "₹4.8M", "trend": "-2.1%", "isUp": false, "iconName": "Box", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/20" },
-    { "label": "Retail Customers", "val": "4,291", "trend": "+18.4%", "isUp": true, "iconName": "Users", "color": "text-fuchsia-400", "bg": "bg-fuchsia-500/10", "border": "border-fuchsia-500/20" }
+    { "label": "Today's Sales", "val": "₹24,500", "trend": "+8.5%", "isUp": true, "iconName": "Banknote", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/20" },
+    { "label": "Bills Generated", "val": "42", "trend": "-2.0%", "isUp": false, "iconName": "Briefcase", "color": "text-indigo-400", "bg": "bg-indigo-500/10", "border": "border-indigo-500/20" },
+    { "label": "Pending Udhaar (Credit)", "val": "₹12,400", "trend": "+1.2%", "isUp": false, "iconName": "Users", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/20" },
+    { "label": "Low Stock Items", "val": "14", "trend": "-5.0%", "isUp": true, "iconName": "Box", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/20" }
   ],
   "chartData": {
-    "timeFrames": ["1W", "1M", "3M", "1Y"],
-    "barHeights": [40, 65, 45, 80, 55, 90, 75, 100, 60, 85, 70, 95]
+    "timeFrames": ["Today", "1W", "1M", "1Y"],
+    "values": {
+      "Today": [1.0, 1.5, 2.0, 1.8, 2.5, 1.2, 1.5, 2.0, 3.0, 3.5, 2.5, 2.0],
+      "1W": [22.0, 23.5, 24.5, 26.0, 30.5, 45.0, 42.0],
+      "1M": [195.0, 213.5, 205.0, 230.5],
+      "1Y": [750, 680, 810, 820, 844, 860, 790, 880, 950, 1200, 1100, 1050]
+    },
+    "labels": {
+      "Today": ["9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM"],
+      "1W": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "1M": ["Week 1", "Week 2", "Week 3", "Week 4"],
+      "1Y": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    }
   },
   "systemAlerts": [
-    { "title": "Low Stock: Pure Silk (Kanchipuram)", "desc": "Only 3 sarees remaining in showroom.", "iconName": "Box", "color": "rose" },
-    { "title": "Pending Tailoring Approval", "desc": "Order #TEX-2026-042 awaits measurements review.", "iconName": "ShieldCheck", "color": "amber" },
-    { "title": "Unreconciled Cash", "desc": "₹5,200 discrepancy in POS drawer #1.", "iconName": "Banknote", "color": "indigo" },
-    { "title": "Bulk Shipment Received", "desc": "Vardhman Cotton shipment arrived at warehouse.", "iconName": "Zap", "color": "emerald" }
+    { "title": "Low Stock: Cotton Kurtis (Size M)", "desc": "Only 2 pieces remaining on display rack.", "iconName": "Box", "color": "rose" },
+    { "title": "Credit Due: Sharma Ji", "desc": "₹4,500 pending for over 15 days. Needs follow-up.", "iconName": "Users", "color": "amber" },
+    { "title": "Cash Drawer Alert", "desc": "₹200 shortage in yesterday's evening settlement.", "iconName": "AlertTriangle", "color": "rose" },
+    { "title": "New Stock Arrived", "desc": "15 boxes received from Surat Distributor. Needs entry.", "iconName": "Zap", "color": "emerald" }
+  ],
+  "recentTransactions": [
+    { "vendor": "A. Arumuga Mudaliar & Sons", "mobile": "33918649", "amount": "₹ 7,62,756", "status": "Completed", "date": "Today", "type": "Purchase" },
+    { "vendor": "Jeyaram Agency", "mobile": "-", "amount": "₹ 1,91,776", "status": "Pending", "date": "Today", "type": "Purchase" },
+    { "vendor": "E.G. Subbiah Dresses", "mobile": "990473", "amount": "₹ 85,865", "status": "Completed", "date": "Yesterday", "type": "Purchase" },
+    { "vendor": "Aatarsh Clothing Company", "mobile": "991328", "amount": "₹ 58,958", "status": "Completed", "date": "Yesterday", "type": "Purchase" },
+    { "vendor": "GL Fashions", "mobile": "990290", "amount": "₹ 40,156", "status": "Completed", "date": "2 Days Ago", "type": "Purchase" },
+    { "vendor": "Viver Enterprise", "mobile": "992484", "amount": "₹ 36,531", "status": "Pending", "date": "2 Days Ago", "type": "Purchase" },
+    { "vendor": "A.R.G Garments", "mobile": "991516", "amount": "₹ 31,563", "status": "Completed", "date": "3 Days Ago", "type": "Purchase" },
+    { "vendor": "R.G. Trendz", "mobile": "990093", "amount": "₹ 29,447", "status": "Completed", "date": "3 Days Ago", "type": "Purchase" },
+    { "vendor": "SPE Fashion", "mobile": "992305", "amount": "₹ 29,247", "status": "Completed", "date": "4 Days Ago", "type": "Purchase" },
+    { "vendor": "Mahesh & Co", "mobile": "990932", "amount": "₹ 26,460", "status": "Completed", "date": "4 Days Ago", "type": "Purchase" },
+    { "vendor": "B & B Textile", "mobile": "991145", "amount": "₹ 5,906", "status": "Completed", "date": "5 Days Ago", "type": "Purchase" }
   ]
 }
 

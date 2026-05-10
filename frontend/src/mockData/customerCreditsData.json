@@ -1,17 +1,16 @@
 {
     "metrics": [
-        { "label": "Total Credits", "value": "$12,450" },
-        { "label": "Pending", "value": "5 Records" },
-        { "label": "Utilized", "value": "128 Records" },
-        { "label": "Growth", "value": "+8.2%" }
+        { "label": "Total Available Credit", "value": "₹4,12,000", "trend": "+5.2%", "status": "success" },
+        { "label": "Credits Issued (MTD)", "value": "₹82,400", "trend": "+12%", "status": "warning" },
+        { "label": "Active Credit Wallets", "value": "128 Nodes", "trend": "+8", "status": "success" },
+        { "label": "Utilization Rate", "value": "64%", "trend": "-2.1%", "status": "info" }
     ],
     "records": [
-        { "id": "#CRD-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$500.00" },
-        { "id": "#CRD-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$1,250.00" },
-        { "id": "#CRD-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$750.00" },
-        { "id": "#CRD-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$2,000.00" },
-        { "id": "#CRD-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$350.00" },
-        { "id": "#CRD-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$1,100.00" }
+        { "id": "#CRD-2024-8801", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Active", "amount": "₹45,000.00", "expiry": "Dec 2024", "type": "Loyalty Credit" },
+        { "id": "#CRD-2024-8802", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Part-Used", "amount": "₹12,200.00", "expiry": "Nov 2024", "type": "Return Credit" },
+        { "id": "#CRD-2024-8803", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Active", "amount": "₹28,800.00", "expiry": "Jan 2025", "type": "Advance Credit" },
+        { "id": "#CRD-2024-8804", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Expiring", "amount": "₹15,000.00", "expiry": "In 2 Days", "type": "Promo Credit" },
+        { "id": "#CRD-2024-8805", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Active", "amount": "₹3,150.00", "expiry": "Dec 2024", "type": "Loyalty Credit" },
+        { "id": "#CRD-2024-8806", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Active", "amount": "₹17,750.00", "expiry": "Feb 2025", "type": "Bulk Order Credit" }
     ]
 }
-

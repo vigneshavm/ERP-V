@@ -73,9 +73,15 @@ export interface InvoiceItem {
     item: string; // Product ID
     name?: string; // Frontend helper
     sku?: string; // Frontend helper
+    hsnCode?: string;     // HSN/SAC code
+    gstRate?: number;     // GST %
     quantity: number;
     price: number;
-    tax: number;
+    taxableAmount?: number; // Before-tax value
+    cgst?: number;
+    sgst?: number;
+    igst?: number;
+    tax: number;          // Total tax (backward compat)
     discount: number;
     total: number;
 }
@@ -99,8 +105,13 @@ export interface Invoice {
 
     paymentStatus: 'paid' | 'unpaid' | 'partial';
     paymentMethod: string;
-    paidViaMethod?: string; // found in InvoiceDetail
-    splitPaymentDetails?: Array<{ method: string; amount: number }>; // found in InvoiceDetail
+    paidViaMethod?: string;
+    splitPaymentDetails?: Array<{ method: string; amount: number }>;
+
+    // GST Compliance
+    taxMode?: 'INCLUSIVE' | 'EXCLUSIVE';
+    isInterState?: boolean;
+    taxBreakdown?: { cgst: number; sgst: number; igst: number; total: number };
 
     createdBy?: {
         shopName?: string;
@@ -114,7 +125,7 @@ export interface Invoice {
     // Frontend helpers
     customerName?: string;
     customerPhone?: string;
-    status?: string; // Legacy/Frontend helper
+    status?: string;
     sector?: string;
 }
 

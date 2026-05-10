@@ -3,6 +3,9 @@ import { Document, Types } from "mongoose";
 export interface IItem extends Document {
     name: string;
     sku?: string;
+    barcode?: string;
+    hsnCode?: string;  // HSN/SAC code for GST
+    gstRate?: 0 | 5 | 12 | 18 | 28; // Standard GST slabs
     category?: string;
     costPrice: number;
     sellingPrice: number;
@@ -26,6 +29,11 @@ export interface IItem extends Document {
         costPrice: number;
         supplierId: Types.ObjectId | string;
         receivedDate: Date;
+    }[];
+    storeLevels: {
+        storeId: Types.ObjectId | string;
+        qty: number;
+        reservedQty: number;
     }[];
 
     // Virtuals

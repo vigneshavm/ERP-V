@@ -94,6 +94,23 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 )}
             </div>
 
+            {/* Store / Branch Selector */}
+            <div className="hidden lg:flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">Store Location</label>
+                <select
+                    value={currentBranch || ''}
+                    onChange={(e) => console.log('Dispatch branch change:', e.target.value)}
+                    className="bg-white dark:bg-neutral-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-neutral-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
+                >
+                    <option value="">All Stores</option>
+                    {(branches || []).map((b: any) => (
+                        <option key={b.id || b._id} value={b.id || b._id}>
+                            {b.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
             {/* Counter Selector */}
             {availableCounters.length > 0 && (
                 <div className="hidden lg:flex flex-col gap-1">

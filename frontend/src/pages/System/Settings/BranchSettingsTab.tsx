@@ -1,16 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import { RootState } from "../../../redux/store";
-import { BranchConfig, Counter } from '../../../types/tenant/core';
+import api from '../../../services/api';
+import { Counter } from '../../../types/tenant/core';
 
 const BranchSettingsTab: React.FC = () => {
-    const { branches } = useSelector((state: RootState) => state.tenant || { branches: [] });
-    // Use optional chaining carefully
-    const [selectedBranchId, setSelectedBranchId] = useState<string | undefined>(branches?.[0]?.id);
+    const [branches, setBranches] = useState<any[]>([]);
+    const [selectedBranchId, setSelectedBranchId] = useState<string | undefined>();
+    const [isCreating, setIsCreating] = useState(false);
+    const [newBranchName, setNewBranchName] = useState('');
 
-    const selectedBranch = (branches || []).find((b: BranchConfig) => b.id === selectedBranchId);
+    useEffect(() => {
+        api.get('/stores').then(res => {
+            setBranches(res.data);
+            if (res.data.length > 0 && !selectedBranchId) {
+                setSelectedBranchId(res.data[0]._id);
+            }
+        }).catch(err => console.error("Failed to load stores", err));
+    }, []);
 
+    const selectedBranch = branches.find((b: any) => b._id === selectedBranchId);
+
+    const handleCreateBranch = async () => {
+        if (!newBranchName) return;
+        try {
+            const res = await api.post('/stores', { name: newBranchName, city: 'City', address: '' });
+            setBranches([...branches, res.data]);
+            setSelectedBranchId(res.data._id);
+            setIsCreating(false);
+            setNewBranchName('');
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleUpdateBranch = async (id: string, field: string, value: string) => {
+        try {
+            const res = await api.put(`/stores/${id}`, { [field]: value });
+            setBranches(branches.map(b => b._id === id ? res.data : b));
+        } catch (err) {
+            console.error(err);
+        }
+    };
     return (
         <div className="flex h-[calc(100vh-280px)] animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Branch List Sidebar */}
@@ -19,18 +49,32 @@ const BranchSettingsTab: React.FC = () => {
                     <div className="flex items-center justify-between">
                         <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Active Locations</p>
                     </div>
-                    <button className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20">
-                        <Plus className="w-4 h-4" /> Add New Branch
-                    </button>
+                    {isCreating ? (
+                        <div className="flex gap-2">
+                            <input 
+                                type="text" 
+                                value={newBranchName} 
+                                onChange={e => setNewBranchName(e.target.value)} 
+                                placeholder="Branch Name" 
+                                className="w-full px-3 py-2 text-sm border rounded-lg"
+                            />
+                            <button onClick={handleCreateBranch} className="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
+                            <button onClick={() => setIsCreating(false)} className="bg-slate-200 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                        </div>
+                    ) : (
+                        <button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20">
+                            <Plus className="w-4 h-4" /> Add New Branch
+                        </button>
+                    )}
                 </div>
 
                 <div className="space-y-3">
-                    {branches.map((br: BranchConfig) => {
-                        const isActive = selectedBranchId === br.id;
+                    {branches.map((br: any) => {
+                        const isActive = selectedBranchId === br._id;
                         return (
                             <button
-                                key={br.id}
-                                onClick={() => setSelectedBranchId(br.id)}
+                                key={br._id}
+                                onClick={() => setSelectedBranchId(br._id)}
                                 className={`w-full group relative p-4 rounded-2xl transition-all duration-300 text-left border ${isActive
                                     ? 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-500 shadow-xl shadow-indigo-100/50 dark:shadow-none translate-x-1'
                                     : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
@@ -83,15 +127,15 @@ const BranchSettingsTab: React.FC = () => {
                             <div className="grid md:grid-cols-2 gap-6 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
                                 <div className="space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Display Name</label>
-                                    <input type="text" defaultValue={selectedBranch.name} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                                    <input type="text" value={selectedBranch.name || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'name', e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">City / Hub</label>
-                                    <input type="text" defaultValue={selectedBranch.city} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                                    <input type="text" value={selectedBranch.city || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'city', e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
                                 </div>
                                 <div className="md:col-span-2 space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Physical Site Address</label>
-                                    <textarea rows={2} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none" defaultValue={selectedBranch?.address}></textarea>
+                                    <textarea rows={2} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none" value={selectedBranch.address || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'address', e.target.value)}></textarea>
                                 </div>
                             </div>
                         </div>

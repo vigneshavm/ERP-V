@@ -87,6 +87,14 @@ export class InventoryService {
         return item;
     }
 
+    async getItemByBarcode(barcode: string, tenantId: string): Promise<IItem> {
+        const items = await this.inventoryRepository.findByQuery({ barcode, tenantId });
+        if (!items || items.length === 0) {
+            throw new AppError("Item not found for this barcode", 404);
+        }
+        return items[0];
+    }
+
     async updateItem(itemId: string, tenantId: string, updateData: any, user: any): Promise<{ updated: IItem, alerts: any[] }> {
         const item = await this.inventoryRepository.findById(itemId, tenantId);
         if (!item) {

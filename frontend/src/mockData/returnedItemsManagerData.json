@@ -1,17 +1,16 @@
 {
     "metrics": [
-        { "label": "Return Volume", "value": "$12,400" },
-        { "label": "Processing", "value": "8 Records" },
-        { "label": "Refunded", "value": "112 Records" },
-        { "label": "Return Rate", "value": "2.4%" }
+        { "label": "Total Returns", "value": "128", "trend": "+12%", "status": "info", "subValue": "Total Count" },
+        { "label": "Total Amount", "value": "₹4,12,500", "trend": "+5.2%", "status": "success", "subValue": "Value Returned" },
+        { "label": "Full Returns", "value": "82", "trend": "64%", "status": "warning", "subValue": "64% of returns" },
+        { "label": "Partial Returns", "value": "46", "trend": "36%", "status": "warning", "subValue": "36% of returns" }
     ],
     "records": [
-        { "id": "#RET-2024-1001", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "Completed", "amount": "$1,250.00" },
-        { "id": "#RET-2024-1002", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "Completed", "amount": "$450.00" },
-        { "id": "#RET-2024-1003", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "Completed", "amount": "$2,100.00" },
-        { "id": "#RET-2024-1004", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "Completed", "amount": "$800.00" },
-        { "id": "#RET-2024-1005", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "Completed", "amount": "$150.00" },
-        { "id": "#RET-2024-1006", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "Completed", "amount": "$5,000.00" }
+        { "id": "#RTN-2024-1101", "date": "Oct 24, 2024", "customer": "Global Textile Corp", "status": "QC Passed", "amount": "₹4,500.00", "reason": "Sizing Issue", "action": "Refunded" },
+        { "id": "#RTN-2024-1102", "date": "Oct 24, 2024", "customer": "T-Mail Textiles", "status": "QC Pending", "amount": "₹2,200.00", "reason": "Damaged", "action": "Pending QC" },
+        { "id": "#RTN-2024-1103", "date": "Oct 23, 2024", "customer": "Starlight Ethnic", "status": "QC Passed", "amount": "₹8,800.00", "reason": "Wrong Item", "action": "Credit Issued" },
+        { "id": "#RTN-2024-1104", "date": "Oct 22, 2024", "customer": "Silk Core", "status": "QC Failed", "amount": "₹1,500.00", "reason": "Used / Worn", "action": "Rejected" },
+        { "id": "#RTN-2024-1105", "date": "Oct 21, 2024", "customer": "Apex Heavy", "status": "QC Passed", "amount": "₹350.00", "reason": "Color Mismatch", "action": "Exchanged" },
+        { "id": "#RTN-2024-1106", "date": "Oct 20, 2024", "customer": "NeuroTextile", "status": "QC Passed", "amount": "₹7,750.00", "reason": "Bulk Defect", "action": "Credit Issued" }
     ]
 }
-
